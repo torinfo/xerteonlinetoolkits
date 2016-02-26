@@ -26,6 +26,9 @@
 				nextBtnTxt,
 				restartBtnTxt;
 
+		var answers = 0;
+		var totaal = 0;
+
 		// function called every time the page is viewed after it has initially loaded
 		this.pageChanged = function() {
 			$pageContents = $("#pageContents");
@@ -95,15 +98,16 @@
 
 							if (document.getElementById('answerTxt').value == text) {
 								$("#answer").slideDown(function () {
-									//$("#button").show();
+									$("#button").show();
+									answers++;
 								});
 							}
 							else {
 								$("#incorrect").slideDown(function () {
-									//$("#button").show();
+									$("#button").show();
 								});
 							}
-							dictation.finishTracking();
+							totaal++;
 
 							if ($pageContents.data("current") + 1 < $pageContents.data("captionInfo").length) {
 								$this
@@ -111,7 +115,7 @@
 										.button("option", "label", nextBtnTxt);
 							} else {
 								$this
-										.data("state", "restart")
+										.data("state", "done")
 										.button("option", "label", restartBtnTxt);
 							}
 
@@ -127,6 +131,8 @@
 							$this
 									.data("state", "show")
 									.button("option", "label", showBtnTxt);
+							dictation.finishTracking();
+							console.log("einde");
 						}
 					})
 					.data("state", "show");
@@ -254,10 +260,7 @@
 			var correctAnswer = $("<div/>").html($pageContents.data("captionInfo")[$pageContents.data("current")].answer).text().replace(/(\r\n|\n|\r)/gm,"");
 			XTExitInteraction(x_currentPage, 0,  filledAnswer);
 			if (filledAnswer == correctAnswer) {
-				XTSetPageScore(x_currentPage, (1 * 100.0));
-			}
-			else {
-				XTSetPageScore(x_currentPage, (0 * 100.0));
+				XTSetPageScore(x_currentPage, ((answers * 100.0)/totaal));
 			}
 		}
 		//Starting the tracking
