@@ -18,6 +18,10 @@
 	 * limitations under the License.
 	 */
 
+	//The number of correct answers
+	var answers = 0;
+	//The total number of questions answered
+	var total = 0;
 	// pageChanged & sizeChanged functions are needed in every model file
 	// other functions for model should also be in here to avoid conflicts
 	var dictation = new function() {
@@ -25,9 +29,6 @@
 				showBtnTxt,
 				nextBtnTxt,
 				restartBtnTxt;
-
-		var answers = 0;
-		var totaal = 0;
 
 		// function called every time the page is viewed after it has initially loaded
 		this.pageChanged = function() {
@@ -95,11 +96,11 @@
 							$("#button").hide();
 							//Formats the answer to te correct format, so we can compare it with the input to check if it is correct
 							var text = $("<div/>").html($pageContents.data("captionInfo")[$pageContents.data("current")].answer).text().replace(/(\r\n|\n|\r)/gm,"");
-
+							//Checks if the answer is correct, and if so it adds one to the total of correct answers
 							if (document.getElementById('answerTxt').value == text) {
+								answers++;
 								$("#answer").slideDown(function () {
 									$("#button").show();
-									answers++;
 								});
 							}
 							else {
@@ -107,13 +108,14 @@
 									$("#button").show();
 								});
 							}
-							totaal++;
+							total++;
 
 							if ($pageContents.data("current") + 1 < $pageContents.data("captionInfo").length) {
 								$this
 										.data("state", "next")
 										.button("option", "label", nextBtnTxt);
 							} else {
+								dictation.finishTracking();
 								$this
 										.data("state", "done")
 										.button("option", "label", restartBtnTxt);
@@ -131,8 +133,6 @@
 							$this
 									.data("state", "show")
 									.button("option", "label", showBtnTxt);
-							dictation.finishTracking();
-							console.log("einde");
 						}
 					})
 					.data("state", "show");
@@ -204,13 +204,15 @@
 						.html(x_addLineBreaks($pageContents.data("captionInfo")[$pageContents.data("current")].prompt));
 			}
 			//Will be shown when the answer is incorrect
+			var text = $("<div/>").html($pageContents.data("captionInfo")[$pageContents.data("current")].answer).text().replace(/(\r\n|\n|\r)/gm,"");
+
 			$("#incorrect")
 					.hide()
-					.html(x_addLineBreaks("The answer is incorrect. The correct answer was: " + $pageContents.data("captionInfo")[$pageContents.data("current")].answer));
+					.html('<img class="tick" src="' + x_templateLocation + 'common_html5/cross.png" alt="' + x_getLangInfo(x_languageData.find("tick")[0], "label", "Tick") + '">' + x_addLineBreaks(" The answer is incorrect. The correct answer was: " + $pageContents.data("captionInfo")[$pageContents.data("current")].answer));
 			//Will be shown if the answer is correct
 			$("#answer")
 					.hide()
-					.html(x_addLineBreaks("Correct!"));
+					.html('<img class="tick" src="' + x_templateLocation + 'common_html5/tick.png" alt="' + x_getLangInfo(x_languageData.find("tick")[0], "label", "Tick") + '">' + x_addLineBreaks(" Correct!"));
 
 			this.loadAudio($pageContents.data("captionInfo")[$pageContents.data("current")]);
 		}
@@ -259,9 +261,7 @@
 			var filledAnswer = document.getElementById('answerTxt').value;
 			var correctAnswer = $("<div/>").html($pageContents.data("captionInfo")[$pageContents.data("current")].answer).text().replace(/(\r\n|\n|\r)/gm,"");
 			XTExitInteraction(x_currentPage, 0,  filledAnswer);
-			if (filledAnswer == correctAnswer) {
-				XTSetPageScore(x_currentPage, ((answers * 100.0)/totaal));
-			}
+			XTSetPageScore(x_currentPage, ((answers * 100.0)/total));
 		}
 		//Starting the tracking
 		this.initTracking = function() {
@@ -270,7 +270,7 @@
 			if (x_currentPageXML.getAttribute("trackingWeight") != undefined) {
 				this.weighting = x_currentPageXML.getAttribute("trackingWeight");
 			}
-			XTSetPageType(x_currentPage, 'text', 1, this.weighting);
+			XTSetPageType(x_currentPage, 'numeric', 1, this.weighting);
 			var correctAnswer = $("<div/>").html($pageContents.data("captionInfo")[$pageContents.data("current")].answer).text().replace(/(\r\n|\n|\r)/gm,"");
 			XTEnterInteraction(x_currentPage, 0, 'text', x_currentPageXML.getAttribute("text"), correctAnswer);
 		}
