@@ -1,6 +1,26 @@
-	<learningObject targetFolder="langTools" name="Project Title" displayMode="fill" newBtnLabel="Solve new problem" backBtn="Previous Step" fwdBtn="Next Step" emailBtn="Email Overview" printBtn="Print Overview" viewThisBtn="Overview" closeBtn="Close" moreInfoString="more" lessInfoString="less" helpString="More information" resultString="Result" overviewString="Problem" posAnswerString="Other possible answers" fromRangeString="From range" viewAllString="All overviews" errorString="ERROR! Invalid ID" sliderError="There is no next step for this value!" noQ="No questions have been added" noA="No answer options have been added" resultEndString="" theme="default">
-		<quiz name="Workflow Title" text="Enter introduction / instructions here" title="Introduction" firstStep="dikkie">
-			<section show="" name="Enter Section Name">
-			</section>
-		</quiz>
+	<learningObject
+	targetFolder="langTools"
+	name="Project Title"
+	displayMode="fill"
+	newBtnLabel="Solve new problem"
+	backBtn="Previous Step"
+	fwdBtn="Next Step"
+	emailBtn="Email	Overview"
+	printBtn="Print	Overview"
+	viewThisBtn="Overview"
+	closeBtn="Close"
+	moreInfoString="more"
+	lessInfoString="less"
+	helpString="More information"
+	resultString="Result"
+	overviewString="Problem"
+	posAnswerString="Other possible answers" 
+	fromRangeString="From range" 
+	viewAllString="All overviews" 
+	errorString="ERROR! Invalid ID" 
+	sliderError="There is no next step for this value!" 
+	noQ="No questions have been added" 
+	noA="No answer options have been added" 
+	resultEndString="" 
+	theme="default">
 	</learningObject>
