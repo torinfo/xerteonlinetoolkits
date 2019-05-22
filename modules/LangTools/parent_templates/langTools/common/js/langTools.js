@@ -8,7 +8,7 @@
  * compliance with the License. You may obtain a copy of the License at:
  *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -22,14 +22,14 @@ var allParams		= {},	// all attributes of learningObject
     allQParams		= {},	// all attributes of quiz
 	allSections		= [],	// array containing an object with details of each section
 	allSteps		= [],	// array containing an object with details for each possible step
-	
+
 	langToolsHistory = [],	// array of arrays - each one contains ids & options selected for that langTools
 	storedResultTxt	= [],	// array of arrays - each one contains text stored until presented as a collated result (optional)
 	currentLangTools,
 	currentStep,
 	currentStepInfo,
 	currentSection,
-	
+
 	languageData	= [],
 	x_theme 		= "default",
 	x_volume        = 1,
@@ -54,9 +54,9 @@ function init() {
 	$footerBlock	= $("#footerBlock");
 	$dialog			= $(".dialog");
 	$head           = $("head");
-	
+
 	smallScreen = screen.width <= 550 ? true : false;
-	
+
 	// _____ GET & SORT XML DATA _____
 	$.ajax({
 		type: "GET",
@@ -67,7 +67,7 @@ function init() {
 				xmlData = $($.parseXML(newString)).find("learningObject"),
 				quizXML,
 				i, len;
-			
+
 			// get attributes of LO & quiz
 			for (var i=0, len=xmlData[0].attributes.length; i<len; i++) {
 				allParams[xmlData[0].attributes[i].name] = xmlData[0].attributes[i].value;
@@ -89,7 +89,40 @@ function init() {
 //Het is een heel rushed POC. Dit zou natuurlijk niet zo gebeuren, maar voor nu het werkt lol.
 function genConfig(pars)
 {
-	debugger;
+	var text =  `<!DOCTYPE html>
+	<html dir="ltr">
+	  <head>
+		<meta charset="UTF-8">
+		<link rel="stylesheet" href="../../../style2.css">
+		<title>${pars['name']}</title>
+	  </head>
+	  <body>
+		<script src="../../../globalvars.js"></script>
+		<script src="../jlVars.js"></script>
+		<script src="../../../btnEN.js"></script>
+		<script src="../HelpEN.js"></script>
+		<script>\n`;
+
+	for (property in pars){
+		if (property != 'name'){
+			value = pars[property];
+			if (!isNaN(parseInt(value)) || value == 'true' || value == 'false')
+				text += `\t\t\tvar ${property} = ${value};\n`;
+			else
+				text += `\t\t\tvar ${property} = '${value}';\n`;
+		}
+	}
+
+
+	text += `\t\t\tif (soort_oefening>0 && AVallowedExtensions.indexOf(bestandsExtensie) > 0)
+				{document.write('<script src="../../../swfobject.js"><\\/script>');}
+		</script>
+	<script src="../../../TitelOefH.js"></script>
+	<script src="../jl.js"></script>
+	</body>
+	</html>`;
+
+	$("body").append(`<a href="data:text/html;charset=UTF-8,${encodeURIComponent(text)}" id="link" download="IngevuldSjabloon.htm">Download ingevuld sjabloon.</a>`);
 }
 
 // _____ PRESERVE LINE BREAKS IN XML _____
@@ -97,7 +130,7 @@ function fixLineBreaks(text) {
 	// replace all line breaks in attributes with ascii code - otherwise these are replaced with spaces when parsed to xml
 	var	split_up = text.split(/<\!\[CDATA\[|\]\]>/),
 		temp, i, j, len, len2;
-	
+
 	for (var i=0, len=split_up.length; i<len; i+=2) {
 		temp = split_up[i].split('"');
 		for (var j=1, len2=temp.length; j<len2; j+=2) {
@@ -114,7 +147,7 @@ function fixLineBreaks(text) {
 		temp.push(split_up[i] + "<![CDATA[" + split_up[i+1]);
 	}
 	temp.push(split_up[i]);
-	
+
 	return temp.join("]]>");
 }
 
