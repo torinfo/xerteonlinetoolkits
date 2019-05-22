@@ -2,42 +2,98 @@
 <wizard menus="">
 
 	<learningObject icon="icPackage" remove="false" duplicate="false">
-  
+
 		<name label="Project Title" type="TextInput"/>
-		<theme type="ThemeList" label="Theme" mandatory="true" defaultValue="default" />
-		<themeurl type="CheckBox" label="Disable theme url" defaultValue="false" optional="true" tooltip="By default the theme can now be changed with a url parameter e.g. &amp;theme=default which is useful for a variety of reasons. However as an author you can use this optional property, if you wish, to tick and disable this feature. The 'theme url parameter' to use when changing a theme by this method is shown in each theme's description and is often shorter and not the same as the display name of the theme."/>
 
-		<auteur label="auteur" type="TextInput" mandatory="true"/>
-		<email label="email" type="TextInput" mandatory="true"/>
-		<taalNiveau label="taalNiveau" type="TextInput" mandatory="true"/>
-		<categorieOef label="categorieOef" type="TextInput" mandatory="true"/>
+		<auteur label="auteur" type="TextInput" mandatory="false"/>
+		<email label="email" type="TextInput" mandatory="false"/>
+		<taalNiveau label="taalNiveau" type="TextInput" mandatory="false"/>
+		<categorieOef label="categorieOef" type="TextInput" mandatory="true" defaultValue='"0"'/>
+		<soort_oefening label="soort_oefening" type="TextInput" mandatory="true" defaultValue="0"/>
+		<minimaalTest label="minimaalTest" type="TextInput" mandatory="true" defaultValue="80"/>
+		<tijdsLimiet label="tijdsLimiet" type="TextInput" mandatory="true" defaultValue="0"/>
+		<TitelOefening label="TitelOefening" type="TextInput" mandatory="true" defaultValue="Spelling"/>
+		<doelstelling label="doelstelling" type="TextInput" mandatory="false"/>
+		<Instructies label="Instructies" type="TextInput" mandatory="true" defaultValue="Click on a letter. Then click on an empty space in a word."/>
+		<SchermPercentage label="SchermPercentage" type="TextInput" mandatory="true" defaultValue="700"/>
+		<bestandVooraf label="bestandVooraf" type="TextInput" mandatory="false"/>
+		<breedteVooraf label="breedteVooraf" type="TextInput" mandatory="true" defaultValue="0"/>
+		<hoogteVooraf label="hoogteVooraf" type="TextInput" mandatory="true" defaultValue="0"/>
+		<titelVooraf label="titelVooraf" type="TextInput" mandatory="true" defaultValue="Click on a button"/>
+		<bestandHelp label="bestandHelp" type="TextInput" mandatory="false"/>
+		<breedteHelp label="breedteHelp" type="TextInput" mandatory="true" defaultValue="0"/>
+		<hoogteHelp label="hoogteHelp" type="TextInput" mandatory="true" defaultValue="0"/>
+		<titelHelp label="titelHelp" type="TextInput" mandatory="false"/>
+		<toetsHelp label="toetsHelp" type="TextInput" mandatory="false"/>
+		<helpApartVenster label="helpApartVenster" type="CheckBox" mandatory="false"/>
+		<tekstVooraf label="tekstVooraf" type="TextInput" mandatory="false"/>
+		<tekst label="tekst" type="TextArea" mandatory="true" />
 
-		
 
-		<newBtnLabel label="New Button" type="TextInput" language="true"/>
-		<viewThisBtn label="Overview Button" type="TextInput" language="true"/>
-		<backBtn label="Back Button" type="TextInput" language="true"/>
-		<fwdBtn label="Forward Button" type="TextInput" language="true"/>
-		<emailBtn label="Email Button" type="TextInput" language="true"/>
-		<printBtn label="Print Button" type="TextInput" language="true"/>
-		<closeBtn label="Close Button" type="TextInput" language="true"/>
-		
-		<posAnswerString label="Other Answers Label" type="TextInput" language="true"/>
-		<fromRangeString label="Slider Range Label" type="TextInput" language="true"/>
-		<resultString label="Solution Label" type="TextInput" language="true"/>
-		<resultEndString label="Final Instruction" type="TextInput" language="true"/>
-		<overviewString label="Overview Label" type="TextInput" language="true"/>
-		<viewAllString label="Overview All Label" type="TextInput" language="true"/>
-		<moreInfoString label="More Information" type="TextInput" language="true"/>
-		<lessInfoString label="Less Information" type="TextInput" language="true"/>
-		<helpString label="Question Help Label" type="TextInput" language="true"/>
-		
-		<warningTitle label="Warning Title" type="TextInput" language="true" deprecated="This property is no longer required"/>
-		<warningString label="Warning Information" type="TextInput" language="true" deprecated="This property is no longer required"/>
-		<okBtn label="OK Button" type="TextInput" language="true" deprecated="This property is no longer required"/>
-		<cancelBtn label="Cancel Button" type="TextInput" language="true" deprecated="This property is no longer required"/>
-		
 	</learningObject>
-	
-	
+<!--
+var auteur='';
+var email='';
+var taalNiveau='';
+var categorieOef="0";
+var soort_oefening = 0;
+var minimaalTest=80;
+var tijdsLimiet=0;
+var TitelOefening = "Spelling";
+var doelstelling = '';
+var Instructies = "Click on a letter.  Then click on an empty space in a word.";
+var SchermPercentage='700';
+var bestandVooraf='';
+var breedteVooraf=0;
+var hoogteVooraf=0;
+var titelVooraf='Click on a button';
+var bestandHelp='';
+var breedteHelp=0;
+var hoogteHelp=0;
+var titelHelp='';
+var toetsHelp='';
+var helpApartVenster=false;
+var testVooraf='';
+var tekst=
+'The owner of a clo[th/2letters]es fact[o]ry in American Samoa has been convi[c]ted of what pros[&minus;&minus;]ecutors called "modern-day sla[v]ery". ' +
+'Kil Soo Lee was found guilty of abusing workers from Vietnam and China and other cr[i]mes including mon[ey] laundering and extortion. '+
+'During his tr[ia]l, he was accused of ordering b[ea]tings for disobed[i]ent employ[ee]s, starving workers '+
+'or [th]reatening them with depor[t]ation if they complained. '+
+'T[w]o factory managers were cleared of similar charges during the tr[ia]l, held in Hawaii as the te[rr]itory of American Samoa has no federal judge.';
+var titelBovenOefening='Titel';
+var uitlijnenTitel='center';
+var valstrik='r,e,f';
+var opvulTeken ="____";
+var nulteken='&minus;&minus;';
+var breedteTekstGedeelte=800;
+var tussenRuimte=10;
+var toonFout=true;
+var onderlijnJuistGeplaatst=true;
+var lijnHoogte=25;
+var interlinie='110%';
+var fontGrootte='11pt';
+var lijnOnderTekst=true;
+var dialoog=false;
+var audioBestand = '';
+var bestandsExtensie='';
+var audioVooraf=true;
+var audioEnkelAchteraf=false;
+var afbBreedte=320;
+var afbHoogte=240;
+var startAutomatisch=0;
+var ondertitels='';
+var afbBestand='';
+var posPrent='right';
+var breedteKaderAfb=0;
+var sorteren=0;
+var volgordeKeuzeLijst='';
+var eersteItemOplichten=true;
+var ruimteBovenKeuzeVenster=1;
+var fontGrootteLijst='11pt';
+var juistVerdwijnt=false;
+var woordAfstand=4;
+var aantalKolommen=2;
+var kleineLetters=true;
+var LnaarR=true;
+-->
 </wizard>
