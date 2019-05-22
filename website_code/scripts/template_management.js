@@ -223,6 +223,11 @@ function edit_window(admin, edit) {
                     }
 
                     if (!window_open) {
+                        if (node.type == "langtools")
+                        {
+                            node.editor_size = "1280, 768"
+                            node.preview_size = "802,602"
+                        }
 
                         size = node.editor_size.split(",");
 

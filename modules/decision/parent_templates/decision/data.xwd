@@ -69,8 +69,8 @@
 		<newNodes>
 			<result><![CDATA[<result name="e.g. R1" text="Enter result text here"/>]]></result>
 			<info><![CDATA[<info name="e.g. I1" target="e.g. Q2" text="Enter text here" btnLabel="Next"/>]]></info>
-			<slider><![CDATA[<slider name="e.g. Q1" text="Enter question here" unit="e.g. £" min="0" max="100" step="1" value="0" btnLabel="Next"/>]]></slider>
-			<mcq><![CDATA[<mcq name="e.g. Q1" text="Enter question here" format="radio" btnLabel="Next"/>]]></mcq>
+			<slider><![CDATA[<slider name="Dikke" text="Enter question here" unit="e.g. £" min="0" max="100" step="1" value="0" btnLabel="Next"/>]]></slider>
+			<mcq><![CDATA[<mcq name="Dikke" text="Enter question here" format="radio" btnLabel="Next"/>]]></mcq>
 		</newNodes>
 		
 		<info><![CDATA[Check the 'Show Section' box to make section names visible in your project.<br/>Alternatively, you can just use sections to organise steps within the editor.]]></info>

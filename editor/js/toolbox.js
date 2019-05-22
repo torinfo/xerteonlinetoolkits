@@ -2530,6 +2530,7 @@ var EDITOR = (function ($, parent) {
                     }
                     break;
                 case 'themelist':
+                    debugger;
                     var id = 'select_' + form_id_offset;
                     var html = $('<div>')
                         .attr('id', 'theme_div_' + form_id_offset);

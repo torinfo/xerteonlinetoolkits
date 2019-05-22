@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html dir="ltr">
+  <head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="../../../style2.css">
+    <!-- 	
+	IN TE BRENGEN GEGEVENS OVER DE OEFENING (JuisteLetter)
+	******************************************************
+	DATUM: 
+	Pas hieronder tussen <title> en </title> de titel van de oefening aan.  
+	Als de oefening als test wordt afgelegd,	wordt het behaalde resultaat bewaard
+	samen met de 'titel' als verwijzing naar de oefening  -->
+    <title>Vervang dit door een passende titel</title>
+    <!-- versie september 2018 (éçñ) -->
+  </head>
+  <body>
+    <script src="../../../globalvars.js"></script>
+    <script src="../jlVars.js"></script>
+    <!--  Vervang hieronder 2x EN (in 'btnEN' en in 'HelpEN') door de correcte taalcode (DU,FR,NE,IT,PO,SP,RU,GR,AR ...)   -->
+    <script src="../../../btnEN.js"></script>
+    <script src="../HelpEN.js"></script>
+    <script>
+
+//************************* INFO OVER DE OEFENING  **********************************************
+	// Naam en e-mailadres van de auteur (ONONTBEERLIJK indien de oef. op de website mag geplaatst worden)
+	// Enkel bestemd voor insiders!!
+var auteur='';
+var email='';
+	// Tweelettercode taal (NE,FR,EN,DU,SP,IT,RU,GR,AR of PO) en Niveau (0,1,2,3,4,5,6 of 7) Bv. FR7 of NE2
+var taalNiveau='';
+	// 1=luisteren, 2=lezen, 3=schrijven, 4=kennis, 5=spreken, 6=cultuur, 0 = niet mee te verrekenen bij totaliseren
+var categorieOef="0";
+
+//***********************************************************************************************
+//		OP HET JUISTE ITEM klikken, daarna op de JUISTE PLAATS klikken
+//				De TEKST komt in zijn geheel op het scherm
+//
+//********************************     SOORT OEFENING  ******************************************
+	// 0 = enkel tekst
+	// 1 =  met 1 audiofragment (zie audioBestand) voor alle zinnen (links)
+	// 2 = met (vanaf 1 genummerde) audiofragment voor elk getoond woord rechts  (Afgespeeld vooraf of na een juiste keuze)
+	// 3 = met audio-iconen rechts (woorden worden niet getoond)
+	// 4 = met 1 video (zie audioBestand) - wmv flv of mp4 formaat
+	// 5 = met luidspreker-iconen links op plaatsen waar @ staat (overeenkomend met vanaf 1 genummerde audio's (zie audioBestand)
+var soort_oefening = 0;
+
+	// minimum te halen percentage indien aangeboden als meermaals af te leggen (kennis)toets: oefening.htm?2m 
+var minimaalTest=80;
+
+	// aantal minuten (1 t/m 19) of seconden (20 en hoger) om een test af te leggen
+var tijdsLimiet=0;
+
+// *************************************(TEKST IN ) DE GROENE TITELSTROOK *****************************
+	// de titel van de oefening (facultatief gevolgd door de bronvermelding op een volgende regel, bv. <br>bron bronvermelding)
+var TitelOefening = "Spelling";
+	// Doelstelling  (getoond als tip bij icoon naast de titel)
+var doelstelling = '';
+var Instructies = "Click on a letter.  Then click on an empty space in a word.";
+        // breedte van de groene titelstrook uitgedrukt in aantal pixels
+var SchermPercentage='700';
+
+// *******************************************************************************************************
+// Relatieve verwijzing naar / afmetingen van / instructie (in groene titelstrook) voor het html-document
+// dat eventueel voor de eigenlijke oefening  of test als inleiding/smaakmaker wordt geopend
+// ******************************************************************************************************
+var bestandVooraf='';
+var breedteVooraf=0;
+var hoogteVooraf=0;
+var titelVooraf='Click on a button';
+
+var bestandHelp='';
+var breedteHelp=0;
+var hoogteHelp=0;
+var titelHelp='';
+
+	// opschrift helptoets (standaard 'help')
+var toetsHelp='';
+	
+	// help verschijnt in apart venster bv. indien onzichtbaar achter video)
+var helpApartVenster=false;
+
+    // link naar een andere test of oefening die vooraf moet gemaakt worden (en op de ovp voorkomt!) 
+    // de link MOET beginnen met /Muis/ en eindigen met ?1, ?2m of ?21
+var testVooraf='';
+
+/* **********************************************************************************************************
+								INVOER van de TEKST ( Bestudeer het voorbeeld ! )
+								*****************************************************************************
+	De aan te klikken items staan tussen [vierkante haakjes]
+	Eenzelfde item mag meerdere malen voorkomen in de tekst (het zal slechts 1 x voorkomen in de keuzelijst rechts)
+	<br>=nieuwe lijn  in doorlopende tekst
+	Gebruik ~ om zinnen af te sluiten die moeten genummerd worden (dialoog = false)
+	of in een dialoog moeten worden voorafgegaan door een liggend streepje  (dialoog = true)
+	html tekstopmaak (vet, cursief, onderstreept, enz.) mogelijk
+	" of ' in de eigenlijke tekst laten voorafgaan door \  bv. tekst = " He said: \"I'm sorry.\"".
+	teksttip is mogelijk.  Tip scheiden van ontbrekende woord met / vb [maandag/eerste dag van de week]
+	Indien het te kiezen item (=a) verschilt van het geplaatst item (b),
+	(a) en (b) scheiden door =>  dus (a)=>(b)
+	vb. Heb je het werk al [doen=>gedaan]?  doen moet gekozen worden in de lijst, gedaan wordt ingevuld in de tekst
+	Niet verenigbaar met een teksttip! Kan niet als test en toonFout automatisch false.
+************************************************************************************************************* */
+
+var tekst=
+'The owner of a clo[th/2letters]es fact[o]ry in American Samoa has been convi[c]ted of what pros[&minus;&minus;]ecutors called "modern-day sla[v]ery". ' +
+'Kil Soo Lee was found guilty of abusing workers from Vietnam and China and other cr[i]mes including mon[ey] laundering and extortion. '+
+'During his tr[ia]l, he was accused of ordering b[ea]tings for disobed[i]ent employ[ee]s, starving workers '+
+'or [th]reatening them with depor[t]ation if they complained. '+
+'T[w]o factory managers were cleared of similar charges during the tr[ia]l, held in Hawaii as the te[rr]itory of American Samoa has no federal judge.';
+
+	// facultatieve titel boven de oefening ("" = geen titel);
+var titelBovenOefening='Titel';
+	// hoe titel uitlijnen: left, center or right
+var uitlijnenTitel='center';
+	// Extra items gescheiden door komma die als distractors fungeren.  '' = geen extra items
+	// Geen distractors inbrengen indien soort_oefening > 1
+var valstrik='r,e,f';
+	// Teken(s) ter aanduiding van de plaats waar item(s) ontbreekt/ontbreken
+var opvulTeken ="____";
+	// teken(reeks) die een lege plaats aanduidt, m.a.w. er moet niets ingebracht worden!
+var nulteken='&minus;&minus;';
+
+//******* AFMETINGEN schermonderdelen in pixels ******//
+
+	// breedte van het schermgedeelte voorbehouden voor de tekst met hiaten (+ prent/afbeelding/video)
+var breedteTekstGedeelte=800;
+	// witruimte tussen tekstKader en de keuzelijst (min. 10)
+var tussenRuimte=10;
+
+//****** TEKSTGEDEELTE *******
+
+	// Bij oef. fout geplaatst woord al (=true) dan niet (=false) tonen
+var toonFout=true;
+	// Juist geplaatst item onderlijnen
+var onderlijnJuistGeplaatst=true;
+	// Aantal extra pixels tussen de alinea's
+	// Indien niet genummerd of geen dialoog (=1 alinea), afstand in pixels tussen de regels
+var lijnHoogte=25;
+    // interlinie binnen alinea (enkel effect indien meerdere alinea's)
+    // moet percentage (van de fontgrootte) zijn, bv. var interlinie='140%';
+	// neutraliseren door lege string (=2 enkele ')
+var interlinie='110%';
+	// Grootte van het lettertype van het tekstgedeelte in punten
+var fontGrootte='11pt';
+	// lijn onder de oefening
+var lijnOnderTekst=true;
+	// Indien dialoog=true, worden de zinnen die eindigen met ยง voorafgegaan door een liggend streepje
+var dialoog=false;
+
+//****** AFBEELDING /  AUDIO / VIDEO *******
+	// relatieve link naar 1 audio- (mp3) of videobestand (mp4 )
+	// of naar de vanaf 1 genummerde audiobestand(en) excl. het volgnummer
+	// en excl. de extensie.
+	// var audioBestand='' indien soort_oefening = 0
+var audioBestand = '';
+	// de extensie inclusief punt van het/de audiobestand(en)
+var bestandsExtensie='';
+	// Audio achteraf (na juist geplaatst item) of vooraf (na klikken op een item) laten horen
+	// geldt enkel bij soort_oefening = 2
+var audioVooraf=true;
+	// Audio of video enkel achteraf laten horen
+	// Geldt enkel bij soort_oefening=1 (= 1 audio) of 4 (= 1 video)
+var audioEnkelAchteraf=false;
+	// hoogte en breedte van het videobestand - breedte van de audioplayer
+var afbBreedte=320;
+var afbHoogte=240;
+	// video start automatisch (=1) of moet gestart worden (=0)
+var startAutomatisch=0;
+	// link  naar bestand (.srt of , bij voorkeur, .vtt) met ondertitels voor mp4  (enkel soort oef.=4)
+	// indien geen ondertitels: var ondertitels='';
+var ondertitels='';
+	// ondersteundende prent incl. extensie & breedte van het kader rond de prent
+	// of prent getoond bij het begin van de video (met zelfde afmetingen als video!)
+var afbBestand='';
+	// positie van de prent: left ofwel right
+var posPrent='right';
+	// breedte van het kader rond de prent
+var breedteKaderAfb=0;
+
+// **************** KEUZELIJST *************************
+    /* volgorde  van de items  in de keuzelijst
+    0= willekeurig 
+    1= alfabetisch (werkt niet perfect met geaccentueerde tekens - niet uitgetest voor talen met niet-westers schrift)
+    2= numeriek  (enkel gebruiken indien alle items cijfers zijn, zoniet browser-afhankelijke wispelturigheden!) */
+var sorteren=0;
+	// specifieke volgorde hieronder opgegeven (ALLE items uit de keuzelijst + valstrik gescheiden door |)
+	// lege string indien niet van toepassing (= 2 enkele aanhalingstekens)
+var volgordeKeuzeLijst='';
+	// Het eerste item wordt automatisch geselecteerd bij het starten van de oefening
+var eersteItemOplichten=true;
+	// Hoe hoger de waarde, hoe lager de keuzelijst komt te staan.
+var ruimteBovenKeuzeVenster=1;
+	// Grootte van het lettertype gebruikt in de keuzelijst.
+	// 0pt = zelfde als tekstgedeelte
+var fontGrootteLijst='11pt';
+	// Juist geplaatst woord verdwijnt (=true) / verdwijnt niet (=false) uit de lijst
+	// Geldt enkel bij 'oefening'
+var juistVerdwijnt=false;
+	// Afstand tussen de woorden in de keuzelijst
+var woordAfstand=4;
+	//  Aantal kolommen waarin de aan te klikken woorden (rechts op het scherm) staan
+var aantalKolommen=2;
+	// Al dan niet omzetten naar kleine letters van de te kiezen woorden
+	// Indien omgezet (=true), wordt geen onderscheid gemaakt tussen grote en kleine
+var kleineLetters=true;
+
+// ************************** HIERONDER NIETS WIJZIGEN TENZIJ VOOR AR *****************************
+var LnaarR=true;
+
+if (soort_oefening>0 && AVallowedExtensions.indexOf(bestandsExtensie) > 0)
+{document.write('<script src="../../../swfobject.js"><\/script>');}
+</script>
+<script src="../../../TitelOefH.js"></script>
+<script src="../jl.js"></script>
+</body>
+</html>
