@@ -633,6 +633,7 @@ function refresh_workspace() {
     $.ajax({
         type: "POST",
         url: "website_code/php/templates/get_templates_sorted.php",
+        dataType: 'json',
         data: {
             sort_type: document.sorting.type.value
         }
@@ -655,6 +656,7 @@ function getProjectInformation(user_id, template_id) {
     $.ajax({
         type: "POST",
         url: "website_code/php/templates/get_template_info.php",
+        dataType: 'json',
         data: {user_id: user_id, template_id: template_id},
     })
     .done(function(info) {
@@ -949,7 +951,7 @@ function duplicatefolder_stateChanged(response) {
 function publish_project(template_id) {
     $.ajax({
         type: "POST",
-        url: "website_code/php/templates/update_file.php",
+        url: "website_code/php/versioncontrol/update_file.php",
         data: {
             template_id: template_id
         }
@@ -1298,7 +1300,7 @@ function create_tutorial(tutorial) {
         if (is_ok_name($("#" + tutorial + "_filename").val())) {
             $.ajax({
                 type: "POST",
-                url: "website_code/php/templates/update_file.php",
+                url: "website_code/php/templates/new_template.php",
                 data: {
                     tutorialid: tutorial,
                     templatename: $("#" + tutorial + "_templatename").val(),
