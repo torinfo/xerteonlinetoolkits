@@ -173,6 +173,7 @@
                 if (x_currentPageXML.getAttribute("trackingWeight") != undefined) {
                     this.weighting = x_currentPageXML.getAttribute("trackingWeight");
                 }
+                debugger
                 XTSetPageType(x_currentPage, 'fill-in', 1, this.weighting);
 
                 var panelWidth = x_currentPageXML.getAttribute("panelWidth"),
@@ -314,6 +315,7 @@
 						}
 						
 						for (i = 0; i < blankAnswers.length; i++) {
+						    debugger
 							XTEnterInteraction(x_currentPage, i, "fill-in", x_GetTrackingTextFromHTML(x_currentPageXML.getAttribute("prompt"), ""), "", blankAnswers[i], $pageContents.data('correctOptionsFeedback'), x_currentPageXML.getAttribute("grouping"));
 						}
 						
@@ -418,7 +420,7 @@
 							$("#result")
 								.html('<p><span id="finalResult"></span>' + passedOrFailed + '</p>')
 								.show();
-                            debugger
+
 							if(passed=== true){
 							    if(passedTxt !== ""){
                                     $("#finalResult")

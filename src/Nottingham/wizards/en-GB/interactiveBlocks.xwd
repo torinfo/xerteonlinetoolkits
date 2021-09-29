@@ -1,0 +1,14 @@
+<wizard menus="Test">
+  <pageWizard remove="true" duplicate="false">
+    <newNodes>
+      <interactiveBlocks><![CDATA[<interactiveBlocks type="Quiz"></interactiveBlocks>]]></interactiveBlocks>
+	</newNodes>
+  </pageWizard>
+
+  <!-- TEXT PAGE=============================================== -->
+  <interactiveBlocks remove="true">
+
+    <type label="Interaction Type" options="Quiz,TopXQ" type="ComboBox"  data="Quiz,TopXQ" width="100"/>
+
+  </interactiveBlocks>
+</wizard>

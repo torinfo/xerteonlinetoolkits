@@ -1128,6 +1128,7 @@ var EDITOR = (function ($, parent) {
         while (currkey != 'treeroot')
         {
             var currItem = lo_data[currkey]['attributes'].nodeName;
+            debugger
             var new_nodes = wizard_data[currItem].new_nodes;
             if (new_nodes.length > 0)
             {
@@ -1240,6 +1241,12 @@ var EDITOR = (function ($, parent) {
                 $('.advNewNodesLevel').hide();
             }
         }
+
+        //INTERN CODE//
+        //Insert interactiveBlocks
+        var interactiveBlocksList = $('<div>').addClass('interactiveBlocksList');
+        $('#insert_subnodes').append(interactiveBlocksList);
+        debugger
 
         //finally, do the help, if it exists...
         if (wizard_data[node_name].info.length > 0)

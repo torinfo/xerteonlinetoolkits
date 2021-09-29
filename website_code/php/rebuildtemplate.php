@@ -42,7 +42,8 @@ if ($argc != 2)
 }
 else
 {
-	$xwd = new XerteXWDBuilder();
+    $xwd = new XerteXWDBuilder();
+
 	if ($xwd->loadTemplateXWD($argv[1] . '/basic.xwd', $argv[1] . '/basicPages.xwd') != -1)
 	{
 		$skipTemplate = $argv[1] . '/template.xwd';

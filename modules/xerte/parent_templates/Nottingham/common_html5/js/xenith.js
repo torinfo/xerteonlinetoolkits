@@ -2319,6 +2319,7 @@ function x_changePageStep6() {
 			{
 				label = x_currentPageXML.getAttribute("trackinglabel");
 			}
+			debugger
 			XTEnterPage(x_currentPage, label, x_currentPageXML.getAttribute("grouping"));
 		}
 
@@ -2424,6 +2425,7 @@ function x_changePageStep6() {
             {
                 label = x_currentPageXML.getAttribute("trackinglabel");
             }
+            debugger
             XTEnterPage(x_currentPage, label);
 
 			var modelfile = x_pageInfo[x_currentPage].type;

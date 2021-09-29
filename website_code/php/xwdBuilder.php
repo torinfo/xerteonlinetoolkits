@@ -59,7 +59,7 @@ class XerteXWDBuilder
 		{
 			$this->menuattrs[$i] = trim($this->menuattrs[$i]);
 		}
-		    for ($i=$count-1; $i>=0; $i--)
+		for ($i=$count-1; $i>=0; $i--)
 		{
 		  if (strlen($this->menuattrs[$i]) == 0)
 		  {
@@ -163,6 +163,7 @@ class XerteXWDBuilder
         }
 		$this->addMenuAttr((string)$xwd['menus']);
 		$newnode = $xwd->xpath('/wizard/pageWizard/newNodes/*');
+
 		if (count($newnode) == 0)
 		{
 			print("No elements found in element 'newNodes' of element pageWizard.\n");
@@ -195,7 +196,11 @@ class XerteXWDBuilder
 		// Normally there us only one
 		foreach($newnode as $child)
 		{
+			printf("==NEWNODE==");
+			printf($child);
+
 			$orgnode = $this->xml->xpath('/wizard/learningObject/newNodes/' . $child->getName());
+			printf($orgnode);
 			if (count($orgnode) == 1 && $replace != 'true')
 			{
 				print("WARNING: Model " . $child->getName() . " is already in the pageTemplate, aborted\n");
@@ -210,6 +215,7 @@ class XerteXWDBuilder
 				$target = current($this->xml->xpath('/wizard/learningObject/newNodes'));
 				$this->addChildNode($target, $child);
 			}
+			printf("==NEWNODE==");
 		}
 		// Loop over all the toplevel children and add all (except the node pageWizard) to the Page template
 		$nodes = $xwd->xpath('*[not(self::pageWizard)]');
@@ -229,19 +235,18 @@ class XerteXWDBuilder
 			else
 			{
 				printf("    Model " . $node->getName() . " is added.\n");
-				
+
 				// add nodes from basicPages.xwd to all pages
 				if ($page == true) {
 					global $basicPageXML;
 					$node = dom_import_simplexml($node);
-					
 					foreach ($basicPageXML->children() as $child) {
 						$child  = dom_import_simplexml($child);
 						$child  = $node->ownerDocument->importNode($child, TRUE);
 						$node->appendChild($child);
 					}
 					$node = simplexml_import_dom($node);
-					
+
 					$page = false;
 					printf("    Common nodes added.\n");
 				}

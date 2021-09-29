@@ -545,6 +545,7 @@ var EDITOR = (function ($, parent) {
     displayParameter = function (id, all_options, name, value, key, nodelabel)
     {
         var options = (nodelabel ? wizard_data[name].menu_options : getOptionValue(all_options, name));
+        debugger
         var label = (nodelabel ? nodelabel : options.label);
         var deprecated = false,
 			groupChild = $(id).parents('.wizardgroup').length > 0 ? true : false;

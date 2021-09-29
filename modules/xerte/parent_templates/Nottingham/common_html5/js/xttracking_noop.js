@@ -266,6 +266,7 @@ function NoopTrackingState()
 
     function enterInteraction(page_nr, ia_nr, ia_type, ia_name, correctoptions, correctanswer, feedback)
     {
+        debugger
         interaction = new NoopTracking(page_nr, ia_nr, ia_type, ia_name);
         this.verifyEnterInteractionParameters(ia_type, ia_name, correctoptions, correctanswer, feedback);
         interaction.enterInteraction(correctanswer, correctoptions);
@@ -283,9 +284,9 @@ function NoopTrackingState()
             sit.exit();
         }
     	if (ia_nr < 0) {
-            var temp = false;
-            var i = 0;
-            for (i = 0; i < state.toCompletePages.length; i++) {
+
+            let temp = false;
+            for (let i = 0; i < state.toCompletePages.length; i++) {
                 var currentPageNr = state.toCompletePages[i];
                 if (currentPageNr == page_nr) {
                     temp = true;
@@ -321,10 +322,13 @@ function NoopTrackingState()
     function setPageScore(page_nr, score)
     {
     	var sit = state.findPage(page_nr);
+    	debugger
         if (sit != null && (state.scoremode != 'first' || sit.count < 1))
         {
             sit.score = score;
+            debugger
             sit.count++;
+            debugger
         }
     }
 
@@ -338,6 +342,7 @@ function NoopTrackingState()
                 return this.interactions[i];
         }
         // Not found
+        debugger
         var sit =  new NoopTracking(page_nr, ia_nr, ia_type, ia_name);
         if (ia_type != "page" && ia_type != "result")
         {
@@ -892,6 +897,7 @@ function NoopTrackingState()
 
 function NoopTracking(page_nr, ia_nr, ia_type, ia_name)
 {
+    debugger
     this.id = makeId(page_nr, ia_nr, ia_type, ia_name);
 	this.page_nr = page_nr;
 	this.ia_nr = ia_nr;
@@ -932,12 +938,14 @@ function NoopTracking(page_nr, ia_nr, ia_type, ia_name)
 
     function enterInteraction(correctAnswers, correctOptions)
     {
+        debugger
     	this.correctAnswers = correctAnswers;
         this.correctOptions = correctOptions;
     }
 
     function exitInteraction(result, learnerAnswers, learnerOptions, feedback)
     {
+        debugger
     	this.learnerAnswers = learnerAnswers;
         this.learnerOptions = learnerOptions;
         this.result = result;
@@ -1067,6 +1075,7 @@ function XTSetOption(option, value)
 
 function XTEnterPage(page_nr, page_name, grouping)
 {
+    debugger
 	state.enterPage(page_nr, -1, "page", page_name);
 }
 
