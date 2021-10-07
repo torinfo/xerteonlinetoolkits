@@ -44,18 +44,19 @@ else
 {
     $xwd = new XerteXWDBuilder();
 
-	if ($xwd->loadTemplateXWD($argv[1] . '/basic.xwd', $argv[1] . '/basicPages.xwd') != -1)
+	if ($xwd->loadTemplateXWD($argv[1] . '/basic.xwd', $argv[1] . '/basicPages.xwd', $argv[1] . '/interactiveBlocks.xwd') != -1 )
 	{
 		$skipTemplate = $argv[1] . '/template.xwd';
 		$skipBasic = $argv[1] . '/basic.xwd';
 		$skipPageBasic = $argv[1] . '/basicPages.xwd';
+		$skipInteractiveBlocks = $argv[1] . '/interactiveBlocks.xwd';
 		$xwds = folder_loop($argv[1]);
         sort($xwds);
 		foreach($xwds as $model)
 		{
-			if ($model != $skipTemplate && $model != $skipBasic && $model != $skipPageBasic)
+			if ($model != $skipTemplate && $model != $skipBasic && $model != $skipPageBasic && $model != $skipInteractiveBlocks)
 			{
-				$xwd->addXwd($model, 'true', 'false');
+                $xwd->addXwd($model, 'true', 'false');
 			}
 		}
 		$xwd->xml->asXML($argv[1] . '/template.xwd');

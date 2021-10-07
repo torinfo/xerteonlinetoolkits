@@ -48,7 +48,7 @@ class XerteXWDBuilder
 		$this->menuattrs = array();
 	}
 
-	public function loadTemplateXWD($name, $basicPages)
+	public function loadTemplateXWD($name, $basicPages, $interactiveBlocks)
 	{
 		$this->fname = $name;
 		$this->xml = simplexml_load_file($name);
@@ -76,6 +76,12 @@ class XerteXWDBuilder
 		{
 			$basicPageXML = new SimpleXMLElement('<commonNodes></commonNodes>');
 		}
+
+		global $interactiveBlocksXML;
+		if (file_exists($interactiveBlocks)) {
+			$interactiveBlocksXML = simplexml_load_file($interactiveBlocks);
+		}
+
 		// Add common="true" attribute to all children of basicPagesXML
 		$elements = $basicPageXML->xpath('/commonNodes/*');
 		foreach($elements as $node)
@@ -229,7 +235,7 @@ class XerteXWDBuilder
 			}
 			if (count($orgnode) == 1)
 			{
-				printf("    Model " . $node->getName() . " is updated/replaced.\n");
+				printf("    Model " . $node->getName() . " is updated/replaced.\n") ;
 				$this->replaceChildNode($orgnode[0], $node);
 			}
 			else
@@ -253,6 +259,34 @@ class XerteXWDBuilder
 				$this->addChildNode($this->xml, $node);
 			}
 		}
+
+		$Allxwd =  $this->xml->xpath("*/interactiveBlocks");
+		foreach($Allxwd as $block)
+		{
+			$orgblock = $this->xml->xpath($block->getName() ."/*/interactiveBlocks");
+			printf("ORGGGGBLOCCCCCCCCKKKKKKKKKKKKK");
+			printf(count($orgblock));
+			printf("ORGGGGBLOCCCCCCCCKKKKKKKKKKKKK");
+			if (count($orgblock) == 0)
+			{
+				print("WARNING: Model " . $block->getName() . " is already in the pageTemplate, aborted\n");
+				return -1;
+			}else{
+				printf("BLOCCCCCCCCKKKKKKKKKKKKK");
+				printf($block->getName());
+				printf(count($Allxwd));
+				printf("EINDEBLOCCCCCCCCKKKKKKKKKKKKK\n");
+				global $interactiveBlocksXML;
+				$block = dom_import_simplexml($block);
+				foreach ($interactiveBlocksXML->children() as $child) {
+					$child  = dom_import_simplexml($child);
+					$child  = $block->ownerDocument->importNode($child, TRUE);
+					$block->appendChild($child);
+				}
+			}
+
+		}
+
 		return 0;
 	}
 
