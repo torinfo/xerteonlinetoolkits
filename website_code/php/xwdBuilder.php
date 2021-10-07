@@ -117,6 +117,7 @@ class XerteXWDBuilder
 
 	public function addXwd($name, $replace, $verbose)
 	{
+		global $interactiveBlocksXML;
 		$page = true;
 		if ($verbose == 'true')
 		{
@@ -168,6 +169,21 @@ class XerteXWDBuilder
           return -1;
         }
 		$this->addMenuAttr((string)$xwd['menus']);
+
+		$currentXwd = $xwd->xpath("*/interactiveBlocks");
+
+		foreach($currentXwd as $block)
+		{
+			$block = dom_import_simplexml($block);
+			foreach ($interactiveBlocksXML->children() as $child) {
+				$child  = dom_import_simplexml($child);
+				$child  = $block->ownerDocument->importNode($child, TRUE);
+				$block->appendChild($child);
+			}
+
+		}
+
+
 		$newnode = $xwd->xpath('/wizard/pageWizard/newNodes/*');
 
 		if (count($newnode) == 0)
@@ -206,7 +222,6 @@ class XerteXWDBuilder
 			printf($child);
 
 			$orgnode = $this->xml->xpath('/wizard/learningObject/newNodes/' . $child->getName());
-			printf($orgnode);
 			if (count($orgnode) == 1 && $replace != 'true')
 			{
 				print("WARNING: Model " . $child->getName() . " is already in the pageTemplate, aborted\n");
@@ -260,32 +275,6 @@ class XerteXWDBuilder
 			}
 		}
 
-		$Allxwd =  $this->xml->xpath("*/interactiveBlocks");
-		foreach($Allxwd as $block)
-		{
-			$orgblock = $this->xml->xpath($block->getName() ."/*/interactiveBlocks");
-			printf("ORGGGGBLOCCCCCCCCKKKKKKKKKKKKK");
-			printf(count($orgblock));
-			printf("ORGGGGBLOCCCCCCCCKKKKKKKKKKKKK");
-			if (count($orgblock) == 0)
-			{
-				print("WARNING: Model " . $block->getName() . " is already in the pageTemplate, aborted\n");
-				return -1;
-			}else{
-				printf("BLOCCCCCCCCKKKKKKKKKKKKK");
-				printf($block->getName());
-				printf(count($Allxwd));
-				printf("EINDEBLOCCCCCCCCKKKKKKKKKKKKK\n");
-				global $interactiveBlocksXML;
-				$block = dom_import_simplexml($block);
-				foreach ($interactiveBlocksXML->children() as $child) {
-					$child  = dom_import_simplexml($child);
-					$child  = $block->ownerDocument->importNode($child, TRUE);
-					$block->appendChild($child);
-				}
-			}
-
-		}
 
 		return 0;
 	}

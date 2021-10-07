@@ -5339,12 +5339,10 @@
 
     <interactiveBlocks>
 
-    </interactiveBlocks>
+    <quiz>
+    </quiz></interactiveBlocks>
 
-  </navPage><interactPage menuItem="Interaction" icon="icBullet" remove="true">
-     <type label="Interaction Type" options="Quiz,TopXQ" type="ComboBox" data="Quiz,TopXQ" width="100"/>
-
-   </interactPage><newWindow menu="Links / Feeds" menuItem="New Window" hint="Allow the user to launch a new window to a URL." icon="icApplication" thumb="thumbs/newWindow.jpg" example="https://xot.xerte.org.uk/play_116?hide=bottom#newwindow" remove="true">
+  </navPage><newWindow menu="Links / Feeds" menuItem="New Window" hint="Allow the user to launch a new window to a URL." icon="icApplication" thumb="thumbs/newWindow.jpg" example="https://xot.xerte.org.uk/play_116?hide=bottom#newwindow" remove="true">
 
     <name label="Page Title" type="TextInput" wysiwyg="true"/>
     <text label="Page Text" type="TextArea" height="150"/>

@@ -1,5 +1,4 @@
 <interactiveBlocks>
-
-    <type label="Interaction Type" options="Quiz,TopXQ" type="ComboBox"  data="Quiz,TopXQ" width="100"/>
-
+    <quiz>
+    </quiz>
 </interactiveBlocks>
