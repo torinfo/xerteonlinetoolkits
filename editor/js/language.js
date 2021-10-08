@@ -200,7 +200,6 @@ var EDITOR = (function ($, parent) {
             node_options['optional'] = opt_options;
             node_options['all'] = all_options;
 
-            debugger
             wizard_data[main_node] = {menu_options : menu_options,  new_nodes: new_nodes, new_nodes_defaults: new_nodes_defaults, node_options : node_options, info : info};
         });
         //wizard_data.menus = String(wizard_xml[0].attributes["menus"].value).split(',');
