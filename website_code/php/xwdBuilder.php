@@ -133,14 +133,15 @@ class XerteXWDBuilder
 				if (file_exists($model)) {
 					$modelXML = simplexml_load_file($model);
 					$foundNodes = $modelXML->xpath('*[not(self::pageWizard)]');
-					$block = $interactiveBlocksXML->xpath('/interactiveBlocks/' . $name);
-					printf("ORGGGGBLOCCCCCCCCKKKKKKKKKKKKK");
-					printf($name);
-					printf("ORGGGGBLOCCCCCCCCKKKKKKKKKKKKK");
-					foreach ($foundNodes->children() as $child) {
-						$child  = dom_import_simplexml($child);
-						$child  = $block->ownerDocument->importNode($child, TRUE);
-						$block->appendChild($child);
+					$blocks = $interactiveBlocksXML->xpath('/interactiveBlocks/' . $name);
+					foreach($blocks as $block)
+					{
+						$block = dom_import_simplexml($block);
+						foreach ($foundNodes as $child) {
+							$child  = dom_import_simplexml($child);
+							$child  = $block->ownerDocument->importNode($child, TRUE);
+							$block->appendChild($child);
+						}
 					}
 				}
 			}
@@ -252,9 +253,6 @@ class XerteXWDBuilder
 		// Normally there us only one
 		foreach($newnode as $child)
 		{
-			printf("==NEWNODE==");
-			printf($child);
-
 			$orgnode = $this->xml->xpath('/wizard/learningObject/newNodes/' . $child->getName());
 			if (count($orgnode) == 1 && $replace != 'true')
 			{
@@ -270,7 +268,6 @@ class XerteXWDBuilder
 				$target = current($this->xml->xpath('/wizard/learningObject/newNodes'));
 				$this->addChildNode($target, $child);
 			}
-			printf("==NEWNODE==");
 		}
 		// Loop over all the toplevel children and add all (except the node pageWizard) to the Page template
 		$nodes = $xwd->xpath('*[not(self::pageWizard)]');
