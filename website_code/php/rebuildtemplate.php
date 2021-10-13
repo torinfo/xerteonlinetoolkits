@@ -52,6 +52,9 @@ else
 		$skipInteractiveBlocks = $argv[1] . '/interactiveBlocks.xwd';
 		$xwds = folder_loop($argv[1]);
         sort($xwds);
+
+        $xwd->populateInteractiveBlocks($xwds, $skipInteractiveBlocks);
+
 		foreach($xwds as $model)
 		{
 			if ($model != $skipTemplate && $model != $skipBasic && $model != $skipPageBasic && $model != $skipInteractiveBlocks)

@@ -5339,7 +5339,9 @@
 
     <interactiveBlocks>
 
-    <quiz name="Quiz"/><mcq name="MCQ"/></interactiveBlocks>
+    <quiz name="Quiz">
+    <haha/>
+    </quiz><mcq name="MCQ"/></interactiveBlocks>
 
   </navPage><newWindow menu="Links / Feeds" menuItem="New Window" hint="Allow the user to launch a new window to a URL." icon="icApplication" thumb="thumbs/newWindow.jpg" example="https://xot.xerte.org.uk/play_116?hide=bottom#newwindow" remove="true">
 
@@ -5827,7 +5829,7 @@
     <multiRight label="Multi Answer Correct" type="TextInput" wysiwyg="true" language="true"/>
     <multiWrong label="Multi Answer Wrong" type="TextInput" wysiwyg="true" language="true"/>
     <onCompletion label="Completion Text" type="TextInput" wysiwyg="true" language="true"/>
-    <score label="You scored {i} out of {n} marks" type="TextInput" wysiwyg="true" language="true"/>
+    <score label="You scored {i} out of {n} marks" type="TextInput" wysiwyg="true" language="  true"/>
     <submitBtnText label="Submit Button Label" type="TextInput" wysiwyg="true" language="true"/>
     <submitBtnTip label="Submit Button Tip" type="textInput" language="true" deprecated="This property is no longer required"/>	
     <submitBtnWidth label="Submit Button Width" type="NumericStepper" min="100" max="250" step="10" width="100" defaultValue="100" language="true" deprecated="Width is now set automatically"/>

@@ -115,6 +115,39 @@ class XerteXWDBuilder
 		$this->xml['menus'] = $str;
 	}
 
+
+	public function populateInteractiveBlocks($xwd, $interactiveBlockPath){
+		global $interactiveBlocksXML;
+		$blockNodes = $interactiveBlocksXML->xpath('*');
+
+		$foundBlocks = array();
+
+		foreach ($blockNodes as $interactiveBlock){
+			array_push($foundBlocks, strtolower($interactiveBlock->getName()));
+		}
+
+		foreach ($xwd as $model){
+			$xwdName = substr($model, strrpos($model, '/') + 1);
+			$name = strtolower(substr($xwdName, 0,-4));
+			if(in_array($name, $foundBlocks)){
+				if (file_exists($model)) {
+					$modelXML = simplexml_load_file($model);
+					$foundNodes = $modelXML->xpath('*[not(self::pageWizard)]');
+					$block = $interactiveBlocksXML->xpath('/interactiveBlocks/' . $name);
+					printf("ORGGGGBLOCCCCCCCCKKKKKKKKKKKKK");
+					printf($name);
+					printf("ORGGGGBLOCCCCCCCCKKKKKKKKKKKKK");
+					foreach ($foundNodes->children() as $child) {
+						$child  = dom_import_simplexml($child);
+						$child  = $block->ownerDocument->importNode($child, TRUE);
+						$block->appendChild($child);
+					}
+				}
+			}
+		}
+	}
+
+
 	public function addXwd($name, $replace, $verbose)
 	{
 		global $interactiveBlocksXML;
@@ -182,6 +215,7 @@ class XerteXWDBuilder
 			}
 
 		}
+
 
 
 		$newnode = $xwd->xpath('/wizard/pageWizard/newNodes/*');

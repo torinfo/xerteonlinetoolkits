@@ -1,4 +1,5 @@
 <interactiveBlocks>
-    <quiz name="Quiz"></quiz>
+    <quiz name="Quiz">
+    </quiz>
     <mcq name="MCQ"></mcq>
 </interactiveBlocks>
