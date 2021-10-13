@@ -842,6 +842,15 @@ td.flashonly, td.deprecated{
     color: #ccc;
 }
 
+.interactiveBlocksContainer {
+	margin-left:188px;
+	display: flex;
+}
+.interactiveBlocksContainer div, .interactiveBlocksContainer button {margin-bottom: 10px;}
+
+.interactiveBlocksLevel {
+	padding: 5px 0px 5px 0px;
+}
 
 .newNodesContainer {
     margin-left:188px;

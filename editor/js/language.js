@@ -28,7 +28,6 @@ var EDITOR = (function ($, parent) {
         fallback_language = {},
 
     parse_wizard_xml = function (wizard_xml) {
-
         var compare = function(a,b) {
             if (a.name < b.name)
                 return -1;
@@ -66,6 +65,20 @@ var EDITOR = (function ($, parent) {
             $($(this).children('newNodes').children()).each( function () {
                 new_nodes.push(this.nodeName);
                 new_nodes_defaults.push($(this)[0].firstChild.data);
+            });
+
+
+            // INTERN CODE
+            var interactiveBlocks = [];
+            $($(this).children('interactiveBlocks').children()).each( function () {
+                interactiveBlocks.push({
+                    name: this.nodeName,
+                    attributes: $(this)[0].attributes
+                });
+
+                if(this.nodeName != ""){
+                    debugger
+                }
             });
 
             // info
@@ -200,7 +213,10 @@ var EDITOR = (function ($, parent) {
             node_options['optional'] = opt_options;
             node_options['all'] = all_options;
 
-            wizard_data[main_node] = {menu_options : menu_options,  new_nodes: new_nodes, new_nodes_defaults: new_nodes_defaults, node_options : node_options, info : info};
+         /*   if(interactiveBlocks.length != 0){
+                debugger
+            }*/
+            wizard_data[main_node] = {menu_options : menu_options,  new_nodes: new_nodes, new_nodes_defaults: new_nodes_defaults, node_options : node_options, info : info, interactive_blocks : interactiveBlocks};
         });
         //wizard_data.menus = String(wizard_xml[0].attributes["menus"].value).split(',');
 
@@ -273,7 +289,6 @@ var EDITOR = (function ($, parent) {
 
     process_data_xwd = function (xml) {
         console.log("data.xwd is loaded...");
-
         var wizard_xml = $($.parseXML(xml)).find("wizard");
 
         parse_wizard_xml(wizard_xml);

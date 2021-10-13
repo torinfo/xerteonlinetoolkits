@@ -336,7 +336,6 @@ var EDITOR = (function ($, parent) {
         }
 
         // Parse the attributes and store in the data store
-        debugger
         var attributes = {nodeName: xmlData[0].nodeName};
         $(xmlData[0].attributes).each(function() {
             attributes[this.name] = this.value;
@@ -375,7 +374,6 @@ var EDITOR = (function ($, parent) {
                 attributes[key] = makeAbsolute(attributes[key]);
             }
         });
-        debugger
         lo_data[key] = {};
         lo_data[key]['attributes'] = attributes;
         if (xmlData[0].firstChild && xmlData[0].firstChild.nodeType == 4)  // cdata-section

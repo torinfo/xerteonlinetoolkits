@@ -366,7 +366,6 @@ var EDITOR = (function ($, parent) {
     		return;
     	}
         var json = build_json("treeroot");
-    	debugger
         var ajax_call = $.ajax({
                 url: "editor/upload.php",
                 data: {
@@ -401,7 +400,6 @@ var EDITOR = (function ($, parent) {
     		return;
     	}
         var json = build_json("treeroot");
-    	debugger
         var ajax_call = $.ajax({
                 url: "editor/upload.php",
                 data: {
@@ -1245,38 +1243,25 @@ var EDITOR = (function ($, parent) {
 
         //INTERN CODE//
         //Insert interactiveBlocks
-        var subInteractiveBlocks = $('<div>').addClass('interactiveBlocksContainer');
-        var subNewInteractiveLevel =  $('<div>').addClass('interactiveBlocksLevel');
-        var interactiveBlocksList = $('<div>').addClass('interactiveBlocksList');
-        $('#insert_subnodes').append(subInteractiveBlocks);
-        $('.interactiveBlocksContainer').append('<hr>');
-        $('.interactiveBlocksContainer').append(subNewInteractiveLevel);
-
         var tree = $.jstree.reference("#treeview");
         var currkey = key;
-      //  var hr_drawn = false;
-      //  $('#insert_subnodes').html("");
-       // var subnodes = $('<div>').
-       // addClass('newNodesContainer');
-       // var subnodes_present = false;
-       // var advsubnodes_present = false;
+        var subInteractiveBlocks = $('<div>').addClass('interactiveBlocksContainer');
         debugger
-        var currItem = lo_data[currkey]['attributes'].nodeName;
-        var new_nodes = wizard_data[currItem].new_nodes;
-      /*  while (currkey != 'treeroot')
+        while (currkey !== 'treeroot')
         {
             var currItem = lo_data[currkey]['attributes'].nodeName;
-            var new_nodes = wizard_data[currItem].new_nodes;
-            if (new_nodes.length > 0)
+            var interactiveBlocks = wizard_data[currItem].interactive_blocks;
+            if (interactiveBlocks.length > 0)
             {
-                // There are nodes for this level
-                var new_nodes_default = wizard_data[currItem].new_nodes_defaults;
+                // The XML from the selected interactive module will be added here
+                /*var new_nodes_default = wizard_data[currItem].new_nodes_defaults;
                 if (!hr_drawn)
                 {
                     subnodes.append("<hr>");
                     hr_drawn = true;
                     subnodes_present = true;
-                }
+                }*/
+
                 // Display the level, i.e. the name of the current node
                 var currItemName;
                 if (wizard_data[currItem].menu_options.menuItem)
@@ -1286,70 +1271,79 @@ var EDITOR = (function ($, parent) {
                     label = lo_data[currkey]['attributes'].name;
 
 
-                var advlevel = $('<div>')
-                    .addClass('advNewNodesLevel')
-                    .append($('<hr>'));
+
+                var subNewInteractiveLevel =  $('<div>').addClass('interactiveBlocksLevel');
+                var interactiveBlocksList = $('<div>').addClass('interactiveBlocksList');
+                $('#insert_subnodes').append(subInteractiveBlocks);
+                $('.interactiveBlocksContainer').append(subNewInteractiveLevel);
 
 
-                var level = $('<div>')
-                    .addClass('newNodesLevel');
-
-                var leveltitle = $('<div>')
-                    .addClass('newNodesTitle');
-                if (tree.get_parent(currkey) == 'treeroot')
-                {
-                    leveltitle.attr('id', 'mainleveltitle');
-                }
-                leveltitle = leveltitle.append(label);
-                level = level.append(leveltitle);
+                var id = 'select';
+                html = $('<select>')
+                    .attr('id', id)
+                    .change({id:id, key:key}, function(event)
+                    {
+                       /* selectChanged(event.data.id, event.data.key, event.data.name, this.value, this);
+                        if (event.data.trigger)
+                        {
+                            triggerRedrawPage(event.data.key);
+                        }*/
+                    });
 
                 var advnodes_level = false;
                 // Weird, the flash editor showed the nodes in reversed order
-                for (var i=new_nodes.length-1; i>=0; i--)
+                debugger
+                var button = $('<button>')
+                    .addClass('btnNewNode')
+                    .addClass('editorbutton')
+                    .attr('type', 'button')
+                    .attr('id',  'add_'+item)
+                    .click({key: currkey}, function(event){
+                        //addSubNode(event);
+                    })
+                    //.append($('<img>').attr('src', 'editor/img/insert.png').height(14))
+                    .append($('<i>').addClass('fa').addClass('fa-plus-circle').addClass("fa-lg").addClass("xerte-icon").height(14));
+                for (var i=interactiveBlocks.length-1; i>=0; i--)
                 {
-                    var item = new_nodes[i];
-                    var itemname = item;
-                    if (wizard_data[item].menu_options.menuItem)
-                        itemname = wizard_data[item].menu_options.menuItem;
+                  /*
+
+
                     var buttonlabel = language.newLink.$label;
                     var pos = buttonlabel.indexOf('{i}');
                     if (pos >= 0)
-                        buttonlabel = buttonlabel.substr(0, pos) + itemname + buttonlabel.substr(pos+3) + "...";
-                    var button = $('<button>')
-                        .addClass('btnNewNode')
-                        .addClass('editorbutton')
-                        .attr('type', 'button')
-                        .attr('id',  'add_'+item)
-                        .click({key: currkey, node: item, defaultnode: new_nodes_default[i]}, function(event){
-                            addSubNode(event);
-                        })
-                        //.append($('<img>').attr('src', 'editor/img/insert.png').height(14))
-                        .append($('<i>').addClass('fa').addClass('fa-plus-circle').addClass("fa-lg").addClass("xerte-icon").height(14))
-                        .append(buttonlabel);
+                        buttonlabel = buttonlabel.substr(0, pos) + itemname + buttonlabel.substr(pos+3) + "...";*/
 
+                    debugger
+                    var item = interactiveBlocks[i].name;
+                    var itemname = item;
+                    if (wizard_data[item].menu_options.menuItem)
+                        itemname = wizard_data[item].menu_options.menuItem;
 
-                    if (wizard_data[item].menu_options.advanced === 'true')
-                    {
-                        advlevel.append(button)
-                            .append("<br>");
-                        advnodes_level = true;
-                        advsubnodes_present = true;
+                    var option = $('<option>')
+                        .attr('value', item);
+                    if (i === interactiveBlocks.length-1) {
+                        option.prop('selected', true);
                     }
-                    else
-                    {
-                        level.append(button)
-                            .append("<br>");
+                    option.append(itemname);
+                    html.append(option);
+                    if (html.find('option:selected').index() > 0) {
+                        html.find(option).eq(0).remove();
                     }
+
+                    subNewInteractiveLevel.append(button)
+
 
                 }
-                subnodes.append(level);
+
+                subNewInteractiveLevel.append(html)
+                /*subnodes.append(level);
                 if (advnodes_level)
                 {
                     subnodes.append(advlevel);
-                }
+                }*/
             }
             currkey = tree.get_parent(currkey);
-        }*/
+        }
 
         //END INTERN CODE
 
