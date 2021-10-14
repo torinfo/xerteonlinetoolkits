@@ -1177,6 +1177,7 @@ var EDITOR = (function ($, parent) {
                     var pos = buttonlabel.indexOf('{i}');
                     if (pos >= 0)
                         buttonlabel = buttonlabel.substr(0, pos) + itemname + buttonlabel.substr(pos+3) + "...";
+                    debugger
                     var button = $('<button>')
                         .addClass('btnNewNode')
                         .addClass('editorbutton')
@@ -1246,9 +1247,9 @@ var EDITOR = (function ($, parent) {
         var tree = $.jstree.reference("#treeview");
         var currkey = key;
         var subInteractiveBlocks = $('<div>').addClass('interactiveBlocksContainer');
-        debugger
         while (currkey !== 'treeroot')
         {
+            debugger
             var currItem = lo_data[currkey]['attributes'].nodeName;
             var interactiveBlocks = wizard_data[currItem].interactive_blocks;
             if (interactiveBlocks.length > 0)
@@ -1263,6 +1264,7 @@ var EDITOR = (function ($, parent) {
                 }*/
 
                 // Display the level, i.e. the name of the current node
+
                 var currItemName;
                 if (wizard_data[currItem].menu_options.menuItem)
                     currItemName = wizard_data[currItem].menu_options.menuItem;
@@ -1292,14 +1294,14 @@ var EDITOR = (function ($, parent) {
 
                 var advnodes_level = false;
                 // Weird, the flash editor showed the nodes in reversed order
-                debugger
                 var button = $('<button>')
                     .addClass('btnNewNode')
                     .addClass('editorbutton')
                     .attr('type', 'button')
                     .attr('id',  'add_'+item)
-                    .click({key: currkey}, function(event){
-                        //addSubNode(event);
+                    .click({key: currkey, node: item, defaultnode: new_nodes_default[i]}, function(event){
+                        debugger
+                        addSubBlock(event)
                     })
                     //.append($('<img>').attr('src', 'editor/img/insert.png').height(14))
                     .append($('<i>').addClass('fa').addClass('fa-plus-circle').addClass("fa-lg").addClass("xerte-icon").height(14));
@@ -1313,7 +1315,6 @@ var EDITOR = (function ($, parent) {
                     if (pos >= 0)
                         buttonlabel = buttonlabel.substr(0, pos) + itemname + buttonlabel.substr(pos+3) + "...";*/
 
-                    debugger
                     var item = interactiveBlocks[i].name;
                     var itemname = item;
                     if (wizard_data[item].menu_options.menuItem)
@@ -1474,6 +1475,21 @@ var EDITOR = (function ($, parent) {
 
     addSubNode = function (event)
     {
+        debugger
+        console.log('Add sub node ' + event.data.node + ' to ' + event.data.key);
+        var tree = $.jstree.reference("#treeview");
+        var node = tree.get_node(event.data.key, false);
+        var nodeName = event.data.node;
+        //var key = parent.tree.generate_lo_key();
+        var xmlData = $.parseXML(event.data.defaultnode);
+        // Parse the attributes and store in the data store
+        addNodeToTree(event.data.key,'last',nodeName,xmlData.firstChild,tree,true);
+
+    },
+
+    addSubBlock = function (event)
+    {
+        debugger
         console.log('Add sub node ' + event.data.node + ' to ' + event.data.key);
         var tree = $.jstree.reference("#treeview");
         var node = tree.get_node(event.data.key, false);

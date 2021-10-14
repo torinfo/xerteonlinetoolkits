@@ -132,8 +132,13 @@ class XerteXWDBuilder
 			if(in_array($name, $foundBlocks)){
 				if (file_exists($model)) {
 					$modelXML = simplexml_load_file($model);
+
+					$cdata = $modelXML->xpath('/newNodes/' . $name . '/text()');
+
+
 					$foundNodes = $modelXML->xpath('*[not(self::pageWizard)]');
 					$blocks = $interactiveBlocksXML->xpath('/interactiveBlocks/' . $name);
+
 					foreach($blocks as $block)
 					{
 						$block = dom_import_simplexml($block);
