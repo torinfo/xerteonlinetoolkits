@@ -1504,7 +1504,7 @@ var EDITOR = (function ($, parent) {
         var node = tree.get_node(event.data.key, false);
         var nodeName = event.data.node;
         //var key = parent.tree.generate_lo_key();
-        var xmlData = $.parseXML(event.data.defaultnode.replace(/(\r\n|\n|\r)/gm, ""));
+        var xmlData = $.parseXML(event.data.defaultnode);
         // Parse the attributes and store in the data store
         addNodeToTree(event.data.key,'last',nodeName,xmlData.firstChild,tree,true);
 

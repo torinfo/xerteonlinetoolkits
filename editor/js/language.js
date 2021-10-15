@@ -70,15 +70,22 @@ var EDITOR = (function ($, parent) {
 
             // INTERN CODE
             var interactiveBlocks = [];
-            $blockDefault = $(this)[0].textContent.replace(/(\r\n|\n|\r)/gm, "")
+
             $($(this).children('interactiveBlocks').children()).each( function () {
+                var blockCdata = ""
+                var i = [].slice.call($(this)[0]["children"]);
+                i.forEach(function(item){
+                    if(item.innerHTML.startsWith("&lt;")){
+                        blockCdata = item.innerHTML.replace(/&gt;/g, ">").replace(/&lt;/g, "<");
+                    }
+                })
                 interactiveBlocks.push({
                     name: this.nodeName,
                     attributes: $(this)[0].attributes,
-                    blockDefault: $blockDefault
+                    blockDefault: blockCdata
                 });
                 if(this.nodeName != ""){
-                    debugger
+
                 }
             });
 
