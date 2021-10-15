@@ -5340,7 +5340,15 @@
     <interactiveBlocks>
 
     <quiz name="Quiz">
-    <quiz menu="Interactivity" menuItem="Quiz" icon="icPageWhiteGear" remove="true" thumb="thumbs/quiz.jpg" example="https://xot.xerte.org.uk/play_116?hide=bottom#quiz" hint="Present a formative assessment comprising a series of questions with multiple answer options. Each question can have one or more correct answers.">
+    <quiz>&lt;quiz name="Enter Page Title" order="random" numQuestions="*" align="left" panelWidth="Medium" instructions="Provide instructions here" judge="true" showfeedback="true" feedback="Provide feedback here"  
+	  quesCount="Question {i} of {n}" feedbackLabel="Feedback" generalFeedbackLabel="General Feedback"
+	  singleRight="Your answer is correct!" singleWrong="Your answer is incorrect" multiRight="You have selected all the correct answers" 
+	  multiWrong="You have not selected the correct combination of answers" 
+	  onCompletion="You have completed the exercise" score="You scored {i} / {n}" 
+	  submitBtnText="Submit" 
+	  nextBtnText="Next" 
+	  restartBtnText="Restart" 
+	  /&gt;</quiz><quiz menu="Interactivity" menuItem="Quiz" icon="icPageWhiteGear" remove="true" thumb="thumbs/quiz.jpg" example="https://xot.xerte.org.uk/play_116?hide=bottom#quiz" hint="Present a formative assessment comprising a series of questions with multiple answer options. Each question can have one or more correct answers.">
     <name label="Quiz Title" type="TextInput" wysiwyg="true"/>
 	<order label="Question Order" options="Sequence,Random" type="comboBox" data="sequence,random" defaultValue="random" width="120"/>
     <numQuestions label="Number of Questions (*=All)" type="TextInput" width="120"/>
@@ -5415,7 +5423,10 @@
     <feedback label="Feedback" type="TextArea" height="100" tooltip="Feedback shown when this answer is submitted"/>
     <correct label="Correct" options="True,False" type="ComboBox" data="true,false" defaultValue="false" width="100"/>
 	<audioFB label="Audio Feedback" defaultValue="Select a Sound File" type="media" optional="true"/>
-  </option></quiz><mcq name="MCQ"><mcq menu="Interactivity" menuItem="Multiple Choice Question" hint="Pose a question with multiple answer options. Create simple true - false questions, or more complex questions with multiple correct answers." icon="icComments" thumb="thumbs/mcq.jpg" example="https://xot.xerte.org.uk/play_116?hide=bottom#multiplechoicequestion" remove="true">
+  </option></quiz><mcq name="MCQ"><mcq>&lt;mcq name="Enter Page Title" instruction="Enter Instruction" prompt="Enter a Prompt" type="Single Answer" align="Left" panelWidth="Medium"
+	  feedbackLabel="Feedback" singleRight="Your answer is correct!" singleWrong="Your answer is incorrect" multiRight="You have selected all the correct answers" 
+	  multiWrong="You have not selected the correct combination of answers" 
+	  checkBtnTxt="Check" /&gt;</mcq><mcq menu="Interactivity" menuItem="Multiple Choice Question" hint="Pose a question with multiple answer options. Create simple true - false questions, or more complex questions with multiple correct answers." icon="icComments" thumb="thumbs/mcq.jpg" example="https://xot.xerte.org.uk/play_116?hide=bottom#multiplechoicequestion" remove="true">
 
     <name label="Page Title" type="TextInput" wysiwyg="true"/>
     <align label="Align Text" options="Left,Right" type="ComboBox" data="Left,Right" defaultValue="Left" width="100"/>

@@ -1280,7 +1280,7 @@ var EDITOR = (function ($, parent) {
                 $('.interactiveBlocksContainer').append(subNewInteractiveLevel);
 
 
-                var id = 'select';
+                var id = 'blockSelect';
                 html = $('<select>')
                     .attr('id', id)
                     .change({id:id, key:key}, function(event)
@@ -1299,8 +1299,16 @@ var EDITOR = (function ($, parent) {
                     .addClass('editorbutton')
                     .attr('type', 'button')
                     .attr('id',  'add_'+item)
-                    .click({key: currkey, node: item, defaultnode: new_nodes_default[i]}, function(event){
+                    .click({key: currkey, node: item, defaultnode: interactiveBlocks}, function(event){
                         debugger
+                        var value = $("#blockSelect").val();
+
+                        for(var i = 0; i<event.data.defaultnode.length; i++){
+                            if(event.data.defaultnode[i].name == value){
+                                event.data.defaultnode = event.data.defaultnode[i].blockDefault.replace(/(\r\n|\n|\r)/gm, "")
+                                break;
+                            }
+                        }
                         addSubBlock(event)
                     })
                     //.append($('<img>').attr('src', 'editor/img/insert.png').height(14))
@@ -1402,6 +1410,7 @@ var EDITOR = (function ($, parent) {
 
     addNodeToTree = function(key, pos, nodeName, xmlData, tree, select)
     {
+        debugger
         var lkey = parent.tree.generate_lo_key();
         var attributes = {nodeName: nodeName, linkID : 'PG' + new Date().getTime()};
         var extranodes = false;
@@ -1495,7 +1504,7 @@ var EDITOR = (function ($, parent) {
         var node = tree.get_node(event.data.key, false);
         var nodeName = event.data.node;
         //var key = parent.tree.generate_lo_key();
-        var xmlData = $.parseXML(event.data.defaultnode);
+        var xmlData = $.parseXML(event.data.defaultnode.replace(/(\r\n|\n|\r)/gm, ""));
         // Parse the attributes and store in the data store
         addNodeToTree(event.data.key,'last',nodeName,xmlData.firstChild,tree,true);
 

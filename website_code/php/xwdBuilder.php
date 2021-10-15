@@ -132,8 +132,8 @@ class XerteXWDBuilder
 			if(in_array($name, $foundBlocks)){
 				if (file_exists($model)) {
 					$modelXML = simplexml_load_file($model);
-
-					$cdata = $modelXML->xpath('/newNodes/' . $name . '/text()');
+					$fullModelXml = simplexml_load_file($model, NULL, LIBXML_NOCDATA);
+					$cdata = $fullModelXml->xpath('/wizard/pageWizard/newNodes/' . $name);
 
 
 					$foundNodes = $modelXML->xpath('*[not(self::pageWizard)]');
@@ -142,6 +142,11 @@ class XerteXWDBuilder
 					foreach($blocks as $block)
 					{
 						$block = dom_import_simplexml($block);
+
+						$cdata  = dom_import_simplexml($cdata[0]);
+						$cdata  = $block->ownerDocument->importNode($cdata, TRUE);
+						$block->appendChild($cdata);
+
 						foreach ($foundNodes as $child) {
 							$child  = dom_import_simplexml($child);
 							$child  = $block->ownerDocument->importNode($child, TRUE);

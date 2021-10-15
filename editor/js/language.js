@@ -70,14 +70,16 @@ var EDITOR = (function ($, parent) {
 
             // INTERN CODE
             var interactiveBlocks = [];
+            $blockDefault = $(this)[0].textContent.replace(/(\r\n|\n|\r)/gm, "")
             $($(this).children('interactiveBlocks').children()).each( function () {
                 interactiveBlocks.push({
                     name: this.nodeName,
                     attributes: $(this)[0].attributes,
+                    blockDefault: $blockDefault
                 });
-               /* if(this.nodeName != ""){
+                if(this.nodeName != ""){
                     debugger
-                }*/
+                }
             });
 
             // info
