@@ -126,7 +126,7 @@
 				if (x_currentPageXML.getAttribute("type") != "Acc" && x_currentPageXML.getAttribute("type") != "Tab") {
 					$navHolderInner.addClass('panel');
 				}
-				
+
 				var panelWidth = x_currentPageXML.getAttribute("panelWidth") == undefined ? "Medium" : x_currentPageXML.getAttribute("panelWidth");
 				
 				// full width - get rid of everything else
@@ -260,7 +260,7 @@
 			
 			// add content to each column/pane
 			$(x_currentPageXML).children().each(function(i) {
-				
+				debugger
 				// column/pane text
 				$("#navChildTitle" + i).html(this.getAttribute("name"));
 				var $navChild = $("#navChild" + i).append(x_addLineBreaks(this.getAttribute("text")));

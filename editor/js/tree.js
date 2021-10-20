@@ -310,7 +310,7 @@ var EDITOR = (function ($, parent) {
         //    previewxmlurl = previewxmlurl.substring(0, previewxmlurl.length-4) + "2.xml";
         //}
         // ***************** TEMPORARY ****************
-
+        debugger
         var json = build_json("treeroot");
         var clickevent = e || window.event;
         var urlparam = "";
@@ -1177,7 +1177,6 @@ var EDITOR = (function ($, parent) {
                     var pos = buttonlabel.indexOf('{i}');
                     if (pos >= 0)
                         buttonlabel = buttonlabel.substr(0, pos) + itemname + buttonlabel.substr(pos+3) + "...";
-                    debugger
                     var button = $('<button>')
                         .addClass('btnNewNode')
                         .addClass('editorbutton')
@@ -1249,7 +1248,6 @@ var EDITOR = (function ($, parent) {
         var subInteractiveBlocks = $('<div>').addClass('interactiveBlocksContainer');
         while (currkey !== 'treeroot')
         {
-            debugger
             var currItem = lo_data[currkey]['attributes'].nodeName;
             var interactiveBlocks = wizard_data[currItem].interactive_blocks;
             if (interactiveBlocks.length > 0)
@@ -1280,8 +1278,9 @@ var EDITOR = (function ($, parent) {
                 $('.interactiveBlocksContainer').append(subNewInteractiveLevel);
 
 
+
                 var id = 'blockSelect';
-                html = $('<select>')
+                var combobox = $('<select>')
                     .attr('id', id)
                     .change({id:id, key:key}, function(event)
                     {
@@ -1300,11 +1299,11 @@ var EDITOR = (function ($, parent) {
                     .attr('type', 'button')
                     .attr('id',  'add_'+item)
                     .click({key: currkey, node: item, defaultnode: interactiveBlocks}, function(event){
-                        debugger
                         var value = $("#blockSelect").val();
 
                         for(var i = 0; i<event.data.defaultnode.length; i++){
                             if(event.data.defaultnode[i].name == value){
+                                event.data.node = value
                                 event.data.defaultnode = event.data.defaultnode[i].blockDefault.replace(/(\r\n|\n|\r)/gm, "")
                                 break;
                             }
@@ -1313,15 +1312,15 @@ var EDITOR = (function ($, parent) {
                     })
                     //.append($('<img>').attr('src', 'editor/img/insert.png').height(14))
                     .append($('<i>').addClass('fa').addClass('fa-plus-circle').addClass("fa-lg").addClass("xerte-icon").height(14));
+
+                var option = $('<option>')
+                    .attr('value', "");
+                option.prop('selected', true);
+                option.prop('hidden', true);
+                combobox.append(option);
+
                 for (var i=interactiveBlocks.length-1; i>=0; i--)
                 {
-                  /*
-
-
-                    var buttonlabel = language.newLink.$label;
-                    var pos = buttonlabel.indexOf('{i}');
-                    if (pos >= 0)
-                        buttonlabel = buttonlabel.substr(0, pos) + itemname + buttonlabel.substr(pos+3) + "...";*/
 
                     var item = interactiveBlocks[i].name;
                     var itemname = item;
@@ -1330,13 +1329,10 @@ var EDITOR = (function ($, parent) {
 
                     var option = $('<option>')
                         .attr('value', item);
-                    if (i === interactiveBlocks.length-1) {
-                        option.prop('selected', true);
-                    }
                     option.append(itemname);
-                    html.append(option);
-                    if (html.find('option:selected').index() > 0) {
-                        html.find(option).eq(0).remove();
+                    combobox.append(option);
+                    if (combobox.find('option:selected').index() > 0) {
+                        combobox.find(option).eq(0).remove();
                     }
 
                     subNewInteractiveLevel.append(button)
@@ -1344,7 +1340,8 @@ var EDITOR = (function ($, parent) {
 
                 }
 
-                subNewInteractiveLevel.append(html)
+                subNewInteractiveLevel.append("New interactive block... ")
+                subNewInteractiveLevel.append(combobox)
                 /*subnodes.append(level);
                 if (advnodes_level)
                 {
@@ -1410,7 +1407,6 @@ var EDITOR = (function ($, parent) {
 
     addNodeToTree = function(key, pos, nodeName, xmlData, tree, select)
     {
-        debugger
         var lkey = parent.tree.generate_lo_key();
         var attributes = {nodeName: nodeName, linkID : 'PG' + new Date().getTime()};
         var extranodes = false;
@@ -1484,7 +1480,6 @@ var EDITOR = (function ($, parent) {
 
     addSubNode = function (event)
     {
-        debugger
         console.log('Add sub node ' + event.data.node + ' to ' + event.data.key);
         var tree = $.jstree.reference("#treeview");
         var node = tree.get_node(event.data.key, false);
@@ -1498,7 +1493,6 @@ var EDITOR = (function ($, parent) {
 
     addSubBlock = function (event)
     {
-        debugger
         console.log('Add sub node ' + event.data.node + ' to ' + event.data.key);
         var tree = $.jstree.reference("#treeview");
         var node = tree.get_node(event.data.key, false);
@@ -1627,6 +1621,7 @@ var EDITOR = (function ($, parent) {
             if (i < wizard_data[topLevelObject].new_nodes.length)
             {
                 var xmlData = $.parseXML(wizard_data[topLevelObject].new_nodes_defaults[i]).firstChild;
+
                 $.each(xmlData.childNodes, function(j, child)       // Was children
                 {
                     if (child.nodeType == 1)
@@ -1642,6 +1637,8 @@ var EDITOR = (function ($, parent) {
                         }
                     }
                 });
+
+
             }
             return {
                 icon: parent.toolbox.getIcon(page_name),
@@ -1655,7 +1652,13 @@ var EDITOR = (function ($, parent) {
         var node_types = {};
         node_types["#"] = create_node_type(null, ["treeroot"]); // Make sure that only the LO can be at root level
         $.each(wizard_data, function (key, value) {
-                node_types[key] = create_node_type(key, value.new_nodes);
+                var interactiveBlocks= [];
+                if(value.interactive_blocks.length > 0){
+                    for(ib in value.interactive_blocks){
+                        interactiveBlocks.push(value.interactive_blocks[ib].name)
+                    }
+                }
+                node_types[key] = create_node_type(key, value.new_nodes.concat(interactiveBlocks));
         });
 
         console.log(node_types);

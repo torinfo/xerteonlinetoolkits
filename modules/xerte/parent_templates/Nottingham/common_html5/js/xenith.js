@@ -64,6 +64,7 @@ if (!$.fn.toggleClick) {
     };
 }
 
+debugger
 $(document).keydown(function(e) {
 	// if lightbox open then don't allow page up/down buttons to change the page open in the background
 	// Place lightbox check in a try block, because an exception will be triggereed if LO is embedded in an iframe
@@ -124,6 +125,7 @@ $(document).keydown(function(e) {
 });
 
 $(document).ready(function() {
+	debugger
 	// Load the script.js dependency loader
     if (!xot_offline) {
         // TODO - we should move this to play/preview and let it kickstart the loading of all files
@@ -207,6 +209,7 @@ x_isMobileBrowser = function() {
 };
 
 x_projectDataLoaded = function(xmlData) {
+	debugger
     var i, len;
 	var markedPages = new Array();
     for (i = 0, len = xmlData[0].attributes.length; i < len; i++) {
@@ -1836,6 +1839,13 @@ function x_navigateToPage(force, pageInfo, addHistory) { // pageInfo = {type, ID
     }
 }
 
+//INTERN CODE
+function x_checkBlocks(){
+	//op welke pagine ben je (x_currentPage.xml)
+	//welke gegevens hebben we
+	//
+}
+
 
 // function returns page no. of page with matching linkID / pageID & whether it's from array of normal pages or standalone pages
 function x_lookupPage(type, id) {
@@ -2427,7 +2437,7 @@ function x_changePageStep6() {
             }
             debugger
             XTEnterPage(x_currentPage, label);
-
+			debugger
 			var modelfile = x_pageInfo[x_currentPage].type;
 			if (typeof modelfilestrs[modelfile] != 'undefined')
 			{
