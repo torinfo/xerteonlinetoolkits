@@ -156,6 +156,10 @@ $(document).ready(function() {
 
 	x_browserInfo.mobile = x_isMobileBrowser();
 
+
+	//INTERN CODE
+	//load interactiveblock js in body/head of rloObject.htm
+
     // get xml data and sort it
     if (typeof dataxmlstr != 'undefined')
     {
@@ -1840,10 +1844,11 @@ function x_navigateToPage(force, pageInfo, addHistory) { // pageInfo = {type, ID
 }
 
 //INTERN CODE
-function x_checkBlocks(){
-	//op welke pagine ben je (x_currentPage.xml)
-	//welke gegevens hebben we
-	//
+function x_createBlocks(container){
+	debugger
+	//init aanroepen
+	container.append('<div id="block">hello</div>');
+	$("#block").load(x_templateLocation + "blocks_html5/" + 'mcq' + ".html");
 }
 
 

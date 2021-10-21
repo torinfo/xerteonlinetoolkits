@@ -118,7 +118,7 @@
 				$navHolder = $('#navHolder');
 			
 			$pageContents.addClass(x_currentPageXML.getAttribute("type").toLowerCase());
-			
+
 			// set up basic structure of page - different for each navigator type
 			if (x_currentPageXML.getAttribute("type") != "Col") {
 				
@@ -137,7 +137,7 @@
 					
 				} else {
 					$textHolder.html(x_addLineBreaks(x_currentPageXML.getAttribute("text")));
-					
+
 					$navHolderInner.appendTo($navHolder);
 					
 					var $splitScreen = $('<div class="splitScreen"/>');
@@ -260,11 +260,11 @@
 			
 			// add content to each column/pane
 			$(x_currentPageXML).children().each(function(i) {
-				debugger
+
 				// column/pane text
 				$("#navChildTitle" + i).html(this.getAttribute("name"));
-				var $navChild = $("#navChild" + i).append(x_addLineBreaks(this.getAttribute("text")));
-				
+				//var $navChild = $("#navChild" + i).append(x_addLineBreaks(this.getAttribute("text")));
+				x_createBlocks($("#navChild" + i))
 				// column/pane media
 				if (this.getAttribute("url") != undefined && this.getAttribute("url") != "") {
 					
