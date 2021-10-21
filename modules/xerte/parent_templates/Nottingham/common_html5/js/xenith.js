@@ -64,7 +64,6 @@ if (!$.fn.toggleClick) {
     };
 }
 
-debugger
 $(document).keydown(function(e) {
 	// if lightbox open then don't allow page up/down buttons to change the page open in the background
 	// Place lightbox check in a try block, because an exception will be triggereed if LO is embedded in an iframe
@@ -125,7 +124,7 @@ $(document).keydown(function(e) {
 });
 
 $(document).ready(function() {
-	debugger
+
 	// Load the script.js dependency loader
     if (!xot_offline) {
         // TODO - we should move this to play/preview and let it kickstart the loading of all files
@@ -159,7 +158,8 @@ $(document).ready(function() {
 
 	//INTERN CODE
 	//load interactiveblock js in body/head of rloObject.htm
-
+	debugger
+	//$("body").append()
     // get xml data and sort it
     if (typeof dataxmlstr != 'undefined')
     {
@@ -1844,11 +1844,13 @@ function x_navigateToPage(force, pageInfo, addHistory) { // pageInfo = {type, ID
 }
 
 //INTERN CODE
-function x_createBlocks(container){
+function x_createBlock(container, module){
 	debugger
 	//init aanroepen
-	container.append('<div id="block">hello</div>');
-	$("#block").load(x_templateLocation + "blocks_html5/" + 'mcq' + ".html");
+
+	container.append('<div id="block" style="width: 300px;">hello</div>');
+	$("#block").load(x_templateLocation + "blocks_html5/" + module.tagName + ".html");
+
 }
 
 
@@ -2334,7 +2336,6 @@ function x_changePageStep6() {
 			{
 				label = x_currentPageXML.getAttribute("trackinglabel");
 			}
-			debugger
 			XTEnterPage(x_currentPage, label, x_currentPageXML.getAttribute("grouping"));
 		}
 
@@ -2440,7 +2441,6 @@ function x_changePageStep6() {
             {
                 label = x_currentPageXML.getAttribute("trackinglabel");
             }
-            debugger
             XTEnterPage(x_currentPage, label);
 			debugger
 			var modelfile = x_pageInfo[x_currentPage].type;

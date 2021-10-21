@@ -264,7 +264,13 @@
 				// column/pane text
 				$("#navChildTitle" + i).html(this.getAttribute("name"));
 				//var $navChild = $("#navChild" + i).append(x_addLineBreaks(this.getAttribute("text")));
-				x_createBlocks($("#navChild" + i))
+				debugger
+				var child = $(x_currentPageXML).children()[i];
+
+				for (var m of child.children){
+					x_createBlock($("#navChild" + i), m)
+				}
+
 				// column/pane media
 				if (this.getAttribute("url") != undefined && this.getAttribute("url") != "") {
 					
