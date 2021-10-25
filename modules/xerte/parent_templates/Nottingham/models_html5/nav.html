@@ -20,8 +20,10 @@
 	
 	// pageChanged & sizeChanged functions are needed in every model file
 	// other functions for model should also be in here to avoid conflicts
+
 	var nav = new function() {
-		
+		var childcount = 0;
+
 		// Called from xenith if tab level deeplinking is available
 		this.deepLink = function(item) {
 			if (x_currentPageXML.getAttribute("type") != "Col") {
@@ -264,11 +266,12 @@
 				// column/pane text
 				$("#navChildTitle" + i).html(this.getAttribute("name"));
 				//var $navChild = $("#navChild" + i).append(x_addLineBreaks(this.getAttribute("text")));
-				debugger
 				var child = $(x_currentPageXML).children()[i];
 
+
 				for (var m of child.children){
-					x_createBlock($("#navChild" + i), m)
+					childcount++;
+					x_createBlock($("#navChild" + i), m, childcount)
 				}
 
 				// column/pane media

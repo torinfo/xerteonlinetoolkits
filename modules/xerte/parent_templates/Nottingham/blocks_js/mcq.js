@@ -1,4 +1,5 @@
 var mcq = new function() {
+    debugger
     // function called every time the page is viewed after it has initially loaded
     this.pageChanged = function() {
         this.optionElements = $("#pageContents").data("optionElements");
@@ -260,9 +261,14 @@ var mcq = new function() {
         x_pageContentsUpdated();
     }
 
-    this.init = function() {
-        console.log("test")
+    this.jGetElement = function (blockid, element){
+        return $("#" + blockid + ' ' + element)
+    }
+
+    this.init = function(test) {
+        console.log(test)
         debugger
+        x_currentPageXML = test;
         // correct attribute on option also not used as it doesn't mark correct/incorrect - only gives feedback for each answer
         var panelWidth = x_currentPageXML.getAttribute("panelWidth"),
             $splitScreen = $("#pageContents .splitScreen"),

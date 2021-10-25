@@ -310,7 +310,7 @@ var EDITOR = (function ($, parent) {
         //    previewxmlurl = previewxmlurl.substring(0, previewxmlurl.length-4) + "2.xml";
         //}
         // ***************** TEMPORARY ****************
-        debugger
+
         var json = build_json("treeroot");
         var clickevent = e || window.event;
         var urlparam = "";

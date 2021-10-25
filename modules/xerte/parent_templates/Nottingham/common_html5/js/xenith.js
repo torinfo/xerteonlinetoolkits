@@ -213,7 +213,6 @@ x_isMobileBrowser = function() {
 };
 
 x_projectDataLoaded = function(xmlData) {
-	debugger
     var i, len;
 	var markedPages = new Array();
     for (i = 0, len = xmlData[0].attributes.length; i < len; i++) {
@@ -1844,12 +1843,13 @@ function x_navigateToPage(force, pageInfo, addHistory) { // pageInfo = {type, ID
 }
 
 //INTERN CODE
-function x_createBlock(container, module){
+function x_createBlock(container, module, modulePosition){
 	debugger
 	//init aanroepen
-
-	container.append('<div id="block" style="width: 300px;">hello</div>');
-	$("#block").load(x_templateLocation + "blocks_html5/" + module.tagName + ".html");
+	var blockid = "block" + modulePosition;
+	container.append('<div id="blockid' + modulePosition+'" style="border: 5px solid #0a001f; margin-bottom: 30px; height: 200px;"></div>');
+	$("#"+blockid).load(x_templateLocation + "blocks_html5/" + module.tagName + ".html");
+	window[module.tagName].init(module)
 
 }
 
@@ -2442,7 +2442,7 @@ function x_changePageStep6() {
                 label = x_currentPageXML.getAttribute("trackinglabel");
             }
             XTEnterPage(x_currentPage, label);
-			debugger
+
 			var modelfile = x_pageInfo[x_currentPage].type;
 			if (typeof modelfilestrs[modelfile] != 'undefined')
 			{
