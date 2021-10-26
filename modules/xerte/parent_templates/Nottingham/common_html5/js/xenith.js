@@ -1848,8 +1848,10 @@ function x_createBlock(container, module, modulePosition){
 	//init aanroepen
 	var blockid = "block" + modulePosition;
 	container.append('<div id="block' + modulePosition+'" style="border: 5px solid #0a001f; margin-bottom: 30px; height: 200px;"></div>');
-	$("#"+blockid).load(x_templateLocation + "blocks_html5/" + module.tagName + ".html");
-	window[module.tagName].init(module)
+	$("#"+blockid).load(x_templateLocation + "blocks_html5/" + module.tagName + ".html", function() {
+		window[module.tagName].init(module, blockid);
+	});
+
 
 }
 

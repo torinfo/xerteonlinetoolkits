@@ -261,21 +261,21 @@ var mcq = new function() {
         x_pageContentsUpdated();
     }
 
-    this.jGetElement = function (blockid, element){
+    let jGetElement = function (blockid, element) {
         return $("#" + blockid + ' ' + element)
     }
 
-    this.init = function(test) {
+    this.init = function(test, blockid) {
         console.log(test)
         debugger
         x_currentPageXML = test;
         // correct attribute on option also not used as it doesn't mark correct/incorrect - only gives feedback for each answer
         var panelWidth = x_currentPageXML.getAttribute("panelWidth"),
-            $splitScreen = $("#pageContents .splitScreen"),
-            $textHolder = $("#textHolder");
+            $splitScreen = jGetElement(blockid, "#pageContents .splitScreen"),
+            $textHolder = jGetElement(blockid, "#textHolder");
 
         if (panelWidth == "Full") {
-            $("#pageContents .panel").appendTo($("#pageContents"));
+            jGetElement(blockid, "#pageContents .panel").appendTo(jGetElement(blockid, "#pageContents"));
             $splitScreen.remove();
         } else {
             $textHolder.html(x_addLineBreaks(x_currentPageXML.getAttribute("instruction")));
@@ -294,7 +294,7 @@ var mcq = new function() {
                     .removeClass("left")
                     .addClass("right")
                     .appendTo($splitScreen);
-                $("#infoHolder")
+                jGetElement(blockid, "#infoHolder")
                     .removeClass("right")
                     .addClass("left");
                 if (panelWidth == "Small") {
@@ -307,13 +307,13 @@ var mcq = new function() {
             }
         }
 
-        $("#question").html(x_addLineBreaks(x_currentPageXML.getAttribute("prompt")));
+        jGetElement(blockid, "#question").html(x_addLineBreaks(x_currentPageXML.getAttribute("prompt")));
 
-        var $optionHolder = $("#optionHolder");
+        var $optionHolder = jGetElement(blockid, "#optionHolder");
 
         if ($(x_currentPageXML).children().length == 0) {
-            $("#optionHolder").html('<span class="alert">' + x_getLangInfo(x_languageData.find("errorQuestions")[0], "noA", "No answer options have been added") + '</span>');
-            $("#checkBtn").remove();
+            jGetElement(blockid, "#optionHolder").html('<span class="alert">' + x_getLangInfo(x_languageData.find("errorQuestions")[0], "noA", "No answer options have been added") + '</span>');
+            jGetElement(blockid, "#checkBtn").remove();
         } else {
             if (x_currentPageXML.getAttribute("type") == "Multiple Answer") {
                 $optionHolder.find("input[type='radio']").remove();
@@ -367,9 +367,9 @@ var mcq = new function() {
                         "id"		:"option" + i
                     })
                     .change(function() {
-                        $("#feedback").find('.feedbackBlock').html("");
-                        var $checkBtn = $("#checkBtn"),
-                            $selected = $("#optionHolder input:checked");
+                        jGetElement(blockid, "#feedback").find('.feedbackBlock').html("");
+                        var $checkBtn = jGetElement(blockid, "#checkBtn"),
+                            $selected = jGetElement(blockid, "#optionHolder input:checked");
 
                         $checkBtn.show();
                         if ($selected.length == 0) {
@@ -402,7 +402,7 @@ var mcq = new function() {
             if (checkBtnTip == undefined) {
                 checkBtnTip = "Check Answer";
             }
-            $("#checkBtn")
+            jGetElement(blockid, "#checkBtn")
                 .button({
                     label: checkBtnTxt,
                     disabled: true
@@ -415,7 +415,7 @@ var mcq = new function() {
 
             this.startQ();
 
-            $("#pageContents").data("optionElements", this.optionElements);
+            jGetElement(blockid, "#pageContents").data("optionElements", this.optionElements);
         }
 
         this.sizeChanged();
