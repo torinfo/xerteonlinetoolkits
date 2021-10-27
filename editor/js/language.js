@@ -72,6 +72,7 @@ var EDITOR = (function ($, parent) {
             var interactiveBlocks = [];
 
             $($(this).children('interactiveBlocks').children()).each( function () {
+                debugger
                 var blockCdata = ""
                 var i = [].slice.call($(this)[0]["children"]);
                 i.forEach(function(item){
