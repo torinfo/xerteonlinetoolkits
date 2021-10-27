@@ -148,6 +148,10 @@ class XerteXWDBuilder
 						$block->appendChild($cdata);
 
 						foreach ($foundNodes as $child) {
+							unset($child->panelWidth);
+							//unset($child->al);
+							//unset($child->panelWidth);
+							//unset($child->panelWidth);
 							$child  = dom_import_simplexml($child);
 							$child  = $block->ownerDocument->importNode($child, TRUE);
 							$block->appendChild($child);
