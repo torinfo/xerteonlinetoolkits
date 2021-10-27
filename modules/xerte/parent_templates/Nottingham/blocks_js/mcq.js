@@ -322,7 +322,7 @@ var mcq = new function() {
             }
 
             var $optionGroup = $optionHolder.find(".optionGroup");
-
+            $optionGroup.addClass(blockid)
             // Store the answers in a temporary array
             var elements = [];
             $(x_currentPageXML).children().each(function(i) {
@@ -364,7 +364,8 @@ var mcq = new function() {
                 $thisOption
                     .attr({
                         "value"		:thisOption.text,
-                        "id"		:"option" + i
+                        "id"		:blockid+" "+ "option" + i,
+                        "name"      :blockid
                     })
                     .change(function() {
                         jGetElement(blockid, "#feedback").find('.feedbackBlock').html("");

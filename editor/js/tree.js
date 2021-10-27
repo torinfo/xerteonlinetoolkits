@@ -1243,6 +1243,7 @@ var EDITOR = (function ($, parent) {
 
         //INTERN CODE//
         //Insert interactiveBlocks
+        debugger
         var tree = $.jstree.reference("#treeview");
         var currkey = key;
         var subInteractiveBlocks = $('<div>').addClass('interactiveBlocksContainer');
@@ -1299,6 +1300,7 @@ var EDITOR = (function ($, parent) {
                     .attr('type', 'button')
                     .attr('id',  'add_'+item)
                     .click({key: currkey, node: item, defaultnode: interactiveBlocks}, function(event){
+                        debugger
                         var value = $("#blockSelect").val();
 
                         for(var i = 0; i<event.data.defaultnode.length; i++){

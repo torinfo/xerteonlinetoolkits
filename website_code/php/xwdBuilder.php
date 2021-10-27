@@ -129,7 +129,7 @@ class XerteXWDBuilder
 		foreach ($xwd as $model){
 			$xwdName = substr($model, strrpos($model, '/') + 1);
 			$name = strtolower(substr($xwdName, 0,-4));
-			if(in_array($name, $foundBlocks)){
+			if(in_array($name."block", $foundBlocks)){
 				if (file_exists($model)) {
 					$modelXML = simplexml_load_file($model);
 					$fullModelXml = simplexml_load_file($model, NULL, LIBXML_NOCDATA);
@@ -137,7 +137,7 @@ class XerteXWDBuilder
 
 
 					$foundNodes = $modelXML->xpath('*[not(self::pageWizard)]');
-					$blocks = $interactiveBlocksXML->xpath('/interactiveBlocks/' . $name);
+					$blocks = $interactiveBlocksXML->xpath('/interactiveBlocks/' . $name ."Block");
 
 					foreach($blocks as $block)
 					{

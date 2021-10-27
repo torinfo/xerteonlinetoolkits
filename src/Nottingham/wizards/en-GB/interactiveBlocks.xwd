@@ -1,5 +1,6 @@
 <interactiveBlocks>
-    <quiz name="Quiz">
-    </quiz>
-    <mcq name="MCQ"></mcq>
+    <quizBlock name="Quiz">
+    </quizBlock>
+    <mcqBlock name="MCQ">
+    </mcqBlock>
 </interactiveBlocks>
