@@ -134,6 +134,9 @@ class XerteXWDBuilder
 					$modelXML = simplexml_load_file($model);
 					$fullModelXml = simplexml_load_file($model, NULL, LIBXML_NOCDATA);
 					$cdata = $fullModelXml->xpath('/wizard/pageWizard/newNodes/' . $name);
+					$replaced = str_replace($name, $name . "Block", $cdata[0]);
+					$xml = simplexml_load_string($replaced);
+					$cdata[0] = $xml;
 
 
 					$foundNodes = $modelXML->xpath('*[not(self::pageWizard)]');
