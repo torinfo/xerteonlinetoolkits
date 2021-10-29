@@ -154,6 +154,7 @@ class XerteXWDBuilder
 					foreach ($foundNodes as $child) {
 						unset($child->panelWidth);
 						$testxml = new SimpleXMLElement("<".$name."Block></".$name."Block>");
+
 						foreach($child as $childnode) {
 							$toDom = dom_import_simplexml($testxml);
 							$fromDom = dom_import_simplexml($childnode);
