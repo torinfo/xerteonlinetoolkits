@@ -153,16 +153,19 @@ class XerteXWDBuilder
 
 					foreach ($foundNodes as $child) {
 						unset($child->panelWidth);
-						$testxml = new SimpleXMLElement("<".$name."Block></".$name."Block>");
+						$tempxml = new SimpleXMLElement("<".$name."Block></".$name."Block>");
 
 						foreach($child as $childnode) {
-							$toDom = dom_import_simplexml($testxml);
+							foreach ($child->attributes() as $c){
+								$tempxml->addAttribute($c->getName(), $c[0]);
+							}
+							$toDom = dom_import_simplexml($tempxml);
 							$fromDom = dom_import_simplexml($childnode);
 							$toDom->appendChild($toDom->ownerDocument->importNode($fromDom, true));
 						}
 
 
-						$this->addChildNode($this->xml, $testxml);
+						$this->addChildNode($this->xml, $tempxml);
 					}
 				}
 			}
