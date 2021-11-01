@@ -138,14 +138,12 @@ class XerteXWDBuilder
 					$xml = simplexml_load_string($replaced);
 					$cdata[0] = $xml;
 
-
 					$foundNodes = $modelXML->xpath('*[not(self::pageWizard)]');
 					$blocks = $interactiveBlocksXML->xpath('/interactiveBlocks/' . $name ."Block");
 
 					foreach($blocks as $block)
 					{
 						$block = dom_import_simplexml($block);
-
 						$cdata  = dom_import_simplexml($cdata[0]);
 						$cdata  = $block->ownerDocument->importNode($cdata, TRUE);
 						$block->appendChild($cdata);
@@ -153,19 +151,22 @@ class XerteXWDBuilder
 
 					foreach ($foundNodes as $child) {
 						unset($child->panelWidth);
-						$tempxml = new SimpleXMLElement("<".$name."Block></".$name."Block>");
-
-						foreach($child as $childnode) {
+						if($name == $child->getName()){
+							$tempxml = new SimpleXMLElement("<".$name."Block></".$name."Block>");
 							foreach ($child->attributes() as $c){
 								$tempxml->addAttribute($c->getName(), $c[0]);
 							}
-							$toDom = dom_import_simplexml($tempxml);
-							$fromDom = dom_import_simplexml($childnode);
-							$toDom->appendChild($toDom->ownerDocument->importNode($fromDom, true));
+							foreach($child as $childnode) {
+
+								$toDom = dom_import_simplexml($tempxml);
+								$fromDom = dom_import_simplexml($childnode);
+								$toDom->appendChild($toDom->ownerDocument->importNode($fromDom, true));
+							}
+							$this->addChildNode($this->xml, $tempxml);
+						} else{
+							$this->addChildNode($this->xml, $child);
 						}
 
-
-						$this->addChildNode($this->xml, $tempxml);
 					}
 				}
 			}
