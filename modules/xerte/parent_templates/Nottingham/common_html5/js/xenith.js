@@ -1847,9 +1847,11 @@ function x_createBlock(container, module, modulePosition){
 	debugger
 	//init aanroepen
 	var blockid = "block" + modulePosition;
-	container.append('<div id="block' + modulePosition+'" style="border: 5px solid #0a001f; margin-bottom: 30px; height: 200px;"></div>');
-	$("#"+blockid).load(x_templateLocation + "blocks_html5/" + module.tagName+"Block" + ".html", function() {
-		window[module.tagName].init(module, blockid);
+	var jsName = module.tagName.replace("Block", "")
+	container.append('<div id="block' + modulePosition+'" class="iblock" style="border: 1px solid #0a001f; margin-bottom: 30px; height: 200px;"></div>');
+	$("#"+blockid).load(x_templateLocation + "blocks_html5/" + module.tagName+ ".html", function() {
+		debugger
+		window[jsName].init(module, blockid);
 	});
 
 

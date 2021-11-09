@@ -266,7 +266,6 @@ var mcq = new function() {
     }
 
     this.init = function(test, blockid) {
-        console.log(test)
         debugger
         x_currentPageXML = test;
         // correct attribute on option also not used as it doesn't mark correct/incorrect - only gives feedback for each answer
@@ -310,7 +309,7 @@ var mcq = new function() {
         jGetElement(blockid, "#question").html(x_addLineBreaks(x_currentPageXML.getAttribute("prompt")));
 
         var $optionHolder = jGetElement(blockid, "#optionHolder");
-
+        debugger
         if ($(x_currentPageXML).children().length == 0) {
             jGetElement(blockid, "#optionHolder").html('<span class="alert">' + x_getLangInfo(x_languageData.find("errorQuestions")[0], "noA", "No answer options have been added") + '</span>');
             jGetElement(blockid, "#checkBtn").remove();

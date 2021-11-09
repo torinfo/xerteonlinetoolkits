@@ -150,11 +150,15 @@ class XerteXWDBuilder
 					}
 
 					foreach ($foundNodes as $child) {
+
 						unset($child->panelWidth);
 						if($name == $child->getName()){
 							$tempxml = new SimpleXMLElement("<".$name."Block></".$name."Block>");
 							foreach ($child->attributes() as $c){
-								$tempxml->addAttribute($c->getName(), $c[0]);
+								if($c->getName() == "icon"){
+									$tempxml->addAttribute($c->getName(), $c[0]);
+								}
+
 							}
 							foreach($child as $childnode) {
 
