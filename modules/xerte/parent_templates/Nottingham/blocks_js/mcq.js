@@ -94,7 +94,7 @@ var mcq = new function() {
         }
     }
 
-    this.showFeedBackandTrackScore = function()
+    this.showFeedBackandTrackScore = function(blockid)
     {
         var answerFeedback = "",
             genFeedback,
@@ -102,7 +102,7 @@ var mcq = new function() {
             l_options = [],
             l_answers = [],
             l_feedbacks = [],
-            selected = $("#optionHolder input");
+            selected = jGetElement(blockid, "#optionHolder input");
 
         if (x_currentPageXML.getAttribute("feedback") != undefined && x_currentPageXML.getAttribute("feedback") != '') {
             genFeedback = x_addLineBreaks(x_currentPageXML.getAttribute("feedback"));
@@ -213,12 +213,12 @@ var mcq = new function() {
                     thisFeedback = rightWrongTxt;
                 }
 
-                $('#' + feedbackDiv[i] + 'Feedback')
+                jGetElement(blockid, '#' + feedbackDiv[i] + 'Feedback')
                     .html(thisFeedback)
                     .show();
 
             } else {
-                $('#' + feedbackDiv[i] + 'Feedback')
+                jGetElement(blockid, '#' + feedbackDiv[i] + 'Feedback')
                     .html('')
                     .hide();
             }
@@ -228,9 +228,9 @@ var mcq = new function() {
         if (feedbackLabel == undefined) {
             feedbackLabel = "Feedback";
         }
-        $("#feedbackHeader").html(feedbackLabel != '' ? "<h3>" + feedbackLabel + "</h3>" : '');
+        jGetElement(blockid, "#feedbackHeader").html(feedbackLabel != '' ? "<h3>" + feedbackLabel + "</h3>" : '');
 
-        $("#feedback")
+        jGetElement(blockid, "#feedback")
             .find(".audioHolder").each(function() {
             $(this).mediaPlayer({
                 type	:"audio",
@@ -253,7 +253,7 @@ var mcq = new function() {
             var i=0;
             for (i=0; i<mcq.currNrOptions; i++)
             {
-                $("#option"+i).attr("disabled", "disabled");
+                jGetElement(blockid, "#option"+i).attr("disabled", "disabled");
             }
         }
 
@@ -408,7 +408,7 @@ var mcq = new function() {
                 })
                 .click(function() {
                     $(this).hide();
-                    mcq.showFeedBackandTrackScore();
+                    mcq.showFeedBackandTrackScore(blockid);
                     mcq.checked = true;
                 })
 
