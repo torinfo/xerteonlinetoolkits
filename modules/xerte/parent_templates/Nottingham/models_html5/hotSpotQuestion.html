@@ -94,7 +94,7 @@
 				})
 				allHighlightsArray = []
 				this.resizeImg(false);
-				debugger
+
 				resizehighlightArray.forEach((h)=>{
 					$('area[data-key="'+h+'"]').mapster('select')
 					$('area[data-key="'+h+'"]').addClass("selected")
@@ -295,7 +295,7 @@
 							}
 
 							if (x_currentPageXML.getAttribute("answers") == "true"){
-								debugger
+
 								$('area[data-key="'+index+'"]').mapster('deselect')
 								$('img').mapster('set_options', optionsCorrect);
 								$('area[data-key="'+index+'"]').mapster('select')
@@ -319,7 +319,7 @@
 						}
 					})
 
-					debugger
+
 					var scoreLabel;
 					if(AmountOfWrongScore==0){
 						var allgood = x_currentPageXML.getAttribute("allGood")

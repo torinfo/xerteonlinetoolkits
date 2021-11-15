@@ -372,7 +372,7 @@ var quiz = new function() {
             feedbackOrder = thisQ.getAttribute('feedbackPos') == undefined ? 'GAC' : thisQ.getAttribute('feedbackPos');
 
         feedbackOrder = [...feedbackOrder];
-        debugger
+
         if(this.showfeedback){
             if(thisQ.getAttribute("type") != "Multiple Answer"){
                 for (var i=0; i<feedbackDiv.length; i++) {
@@ -404,7 +404,7 @@ var quiz = new function() {
                     if (feedbackOrder[p] == 'G') {
                         thisFeedback = thisQ.getAttribute('feedback');
                     } else if (feedbackOrder[p] == 'A') {
-                        debugger
+
                         var selectedInput = $("#optionHolder input:checked")
                         var multipleFeedback = []
                         var feedback = "";
@@ -445,7 +445,7 @@ var quiz = new function() {
             success: correct,
             score: correct ? 100.0 : 0.0
         };
-        debugger
+
         XTExitInteraction(x_currentPage, quiz.questions[quiz.currentQ], result, l_options, l_answer, l_feedback, x_currentPageXML.getAttribute("trackinglabel"));
         quiz.myProgress.splice(quiz.currentQ, 1, correct);
 

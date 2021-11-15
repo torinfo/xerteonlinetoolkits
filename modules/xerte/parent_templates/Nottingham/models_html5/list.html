@@ -86,7 +86,6 @@
 			}
 			
 			var $listItem = $(".listItem:first");
-			debugger
 			$(x_currentPageXML).children()
 				.each(function(i) {
 					var $thisItem;
@@ -174,7 +173,6 @@
 							}
 						});
 				});
-			debugger
 			if(x_currentPageXML.getAttribute('hicol') !== null){
 				var color = "#" + x_currentPageXML.getAttribute('hicol').substr(2)
 			}else{
@@ -190,7 +188,6 @@
 				var hicolHover = "#" + x_currentPageXML.getAttribute('hicolHover').substr(2)
 			}
 
-			debugger
 			if(x_currentPageXML.getAttribute('hicolHover') !== null && x_currentPageXML.getAttribute('hicolHover') !== undefined){
 				$(".listItem").css({
 					'color': color,

@@ -49,7 +49,7 @@ var EDITOR = (function ($, parent) {
             );
         }
         menu_data = {"menu": temp_menu_data};
-            debugger
+
         // Parse the xml
         $(wizard_xml.children()).each(function(i) {
             var main_node = $(this)[0].nodeName;
@@ -60,7 +60,7 @@ var EDITOR = (function ($, parent) {
             }
 
             if(main_node === "mcqBlock"){
-                debugger
+
                 var set = wizard_xml;
             }
 
@@ -81,7 +81,7 @@ var EDITOR = (function ($, parent) {
                 i.forEach(function(item){
                     blockCdata = item.outerHTML;
                 })
-                debugger
+
                 interactiveBlocks.push({
                     name: this.nodeName,
                     attributes: $(this)[0].attributes,
@@ -297,7 +297,7 @@ var EDITOR = (function ($, parent) {
         var wizard_xml = $($.parseXML(xml)).find("wizard");
 
         parse_wizard_xml(wizard_xml);
-        debugger
+
         waitonlanguage();
     },
 

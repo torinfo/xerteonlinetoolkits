@@ -1243,7 +1243,7 @@ var EDITOR = (function ($, parent) {
 
         //INTERN CODE//
         //Insert interactiveBlocks
-        debugger
+
         var tree = $.jstree.reference("#treeview");
         var currkey = key;
         var subInteractiveBlocks = $('<div>').addClass('interactiveBlocksContainer');

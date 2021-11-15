@@ -285,7 +285,8 @@ function NoopTrackingState()
     	if (ia_nr < 0) {
 
             let temp = false;
-            for (let i = 0; i < state.toCompletePages.length; i++) {
+            let i = 0;
+            for (i = 0; i < state.toCompletePages.length; i++) {
                 var currentPageNr = state.toCompletePages[i];
                 if (currentPageNr == page_nr) {
                     temp = true;
@@ -293,6 +294,7 @@ function NoopTrackingState()
                 }
             }
             if (temp) {
+                debugger
                 if (!state.completedPages[i]) {
                     var sit = state.findInteraction(page_nr, -1);
                     if (sit != null) {
@@ -321,13 +323,11 @@ function NoopTrackingState()
     function setPageScore(page_nr, score)
     {
     	var sit = state.findPage(page_nr);
-    	debugger
+
         if (sit != null && (state.scoremode != 'first' || sit.count < 1))
         {
             sit.score = score;
-            debugger
             sit.count++;
-            debugger
         }
     }
 
@@ -941,7 +941,6 @@ function NoopTracking(page_nr, ia_nr, ia_type, ia_name)
 
     function exitInteraction(result, learnerAnswers, learnerOptions, feedback)
     {
-        debugger
     	this.learnerAnswers = learnerAnswers;
         this.learnerOptions = learnerOptions;
         this.result = result;

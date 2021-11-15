@@ -739,7 +739,6 @@
         this.pageChanged = function() {
             $("#adaptiveContentMain").html("");
             var displayMode = x_currentPageXML.getAttribute('displayMode');
-        debugger;
             if(displayMode == "Listed"){
                 this.setUpListed();
             }else {
@@ -779,7 +778,6 @@
         };
 
         this.init = function() {
-            debugger;
             var loadFiles = true;
             for (var i = 0; i < x_pageInfo.length; i++) {
                 if (i != x_currentPage && x_pageInfo[i].type == x_pageInfo[x_currentPage].type && x_pageInfo[i].built != false) {
@@ -865,7 +863,6 @@
                 adviceHeader = `<h4>${interaction.getAttribute('AdviceText')}</h4>`;
             }
 
-            debugger;
             let introductionText = interaction.getAttribute('introduction');
             if (introductionText == undefined) {
                 introductionText = "";
@@ -1705,7 +1702,6 @@
                     });
                     labelCounter += 1;
                   }
-                  debugger;
                   var options = {
                     series: [
                       {
