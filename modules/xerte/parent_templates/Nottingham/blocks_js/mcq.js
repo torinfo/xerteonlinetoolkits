@@ -44,6 +44,7 @@ var mcq = new function() {
         {
             this.weighting = x_currentPageXML.getAttribute("trackingWeight");
         }
+        debugger
         XTSetPageType(x_currentPage, 'numeric', 1, this.weighting);
         for (var i = 0; i < this.optionElements.length; i++) {
             var answerTxt;
@@ -245,6 +246,7 @@ var mcq = new function() {
             success: correct,
             score: correct ? 100.0 : 0.0
         };
+        debugger
         XTExitInteraction(x_currentPage, 0, result, l_options, l_answers, l_feedbacks, x_currentPageXML.getAttribute("trackinglabel"));
         XTSetPageScore(x_currentPage, (correct ? 100.0 : 0.0), x_currentPageXML.getAttribute("trackinglabel"));
         if (XTGetMode() == "normal")

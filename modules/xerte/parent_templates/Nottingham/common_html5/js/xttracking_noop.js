@@ -25,6 +25,9 @@
  * To change this template use File | Settings | File Templates.
  */
 
+import trackingManager from "../../blocks_js/js/trackingManager";
+
+var trackingManager = new trackingManager();
 
 function makeId(page_nr, ia_nr, ia_type, ia_name)
 {
@@ -310,6 +313,7 @@ function NoopTrackingState()
 
     function setPageType(page_nr, page_type, nrinteractions, weighting)
     {
+        debugger
     	var sit = state.findPage(page_nr);
         if (sit != null)
         {
@@ -333,6 +337,7 @@ function NoopTrackingState()
 
     function findCreate(page_nr, ia_nr, ia_type, ia_name)
     {
+        debugger
         var tmpid = makeId(page_nr, ia_nr, ia_type, ia_name);
         var i=0;
         for (i=0; i<this.interactions.length; i++)
@@ -1070,7 +1075,9 @@ function XTSetOption(option, value)
 
 function XTEnterPage(page_nr, page_name, grouping)
 {
-	state.enterPage(page_nr, -1, "page", page_name);
+    debugger
+	//state.enterPage(page_nr, -1, "page", page_name);
+	trackingManager.enterPage(page_nr, "Page", page_name)
 }
 
 function XTExitPage(page_nr)
