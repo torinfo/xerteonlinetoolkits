@@ -1,22 +1,26 @@
-export default class state{
-    constructor() {
+function state(){
+
+
+    this.childState = [];
+
+    this.exit = exit;
+    this.enter = enter;
+    this.addState = addState;
+    this.removeState = removeState;
+
+    function exit(){
+
     }
 
-    childState = [];
-
-    exit(){
+    function enter(){
 
     }
 
-    enter(){
-
-    }
-
-    addState(state){
+    function addState(state){
         this.childState.push(state)
     }
 
-    removeState(state){
+    function removeState(state){
         var i = 0;
         while (i < this.childState.length) {
             if (this.childState[i] === state) {

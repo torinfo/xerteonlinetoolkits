@@ -1,13 +1,13 @@
-class pageState{
-    constructor(page_nr, ia_type, ia_name) {
+function pageState(){
+
+    this.exit = exit;
+    this.enter = enter;
+
+    function exit(){
 
     }
 
-    exit(){
-
-    }
-
-    enter(){
+    function enter(){
 
     }
 }
