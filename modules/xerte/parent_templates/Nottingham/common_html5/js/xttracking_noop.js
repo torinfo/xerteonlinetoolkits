@@ -27,62 +27,6 @@
 
 const trackingManager = new TrackingManager();
 
-function NoopTracking(page_nr, ia_nr, ia_type, ia_name)
-{
-    this.id = trackingManager.makeId(page_nr, ia_nr, ia_type, ia_name);
-	this.page_nr = page_nr;
-	this.ia_nr = ia_nr;
-    this.ia_type = ia_type;
-    this.ia_name = ia_name;
-    this.start = new Date();
-    this.end = this.start;
-    this.count = 0;
-    this.duration = 0;
-    this.nrinteractions = 0;
-    this.weighting = 0.0;
-    this.score = 0.0;
-    this.correctOptions = [];
-    this.correctAnswers = [];
-    this.learnerAnswers = [];
-    this.learnerOptions = [];
-
-    this.exit = exit;
-    this.enterInteraction = enterInteraction;
-    this.exitInteraction = exitInteraction;
-
-    function exit()
-    {
-        this.end = new Date();
-        var duration = this.end.getTime() - this.start.getTime();
-        if (duration > 100)
-        {
-            this.duration += duration;
-            this.count++;
-            return true;
-        }
-        else
-        {
-            return false;
-        }
-
-    }
-
-    function enterInteraction(correctAnswers, correctOptions)
-    {
-    	this.correctAnswers = correctAnswers;
-        this.correctOptions = correctOptions;
-    }
-
-    function exitInteraction(result, learnerAnswers, learnerOptions, feedback)
-    {
-    	this.learnerAnswers = learnerAnswers;
-        this.learnerOptions = learnerOptions;
-        this.result = result;
-        this.feedback = feedback;
-    }
-
-}
-
 trackingManager.debug = true;
 
 function XTInitialise(category)
@@ -198,7 +142,7 @@ function XTSetOption(option, value)
 
 function XTEnterPage(page_nr, page_name, grouping)
 {
-    debugger
+
 	trackingManager.enterPage(page_nr,"page", page_name);
 }
 

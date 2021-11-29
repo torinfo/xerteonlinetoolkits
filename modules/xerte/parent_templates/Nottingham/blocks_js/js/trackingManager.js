@@ -68,6 +68,7 @@ function TrackingManager(){
     }
 
     function findCreatePageState (page_nr, ia_type, ia_name){
+        debugger
         var tmpid = makeId(page_nr,-1, ia_type, ia_name);
 
         for (var i=0; i<this.pageStates.length; i++)
@@ -76,7 +77,7 @@ function TrackingManager(){
                 return this.pageStates[i];
         }
         // Not found
-        var sit =  new pageState(page_nr, ia_type, ia_name);
+        var sit =  new pageState(tmpid,page_nr, ia_type, ia_name);
         if (ia_type !== "page" && ia_type !== "result")
         {
             this.lo_type = "interactive";
@@ -85,7 +86,7 @@ function TrackingManager(){
                 this.lo_passed = 55;
             }
         }
-
+          
         this.pageStates.push(sit);
         return sit;
     }
@@ -266,10 +267,15 @@ function TrackingManager(){
 
     function enterInteraction(page_nr, ia_nr, ia_type, ia_name, correctoptions, correctanswer, feedback)
     {
-        interaction = new NoopTracking(page_nr, ia_nr, ia_type, ia_name);
+        debugger
+        var tempid = makeId(page_nr, ia_nr, ia_type, ia_name)
+
+        interaction = new InteractionState(tempid, page_nr, ia_nr, ia_type, ia_name);
         this.verifyEnterInteractionParameters(ia_type, ia_name, correctoptions, correctanswer, feedback);
         interaction.enterInteraction(correctanswer, correctoptions);
-        this.pageStates.push(interaction);
+        //this.pageStates.push(interaction);
+        var page = findPage(page_nr)
+        page.interactions.push(interaction)
     }
 
     function exitInteraction(page_nr, ia_nr, result, learneroptions, learneranswer, feedback)
@@ -294,7 +300,7 @@ function TrackingManager(){
                 }
             }
             if (temp) {
-                debugger
+                  
                 if (!this.completedPages[i]) {
                     var sit = this.findInteraction(page_nr, -1);
                     if (sit != null) {
@@ -310,6 +316,7 @@ function TrackingManager(){
 
     function setPageType(page_nr, page_type, nrinteractions, weighting)
     {
+          
         var sit = this.findPage(page_nr);
         if (sit != null)
         {
@@ -345,9 +352,10 @@ function TrackingManager(){
 
     function findPage(page_nr)
     {
+          
         for (let i=0; i<this.pageStates.length; i++)
         {
-            if (this.pageStates[i].page_nr === page_nr && this.pageStates[i].ia_nr === -1)
+            if (this.pageStates[i].page_nr === page_nr)
                 return this.pageStates[i];
         }
         return null;
