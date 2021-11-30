@@ -2,6 +2,7 @@ function InteractionState(id, page_nr, ia_nr, ia_type, ia_name){
 
     this.id = id;
     this.page_nr = page_nr;
+    this.ia_nr = ia_nr;
     this.ia_type = ia_type;
     this.ia_name = ia_name;
     this.start = new Date();
@@ -22,7 +23,6 @@ function InteractionState(id, page_nr, ia_nr, ia_type, ia_name){
 
     function exit()
     {
-        debugger
         this.end = new Date();
         var duration = this.end.getTime() - this.start.getTime();
         if (duration > 100)
@@ -40,14 +40,12 @@ function InteractionState(id, page_nr, ia_nr, ia_type, ia_name){
 
     function enterInteraction(correctAnswers, correctOptions)
     {
-        debugger
         this.correctAnswers = correctAnswers;
         this.correctOptions = correctOptions;
     }
 
     function exitInteraction(result, learnerAnswers, learnerOptions, feedback)
     {
-        debugger
         this.learnerAnswers = learnerAnswers;
         this.learnerOptions = learnerOptions;
         this.result = result;

@@ -44,7 +44,6 @@ var mcq = new function() {
         {
             this.weighting = x_currentPageXML.getAttribute("trackingWeight");
         }
-        debugger
         XTSetPageType(x_currentPage, 'numeric', 1, this.weighting);
         for (var i = 0; i < this.optionElements.length; i++) {
             var answerTxt;

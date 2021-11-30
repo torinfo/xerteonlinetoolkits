@@ -68,7 +68,6 @@ function TrackingManager(){
     }
 
     function findCreatePageState (page_nr, ia_type, ia_name){
-        debugger
         var tmpid = makeId(page_nr,-1, ia_type, ia_name);
 
         for (var i=0; i<this.pageStates.length; i++)
@@ -267,19 +266,19 @@ function TrackingManager(){
 
     function enterInteraction(page_nr, ia_nr, ia_type, ia_name, correctoptions, correctanswer, feedback)
     {
-        debugger
         var tempid = makeId(page_nr, ia_nr, ia_type, ia_name)
 
         interaction = new InteractionState(tempid, page_nr, ia_nr, ia_type, ia_name);
         this.verifyEnterInteractionParameters(ia_type, ia_name, correctoptions, correctanswer, feedback);
         interaction.enterInteraction(correctanswer, correctoptions);
         //this.pageStates.push(interaction);
-        var page = findPage(page_nr)
+        var page = this.findPage(page_nr)
         page.interactions.push(interaction)
     }
 
     function exitInteraction(page_nr, ia_nr, result, learneroptions, learneranswer, feedback)
     {
+        debugger
         var sit = this.findInteraction(page_nr, ia_nr);
         if (sit != null) {
             if (ia_nr !== -1) {
@@ -363,15 +362,17 @@ function TrackingManager(){
 
     function findInteraction(page_nr, ia_nr)
     {
-        if (ia_nr < 0)
-        {
-            return this.findPage(page_nr);
+        debugger
+
+        var page = this.findPage(page_nr)
+        if (page == null){
+            return null;
         }
         var i=0;
-        for (i=0; i<this.pageStates.length; i++)
+        for (i=0; i<page.interactions.length; i++)
         {
-            if (this.pageStates[i].page_nr === page_nr && this.pageStates[i].ia_nr === ia_nr)
-                return this.pageStates[i];
+            if (page.interactions[i].page_nr === page_nr && page.interactions[i].ia_nr === ia_nr)
+                return page.interactions[i];
         }
         return null;
     }
