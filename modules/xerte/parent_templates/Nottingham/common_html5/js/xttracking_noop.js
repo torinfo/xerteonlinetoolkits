@@ -220,6 +220,7 @@ function XTSetInteractionPageXML(page_nr, ia_nr, pageXML){
 }
 
 function XTGetPageXML(page_nr, ia_nr){
+
     return trackingManager.getInteractionPageXML(page_nr, ia_nr);
 }
 
@@ -311,6 +312,7 @@ function XTTerminate()
 }
 
 function XTResults(fullcompletion) {
+
     var completion = 0;
     var nrcompleted = 0;
     var nrvisited = 0;
@@ -349,10 +351,8 @@ function XTResults(fullcompletion) {
 
     for (i = 0; i < trackingManager.pageStates.length - 1; i++) {
 
-
-        score += trackingManager.pageStates[i].score * trackingManager.pageStates[i].weighting;
         if (trackingManager.pageStates[i].nrinteractions > 0) {
-
+            score += trackingManager.pageStates[i].score * trackingManager.pageStates[i].weighting;
             var interaction = {};
             interaction.score = Math.round(trackingManager.pageStates[i].score);
             interaction.title = trackingManager.pageStates[i].ia_name;
@@ -384,6 +384,7 @@ function XTResults(fullcompletion) {
             totalWeight += trackingManager.pageStates[i].weighting;
 
             if(results.mode == "full-results"){
+
                 for (var x = 0; x < trackingManager.pageStates[i].interactions.length; x++) {
                     var subinteraction = {};
 
@@ -456,6 +457,7 @@ function XTResults(fullcompletion) {
             }
         }
     }
+    debugger
     results.completion = completion;
     results.score = score;
     results.nrofquestions = nrofquestions;

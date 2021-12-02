@@ -281,6 +281,7 @@ function TrackingManager(){
 
     function exitInteraction(page_nr, ia_nr, result, learneroptions, learneranswer, feedback)
     {
+        debugger
         var sit = this.findInteraction(page_nr, ia_nr);
         if (sit != null) {
             if (ia_nr !== -1) {
@@ -294,6 +295,18 @@ function TrackingManager(){
     function exitPage(page_nr){
         let temp = false;
         let i = 0;
+
+        debugger
+        var page = this.findPage(page_nr);
+        var tempscore = 0;
+        for(i=0;i<page.interactions.length;i++){
+            tempscore+= page.interactions[i].result.score;
+        }
+
+        tempscore/=page.interactions.length;
+
+        page.score = tempscore;
+
         for (i = 0; i < this.toCompletePages.length; i++) {
             var currentPageNr = this.toCompletePages[i];
             if (currentPageNr === page_nr) {
@@ -307,7 +320,6 @@ function TrackingManager(){
                 if (sit != null) {
                     // Skip results page completely
                     if (sit.ia_type !== "result") {
-
                         this.completedPages[i] = this.pageCompleted(sit);
                         sit.exit();
                     }
@@ -331,12 +343,19 @@ function TrackingManager(){
 
     function setPageScore(page_nr, score)
     {
-        var sit = this.findPage(page_nr);
+        debugger
+        var page = this.findPage(page_nr);
+        var tempscore = 0;
+        for(i=0;i<page.pageStates.interactions.length;i++){
+            tempscore+= page.pageStates.interactions[i].result.score;
+        }
 
-        if (sit != null && (this.scoremode !== 'first' || sit.count < 1))
+        tempscore/=page.pageStates.interactions.length;
+
+        if (page != null && (this.scoremode !== 'first' || page.count < 1))
         {
-            sit.score = score;
-            sit.count++;
+            page.score = tempscore;
+            page.count++;
         }
     }
 
@@ -381,6 +400,8 @@ function TrackingManager(){
 
     function findInteraction(page_nr, ia_nr)
     {
+
+
         var page = this.findPage(page_nr)
         if (page == null){
             return null;
