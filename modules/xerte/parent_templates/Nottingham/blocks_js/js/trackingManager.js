@@ -34,6 +34,8 @@ function TrackingManager(){
     this.getMaxScore = getMaxScore;
     this.setPageType = setPageType;
     this.setPageScore = setPageScore;
+    this.setInteractionPageXML = setInteractionPageXML;
+    this.getInteractionPageXML = getInteractionPageXML;
     this.enterInteraction = enterInteraction;
     this.exitInteraction = exitInteraction;
     this.exitPage = exitPage;
@@ -337,6 +339,22 @@ function TrackingManager(){
             sit.score = score;
             sit.count++;
         }
+    }
+
+    function setInteractionPageXML(page_nr, ia_nr, x_currentPage){
+        var interactionState = this.findInteraction(page_nr, ia_nr);
+        if(interactionState == null){
+            return;
+        }
+        interactionState.setPageXML(x_currentPage);
+    }
+
+    function getInteractionPageXML(page_nr, ia_nr){
+        var interactionState = this.findInteraction(page_nr, ia_nr);
+        if(interactionState == null){
+            return;
+        }
+        return interactionState.pageXML;
     }
 
     function find(id)

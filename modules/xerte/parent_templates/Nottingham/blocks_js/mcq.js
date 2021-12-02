@@ -86,6 +86,7 @@ var mcq = new function() {
         }
         var blocknr = parseFloat(blockid.split("block").pop());
         XTEnterInteraction(x_currentPage, blocknr-1, 'multiplechoice', label, correctOptions, correctAnswer, correctFeedback, x_currentPageXML.getAttribute("grouping"));
+        XTSetInteractionPageXML(x_currentPage, blocknr-1, x_currentPageXML);
     }
 
     this.leavePage = function() {
@@ -98,16 +99,19 @@ var mcq = new function() {
 
     this.showFeedBackandTrackScore = function(blockid)
     {
+        var blocknr = parseFloat(blockid.split("block").pop()) - 1;
+        let currentPageXML = XTGetPageXML(x_currentPage, blocknr);
+        this.optionElements = getOptionElements(currentPageXML);
         var answerFeedback = "",
             genFeedback,
-            correct = (x_currentPageXML.getAttribute("type") == "Multiple Answer"),
+            correct = (currentPageXML.getAttribute("type") == "Multiple Answer"),
             l_options = [],
             l_answers = [],
             l_feedbacks = [],
             selected = jGetElement(blockid, "#optionHolder input");
 
-        if (x_currentPageXML.getAttribute("feedback") != undefined && x_currentPageXML.getAttribute("feedback") != '') {
-            genFeedback = x_addLineBreaks(x_currentPageXML.getAttribute("feedback"));
+        if (currentPageXML.getAttribute("feedback") != undefined && currentPageXML.getAttribute("feedback") != '') {
+            genFeedback = x_addLineBreaks(currentPageXML.getAttribute("feedback"));
             if (genFeedback != "" && genFeedback.indexOf('<p') == -1) {
                 genFeedback = '<p>' + genFeedback + '</p>';
             }
@@ -118,7 +122,7 @@ var mcq = new function() {
                 selectedOption = this.optionElements[optionIndex],
                 currCorrect;
 
-            if (x_currentPageXML.getAttribute("type") == "Multiple Answer") {
+            if (currentPageXML.getAttribute("type") == "Multiple Answer") {
                 currCorrect = (
                     (selectedOption.correct == "true" && $(selected[i]).is(':checked')) ||
                     (selectedOption.correct == "false" && !$(selected[i]).is(':checked'))
@@ -150,7 +154,7 @@ var mcq = new function() {
                 else
                 {
                     // Create fallback label
-                    answerTxt = (x_currentPageXML.getAttribute('answerTxt') != undefined ? x_currentPageXML.getAttribute('answerTxt') : "Option");
+                    answerTxt = (currentPageXML.getAttribute('answerTxt') != undefined ? currentPageXML.getAttribute('answerTxt') : "Option");
                     answerTxt += ' ' + (optionIndex+1);
                     answerTxt = x_GetTrackingTextFromHTML(selectedOption.text, answerTxt);
                 }
@@ -166,15 +170,15 @@ var mcq = new function() {
             }
         }
 
-        var singleRight = x_currentPageXML.getAttribute("singleRight") != undefined ? x_currentPageXML.getAttribute("singleRight") : "Your answer is correct",
-            singleWrong = x_currentPageXML.getAttribute("singleWrong") != undefined ? x_currentPageXML.getAttribute("singleWrong") : "Your answer is incorrect",
-            multiRight = x_currentPageXML.getAttribute("multiRight") != undefined ? x_currentPageXML.getAttribute("multiRight") : "You have selected all the correct answers",
-            multiWrong = x_currentPageXML.getAttribute("multiWrong") != undefined ? x_currentPageXML.getAttribute("multiWrong") : "You have not selected the correct combination of answers";
+        var singleRight = currentPageXML.getAttribute("singleRight") != undefined ? currentPageXML.getAttribute("singleRight") : "Your answer is correct",
+            singleWrong = currentPageXML.getAttribute("singleWrong") != undefined ? currentPageXML.getAttribute("singleWrong") : "Your answer is incorrect",
+            multiRight = currentPageXML.getAttribute("multiRight") != undefined ? currentPageXML.getAttribute("multiRight") : "You have selected all the correct answers",
+            multiWrong = currentPageXML.getAttribute("multiWrong") != undefined ? currentPageXML.getAttribute("multiWrong") : "You have not selected the correct combination of answers";
 
         var rightWrongTxt = "";
         // add correct feedback depending on if question overall has been answered correctly or not
-        if (x_currentPageXML.getAttribute("markFeedback") != 'false') { // new optional property allows for this feedback to be turned off
-            if (x_currentPageXML.getAttribute("type") == "Multiple Answer") {
+        if (currentPageXML.getAttribute("markFeedback") != 'false') { // new optional property allows for this feedback to be turned off
+            if (currentPageXML.getAttribute("type") == "Multiple Answer") {
                 if ($("#pageContents").data("judge") == true) { // there is a correct answer for question
                     if (correct == true) {
                         rightWrongTxt = multiRight != '' ? '<p>' + multiRight + '</p>' : '';
@@ -196,7 +200,7 @@ var mcq = new function() {
         var feedback = 0,
             feedbackDiv = ['top', 'middle', 'bottom'],
             // order feedback is shown - default is: general feedback > answer feedback > correct/incorrect feedback
-            feedbackOrder = x_currentPageXML.getAttribute("feedbackPos") == undefined ? 'GAC' : x_currentPageXML.getAttribute("feedbackPos");
+            feedbackOrder = currentPageXML.getAttribute("feedbackPos") == undefined ? 'GAC' : currentPageXML.getAttribute("feedbackPos");
 
         feedbackOrder = [...feedbackOrder];
 
@@ -227,7 +231,7 @@ var mcq = new function() {
             }
         }
 
-        var feedbackLabel = x_currentPageXML.getAttribute("feedbackLabel");
+        var feedbackLabel = currentPageXML.getAttribute("feedbackLabel");
         if (feedbackLabel == undefined) {
             feedbackLabel = "Feedback";
         }
@@ -250,8 +254,8 @@ var mcq = new function() {
         };
         var blocknr = parseFloat(blockid.split("block").pop());
         debugger
-        XTExitInteraction(x_currentPage, blocknr-1, result, l_options, l_answers, l_feedbacks, x_currentPageXML.getAttribute("trackinglabel"));
-        XTSetPageScore(x_currentPage, (correct ? 100.0 : 0.0), x_currentPageXML.getAttribute("trackinglabel"));
+        XTExitInteraction(x_currentPage, blocknr-1, result, l_options, l_answers, l_feedbacks, currentPageXML.getAttribute("trackinglabel"));
+        XTSetPageScore(x_currentPage, (correct ? 100.0 : 0.0), currentPageXML.getAttribute("trackinglabel"));
         if (XTGetMode() == "normal")
         {
             // Disable all options
@@ -269,10 +273,24 @@ var mcq = new function() {
         return $("#" + blockid + ' ' + element)
     }
 
-    this.init = function(pageXML, blockid) {
-        debugger
-        var pages = [pageXML]
+    let getOptionElements = function(currentPage){
+        var elements = [];
+        $(currentPage).children().each(function(i) {
+            elements.push(
+                {
+                    label:		this.getAttribute("name"),
+                    text:		this.getAttribute("text"),
+                    correct:	this.getAttribute("correct"),
+                    feedback:	this.getAttribute("feedback"),
+                    audioFB:	this.getAttribute("audioFB")
+                }
+            );
+        });
+        return elements;
+    }
 
+
+    this.init = function(pageXML, blockid) {
         x_currentPageXML = pageXML;
         // correct attribute on option also not used as it doesn't mark correct/incorrect - only gives feedback for each answer
         var panelWidth = x_currentPageXML.getAttribute("panelWidth"),

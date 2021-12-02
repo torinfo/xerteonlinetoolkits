@@ -215,6 +215,15 @@ function XTExitInteraction(page_nr, ia_nr, result, learneroptions, learneranswer
 	trackingManager.exitInteraction(page_nr, ia_nr, result, learneroptions, learneranswer, feedback);
 }
 
+function XTSetInteractionPageXML(page_nr, ia_nr, pageXML){
+    trackingManager.setInteractionPageXML(page_nr, ia_nr, pageXML);
+}
+
+function XTGetPageXML(page_nr, ia_nr){
+    debugger
+    return trackingManager.getInteractionPageXML(page_nr, ia_nr);
+}
+
 function XTGetInteractionScore(page_nr, ia_nr, ia_type, ia_name, full_id, callback, q)
 {
     var JSONGraph = {

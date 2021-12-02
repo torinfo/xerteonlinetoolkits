@@ -16,10 +16,12 @@ function InteractionState(id, page_nr, ia_nr, ia_type, ia_name){
     this.correctAnswers = [];
     this.learnerAnswers = [];
     this.learnerOptions = [];
+    this.pageXML = {};
 
     this.exit = exit;
     this.enterInteraction = enterInteraction;
     this.exitInteraction = exitInteraction;
+    this.setPageXML = setPageXML;
 
     function exit()
     {
@@ -50,5 +52,9 @@ function InteractionState(id, page_nr, ia_nr, ia_type, ia_name){
         this.learnerOptions = learnerOptions;
         this.result = result;
         this.feedback = feedback;
+    }
+
+    function setPageXML(pageXML){
+        this.pageXML = pageXML;
     }
 }
