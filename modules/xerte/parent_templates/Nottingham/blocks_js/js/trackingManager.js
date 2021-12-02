@@ -293,7 +293,6 @@ function TrackingManager(){
     }
 
     function exitPage(page_nr){
-        debugger
         let temp = false;
         let i = 0;
         for (i = 0; i < this.toCompletePages.length; i++) {
@@ -304,13 +303,14 @@ function TrackingManager(){
             }
         }
         if (temp) {
-
             if (!this.completedPages[i]) {
-                var sit = this.findPage(page_nr, -1);
+                var sit = this.findPage(page_nr);
                 if (sit != null) {
                     // Skip results page completely
                     if (sit.ia_type !== "result") {
+
                         this.completedPages[i] = this.pageCompleted(sit);
+                        sit.exit();
                     }
                 }
             }
