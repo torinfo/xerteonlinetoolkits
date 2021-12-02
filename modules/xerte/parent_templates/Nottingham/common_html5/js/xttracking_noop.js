@@ -148,7 +148,7 @@ function XTEnterPage(page_nr, page_name, grouping)
 
 function XTExitPage(page_nr)
 {
-    trackingManager.exitInteraction(page_nr, -1, false, "", "", "", false);
+    trackingManager.exitPage(page_nr);
 }
 
 function XTSetPageType(page_nr, page_type, nrinteractions, weighting)
@@ -303,6 +303,7 @@ function XTTerminate()
 }
 
 function XTResults(fullcompletion) {
+    debugger
     var completion = 0;
     var nrcompleted = 0;
     var nrvisited = 0;
@@ -343,7 +344,7 @@ function XTResults(fullcompletion) {
 
 
         score += trackingManager.pageStates[i].score * trackingManager.pageStates[i].weighting;
-        if (trackingManager.pageStates[i].ia_nr < 0 || trackingManager.pageStates[i].nrinteractions > 0) {
+        if (trackingManager.pageStates[i].nrinteractions > 0) {
 
             var interaction = {};
             interaction.score = Math.round(trackingManager.pageStates[i].score);
@@ -375,73 +376,77 @@ function XTResults(fullcompletion) {
             nrofquestions++;
             totalWeight += trackingManager.pageStates[i].weighting;
 
-        }
-        else if (results.mode == "full-results") {
-            var subinteraction = {};
+            if(results.mode == "full-results"){
+                debugger
+                for (var x = 0; x < trackingManager.pageStates[i].interactions.length; x++) {
+                    var subinteraction = {};
 
-            var learnerAnswer, correctAnswer;
-            switch (trackingManager.pageStates[i].ia_type) {
-                case "match":
-                    for (var c = 0; c < trackingManager.pageStates[i].correctOptions.length; c++) {
-                        var matchSub = {}; //Create a subinteraction here for every match sub instead
-                        correctAnswer = trackingManager.pageStates[i].correctOptions[c].source + ' --> ' + trackingManager.pageStates[i].correctOptions[c].target;
-                        source = trackingManager.pageStates[i].correctOptions[c].source;
-                        if (trackingManager.pageStates[i].learnerOptions.length == 0) {
-                            learnerAnswer = source + ' --> ' + ' ';
-                        }
-                        else {
-                            for (var d = 0; d < trackingManager.pageStates[i].learnerOptions.length; d++) {
-                                if (source == trackingManager.pageStates[i].learnerOptions[d].source) {
-                                    learnerAnswer = source + ' --> ' + trackingManager.pageStates[i].learnerOptions[d].target;
-                                    break;
-                                }
-                                else {
+                    var learnerAnswer, correctAnswer;
+                    switch (trackingManager.pageStates[i].interactions[x].ia_type) {
+                        case "match":
+                            for (var c = 0; c < trackingManager.pageStates[i].interactions[x].correctOptions.length; c++) {
+                                var matchSub = {}; //Create a subinteraction here for every match sub instead
+                                correctAnswer = trackingManager.pageStates[i].interactions[x].correctOptions[c].source + ' --> ' + trackingManager.pageStates[i].interactions[x].correctOptions[c].target;
+                                source = trackingManager.pageStates[i].interactions[x].correctOptions[c].source;
+                                if (trackingManager.pageStates[i].interactions[x].learnerOptions.length == 0) {
                                     learnerAnswer = source + ' --> ' + ' ';
                                 }
+                                else {
+                                    for (var d = 0; d < trackingManager.pageStates[i].interactions[x].learnerOptions.length; d++) {
+                                        if (source == trackingManager.pageStates[i].interactions[x].learnerOptions[d].source) {
+                                            learnerAnswer = source + ' --> ' + trackingManager.pageStates[i].interactions[x].learnerOptions[d].target;
+                                            break;
+                                        }
+                                        else {
+                                            learnerAnswer = source + ' --> ' + ' ';
+                                        }
+                                    }
+                                }
+
+                                matchSub.question = trackingManager.pageStates[i].interactions[x].ia_name;
+                                matchSub.correct = (learnerAnswer === correctAnswer);
+                                matchSub.learnerAnswer = learnerAnswer;
+                                matchSub.correctAnswer = correctAnswer;
+                                results.interactions[i].subinteractions.push(matchSub);
                             }
-                        }
 
-                        matchSub.question = trackingManager.pageStates[i].ia_name;
-                        matchSub.correct = (learnerAnswer === correctAnswer);
-                        matchSub.learnerAnswer = learnerAnswer;
-                        matchSub.correctAnswer = correctAnswer;
-                        results.interactions[nrofquestions - 1].subinteractions.push(matchSub);
-                    }
+                            break;
+                        case "text":
+                            learnerAnswer = trackingManager.pageStates[i].interactions[x].learnerAnswers;
+                            correctAnswer = trackingManager.pageStates[i].interactions[x].correctAnswers;
+                            break;
+                        case "multiplechoice":
+                            learnerAnswer = trackingManager.pageStates[i].interactions[x].learnerAnswers[0] != undefined ? trackingManager.pageStates[i].interactions[x].learnerAnswers[0] : "";
+                            for (var j = 1; j < trackingManager.pageStates[i].interactions[x].learnerAnswers.length; j++) {
+                                learnerAnswer += "\n" + trackingManager.pageStates[i].interactions[x].learnerAnswers[j];
+                            }
+                            correctAnswer = "";
+                            for (var j = 0; j < trackingManager.pageStates[i].interactions[x].correctAnswers.length; j++) {
+                                if (correctAnswer.length > 0)
+                                    correctAnswer += "\n";
+                                correctAnswer += trackingManager.pageStates[i].interactions[x].correctAnswers[j];
+                            }
+                            break;
+                        case "numeric":
 
-                    break;
-                case "text":
-                    learnerAnswer = trackingManager.pageStates[i].learnerAnswers;
-                    correctAnswer = trackingManager.pageStates[i].correctAnswers;
-                    break;
-                case "multiplechoice":
-                    learnerAnswer = trackingManager.pageStates[i].learnerAnswers[0] != undefined ? trackingManager.pageStates[i].learnerAnswers[0] : "";
-                    for (var j = 1; j < trackingManager.pageStates[i].learnerAnswers.length; j++) {
-                        learnerAnswer += "\n" + trackingManager.pageStates[i].learnerAnswers[j];
+                            learnerAnswer = trackingManager.pageStates[i].interactions[x].learnerAnswers;
+                            correctAnswer = "-";  // Not applicable
+                            //TODO: We don't have a good example of an interactivity where the numeric type has a correctAnswer. Currently implemented for the survey page.
+                            break;
+                        case "fill-in":
+                            learnerAnswer = trackingManager.pageStates[i].interactions[x].learnerAnswers;
+                            correctAnswer = trackingManager.pageStates[i].interactions[x].correctAnswers;
+                            break;
                     }
-                    correctAnswer = "";
-                    for (var j = 0; j < trackingManager.pageStates[i].correctAnswers.length; j++) {
-                        if (correctAnswer.length > 0)
-                            correctAnswer += "\n";
-                        correctAnswer += trackingManager.pageStates[i].correctAnswers[j];
+                    if (trackingManager.pageStates[i].interactions[x].ia_type != "match" && trackingManager.pageStates[i].interactions[x].result != undefined) {
+                        subinteraction.question = trackingManager.pageStates[i].interactions[x].ia_name;
+                        subinteraction.correct = trackingManager.pageStates[i].interactions[x].result.success;
+                        subinteraction.learnerAnswer = learnerAnswer;
+                        subinteraction.correctAnswer = correctAnswer;
+                        results.interactions[i].subinteractions.push(subinteraction);
                     }
-                    break;
-                case "numeric":
+                }
 
-                    learnerAnswer = trackingManager.pageStates[i].learnerAnswers;
-                    correctAnswer = "-";  // Not applicable
-                    //TODO: We don't have a good example of an interactivity where the numeric type has a correctAnswer. Currently implemented for the survey page.
-                    break;
-                case "fill-in":
-                    learnerAnswer = trackingManager.pageStates[i].learnerAnswers;
-                    correctAnswer = trackingManager.pageStates[i].correctAnswers;
-                    break;
-            }
-            if (trackingManager.pageStates[i].ia_type != "match" && trackingManager.pageStates[i].result != undefined) {
-                subinteraction.question = trackingManager.pageStates[i].ia_name;
-                subinteraction.correct = trackingManager.pageStates[i].result.success;
-                subinteraction.learnerAnswer = learnerAnswer;
-                subinteraction.correctAnswer = correctAnswer;
-                results.interactions[nrofquestions - 1].subinteractions.push(subinteraction);
             }
         }
     }
@@ -462,4 +467,3 @@ function XTResults(fullcompletion) {
 
     return results;
 }
-

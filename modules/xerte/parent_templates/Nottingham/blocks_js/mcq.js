@@ -1,6 +1,7 @@
 var mcq = new function() {
     // function called every time the page is viewed after it has initially loaded
     this.pageChanged = function() {
+        debugger
         this.optionElements = $("#pageContents").data("optionElements");
 
         if ($(x_currentPageXML).children().length > 0) {
@@ -14,9 +15,9 @@ var mcq = new function() {
     }
 
     // function called every time the size of the LO is changed
-    this.sizeChanged = function() {
+    this.sizeChanged = function(blockid) {
         if (x_browserInfo.mobile == false) {
-            var $panel = $("#pageContents .panel");
+            var $panel = jGetElement(blockid,"#pageContents .panel");
             $panel.height($x_pageHolder.height() - parseInt($x_pageDiv.css("padding-top")) * 2 - parseInt($panel.css("padding-top")) * 2 - 5);
         }
 
@@ -31,7 +32,7 @@ var mcq = new function() {
         }
     }
 
-    this.startQ = function() {
+    this.startQ = function(blockid) {
         var correctOptions = [],
             correctAnswer = [],
             correctFeedback = [],
@@ -83,7 +84,8 @@ var mcq = new function() {
         {
             label = x_GetTrackingTextFromHTML(x_currentPageXML.getAttribute("prompt"), label);
         }
-        XTEnterInteraction(x_currentPage, 0, 'multiplechoice', label, correctOptions, correctAnswer, correctFeedback, x_currentPageXML.getAttribute("grouping"));
+        var blocknr = parseFloat(blockid.split("block").pop());
+        XTEnterInteraction(x_currentPage, blocknr-1, 'multiplechoice', label, correctOptions, correctAnswer, correctFeedback, x_currentPageXML.getAttribute("grouping"));
     }
 
     this.leavePage = function() {
@@ -158,6 +160,7 @@ var mcq = new function() {
                     answer: answerTxt,
                     result: currCorrect
                 });
+                debugger
                 l_answers.push(answerTxt);
                 l_feedbacks.push(x_GetTrackingTextFromHTML(selectedOption.feedback, ""));
             }
@@ -245,8 +248,9 @@ var mcq = new function() {
             success: correct,
             score: correct ? 100.0 : 0.0
         };
+        var blocknr = parseFloat(blockid.split("block").pop());
         debugger
-        XTExitInteraction(x_currentPage, 0, result, l_options, l_answers, l_feedbacks, x_currentPageXML.getAttribute("trackinglabel"));
+        XTExitInteraction(x_currentPage, blocknr-1, result, l_options, l_answers, l_feedbacks, x_currentPageXML.getAttribute("trackinglabel"));
         XTSetPageScore(x_currentPage, (correct ? 100.0 : 0.0), x_currentPageXML.getAttribute("trackinglabel"));
         if (XTGetMode() == "normal")
         {
@@ -265,9 +269,11 @@ var mcq = new function() {
         return $("#" + blockid + ' ' + element)
     }
 
-    this.init = function(test, blockid) {
+    this.init = function(pageXML, blockid) {
+        debugger
+        var pages = [pageXML]
 
-        x_currentPageXML = test;
+        x_currentPageXML = pageXML;
         // correct attribute on option also not used as it doesn't mark correct/incorrect - only gives feedback for each answer
         var panelWidth = x_currentPageXML.getAttribute("panelWidth"),
             $splitScreen = jGetElement(blockid, "#pageContents .splitScreen"),
@@ -413,12 +419,12 @@ var mcq = new function() {
                     mcq.checked = true;
                 })
 
-            this.startQ();
+            this.startQ(blockid);
 
             jGetElement(blockid, "#pageContents").data("optionElements", this.optionElements);
         }
 
-        this.sizeChanged();
+        this.sizeChanged(blockid);
         x_pageLoaded();
     }
 }

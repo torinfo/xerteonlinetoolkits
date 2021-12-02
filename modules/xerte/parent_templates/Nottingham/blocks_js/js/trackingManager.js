@@ -36,6 +36,7 @@ function TrackingManager(){
     this.setPageScore = setPageScore;
     this.enterInteraction = enterInteraction;
     this.exitInteraction = exitInteraction;
+    this.exitPage = exitPage;
     this.findPage = findPage;
     this.findInteraction = findInteraction;
     this.findAllInteractions = findAllInteractions;
@@ -287,26 +288,27 @@ function TrackingManager(){
             }
             sit.exit();
         }
-        if (ia_nr < 0) {
+    }
 
-            let temp = false;
-            let i = 0;
-            for (i = 0; i < this.toCompletePages.length; i++) {
-                var currentPageNr = this.toCompletePages[i];
-                if (currentPageNr === page_nr) {
-                    temp = true;
-                    break;
-                }
+    function exitPage(page_nr){
+        debugger
+        let temp = false;
+        let i = 0;
+        for (i = 0; i < this.toCompletePages.length; i++) {
+            var currentPageNr = this.toCompletePages[i];
+            if (currentPageNr === page_nr) {
+                temp = true;
+                break;
             }
-            if (temp) {
-                  
-                if (!this.completedPages[i]) {
-                    var sit = this.findInteraction(page_nr, -1);
-                    if (sit != null) {
-                        // Skip results page completely
-                        if (sit.ia_type !== "result") {
-                            this.completedPages[i] = this.pageCompleted(sit);
-                        }
+        }
+        if (temp) {
+
+            if (!this.completedPages[i]) {
+                var sit = this.findPage(page_nr, -1);
+                if (sit != null) {
+                    // Skip results page completely
+                    if (sit.ia_type !== "result") {
+                        this.completedPages[i] = this.pageCompleted(sit);
                     }
                 }
             }
