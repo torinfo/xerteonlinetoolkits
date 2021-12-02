@@ -281,7 +281,6 @@ function TrackingManager(){
 
     function exitInteraction(page_nr, ia_nr, result, learneroptions, learneranswer, feedback)
     {
-        debugger
         var sit = this.findInteraction(page_nr, ia_nr);
         if (sit != null) {
             if (ia_nr !== -1) {
@@ -382,8 +381,6 @@ function TrackingManager(){
 
     function findInteraction(page_nr, ia_nr)
     {
-        debugger
-
         var page = this.findPage(page_nr)
         if (page == null){
             return null;

@@ -22,7 +22,6 @@ function pageState(id, page_nr, ia_type, ia_name){
 
 
     function exit(){
-        debugger
         for(let i = 0; i < this.interactions.length; i++){
             if(this.interactions[i].duration > this.duration){
                 this.duration = this.interactions[i].duration;

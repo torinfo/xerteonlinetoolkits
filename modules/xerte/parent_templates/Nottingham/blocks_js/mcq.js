@@ -1,7 +1,6 @@
 var mcq = new function() {
     // function called every time the page is viewed after it has initially loaded
     this.pageChanged = function() {
-        debugger
         this.optionElements = $("#pageContents").data("optionElements");
 
         if ($(x_currentPageXML).children().length > 0) {
@@ -164,7 +163,6 @@ var mcq = new function() {
                     answer: answerTxt,
                     result: currCorrect
                 });
-                debugger
                 l_answers.push(answerTxt);
                 l_feedbacks.push(x_GetTrackingTextFromHTML(selectedOption.feedback, ""));
             }
@@ -253,7 +251,6 @@ var mcq = new function() {
             score: correct ? 100.0 : 0.0
         };
         var blocknr = parseFloat(blockid.split("block").pop());
-        debugger
         XTExitInteraction(x_currentPage, blocknr-1, result, l_options, l_answers, l_feedbacks, currentPageXML.getAttribute("trackinglabel"));
         XTSetPageScore(x_currentPage, (correct ? 100.0 : 0.0), currentPageXML.getAttribute("trackinglabel"));
         if (XTGetMode() == "normal")

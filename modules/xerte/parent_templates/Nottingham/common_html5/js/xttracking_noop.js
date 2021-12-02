@@ -220,7 +220,6 @@ function XTSetInteractionPageXML(page_nr, ia_nr, pageXML){
 }
 
 function XTGetPageXML(page_nr, ia_nr){
-    debugger
     return trackingManager.getInteractionPageXML(page_nr, ia_nr);
 }
 
@@ -312,7 +311,6 @@ function XTTerminate()
 }
 
 function XTResults(fullcompletion) {
-    debugger
     var completion = 0;
     var nrcompleted = 0;
     var nrvisited = 0;
@@ -386,7 +384,6 @@ function XTResults(fullcompletion) {
             totalWeight += trackingManager.pageStates[i].weighting;
 
             if(results.mode == "full-results"){
-                debugger
                 for (var x = 0; x < trackingManager.pageStates[i].interactions.length; x++) {
                     var subinteraction = {};
 
