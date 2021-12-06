@@ -300,6 +300,13 @@ function TrackingManager(){
         var page = this.findPage(page_nr);
         var tempscore = 0;
         for(i=0;i<page.interactions.length;i++){
+            if(page.interactions[i].result === undefined){
+                var result = {
+                    success: false,
+                    score: 0.0
+                };
+                page.interactions[i].result = result;
+            }
             tempscore+= page.interactions[i].result.score;
         }
 
