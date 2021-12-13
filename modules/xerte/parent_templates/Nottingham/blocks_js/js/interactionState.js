@@ -1,8 +1,8 @@
-function InteractionState(id, page_nr, ia_nr, ia_type, ia_name){
-
+function InteractionState(id, page_nr, ia_nr, ia_type, ia_name, ia_sub_nr){
     this.id = id;
     this.page_nr = page_nr;
     this.ia_nr = ia_nr;
+    this.ia_sub_nr = ia_sub_nr;
     this.ia_type = ia_type;
     this.ia_name = ia_name;
     this.start = new Date();

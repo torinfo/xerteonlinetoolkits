@@ -205,23 +205,23 @@ function XTVideo(page_nr, name, block_name, verb, videotrackingManager, grouping
     return;
 }
 
-function XTEnterInteraction(page_nr, ia_nr, ia_type, ia_name, correctoptions, correctanswer, feedback, grouping)
+function XTEnterInteraction(page_nr, ia_nr, ia_type, ia_name, correctoptions, correctanswer, feedback, grouping, ia_sub_nr = 0)
 {
-	trackingManager.enterInteraction(page_nr, ia_nr, ia_type, ia_name, correctoptions, correctanswer, feedback);
+	trackingManager.enterInteraction(page_nr, ia_nr, ia_type, ia_name, correctoptions, correctanswer, feedback, ia_sub_nr);
 }
 
-function XTExitInteraction(page_nr, ia_nr, result, learneroptions, learneranswer, feedback)
+function XTExitInteraction(page_nr, ia_nr, result, learneroptions, learneranswer, feedback, ia_sub_nr = 0)
 {
-	trackingManager.exitInteraction(page_nr, ia_nr, result, learneroptions, learneranswer, feedback);
+	trackingManager.exitInteraction(page_nr, ia_nr, result, learneroptions, learneranswer, feedback, ia_sub_nr);
 }
 
-function XTSetInteractionPageXML(page_nr, ia_nr, pageXML){
-    trackingManager.setInteractionPageXML(page_nr, ia_nr, pageXML);
+function XTSetInteractionPageXML(page_nr, ia_nr, pageXML, ia_sub_nr = 0){
+    trackingManager.setInteractionPageXML(page_nr, ia_nr, pageXML, ia_sub_nr);
 }
 
-function XTGetPageXML(page_nr, ia_nr){
+function XTGetPageXML(page_nr, ia_nr, ia_sub_nr = 0){
 
-    return trackingManager.getInteractionPageXML(page_nr, ia_nr);
+    return trackingManager.getInteractionPageXML(page_nr, ia_nr, ia_sub_nr);
 }
 
 function XTGetInteractionScore(page_nr, ia_nr, ia_type, ia_name, full_id, callback, q)

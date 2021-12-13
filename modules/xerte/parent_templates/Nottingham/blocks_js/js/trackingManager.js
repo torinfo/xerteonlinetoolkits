@@ -267,22 +267,22 @@ function TrackingManager(){
         return true;
     }
 
-    function enterInteraction(page_nr, ia_nr, ia_type, ia_name, correctoptions, correctanswer, feedback)
+    function enterInteraction(page_nr, ia_nr, ia_type, ia_name, correctoptions, correctanswer, feedback, ia_sub_nr = 0)
     {
+        debugger
         var tempid = makeId(page_nr, ia_nr, ia_type, ia_name)
 
-        interaction = new InteractionState(tempid, page_nr, ia_nr, ia_type, ia_name);
+        interaction = new InteractionState(tempid, page_nr, ia_nr, ia_type, ia_name, ia_sub_nr);
         this.verifyEnterInteractionParameters(ia_type, ia_name, correctoptions, correctanswer, feedback);
         interaction.enterInteraction(correctanswer, correctoptions);
-        //this.pageStates.push(interaction);
         var page = this.findPage(page_nr)
         page.interactions.push(interaction)
     }
 
-    function exitInteraction(page_nr, ia_nr, result, learneroptions, learneranswer, feedback)
+    function exitInteraction(page_nr, ia_nr, result, learneroptions, learneranswer, feedback, ia_sub_nr = 0)
     {
         debugger
-        var sit = this.findInteraction(page_nr, ia_nr);
+        var sit = this.findInteraction(page_nr, ia_nr, ia_sub_nr);
         if (sit != null) {
             if (ia_nr !== -1) {
                 this.verifyExitInteractionParameters(sit, result, learneroptions, learneranswer, feedback);
@@ -292,11 +292,10 @@ function TrackingManager(){
         }
     }
 
-    function exitPage(page_nr){
+    function exitPage(page_nr, ia_sub_nr = 0){
         let temp = false;
         let i = 0;
 
-        debugger
         var page = this.findPage(page_nr);
         var tempscore = 0;
         for(i=0;i<page.interactions.length;i++){
@@ -366,37 +365,24 @@ function TrackingManager(){
         }
     }
 
-    function setInteractionPageXML(page_nr, ia_nr, x_currentPage){
-        var interactionState = this.findInteraction(page_nr, ia_nr);
+    function setInteractionPageXML(page_nr, ia_nr, x_currentPage, ia_sub_nr = 0){
+        var interactionState = this.findInteraction(page_nr, ia_nr, ia_sub_nr);
         if(interactionState == null){
             return;
         }
         interactionState.setPageXML(x_currentPage);
     }
 
-    function getInteractionPageXML(page_nr, ia_nr){
-        var interactionState = this.findInteraction(page_nr, ia_nr);
+    function getInteractionPageXML(page_nr, ia_nr, ia_sub_nr = 0){
+        var interactionState = this.findInteraction(page_nr, ia_nr, ia_sub_nr);
         if(interactionState == null){
             return;
         }
         return interactionState.pageXML;
     }
 
-    function find(id)
-    {
-        var i=0;
-        for (i=0; i<this.pageStates.length; i++)
-        {
-            if (this.pageStates[i].id === id)
-                return this.pageStates[i];
-        }
-
-        return null;
-    }
-
     function findPage(page_nr)
     {
-          
         for (let i=0; i<this.pageStates.length; i++)
         {
             if (this.pageStates[i].page_nr === page_nr)
@@ -405,10 +391,8 @@ function TrackingManager(){
         return null;
     }
 
-    function findInteraction(page_nr, ia_nr)
+    function findInteraction(page_nr, ia_nr, ia_sub_nr = 0)
     {
-
-
         var page = this.findPage(page_nr)
         if (page == null){
             return null;
@@ -416,7 +400,7 @@ function TrackingManager(){
         var i=0;
         for (i=0; i<page.interactions.length; i++)
         {
-            if (page.interactions[i].page_nr === page_nr && page.interactions[i].ia_nr === ia_nr)
+            if (page.interactions[i].page_nr === page_nr && page.interactions[i].ia_nr === ia_nr && page.interactions[i].ia_sub_nr === ia_sub_nr)
                 return page.interactions[i];
         }
         return null;

@@ -93,7 +93,6 @@ var quiz = new function() {
         if (x_currentPageXML.getAttribute("numQuestions") != "All" && x_currentPageXML.getAttribute("numQuestions") != undefined && Number(x_currentPageXML.getAttribute("numQuestions")) < numQs) {
             numQs = Number(x_currentPageXML.getAttribute("numQuestions"));
         }
-
         if (x_currentPageXML.getAttribute("order") == "random") {
             var qNums = [];
             for (var i=0; i<$(x_currentPageXML).children().length; i++) {
@@ -124,7 +123,7 @@ var quiz = new function() {
         x_pageContentsUpdated();
     };
 
-    this.loadQ = function(blockid) {
+    this.loadQ = function(blockid, next = false) {
         // Reset tracking flag
         this.tracked = false;
 
@@ -132,8 +131,13 @@ var quiz = new function() {
             jGetElement(blockid, "#optionHolder").html('<span class="alert">' + x_getLangInfo(x_languageData.find("errorQuestions")[0], "noQ", "No questions have been added") + '</span>');
 
         } else {
+            var $thisQ = null;
+            if(next){
+                var blocknr = parseFloat(blockid.split("block").pop()) - 1;
+                x_currentPageXML = XTGetPageXML(x_currentPage, blocknr);
+            }
 
-            var $thisQ = $(x_currentPageXML).children()[this.questions[this.currentQ]];
+            $thisQ = $(x_currentPageXML).children()[this.questions[this.currentQ]];
 
             jGetElement(blockid, "#qNo").html(this.qNoTxt.replace("{i}", this.currentQ + 1).replace("{n}", this.questions.length));
 
@@ -278,10 +282,9 @@ var quiz = new function() {
                     name = $thisQ.getAttribute("name");
                 }
 
-                var blocknr = parseFloat(blockid.split("block").pop());
-                debugger
-                XTEnterInteraction(x_currentPage, this.questions[this.currentQ], 'multiplechoice', name, correctOptions, correctAnswer, correctFeedback, x_currentPageXML.getAttribute("grouping"));
-                XTSetInteractionPageXML(x_currentPage, this.questions[this.currentQ], x_currentPageXML);
+                var blocknr = parseFloat(blockid.split("block").pop()) - 1;
+                XTEnterInteraction(x_currentPage, blocknr , 'multiplechoice', name, correctOptions, correctAnswer, correctFeedback, x_currentPageXML.getAttribute("grouping"),  this.questions[this.currentQ]);
+                XTSetInteractionPageXML(x_currentPage, blocknr, x_currentPageXML, this.questions[this.currentQ]);
                 quiz.checked = false;
             }
         }
@@ -295,7 +298,7 @@ var quiz = new function() {
     {
         debugger
         var blocknr = parseFloat(blockid.split("block").pop()) - 1;
-        let currentPageXML = XTGetPageXML(x_currentPage, blocknr);
+        let currentPageXML = XTGetPageXML(x_currentPage, blocknr, this.questions[this.currentQ]);
         this.tracked = true;
 
         var currentQuestion = currentPageXML.children[quiz.questions[quiz.currentQ]];
@@ -456,7 +459,7 @@ var quiz = new function() {
             score: correct ? 100.0 : 0.0
         };
 
-        XTExitInteraction(x_currentPage, quiz.questions[quiz.currentQ], result, l_options, l_answer, l_feedback, x_currentPageXML.getAttribute("trackinglabel"));
+        XTExitInteraction(x_currentPage, quiz.questions[quiz.currentQ], result, l_options, l_answer, l_feedback, x_currentPageXML.getAttribute("trackinglabel"),  this.questions[this.currentQ]);
         quiz.myProgress.splice(quiz.currentQ, 1, correct);
 
         generalFeedback += rightWrongTxt;
@@ -518,9 +521,11 @@ var quiz = new function() {
 
     this.showResults = function(blockid) {
         // last question answered - show results
+        var blocknr = parseFloat(blockid.split("block").pop()) - 1;
+        let currentPageXML = XTGetPageXML(x_currentPage, blocknr, this.questions[this.currentQ]);
         var $pageContents = jGetElement(blockid, "#pageContents");
         jGetElement(blockid, "#qNo").html($pageContents.data("onCompletionText"));
-        var fbTxt = "<p>" + x_addLineBreaks(x_currentPageXML.getAttribute("feedback")) + "</p>";
+        var fbTxt = "<p>" + x_addLineBreaks(currentPageXML.getAttribute("feedback")) + "</p>";
 
         var myScore = 0;
         for (var i=0; i<quiz.myProgress.length; i++) {
@@ -721,7 +726,7 @@ var quiz = new function() {
                     quiz.showResults(blockid);
                     quiz.resultsShown = true;
                 } else {
-                    quiz.loadQ(blockid);
+                    quiz.loadQ(blockid, true);
                 }
 
                 x_pageContentsUpdated();
