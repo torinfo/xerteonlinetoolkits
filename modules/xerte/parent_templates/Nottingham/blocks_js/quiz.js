@@ -9,69 +9,69 @@ var quiz = new function() {
         questionFeedbackText;
 
     // function called every time the page is viewed after it has initially loaded
-    this.pageChanged = function() {
-        $("#feedbackGroup").find('.feedbackBlock').html("");
+    this.pageChanged = function(blockid) {
+        jGetElement(blockid, "#feedbackGroup").find('.feedbackBlock').html("");
         if ($(x_currentPageXML).children().length > 0) {
-            this.startQs();
+            this.startQs(blockid);
         }
         if (x_currentPageXML.getAttribute("panelWidth") != "Full" && x_currentPageXML.getAttribute("video") != undefined && x_currentPageXML.getAttribute("video") != "") {
-            this.loadVideo();
+            this.loadVideo(blockid);
         }
     };
 
     // function called every time the size of the LO is changed
-    this.sizeChanged = function() {
-        var $panel = $("#pageContents .qPanel");
+    this.sizeChanged = function(blockid) {
+        var $panel = jGetElement(blockid, "#pageContents .qPanel");
         if (x_browserInfo.mobile == false) {
             $panel.height($x_pageHolder.height() - parseInt($x_pageDiv.css("padding-top")) * 2 - parseInt($panel.css("padding-top")) * 2 - 5);
         }
         if (x_currentPageXML.getAttribute("panelWidth") != "Full" && x_currentPageXML.getAttribute("video") != undefined && x_currentPageXML.getAttribute("video") != "") {
-            this.loadVideo();
+            this.loadVideo(blockid);
         }
 
         var resized = false;
-        if ($("#questionAudio").children().length > 0) {
+        if (jGetElement(blockid, "#questionAudio").children().length > 0) {
             if (resized == false) {
                 var audioBarW = 0;
-                $("#questionAudio").find(".mejs-inner").find(".mejs-controls").children().each(function() {
+                jGetElement(blockid, "#questionAudio").find(".mejs-inner").find(".mejs-controls").children().each(function() {
                     audioBarW += $(this).outerWidth();
                 });
-                if (audioBarW < $("#questionAudio").width() - 5 || audioBarW > $("#questionAudio").width() + 5) {
+                if (audioBarW < jGetElement(blockid, "#questionAudio").width() - 5 || audioBarW > jGetElement(blockid, "#questionAudio").width() + 5) {
                     resized = true;
                     $x_window.resize();
                 }
             }
         }
-        if ($("#pageContents .audioHolder").length > 0) {
+        if (jGetElement(blockid, "#pageContents .audioHolder").length > 0) {
             if (resized == false) {
                 var audioBarW = 0;
-                $("#pageContents .audioHolder:eq(0) .mejs-inner .mejs-controls").children().each(function() {
+                jGetElement(blockid, "#pageContents .audioHolder:eq(0) .mejs-inner .mejs-controls").children().each(function() {
                     audioBarW += $(this).outerWidth();
                 });
-                if (audioBarW - $("#pageContents .audioHolder").parents("#mainPanel").width() < -2 || audioBarW - $("#pageContents .audioHolder").parents("#mainPanel").width() > 2) {
+                if (audioBarW - jGetElement(blockid, "#pageContents .audioHolder").parents("#mainPanel").width() < -2 || audioBarW - jGetElement(blockid, "#pageContents .audioHolder").parents("#mainPanel").width() > 2) {
                     resized = true;
                     $x_window.resize();
                 }
             }
         }
 
-        $("#qTxt").width($panel.width());
+        jGetElement(blockid, "#qTxt").width($panel.width());
     };
 
 
-    this.leavePage = function() {
+    this.leavePage = function(blockid) {
         if ($(x_currentPageXML).children().length > 0) {
             if (!this.tracked) {
-                this.showFeedBackandTrackResults();
+                this.showFeedBackandTrackResults(blockid);
             }
             if (!this.resultsShown) {
-                this.showResults();
+                this.showResults(blockid);
             }
         }
     }
 
 
-    this.startQs = function() {
+    this.startQs = function(blockid) {
         // if language attributes aren't in xml will have to use english fall back
         this.qNoTxt = x_currentPageXML.getAttribute("quesCount");
         if (this.qNoTxt == undefined) {
@@ -83,8 +83,8 @@ var quiz = new function() {
             this.showfeedback = x_currentPageXML.getAttribute("showfeedback") == "true";
         }
 
-        $("#optionHolder").show();
-        $("#checkBtn, #nextBtn, #restartBtn").button("disable");
+        jGetElement(blockid, "#optionHolder").show();
+        jGetElement(blockid, "#checkBtn, #nextBtn, #restartBtn").button("disable");
 
         this.currentQ = 0;
         this.questions = []; // array of questions to use (index)
@@ -119,30 +119,30 @@ var quiz = new function() {
         }
         XTSetPageType(x_currentPage, 'numeric', numQs, this.weighting);
 
-        this.loadQ();
+        this.loadQ(blockid);
 
         x_pageContentsUpdated();
     };
 
-    this.loadQ = function() {
+    this.loadQ = function(blockid) {
         // Reset tracking flag
         this.tracked = false;
 
         if ($(x_currentPageXML).children().length == 0) {
-            $("#optionHolder").html('<span class="alert">' + x_getLangInfo(x_languageData.find("errorQuestions")[0], "noQ", "No questions have been added") + '</span>');
+            jGetElement(blockid, "#optionHolder").html('<span class="alert">' + x_getLangInfo(x_languageData.find("errorQuestions")[0], "noQ", "No questions have been added") + '</span>');
 
         } else {
 
             var $thisQ = $(x_currentPageXML).children()[this.questions[this.currentQ]];
 
-            $("#qNo").html(this.qNoTxt.replace("{i}", this.currentQ + 1).replace("{n}", this.questions.length));
+            jGetElement(blockid, "#qNo").html(this.qNoTxt.replace("{i}", this.currentQ + 1).replace("{n}", this.questions.length));
 
             var infoString = $thisQ.getAttribute("prompt");
 
             if ($thisQ.getAttribute("sound") != undefined && $thisQ.getAttribute("sound") != "") {
-                quiz.loadAudio($thisQ.getAttribute("sound"));
+                quiz.loadAudio($thisQ.getAttribute("sound"), blockid);
             } else {
-                $("#questionAudio").empty().hide();
+                jGetElement(blockid, "#questionAudio").empty().hide();
             }
 
             var url = $thisQ.getAttribute("image");
@@ -155,27 +155,27 @@ var quiz = new function() {
                 newString += ' />';
                 infoString = newString + infoString;
             }
-            $("#qTxt").html(x_addLineBreaks(infoString));
+            jGetElement(blockid, "#qTxt").html(x_addLineBreaks(infoString));
 
             //if (x_currentPageXML.getAttribute("disableGlossary") == "true") {
-            //	$("#qTxt").find("a.x_glossary").contents().unwrap();
+            //	jGetElement(blockid, "#qTxt").find("a.x_glossary").contents().unwrap();
             //}
 
-            $("#feedback").html("");
-            $("#generalFeedback").html("");
+            jGetElement(blockid, "#feedback").html("");
+            jGetElement(blockid, "#generalFeedback").html("");
 
             if ($($thisQ).children().length == 0) {
-                $("#optionHolder").html('<span class="alert">' + x_getLangInfo(x_languageData.find("errorQuestions")[0], "noA", "No answer options have been added") + '</span>');
+                jGetElement(blockid, "#optionHolder").html('<span class="alert">' + x_getLangInfo(x_languageData.find("errorQuestions")[0], "noA", "No answer options have been added") + '</span>');
             } else {
-                var $optionHolder = $("#optionHolder");
+                var $optionHolder = jGetElement(blockid, "#optionHolder");
                 if ($thisQ.getAttribute("type") == "Multiple Answer") {
                     $optionHolder.html('<div class="optionGroup"><input type="checkbox" name="option" /><label class="optionTxt"></label></div>');
                 } else {
                     $optionHolder.html('<div class="optionGroup"><input type="radio" name="option" /><label class="optionTxt"></label></div>');
                 }
                 var $optionGroup = $optionHolder.find(".optionGroup"),
-                    $checkBtn = $("#checkBtn"),
-                    $feedback = $("#feedback"),
+                    $checkBtn = jGetElement(blockid, "#checkBtn"),
+                    $feedback = jGetElement(blockid, "#feedback"),
                     correctOptions = [],
                     correctAnswer = [],
                     correctFeedback = [];
@@ -186,7 +186,7 @@ var quiz = new function() {
                     var label;
                     if (this.getAttribute("name") == undefined || this.getAttribute("name")=="")
                     {
-                        label = $("<div>").html(this.getAttribute("text")).text();
+                        label = jGetElement(blockid, "<div>").html(this.getAttribute("text")).text();
                     }
                     else
                     {
@@ -216,6 +216,7 @@ var quiz = new function() {
                 }
 
                 $.each(this.currentAnswers, function(i, thisOption) {
+
                     var $thisOptionGroup, $thisOption, $thisOptionTxt;
                     if (i != 0) {
                         $thisOptionGroup = $optionGroup.clone().appendTo($optionHolder);
@@ -246,14 +247,14 @@ var quiz = new function() {
                         .change(function() {
 
                             $feedback.html("");
-                            $("#feedbackGroup").find('.feedbackBlock').html("");
-                            var $selected = $("#optionHolder input:checked");
+                            jGetElement(blockid, "#feedbackGroup").find('.feedbackBlock').html("");
+                            var $selected = jGetElement(blockid, "#optionHolder input:checked");
                             if ($selected.length > 0) {
                                 $checkBtn.button("enable");
                             } else {
                                 $checkBtn.button("disable");
                             }
-                            $("#nextBtn").button("disable");
+                            jGetElement(blockid, "#nextBtn").button("disable");
                         })
                         .focusin(function() {
                             $thisOptionGroup.addClass("highlight");
@@ -277,20 +278,29 @@ var quiz = new function() {
                     name = $thisQ.getAttribute("name");
                 }
 
+                var blocknr = parseFloat(blockid.split("block").pop());
+                debugger
                 XTEnterInteraction(x_currentPage, this.questions[this.currentQ], 'multiplechoice', name, correctOptions, correctAnswer, correctFeedback, x_currentPageXML.getAttribute("grouping"));
+                XTSetInteractionPageXML(x_currentPage, this.questions[this.currentQ], x_currentPageXML);
                 quiz.checked = false;
             }
         }
     }
 
-    this.showFeedBackandTrackResults = function()
-    {
+    let jGetElement = function (blockid, element) {
+        return $("#" + blockid + ' ' + element)
+    }
 
+    this.showFeedBackandTrackResults = function(blockid)
+    {
+        debugger
+        var blocknr = parseFloat(blockid.split("block").pop()) - 1;
+        let currentPageXML = XTGetPageXML(x_currentPage, blocknr);
         this.tracked = true;
 
-        var currentQuestion = $(x_currentPageXML).children()[quiz.questions[quiz.currentQ]];
+        var currentQuestion = currentPageXML.children[quiz.questions[quiz.currentQ]];
 
-        var selected = $("#optionHolder input:checked"),
+        var selected = jGetElement(blockid, "#optionHolder input:checked"),
             optionFeedback = "",
             correct = true,
             l_options = [],
@@ -300,9 +310,9 @@ var quiz = new function() {
         var generalFeedback = "";
         var correctCounter = 0;
 
-        var thisQ = $(x_currentPageXML).children()[this.questions[this.currentQ]];
+        var thisQ = currentPageXML.children[this.questions[this.currentQ]];
         questionFeedbackText = thisQ.getAttribute('generalFeedback')
-        var currentQuestionsChildren = $($(x_currentPageXML).children()[this.questions[this.currentQ]]).children();
+        var currentQuestionsChildren = $(currentPageXML.children[this.questions[this.currentQ]]).children();
         for(i = 0; i < currentQuestionsChildren.length; i++)
         {
 
@@ -341,10 +351,10 @@ var quiz = new function() {
         }
         generalFeedback += optionFeedback;
         var rightWrongTxt = "";
-        if (x_currentPageXML.getAttribute("judge") != "false") {
+        if (currentPageXML.getAttribute("judge") != "false") {
             // if all selected are correct - check that none of the unselected options should have been
             if (correct != false && currentQuestion.getAttribute("type") == "Multiple Answer") {
-                var notSelected = $("#optionHolder input:not(:checked)");
+                var notSelected = jGetElement(blockid, "#optionHolder input:not(:checked)");
                 for (var i=0; i<notSelected.length; i++) {
                     var notSelectedOption = quiz.currentAnswers[$(notSelected[i]).parent().index()];
                     if (notSelectedOption.correct == "true") {
@@ -355,15 +365,15 @@ var quiz = new function() {
             // add correct feedback depending on if question overall has been answered correctly or not
             if (currentQuestion.getAttribute("type") == "Multiple Answer") {
                 if (correct == true) {
-                    rightWrongTxt = '<p>' + $("#pageContents").data("multiRight") + '</p>';
+                    rightWrongTxt = '<p>' + jGetElement(blockid, "#pageContents").data("multiRight") + '</p>';
                 } else {
-                    rightWrongTxt = '<p>' + $("#pageContents").data("multiWrong") + '</p>';
+                    rightWrongTxt = '<p>' + jGetElement(blockid, "#pageContents").data("multiWrong") + '</p>';
                 }
             } else {
                 if (correct == true) {
-                    rightWrongTxt = '<p>' + $("#pageContents").data("singleRight") + '</p>';
+                    rightWrongTxt = '<p>' + jGetElement(blockid, "#pageContents").data("singleRight") + '</p>';
                 } else {
-                    rightWrongTxt = '<p>' + $("#pageContents").data("singleWrong") + '</p>';
+                    rightWrongTxt = '<p>' + jGetElement(blockid, "#pageContents").data("singleWrong") + '</p>';
                 }
             }
         }
@@ -392,11 +402,11 @@ var quiz = new function() {
                         .show();
                 }
 
-                var feedbackLabel = x_currentPageXML.getAttribute("feedbackLabel");
+                var feedbackLabel = currentPageXML.getAttribute("feedbackLabel");
                 if (feedbackLabel == undefined) {
                     feedbackLabel = "Feedback";
                 }
-                $("#feedbackHeader").html(feedbackLabel != '' ? "<h3>" + feedbackLabel + "</h3>" : '');
+                jGetElement(blockid, "#feedbackHeader").html(feedbackLabel != '' ? "<h3>" + feedbackLabel + "</h3>" : '');
             }else{
 
                 for (var p=0; p<feedbackDiv.length; p++) {
@@ -405,7 +415,7 @@ var quiz = new function() {
                         thisFeedback = thisQ.getAttribute('feedback');
                     } else if (feedbackOrder[p] == 'A') {
 
-                        var selectedInput = $("#optionHolder input:checked")
+                        var selectedInput = jGetElement(blockid, "#optionHolder input:checked")
                         var multipleFeedback = []
                         var feedback = "";
 
@@ -429,11 +439,11 @@ var quiz = new function() {
                         .html(thisFeedback)
                         .show();
                 }
-                var feedbackLabel = x_currentPageXML.getAttribute("feedbackLabel");
+                var feedbackLabel = currentPageXML.getAttribute("feedbackLabel");
                 if (feedbackLabel == undefined) {
                     feedbackLabel = "Feedback";
                 }
-                $("#feedbackHeader").html(feedbackLabel != '' ? "<h3>" + feedbackLabel + "</h3>" : '');
+                jGetElement(blockid, "#feedbackHeader").html(feedbackLabel != '' ? "<h3>" + feedbackLabel + "</h3>" : '');
             }
 
         }
@@ -450,19 +460,19 @@ var quiz = new function() {
         quiz.myProgress.splice(quiz.currentQ, 1, correct);
 
         generalFeedback += rightWrongTxt;
-        var answerFeedback = "<h3>" + $("#pageContents").data("feedbackLabel") + "</h3>" + generalFeedback;
+        var answerFeedback = "<h3>" + jGetElement(blockid, "#pageContents").data("feedbackLabel") + "</h3>" + generalFeedback;
         if (XTGetMode() == "normal")
         {
             // Disable all options
             var i=0;
             for (i=0; i<quiz.currNrOptions; i++)
             {
-                $("#option"+i).attr("disabled", "disabled");
+                jGetElement(blockid, "#option"+i).attr("disabled", "disabled");
             }
         }
         if (quiz.showfeedback)
         {
-            $("#feedback")
+            jGetElement(blockid, "#feedback")
                 .html(answerFeedback)
                 .find(".audioHolder").each(function() {
                 $(this).mediaPlayer({
@@ -474,7 +484,7 @@ var quiz = new function() {
 
             if(questionFeedbackText !== null){
                 if(questionFeedbackText !== ""){
-                    var questionFeedback = "<h3>" + $("#pageContents").data("generalFeedbackLabel") + "</h3>" + questionFeedbackText
+                    var questionFeedback = "<h3>" + jGetElement(blockid, "#pageContents").data("generalFeedbackLabel") + "</h3>" + questionFeedbackText
                     $('#generalFeedback').html(questionFeedback)
                 }
 
@@ -482,35 +492,34 @@ var quiz = new function() {
 
 
             //if (x_currentPageXML.getAttribute("disableGlossary") == "true") {
-            //    $("#feedback").find("a.x_glossary").contents().unwrap();
+            //    jGetElement(blockid, "#feedback").find("a.x_glossary").contents().unwrap();
             //}
 
-            $("#nextBtn").button("enable");
-            $("#checkBtn").button("disable");
+            jGetElement(blockid, "#nextBtn").button("enable");
+            jGetElement(blockid, "#checkBtn").button("disable");
 
             $(this).hide().show(); // hack to take care of IEs inconsistent handling of clicks
         }
         else
         {
             // Continue to next question
-
-            $("#checkBtn").button("disable");
+            jGetElement(blockid, "#checkBtn").button("disable");
             quiz.currentQ++;
             if (quiz.currentQ == quiz.questions.length) {
                 // last question answered - show results
                 quiz.showResults();
             } else {
-                quiz.loadQ();
+                quiz.loadQ(blockid);
             }
         }
 
         x_pageContentsUpdated();
     }
 
-    this.showResults = function() {
+    this.showResults = function(blockid) {
         // last question answered - show results
-        var $pageContents = $("#pageContents");
-        $("#qNo").html($pageContents.data("onCompletionText"));
+        var $pageContents = jGetElement(blockid, "#pageContents");
+        jGetElement(blockid, "#qNo").html($pageContents.data("onCompletionText"));
         var fbTxt = "<p>" + x_addLineBreaks(x_currentPageXML.getAttribute("feedback")) + "</p>";
 
         var myScore = 0;
@@ -527,30 +536,30 @@ var quiz = new function() {
             }
         }
 
-        $("#feedbackHeader").html(fbTxt);
-        $("#questionAudio").empty();
+        jGetElement(blockid, "#feedbackHeader").html(fbTxt);
+        jGetElement(blockid, "#questionAudio").empty();
 
         //if (x_currentPageXML.getAttribute("disableGlossary") == "true") {
-        //	$("#feedback").find("a.x_glossary").contents().unwrap();
+        //	jGetElement(blockid, "#feedback").find("a.x_glossary").contents().unwrap();
         //}
 
-        $("#optionHolder").hide();
-        $("#nextBtn, #checkBtn").button("disable");
+        jGetElement(blockid, "#optionHolder").hide();
+        jGetElement(blockid, "#nextBtn, #checkBtn").button("disable");
         if (XTGetMode() != "normal")
         {
-            $("#restartBtn").button("enable");
+            jGetElement(blockid, "#restartBtn").button("enable");
         }
-        $("#qTxt").html("");
+        jGetElement(blockid, "#qTxt").html("");
 
         var scormScore = Math.round((myScore * 100 / quiz.questions.length) * 100)/100;
         XTSetPageScore(x_currentPage, scormScore);
         this.resultsShown = true;
     };
 
-    this.loadVideo = function() {
-        var $video = $("#pageVideo"),
+    this.loadVideo = function(blockid) {
+        var $video = jGetElement(blockid, "#pageVideo"),
             videoDimensions = $video.data("dimensions"),
-            $textHolder = $("#textHolder"),
+            $textHolder = jGetElement(blockid, "#textHolder"),
             maxW = $textHolder.width() - parseInt($textHolder.find(".panel").css("padding-left")) * 2 - parseInt($textHolder.find(".panel").css("margin-left")) * 2;
 
         if (maxW < videoDimensions[0]) {
@@ -566,14 +575,15 @@ var quiz = new function() {
         });
     }
 
-    this.init = function() {
+    this.init = function(pageXML,blockid) {
+        x_currentPageXML = pageXML;
         var panelWidth = x_currentPageXML.getAttribute("panelWidth"),
-            $splitScreen = $("#pageContents .splitScreen"),
-            $textHolder = $("#textHolder");
+            $splitScreen = jGetElement(blockid, "#pageContents .splitScreen"),
+            $textHolder = jGetElement(blockid, "#textHolder");
 
         this.resultsShown = false;
         if (panelWidth == "Full") {
-            $("#infoHolder .panel").appendTo($("#pageContents"));
+            jGetElement(blockid, "#infoHolder .panel").appendTo(jGetElement(blockid, "#pageContents"));
             $splitScreen.remove();
         } else {
             $textHolder.html(x_addLineBreaks(x_currentPageXML.getAttribute("instructions")));
@@ -596,7 +606,7 @@ var quiz = new function() {
                     .removeClass("left")
                     .addClass("right")
                     .appendTo($splitScreen);
-                $("#infoHolder")
+                jGetElement(blockid, "#infoHolder")
                     .removeClass("right")
                     .addClass("left");
                 if (panelWidth == "Small") {
@@ -611,7 +621,7 @@ var quiz = new function() {
 
         if (panelWidth != "Full" && x_currentPageXML.getAttribute("video") != undefined && x_currentPageXML.getAttribute("video") != "") {
             $textHolder.append('<div id="vidHolder" class="panel inline"><div id="pageVideo"></div></div>');
-            var $pageVideo = $("#pageVideo"),
+            var $pageVideo = jGetElement(blockid, "#pageVideo"),
                 videoDimensions = [320,240]; // default video size
             if (x_currentPageXML.getAttribute("movieSize") != "" && x_currentPageXML.getAttribute("movieSize") != undefined) {
                 var dimensions = x_currentPageXML.getAttribute("movieSize").split(",");
@@ -623,7 +633,7 @@ var quiz = new function() {
                 "src"			:x_currentPageXML.getAttribute("video"),
                 "dimensions"	:videoDimensions
             });
-            quiz.loadVideo();
+            quiz.loadVideo(blockid);
         }
 
         if (panelWidth != "Full" && x_currentPageXML.getAttribute("img") != undefined && x_currentPageXML.getAttribute("img") != "") {
@@ -678,7 +688,7 @@ var quiz = new function() {
             generalFeedbackLabel = "General Feedback";
         }
 
-        $("#pageContents").data({
+        jGetElement(blockid, "#pageContents").data({
             "feedbackLabel"			:feedbackLabel,
             "generalFeedbackLabel"	:generalFeedbackLabel,
             "singleRight"			:singleRight,
@@ -689,50 +699,50 @@ var quiz = new function() {
             "scoreText"				:scoreText
         });
 
-        $("#checkBtn")
+        jGetElement(blockid, "#checkBtn")
             .button({
                 label: submitBtnText
             })
             .click(function() {
-                quiz.showFeedBackandTrackResults();
+                quiz.showFeedBackandTrackResults(blockid);
                 quiz.checked = true;
             });
 
-        $("#nextBtn")
+        jGetElement(blockid, "#nextBtn")
             .button({
                 label: nextBtnText
             })
             .click(function() {
                 $(this).button("disable");
-                $("#feedbackGroup").find('.feedbackBlock').html("");
+                jGetElement(blockid, "#feedbackGroup").find('.feedbackBlock').html("");
                 quiz.currentQ++;
                 if (quiz.currentQ == quiz.questions.length) {
                     // last question answered - show results
-                    quiz.showResults();
+                    quiz.showResults(blockid);
                     quiz.resultsShown = true;
                 } else {
-                    quiz.loadQ();
+                    quiz.loadQ(blockid);
                 }
 
                 x_pageContentsUpdated();
             });
 
-        $("#restartBtn")
+        jGetElement(blockid, "#restartBtn")
             .button({
                 label: restartBtnText
             })
             .click(function() {
-                quiz.startQs();
+                quiz.startQs(blockid);
             });
 
-        this.startQs();
-        this.sizeChanged();
+        this.startQs(blockid);
+        this.sizeChanged(blockid);
         x_pageLoaded();
     }
 
-    this.loadAudio = function(soundFile) {
+    this.loadAudio = function(soundFile, blockid) {
         if (soundFile != undefined && soundFile != "") {
-            $("#questionAudio").mediaPlayer({
+            jGetElement(blockid, "#questionAudio").mediaPlayer({
                 type	:"audio",
                 source	:soundFile,
                 width	:"100%"

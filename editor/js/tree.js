@@ -1243,7 +1243,7 @@ var EDITOR = (function ($, parent) {
 
         //INTERN CODE//
         //Insert interactiveBlocks
-
+        debugger
         var tree = $.jstree.reference("#treeview");
         var currkey = key;
         var subInteractiveBlocks = $('<div>').addClass('interactiveBlocksContainer');
@@ -1330,7 +1330,7 @@ var EDITOR = (function ($, parent) {
 
                     var option = $('<option>')
                         .attr('value', item);
-                    option.append(itemname);
+                    option.append(interactiveBlocks[i].attributes[0].value);
                     combobox.append(option);
                     if (combobox.find('option:selected').index() > 0) {
                         combobox.find(option).eq(0).remove();
