@@ -3,4 +3,6 @@
     </quizBlock>
     <mcqBlock name="MCQ">
     </mcqBlock>
+    <opinionBlock name="Opinion">
+    </opinionBlock>
 </interactiveBlocks>

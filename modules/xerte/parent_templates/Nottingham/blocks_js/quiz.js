@@ -290,10 +290,6 @@ var quiz = new function() {
         }
     }
 
-    let jGetElement = function (blockid, element) {
-        return $("#" + blockid + ' ' + element)
-    }
-
     this.showFeedBackandTrackResults = function(blockid)
     {
 

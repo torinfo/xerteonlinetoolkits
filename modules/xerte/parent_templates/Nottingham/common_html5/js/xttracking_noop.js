@@ -156,8 +156,14 @@ function XTSetPageType(page_nr, page_type, nrinteractions, weighting)
 	trackingManager.setPageType(page_nr, page_type, nrinteractions, weighting);
 }
 
+function XTSetInteractionType(page_nr, ia_nr, page_type, weighting, sub_ia_nr)
+{
+    trackingManager.setInteractionType(page_nr, ia_nr, page_type, weighting, sub_ia_nr);
+}
+
 function XTSetPageScore(page_nr, score)
 {
+    debugger
 	trackingManager.setPageScore(page_nr, score);
 }
 
@@ -329,7 +335,7 @@ function XTResults(fullcompletion) {
             nrvisited++;
         }
     })
-
+    debugger
     if (nrcompleted != 0) {
         if (!fullcompletion) {
             completion = Math.round((nrcompleted / nrvisited) * 100);
@@ -490,4 +496,16 @@ function XTResults(fullcompletion) {
     //});
 
     return results;
+}
+
+function jGetElement(blockid, element) {
+    return $("#" + blockid + ' ' + element)
+}
+
+function XTGetBlockNr(blockid){
+    if(blockid){
+        return parseFloat(blockid.split("block").pop()) - 1
+    } else{
+        return 0;
+    }
 }

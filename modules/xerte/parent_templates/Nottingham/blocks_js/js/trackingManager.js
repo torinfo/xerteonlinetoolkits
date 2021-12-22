@@ -33,6 +33,7 @@ function TrackingManager(){
     this.getMinScore = getMinScore;
     this.getMaxScore = getMaxScore;
     this.setPageType = setPageType;
+    this.setInteractionType = setInteractionType;
     this.setPageScore = setPageScore;
     this.setInteractionPageXML = setInteractionPageXML;
     this.getInteractionPageXML = getInteractionPageXML;
@@ -261,11 +262,18 @@ function TrackingManager(){
         {
             return false;
         }
+        var done = true;
+        for(var i = 0; i < sits.length; i++){
+            var s = sits[i].result.success;
+            if(!s){
+                done = false;
+            }
+        }
         if (sit.ia_type==="page" && sit.duration < this.page_timeout)
         {
             return false;
         }
-        return true;
+        return done;
     }
 
     function enterInteraction(page_nr, ia_nr, ia_type, ia_name, correctoptions, correctanswer, feedback, ia_sub_nr = 0)
@@ -313,7 +321,7 @@ function TrackingManager(){
         tempscore/=page.interactions.length;
 
         page.score = tempscore;
-
+        debugger
         for (i = 0; i < this.toCompletePages.length; i++) {
             var currentPageNr = this.toCompletePages[i];
             if (currentPageNr === page_nr) {
@@ -345,6 +353,23 @@ function TrackingManager(){
 
             sit.nrinteractions = nrinteractions;
             sit.weighting = parseFloat(weighting);
+        }
+    }
+
+    function setInteractionType(page_nr, ia_nr, page_type, weighting, sub_ia_nr)
+    {
+
+        var sit = this.findPage(page_nr);
+        if (sit != null)
+        {
+            sit.ia_type = page_type;
+
+            sit.nrinteractions = sit.nrinteractions + 1;
+        }
+
+        var int = this.findInteraction(page_nr, ia_nr, sub_ia_nr);
+        if(int != null){
+            int.weighting = weighting;
         }
     }
 

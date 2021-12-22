@@ -36,7 +36,8 @@ var mcq = new function() {
         var correctOptions = [],
             correctAnswer = [],
             correctFeedback = [],
-            judge = false; // is there a correct answer for the question?
+            judge = false,
+            blocknr = XTGetBlockNr(blockid); // is there a correct answer for the question?
 
         this.checked = false;
         // Track the quiz page
@@ -45,7 +46,7 @@ var mcq = new function() {
         {
             this.weighting = x_currentPageXML.getAttribute("trackingWeight");
         }
-        XTSetPageType(x_currentPage, 'numeric', 1, this.weighting);
+        XTSetInteractionType(x_currentPage, blocknr, 'numeric', 1, this.weighting);
         for (var i = 0; i < this.optionElements.length; i++) {
             var answerTxt;
             if (this.optionElements[i].label != undefined)
@@ -84,9 +85,8 @@ var mcq = new function() {
         {
             label = x_GetTrackingTextFromHTML(x_currentPageXML.getAttribute("prompt"), label);
         }
-        var blocknr = parseFloat(blockid.split("block").pop());
-        XTEnterInteraction(x_currentPage, blocknr-1, 'multiplechoice', label, correctOptions, correctAnswer, correctFeedback, x_currentPageXML.getAttribute("grouping"));
-        XTSetInteractionPageXML(x_currentPage, blocknr-1, x_currentPageXML);
+        XTEnterInteraction(x_currentPage, blocknr, 'multiplechoice', label, correctOptions, correctAnswer, correctFeedback, x_currentPageXML.getAttribute("grouping"));
+        XTSetInteractionPageXML(x_currentPage, blocknr, x_currentPageXML);
     }
 
     this.leavePage = function() {
@@ -268,10 +268,6 @@ var mcq = new function() {
         }
 
         x_pageContentsUpdated();
-    }
-
-    let jGetElement = function (blockid, element) {
-        return $("#" + blockid + ' ' + element)
     }
 
     let getOptionElements = function(currentPage){

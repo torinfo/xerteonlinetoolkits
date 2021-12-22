@@ -9,7 +9,6 @@ function InteractionState(id, page_nr, ia_nr, ia_type, ia_name, ia_sub_nr){
     this.end = this.start;
     this.count = 0;
     this.duration = 0;
-    this.nrinteractions = 0;
     this.weighting = 0.0;
     this.score = 0.0;
     this.correctOptions = [];
