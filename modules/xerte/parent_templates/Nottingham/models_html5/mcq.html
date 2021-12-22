@@ -267,7 +267,7 @@
                 success: correct,
                 score: correct ? 100.0 : 0.0
             };
-            XTExitInteraction(x_currentPage, 0, result, l_options, l_answers, l_feedbacks, x_currentPageXML.getAttribute("trackinglabel"));
+            XTExitInteraction(x_currentPage, 0, result, l_options, l_answers, l_feedbacks);
             XTSetPageScore(x_currentPage, (correct ? 100.0 : 0.0), x_currentPageXML.getAttribute("trackinglabel"));
             if (XTGetMode() == "normal")
             {

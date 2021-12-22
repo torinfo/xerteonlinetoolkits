@@ -123,7 +123,7 @@ var quiz = new function() {
         x_pageContentsUpdated();
     };
 
-    this.loadQ = function(blockid, next = false) {
+    this.loadQ = function(blockid, next = false, xmlState) {
         // Reset tracking flag
         this.tracked = false;
 
@@ -133,8 +133,7 @@ var quiz = new function() {
         } else {
             var $thisQ = null;
             if(next){
-                var blocknr = parseFloat(blockid.split("block").pop()) - 1;
-                x_currentPageXML = XTGetPageXML(x_currentPage, blocknr);
+                x_currentPageXML = xmlState;
             }
 
             $thisQ = $(x_currentPageXML).children()[this.questions[this.currentQ]];
@@ -283,6 +282,7 @@ var quiz = new function() {
                 }
 
                 var blocknr = parseFloat(blockid.split("block").pop()) - 1;
+
                 XTEnterInteraction(x_currentPage, blocknr , 'multiplechoice', name, correctOptions, correctAnswer, correctFeedback, x_currentPageXML.getAttribute("grouping"),  this.questions[this.currentQ]);
                 XTSetInteractionPageXML(x_currentPage, blocknr, x_currentPageXML, this.questions[this.currentQ]);
                 quiz.checked = false;
@@ -296,7 +296,7 @@ var quiz = new function() {
 
     this.showFeedBackandTrackResults = function(blockid)
     {
-        debugger
+
         var blocknr = parseFloat(blockid.split("block").pop()) - 1;
         let currentPageXML = XTGetPageXML(x_currentPage, blocknr, this.questions[this.currentQ]);
         this.tracked = true;
@@ -459,7 +459,7 @@ var quiz = new function() {
             score: correct ? 100.0 : 0.0
         };
 
-        XTExitInteraction(x_currentPage, quiz.questions[quiz.currentQ], result, l_options, l_answer, l_feedback, x_currentPageXML.getAttribute("trackinglabel"),  this.questions[this.currentQ]);
+        XTExitInteraction(x_currentPage, blocknr, result, l_options, l_answer, l_feedback,  this.questions[this.currentQ]);
         quiz.myProgress.splice(quiz.currentQ, 1, correct);
 
         generalFeedback += rightWrongTxt;
@@ -718,6 +718,8 @@ var quiz = new function() {
                 label: nextBtnText
             })
             .click(function() {
+                var blocknr = parseFloat(blockid.split("block").pop()) - 1;
+                var xmlState = XTGetPageXML(x_currentPage, blocknr,quiz.questions[quiz.currentQ])
                 $(this).button("disable");
                 jGetElement(blockid, "#feedbackGroup").find('.feedbackBlock').html("");
                 quiz.currentQ++;
@@ -726,7 +728,7 @@ var quiz = new function() {
                     quiz.showResults(blockid);
                     quiz.resultsShown = true;
                 } else {
-                    quiz.loadQ(blockid, true);
+                    quiz.loadQ(blockid, true, xmlState);
                 }
 
                 x_pageContentsUpdated();

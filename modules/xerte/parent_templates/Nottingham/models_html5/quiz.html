@@ -465,7 +465,7 @@
                 success: correct,
                 score: correct ? 100.0 : 0.0
             };
-            XTExitInteraction(x_currentPage, quiz.questions[quiz.currentQ], result, l_options, l_answer, l_feedback, x_currentPageXML.getAttribute("trackinglabel"));
+            XTExitInteraction(x_currentPage, quiz.questions[quiz.currentQ], result, l_options, l_answer, l_feedback);
             quiz.myProgress.splice(quiz.currentQ, 1, correct);
 
             generalFeedback += rightWrongTxt;
@@ -562,6 +562,7 @@
             $("#qTxt").html("");
 
             var scormScore = Math.round((myScore * 100 / quiz.questions.length) * 100)/100;
+
             XTSetPageScore(x_currentPage, scormScore);
             this.resultsShown = true;
         };

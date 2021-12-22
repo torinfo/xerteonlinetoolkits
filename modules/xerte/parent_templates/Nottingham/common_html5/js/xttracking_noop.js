@@ -317,6 +317,8 @@ function XTResults(fullcompletion) {
     var nrcompleted = 0;
     var nrvisited = 0;
     var completed;
+
+
     $.each(trackingManager.completedPages, function (i, completed) {
         // indices not defined will be visited anyway.
         // In that case 'completed' will be undefined
@@ -362,6 +364,7 @@ function XTResults(fullcompletion) {
             interaction.weighting = trackingManager.pageStates[i].weighting;
             interaction.subinteractions = Array();
 
+
             var j = 0;
             for (j; j < trackingManager.toCompletePages.length; j++) {
                 var currentPageNr = trackingManager.toCompletePages[j];
@@ -382,6 +385,19 @@ function XTResults(fullcompletion) {
             totalDuration += trackingManager.pageStates[i].duration;
             nrofquestions++;
             totalWeight += trackingManager.pageStates[i].weighting;
+
+            function compare( a, b ) {
+                if ( a.ia_nr < b.ia_nr ){
+                    return -1;
+                }
+                if ( a.ia_nr > b.ia_nr ){
+                    return 1;
+                }
+                return 0;
+            }
+
+
+            trackingManager.pageStates[i].interactions.sort(compare);
 
             if(results.mode == "full-results"){
 
@@ -457,7 +473,7 @@ function XTResults(fullcompletion) {
             }
         }
     }
-    debugger
+
     results.completion = completion;
     results.score = score;
     results.nrofquestions = nrofquestions;

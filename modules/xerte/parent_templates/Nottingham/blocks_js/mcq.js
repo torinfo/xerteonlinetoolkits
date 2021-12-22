@@ -118,7 +118,7 @@ var mcq = new function() {
         }
 
         for (var i=0; i<selected.length; i++) {
-            debugger
+
             var optionIndex = $(selected[i]).parent().index(),
                 selectedOption = this.optionElements[optionIndex],
                 currCorrect;
@@ -254,9 +254,9 @@ var mcq = new function() {
             score: correct ? 100.0 : 0.0
         };
         var blocknr = parseFloat(blockid.split("block").pop());
-        debugger
-        XTExitInteraction(x_currentPage, blocknr-1, result, l_options, l_answers, l_feedbacks, currentPageXML.getAttribute("trackinglabel"));
-        //XTSetPageScore(x_currentPage, (correct ? 100.0 : 0.0), currentPageXML.getAttribute("trackinglabel"));
+
+        XTExitInteraction(x_currentPage, blocknr-1, result, l_options, l_answers, l_feedbacks);
+
         if (XTGetMode() == "normal")
         {
             // Disable all options

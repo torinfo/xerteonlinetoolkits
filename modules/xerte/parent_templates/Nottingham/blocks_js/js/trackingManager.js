@@ -94,6 +94,7 @@ function TrackingManager(){
     }
 
     function enterPage(page_nr, ia_type, ia_name){
+        debugger
         this.findCreatePageState(page_nr, ia_type, ia_name)
     }
 
@@ -269,7 +270,7 @@ function TrackingManager(){
 
     function enterInteraction(page_nr, ia_nr, ia_type, ia_name, correctoptions, correctanswer, feedback, ia_sub_nr = 0)
     {
-        debugger
+
         var tempid = makeId(page_nr, ia_nr, ia_type, ia_name)
 
         interaction = new InteractionState(tempid, page_nr, ia_nr, ia_type, ia_name, ia_sub_nr);
@@ -281,7 +282,7 @@ function TrackingManager(){
 
     function exitInteraction(page_nr, ia_nr, result, learneroptions, learneranswer, feedback, ia_sub_nr = 0)
     {
-        debugger
+
         var sit = this.findInteraction(page_nr, ia_nr, ia_sub_nr);
         if (sit != null) {
             if (ia_nr !== -1) {
@@ -349,14 +350,16 @@ function TrackingManager(){
 
     function setPageScore(page_nr, score)
     {
-        debugger
+
         var page = this.findPage(page_nr);
         var tempscore = 0;
-        for(i=0;i<page.pageStates.interactions.length;i++){
-            tempscore+= page.pageStates.interactions[i].result.score;
+        for(i=0;i<page.interactions.length;i++){
+            if(page.interactions[i].result != null || page.interactions[i].result != undefined){
+                tempscore+= page.interactions[i].result.score;
+            }
         }
 
-        tempscore/=page.pageStates.interactions.length;
+        tempscore/=page.interactions.length;
 
         if (page != null && (this.scoremode !== 'first' || page.count < 1))
         {
@@ -408,13 +411,7 @@ function TrackingManager(){
 
     function findAllInteractions(page_nr)
     {
-        let tmpinteractions = [];
-        for (let i=0; i<this.pageStates.length; i++)
-        {
-            if (this.pageStates[i].page_nr === page_nr && this.pageStates[i].ia_nr !== -1)
-                tmpinteractions.push(i);
-        }
-        return tmpinteractions;
+        return this.pageStates[page_nr].interactions;
     }
 
     /**

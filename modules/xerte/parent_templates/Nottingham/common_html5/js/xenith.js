@@ -77,6 +77,7 @@ $(document).keydown(function(e) {
 		// Ignore
 	}
 	if (!shownInFeatherlight) {
+		debugger
 		switch(e.which) {
 			case 33: // PgUp
 				var pageIndex = $.inArray(x_currentPage, x_normalPages);
@@ -1999,6 +2000,7 @@ function x_changePage(x_gotoPage, addHistory) {
 		
 	// standalone page opening in lightbox
 	} else {
+		debugger
 		$.featherlight({iframe: window.location.href.split('#')[0] + '#' + pageHash, iframeWidth: $x_mainHolder.width()*0.8, iframeHeight: $x_mainHolder.height()*0.8});
 		
 		// update progress bar & record that it's been opened in lightbox
