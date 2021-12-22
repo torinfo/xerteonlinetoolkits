@@ -270,7 +270,48 @@
     <feedback label="Feedback" type="TextArea" height="100" tooltip="Feedback shown when this answer is submitted"/>
     <correct label="Correct" options="True,False" type="ComboBox" data="true,false" defaultValue="false" width="100"/>
 	<audioFB label="Audio Feedback" defaultValue="Select a Sound File" type="media" optional="true"/>
-  </option><quizBlock icon="icPageWhiteGear"><name label="Quiz Title" type="TextInput" wysiwyg="true"/><order label="Question Order" options="Sequence,Random" type="comboBox" data="sequence,random" defaultValue="random" width="120"/><numQuestions label="Number of Questions (*=All)" type="TextInput" width="120"/><align label="Align Text" options="Left,Right" type="comboBox" data="left,right" defaultValue="left" width="120"/><instructions label="Instructions" type="textArea" height="120"/><judge label="Judge Questions" type="CheckBox" defaultValue="true"/><showfeedback label="Show Feedback" type="CheckBox" defaultValue="true"/><feedback label="Feedback" type="textArea" height="120"/><trackingWeight label="Tracking Score Weight (0=Off)" optional="true" type="textInput" width="120" defaultValue="1.0"/><scorePos label="Score Position" options="Above Feedback,Below Feedback" type="ComboBox" data="Above,Below" defaultValue="Below" width="120" optional="true"/><quesCount label="{i} of {n} questions" type="TextInput" wysiwyg="true" divider="true" language="true"/><feedbackLabel label="Feedback Label" type="TextInput" wysiwyg="true" language="true"/><generalFeedbackLabel label="General Feedback Label" type="TextInput" wysiwyg="true" language="true"/><singleRight label="Single Answer Correct" type="TextInput" wysiwyg="true" language="true"/><singleWrong label="Single Answer Wrong" type="TextInput" wysiwyg="true" language="true"/><multiRight label="Multi Answer Correct" type="TextInput" wysiwyg="true" language="true"/><multiWrong label="Multi Answer Wrong" type="TextInput" wysiwyg="true" language="true"/><onCompletion label="Completion Text" type="TextInput" wysiwyg="true" language="true"/><score label="You scored {i} out of {n} marks" type="TextInput" wysiwyg="true" language="  true"/><submitBtnText label="Submit Button Label" type="TextInput" wysiwyg="true" language="true"/><submitBtnTip label="Submit Button Tip" type="textInput" language="true" deprecated="This property is no longer required"/><submitBtnWidth label="Submit Button Width" type="NumericStepper" min="100" max="250" step="10" width="100" defaultValue="100" language="true" deprecated="Width is now set automatically"/><nextBtnText label="Next Button Label" type="TextInput" wysiwyg="true" language="true"/><nextBtnTip label="Next Button Tip" type="textInput" language="true" deprecated="This property is no longer required"/><nextBtnWidth label="Next Button Width" type="NumericStepper" min="100" max="250" step="10" width="100" defaultValue="100" language="true" deprecated="Width is now set automatically"/><restartBtnText label="Restart Button Label" type="TextInput" wysiwyg="true" language="true"/><restartBtnTip label="Restart Button Tip" type="textInput" language="true" deprecated="This property is no longer required"/><restartBtnWidth label="Restart Button Width" type="NumericStepper" min="100" max="250" step="10" width="100" defaultValue="100" language="true" deprecated="Width is now set automatically"/><imgInfo type="group" label="Image" optional="true">
+  </option><opinionBlock icon="icOpinion"><name label="Page Title" type="TextInput" wysiwyg="true"/><instructions label="Instructions" type="textArea" height="120"/><align label="Align Text" options="Left,Right" type="comboBox" data="left,right" defaultValue="left" width="120"/><order label="Question Order" options="Sequence,Random" type="comboBox" data="sequence,random" defaultValue="random" width="120"/><showfeedback label="Show Feedback" type="CheckBox" defaultValue="true" conditionTrigger="true"/><feedback label="Feedback" type="textArea" height="120" condition="showfeedback!='false'"/><quesCount label="{i} of {n} questions" type="TextInput" wysiwyg="true" divider="true" language="true"/><onCompletion label="Completion Text" type="TextInput" wysiwyg="true" language="true"/><submitBtnText label="Submit Button Label" type="TextInput" wysiwyg="true" language="true"/><resetBtnText label="Reset Button Label" type="TextInput" wysiwyg="true" mandatory="true" defaultValue="Reset" language="true"/><trackingWeight label="Tracking Score Weight (0=Off)" optional="true" type="textInput" width="120" defaultValue="1.0"/><imgGroup type="group" label="Image" optional="true">
+		<img label="File" type="media" defaultValue="Select an Image" optional="true"/>
+		<tip label="Description" type="textInput" optional="true" defaultValue="Enter a Description for Accessibility"/>
+	</imgGroup><graph label="Graph" type="group" optional="true">
+		<diagram label="Hide Graph" type="CheckBox" defaultValue="false" optional="true" conditionTrigger="true" tooltip="Do not show the graph at the end of the questionnaire"/>
+		<colour label="Colour" type="colourPicker" defaultValue="0x000000" optional="true" condition="diagram!='true'" tooltip="The colour used for this page on the graph"/>
+		<key label="Show Key" type="CheckBox" defaultValue="true" optional="true" condition="diagram!='true'" tooltip="Show a key listing page names and colours"/>
+	</graph><layout label="Layout" type="group" optional="true">
+      <list label="Question Layout" type="ComboBox" options="One Per Page,List in Pages,List All" data="false,true,all" optional="true" defaultValue="false" conditionTrigger="true"/>
+      <paging label="Use Paging" type="checkbox" optional="true" tooltip="Group question list in pages if using list mode" defaultValue="true" deprecated="This property is deprecated - use the List in Pages question layout to create pages of questions"/>
+	  <pagesize label="Questions Per Page" type="NumericStepper" min="1" max="100" step="1" optional="true" defaultValue="10" condition="list=='true'" tooltip="Maximum number of questions per page (when list in pages layout)"/>
+    </layout><newNodes>
+        <opinionClass><![CDATA[<opinionClass title="Title used on graph" name="Class"/>]]></opinionClass>
+      </newNodes></opinionBlock><opinionClass menuItem="Class">
+      <title label="Title" type="TextInput" mandatory="true" defaultValue="Title used on graph" wysiwyg="true"/>
+	  <name label="Label" type="TextInput" mandatory="true" defaultValue="Class" wysiwyg="false"/>
+
+    <newNodes>
+      <opinionQuestion><![CDATA[<opinionQuestion  name="Question" prompt="Enter a Prompt" scale="false" classWeight="1" interactivity="slider" />]]></opinionQuestion>
+    </newNodes>
+  </opinionClass><opinionQuestion menuItem="Question">
+    <prompt label="Question" type="TextArea" height="100"/>
+    <name label="Label" type="TextInput" mandatory="true" defaultValue="Question" wysiwyg="false"/>
+    <classWeight label="Weighting" type="TextInput" wysiwyg="false"/>
+	<interactivity label="Interactivity" options="Radio Buttons, Slider" mandatory="true" type="ComboBox" data="radio-buttons,slider" defaultValue="slider" width="120"/>
+	
+	<imgGroup type="group" label="Image" optional="true">
+		<image label="File" type="media" defaultValue="Select an Image" optional="true"/>
+		<tip label="Description" type="textInput" optional="true" defaultValue="Enter a Description for Accessibility"/>
+	</imgGroup>
+	
+    <scale label="Reverse scale" type="CheckBox"/>  
+    <sound label="Sound" type="Media" optional="true"/>
+		
+    <newNodes>
+      <opinionOption><![CDATA[<opinionOption name="Answer" text="Here is an option" />]]></opinionOption>
+    </newNodes>
+
+  </opinionQuestion><opinionOption menuItem="Answer" icon="icBullet">
+    <text label="Text" type="TextArea" manadtory="true" defaultValue="Here is an option" wysiwig="true"/>
+	<name label="Label" type="TextInput" mandatory="true" defaultValue="Answer" wysiwyg="false"/>
+  </opinionOption><quizBlock icon="icPageWhiteGear"><name label="Quiz Title" type="TextInput" wysiwyg="true"/><order label="Question Order" options="Sequence,Random" type="comboBox" data="sequence,random" defaultValue="random" width="120"/><numQuestions label="Number of Questions (*=All)" type="TextInput" width="120"/><align label="Align Text" options="Left,Right" type="comboBox" data="left,right" defaultValue="left" width="120"/><instructions label="Instructions" type="textArea" height="120"/><judge label="Judge Questions" type="CheckBox" defaultValue="true"/><showfeedback label="Show Feedback" type="CheckBox" defaultValue="true"/><feedback label="Feedback" type="textArea" height="120"/><trackingWeight label="Tracking Score Weight (0=Off)" optional="true" type="textInput" width="120" defaultValue="1.0"/><scorePos label="Score Position" options="Above Feedback,Below Feedback" type="ComboBox" data="Above,Below" defaultValue="Below" width="120" optional="true"/><quesCount label="{i} of {n} questions" type="TextInput" wysiwyg="true" divider="true" language="true"/><feedbackLabel label="Feedback Label" type="TextInput" wysiwyg="true" language="true"/><generalFeedbackLabel label="General Feedback Label" type="TextInput" wysiwyg="true" language="true"/><singleRight label="Single Answer Correct" type="TextInput" wysiwyg="true" language="true"/><singleWrong label="Single Answer Wrong" type="TextInput" wysiwyg="true" language="true"/><multiRight label="Multi Answer Correct" type="TextInput" wysiwyg="true" language="true"/><multiWrong label="Multi Answer Wrong" type="TextInput" wysiwyg="true" language="true"/><onCompletion label="Completion Text" type="TextInput" wysiwyg="true" language="true"/><score label="You scored {i} out of {n} marks" type="TextInput" wysiwyg="true" language="  true"/><submitBtnText label="Submit Button Label" type="TextInput" wysiwyg="true" language="true"/><submitBtnTip label="Submit Button Tip" type="textInput" language="true" deprecated="This property is no longer required"/><submitBtnWidth label="Submit Button Width" type="NumericStepper" min="100" max="250" step="10" width="100" defaultValue="100" language="true" deprecated="Width is now set automatically"/><nextBtnText label="Next Button Label" type="TextInput" wysiwyg="true" language="true"/><nextBtnTip label="Next Button Tip" type="textInput" language="true" deprecated="This property is no longer required"/><nextBtnWidth label="Next Button Width" type="NumericStepper" min="100" max="250" step="10" width="100" defaultValue="100" language="true" deprecated="Width is now set automatically"/><restartBtnText label="Restart Button Label" type="TextInput" wysiwyg="true" language="true"/><restartBtnTip label="Restart Button Tip" type="textInput" language="true" deprecated="This property is no longer required"/><restartBtnWidth label="Restart Button Width" type="NumericStepper" min="100" max="250" step="10" width="100" defaultValue="100" language="true" deprecated="Width is now set automatically"/><imgInfo type="group" label="Image" optional="true">
 		<img label="Image" type="media" defaultValue="Select an Image" optional="true"/>
 		<tip label="Description" type="textInput" optional="true" defaultValue="Enter a Description for Accessibility"/>
 	</imgInfo><videoInfo type="group" label="Video" optional="true">
@@ -5390,7 +5431,8 @@
 
     <quizBlock name="Quiz">
     <quizBlock name="Enter Page Title" order="random" numQuestions="*" align="left" panelWidth="Medium" instructions="Provide instructions here" judge="true" showfeedback="true" feedback="Provide feedback here" quesCount="Question {i} of {n}" feedbackLabel="Feedback" generalFeedbackLabel="General Feedback" singleRight="Your answer is correct!" singleWrong="Your answer is incorrect" multiRight="You have selected all the correct answers" multiWrong="You have not selected the correct combination of answers" onCompletion="You have completed the exercise" score="You scored {i} / {n}" submitBtnText="Submit" nextBtnText="Next" restartBtnText="Restart"/></quizBlock><mcqBlock name="MCQ">
-    <mcqBlock name="Enter Page Title" instruction="Enter Instruction" prompt="Enter a Prompt" type="Single Answer" align="Left" panelWidth="Medium" feedbackLabel="Feedback" singleRight="Your answer is correct!" singleWrong="Your answer is incorrect" multiRight="You have selected all the correct answers" multiWrong="You have not selected the correct combination of answers" checkBtnTxt="Check"/></mcqBlock></interactiveBlocks>
+    <mcqBlock name="Enter Page Title" instruction="Enter Instruction" prompt="Enter a Prompt" type="Single Answer" align="Left" panelWidth="Medium" feedbackLabel="Feedback" singleRight="Your answer is correct!" singleWrong="Your answer is incorrect" multiRight="You have selected all the correct answers" multiWrong="You have not selected the correct combination of answers" checkBtnTxt="Check"/></mcqBlock><opinionBlock name="Opinion">
+    <opinionBlock name="Enter Page Title" order="sequence" align="left" panelWidth="Medium" instructions="Enter Instruction" showfeedback="true" feedback="Provide feedback here" quesCount="Question {i} of {n}" onCompletion="You have completed the questionnaire" score="You answered {i} / {n}" submitBtnText="Submit" resetBtnText="Reset"/></opinionBlock></interactiveBlocks>
 
   </navPage><newWindow menu="Links / Feeds" menuItem="New Window" hint="Allow the user to launch a new window to a URL." icon="icApplication" thumb="thumbs/newWindow.jpg" example="https://xot.xerte.org.uk/play_116?hide=bottom#newwindow" remove="true">
 
@@ -5555,35 +5597,7 @@
 	</variables><lightboxGroup type="group" label="Lightbox" optional="true" tooltip="By default, clicked images will open in a lightbox. Use these properties to turn the lightbox functionality on/off for this page only" common="true">
 		<lightbox type="CheckBox" label="Lightbox Images" defaultValue="true" optional="true"/>
 		<lightboxCaption type="ComboBox" label="Caption" defaultValue="false" optional="true" options="None,Below Image,Above Image" data="false,below,above" tooltip="Add a caption to lightbox images on this page. The caption text is taken from the 'Description' or 'Alt Text' fields."/>
-	</lightboxGroup></opinion><opinionClass menuItem="Class">
-      <title label="Title" type="TextInput" mandatory="true" defaultValue="Title used on graph" wysiwyg="true"/>
-	  <name label="Label" type="TextInput" mandatory="true" defaultValue="Class" wysiwyg="false"/>
-
-    <newNodes>
-      <opinionQuestion><![CDATA[<opinionQuestion  name="Question" prompt="Enter a Prompt" scale="false" classWeight="1" interactivity="slider" />]]></opinionQuestion>
-    </newNodes>
-  </opinionClass><opinionQuestion menuItem="Question">
-    <prompt label="Question" type="TextArea" height="100"/>
-    <name label="Label" type="TextInput" mandatory="true" defaultValue="Question" wysiwyg="false"/>
-    <classWeight label="Weighting" type="TextInput" wysiwyg="false"/>
-	<interactivity label="Interactivity" options="Radio Buttons, Slider" mandatory="true" type="ComboBox" data="radio-buttons,slider" defaultValue="slider" width="120"/>
-	
-	<imgGroup type="group" label="Image" optional="true">
-		<image label="File" type="media" defaultValue="Select an Image" optional="true"/>
-		<tip label="Description" type="textInput" optional="true" defaultValue="Enter a Description for Accessibility"/>
-	</imgGroup>
-	
-    <scale label="Reverse scale" type="CheckBox"/>  
-    <sound label="Sound" type="Media" optional="true"/>
-		
-    <newNodes>
-      <opinionOption><![CDATA[<opinionOption name="Answer" text="Here is an option" />]]></opinionOption>
-    </newNodes>
-
-  </opinionQuestion><opinionOption menuItem="Answer" icon="icBullet">
-    <text label="Text" type="TextArea" manadtory="true" defaultValue="Here is an option" wysiwig="true"/>
-	<name label="Label" type="TextInput" mandatory="true" defaultValue="Answer" wysiwyg="false"/>
-  </opinionOption><orient menu="Text" menuItem="Orientation" hint="A page for orienting users before they begin working with the content." icon="icPageWhiteQuestion" remove="true" thumb="thumbs/orient.jpg" example="https://xot.xerte.org.uk/play_116?hide=bottom#orientation">
+	</lightboxGroup></opinion><orient menu="Text" menuItem="Orientation" hint="A page for orienting users before they begin working with the content." icon="icPageWhiteQuestion" remove="true" thumb="thumbs/orient.jpg" example="https://xot.xerte.org.uk/play_116?hide=bottom#orientation">
 
     <name label="Page Title" type="TextInput" wysiwyg="true"/>
 	

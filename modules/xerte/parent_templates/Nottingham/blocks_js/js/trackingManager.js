@@ -95,7 +95,6 @@ function TrackingManager(){
     }
 
     function enterPage(page_nr, ia_type, ia_name){
-        debugger
         this.findCreatePageState(page_nr, ia_type, ia_name)
     }
 

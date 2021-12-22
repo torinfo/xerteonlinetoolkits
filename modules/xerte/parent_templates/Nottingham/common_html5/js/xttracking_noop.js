@@ -212,13 +212,11 @@ function XTVideo(page_nr, name, block_name, verb, videotrackingManager, grouping
 
 function XTEnterInteraction(page_nr, ia_nr, ia_type, ia_name, correctoptions, correctanswer, feedback, grouping, ia_sub_nr = 0)
 {
-    debugger
 	trackingManager.enterInteraction(page_nr, ia_nr, ia_type, ia_name, correctoptions, correctanswer, feedback, ia_sub_nr);
 }
 
 function XTExitInteraction(page_nr, ia_nr, result, learneroptions, learneranswer, feedback, ia_sub_nr = 0)
 {
-    debugger
 	trackingManager.exitInteraction(page_nr, ia_nr, result, learneroptions, learneranswer, feedback, ia_sub_nr);
 }
 
@@ -325,7 +323,6 @@ function XTResults(fullcompletion) {
     var nrvisited = 0;
     var completed;
 
-    debugger
     $.each(trackingManager.completedPages, function (i, completed) {
         // indices not defined will be visited anyway.
         // In that case 'completed' will be undefined

@@ -2,9 +2,9 @@ var opinion = new function()
 {
     var $pageContents;
 
-    this.sizeChanged = function()
+    this.sizeChanged = function(blockid)
     {
-        var $panel = $("#pageContents .qPanel"),
+        var $panel = jGetElement(blockid, "#pageContents .qPanel"),
             resized = false;
 
         if (x_browserInfo.mobile == false)
@@ -12,8 +12,8 @@ var opinion = new function()
             $panel.height($x_pageHolder.height() - parseInt($x_pageDiv.css("padding-top")) * 2 - parseInt($panel.css("padding-top")) * 2 - 5);
         }
 
-        $.each($(".questionAudio"), function(key, qA) {
-            var qAudio = $("#" + qA.id);
+        $.each(jGetElement(blockid, ".questionAudio"), function(key, qA) {
+            var qAudio = jGetElement(blockid, "#" + qA.id);
             if (qAudio.children().length > 0)
             {
                 if (resized == false)
@@ -31,14 +31,14 @@ var opinion = new function()
             }
         });
 
-        var audioHolder = $("#pageContents .audioHolder");
+        var audioHolder = jGetElement(blockid, "#pageContents .audioHolder");
 
         if (audioHolder.length > 0)
         {
             if (resized == false)
             {
                 var audioBarW = 0;
-                $("#pageContents .audioHolder:eq(0) .mejs-inner .mejs-controls").children().each(function() {
+                jGetElement(blockid, "#pageContents .audioHolder:eq(0) .mejs-inner .mejs-controls").children().each(function() {
                     audioBarW += $(this).outerWidth();
                 });
 
@@ -50,18 +50,18 @@ var opinion = new function()
             }
         }
 
-        var width = $("#mainPanel").width(),
-            height = $("#mainPanel").height(),
+        var width = jGetElement(blockid, "#mainPanel").width(),
+            height = jGetElement(blockid, "#mainPanel").height(),
             textSize;
 
         if(width > height) {
-            $("#diagram")
+            jGetElement(blockid, "#diagram")
                 .width(height*0.90)
                 .height(height*0.90);
             textSize = (width - height) / 10;
         }
         else {
-            $("#diagram")
+            jGetElement(blockid, "#diagram")
                 .width(width*0.90)
                 .height(width*0.90);
             textSize = (height - width) / 10;
@@ -80,7 +80,7 @@ var opinion = new function()
     {
         if (soundFile != undefined && soundFile != "")
         {
-            $("#questionAudio" + currentQuestion).mediaPlayer({
+            jGetElement(blockid, "#questionAudio" + currentQuestion).mediaPlayer({
                 type	:"audio",
                 source	:soundFile,
                 width	:"100%"
@@ -88,8 +88,9 @@ var opinion = new function()
         }
     };
 
-    this.startQuestions = function()
+    this.startQuestions = function(blockid)
     {
+        debugger
         // If the language attribute is not defined in the xml, fall back to English.
         var questionNumberText = x_currentPageXML.getAttribute("quesCount");
         if (questionNumberText == undefined)
@@ -108,9 +109,9 @@ var opinion = new function()
         }
         $pageContents.data('showfeedback', showfeedback);
 
-        $("#diagram").hide();
-        $("#qHolder").show();
-        $("#checkBtn")
+        jGetElement(blockid, "#diagram").hide();
+        jGetElement(blockid, "#qHolder").show();
+        jGetElement(blockid, "#checkBtn")
             .show()
             .button("disable");
 
@@ -154,14 +155,14 @@ var opinion = new function()
 
         XTSetPageType(x_currentPage, 'numeric', numberOfQuestions, weighting);
 
-        this.loadQuestions();
+        this.loadQuestions(blockid);
 
         x_pageContentsUpdated();
     };
 
-    this.loadQuestions = function()
+    this.loadQuestions = function(blockid)
     {
-        $("#checkBtn").button("disable");
+        jGetElement(blockid, "#checkBtn").button("disable");
 
         $pageContents.data('radioButtonQuestions', []);
 
@@ -175,40 +176,40 @@ var opinion = new function()
         {
             if (pageMode || (pageMode == undefined && listMode == true))
             {
-                $("#qNo").html($pageContents.data('qNumTxt').replace("{i}", (currentQuestion + 1) + " - " + (Math.min(currentQuestion + pageSize, questions.length))).replace("{n}", questions.length));
-                $("#qHolder").html("");
+                jGetElement(blockid, "#qNo").html($pageContents.data('qNumTxt').replace("{i}", (currentQuestion + 1) + " - " + (Math.min(currentQuestion + pageSize, questions.length))).replace("{n}", questions.length));
+                jGetElement(blockid, "#qHolder").html("");
                 for (i=currentQuestion; i<Math.min(currentQuestion + pageSize, questions.length); i++)
                 {
-                    $("#qHolder").append('<legend id="qTxt' + i + '" class="qTxt"></legend><div id="questionAudio'+ i + '" class="questionAudio"></div><div id="sliderHolder' + i
+                    jGetElement(blockid, "#qHolder").append('<legend id="qTxt' + i + '" class="qTxt"></legend><div id="questionAudio'+ i + '" class="questionAudio"></div><div id="sliderHolder' + i
                         + '" class="sliderHolder"><div id="labelHolder' + i + '" class="labelHolder"></div><div id="rangeHolder' + i + '" class="rangeHolder"></div></div><div class="qSeparator"><hr></div>');
-                    this.loadQuestion(i);
+                    this.loadQuestion(i, blockid);
                 }
             }
             else
             {
-                $("#qNo").html($pageContents.data('qNumTxt').replace("{i}", (currentQuestion + 1) + " - " + questions.length).replace("{n}", questions.length));
-                $("#qHolder").html("");
+                jGetElement(blockid, "#qNo").html($pageContents.data('qNumTxt').replace("{i}", (currentQuestion + 1) + " - " + questions.length).replace("{n}", questions.length));
+                jGetElement(blockid, "#qHolder").html("");
                 for (i=currentQuestion; i<questions.length; i++)
                 {
-                    $("#qHolder").append('<legend id="qTxt' + i + '" class="qTxt"></legend><div id="questionAudio'+ i + '" class="questionAudio"></div><div id="sliderHolder' + i
+                    jGetElement(blockid, "#qHolder").append('<legend id="qTxt' + i + '" class="qTxt"></legend><div id="questionAudio'+ i + '" class="questionAudio"></div><div id="sliderHolder' + i
                         + '" class="sliderHolder"><div id="labelHolder' + i + '" class="labelHolder"></div><div id="rangeHolder' + i + '" class="rangeHolder"></div></div><div class="qSeparator"><hr></div>');
-                    this.loadQuestion(i);
+                    this.loadQuestion(i, blockid);
                 }
             }
         }
         else
         {
-            $("#qNo").html($pageContents.data('qNumTxt').replace("{i}", currentQuestion + 1).replace("{n}", questions.length));
-            $("#qHolder").html('<legend id="qTxt' + currentQuestion + '" class="qTxt"></legend><div id="questionAudio'+currentQuestion + '" class="questionAudio"></div><div id="sliderHolder'
+            jGetElement(blockid, "#qNo").html($pageContents.data('qNumTxt').replace("{i}", currentQuestion + 1).replace("{n}", questions.length));
+            jGetElement(blockid, "#qHolder").html('<legend id="qTxt' + currentQuestion + '" class="qTxt"></legend><div id="questionAudio'+currentQuestion + '" class="questionAudio"></div><div id="sliderHolder'
                 + currentQuestion + '" class="sliderHolder"><div id="labelHolder' + currentQuestion + '" class="labelHolder"></div><div id="rangeHolder' + currentQuestion + '" class="rangeHolder"></div></div>');
 
-            this.loadQuestion(currentQuestion);
+            this.loadQuestion(currentQuestion, blockid);
         }
 
-        this.checkButtonState();
+        this.checkButtonState(blockid);
     };
 
-    this.checkButtonState = function()
+    this.checkButtonState = function(blockid)
     {
         var checked = true;
         $.each($pageContents.data('radioButtonQuestions'), function(key, value){
@@ -218,17 +219,17 @@ var opinion = new function()
         });
         if (checked)
         {
-            $("#checkBtn").button("enable");
+            jGetElement(blockid, "#checkBtn").button("enable");
         }
     };
 
-    this.loadQuestion = function(currentQuestion)
+    this.loadQuestion = function(currentQuestion, blockid)
     {
         var questions = $pageContents.data('questions');
 
         if ($(x_currentPageXML).children().length == 0)
         {
-            $("#optionHolder").html('<span class="alert">' + x_getLangInfo(x_languageData.find("errorQuestions")[0], "noQ", "No questions have been added") + '</span>');
+            jGetElement(blockid, "#optionHolder").html('<span class="alert">' + x_getLangInfo(x_languageData.find("errorQuestions")[0], "noQ", "No questions have been added") + '</span>');
         }
         else
         {
@@ -240,7 +241,7 @@ var opinion = new function()
             }
             else
             {
-                $("#questionAudio" + currentQuestion).empty();
+                jGetElement(blockid, "#questionAudio" + currentQuestion).empty();
             }
 
             var url = $thisQ.getAttribute("image");
@@ -258,12 +259,12 @@ var opinion = new function()
                 infoString = newString + infoString;
             }
 
-            $("#qTxt" + currentQuestion).html(x_addLineBreaks(infoString));
-            $("#feedback").html("");
+            jGetElement(blockid, "#qTxt" + currentQuestion).html(x_addLineBreaks(infoString));
+            jGetElement(blockid, "#feedback").html("");
 
             if ($($thisQ).children().length == 0)
             {
-                $("#sliderHolder" + currentQuestion).html('<span class="alert">' + x_getLangInfo(x_languageData.find("errorQuestions")[0], "noA", "No answer options have been added") + '</span>');
+                jGetElement(blockid, "#sliderHolder" + currentQuestion).html('<span class="alert">' + x_getLangInfo(x_languageData.find("errorQuestions")[0], "noA", "No answer options have been added") + '</span>');
             }
             else
             {
@@ -272,7 +273,7 @@ var opinion = new function()
                     name;
 
                 if($thisQ.getAttribute("interactivity") == "radio-buttons") {
-                    var $optionHolder = $("#sliderHolder" + currentQuestion);
+                    var $optionHolder = jGetElement(blockid, "#sliderHolder" + currentQuestion);
                     $optionHolder.html('<div class="optionGroup"><input type="radio" name="option' + currentQuestion + '" /><label class="optionTxt"></label></div>');
 
                     var $optionGroup = $optionHolder.find(".optionGroup");
@@ -316,7 +317,7 @@ var opinion = new function()
                                 var radioButtonQuestions = $pageContents.data('radioButtonQuestions');
                                 radioButtonQuestions[currentQuestion] = true;
                                 $pageContents.data('radioButtonQuestions', radioButtonQuestions);
-                                opinion.checkButtonState();
+                                opinion.checkButtonState(blockid);
                             });
                         $thisOption[0].score = index;
                         $thisOptionTxt
@@ -333,10 +334,10 @@ var opinion = new function()
                 }
                 else if($thisQ.getAttribute("interactivity") == null || $thisQ.getAttribute("interactivity") == "slider")
                 {
-                    var $sliderHolder = $("#sliderHolder" + currentQuestion);
+                    var $sliderHolder = jGetElement(blockid, "#sliderHolder" + currentQuestion);
                     $sliderHolder.html('<div id="labelHolder' + currentQuestion + '" class="labelHolder"><table><tr id="labelHolderRow' + currentQuestion + '"></tr></table></div><div id="rangeHolder' + currentQuestion + '"></div>');
-                    var $labelHolder = $("#labelHolderRow" + currentQuestion),
-                        $rangeHolder = $("#rangeHolder" + currentQuestion);
+                    var $labelHolder = jGetElement(blockid, "#labelHolderRow" + currentQuestion),
+                        $rangeHolder = jGetElement(blockid, "#rangeHolder" + currentQuestion);
 
                     $labelHolder.html('<td class="labelCell"><a href="#" onclick="" class="optionTxt"></a></td>');
                     var $optionTxt = $labelHolder.find(".optionTxt"),
@@ -368,7 +369,7 @@ var opinion = new function()
 
                         $thisOptionTxt[0].onclick = function()
                         {
-                            $("#slider" + currentQuestion)[0].value = index;
+                            jGetElement(blockid, "#slider" + currentQuestion)[0].value = index;
                         };
 
                         correctOptions.push(index + 1 + "");
@@ -376,9 +377,9 @@ var opinion = new function()
                     });
 
                     var cellWidth = 100.0/numberOfOptions;
-                    $("td.labelCell").css("width", cellWidth + "%");
-                    $("#slider" + currentQuestion).css("width", 100-cellWidth + 2 +"%");
-                    $("#slider" + currentQuestion).css("margin-left", cellWidth/2 - 1 + "%");
+                    jGetElement(blockid, "td.labelCell").css("width", cellWidth + "%");
+                    jGetElement(blockid, "#slider" + currentQuestion).css("width", 100-cellWidth + 2 +"%");
+                    jGetElement(blockid, "#slider" + currentQuestion).css("margin-left", cellWidth/2 - 1 + "%");
 
                     name = $thisQ.getAttribute("prompt");
 
@@ -396,10 +397,10 @@ var opinion = new function()
 
     this.pageChanged = function()
     {
-        $pageContents = $('#pageContents');
+        $pageContents = jGetElement(blockid, "#pageContents");
     };
 
-    this.trackQuestions = function()
+    this.trackQuestions = function(blockid)
     {
         var listMode = $pageContents.data('listMode'),
             pageMode = $pageContents.data('pageMode'),
@@ -413,28 +414,28 @@ var opinion = new function()
             {
                 for (i=currentQuestion; i<Math.min(currentQuestion + pageSize, questions.length); i++)
                 {
-                    this.trackQuestion(i);
+                    this.trackQuestion(i, blockid);
                 }
             }
             else
             {
                 for (i=currentQuestion; i<questions.length; i++)
                 {
-                    this.trackQuestion(i);
+                    this.trackQuestion(i, blockid);
                 }
             }
         }
         else
         {
-            this.trackQuestion(currentQuestion);
+            this.trackQuestion(currentQuestion, blockid);
         }
         if ($pageContents.data('resultShown') == false)
         {
-            this.loadQuestions();
+            this.loadQuestions(blockid);
         }
     };
 
-    this.trackQuestion = function(currentQuestion)
+    this.trackQuestion = function(currentQuestion, blockid)
     {
         var questions = $pageContents.data('questions'),
             currentQ = $(x_currentPageXML).children().children()[questions[currentQuestion]],
@@ -445,10 +446,10 @@ var opinion = new function()
             currentQuestionValue = 0;
 
         if (currentQ.getAttribute("interactivity") == null || currentQ.getAttribute("interactivity") == "slider")
-            selected = $('#slider' + currentQuestion)[0].valueAsNumber;
+            selected = jGetElement(blockid, "#slider" + currentQuestion)[0].valueAsNumber;
         else if (currentQ.getAttribute("interactivity") == "radio-buttons")
-            if ($("#sliderHolder" + currentQuestion + " input:checked")[0] != null)
-                selected = $("#sliderHolder" + currentQuestion + " input:checked")[0].score;
+            if (jGetElement(blockid, "#sliderHolder" + currentQuestion + " input:checked")[0] != null)
+                selected = jGetElement(blockid, "#sliderHolder" + currentQuestion + " input:checked")[0].score;
         for (var i = 0; i < options.length; i++)
         {
             l_options.push(i + "");
@@ -502,22 +503,22 @@ var opinion = new function()
         // If last question has been answered - show results, else continue
         if ($pageContents.data('currentQuestion') == questions.length)
         {
-            this.trackOpinion();
+            this.trackOpinion(blockid);
             $pageContents.data('resultShown', true);
         }
 
         x_pageContentsUpdated();
     };
 
-    this.trackOpinion = function() {
+    this.trackOpinion = function(blockid) {
         // Last question answered - show results
         var JSONGraph = this.createGraphObject();
         if (x_currentPageXML.getAttribute("diagram") !== "true"){
             this.createDiagram(JSONGraph);
-            this.sizeChanged();
+            this.sizeChanged(blockid);
         }
 
-        $("#qNo").html($pageContents.data("onCompletionText"));
+        jGetElement(blockid, "#qNo").html($pageContents.data("onCompletionText"));
 
         var myScore = 0;
         var answeredValues = $pageContents.data('answeredValues');
@@ -529,19 +530,19 @@ var opinion = new function()
 
         var feedbackText = x_currentPageXML.getAttribute("feedback") != '' ? "<p>" + x_addLineBreaks(x_currentPageXML.getAttribute("feedback")) + "</p>" : '';
         if ($pageContents.data('showfeedback') && feedbackText != '') {
-            $("#feedback").html(feedbackText);
+            jGetElement(blockid, "#feedback").html(feedbackText);
         } else {
-            $("#feedback").remove();
+            jGetElement(blockid, "#feedback").remove();
         }
-        $("#questionAudio").empty();
+        jGetElement(blockid, "#questionAudio").empty();
 
         if (x_currentPageXML.getAttribute("diagram") !== "true"){
-            $("#diagram").show();
+            jGetElement(blockid, "#diagram").show();
         } else {
-            $('#diagram').hide();
+            jGetElement(blockid, "#diagram").hide();
         }
-        $("#qHolder").hide();
-        $("#checkBtn").hide();
+        jGetElement(blockid, "#qHolder").hide();
+        jGetElement(blockid, "#checkBtn").hide();
 
         XTSetPageScoreJSON(x_currentPage, myScore, JSON.stringify(JSONGraph), x_currentPageXML.getAttribute("trackinglabel"));
         $pageContents.data('checked', true);
@@ -591,7 +592,7 @@ var opinion = new function()
 
     this.createDiagram = function(graphObject)
     {
-        var htmlToChar = function(h){return $("<div>").html(h).text();},
+        var htmlToChar = function(h){return jGetElement(blockid, "<div>").html(h).text();},
             classTitles = graphObject.classtitles.map(function(a){return htmlToChar(a);}),
             classValues = graphObject.classvalues;
 
@@ -610,7 +611,7 @@ var opinion = new function()
         }
         var bgColour = hexToRgb(bgColourIn.substr(bgColourIn.length - 6), 0.5);
         var lnColour = hexToRgb(bgColourIn.substr(bgColourIn.length - 6), 1);
-        var ctx = $("#diagram");
+        var ctx = jGetElement(blockid, "#diagram");
 
         var myRadarChart = new Chart(ctx, {
             type: 'radar',
@@ -646,9 +647,10 @@ var opinion = new function()
         });
     };
 
-    this.init = function()
-    {
-        $pageContents = $('#pageContents');
+    this.init = function(pageXML, blockid) {
+        x_currentPageXML = pageXML;
+        debugger
+        $pageContents = jGetElement(blockid, "#pageContents");
 
         $pageContents.data({
             'listMode': false,
@@ -672,12 +674,12 @@ var opinion = new function()
         }
 
         var panelWidth = x_currentPageXML.getAttribute("panelWidth"),
-            $splitScreen = $("#pageContents .splitScreen"),
-            $textHolder = $("#textHolder");
+            $splitScreen = jGetElement(blockid, "#pageContents .splitScreen"),
+            $textHolder = jGetElement(blockid, "#textHolder");
 
         if (panelWidth == "Full")
         {
-            $("#infoHolder .panel").appendTo($pageContents);
+            jGetElement(blockid, "#infoHolder .panel").appendTo($pageContents);
             $splitScreen.remove();
         }
         else
@@ -706,7 +708,7 @@ var opinion = new function()
                     .removeClass("left")
                     .addClass("right")
                     .appendTo($splitScreen);
-                $("#infoHolder")
+                jGetElement(blockid, "#infoHolder")
                     .removeClass("right")
                     .addClass("left");
                 if (panelWidth == "Small")
@@ -753,16 +755,16 @@ var opinion = new function()
         });
 
         // submit button
-        $("#checkBtn")
+        jGetElement(blockid, "#checkBtn")
             .button({
                 label: submitBtnText
             })
             .click(function() {
-                opinion.trackQuestions();
+                opinion.trackQuestions(blockid);
             });
 
         // reset button
-        $("#resetBtn")
+        jGetElement(blockid, "#resetBtn")
             .button({
                 label: resetBtnText
             })
@@ -774,12 +776,12 @@ var opinion = new function()
                         'diagramAnswers': []
                     });
 
-                    opinion.startQuestions();
+                    opinion.startQuestions(blockid);
                 }
             });
 
-        this.startQuestions();
-        this.sizeChanged();
+        this.startQuestions(blockid);
+        this.sizeChanged(blockid);
         x_pageLoaded();
     }
 };
