@@ -4,11 +4,13 @@ var opinion = new function()
 
     this.sizeChanged = function(blockid)
     {
+        debugger
         var $panel = jGetElement(blockid, "#pageContents .qPanel"),
             resized = false;
 
         if (x_browserInfo.mobile == false)
         {
+            debugger
             $panel.height($x_pageHolder.height() - parseInt($x_pageDiv.css("padding-top")) * 2 - parseInt($panel.css("padding-top")) * 2 - 5);
         }
 
@@ -42,7 +44,7 @@ var opinion = new function()
                     audioBarW += $(this).outerWidth();
                 });
 
-                if (audioBarW - audioHolder.parents("#mainPanel").width() < -2 || audioBarW - audioHolder.parents("#mainPanel").width() > 2)
+                if (audioBarW - audioHolder.parents("#infoHolder").width() < -2 || audioBarW - audioHolder.parents("#infoHolder").width() > 2)
                 {
                     resized = true;
                     $x_window.resize();
@@ -50,10 +52,10 @@ var opinion = new function()
             }
         }
 
-        var width = jGetElement(blockid, "#mainPanel").width(),
-            height = jGetElement(blockid, "#mainPanel").height(),
+        var width = jGetElement(blockid, "#infoHolder").width(),
+            height = jGetElement(blockid, "#infoHolder").height(),
             textSize;
-
+        debugger
         if(width > height) {
             jGetElement(blockid, "#diagram")
                 .width(height*0.90)
@@ -495,7 +497,7 @@ var opinion = new function()
             score: Math.round(currentQuestionValue * 10.0) / 10.0
         };
 
-        XTExitInteraction(x_currentPage, questions[currentQuestion], result, l_options, l_answer, null, x_currentPageXML.getAttribute("trackinglabel"));
+        XTExitInteraction(x_currentPage, questions[currentQuestion], result, l_options, l_answer, null, 0, x_currentPageXML.getAttribute("trackinglabel"));
 
         // Continue to next question
         $pageContents.data('currentQuestion', $pageContents.data('currentQuestion')+1);
@@ -514,7 +516,7 @@ var opinion = new function()
         // Last question answered - show results
         var JSONGraph = this.createGraphObject();
         if (x_currentPageXML.getAttribute("diagram") !== "true"){
-            this.createDiagram(JSONGraph);
+            this.createDiagram(JSONGraph, blockid);
             this.sizeChanged(blockid);
         }
 
@@ -590,9 +592,9 @@ var opinion = new function()
 
     };
 
-    this.createDiagram = function(graphObject)
+    this.createDiagram = function(graphObject, blockid)
     {
-        var htmlToChar = function(h){return jGetElement(blockid, "<div>").html(h).text();},
+        var htmlToChar = function(h){return $("<div>").html(h).text();},
             classTitles = graphObject.classtitles.map(function(a){return htmlToChar(a);}),
             classValues = graphObject.classvalues;
 

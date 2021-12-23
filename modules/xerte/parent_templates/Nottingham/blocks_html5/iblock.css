@@ -3,21 +3,6 @@
     left: auto;
     position: relative;
 }
-/* mcq.html */
-
-#pageContents .panel {
-    overflow:	auto;
-}
-
-#optionHolder {
-    margin-top:	15px;
-    margin-bottom:	15px;
-}
-
-#pageContents input {
-    float:		left;
-    display:	block;
-}
 
 .x-card {
     box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
@@ -25,42 +10,3 @@
     background-color: #f1f1f1;
     margin-bottom: 30px;
 }
-
-#optionHolder .optionGroup {
-    padding-top:	5px;
-    padding-bottom:	5px;
-}
-
-#pageContents .optionTxt {
-    cursor:			pointer;
-    position:		relative;
-    margin-left:	2em;
-    display:		block;
-}
-
-#pageContents #checkBtn {
-    margin:		10px;
-    float:		right;
-}
-
-#pageContents #feedback {
-    clear:		both;
-}
-
-#feedback .feedbackBlock {
-    margin-bottom: 0.5em;
-}
-
-#feedback .audioHolder {
-    margin:	0.5em 0 1em 0;
-}
-
-#feedback h3 {
-    border-top: 1px solid #ccc;
-    padding-top: 1em;
-}
-
-legend#question {
-    width: 100%;
-}
-

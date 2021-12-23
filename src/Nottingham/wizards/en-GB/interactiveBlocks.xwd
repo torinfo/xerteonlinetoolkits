@@ -5,4 +5,6 @@
     </mcqBlock>
     <opinionBlock name="Opinion">
     </opinionBlock>
+    <gapFillBlock name="Gap Fill">
+    </gapFillBlock>
 </interactiveBlocks>

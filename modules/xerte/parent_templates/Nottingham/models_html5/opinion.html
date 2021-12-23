@@ -514,7 +514,7 @@
                 score: Math.round(currentQuestionValue * 10.0) / 10.0
             };
 			
-			XTExitInteraction(x_currentPage, questions[currentQuestion], result, l_options, l_answer, null, x_currentPageXML.getAttribute("trackinglabel"));
+			XTExitInteraction(x_currentPage, questions[currentQuestion], result, l_options, l_answer, null, 0, x_currentPageXML.getAttribute("trackinglabel"));
 
 			// Continue to next question
 			$pageContents.data('currentQuestion', $pageContents.data('currentQuestion')+1);

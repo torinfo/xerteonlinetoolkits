@@ -1,0 +1,111 @@
+/* gapFill.html */
+	
+	#pageContents .panel {
+		overflow:	auto;
+	}
+	
+	#textHolder {
+		margin-bottom:	10px;
+	}
+	
+	#targetHolder .target {
+		display:		inline-block;
+		text-align:		center;
+		vertical-align:	middle;
+		padding:		5px;
+		margin:			3px 0 5px 0;
+	}
+	
+	#targetHolder input {
+		margin:		5px 0;
+		text-align:	center;
+	}
+	
+	#targetHolder input[readonly].correct, #targetHolder .target.correct, #targetHolder input[correct] {
+		color:			green;
+		border-color:	transparent;
+	}
+
+	#targetHolder .target.incorrect {
+		color:			#EB0000;
+		border-color:	transparent;
+		font-weight:600;
+	}
+	
+	#targetHolder input.incorrect, #targetHolder input[incorrect] {
+		color: 			#EB0000;
+		font-weight:600;
+	}
+	
+	#targetHolder .target.incorrect {
+		color:			#EB0000;
+		border-color:	transparent;
+		font-weight:600;
+	}
+	
+	#targetHolder .target.answerShown, #targetHolder input.answerShown {
+		color:			#c36b00;
+		border-color:	transparent;
+	}
+	
+	#targetHolder select {
+		margin:	5px 0;
+	}
+	
+	#targetHolder select[disabled] {
+		color: #EB0000;
+		font-weight:600;
+	}
+	
+	#targetHolder select[disabled].correct {
+		color:	green;
+	}
+	
+	#targetHolder select[disabled].answerShown {
+		color:			#c36b00;
+	}
+	
+	#labelHolder {
+		margin-top:	1em;
+		border-top:	1px solid #ccc;
+	}
+	
+	#labelHolder .label {
+		display:	inline-block;
+		cursor:		pointer;
+		padding:	7px;
+		margin:		10px;
+		border:		2px solid white;
+	}
+	
+	#labelHolder .label.focus {
+		border:		2px solid yellow;
+	}
+	
+	#labelHolder .label.selected {
+		border:		2px solid green;
+	}
+	
+	#feedbackTxt {
+		margin-top:		1em;
+		padding-top:	1em;
+		border-top:		1px solid #ccc;
+		clear:			both;
+	}
+	
+	#feedbackTxt #audioHolder {
+		margin-top:	20px;
+	}
+	
+	#btnHolder {
+		overflow: auto;
+	}
+	
+	#submitBtn, #showBtn {
+		float:	right;
+		margin-bottom:	10px;
+	}
+	
+	#showBtn {
+		margin-right: 1em;
+	}
