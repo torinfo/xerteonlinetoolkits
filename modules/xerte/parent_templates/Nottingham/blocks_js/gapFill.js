@@ -20,7 +20,7 @@ var gapFill = new function() {
         $audioHolder;
 
     // function called every time the page is viewed after it has initially loaded
-    this.pageChanged = function() {
+    this.pageChanged = function(blockid) {
         $pageContents = jGetElement(blockid, "#pageContents");
         $targetHolder = jGetElement(blockid, "#targetHolder");
         $feedbackTxt = jGetElement(blockid, "#feedbackTxt");
@@ -80,13 +80,13 @@ var gapFill = new function() {
         $pageContents.find("#hint").remove();
 
         if ($audioHolder.length > 0) {
-            this.audioFbResize();
+            this.audioFbResize(false, blockid);
         }
 
         $targetHolder.find("input, select").css("font-size", jGetElement(blockid, "#dragDropHolder").css("font-size"));
     }
 
-    this.audioFbResize = function(show) {
+    this.audioFbResize = function(show, blockid) {
         if (show === true) {
             $audioHolder.show();
         }
@@ -109,6 +109,10 @@ var gapFill = new function() {
         $targetHolder = jGetElement(blockid, "#targetHolder");
         $feedbackTxt = jGetElement(blockid, "#feedbackTxt");
         $audioHolder = jGetElement(blockid, "#audioHolder");
+
+        $dragDropHolder = jGetElement(blockid, "#dragDropHolder");
+        $dragDropHolder.addClass(blockid);
+
         const blocknr = XTGetBlockNr(blockid);
 
         delimiter = x_currentPageXML.getAttribute("answerDelimiter") != undefined && x_currentPageXML.getAttribute("answerDelimiter") != "" ? x_currentPageXML.getAttribute("answerDelimiter")  : ",";
@@ -355,6 +359,7 @@ var gapFill = new function() {
     }
 
     this.setUpDropDown = function(blockid) {
+        debugger
         jGetElement(blockid, "#labelHolder").remove();
 
         if (x_currentPageXML.getAttribute("spaceLines") != "false") {
@@ -387,7 +392,7 @@ var gapFill = new function() {
 
                     jGetElement(blockid, "#feedbackTxt #txt").html(x_addLineBreaks(x_currentPageXML.getAttribute("feedback")));
                     $feedbackTxt.fadeIn();
-                    gapFill.audioFbResize(true);
+                    gapFill.audioFbResize(true, blockid);
                 });
 
                 $(this).hide();
@@ -446,7 +451,7 @@ var gapFill = new function() {
                                 if ($targetHolder.find("input.correct").length == $targetHolder.find("input").length) {
                                     jGetElement(blockid, "#feedbackTxt #txt").html(x_addLineBreaks(x_currentPageXML.getAttribute("feedback")));
                                     $feedbackTxt.fadeIn();
-                                    gapFill.audioFbResize(true);
+                                    gapFill.audioFbResize(true, blockid);
                                 }
 
                             } else { // wrong - start showing hint after 3 wrong characters entered - this only gives hint if there's only 1 possible correct answer for the gap
@@ -565,7 +570,7 @@ var gapFill = new function() {
                     jGetElement(blockid, "#submitBtn").hide();
                     jGetElement(blockid, "#feedbackTxt #txt").html(x_addLineBreaks(x_currentPageXML.getAttribute("feedback")));
                     $feedbackTxt.fadeIn();
-                    gapFill.audioFbResize(true);
+                    gapFill.audioFbResize(true, blockid);
 
                     finished = true;
                 });
@@ -579,6 +584,7 @@ var gapFill = new function() {
     }
 
     this.setUpDragDrop = function(blockid) {
+        let blocknr = XTGetBlockNr(blockid);
         // if mark at end is off but tracking is on then it will mark at end anyway
         if (!this.isTracked && (x_currentPageXML.getAttribute("markEnd") == undefined || x_currentPageXML.getAttribute("markEnd") == "false")) {
             jGetElement(blockid, "#submitBtn").hide();
@@ -616,7 +622,7 @@ var gapFill = new function() {
                     jGetElement(blockid, "#submitBtn").hide();
                     jGetElement(blockid, "#feedbackTxt #txt").html(x_addLineBreaks(x_currentPageXML.getAttribute("feedback")));
                     $feedbackTxt.fadeIn();
-                    gapFill.audioFbResize(true);
+                    gapFill.audioFbResize(true, blockid);
 
                     finished = true;
                 });
@@ -710,7 +716,7 @@ var gapFill = new function() {
         // set up drag events (mouse and keyboard controlled)
         jGetElement(blockid, "#dragDropHolder .label")
             .draggable({
-                containment:	"#dragDropHolder",
+                containment:	"#dragDropHolder .block" + blocknr,
                 stack:			"#dragDropHolder .label", // item being dragged is always on top (z-index)
                 revert:			"invalid", // snap back to original position if not dropped on target
                 start:			function() {
@@ -785,7 +791,7 @@ var gapFill = new function() {
             jGetElement(blockid, "#labelHolder").hide();
             jGetElement(blockid, "#feedbackTxt #txt").html(x_addLineBreaks(x_currentPageXML.getAttribute("feedback")));
             $feedbackTxt.fadeIn();
-            gapFill.audioFbResize(true);
+            gapFill.audioFbResize(true, blockid);
             gapFill.dragDropSubmit(false, blockid);
         }
     }
@@ -878,6 +884,7 @@ var gapFill = new function() {
 
     this.dropDownSubmit = function(forced, blockid) {
         let blocknr = XTGetBlockNr(blockid);
+        debugger
         // no answers given
         if ($targetHolder.find('select option:selected[value=" "]').parent().length == $targetHolder.find('select').length) {
             // prompt to complete exercise unless this has been triggered by leaving the page
@@ -941,7 +948,7 @@ var gapFill = new function() {
                     jGetElement(blockid, "#submitBtn, #showBtn").hide();
                     jGetElement(blockid, "#feedbackTxt #txt").html(x_addLineBreaks(x_currentPageXML.getAttribute("feedback")));
                     $feedbackTxt.fadeIn();
-                    gapFill.audioFbResize(true);
+                    gapFill.audioFbResize(true, blockid);
 
                     finished = true;
 
@@ -1067,7 +1074,7 @@ var gapFill = new function() {
                     jGetElement(blockid, "#feedbackTxt #txt").html(x_addLineBreaks(x_currentPageXML.getAttribute("feedback")));
                     jGetElement(blockid, "#showBtn,#submitBtn").hide();
                     $feedbackTxt.fadeIn();
-                    gapFill.audioFbResize(true);
+                    gapFill.audioFbResize(true, blockid);
 
                     finished = true;
 
@@ -1204,7 +1211,7 @@ var gapFill = new function() {
                     jGetElement(blockid, "#labelHolder").hide();
                     jGetElement(blockid, "#feedbackTxt #txt").html(x_addLineBreaks(x_currentPageXML.getAttribute("feedback")));
                     $feedbackTxt.fadeIn();
-                    gapFill.audioFbResize(true);
+                    gapFill.audioFbResize(true, blockid);
                     finished = true;
                 } else {
                     if (score == 0) {

@@ -225,7 +225,6 @@ function XTSetInteractionPageXML(page_nr, ia_nr, pageXML, ia_sub_nr = 0){
 }
 
 function XTGetPageXML(page_nr, ia_nr, ia_sub_nr = 0){
-
     return trackingManager.getInteractionPageXML(page_nr, ia_nr, ia_sub_nr);
 }
 
