@@ -256,6 +256,7 @@ function TrackingManager(){
 
     function pageCompleted(sit)
     {
+        debugger
         var sits = this.findAllInteractions(sit.page_nr);
         if (sits.length !== sit.nrinteractions)
         {

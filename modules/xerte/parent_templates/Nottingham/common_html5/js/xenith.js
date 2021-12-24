@@ -77,7 +77,6 @@ $(document).keydown(function(e) {
 		// Ignore
 	}
 	if (!shownInFeatherlight) {
-		debugger
 		switch(e.which) {
 			case 33: // PgUp
 				var pageIndex = $.inArray(x_currentPage, x_normalPages);
@@ -1853,7 +1852,7 @@ function x_createBlock(container, module, modulePosition){
 	$("#"+blockid).load(x_templateLocation + "blocks_html5/" + module.tagName+ ".html", function() {
 		window[jsName].init(module, blockid);
 	});
-	debugger
+
 	x_insertCSS(x_templateLocation + "blocks_html5/" + module.tagName + ".css", null, false, "page_model_css");
 
 
@@ -1982,7 +1981,6 @@ function x_changePage(x_gotoPage, addHistory) {
 
 			$x_mainHolder.addClass("x_" + modelfile + "_page");
 
-			debugger
 			x_insertCSS(x_templateLocation + "models_html5/" + modelfile + ".css", function () {
 				x_changePageStep2(x_gotoPage);
 			}, false, "page_model_css");

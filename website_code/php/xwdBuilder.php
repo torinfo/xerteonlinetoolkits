@@ -123,13 +123,13 @@ class XerteXWDBuilder
 		$foundBlocks = array();
 
 		foreach ($blockNodes as $interactiveBlock){
-			array_push($foundBlocks, strtolower($interactiveBlock->getName()));
+			array_push($foundBlocks, $interactiveBlock->getName());
 		}
 
 		foreach ($xwd as $model){
 			$xwdName = substr($model, strrpos($model, '/') + 1);
-			$name = strtolower(substr($xwdName, 0,-4));
-			if(in_array($name."block", $foundBlocks)){
+			$name = substr($xwdName, 0,-4);
+			if(in_array($name."Block", $foundBlocks)){
 				if (file_exists($model)) {
 					$modelXML = simplexml_load_file($model);
 					$fullModelXml = simplexml_load_file($model, NULL, LIBXML_NOCDATA);

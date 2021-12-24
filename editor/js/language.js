@@ -76,6 +76,7 @@ var EDITOR = (function ($, parent) {
             // INTERN CODE
             var interactiveBlocks = [];
             $($(this).children('interactiveBlocks').children()).each( function () {
+                debugger
                 var blockCdata = ""
                 var i = [].slice.call($(this)[0]["children"]);
                 i.forEach(function(item){
@@ -88,7 +89,6 @@ var EDITOR = (function ($, parent) {
                     blockDefault: blockCdata
                 });
             });
-
             // info
             info = "";
             if ($(this).children('info').length > 0)
@@ -297,7 +297,7 @@ var EDITOR = (function ($, parent) {
         var wizard_xml = $($.parseXML(xml)).find("wizard");
 
         parse_wizard_xml(wizard_xml);
-
+        debugger
         waitonlanguage();
     },
 

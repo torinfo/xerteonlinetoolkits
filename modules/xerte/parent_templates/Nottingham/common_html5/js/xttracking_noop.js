@@ -323,6 +323,8 @@ function XTResults(fullcompletion) {
     var nrvisited = 0;
     var completed;
 
+    debugger
+
     $.each(trackingManager.completedPages, function (i, completed) {
         // indices not defined will be visited anyway.
         // In that case 'completed' will be undefined
