@@ -7,4 +7,6 @@
     </opinionBlock>
     <gapFillBlock name="Gap Fill">
     </gapFillBlock>
+    <textMatchBlock name="Text Match">
+    </textMatchBlock>
 </interactiveBlocks>
