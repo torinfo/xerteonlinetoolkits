@@ -85,7 +85,6 @@ var textMatch = new function() {
     this.leavePage = function(blockid) {
         debugger
         var blocknr = XTGetBlockNr(blockid);
-        var modelState = XTGetInteractionModelState(x_currentPage, blocknr);
         x_currentPageXML = XTGetPageXML(x_currentPage, blocknr);
         if ($(x_currentPageXML).children().length > 0 && this.tracked != true) {
             this.finishTracking(blockid);
