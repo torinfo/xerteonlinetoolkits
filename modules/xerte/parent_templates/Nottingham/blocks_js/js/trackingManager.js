@@ -46,6 +46,7 @@ function TrackingManager(){
     this.verifyResult = verifyResult;
     this.verifyEnterInteractionParameters = verifyEnterInteractionParameters;
     this.verifyExitInteractionParameters = verifyExitInteractionParameters;
+    this.setLeavePage = setLeavePage;
 
     function makeId(page_nr, ia_nr, ia_type, ia_name){
 
@@ -341,6 +342,14 @@ function TrackingManager(){
                         sit.exit();
                     }
                 }
+            }
+        }
+
+        for(i=0;i<page.interactions.length;i++){
+            var interaction = page.interactions[i];
+            if(interaction.leavePage != null){
+                var blockid = "block" + (interaction.ia_nr + 1);
+                interaction.leavePage(blockid);
             }
         }
     }
@@ -918,5 +927,10 @@ function TrackingManager(){
                     break;
             }
         }
+    }
+
+    function setLeavePage(page_nr, ia_nr, ia_sub_nr, leavepage) {
+        var interaction = this.findInteraction(page_nr, ia_nr, ia_sub_nr);
+        interaction.leavePage = leavepage;
     }
 }

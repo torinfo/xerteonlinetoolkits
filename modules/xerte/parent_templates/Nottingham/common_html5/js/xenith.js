@@ -2064,7 +2064,7 @@ function x_changePageStep4(x_gotoPage) {
 }
 
 function x_endPageTracking(pagechange, x_gotoPage) {
-    // End page tracking of x_currentPage
+    // End page tracking of x_curreniuysPage
     if (x_currentPage != -1 && !x_isMenu() && (!pagechange || x_currentPage != x_gotoPage) && x_pageInfo[x_currentPage].passwordPass != false)
     {
         var pageObj;

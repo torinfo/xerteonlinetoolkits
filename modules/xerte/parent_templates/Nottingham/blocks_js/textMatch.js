@@ -78,6 +78,9 @@ var textMatch = new function() {
     }
 
     this.leavePage = function(blockid) {
+        debugger
+        var blocknr = XTGetBlockNr(blockid);
+        x_currentPageXML = XTGetPageXML(x_currentPage, blocknr);
         if ($(x_currentPageXML).children().length > 0 && this.tracked != true) {
             this.finishTracking(blockid);
         }
@@ -416,7 +419,9 @@ var textMatch = new function() {
         }
         var blocknr = parseFloat(blockid.split("block").pop()) - 1;
         debugger
+
         XTEnterInteraction(x_currentPage, blocknr, 'match', label, correctOptions, correctAnswers, correctFeedbacks, x_currentPageXML.getAttribute("grouping"));
+        XTSetLeavePage(x_currentPage, blocknr, this.leavePage);
     }
 
 

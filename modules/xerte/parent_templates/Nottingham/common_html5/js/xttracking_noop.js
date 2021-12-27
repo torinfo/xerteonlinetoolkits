@@ -220,14 +220,6 @@ function XTExitInteraction(page_nr, ia_nr, result, learneroptions, learneranswer
 	trackingManager.exitInteraction(page_nr, ia_nr, result, learneroptions, learneranswer, feedback, ia_sub_nr);
 }
 
-function XTSetInteractionPageXML(page_nr, ia_nr, pageXML, ia_sub_nr = 0){
-    trackingManager.setInteractionPageXML(page_nr, ia_nr, pageXML, ia_sub_nr);
-}
-
-function XTGetPageXML(page_nr, ia_nr, ia_sub_nr = 0){
-    return trackingManager.getInteractionPageXML(page_nr, ia_nr, ia_sub_nr);
-}
-
 function XTGetInteractionScore(page_nr, ia_nr, ia_type, ia_name, full_id, callback, q)
 {
     var JSONGraph = {
@@ -507,4 +499,16 @@ function XTGetBlockNr(blockid){
     } else{
         return 0;
     }
+}
+
+function XTSetInteractionPageXML(page_nr, ia_nr, pageXML, ia_sub_nr = 0){
+    trackingManager.setInteractionPageXML(page_nr, ia_nr, pageXML, ia_sub_nr);
+}
+
+function XTGetPageXML(page_nr, ia_nr, ia_sub_nr = 0){
+    return trackingManager.getInteractionPageXML(page_nr, ia_nr, ia_sub_nr);
+}
+
+function XTSetLeavePage(page_nr, ia_nr, leavePage, ia_sub_nr = 0){
+    return trackingManager.setLeavePage(page_nr, ia_nr, ia_sub_nr,leavePage);
 }
