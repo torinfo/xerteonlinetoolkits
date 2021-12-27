@@ -1,14 +1,18 @@
 var textMatch = new function() {
-    var labelTxt1,
-        labelTxt2,
-        labelTxt3,
-        targetTxt1,
-        targetTxt2,
-        numAttempts;
+    var modelState = {
+        labelTxt1: null,
+        labelTxt2: null,
+        labelTxt3: null,
+        targetTxt1: null,
+        targetTxt2: null,
+        numAttempts: null
+    }
 
     // function called every time the page is viewed after it has initially loaded
     this.pageChanged = function(blockid) {
-        numAttempts = 0;
+        var blocknr = XTGetBlockNr(blockid);
+        modelState = XTGetInteractionModelState(x_currentPage, blocknr);
+        modelState.numAttempts = 0;
         jGetElement(blockid, "#labelHolder .label, #targetHolder .hint").remove();
         jGetElement(blockid, "#labelHolder .audioHolder, #feedback").hide();
         jGetElement(blockid, "#button").show();
@@ -17,8 +21,9 @@ var textMatch = new function() {
             .data("currentLabel", "")
             .css("height", "auto");
 
-        this.createLabels();
-        this.sizeChanged();
+        this.createLabels(blockid);
+        this.sizeChanged(blockid);
+        XTSetInteractionModelState(x_currentPage, blocknr, modelState)
     }
 
     // function called every time the size of the LO is changed
@@ -80,6 +85,7 @@ var textMatch = new function() {
     this.leavePage = function(blockid) {
         debugger
         var blocknr = XTGetBlockNr(blockid);
+        var modelState = XTGetInteractionModelState(x_currentPage, blocknr);
         x_currentPageXML = XTGetPageXML(x_currentPage, blocknr);
         if ($(x_currentPageXML).children().length > 0 && this.tracked != true) {
             this.finishTracking(blockid);
@@ -89,14 +95,17 @@ var textMatch = new function() {
     this.init = function(pageXML,blockid) {
         x_currentPageXML = pageXML;
         jGetElement(blockid, "#pageContents").data("audioW", 0);
-        numAttempts = 0;
+
+        //Reset modelState
+        modelState = {};
+        modelState.numAttempts = 0;
 
         // store strings used to give titles to labels and targets when keyboard is being used (for screen readers)
-        labelTxt1 = x_getLangInfo(x_languageData.find("interactions").find("draggableItem")[0], "name", "Draggable Item");
-        labelTxt2 = x_getLangInfo(x_languageData.find("interactions").find("draggableItem")[0], "selected", "Item Selected");
-        labelTxt3 = x_getLangInfo(x_languageData.find("interactions").find("draggableItem")[0], "toSelect", "Press space to select");
-        targetTxt1 = x_getLangInfo(x_languageData.find("interactions").find("targetArea")[0], "description", "Drop zone for");
-        targetTxt2 = x_getLangInfo(x_languageData.find("interactions").find("targetArea")[0], "toSelect", "Press space to drop the selected item.");
+        modelState.labelTxt1 = x_getLangInfo(x_languageData.find("interactions").find("draggableItem")[0], "name", "Draggable Item");
+        modelState.labelTxt2 = x_getLangInfo(x_languageData.find("interactions").find("draggableItem")[0], "selected", "Item Selected");
+        modelState.labelTxt3 = x_getLangInfo(x_languageData.find("interactions").find("draggableItem")[0], "toSelect", "Press space to select");
+        modelState.targetTxt1 = x_getLangInfo(x_languageData.find("interactions").find("targetArea")[0], "description", "Drop zone for");
+        modelState.targetTxt2 = x_getLangInfo(x_languageData.find("interactions").find("targetArea")[0], "toSelect", "Press space to drop the selected item.");
 
         jGetElement(blockid, "#textHolder")
             .html(x_addLineBreaks(x_currentPageXML.getAttribute("text")))
@@ -137,7 +146,7 @@ var textMatch = new function() {
                 });
                 if(!labelOffTarget)
                 {
-                    numAttempts++;
+                    modelState.numAttempts++;
                 }
                 if(XTGetMode() != "normal" && x_currentPageXML.getAttribute('markEnd') === 'false' ){
                     jGetElement(blockid, "#labelHolder .label").each(function() {
@@ -169,7 +178,7 @@ var textMatch = new function() {
 
                                 $prevTarget.data("currentLabel", "");
 
-                                if (numAttempts >= maxAttempts) {
+                                if (modelState.numAttempts >= maxAttempts) {
                                     if ($prevTarget.data("hint") != "" && $prevTarget.data("hint") != undefined) {
                                         $prevTarget.prepend('<div class="hint">' + x_addLineBreaks($prevTarget.data("hint")) + '</div>');
                                     } else {
@@ -228,7 +237,7 @@ var textMatch = new function() {
                     }
 
 
-                    if (allCorrect == false && numAttempts >= maxAttempts) {
+                    if (allCorrect == false && modelState.numAttempts >= maxAttempts) {
                         $feedback.html(x_addLineBreaks(x_currentPageXML.getAttribute("feedback")));
                     } else if (allCorrect == true) {
                         $feedback.html(x_addLineBreaks(x_currentPageXML.getAttribute("feedback")));
@@ -261,7 +270,7 @@ var textMatch = new function() {
                 }
 
                 $thisTarget
-                    .attr("title", targetTxt1 + " '" + this.getAttribute("name") + " " + (i + 1) + "'")
+                    .attr("title", modelState.targetTxt1 + " '" + this.getAttribute("name") + " " + (i + 1) + "'")
                     .data({
                         "hint"	:this.getAttribute("hint"),
                         "name"	:this.getAttribute("name"),
@@ -291,7 +300,7 @@ var textMatch = new function() {
                     $(this).addClass("highlightDark");
                     var $pageContents = jGetElement(blockid, "#pageContents");
                     if ($pageContents.data("selectedLabel") != undefined && $pageContents.data("selectedLabel") != "") {
-                        $(this).attr("title", targetTxt1 + " '" + $(this).data("name") + " " + ($(this).index() + 1) + "' - " + targetTxt2);
+                        $(this).attr("title", modelState.targetTxt1 + " '" + $(this).data("name") + " " + ($(this).index() + 1) + "' - " + modelState.targetTxt2);
                     }
                 }
             })
@@ -299,7 +308,7 @@ var textMatch = new function() {
                 var $pageContents = jGetElement(blockid, "#pageContents");
                 $(this)
                     .removeClass("highlightDark")
-                    .attr("title", targetTxt1 + " '" + $(this).data("name") + " " + ($(this).index() + 1) + "'");
+                    .attr("title", modelState.targetTxt1 + " '" + $(this).data("name") + " " + ($(this).index() + 1) + "'");
             })
             .keypress(function(e) {
                 if ($(e.target).hasClass("target")) {
@@ -322,7 +331,7 @@ var textMatch = new function() {
             var $this = $(this);
             $this.attr({
                 "tabindex"	:tabIndex,
-                "title"		:targetTxt1 + " '" + $this.data("name") + " " + ($this.index() + 1) + "'"
+                "title"		:modelState.targetTxt1 + " '" + $this.data("name") + " " + ($this.index() + 1) + "'"
             });
             tabIndex++;
         });
@@ -422,6 +431,7 @@ var textMatch = new function() {
 
         XTEnterInteraction(x_currentPage, blocknr, 'match', label, correctOptions, correctAnswers, correctFeedbacks, x_currentPageXML.getAttribute("grouping"));
         XTSetLeavePage(x_currentPage, blocknr, this.leavePage);
+        XTSetInteractionModelState(x_currentPage, blocknr, modelState);
     }
 
 
@@ -440,7 +450,7 @@ var textMatch = new function() {
             tempLabels.splice(labelNum, 1);
         }
         for (i=0; i<labels.length; i++) {
-            jGetElement(blockid, "#labelHolder").append('<div class="label panel" id="label' + i + '" tabindex="' + (i+2) + '" title="' + labelTxt1 + '"><div class="labelTxt">' + x_addLineBreaks(labels[i].text) + '</div></div>');
+            jGetElement(blockid, "#labelHolder").append('<div class="label panel" id="label' + i + '" tabindex="' + (i+2) + '" title="' + modelState.labelTxt1 + '"><div class="labelTxt">' + x_addLineBreaks(labels[i].text) + '</div></div>');
 
             var $thisLabel = jGetElement(blockid, "#label" + i);
             $thisLabel.data("target", labels[i].correct);
@@ -474,14 +484,14 @@ var textMatch = new function() {
                     // remove any focus/selection highlights made by tabbing to labels/targets
                     var $pageContents = jGetElement(blockid, "#pageContents");
                     if (jGetElement(blockid, "#labelHolder .label.focus").length > 0) {
-                        jGetElement(blockid, "#labelHolder .label.focus").attr("title", labelTxt1);
+                        jGetElement(blockid, "#labelHolder .label.focus").attr("title", modelState.labelTxt1);
                     } else if ($pageContents.data("selectedLabel") != undefined && $pageContents.data("selectedLabel") != "") {
-                        $pageContents.data("selectedLabel").attr("title", labelTxt1);
+                        $pageContents.data("selectedLabel").attr("title", modelState.labelTxt1);
                         $pageContents.data("selectedLabel", "");
                     }
                     var targetInFocus = jGetElement(blockid, "#targetHolder .target.highlightDark");
                     if (targetInFocus.length > 0) {
-                        targetInFocus.attr("title", targetTxt1 + " '" + targetInFocus.data("name") + " " + (targetInFocus.index() + 1) + "'");
+                        targetInFocus.attr("title", modelState.targetTxt1 + " '" + targetInFocus.data("name") + " " + (targetInFocus.index() + 1) + "'");
                     }
                     jGetElement(blockid, "#dragDropHolder .selected").removeClass("selected");
                     jGetElement(blockid, "#dragDropHolder .focus").removeClass("focus");
@@ -501,14 +511,14 @@ var textMatch = new function() {
                 if ($this.is($pageContents.data("selectedLabel")) == false) {
                     $this
                         .addClass("focus")
-                        .attr("title", labelTxt1 + " - " + labelTxt3);
+                        .attr("title", modelState.labelTxt1 + " - " + modelState.labelTxt3);
                 }
             })
             .focusout(function() {
                 var $this = $(this);
                 $this.removeClass("focus");
                 if ($this.is($pageContents.data("selectedLabel")) == false) {
-                    $this.attr("title", labelTxt1);
+                    $this.attr("title", modelState.labelTxt1);
                 }
             })
             .keypress(function(e) {
@@ -518,13 +528,13 @@ var textMatch = new function() {
                     if ($pageContents.data("selectedLabel") != undefined && $pageContents.data("selectedLabel") != "") {
                         $pageContents.data("selectedLabel")
                             .removeClass("selected")
-                            .attr("title", labelTxt1);
+                            .attr("title", modelState.labelTxt1);
                     }
                     var $this = $(this);
                     $this
                         .removeClass("focus")
                         .addClass("selected")
-                        .attr("title", labelTxt1 + ' - ' + labelTxt2);
+                        .attr("title", modelState.labelTxt1 + ' - ' + modelState.labelTxt2);
                     $pageContents.data("selectedLabel", $this);
 
                     jGetElement(blockid, "#dragDropHolder .tick, #targetHolder .hint").remove();
@@ -581,10 +591,10 @@ var textMatch = new function() {
             jGetElement(blockid, "#pageContents").data("selectedLabel", "");
         }
 
-        $thisTarget.attr("title", targetTxt1 + " '" + $thisTarget.data("name") + " " + ($thisTarget.index() + 1) + "'");
+        $thisTarget.attr("title", modelState.targetTxt1 + " '" + $thisTarget.data("name") + " " + ($thisTarget.index() + 1) + "'");
 
         $thisLabel
-            .attr("title", labelTxt1)
+            .attr("title", modelState.labelTxt1)
             .removeClass("selected")
             .css({
                 "top"	:$thisTarget.find("h3").position().top + jGetElement(blockid, "div#x_pageHolder").scrollTop(),

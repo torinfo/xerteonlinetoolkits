@@ -47,6 +47,8 @@ function TrackingManager(){
     this.verifyEnterInteractionParameters = verifyEnterInteractionParameters;
     this.verifyExitInteractionParameters = verifyExitInteractionParameters;
     this.setLeavePage = setLeavePage;
+    this.setInteractionModelState = setInteractionModelState;
+    this.getInteractionModelState = getInteractionModelState;
 
     function makeId(page_nr, ia_nr, ia_type, ia_name){
 
@@ -929,8 +931,27 @@ function TrackingManager(){
         }
     }
 
+    function setInteractionModelState(page_nr, ia_nr, modelState, ia_sub_nr) {
+        var interaction = this.findInteraction(page_nr, ia_nr, ia_sub_nr);
+        if(interaction != null){
+            interaction.modelState = modelState;
+        }
+    }
+
+
+    function getInteractionModelState(page_nr, ia_nr, ia_sub_nr) {
+        var interaction = this.findInteraction(page_nr, ia_nr, ia_sub_nr);
+        if(interaction != null){
+            return interaction.modelState;
+        } else {
+            return null;
+        }
+    }
+
     function setLeavePage(page_nr, ia_nr, ia_sub_nr, leavepage) {
         var interaction = this.findInteraction(page_nr, ia_nr, ia_sub_nr);
-        interaction.leavePage = leavepage;
+        if(interaction != null){
+            interaction.leavePage = leavepage;
+        }
     }
 }

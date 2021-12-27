@@ -512,3 +512,11 @@ function XTGetPageXML(page_nr, ia_nr, ia_sub_nr = 0){
 function XTSetLeavePage(page_nr, ia_nr, leavePage, ia_sub_nr = 0){
     return trackingManager.setLeavePage(page_nr, ia_nr, ia_sub_nr,leavePage);
 }
+
+function XTSetInteractionModelState(page_nr, ia_nr, modelState, ia_sub_nr = 0){
+    trackingManager.setInteractionModelState(page_nr, ia_nr, modelState, ia_sub_nr);
+}
+
+function XTGetInteractionModelState(page_nr, ia_nr, ia_sub_nr = 0){
+    return trackingManager.getInteractionModelState(page_nr, ia_nr, ia_sub_nr);
+}

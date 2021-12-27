@@ -22,6 +22,7 @@ function InteractionState(id, page_nr, ia_nr, ia_type, ia_name, ia_sub_nr){
     this.exitInteraction = exitInteraction;
     this.setPageXML = setPageXML;
     this.leavePage = null;
+    this.modelState = {};
 
     function exit()
     {
