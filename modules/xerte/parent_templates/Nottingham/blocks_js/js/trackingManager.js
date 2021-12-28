@@ -934,7 +934,7 @@ function TrackingManager(){
     function setInteractionModelState(page_nr, ia_nr, modelState, ia_sub_nr) {
         var interaction = this.findInteraction(page_nr, ia_nr, ia_sub_nr);
         if(interaction != null){
-            interaction.modelState = modelState;
+            interaction.modelState = JSON. parse(JSON. stringify(modelState));
         }
     }
 
