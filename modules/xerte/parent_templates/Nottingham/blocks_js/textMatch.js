@@ -192,7 +192,7 @@ var textMatch = new function() {
                 }
                 else{
                     if (!labelOffTarget){
-                        textMatch.finishTracking();
+                        textMatch.finishTracking(blockid);
                         jGetElement(blockid, "#labelHolder .label").each(function() {
                             var $this = $(this);
                             if ($this.data("target").is($this.data("currentTarget"))) {
@@ -383,7 +383,7 @@ var textMatch = new function() {
         };
         var blocknr = parseFloat(blockid.split("block").pop()) - 1;
 
-        XTExitInteraction(x_currentPage, blocknr, result, l_options, l_answers, l_feedbacks, x_currentPageXML.getAttribute("trackinglabel"));
+        XTExitInteraction(x_currentPage, blocknr, result, l_options, l_answers, l_feedbacks);
 
         if(XTGetMode() == "normal" && x_currentPageXML.getAttribute('markEnd') !== 'false'){
             jGetElement(blockid, "#dragDropHolder .label")
