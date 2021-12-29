@@ -22,6 +22,26 @@ var gapFill = new function() {
         $feedbackTxt,
         $audioHolder;
 
+    this.resetModelState = function(){
+        modelState = {
+            labelTxt1: null,
+            labelTxt2: null,
+            labelTxt3: null,
+            targetTxt1: null,
+            targetTxt2: null,
+            delimiter: null,
+            finished: false,
+            correct_answers: 0,
+            total: 0,
+            score: 0,
+            attempts: 0,
+            casesensitive: null,
+            answerData: null,
+            allDropDownAnswers:null,
+            labelAnswers: {}
+        };
+    }
+
     this.refreshPageVariables = function(blockid){
         $pageContents = jGetElement(blockid, "#pageContents");
         $targetHolder = jGetElement(blockid, "#targetHolder");
@@ -116,6 +136,7 @@ var gapFill = new function() {
 
     this.init = function(pageXML, blockid) {
         x_currentPageXML = pageXML;
+        this.resetModelState();
         this.refreshPageVariables(blockid);
 
         $dragDropHolder = jGetElement(blockid, "#dragDropHolder");
@@ -297,10 +318,6 @@ var gapFill = new function() {
             $audioHolder.remove();
         }
 
-        // start tracking
-        this.initTracking();
-        debugger
-
         // Enter the interactions for this page.
         var interactionNumber,
             name,
@@ -312,7 +329,6 @@ var gapFill = new function() {
             for (interactionNumber=0;  interactionNumber<modelState.answerData.length;  interactionNumber++) {
                 name = "interaction number" + " " + interactionNumber;
                 correctAnswer = modelState.answerData[interactionNumber];
-                debugger
                 XTEnterInteraction(x_currentPage,  blocknr , 'fill-in', name, [], correctAnswer, "Correct", x_currentPageXML.getAttribute("grouping"), interactionNumber);
                 XTSetInteractionPageXML(x_currentPage, blocknr, x_currentPageXML, interactionNumber);
                 XTSetInteractionModelState(x_currentPage, blocknr, modelState, interactionNumber);
@@ -366,7 +382,8 @@ var gapFill = new function() {
             }
         }
 
-
+// start tracking
+        this.initTracking(blockid);
         this.sizeChanged(blockid);
         x_pageLoaded();
     }
@@ -421,6 +438,7 @@ var gapFill = new function() {
 
     this.setUpFillBlank = function(blockid) {
         this.refreshPageVariables(blockid);
+
         jGetElement(blockid, "#labelHolder").remove();
 
         if (x_currentPageXML.getAttribute("spaceLines") != "false") {
@@ -449,10 +467,12 @@ var gapFill = new function() {
             $targetHolder.find("input")
                 .addClass("incorrect")
                 .on("keypress", function() {
+                    modelState = XTGetInteractionModelState(x_currentPage, XTGetBlockNr(blockid));
                     if (modelState.finished == false) {
                         var $this = $(this);
-
                         setTimeout(function() {
+                            x_currentPageXML = XTGetPageXML(x_currentPage, XTGetBlockNr(blockid));
+                            gapFill.refreshPageVariables(blockid);
                             var currvalue = !modelState.casesensitive ? $this.val().trim().toLowerCase() : $this.val().trim();
                             if (modelState.answerData[$this.data("index")].indexOf(currvalue) != -1) { // correct
                                 $this
@@ -468,6 +488,17 @@ var gapFill = new function() {
                                     gapFill.audioFbResize(true, blockid);
                                 }
 
+                                debugger
+                                modelState.correct_answers++;
+                                modelState.total++;
+                                var result = {
+                                    success: true,
+                                    score: 100.0
+                                };
+                                let answer = !modelState.casesensitive ? $this.val().trim().toLowerCase() : $this.val().trim();
+                                debugger
+                                XTExitInteraction(x_currentPage, XTGetBlockNr(blockid) , result, [], answer, "Correct", $this.data("index"), x_currentPageXML.getAttribute("trackinglabel"));
+                                XTSetInteractionModelState(x_currentPage, XTGetBlockNr(blockid), modelState, $this.data("index"));
                             } else { // wrong - start showing hint after 3 wrong characters entered - this only gives hint if there's only 1 possible correct answer for the gap
                                 if (x_currentPageXML.getAttribute("showHint") != "false") {
                                     var wrong = 0;
@@ -521,7 +552,6 @@ var gapFill = new function() {
                                                 $this
                                                     .data("hint", currentHint)
                                                     .attr("title", currentHint);
-
                                                 var $hint = $pageContents.find("#hint");
                                                 if ($hint.length < 1) {
                                                     $pageContents.append('<div id="hint" class="x_tooltip"></div>');
@@ -662,11 +692,13 @@ var gapFill = new function() {
                 .attr("title", modelState.targetTxt1 + " " + (i + 1))
                 .data("index", i); // stored here as using .index() won't return result needed as there are other elements (line breaks etc.) in $targetHolder
         });
+        //reminder
+        let height = ($targetHolder.find(".target").height() + 10);
 
         $targetHolder.find(".target")
             .css({
                 "width":maxW + 30,
-                "height":$targetHolder.find(".target").height() + 10,
+                "height": "" + ($targetHolder.find(".target").height() + 10) + "px",
                 "line-height":$targetHolder.find(".target").height() + 10 + "px"
             })
             .html("")
@@ -769,6 +801,7 @@ var gapFill = new function() {
     // function called when label dropped on target - by mouse or keyboard
     this.dropLabel = function($thisTarget, $thisLabel, blockid) {
         this.refreshPageVariables(blockid);
+        modelState = XTGetInteractionModelState(x_currentPage, XTGetBlockNr(blockid));
         $feedbackTxt.hide();
 
         $thisLabel
@@ -799,7 +832,6 @@ var gapFill = new function() {
             .removeClass("highlight highlightDark ui-state-disabled");
 
         $pageContents.data("selectedLabel", "");
-
         modelState.labelAnswers[$thisTarget.data("answer")] = $thisLabel.data("answer");
 
         // if it's marked as completed (can only drop on correct targets) then show feedback immediately when complete
@@ -809,7 +841,9 @@ var gapFill = new function() {
             $feedbackTxt.fadeIn();
             gapFill.audioFbResize(true, blockid);
             gapFill.dragDropSubmit(false, blockid);
+            //reminder
         }
+        XTSetInteractionModelState(x_currentPage, XTGetBlockNr(blockid), modelState)
     }
 
     // set up events used when keyboard rather than mouse is used
@@ -911,7 +945,6 @@ var gapFill = new function() {
         modelState = XTGetInteractionModelState(x_currentPage, blocknr);
         this.refreshPageVariables(blockid);
 
-        debugger
         // no answers given
         if ($targetHolder.find('select option:selected[value=" "]').parent().length == $targetHolder.find('select').length) {
             // prompt to complete exercise unless this has been triggered by leaving the page
@@ -965,11 +998,11 @@ var gapFill = new function() {
                             result: ($.inArray($this.val(), modelState.answerData[i]) != -1)
                         });
                     });
-                    debugger
-                    XTExitInteraction(x_currentPage, blocknr, result, options, answers, [], 0, x_currentPageXML.getAttribute("trackinglabel"));
+
+                    XTExitInteraction(x_currentPage, blocknr, result, options, answers, [], i, x_currentPageXML.getAttribute("trackinglabel"));
                 });
 
-                gapFill.finishTracking();
+                gapFill.finishTracking(blockid);
 
                 if (wrong == 0) { // all correct
                     jGetElement(blockid, "#submitBtn, #showBtn").hide();
@@ -1081,11 +1114,11 @@ var gapFill = new function() {
                         success: correct,
                         score: (correct ? 100.0 : 0.0)
                     };
-
-                    XTExitInteraction(x_currentPage, blocknr , result, [], answer, feedback, $this.data("index"), x_currentPageXML.getAttribute("trackinglabel"),);
+                    debugger
+                    XTExitInteraction(x_currentPage, blocknr , result, [], answer, feedback, $this.data("index"), x_currentPageXML.getAttribute("trackinglabel"));
                 });
 
-                gapFill.finishTracking();
+                gapFill.finishTracking(blockid);
 
                 // show feedback - might be different if tracking on/off
                 var gapFillWrong = x_addLineBreaks(x_currentPageXML.getAttribute("gapFillWrong") != undefined && x_currentPageXML.getAttribute("gapFillWrong") != "" ? x_currentPageXML.getAttribute("gapFillWrong") : "You have not filled any gaps correctly. Try again."),
@@ -1180,10 +1213,9 @@ var gapFill = new function() {
                     score: (correct ? 100.0 : 0.0)
                 };
                 if (!correct) { feedback = "Incorrect"; }
-                debugger
-                XTExitInteraction(x_currentPage, 0, result, l_options, l_answers, feedback);
+                XTExitInteraction(x_currentPage, XTGetBlockNr(blockid), result, l_options, l_answers, feedback);
 
-                gapFill.finishTracking();
+                gapFill.finishTracking(blockid);
 
                 if (!this.isTracked) {
                     // reset incorrect labels so you can try again
@@ -1259,8 +1291,9 @@ var gapFill = new function() {
     }
 
     //Starting the tracking
-    this.initTracking = function() {
+    this.initTracking = function(blockid) {
         // Track the gapfill page
+        modelState = XTGetInteractionModelState(x_currentPage, XTGetBlockNr(blockid));
         this.weighting = 1.0;
         if (x_currentPageXML.getAttribute("trackingWeight") != undefined)
         {
@@ -1276,14 +1309,7 @@ var gapFill = new function() {
     }
 
     //Stopping the tracking
-    this.finishTracking = function() {
-        if(modelState.total != 0)
-        {
-            XTSetPageScore(x_currentPage, ((modelState.correct_answers * 100.0)/modelState.total), x_currentPageXML.getAttribute("trackinglabel"));
-        }
-        else
-        {
-            XTSetPageScore(x_currentPage, 0.0, x_currentPageXML.getAttribute("trackinglabel"));
-        }
+    this.finishTracking = function(blockid) {
+
     }
 }

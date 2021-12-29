@@ -217,6 +217,7 @@ function XTEnterInteraction(page_nr, ia_nr, ia_type, ia_name, correctoptions, co
 
 function XTExitInteraction(page_nr, ia_nr, result, learneroptions, learneranswer, feedback, ia_sub_nr = 0)
 {
+    debugger
 	trackingManager.exitInteraction(page_nr, ia_nr, result, learneroptions, learneranswer, feedback, ia_sub_nr);
 }
 
@@ -514,7 +515,6 @@ function XTSetLeavePage(page_nr, ia_nr, leavePage, ia_sub_nr = 0){
 }
 
 function XTSetInteractionModelState(page_nr, ia_nr, modelState, ia_sub_nr = 0){
-    debugger
     trackingManager.setInteractionModelState(page_nr, ia_nr, modelState, ia_sub_nr);
 }
 

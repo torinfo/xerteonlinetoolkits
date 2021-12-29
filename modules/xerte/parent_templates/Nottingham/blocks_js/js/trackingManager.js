@@ -388,7 +388,7 @@ function TrackingManager(){
 
     function setPageScore(page_nr, score)
     {
-
+        debugger
         var page = this.findPage(page_nr);
         var tempscore = 0;
         for(i=0;i<page.interactions.length;i++){
