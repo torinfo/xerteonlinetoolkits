@@ -43,10 +43,10 @@ var gapFill = new function() {
     }
 
     this.refreshPageVariables = function(blockid){
-        $pageContents = jGetElement(blockid, "#pageContents");
-        $targetHolder = jGetElement(blockid, "#targetHolder");
-        $feedbackTxt = jGetElement(blockid, "#feedbackTxt");
-        $audioHolder = jGetElement(blockid, "#audioHolder");
+        $pageContents = jGetElement(blockid, ".pageContents");
+        $targetHolder = jGetElement(blockid, ".targetHolder");
+        $feedbackTxt = jGetElement(blockid, ".feedbackTxt");
+        $audioHolder = jGetElement(blockid, ".audioHolder");
     }
 
     // function called every time the page is viewed after it has initially loaded
@@ -99,11 +99,11 @@ var gapFill = new function() {
     // function called every time the size of the LO is changed
     this.sizeChanged = function(blockid) {
         this.refreshPageVariables(blockid);
-        var $panel = jGetElement(blockid, "#mainPanel");
+        var $panel = jGetElement(blockid, ".mainPanel");
 
         if (x_browserInfo.mobile == false) {
             $panel.height(Math.max(
-                jGetElement(blockid, "#targetHolder").height() + jGetElement(blockid, "#labelHolder").outerHeight(true) + jGetElement(blockid, "#btnHolder").height(),
+                jGetElement(blockid, ".targetHolder").height() + jGetElement(blockid, ".labelHolder").outerHeight(true) + jGetElement(blockid, ".btnHolder").height(),
                 $x_pageHolder.height() - parseInt($x_pageDiv.css("padding-top")) * 2 - parseInt($panel.css("padding-top")) * 2 - 5
             ));
         }
@@ -113,7 +113,7 @@ var gapFill = new function() {
             this.audioFbResize(false, blockid);
         }
 
-        $targetHolder.find("input, select").css("font-size", jGetElement(blockid, "#dragDropHolder").css("font-size"));
+        $targetHolder.find("input, select").css("font-size", jGetElement(blockid, ".dragDropHolder").css("font-size"));
     }
 
     this.audioFbResize = function(show, blockid) {
@@ -124,7 +124,7 @@ var gapFill = new function() {
 
         if ($audioHolder.is(":visible")) {
             var audioBarW = 0;
-            jGetElement(blockid, "#pageContents #audioHolder .mejs-inner .mejs-controls").children().each(function() {
+            jGetElement(blockid, ".pageContents .audioHolder .mejs-inner .mejs-controls").children().each(function() {
                 audioBarW += $(this).outerWidth();
             });
 
@@ -139,7 +139,7 @@ var gapFill = new function() {
         this.resetModelState();
         this.refreshPageVariables(blockid);
 
-        $dragDropHolder = jGetElement(blockid, "#dragDropHolder");
+        $dragDropHolder = jGetElement(blockid, ".dragDropHolder");
         $dragDropHolder.addClass(blockid);
 
         const blocknr = XTGetBlockNr(blockid);
@@ -153,26 +153,26 @@ var gapFill = new function() {
         }
 
         // add aria-label to answer box input/selects
-        jGetElement(blockid, "#submitBtn").attr("aria-label", x_currentPageXML.getAttribute("checkBtn") != undefined && x_currentPageXML.getAttribute("checkBtn") != "" ? x_currentPageXML.getAttribute("checkBtn") : "Check");
-        jGetElement(blockid, "#showBtn")
+        jGetElement(blockid, ".submitBtn").attr("aria-label", x_currentPageXML.getAttribute("checkBtn") != undefined && x_currentPageXML.getAttribute("checkBtn") != "" ? x_currentPageXML.getAttribute("checkBtn") : "Check");
+        jGetElement(blockid, ".showBtn")
             .attr("aria-label", x_currentPageXML.getAttribute("showBtn") != undefined && x_currentPageXML.getAttribute("showBtn") != "" ? x_currentPageXML.getAttribute("showBtn") : "Show Answers")
             .hide();
 
         // set panel appearance
         var panelWidth = x_currentPageXML.getAttribute("panelWidth");
         if (panelWidth == "Full") {
-            jGetElement(blockid, "#mainText").remove();
-            jGetElement(blockid, "#dragDropHolder").appendTo($pageContents);
-            jGetElement(blockid, "#pageContents .splitScreen").remove();
+            jGetElement(blockid, ".mainText").remove();
+            jGetElement(blockid, ".dragDropHolder").appendTo($pageContents);
+            jGetElement(blockid, ".pageContents .splitScreen").remove();
 
         } else {
-            jGetElement(blockid, "#mainText").html(x_addLineBreaks(x_currentPageXML.getAttribute("text")));
+            jGetElement(blockid, ".mainText").html(x_addLineBreaks(x_currentPageXML.getAttribute("text")));
             if (panelWidth == "Small") {
-                jGetElement(blockid, "#pageContents .splitScreen").addClass("large"); // make text area on left large so panel on right is small
+                jGetElement(blockid, ".pageContents .splitScreen").addClass("large"); // make text area on left large so panel on right is small
             } else if (panelWidth == "Large") {
-                jGetElement(blockid, "#pageContents .splitScreen").addClass("small");
+                jGetElement(blockid, ".pageContents .splitScreen").addClass("small");
             } else {
-                jGetElement(blockid, "#pageContents .splitScreen").addClass("medium");
+                jGetElement(blockid, ".pageContents .splitScreen").addClass("medium");
             }
         }
 
@@ -303,7 +303,7 @@ var gapFill = new function() {
 
         $feedbackTxt
             .hide()
-            .find("#txt").html(x_addLineBreaks(x_currentPageXML.getAttribute("feedback")));
+            .find(".txt").html(x_addLineBreaks(x_currentPageXML.getAttribute("feedback")));
 
         if (x_currentPageXML.getAttribute("audioFeedback") != "" && x_currentPageXML.getAttribute("audioFeedback") != undefined) {
             $audioHolder.mediaPlayer({
@@ -390,13 +390,13 @@ var gapFill = new function() {
 
     this.setUpDropDown = function(blockid) {
         this.refreshPageVariables(blockid);
-        jGetElement(blockid, "#labelHolder").remove();
+        jGetElement(blockid, ".labelHolder").remove();
 
         if (x_currentPageXML.getAttribute("spaceLines") != "false") {
             $targetHolder.find("span").css("line-height", $targetHolder.find("select").outerHeight() + 12 + "px");
         }
 
-        jGetElement(blockid, "#submitBtn")
+        jGetElement(blockid, ".submitBtn")
             .button({
                 label:	x_currentPageXML.getAttribute("checkBtn") != undefined && x_currentPageXML.getAttribute("checkBtn") != "" ? x_currentPageXML.getAttribute("checkBtn") : "Check"
             })
@@ -404,7 +404,7 @@ var gapFill = new function() {
                 gapFill.dropDownSubmit(false, blockid);
             });
 
-        jGetElement(blockid, "#showBtn")
+        jGetElement(blockid, ".showBtn")
             .button({
                 label:	x_currentPageXML.getAttribute("showBtn") != undefined && x_currentPageXML.getAttribute("showBtn") != "" ? x_currentPageXML.getAttribute("showBtn") : "Show Answers"
             })
@@ -420,13 +420,13 @@ var gapFill = new function() {
                             .addClass("answerShown");
                     }
 
-                    jGetElement(blockid, "#feedbackTxt #txt").html(x_addLineBreaks(x_currentPageXML.getAttribute("feedback")));
+                    jGetElement(blockid, ".feedbackTxt .txt").html(x_addLineBreaks(x_currentPageXML.getAttribute("feedback")));
                     $feedbackTxt.fadeIn();
                     gapFill.audioFbResize(true, blockid);
                 });
 
                 $(this).hide();
-                jGetElement(blockid, "#submitBtn").hide();
+                jGetElement(blockid, ".submitBtn").hide();
 
                 modelState.finished = true;
             });
@@ -439,7 +439,7 @@ var gapFill = new function() {
     this.setUpFillBlank = function(blockid) {
         this.refreshPageVariables(blockid);
 
-        jGetElement(blockid, "#labelHolder").remove();
+        jGetElement(blockid, ".labelHolder").remove();
 
         if (x_currentPageXML.getAttribute("spaceLines") != "false") {
             $targetHolder.find("span").css("line-height", $targetHolder.find("input").outerHeight() + 12 + "px");
@@ -462,7 +462,7 @@ var gapFill = new function() {
             });
 
         if ((x_currentPageXML.getAttribute("markEnd") == undefined || x_currentPageXML.getAttribute("markEnd") == "false") && !this.isTracked) {
-            jGetElement(blockid, "#submitBtn, #showBtn").remove();
+            jGetElement(blockid, ".submitBtn, .showBtn").remove();
 
             $targetHolder.find("input")
                 .addClass("incorrect")
@@ -483,7 +483,7 @@ var gapFill = new function() {
                                 $pageContents.find("#hint").remove();
 
                                 if ($targetHolder.find("input.correct").length == $targetHolder.find("input").length) {
-                                    jGetElement(blockid, "#feedbackTxt #txt").html(x_addLineBreaks(x_currentPageXML.getAttribute("feedback")));
+                                    jGetElement(blockid, ".feedbackTxt .txt").html(x_addLineBreaks(x_currentPageXML.getAttribute("feedback")));
                                     $feedbackTxt.fadeIn();
                                     gapFill.audioFbResize(true, blockid);
                                 }
@@ -558,10 +558,10 @@ var gapFill = new function() {
                                                     $hint = $pageContents.find("#hint");
                                                 }
                                                 $hint.html(currentHint);
-
+                                                debugger
                                                 $hint.css({
-                                                    top	 :$this.position().top + parseInt(jGetElement(blockid, "#mainPanel").css("padding-top")) + parseInt($this.css("margin-top")) + $this.height() + 10,
-                                                    left :$this.position().left + parseInt(jGetElement(blockid, "#mainPanel").css("padding-left")) + 5
+                                                    top	 :$this.position().top + parseInt(jGetElement(blockid, ".mainPanel").css("padding-top")) + parseInt($this.css("margin-top")) + $this.height() + 10,
+                                                    left :$this.position().left + parseInt(jGetElement(blockid, ".mainPanel").css("padding-left")) + 5
                                                 });
                                             }
 
@@ -582,7 +582,7 @@ var gapFill = new function() {
                     $(this).removeAttr("incorrect");
                 });
 
-            jGetElement(blockid, "#submitBtn")
+            jGetElement(blockid, ".submitBtn")
                 .button({
                     label:	x_currentPageXML.getAttribute("checkBtn") != undefined && x_currentPageXML.getAttribute("checkBtn") != "" ? x_currentPageXML.getAttribute("checkBtn") : "Check"
                 })
@@ -590,7 +590,7 @@ var gapFill = new function() {
                     gapFill.fillInSubmit(blockid);
                 });
 
-            jGetElement(blockid, "#showBtn")
+            jGetElement(blockid, ".showBtn")
                 .button({
                     label:	x_currentPageXML.getAttribute("showBtn") != undefined && x_currentPageXML.getAttribute("showBtn") != "" ? x_currentPageXML.getAttribute("showBtn") : "Show Answers"
                 })
@@ -611,8 +611,8 @@ var gapFill = new function() {
                     });
 
                     $(this).hide();
-                    jGetElement(blockid, "#submitBtn").hide();
-                    jGetElement(blockid, "#feedbackTxt #txt").html(x_addLineBreaks(x_currentPageXML.getAttribute("feedback")));
+                    jGetElement(blockid, ".submitBtn").hide();
+                    jGetElement(blockid, ".feedbackTxt .txt").html(x_addLineBreaks(x_currentPageXML.getAttribute("feedback")));
                     $feedbackTxt.fadeIn();
                     gapFill.audioFbResize(true, blockid);
 
@@ -632,10 +632,10 @@ var gapFill = new function() {
         let blocknr = XTGetBlockNr(blockid);
         // if mark at end is off but tracking is on then it will mark at end anyway
         if (!this.isTracked && (x_currentPageXML.getAttribute("markEnd") == undefined || x_currentPageXML.getAttribute("markEnd") == "false")) {
-            jGetElement(blockid, "#submitBtn").hide();
+            jGetElement(blockid, ".submitBtn").hide();
 
         } else {
-            jGetElement(blockid, "#submitBtn")
+            jGetElement(blockid, ".submitBtn")
                 .button({
                     label:	x_currentPageXML.getAttribute("checkBtn") != undefined && x_currentPageXML.getAttribute("checkBtn") != "" ? x_currentPageXML.getAttribute("checkBtn") : "Check"
                 })
@@ -643,12 +643,12 @@ var gapFill = new function() {
                     gapFill.dragDropSubmit(false, blockid);
                 });
 
-            jGetElement(blockid, "#showBtn")
+            jGetElement(blockid, ".showBtn")
                 .button({
                     label:	x_currentPageXML.getAttribute("showBtn") != undefined && x_currentPageXML.getAttribute("showBtn") != "" ? x_currentPageXML.getAttribute("showBtn") : "Show Answers"
                 })
                 .click(function() {
-                    var $incorrectTargets = jGetElement(blockid, "#targetHolder .target").filter(function () {
+                    var $incorrectTargets = jGetElement(blockid, ".targetHolder .target").filter(function () {
                         return $(this).data("correct") != true;
                     });
 
@@ -661,11 +661,11 @@ var gapFill = new function() {
                             $(this).html($(this).data("answer"));
                         });
 
-                    jGetElement(blockid, "#labelHolder").hide();
+                    jGetElement(blockid, ".labelHolder").hide();
 
                     $(this).hide();
-                    jGetElement(blockid, "#submitBtn").hide();
-                    jGetElement(blockid, "#feedbackTxt #txt").html(x_addLineBreaks(x_currentPageXML.getAttribute("feedback")));
+                    jGetElement(blockid, ".submitBtn").hide();
+                    jGetElement(blockid, ".feedbackTxt .txt").html(x_addLineBreaks(x_currentPageXML.getAttribute("feedback")));
                     $feedbackTxt.fadeIn();
                     gapFill.audioFbResize(true, blockid);
 
@@ -741,7 +741,7 @@ var gapFill = new function() {
             if (tempMultiAnswers.indexOf(arrayString) == -1) {
                 for (var j=0; j<allLabels[i].length; j++) {
                     $('<div class="label panel" title="' + modelState.labelTxt1 + '">' + allLabels[i][j] + '</div>')
-                        .appendTo(jGetElement(blockid, "#labelHolder"))
+                        .appendTo(jGetElement(blockid, ".labelHolder"))
                         .data("answer", arrayString);
                 }
                 if (allLabels[i].length > 1) {
@@ -750,10 +750,10 @@ var gapFill = new function() {
             }
         }
 
-        var labels = jGetElement(blockid, "#labelHolder .label").sort(function() { return (Math.round(Math.random())-0.5); });
+        var labels = jGetElement(blockid, ".labelHolder .label").sort(function() { return (Math.round(Math.random())-0.5); });
         for (var i=0; i<labels.length; i++) {
             $(labels[i])
-                .appendTo(jGetElement(blockid, "#labelHolder"))
+                .appendTo(jGetElement(blockid, ".labelHolder"))
                 .attr({
                     "id": "index" + i,
                     "tabindex":	0
@@ -761,39 +761,39 @@ var gapFill = new function() {
         }
 
         // set up drag events (mouse and keyboard controlled)
-        jGetElement(blockid, "#dragDropHolder .label")
+        jGetElement(blockid, ".dragDropHolder .label")
             .draggable({
-                containment:	"#dragDropHolder .block" + blocknr,
-                stack:			"#dragDropHolder .label", // item being dragged is always on top (z-index)
+                containment:	".dragDropHolder .block" + blocknr,
+                stack:			".dragDropHolder .label", // item being dragged is always on top (z-index)
                 revert:			"invalid", // snap back to original position if not dropped on target
                 start:			function() {
                     // remove any focus/selection highlights made by tabbing to labels/targets
-                    if (jGetElement(blockid, "#labelHolder .label.focus").length > 0) {
-                        jGetElement(blockid, "#labelHolder .label.focus").attr("title", modelState.labelTxt1);
+                    if (jGetElement(blockid, ".labelHolder .label.focus").length > 0) {
+                        jGetElement(blockid, ".labelHolder .label.focus").attr("title", modelState.labelTxt1);
                     }
                     if ($pageContents.data("selectedLabel") != undefined && $pageContents.data("selectedLabel") != "") {
                         $pageContents.data("selectedLabel").attr("title", modelState.labelTxt1);
                         $pageContents.data("selectedLabel", "");
                     }
-                    var targetInFocus = jGetElement(blockid, "#targetHolder .target.highlightDark");
+                    var targetInFocus = jGetElement(blockid, ".targetHolder .target.highlightDark");
                     if (targetInFocus.length > 0) {
                         targetInFocus.attr("title", modelState.targetTxt1 + " " + (targetInFocus.index() + 1));
                     }
-                    jGetElement(blockid, "#dragDropHolder .selected").removeClass("selected");
-                    jGetElement(blockid, "#dragDropHolder .focus").removeClass("focus");
-                    jGetElement(blockid, "#dragDropHolder .highlightDark").removeClass("highlightDark");
+                    jGetElement(blockid, ".dragDropHolder .selected").removeClass("selected");
+                    jGetElement(blockid, ".dragDropHolder .focus").removeClass("focus");
+                    jGetElement(blockid, ".dragDropHolder .highlightDark").removeClass("highlightDark");
                 }
             })
             .disableSelection();
 
-        this.setUpLabelListeners(jGetElement(blockid, "#dragDropHolder .label"));
+        this.setUpLabelListeners(jGetElement(blockid, ".dragDropHolder .label"));
 
-        for (i=0; i<jGetElement(blockid, "#targetHolder .target").length; i++) {
-            jGetElement(blockid, "#targetHolder .target:eq(" + i + ")").droppable({
+        for (i=0; i<jGetElement(blockid, ".targetHolder .target").length; i++) {
+            jGetElement(blockid, ".targetHolder .target:eq(" + i + ")").droppable({
                 accept:	(!this.isTracked && (x_currentPageXML.getAttribute("markEnd") == undefined || x_currentPageXML.getAttribute("markEnd") == "false")) ?
-                    jGetElement(blockid, "#labelHolder .label").filter(function() {
-                        return $(this).data("answer") == jGetElement(blockid, "#targetHolder .target:eq(" + i + ")").data("answer");
-                    }) : jGetElement(blockid, "#labelHolder .label")
+                    jGetElement(blockid, ".labelHolder .label").filter(function() {
+                        return $(this).data("answer") == jGetElement(blockid, ".targetHolder .target:eq(" + i + ")").data("answer");
+                    }) : jGetElement(blockid, ".labelHolder .label")
             });
         }
     }
@@ -836,8 +836,8 @@ var gapFill = new function() {
 
         // if it's marked as completed (can only drop on correct targets) then show feedback immediately when complete
         if (!this.isTracked && (x_currentPageXML.getAttribute("markEnd") != "true" && $targetHolder.find(".target.highlight").length == 0)) {
-            jGetElement(blockid, "#labelHolder").hide();
-            jGetElement(blockid, "#feedbackTxt #txt").html(x_addLineBreaks(x_currentPageXML.getAttribute("feedback")));
+            jGetElement(blockid, ".labelHolder").hide();
+            jGetElement(blockid, ".feedbackTxt .txt").html(x_addLineBreaks(x_currentPageXML.getAttribute("feedback")));
             $feedbackTxt.fadeIn();
             gapFill.audioFbResize(true, blockid);
             gapFill.dragDropSubmit(false, blockid);
@@ -949,7 +949,7 @@ var gapFill = new function() {
         if ($targetHolder.find('select option:selected[value=" "]').parent().length == $targetHolder.find('select').length) {
             // prompt to complete exercise unless this has been triggered by leaving the page
             if (forced != true) {
-                jGetElement(blockid, "#feedbackTxt #txt").html('<p>' + x_addLineBreaks(x_currentPageXML.getAttribute("gapFillIncomplete") != undefined && x_currentPageXML.getAttribute("gapFillIncomplete") != "" ? x_currentPageXML.getAttribute("gapFillIncomplete") : "Please complete the exercise.") + '</p>');
+                jGetElement(blockid, ".feedbackTxt .txt").html('<p>' + x_addLineBreaks(x_currentPageXML.getAttribute("gapFillIncomplete") != undefined && x_currentPageXML.getAttribute("gapFillIncomplete") != "" ? x_currentPageXML.getAttribute("gapFillIncomplete") : "Please complete the exercise.") + '</p>');
                 $feedbackTxt.fadeIn();
             }
 
@@ -1005,8 +1005,8 @@ var gapFill = new function() {
                 gapFill.finishTracking(blockid);
 
                 if (wrong == 0) { // all correct
-                    jGetElement(blockid, "#submitBtn, #showBtn").hide();
-                    jGetElement(blockid, "#feedbackTxt #txt").html(x_addLineBreaks(x_currentPageXML.getAttribute("feedback")));
+                    jGetElement(blockid, ".submitBtn, .showBtn").hide();
+                    jGetElement(blockid, ".feedbackTxt .txt").html(x_addLineBreaks(x_currentPageXML.getAttribute("feedback")));
                     $feedbackTxt.fadeIn();
                     gapFill.audioFbResize(true, blockid);
 
@@ -1018,7 +1018,7 @@ var gapFill = new function() {
                             if ($(this).val() != " ") {
                                 modelState.attempts++;
                                 if (modelState.attempts >= (x_currentPageXML.getAttribute("attemptsBeforeHint") != undefined && $.isNumeric(x_currentPageXML.getAttribute("attemptsBeforeHint")) ? Number(x_currentPageXML.getAttribute("attemptsBeforeHint")) : 2)) {
-                                    jGetElement(blockid, "#showBtn").show();
+                                    jGetElement(blockid, ".showBtn").show();
                                 }
                                 return false;
                             }
@@ -1033,8 +1033,8 @@ var gapFill = new function() {
                         gapFillWrong = x_addLineBreaks(x_currentPageXML.getAttribute("gapFillWrongTracking") != undefined && x_currentPageXML.getAttribute("gapFillWrongTracking") != "" ? x_currentPageXML.getAttribute("gapFillWrongTracking") : "You have not filled any gaps correctly.");
                         gapFillPartWrong = x_addLineBreaks(x_currentPageXML.getAttribute("gapFillPartWrongTracking") != undefined && x_currentPageXML.getAttribute("gapFillPartWrongTracking") != "" ? x_currentPageXML.getAttribute("gapFillPartWrongTracking") : "Your correct answers are shown in green.");
 
-                        jGetElement(blockid, "#submitBtn").hide();
-                        jGetElement(blockid, "#showBtn").show();
+                        jGetElement(blockid, ".submitBtn").hide();
+                        jGetElement(blockid, ".showBtn").show();
                         modelState.finished = true;
 
                         $targetHolder.find("select").each(function(i) {
@@ -1043,16 +1043,16 @@ var gapFill = new function() {
                     }
 
                     if (wrong == $targetHolder.find("select").length) {
-                        jGetElement(blockid, "#feedbackTxt #txt").html('<p>' + gapFillWrong + '</p>');
+                        jGetElement(blockid, ".feedbackTxt .txt").html('<p>' + gapFillWrong + '</p>');
                     } else {
-                        jGetElement(blockid, "#feedbackTxt #txt").html('<p>' + gapFillPartWrong + '</p>');
+                        jGetElement(blockid, ".feedbackTxt .txt").html('<p>' + gapFillPartWrong + '</p>');
                     }
                     $feedbackTxt.fadeIn();
                 }
 
                 // if force tracking mode is on then you must fully complete before checking answers
             } else {
-                jGetElement(blockid, "#feedbackTxt #txt").html('<p>' + x_addLineBreaks(x_currentPageXML.getAttribute("gapFillIncomplete") != undefined && x_currentPageXML.getAttribute("gapFillIncomplete") != "" ? x_currentPageXML.getAttribute("gapFillIncomplete") : "Please complete the exercise.") + '</p>');
+                jGetElement(blockid, ".feedbackTxt .txt").html('<p>' + x_addLineBreaks(x_currentPageXML.getAttribute("gapFillIncomplete") != undefined && x_currentPageXML.getAttribute("gapFillIncomplete") != "" ? x_currentPageXML.getAttribute("gapFillIncomplete") : "Please complete the exercise.") + '</p>');
                 $feedbackTxt.fadeIn();
             }
         }
@@ -1066,7 +1066,7 @@ var gapFill = new function() {
         if ($targetHolder.find("input").filter(function() { return $(this).val() != ""; }).length == 0) {
             // prompt to complete exercise unless this has been triggered by leaving the page
             if (forced != true) {
-                jGetElement(blockid, "#feedbackTxt #txt").html('<p>' + x_addLineBreaks(x_currentPageXML.getAttribute("gapFillIncomplete") != undefined && x_currentPageXML.getAttribute("gapFillIncomplete") != "" ? x_currentPageXML.getAttribute("gapFillIncomplete") : "Please complete the exercise.") + '</p>');
+                jGetElement(blockid, ".feedbackTxt .txt").html('<p>' + x_addLineBreaks(x_currentPageXML.getAttribute("gapFillIncomplete") != undefined && x_currentPageXML.getAttribute("gapFillIncomplete") != "" ? x_currentPageXML.getAttribute("gapFillIncomplete") : "Please complete the exercise.") + '</p>');
                 $feedbackTxt.fadeIn();
             }
 
@@ -1077,7 +1077,7 @@ var gapFill = new function() {
                 if (x_currentPageXML.getAttribute("showHint") != "false") {
                     modelState.attempts++;
                     if (modelState.attempts >= (x_currentPageXML.getAttribute("attemptsBeforeHint") != undefined && $.isNumeric(x_currentPageXML.getAttribute("attemptsBeforeHint")) ? Number(x_currentPageXML.getAttribute("attemptsBeforeHint")) : 2)) {
-                        jGetElement(blockid, "#showBtn").show();
+                        jGetElement(blockid, ".showBtn").show();
                     }
                 }
 
@@ -1132,8 +1132,8 @@ var gapFill = new function() {
                 }
 
                 if (wrong == 0) {
-                    jGetElement(blockid, "#feedbackTxt #txt").html(x_addLineBreaks(x_currentPageXML.getAttribute("feedback")));
-                    jGetElement(blockid, "#showBtn,#submitBtn").hide();
+                    jGetElement(blockid, ".feedbackTxt .txt").html(x_addLineBreaks(x_currentPageXML.getAttribute("feedback")));
+                    jGetElement(blockid, ".showBtn,.submitBtn").hide();
                     $feedbackTxt.fadeIn();
                     gapFill.audioFbResize(true, blockid);
 
@@ -1141,21 +1141,21 @@ var gapFill = new function() {
 
                 } else {
                     if (wrong == $targetHolder.find("input").length) {
-                        jGetElement(blockid, "#feedbackTxt #txt").html('<p>' + gapFillWrong + '</p>');
+                        jGetElement(blockid, ".feedbackTxt .txt").html('<p>' + gapFillWrong + '</p>');
                     } else {
-                        jGetElement(blockid, "#feedbackTxt #txt").html('<p>' + gapFillPartWrong + '</p>');
+                        jGetElement(blockid, ".feedbackTxt .txt").html('<p>' + gapFillPartWrong + '</p>');
                     }
                     $feedbackTxt.fadeIn();
 
                     if (this.isTracked) {
-                        jGetElement(blockid, "#submitBtn").hide();
-                        jGetElement(blockid, "#showBtn").show();
+                        jGetElement(blockid, ".submitBtn").hide();
+                        jGetElement(blockid, ".showBtn").show();
                     }
                 }
 
                 // if force tracking mode is on then you must fully complete before checking answers
             } else {
-                jGetElement(blockid, "#feedbackTxt #txt").html('<p>' + x_addLineBreaks(x_currentPageXML.getAttribute("gapFillIncomplete") != undefined && x_currentPageXML.getAttribute("gapFillIncomplete") != "" ? x_currentPageXML.getAttribute("gapFillIncomplete") : "Please complete the exercise.") + '</p>');
+                jGetElement(blockid, ".feedbackTxt .txt").html('<p>' + x_addLineBreaks(x_currentPageXML.getAttribute("gapFillIncomplete") != undefined && x_currentPageXML.getAttribute("gapFillIncomplete") != "" ? x_currentPageXML.getAttribute("gapFillIncomplete") : "Please complete the exercise.") + '</p>');
                 $feedbackTxt.fadeIn();
             }
         }
@@ -1167,7 +1167,7 @@ var gapFill = new function() {
         if ($targetHolder.find(".target:not(.highlight)").length == 0) {
             // prompt to complete exercise unless this has been triggered by leaving the page
             if (forced != true) {
-                jGetElement(blockid, "#feedbackTxt #txt").html('<p>' + x_addLineBreaks(x_currentPageXML.getAttribute("gapFillIncomplete") != undefined && x_currentPageXML.getAttribute("gapFillIncomplete") != "" ? x_currentPageXML.getAttribute("gapFillIncomplete") : "Please complete the exercise.") + '</p>');
+                jGetElement(blockid, ".feedbackTxt .txt").html('<p>' + x_addLineBreaks(x_currentPageXML.getAttribute("gapFillIncomplete") != undefined && x_currentPageXML.getAttribute("gapFillIncomplete") != "" ? x_currentPageXML.getAttribute("gapFillIncomplete") : "Please complete the exercise.") + '</p>');
                 $feedbackTxt.fadeIn();
             }
 
@@ -1175,15 +1175,15 @@ var gapFill = new function() {
         } else {
             // mark exercise (unless force tracking mode is on & exercise is incomplete)
             if ($targetHolder.find(".target.highlight").length == 0 || !this.isTracked) {
-                jGetElement(blockid, "#targetHolder .target").filter(function () {
+                jGetElement(blockid, ".targetHolder .target").filter(function () {
                     return $(this).data("correct") == true;
                 }).addClass("correct");
 
-                var $incorrectTargets = jGetElement(blockid, "#targetHolder .target").filter(function () {
+                var $incorrectTargets = jGetElement(blockid, ".targetHolder .target").filter(function () {
                     return !($(this).data("correct") == true || $(this).hasClass("correct")) && !$(this).hasClass("highlight");
                 });
 
-                var $incorrectLabels = jGetElement(blockid, "#labelHolder .label").filter(function () {
+                var $incorrectLabels = jGetElement(blockid, ".labelHolder .label").filter(function () {
                     return $(this).data("correct") != true;
                 });
 
@@ -1247,44 +1247,44 @@ var gapFill = new function() {
                         });
 
                     if ($targetHolder.find(".target.highlight").length == 0) {
-                        jGetElement(blockid, "#submitBtn, #showBtn").hide();
+                        jGetElement(blockid, ".submitBtn, .showBtn").hide();
                     } else if (x_currentPageXML.getAttribute("showHint") != "false") {
                         modelState.attempts++;
                         if (modelState.attempts >= (x_currentPageXML.getAttribute("attemptsBeforeHint") != undefined && $.isNumeric(x_currentPageXML.getAttribute("attemptsBeforeHint")) ? Number(x_currentPageXML.getAttribute("attemptsBeforeHint")) : 2)) {
-                            jGetElement(blockid, "#showBtn").show();
+                            jGetElement(blockid, ".showBtn").show();
                         }
                     }
 
                 } else {
                     // if tracked then you don't get to try again (is this how it should be?)
                     $incorrectTargets.addClass("incorrect");
-                    jGetElement(blockid, "#submitBtn").hide();
+                    jGetElement(blockid, ".submitBtn").hide();
                     modelState.finished = true;
 
                     if (correct !== true) {
-                        jGetElement(blockid, "#showBtn").show();
+                        jGetElement(blockid, ".showBtn").show();
                     }
                 }
 
                 // feedback...
-                if (modelState.score == jGetElement(blockid, "#targetHolder .target").length) {
-                    jGetElement(blockid, "#labelHolder").hide();
-                    jGetElement(blockid, "#feedbackTxt #txt").html(x_addLineBreaks(x_currentPageXML.getAttribute("feedback")));
+                if (modelState.score == jGetElement(blockid, ".targetHolder .target").length) {
+                    jGetElement(blockid, ".labelHolder").hide();
+                    jGetElement(blockid, ".feedbackTxt .txt").html(x_addLineBreaks(x_currentPageXML.getAttribute("feedback")));
                     $feedbackTxt.fadeIn();
                     gapFill.audioFbResize(true, blockid);
                     modelState.finished = true;
                 } else {
                     if (modelState.score == 0) {
-                        jGetElement(blockid, "#feedbackTxt #txt").html('<p>' + x_addLineBreaks(x_currentPageXML.getAttribute("gapFillWrongTracking") != undefined && x_currentPageXML.getAttribute("gapFillWrongTracking") != "" ? x_currentPageXML.getAttribute("gapFillWrongTracking") : "You have not filled any gaps correctly.") + '</p>');
+                        jGetElement(blockid, ".feedbackTxt .txt").html('<p>' + x_addLineBreaks(x_currentPageXML.getAttribute("gapFillWrongTracking") != undefined && x_currentPageXML.getAttribute("gapFillWrongTracking") != "" ? x_currentPageXML.getAttribute("gapFillWrongTracking") : "You have not filled any gaps correctly.") + '</p>');
                     } else {
-                        jGetElement(blockid, "#feedbackTxt #txt").html('<p>' + x_addLineBreaks(x_currentPageXML.getAttribute("gapFillPartWrongTracking") != undefined && x_currentPageXML.getAttribute("gapFillPartWrongTracking") != "" ? x_currentPageXML.getAttribute("gapFillPartWrongTracking") : "Your correct answers are shown in green.") + '</p>');
+                        jGetElement(blockid, ".feedbackTxt .txt").html('<p>' + x_addLineBreaks(x_currentPageXML.getAttribute("gapFillPartWrongTracking") != undefined && x_currentPageXML.getAttribute("gapFillPartWrongTracking") != "" ? x_currentPageXML.getAttribute("gapFillPartWrongTracking") : "Your correct answers are shown in green.") + '</p>');
                     }
                     $feedbackTxt.fadeIn();
                 }
 
                 // if force tracking mode is on then you must fully complete before checking answers
             } else {
-                jGetElement(blockid, "#feedbackTxt #txt").html('<p>' + x_addLineBreaks(x_currentPageXML.getAttribute("gapFillIncomplete") != undefined && x_currentPageXML.getAttribute("gapFillIncomplete") != "" ? x_currentPageXML.getAttribute("gapFillIncomplete") : "Please complete the exercise.") + '</p>');
+                jGetElement(blockid, ".feedbackTxt .txt").html('<p>' + x_addLineBreaks(x_currentPageXML.getAttribute("gapFillIncomplete") != undefined && x_currentPageXML.getAttribute("gapFillIncomplete") != "" ? x_currentPageXML.getAttribute("gapFillIncomplete") : "Please complete the exercise.") + '</p>');
                 $feedbackTxt.fadeIn();
             }
         }

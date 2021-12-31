@@ -1,14 +1,15 @@
 /* gapFill.html */
 	
-	#pageContents .panel {
+	.pageContents{
 		overflow:	auto;
+		position: relative;
 	}
 	
-	#textHolder {
+	.textHolder {
 		margin-bottom:	10px;
 	}
 	
-	#targetHolder .target {
+	.targetHolder .target {
 		display:		inline-block;
 		text-align:		center;
 		vertical-align:	middle;
@@ -16,61 +17,61 @@
 		margin:			3px 0 5px 0;
 	}
 	
-	#targetHolder input {
+	.targetHolder input {
 		margin:		5px 0;
 		text-align:	center;
 	}
 	
-	#targetHolder input[readonly].correct, #targetHolder .target.correct, #targetHolder input[correct] {
+	.targetHolder input[readonly].correct, .targetHolder .target.correct, .targetHolder input[correct] {
 		color:			green;
 		border-color:	transparent;
 	}
 
-	#targetHolder .target.incorrect {
+	.targetHolder .target.incorrect {
 		color:			#EB0000;
 		border-color:	transparent;
 		font-weight:600;
 	}
 	
-	#targetHolder input.incorrect, #targetHolder input[incorrect] {
+	.targetHolder input.incorrect, .targetHolder input[incorrect] {
 		color: 			#EB0000;
 		font-weight:600;
 	}
 	
-	#targetHolder .target.incorrect {
+	.targetHolder .target.incorrect {
 		color:			#EB0000;
 		border-color:	transparent;
 		font-weight:600;
 	}
 	
-	#targetHolder .target.answerShown, #targetHolder input.answerShown {
+	.targetHolder .target.answerShown, .targetHolder input.answerShown {
 		color:			#c36b00;
 		border-color:	transparent;
 	}
 	
-	#targetHolder select {
+	.targetHolder select {
 		margin:	5px 0;
 	}
 	
-	#targetHolder select[disabled] {
+	.targetHolder select[disabled] {
 		color: #EB0000;
 		font-weight:600;
 	}
 	
-	#targetHolder select[disabled].correct {
+	.targetHolder select[disabled].correct {
 		color:	green;
 	}
 	
-	#targetHolder select[disabled].answerShown {
+	.targetHolder select[disabled].answerShown {
 		color:			#c36b00;
 	}
 	
-	#labelHolder {
+	.labelHolder {
 		margin-top:	1em;
 		border-top:	1px solid #ccc;
 	}
 	
-	#labelHolder .label {
+	.labelHolder .label {
 		display:	inline-block;
 		cursor:		pointer;
 		padding:	7px;
@@ -78,34 +79,34 @@
 		border:		2px solid white;
 	}
 	
-	#labelHolder .label.focus {
+	.labelHolder .label.focus {
 		border:		2px solid yellow;
 	}
 	
-	#labelHolder .label.selected {
+	.labelHolder .label.selected {
 		border:		2px solid green;
 	}
 	
-	#feedbackTxt {
+	.feedbackTxt {
 		margin-top:		1em;
 		padding-top:	1em;
 		border-top:		1px solid #ccc;
 		clear:			both;
 	}
 	
-	#feedbackTxt #audioHolder {
+	.feedbackTxt .audioHolder {
 		margin-top:	20px;
 	}
 	
-	#btnHolder {
+	.btnHolder {
 		overflow: auto;
 	}
 	
-	#submitBtn, #showBtn {
+	.submitBtn, .showBtn {
 		float:	right;
 		margin-bottom:	10px;
 	}
 	
-	#showBtn {
+	.showBtn {
 		margin-right: 1em;
 	}
