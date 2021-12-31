@@ -388,7 +388,7 @@ function TrackingManager(){
 
     function setPageScore(page_nr, score)
     {
-
+        debugger
         var page = this.findPage(page_nr);
         var tempscore = 0;
         for(i=0;i<page.interactions.length;i++){
@@ -934,7 +934,7 @@ function TrackingManager(){
     function setInteractionModelState(page_nr, ia_nr, modelState, ia_sub_nr) {
         var interaction = this.findInteraction(page_nr, ia_nr, ia_sub_nr);
         if(interaction != null){
-            interaction.modelState = modelState;
+            interaction.modelState = JSON. parse(JSON. stringify(modelState));
         }
     }
 
