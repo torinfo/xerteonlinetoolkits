@@ -13,11 +13,11 @@ var textMatch = new function() {
         var blocknr = XTGetBlockNr(blockid);
         modelState = XTGetInteractionModelState(x_currentPage, blocknr);
         modelState.numAttempts = 0;
-        jGetElement(blockid, "#labelHolder .label, #targetHolder .hint").remove();
-        jGetElement(blockid, "#labelHolder .audioHolder, #feedback").hide();
-        jGetElement(blockid, "#button").show();
+        jGetElement(blockid, ".labelHolder .label, .targetHolder .hint").remove();
+        jGetElement(blockid, ".labelHolder .audioHolder, .feedback").hide();
+        jGetElement(blockid, ".button").show();
 
-        jGetElement(blockid, "#targetHolder .target")
+        jGetElement(blockid, ".targetHolder .target")
             .data("currentLabel", "")
             .css("height", "auto");
 
@@ -29,17 +29,17 @@ var textMatch = new function() {
     // function called every time the size of the LO is changed
     this.sizeChanged = function(blockid) {
         // label width should be same width as part 1 of sentence and target height should fit largest label
-        var $target = jGetElement(blockid, "#targetHolder .target");
+        var $target = jGetElement(blockid, ".targetHolder .target");
         $target.css("height", "auto");
 
-        var $labels = jGetElement(blockid, "#labelHolder .label"),
+        var $labels = jGetElement(blockid, ".labelHolder .label"),
             tallestLabel = 0;
 
         $labels.each(function() {
             var $this = $(this);
             $this.width($target.find("h3").width() + 5); // + 5 is so drop shadow width is ignored
             if ($this.find(".audioHolder").length > 0) {
-                $this.find(".labelTxt").width($this.width() - jGetElement(blockid, "#pageContents").data("audioW"));
+                $this.find(".labelTxt").width($this.width() - jGetElement(blockid, ".pageContents").data("audioW"));
             } else {
                 $this.find(".labelTxt").width($this.width());
             }
@@ -49,7 +49,7 @@ var textMatch = new function() {
             }
         });
 
-        jGetElement(blockid, "#labelHolder")
+        jGetElement(blockid, ".labelHolder")
             .width($labels.width())
             .height(tallestLabel);
 
@@ -93,7 +93,7 @@ var textMatch = new function() {
 
     this.init = function(pageXML,blockid) {
         x_currentPageXML = pageXML;
-        jGetElement(blockid, "#pageContents").data("audioW", 0);
+        jGetElement(blockid, ".pageContents").data("audioW", 0);
 
         //Reset modelState
         modelState = {};
@@ -106,7 +106,7 @@ var textMatch = new function() {
         modelState.targetTxt1 = x_getLangInfo(x_languageData.find("interactions").find("targetArea")[0], "description", "Drop zone for");
         modelState.targetTxt2 = x_getLangInfo(x_languageData.find("interactions").find("targetArea")[0], "toSelect", "Press space to drop the selected item.");
 
-        jGetElement(blockid, "#textHolder")
+        jGetElement(blockid, ".textHolder")
             .html(x_addLineBreaks(x_currentPageXML.getAttribute("text")))
             .addClass("transparent"); /* without the text having a bg the labels strangely aren't selectable in IE */
 
@@ -114,7 +114,7 @@ var textMatch = new function() {
         if (feedbackTxt == undefined) {
             feedbackTxt = "Correct answers are shown.";
         }
-        var $feedback = jGetElement(blockid, "#feedback")
+        var $feedback = jGetElement(blockid, ".feedback")
             .html(x_addLineBreaks(feedbackTxt))
             .hide();
 
@@ -124,7 +124,7 @@ var textMatch = new function() {
             buttonLabel = "Submit";
         }
 
-        var $button = jGetElement(blockid, "#button")
+        var $button = jGetElement(blockid, ".button")
             .button({
                 label:	buttonLabel
             })
@@ -133,12 +133,12 @@ var textMatch = new function() {
                     allCorrect = true;
 
 
-                jGetElement(blockid, "#dragDropHolder .tick, #targetHolder .hint").remove();
-                jGetElement(blockid, "#labelHolder .audioHolder").hide();
+                jGetElement(blockid, ".dragDropHolder .tick, .targetHolder .hint").remove();
+                jGetElement(blockid, ".labelHolder .audioHolder").hide();
 
                 // are any labels not on a target?
                 var labelOffTarget = false;
-                jGetElement(blockid, "#labelHolder .label").each(function() {
+                jGetElement(blockid, ".labelHolder .label").each(function() {
                     if ($(this).data("currentTarget") == "") {
                         labelOffTarget = true;
                     }
@@ -148,7 +148,7 @@ var textMatch = new function() {
                     modelState.numAttempts++;
                 }
                 if(XTGetMode() != "normal" && x_currentPageXML.getAttribute('markEnd') === 'false' ){
-                    jGetElement(blockid, "#labelHolder .label").each(function() {
+                    jGetElement(blockid, ".labelHolder .label").each(function() {
                         var $this = $(this);
                         if ($this.data("target").is($this.data("currentTarget"))) {
                             // correct - show tick
@@ -193,7 +193,7 @@ var textMatch = new function() {
                 else{
                     if (!labelOffTarget){
                         textMatch.finishTracking(blockid);
-                        jGetElement(blockid, "#labelHolder .label").each(function() {
+                        jGetElement(blockid, ".labelHolder .label").each(function() {
                             var $this = $(this);
                             if ($this.data("target").is($this.data("currentTarget"))) {
                                 // correct - show tick
@@ -207,19 +207,19 @@ var textMatch = new function() {
                     else{
                         $feedback.html(x_currentPageXML.getAttribute("incomplete") != undefined ? x_currentPageXML.getAttribute("incomplete") : x_addLineBreaks(x_currentPageXML.getAttribute("feedback")));
                     }
-                    jGetElement(blockid, "#feedback").show();
+                    jGetElement(blockid, ".feedback").show();
                 }
 
                 var correct = 0;
 
-                jGetElement(blockid, "#labelHolder .label").each(function() {
+                jGetElement(blockid, ".labelHolder .label").each(function() {
                     var $this = $(this);
                     if ($this.data("target").is($this.data("currentTarget"))) {
                         correct++;
                     }
                 });
 
-                allCorrect = correct == jGetElement(blockid, "#labelHolder .label").length;
+                allCorrect = correct == jGetElement(blockid, ".labelHolder .label").length;
 
                 if(!labelOffTarget || (XTGetMode() != "normal" && x_currentPageXML.getAttribute('markEnd') === 'false')){
 
@@ -244,9 +244,9 @@ var textMatch = new function() {
                     } else if (correct == 0){
                         $feedback.html(wrongFeedback != undefined ? wrongFeedback : x_addLineBreaks(x_currentPageXML.getAttribute("feedback")));
                     } else {
-                        $feedback.html(scoreFeedback != undefined ? scoreFeedback.replace("{i}", correct).replace("{n}", jGetElement(blockid, "#labelHolder .label").length) : x_addLineBreaks(x_currentPageXML.getAttribute("feedback")));
+                        $feedback.html(scoreFeedback != undefined ? scoreFeedback.replace("{i}", correct).replace("{n}", jGetElement(blockid, ".labelHolder .label").length) : x_addLineBreaks(x_currentPageXML.getAttribute("feedback")));
                     }
-                    jGetElement(blockid, "#feedback").show();
+                    jGetElement(blockid, ".feedback").show();
                 }
 
                 x_pageContentsUpdated();
@@ -255,7 +255,7 @@ var textMatch = new function() {
 
 
         // create targets
-        var $targetHolder = jGetElement(blockid, "#targetHolder"),
+        var $targetHolder = jGetElement(blockid, ".targetHolder"),
             $firstTarget = $targetHolder.find(".target"),
             labels = [];
 
@@ -281,15 +281,15 @@ var textMatch = new function() {
                 labels.push({text:this.getAttribute("p2"), correct:$thisTarget, audio:this.getAttribute("audioFeedback")});
             });
 
-        var $pageContents = jGetElement(blockid, "#pageContents");
+        var $pageContents = jGetElement(blockid, ".pageContents");
         $pageContents.data({
             "labels"		:labels,
             "selectedLabel"	:""
         });
 
-        jGetElement(blockid, "#targetHolder .target")
+        jGetElement(blockid, ".targetHolder .target")
             .droppable({
-                accept:	"#dragDropHolder .label",
+                accept:	".dragDropHolder .label",
                 drop:	function(event, ui) {
                     textMatch.dropLabel($(this), ui.draggable, blockid); // target, label
                 }
@@ -297,14 +297,14 @@ var textMatch = new function() {
             .focusin(function(e) {
                 if ($(e.target).hasClass("target")) {
                     $(this).addClass("highlightDark");
-                    var $pageContents = jGetElement(blockid, "#pageContents");
+                    var $pageContents = jGetElement(blockid, ".pageContents");
                     if ($pageContents.data("selectedLabel") != undefined && $pageContents.data("selectedLabel") != "") {
                         $(this).attr("title", modelState.targetTxt1 + " '" + $(this).data("name") + " " + ($(this).index() + 1) + "' - " + modelState.targetTxt2);
                     }
                 }
             })
             .focusout(function() {
-                var $pageContents = jGetElement(blockid, "#pageContents");
+                var $pageContents = jGetElement(blockid, ".pageContents");
                 $(this)
                     .removeClass("highlightDark")
                     .attr("title", modelState.targetTxt1 + " '" + $(this).data("name") + " " + ($(this).index() + 1) + "'");
@@ -313,7 +313,7 @@ var textMatch = new function() {
                 if ($(e.target).hasClass("target")) {
                     var charCode = e.charCode || e.keyCode;
                     if (charCode == 32) {
-                        var $selectedLabel = jGetElement(blockid, "#pageContents").data("selectedLabel");
+                        var $selectedLabel = jGetElement(blockid, ".pageContents").data("selectedLabel");
                         if ($selectedLabel != undefined && $selectedLabel != "") {
                             textMatch.dropLabel($(this), $selectedLabel); // target, label
                         }
@@ -354,7 +354,7 @@ var textMatch = new function() {
             l_total = 0;
         this.tracked = true;
 
-        jGetElement(blockid, "#labelHolder .label").each(function(i) {
+        jGetElement(blockid, ".labelHolder .label").each(function(i) {
             var $this = $(this);
             l_total++;
             var l_option={};
@@ -372,7 +372,7 @@ var textMatch = new function() {
             l_option.target = l_placeholder;
             l_options.push(l_option);
             l_answers.push(l_draglabel + "-->" + l_placeholder);
-            l_feedbacks.push(jGetElement(blockid, "#feedback").text());
+            l_feedbacks.push(jGetElement(blockid, ".feedback").text());
             if ($this.data("target").is($this.data("currentTarget"))) {
                 l_correct++;
             }
@@ -386,7 +386,7 @@ var textMatch = new function() {
         XTExitInteraction(x_currentPage, blocknr, result, l_options, l_answers, l_feedbacks);
 
         if(XTGetMode() == "normal" && x_currentPageXML.getAttribute('markEnd') !== 'false'){
-            jGetElement(blockid, "#dragDropHolder .label")
+            jGetElement(blockid, ".dragDropHolder .label")
                 .draggable("disable");
         }
         //XTSetPageScore(x_currentPage, (l_correct * 100.0)/l_total, x_currentPageXML.getAttribute("trackinglabel"));
@@ -438,7 +438,7 @@ var textMatch = new function() {
         // randomise order and create labels
 
 
-        var $pageContents = jGetElement(blockid, "#pageContents"),
+        var $pageContents = jGetElement(blockid, ".pageContents"),
             labels = [],
             tempLabels = $pageContents.data("labels").slice(0),
             i;
@@ -449,14 +449,14 @@ var textMatch = new function() {
             tempLabels.splice(labelNum, 1);
         }
         for (i=0; i<labels.length; i++) {
-            jGetElement(blockid, "#labelHolder").append('<div class="label panel" id="label' + i + '" tabindex="' + (i+2) + '" title="' + modelState.labelTxt1 + '"><div class="labelTxt">' + x_addLineBreaks(labels[i].text) + '</div></div>');
+            jGetElement(blockid, ".labelHolder").append('<div class="label panel" id="label' + i + '" tabindex="' + (i+2) + '" title="' + modelState.labelTxt1 + '"><div class="labelTxt">' + x_addLineBreaks(labels[i].text) + '</div></div>');
 
             var $thisLabel = jGetElement(blockid, "#label" + i);
             $thisLabel.data("target", labels[i].correct);
 
             if (labels[i].audio != "" && labels[i].audio != undefined) {
-                if (jGetElement(blockid, "#pageContents").data("audioW") == 0) {
-                    jGetElement(blockid, "#pageContents").data("audioW", 25);
+                if (jGetElement(blockid, ".pageContents").data("audioW") == 0) {
+                    jGetElement(blockid, ".pageContents").data("audioW", 25);
                 }
 
                 $('<div class="audioHolder"/>')
@@ -474,33 +474,33 @@ var textMatch = new function() {
             }
         }
 
-        jGetElement(blockid, "#dragDropHolder .label")
+        jGetElement(blockid, ".dragDropHolder .label")
             .draggable({
-                containment:	"#dragDropHolder",
-                stack:			"#dragDropHolder .label", // item being dragged is always on top (z-index)
+                containment:	".dragDropHolder",
+                stack:			".dragDropHolder .label", // item being dragged is always on top (z-index)
                 revert:			"invalid", // snap back to original position if not dropped on target
                 start:			function() {
                     // remove any focus/selection highlights made by tabbing to labels/targets
-                    var $pageContents = jGetElement(blockid, "#pageContents");
-                    if (jGetElement(blockid, "#labelHolder .label.focus").length > 0) {
-                        jGetElement(blockid, "#labelHolder .label.focus").attr("title", modelState.labelTxt1);
+                    var $pageContents = jGetElement(blockid, ".pageContents");
+                    if (jGetElement(blockid, ".labelHolder .label.focus").length > 0) {
+                        jGetElement(blockid, ".labelHolder .label.focus").attr("title", modelState.labelTxt1);
                     } else if ($pageContents.data("selectedLabel") != undefined && $pageContents.data("selectedLabel") != "") {
                         $pageContents.data("selectedLabel").attr("title", modelState.labelTxt1);
                         $pageContents.data("selectedLabel", "");
                     }
-                    var targetInFocus = jGetElement(blockid, "#targetHolder .target.highlightDark");
+                    var targetInFocus = jGetElement(blockid, ".targetHolder .target.highlightDark");
                     if (targetInFocus.length > 0) {
                         targetInFocus.attr("title", modelState.targetTxt1 + " '" + targetInFocus.data("name") + " " + (targetInFocus.index() + 1) + "'");
                     }
-                    jGetElement(blockid, "#dragDropHolder .selected").removeClass("selected");
-                    jGetElement(blockid, "#dragDropHolder .focus").removeClass("focus");
-                    jGetElement(blockid, "#dragDropHolder .highlightDark").removeClass("highlightDark");
+                    jGetElement(blockid, ".dragDropHolder .selected").removeClass("selected");
+                    jGetElement(blockid, ".dragDropHolder .focus").removeClass("focus");
+                    jGetElement(blockid, ".dragDropHolder .highlightDark").removeClass("highlightDark");
 
-                    jGetElement(blockid, "#feedback").hide();
-                    jGetElement(blockid, "#dragDropHolder .tick, #targetHolder .hint").remove();
-                    jGetElement(blockid, "#labelHolder .audioHolder").hide();
+                    jGetElement(blockid, ".feedback").hide();
+                    jGetElement(blockid, ".dragDropHolder .tick, .targetHolder .hint").remove();
+                    jGetElement(blockid, ".labelHolder .audioHolder").hide();
 
-                    jGetElement(blockid, "#button").show();
+                    jGetElement(blockid, ".button").show();
                 }
             })
             // set up events used when keyboard rather than mouse is used
@@ -523,7 +523,7 @@ var textMatch = new function() {
             .keypress(function(e) {
                 var charCode = e.charCode || e.keyCode;
                 if (charCode == 32) {
-                    var $pageContents = jGetElement(blockid, "#pageContents");
+                    var $pageContents = jGetElement(blockid, ".pageContents");
                     if ($pageContents.data("selectedLabel") != undefined && $pageContents.data("selectedLabel") != "") {
                         $pageContents.data("selectedLabel")
                             .removeClass("selected")
@@ -536,9 +536,9 @@ var textMatch = new function() {
                         .attr("title", modelState.labelTxt1 + ' - ' + modelState.labelTxt2);
                     $pageContents.data("selectedLabel", $this);
 
-                    jGetElement(blockid, "#dragDropHolder .tick, #targetHolder .hint").remove();
-                    jGetElement(blockid, "#labelHolder .audioHolder, #feedback").hide();
-                    jGetElement(blockid, "#button").show();
+                    jGetElement(blockid, ".dragDropHolder .tick, .targetHolder .hint").remove();
+                    jGetElement(blockid, ".labelHolder .audioHolder, .feedback").hide();
+                    jGetElement(blockid, ".button").show();
                 }
             })
             .css("position", "absolute")
@@ -568,7 +568,7 @@ var textMatch = new function() {
                     .data("currentTarget", "")
                     .attr("tabindex", Number(prevLabel.attr("id").replace("label","")) + 2);
 
-                jGetElement(blockid, "#dragDropHolder .label").each(function() {
+                jGetElement(blockid, ".dragDropHolder .label").each(function() {
                     if ($(this).data("currentTarget") == "" && $(this).is(prevLabel) == false) {
                         $(this).hide();
                     }
@@ -577,7 +577,7 @@ var textMatch = new function() {
 
             // show next label if wasn't on a target before
             if (prevTarget == "") {
-                jGetElement(blockid, "#dragDropHolder .label").each(function() {
+                jGetElement(blockid, ".dragDropHolder .label").each(function() {
                     if ($(this).data("currentTarget") == "") {
                         $(this).show();
                         return false;
@@ -587,7 +587,7 @@ var textMatch = new function() {
                 prevTarget.data("currentLabel", "");
             }
 
-            jGetElement(blockid, "#pageContents").data("selectedLabel", "");
+            jGetElement(blockid, ".pageContents").data("selectedLabel", "");
         }
 
         $thisTarget.attr("title", modelState.targetTxt1 + " '" + $thisTarget.data("name") + " " + ($thisTarget.index() + 1) + "'");

@@ -1,73 +1,73 @@
 /* textMatch.html */
-#textHolder {
+.textHolder {
     margin-bottom: 20px;
 }
 
-#dragDropHolder {
+.dragDropHolder {
     overflow: auto;
     margin-bottom: 10px;
 }
 
-#dragDropHolder .label {
+.dragDropHolder .label {
     cursor: pointer;
     padding: 5px;
 }
 
-#dragDropHolder .label.focus {
+.dragDropHolder .label.focus {
     border: 2px solid yellow;
 }
 
-#dragDropHolder .label.selected {
+.dragDropHolder .label.selected {
     border: 2px solid green;
 }
 
-#dragDropHolder .labelTxt {
+.dragDropHolder .labelTxt {
     position: relative;
     float: left;
 }
 
-#dragDropHolder .audioHolder {
+.dragDropHolder .audioHolder {
     float: left;
 }
 
-#dragDropHolder .audioHolder .mejs-controls div:not (.mejs-playpause-button
+.dragDropHolder .audioHolder .mejs-controls div:not (.mejs-playpause-button
 	) {
     display: none;
 }
 
-#dragDropHolder .tick {
+.dragDropHolder .tick {
     position: absolute;
     top: 0.5em;
     right: 0.5em;
 }
 
-#labelHolder {
+.labelHolder {
     padding: 0px;
     margin-bottom: 20px;
     margin-right: 20px;
     float: right;
 }
 
-#targetHolder {
+.targetHolder {
     clear: right;
 }
 
-#targetHolder .target {
+.targetHolder .target {
     padding: 1%;
     margin-top: 10px;
     margin-bottom: 10px;
 }
 
-#targetHolder h3 {
+.targetHolder h3 {
     width: 48%;
 }
 
-#targetHolder .hint {
+.targetHolder .hint {
     width: 50%;
     float: right;
 }
 
-#button {
+.button {
     margin-bottom: 10px;
     float: right;
 }

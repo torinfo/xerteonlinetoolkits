@@ -9,4 +9,6 @@
     </gapFillBlock>
     <textMatchBlock name="Text Match">
     </textMatchBlock>
+    <categoriesBlock name="Category">
+    </categoriesBlock>
 </interactiveBlocks>
