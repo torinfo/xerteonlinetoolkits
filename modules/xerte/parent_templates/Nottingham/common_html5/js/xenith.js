@@ -1853,7 +1853,7 @@ function x_createBlock(container, module, modulePosition){
 		window[jsName].init(module, blockid);
 	});
 
-	x_insertCSS(x_templateLocation + "blocks_html5/" + module.tagName + ".css", null, false, "page_model_css_"+blockid);
+	x_insertCSS(x_templateLocation + "blocks_html5/" + module.tagName + ".css", null, false, "page_model_css_"+module.tagName);
 
 
 }

@@ -83,7 +83,6 @@ var textMatch = new function() {
     }
 
     this.leavePage = function(blockid) {
-        debugger
         var blocknr = XTGetBlockNr(blockid);
         x_currentPageXML = XTGetPageXML(x_currentPage, blocknr);
         if ($(x_currentPageXML).children().length > 0 && this.tracked != true) {
@@ -382,7 +381,7 @@ var textMatch = new function() {
             score: (l_correct * 100.0)/l_total
         };
         var blocknr = parseFloat(blockid.split("block").pop()) - 1;
-
+        debugger
         XTExitInteraction(x_currentPage, blocknr, result, l_options, l_answers, l_feedbacks);
 
         if(XTGetMode() == "normal" && x_currentPageXML.getAttribute('markEnd') !== 'false'){
@@ -426,7 +425,6 @@ var textMatch = new function() {
             label = x_currentPageXML.getAttribute("trackinglabel");
         }
         var blocknr = parseFloat(blockid.split("block").pop()) - 1;
-        debugger
 
         XTEnterInteraction(x_currentPage, blocknr, 'match', label, correctOptions, correctAnswers, correctFeedbacks, x_currentPageXML.getAttribute("grouping"));
         XTSetLeavePage(x_currentPage, blocknr, this.leavePage);
@@ -476,8 +474,8 @@ var textMatch = new function() {
 
         jGetElement(blockid, ".dragDropHolder .label")
             .draggable({
-                containment:	".dragDropHolder",
-                stack:			".dragDropHolder .label", // item being dragged is always on top (z-index)
+                containment:	".dragDropHolder #"+blockid,
+                stack:			".dragDropHolder .label #"+blockid, // item being dragged is always on top (z-index)
                 revert:			"invalid", // snap back to original position if not dropped on target
                 start:			function() {
                     // remove any focus/selection highlights made by tabbing to labels/targets
@@ -596,7 +594,7 @@ var textMatch = new function() {
             .attr("title", modelState.labelTxt1)
             .removeClass("selected")
             .css({
-                "top"	:$thisTarget.find("h3").position().top + jGetElement(blockid, "div#x_pageHolder").scrollTop(),
+                "top"	: jGetElement(blockid, "div#x_pageHolder").scrollTop(),
                 "left"	:$thisTarget.position().left + $thisTarget.width() - parseInt($thisTarget.css("padding-left")) - $thisLabel.width() + 5
             });
     }
