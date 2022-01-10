@@ -293,7 +293,7 @@ var categories = new function() {
         jGetElement(blockid,".initHolder, .categoryHolder .category").sortable({
             connectWith:	".categoryHolder .category",
             items:			".label",
-            containment:	".dragDropHolder",
+            containment:	"#"+blockid +" .dragDropHolder",
             stop:	function(event, ui) {
                 if (ui.item.parent().is(jGetElement(blockid,".initHolder")) == false) {
                     // show next label if it came from initHolder
