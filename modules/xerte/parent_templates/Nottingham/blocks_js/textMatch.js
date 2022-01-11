@@ -29,15 +29,17 @@ var textMatch = new function() {
     // function called every time the size of the LO is changed
     this.sizeChanged = function(blockid) {
         // label width should be same width as part 1 of sentence and target height should fit largest label
+        debugger
         var $target = jGetElement(blockid, ".targetHolder .target");
         $target.css("height", "auto");
+
 
         var $labels = jGetElement(blockid, ".labelHolder .label"),
             tallestLabel = 0;
 
         $labels.each(function() {
             var $this = $(this);
-            $this.width($target.find("h3").width() + 5); // + 5 is so drop shadow width is ignored
+            $this.width(($target.find("h3").width() + 5)/2); // + 5 is so drop shadow width is ignored
             if ($this.find(".audioHolder").length > 0) {
                 $this.find(".labelTxt").width($this.width() - jGetElement(blockid, ".pageContents").data("audioW"));
             } else {
@@ -254,19 +256,20 @@ var textMatch = new function() {
 
 
         // create targets
+        debugger
         var $targetHolder = jGetElement(blockid, ".targetHolder"),
             $firstTarget = $targetHolder.find(".target"),
             labels = [];
 
         $(x_currentPageXML).children()
             .each(function(i) {
+
                 var $thisTarget;
                 if (i != 0) {
                     $thisTarget = $firstTarget.clone().appendTo($targetHolder);
                 } else {
                     $thisTarget = $firstTarget;
                 }
-
                 $thisTarget
                     .attr("title", modelState.targetTxt1 + " '" + this.getAttribute("name") + " " + (i + 1) + "'")
                     .data({
@@ -381,7 +384,6 @@ var textMatch = new function() {
             score: (l_correct * 100.0)/l_total
         };
         var blocknr = parseFloat(blockid.split("block").pop()) - 1;
-        debugger
         XTExitInteraction(x_currentPage, blocknr, result, l_options, l_answers, l_feedbacks);
 
         if(XTGetMode() == "normal" && x_currentPageXML.getAttribute('markEnd') !== 'false'){
@@ -474,8 +476,8 @@ var textMatch = new function() {
 
         jGetElement(blockid, ".dragDropHolder .label")
             .draggable({
-                containment:	".dragDropHolder #"+blockid,
-                stack:			".dragDropHolder .label #"+blockid, // item being dragged is always on top (z-index)
+                containment:	"#"+blockid +" .dragDropHolder",
+                stack:			"#"+blockid +" .dragDropHolder .label", // item being dragged is always on top (z-index)
                 revert:			"invalid", // snap back to original position if not dropped on target
                 start:			function() {
                     // remove any focus/selection highlights made by tabbing to labels/targets
@@ -595,7 +597,7 @@ var textMatch = new function() {
             .removeClass("selected")
             .css({
                 "top"	: jGetElement(blockid, "div#x_pageHolder").scrollTop(),
-                "left"	:$thisTarget.position().left + $thisTarget.width() - parseInt($thisTarget.css("padding-left")) - $thisLabel.width() + 5
+                "left"	:0
             });
     }
 }

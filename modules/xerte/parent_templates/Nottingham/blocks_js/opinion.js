@@ -4,13 +4,13 @@ var opinion = new function()
 
     this.sizeChanged = function(blockid)
     {
-        debugger
+
         var $panel = jGetElement(blockid, "#pageContents .qPanel"),
             resized = false;
 
         if (x_browserInfo.mobile == false)
         {
-            debugger
+
             $panel.height($x_pageHolder.height() - parseInt($x_pageDiv.css("padding-top")) * 2 - parseInt($panel.css("padding-top")) * 2 - 5);
         }
 
@@ -55,7 +55,7 @@ var opinion = new function()
         var width = jGetElement(blockid, "#infoHolder").width(),
             height = jGetElement(blockid, "#infoHolder").height(),
             textSize;
-        debugger
+
         if(width > height) {
             jGetElement(blockid, "#diagram")
                 .width(height*0.90)
@@ -92,7 +92,7 @@ var opinion = new function()
 
     this.startQuestions = function(blockid)
     {
-        debugger
+
         // If the language attribute is not defined in the xml, fall back to English.
         var questionNumberText = x_currentPageXML.getAttribute("quesCount");
         if (questionNumberText == undefined)
@@ -651,7 +651,7 @@ var opinion = new function()
 
     this.init = function(pageXML, blockid) {
         x_currentPageXML = pageXML;
-        debugger
+
         $pageContents = jGetElement(blockid, "#pageContents");
 
         $pageContents.data({

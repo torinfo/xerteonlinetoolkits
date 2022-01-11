@@ -259,7 +259,7 @@ function TrackingManager(){
 
     function pageCompleted(sit)
     {
-        debugger
+
         var sits = this.findAllInteractions(sit.page_nr);
         if (sits.length !== sit.nrinteractions)
         {
@@ -308,7 +308,6 @@ function TrackingManager(){
         let temp = false;
         let i = 0;
 
-        debugger
 
         var page = this.findPage(page_nr);
         var tempscore = 0;
@@ -388,7 +387,7 @@ function TrackingManager(){
 
     function setPageScore(page_nr, score)
     {
-        debugger
+
         var page = this.findPage(page_nr);
         var tempscore = 0;
         for(i=0;i<page.interactions.length;i++){

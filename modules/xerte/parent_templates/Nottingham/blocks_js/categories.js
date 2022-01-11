@@ -289,7 +289,7 @@ var categories = new function() {
                 $thisLabel.hide();
             }
         }
-        debugger
+
         jGetElement(blockid,".initHolder, .categoryHolder .category").sortable({
             connectWith:	".categoryHolder .category",
             items:			".label",

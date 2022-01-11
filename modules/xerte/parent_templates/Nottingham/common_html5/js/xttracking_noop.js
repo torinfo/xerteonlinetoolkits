@@ -217,7 +217,7 @@ function XTEnterInteraction(page_nr, ia_nr, ia_type, ia_name, correctoptions, co
 
 function XTExitInteraction(page_nr, ia_nr, result, learneroptions, learneranswer, feedback, ia_sub_nr = 0)
 {
-    debugger
+
 	trackingManager.exitInteraction(page_nr, ia_nr, result, learneroptions, learneranswer, feedback, ia_sub_nr);
 }
 
@@ -315,7 +315,7 @@ function XTResults(fullcompletion) {
     var nrvisited = 0;
     var completed;
 
-    debugger
+
 
     $.each(trackingManager.completedPages, function (i, completed) {
         // indices not defined will be visited anyway.
@@ -493,7 +493,7 @@ function XTResults(fullcompletion) {
 function jGetElement(blockid, element) {
 
     if(element.includes(",")){
-        debugger
+
         var finalElement = "";
         var elements = element.split(",");
         for( var i=0; i< elements.length; i++){
