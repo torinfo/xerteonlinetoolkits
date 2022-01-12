@@ -11,4 +11,8 @@
     </textMatchBlock>
     <categoriesBlock name="Category">
     </categoriesBlock>
+    <dragDropLabelBlock name="Drag and Drop Labelling">
+    </dragDropLabelBlock>
+    <topXQBlock name="Top X Q">
+    </topXQBlock>
 </interactiveBlocks>

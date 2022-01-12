@@ -43,6 +43,7 @@ var gapFill = new function() {
     }
 
     this.refreshPageVariables = function(blockid){
+        debugger
         $pageContents = jGetElement(blockid, ".pageContents");
         $targetHolder = jGetElement(blockid, ".targetHolder");
         $feedbackTxt = jGetElement(blockid, ".feedbackTxt");
@@ -216,6 +217,7 @@ var gapFill = new function() {
                 markedWord = true;
             } else {
                 decodedAnswer = $("<textarea/>").html(passageArray[i]).text();
+                //reminder
                 if (x_currentPageXML.getAttribute("interactivity") == "Drag Drop") {
                     gapFillStr += '<span id="gap' + (i-1)/2 + '" class="target highlight" tabindex="0">' + decodedAnswer + '</span>';
                     modelState.answerData.push(decodedAnswer.split(modelState.delimiter));
@@ -330,6 +332,7 @@ var gapFill = new function() {
                 name = "interaction number" + " " + interactionNumber;
                 correctAnswer = modelState.answerData[interactionNumber];
                 XTEnterInteraction(x_currentPage,  blocknr , 'fill-in', name, [], correctAnswer, "Correct", x_currentPageXML.getAttribute("grouping"), interactionNumber);
+                XTSetLeavePage(x_currentPage, blocknr, this.leavePage);
                 XTSetInteractionPageXML(x_currentPage, blocknr, x_currentPageXML, interactionNumber);
                 XTSetInteractionModelState(x_currentPage, blocknr, modelState, interactionNumber);
             }
@@ -349,7 +352,9 @@ var gapFill = new function() {
                 correctOption = {source: modelState.answerData[interactionNumber][0], target: modelState.answerData[interactionNumber][0]}
                 correctOptions.push(correctOption);
             }
+            debugger
             XTEnterInteraction(x_currentPage,  blocknr , 'match', name, correctOptions, correctAnswers, "", x_currentPageXML.getAttribute("grouping"));
+            XTSetLeavePage(x_currentPage, blocknr, this.leavePage);
             XTSetInteractionPageXML(x_currentPage, blocknr, x_currentPageXML)
             XTSetInteractionModelState(x_currentPage, blocknr, modelState)
         }
@@ -377,6 +382,7 @@ var gapFill = new function() {
                     });
                 }
                 XTEnterInteraction(x_currentPage,  blocknr , 'multiplechoice', name, correctOptions, correctAnswers, "Correct", x_currentPageXML.getAttribute("grouping"), interactionNumber);
+                XTSetLeavePage(x_currentPage, blocknr, this.leavePage);
                 XTSetInteractionPageXML(x_currentPage, blocknr, x_currentPageXML, interactionNumber);
                 XTSetInteractionModelState(x_currentPage, blocknr, modelState, interactionNumber);
             }
@@ -679,7 +685,7 @@ var gapFill = new function() {
         modelState.labelTxt3 = x_getLangInfo(x_languageData.find("interactions").find("draggableItem")[0], "toSelect", "Press space to select");
         modelState.targetTxt1 = x_getLangInfo(x_languageData.find("interactions").find("targetArea")[0], "description", "Drop zone for");
         modelState.targetTxt2 = x_getLangInfo(x_languageData.find("interactions").find("targetArea")[0], "toSelect", "Press space to drop the selected item.");
-
+        debugger
         // set up targets
         var	maxW = 0,
             i;

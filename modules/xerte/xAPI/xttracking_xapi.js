@@ -3625,3 +3625,29 @@ function XTResults(fullcompletion) {
 
     return results;
 }
+
+function jGetElement(blockid, element) {
+
+    if(element.includes(",")){
+        debugger
+        var finalElement = "";
+        var elements = element.split(",");
+        for( var i=0; i< elements.length; i++){
+            var e = "#"+blockid+" "+elements[i];
+            if(i !== elements.length-1){
+                e += ", "
+            }
+            finalElement += e;
+        }
+        return $(finalElement)
+    }
+    return $("#" + blockid + ' ' + element)
+}
+
+function XTGetBlockNr(blockid){
+    if(blockid){
+        return parseFloat(blockid.split("block").pop()) - 1
+    } else{
+        return 0;
+    }
+}
