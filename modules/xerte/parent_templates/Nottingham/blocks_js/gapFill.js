@@ -494,7 +494,7 @@ var gapFill = new function() {
                                     gapFill.audioFbResize(true, blockid);
                                 }
 
-                                debugger
+
                                 modelState.correct_answers++;
                                 modelState.total++;
                                 var result = {
@@ -502,7 +502,7 @@ var gapFill = new function() {
                                     score: 100.0
                                 };
                                 let answer = !modelState.casesensitive ? $this.val().trim().toLowerCase() : $this.val().trim();
-                                debugger
+
                                 XTExitInteraction(x_currentPage, XTGetBlockNr(blockid) , result, [], answer, "Correct", $this.data("index"), x_currentPageXML.getAttribute("trackinglabel"));
                                 XTSetInteractionModelState(x_currentPage, XTGetBlockNr(blockid), modelState, $this.data("index"));
                             } else { // wrong - start showing hint after 3 wrong characters entered - this only gives hint if there's only 1 possible correct answer for the gap
@@ -564,7 +564,7 @@ var gapFill = new function() {
                                                     $hint = $pageContents.find("#hint");
                                                 }
                                                 $hint.html(currentHint);
-                                                debugger
+
                                                 $hint.css({
                                                     top	 :$this.position().top + parseInt(jGetElement(blockid, ".mainPanel").css("padding-top")) + parseInt($this.css("margin-top")) + $this.height() + 10,
                                                     left :$this.position().left + parseInt(jGetElement(blockid, ".mainPanel").css("padding-left")) + 5
@@ -1120,7 +1120,7 @@ var gapFill = new function() {
                         success: correct,
                         score: (correct ? 100.0 : 0.0)
                     };
-                    debugger
+
                     XTExitInteraction(x_currentPage, blocknr , result, [], answer, feedback, $this.data("index"), x_currentPageXML.getAttribute("trackinglabel"));
                 });
 
