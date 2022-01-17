@@ -10,7 +10,7 @@ var quiz = new function() {
 
     // function called every time the page is viewed after it has initially loaded
     this.pageChanged = function(blockid) {
-        jGetElement(blockid, "#feedbackGroup").find('.feedbackBlock').html("");
+        jGetElement(blockid, ".feedbackGroup").find('.feedbackBlock').html("");
         if ($(x_currentPageXML).children().length > 0) {
             this.startQs(blockid);
         }
@@ -21,7 +21,7 @@ var quiz = new function() {
 
     // function called every time the size of the LO is changed
     this.sizeChanged = function(blockid) {
-        var $panel = jGetElement(blockid, "#pageContents .qPanel");
+        var $panel = jGetElement(blockid, ".pageContents .qPanel");
         if (x_browserInfo.mobile == false) {
             $panel.height($x_pageHolder.height() - parseInt($x_pageDiv.css("padding-top")) * 2 - parseInt($panel.css("padding-top")) * 2 - 5);
         }
@@ -30,32 +30,32 @@ var quiz = new function() {
         }
 
         var resized = false;
-        if (jGetElement(blockid, "#questionAudio").children().length > 0) {
+        if (jGetElement(blockid, ".questionAudio").children().length > 0) {
             if (resized == false) {
                 var audioBarW = 0;
-                jGetElement(blockid, "#questionAudio").find(".mejs-inner").find(".mejs-controls").children().each(function() {
+                jGetElement(blockid, ".questionAudio").find(".mejs-inner").find(".mejs-controls").children().each(function() {
                     audioBarW += $(this).outerWidth();
                 });
-                if (audioBarW < jGetElement(blockid, "#questionAudio").width() - 5 || audioBarW > jGetElement(blockid, "#questionAudio").width() + 5) {
+                if (audioBarW < jGetElement(blockid, ".questionAudio").width() - 5 || audioBarW > jGetElement(blockid, ".questionAudio").width() + 5) {
                     resized = true;
                     $x_window.resize();
                 }
             }
         }
-        if (jGetElement(blockid, "#pageContents .audioHolder").length > 0) {
+        if (jGetElement(blockid, ".pageContents .audioHolder").length > 0) {
             if (resized == false) {
                 var audioBarW = 0;
-                jGetElement(blockid, "#pageContents .audioHolder:eq(0) .mejs-inner .mejs-controls").children().each(function() {
+                jGetElement(blockid, ".pageContents .audioHolder:eq(0) .mejs-inner .mejs-controls").children().each(function() {
                     audioBarW += $(this).outerWidth();
                 });
-                if (audioBarW - jGetElement(blockid, "#pageContents .audioHolder").parents("#mainPanel").width() < -2 || audioBarW - jGetElement(blockid, "#pageContents .audioHolder").parents("#mainPanel").width() > 2) {
+                if (audioBarW - jGetElement(blockid, ".pageContents .audioHolder").parents(".mainPanel").width() < -2 || audioBarW - jGetElement(blockid, ".pageContents .audioHolder").parents(".mainPanel").width() > 2) {
                     resized = true;
                     $x_window.resize();
                 }
             }
         }
 
-        jGetElement(blockid, "#qTxt").width($panel.width());
+        jGetElement(blockid, ".qTxt").width($panel.width());
     };
 
 
@@ -83,8 +83,8 @@ var quiz = new function() {
             this.showfeedback = x_currentPageXML.getAttribute("showfeedback") == "true";
         }
 
-        jGetElement(blockid, "#optionHolder").show();
-        jGetElement(blockid, "#checkBtn, #nextBtn, #restartBtn").button("disable");
+        jGetElement(blockid, ".optionHolder").show();
+        jGetElement(blockid, ".checkBtn, .nextBtn, .restartBtn").button("disable");
 
         this.currentQ = 0;
         this.questions = []; // array of questions to use (index)
@@ -128,7 +128,7 @@ var quiz = new function() {
         this.tracked = false;
 
         if ($(x_currentPageXML).children().length == 0) {
-            jGetElement(blockid, "#optionHolder").html('<span class="alert">' + x_getLangInfo(x_languageData.find("errorQuestions")[0], "noQ", "No questions have been added") + '</span>');
+            jGetElement(blockid, ".optionHolder").html('<span class="alert">' + x_getLangInfo(x_languageData.find("errorQuestions")[0], "noQ", "No questions have been added") + '</span>');
 
         } else {
             var $thisQ = null;
@@ -138,14 +138,14 @@ var quiz = new function() {
 
             $thisQ = $(x_currentPageXML).children()[this.questions[this.currentQ]];
 
-            jGetElement(blockid, "#qNo").html(this.qNoTxt.replace("{i}", this.currentQ + 1).replace("{n}", this.questions.length));
+            jGetElement(blockid, ".qNo").html(this.qNoTxt.replace("{i}", this.currentQ + 1).replace("{n}", this.questions.length));
 
             var infoString = $thisQ.getAttribute("prompt");
 
             if ($thisQ.getAttribute("sound") != undefined && $thisQ.getAttribute("sound") != "") {
                 quiz.loadAudio($thisQ.getAttribute("sound"), blockid);
             } else {
-                jGetElement(blockid, "#questionAudio").empty().hide();
+                jGetElement(blockid, ".questionAudio").empty().hide();
             }
 
             var url = $thisQ.getAttribute("image");
@@ -158,27 +158,27 @@ var quiz = new function() {
                 newString += ' />';
                 infoString = newString + infoString;
             }
-            jGetElement(blockid, "#qTxt").html(x_addLineBreaks(infoString));
+            jGetElement(blockid, ".qTxt").html(x_addLineBreaks(infoString));
 
             //if (x_currentPageXML.getAttribute("disableGlossary") == "true") {
-            //	jGetElement(blockid, "#qTxt").find("a.x_glossary").contents().unwrap();
+            //	jGetElement(blockid, ".qTxt").find("a.x_glossary").contents().unwrap();
             //}
 
-            jGetElement(blockid, "#feedback").html("");
-            jGetElement(blockid, "#generalFeedback").html("");
+            jGetElement(blockid, ".feedback").html("");
+            jGetElement(blockid, ".generalFeedback").html("");
 
             if ($($thisQ).children().length == 0) {
-                jGetElement(blockid, "#optionHolder").html('<span class="alert">' + x_getLangInfo(x_languageData.find("errorQuestions")[0], "noA", "No answer options have been added") + '</span>');
+                jGetElement(blockid, ".optionHolder").html('<span class="alert">' + x_getLangInfo(x_languageData.find("errorQuestions")[0], "noA", "No answer options have been added") + '</span>');
             } else {
-                var $optionHolder = jGetElement(blockid, "#optionHolder");
+                var $optionHolder = jGetElement(blockid, ".optionHolder");
                 if ($thisQ.getAttribute("type") == "Multiple Answer") {
                     $optionHolder.html('<div class="optionGroup"><input type="checkbox" name="option" /><label class="optionTxt"></label></div>');
                 } else {
                     $optionHolder.html('<div class="optionGroup"><input type="radio" name="option" /><label class="optionTxt"></label></div>');
                 }
                 var $optionGroup = $optionHolder.find(".optionGroup"),
-                    $checkBtn = jGetElement(blockid, "#checkBtn"),
-                    $feedback = jGetElement(blockid, "#feedback"),
+                    $checkBtn = jGetElement(blockid, ".checkBtn"),
+                    $feedback = jGetElement(blockid, ".feedback"),
                     correctOptions = [],
                     correctAnswer = [],
                     correctFeedback = [];
@@ -250,14 +250,14 @@ var quiz = new function() {
                         .change(function() {
 
                             $feedback.html("");
-                            jGetElement(blockid, "#feedbackGroup").find('.feedbackBlock').html("");
-                            var $selected = jGetElement(blockid, "#optionHolder input:checked");
+                            jGetElement(blockid, ".feedbackGroup").find('.feedbackBlock').html("");
+                            var $selected = jGetElement(blockid, ".optionHolder input:checked");
                             if ($selected.length > 0) {
                                 $checkBtn.button("enable");
                             } else {
                                 $checkBtn.button("disable");
                             }
-                            jGetElement(blockid, "#nextBtn").button("disable");
+                            jGetElement(blockid, ".nextBtn").button("disable");
                         })
                         .focusin(function() {
                             $thisOptionGroup.addClass("highlight");
@@ -282,7 +282,7 @@ var quiz = new function() {
                 }
 
                 var blocknr = parseFloat(blockid.split("block").pop()) - 1;
-
+                debugger
                 XTEnterInteraction(x_currentPage, blocknr , 'multiplechoice', name, correctOptions, correctAnswer, correctFeedback, x_currentPageXML.getAttribute("grouping"),  this.questions[this.currentQ]);
                 XTSetInteractionPageXML(x_currentPage, blocknr, x_currentPageXML, this.questions[this.currentQ]);
                 quiz.checked = false;
@@ -299,7 +299,7 @@ var quiz = new function() {
 
         var currentQuestion = currentPageXML.children[quiz.questions[quiz.currentQ]];
 
-        var selected = jGetElement(blockid, "#optionHolder input:checked"),
+        var selected = jGetElement(blockid, ".optionHolder input:checked"),
             optionFeedback = "",
             correct = true,
             l_options = [],
@@ -353,7 +353,7 @@ var quiz = new function() {
         if (currentPageXML.getAttribute("judge") != "false") {
             // if all selected are correct - check that none of the unselected options should have been
             if (correct != false && currentQuestion.getAttribute("type") == "Multiple Answer") {
-                var notSelected = jGetElement(blockid, "#optionHolder input:not(:checked)");
+                var notSelected = jGetElement(blockid, ".optionHolder input:not(:checked)");
                 for (var i=0; i<notSelected.length; i++) {
                     var notSelectedOption = quiz.currentAnswers[$(notSelected[i]).parent().index()];
                     if (notSelectedOption.correct == "true") {
@@ -364,15 +364,15 @@ var quiz = new function() {
             // add correct feedback depending on if question overall has been answered correctly or not
             if (currentQuestion.getAttribute("type") == "Multiple Answer") {
                 if (correct == true) {
-                    rightWrongTxt = '<p>' + jGetElement(blockid, "#pageContents").data("multiRight") + '</p>';
+                    rightWrongTxt = '<p>' + jGetElement(blockid, ".pageContents").data("multiRight") + '</p>';
                 } else {
-                    rightWrongTxt = '<p>' + jGetElement(blockid, "#pageContents").data("multiWrong") + '</p>';
+                    rightWrongTxt = '<p>' + jGetElement(blockid, ".pageContents").data("multiWrong") + '</p>';
                 }
             } else {
                 if (correct == true) {
-                    rightWrongTxt = '<p>' + jGetElement(blockid, "#pageContents").data("singleRight") + '</p>';
+                    rightWrongTxt = '<p>' + jGetElement(blockid, ".pageContents").data("singleRight") + '</p>';
                 } else {
-                    rightWrongTxt = '<p>' + jGetElement(blockid, "#pageContents").data("singleWrong") + '</p>';
+                    rightWrongTxt = '<p>' + jGetElement(blockid, ".pageContents").data("singleWrong") + '</p>';
                 }
             }
         }
@@ -396,7 +396,7 @@ var quiz = new function() {
                         thisFeedback = rightWrongTxt;
                     }
 
-                    $('#' + feedbackDiv[i] + 'Feedback')
+                    $('.' + feedbackDiv[i] + 'Feedback')
                         .html(thisFeedback)
                         .show();
                 }
@@ -405,7 +405,7 @@ var quiz = new function() {
                 if (feedbackLabel == undefined) {
                     feedbackLabel = "Feedback";
                 }
-                jGetElement(blockid, "#feedbackHeader").html(feedbackLabel != '' ? "<h3>" + feedbackLabel + "</h3>" : '');
+                jGetElement(blockid, ".feedbackHeader").html(feedbackLabel != '' ? "<h3>" + feedbackLabel + "</h3>" : '');
             }else{
 
                 for (var p=0; p<feedbackDiv.length; p++) {
@@ -414,7 +414,7 @@ var quiz = new function() {
                         thisFeedback = thisQ.getAttribute('feedback');
                     } else if (feedbackOrder[p] == 'A') {
 
-                        var selectedInput = jGetElement(blockid, "#optionHolder input:checked")
+                        var selectedInput = jGetElement(blockid, ".optionHolder input:checked")
                         var multipleFeedback = []
                         var feedback = "";
 
@@ -434,7 +434,7 @@ var quiz = new function() {
                         thisFeedback = rightWrongTxt;
                     }
 
-                    $('#' + feedbackDiv[p] + 'Feedback')
+                    $('.' + feedbackDiv[p] + 'Feedback')
                         .html(thisFeedback)
                         .show();
                 }
@@ -442,7 +442,7 @@ var quiz = new function() {
                 if (feedbackLabel == undefined) {
                     feedbackLabel = "Feedback";
                 }
-                jGetElement(blockid, "#feedbackHeader").html(feedbackLabel != '' ? "<h3>" + feedbackLabel + "</h3>" : '');
+                jGetElement(blockid, ".feedbackHeader").html(feedbackLabel != '' ? "<h3>" + feedbackLabel + "</h3>" : '');
             }
 
         }
@@ -454,24 +454,24 @@ var quiz = new function() {
             success: correct,
             score: correct ? 100.0 : 0.0
         };
-
+        debugger
         XTExitInteraction(x_currentPage, blocknr, result, l_options, l_answer, l_feedback,  this.questions[this.currentQ]);
         quiz.myProgress.splice(quiz.currentQ, 1, correct);
 
         generalFeedback += rightWrongTxt;
-        var answerFeedback = "<h3>" + jGetElement(blockid, "#pageContents").data("feedbackLabel") + "</h3>" + generalFeedback;
+        var answerFeedback = "<h3>" + jGetElement(blockid, ".pageContents").data("feedbackLabel") + "</h3>" + generalFeedback;
         if (XTGetMode() == "normal")
         {
             // Disable all options
             var i=0;
             for (i=0; i<quiz.currNrOptions; i++)
             {
-                jGetElement(blockid, "#option"+i).attr("disabled", "disabled");
+                jGetElement(blockid, ".option"+i).attr("disabled", "disabled");
             }
         }
         if (quiz.showfeedback)
         {
-            jGetElement(blockid, "#feedback")
+            jGetElement(blockid, ".feedback")
                 .html(answerFeedback)
                 .find(".audioHolder").each(function() {
                 $(this).mediaPlayer({
@@ -483,26 +483,26 @@ var quiz = new function() {
 
             if(questionFeedbackText !== null){
                 if(questionFeedbackText !== ""){
-                    var questionFeedback = "<h3>" + jGetElement(blockid, "#pageContents").data("generalFeedbackLabel") + "</h3>" + questionFeedbackText
-                    $('#generalFeedback').html(questionFeedback)
+                    var questionFeedback = "<h3>" + jGetElement(blockid, ".pageContents").data("generalFeedbackLabel") + "</h3>" + questionFeedbackText
+                    $('.generalFeedback').html(questionFeedback)
                 }
 
             }
 
 
             //if (x_currentPageXML.getAttribute("disableGlossary") == "true") {
-            //    jGetElement(blockid, "#feedback").find("a.x_glossary").contents().unwrap();
+            //    jGetElement(blockid, ".feedback").find("a.x_glossary").contents().unwrap();
             //}
 
-            jGetElement(blockid, "#nextBtn").button("enable");
-            jGetElement(blockid, "#checkBtn").button("disable");
+            jGetElement(blockid, ".nextBtn").button("enable");
+            jGetElement(blockid, ".checkBtn").button("disable");
 
             $(this).hide().show(); // hack to take care of IEs inconsistent handling of clicks
         }
         else
         {
             // Continue to next question
-            jGetElement(blockid, "#checkBtn").button("disable");
+            jGetElement(blockid, ".checkBtn").button("disable");
             quiz.currentQ++;
             if (quiz.currentQ == quiz.questions.length) {
                 // last question answered - show results
@@ -519,8 +519,8 @@ var quiz = new function() {
         // last question answered - show results
         var blocknr = parseFloat(blockid.split("block").pop()) - 1;
         let currentPageXML = XTGetPageXML(x_currentPage, blocknr, this.questions[this.currentQ]);
-        var $pageContents = jGetElement(blockid, "#pageContents");
-        jGetElement(blockid, "#qNo").html($pageContents.data("onCompletionText"));
+        var $pageContents = jGetElement(blockid, ".pageContents");
+        jGetElement(blockid, ".qNo").html($pageContents.data("onCompletionText"));
         var fbTxt = "<p>" + x_addLineBreaks(currentPageXML.getAttribute("feedback")) + "</p>";
 
         var myScore = 0;
@@ -537,20 +537,20 @@ var quiz = new function() {
             }
         }
 
-        jGetElement(blockid, "#feedbackHeader").html(fbTxt);
-        jGetElement(blockid, "#questionAudio").empty();
+        jGetElement(blockid, ".feedbackHeader").html(fbTxt);
+        jGetElement(blockid, ".questionAudio").empty();
 
         //if (x_currentPageXML.getAttribute("disableGlossary") == "true") {
-        //	jGetElement(blockid, "#feedback").find("a.x_glossary").contents().unwrap();
+        //	jGetElement(blockid, ".feedback").find("a.x_glossary").contents().unwrap();
         //}
 
-        jGetElement(blockid, "#optionHolder").hide();
-        jGetElement(blockid, "#nextBtn, #checkBtn").button("disable");
+        jGetElement(blockid, ".optionHolder").hide();
+        jGetElement(blockid, ".nextBtn, .checkBtn").button("disable");
         if (XTGetMode() != "normal")
         {
-            jGetElement(blockid, "#restartBtn").button("enable");
+            jGetElement(blockid, ".restartBtn").button("enable");
         }
-        jGetElement(blockid, "#qTxt").html("");
+        jGetElement(blockid, ".qTxt").html("");
 
         var scormScore = Math.round((myScore * 100 / quiz.questions.length) * 100)/100;
         XTSetPageScore(x_currentPage, scormScore);
@@ -558,9 +558,9 @@ var quiz = new function() {
     };
 
     this.loadVideo = function(blockid) {
-        var $video = jGetElement(blockid, "#pageVideo"),
+        var $video = jGetElement(blockid, ".pageVideo"),
             videoDimensions = $video.data("dimensions"),
-            $textHolder = jGetElement(blockid, "#textHolder"),
+            $textHolder = jGetElement(blockid, ".textHolder"),
             maxW = $textHolder.width() - parseInt($textHolder.find(".panel").css("padding-left")) * 2 - parseInt($textHolder.find(".panel").css("margin-left")) * 2;
 
         if (maxW < videoDimensions[0]) {
@@ -579,12 +579,12 @@ var quiz = new function() {
     this.init = function(pageXML,blockid) {
         x_currentPageXML = pageXML;
         var panelWidth = x_currentPageXML.getAttribute("panelWidth"),
-            $splitScreen = jGetElement(blockid, "#pageContents .splitScreen"),
-            $textHolder = jGetElement(blockid, "#textHolder");
+            $splitScreen = jGetElement(blockid, ".pageContents .splitScreen"),
+            $textHolder = jGetElement(blockid, ".textHolder");
 
         this.resultsShown = false;
         if (panelWidth == "Full") {
-            jGetElement(blockid, "#infoHolder .panel").appendTo(jGetElement(blockid, "#pageContents"));
+            jGetElement(blockid, ".infoHolder .panel").appendTo(jGetElement(blockid, ".pageContents"));
             $splitScreen.remove();
         } else {
             $textHolder.html(x_addLineBreaks(x_currentPageXML.getAttribute("instructions")));
@@ -607,7 +607,7 @@ var quiz = new function() {
                     .removeClass("left")
                     .addClass("right")
                     .appendTo($splitScreen);
-                jGetElement(blockid, "#infoHolder")
+                jGetElement(blockid, ".infoHolder")
                     .removeClass("right")
                     .addClass("left");
                 if (panelWidth == "Small") {
@@ -622,7 +622,7 @@ var quiz = new function() {
 
         if (panelWidth != "Full" && x_currentPageXML.getAttribute("video") != undefined && x_currentPageXML.getAttribute("video") != "") {
             $textHolder.append('<div id="vidHolder" class="panel inline"><div id="pageVideo"></div></div>');
-            var $pageVideo = jGetElement(blockid, "#pageVideo"),
+            var $pageVideo = jGetElement(blockid, ".pageVideo"),
                 videoDimensions = [320,240]; // default video size
             if (x_currentPageXML.getAttribute("movieSize") != "" && x_currentPageXML.getAttribute("movieSize") != undefined) {
                 var dimensions = x_currentPageXML.getAttribute("movieSize").split(",");
@@ -689,7 +689,7 @@ var quiz = new function() {
             generalFeedbackLabel = "General Feedback";
         }
 
-        jGetElement(blockid, "#pageContents").data({
+        jGetElement(blockid, ".pageContents").data({
             "feedbackLabel"			:feedbackLabel,
             "generalFeedbackLabel"	:generalFeedbackLabel,
             "singleRight"			:singleRight,
@@ -700,7 +700,7 @@ var quiz = new function() {
             "scoreText"				:scoreText
         });
 
-        jGetElement(blockid, "#checkBtn")
+        jGetElement(blockid, ".checkBtn")
             .button({
                 label: submitBtnText
             })
@@ -709,7 +709,7 @@ var quiz = new function() {
                 quiz.checked = true;
             });
 
-        jGetElement(blockid, "#nextBtn")
+        jGetElement(blockid, ".nextBtn")
             .button({
                 label: nextBtnText
             })
@@ -717,7 +717,7 @@ var quiz = new function() {
                 var blocknr = parseFloat(blockid.split("block").pop()) - 1;
                 var xmlState = XTGetPageXML(x_currentPage, blocknr,quiz.questions[quiz.currentQ])
                 $(this).button("disable");
-                jGetElement(blockid, "#feedbackGroup").find('.feedbackBlock').html("");
+                jGetElement(blockid, ".feedbackGroup").find('.feedbackBlock').html("");
                 quiz.currentQ++;
                 if (quiz.currentQ == quiz.questions.length) {
                     // last question answered - show results
@@ -730,7 +730,7 @@ var quiz = new function() {
                 x_pageContentsUpdated();
             });
 
-        jGetElement(blockid, "#restartBtn")
+        jGetElement(blockid, ".restartBtn")
             .button({
                 label: restartBtnText
             })
@@ -745,7 +745,7 @@ var quiz = new function() {
 
     this.loadAudio = function(soundFile, blockid) {
         if (soundFile != undefined && soundFile != "") {
-            jGetElement(blockid, "#questionAudio").mediaPlayer({
+            jGetElement(blockid, ".questionAudio").mediaPlayer({
                 type	:"audio",
                 source	:soundFile,
                 width	:"100%"

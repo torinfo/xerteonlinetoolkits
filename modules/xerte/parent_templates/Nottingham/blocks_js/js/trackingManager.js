@@ -75,6 +75,7 @@ function TrackingManager(){
     }
 
     function findCreatePageState (page_nr, ia_type, ia_name){
+        debugger
         var tmpid = makeId(page_nr,-1, ia_type, ia_name);
 
         for (var i=0; i<this.pageStates.length; i++)
@@ -448,7 +449,13 @@ function TrackingManager(){
 
     function findAllInteractions(page_nr)
     {
-        return this.pageStates[page_nr].interactions;
+        for(var i = 0; i < this.pageStates.length; i++){
+            if(this.pageStates[i].page_nr == page_nr){
+                return this.pageStates[i].interactions;
+            }
+
+        }
+
     }
 
     /**

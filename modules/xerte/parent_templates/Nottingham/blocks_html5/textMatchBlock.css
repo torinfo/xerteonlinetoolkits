@@ -1,47 +1,47 @@
 /* textMatch.html */
-.textHolder {
+.textMatchBlock .textHolder {
     margin-bottom: 20px;
 }
 
-.dragDropHolder {
+.textMatchBlock .dragDropHolder {
     overflow: auto;
     margin-bottom: 10px;
 }
 
-.dragDropHolder .label {
+.textMatchBlock .dragDropHolder .label {
     cursor: pointer;
     padding: 5px;
 }
 
-.dragDropHolder .label.focus {
+.textMatchBlock .dragDropHolder .label.focus {
     border: 2px solid yellow;
 }
 
-.dragDropHolder .label.selected {
+.textMatchBlock .dragDropHolder .label.selected {
     border: 2px solid green;
 }
 
-.dragDropHolder .labelTxt {
+.textMatchBlock .dragDropHolder .labelTxt {
     position: relative;
     float: left;
 }
 
-.dragDropHolder .audioHolder {
+.textMatchBlock .dragDropHolder .audioHolder {
     float: left;
 }
 
-.dragDropHolder .audioHolder .mejs-controls div:not (.mejs-playpause-button
+.textMatchBlock .dragDropHolder .audioHolder .mejs-controls div:not (.mejs-playpause-button
 	) {
     display: none;
 }
 
-.dragDropHolder .tick {
+.textMatchBlock .dragDropHolder .tick {
     position: absolute;
     top: 0.5em;
     right: 0.5em;
 }
 
-.labelHolder {
+.textMatchBlock .labelHolder {
     padding: 0px;
     margin-bottom: 20px;
     margin-right: 20px;
@@ -49,26 +49,26 @@
     position: relative;
 }
 
-.targetHolder {
+.textMatchBlock .targetHolder {
     clear: right;
 }
 
-.targetHolder .target {
+.textMatchBlock .targetHolder .target {
     padding: 1%;
     margin-top: 10px;
     margin-bottom: 10px;
 }
 
-.targetHolder h3 {
+.textMatchBlock .targetHolder h3 {
     width: 48%;
 }
 
-.targetHolder .hint {
+.textMatchBlock .targetHolder .hint {
     width: 50%;
     float: right;
 }
 
-.button {
+.textMatchBlock .button {
     margin-bottom: 10px;
     float: right;
 }
