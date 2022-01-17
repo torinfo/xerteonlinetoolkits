@@ -1,7 +1,7 @@
 var mcq = new function() {
     // function called every time the page is viewed after it has initially loaded
     this.pageChanged = function() {
-
+        debugger
         this.optionElements = $("#pageContents").data("optionElements");
 
         if ($(x_currentPageXML).children().length > 0) {
@@ -85,6 +85,7 @@ var mcq = new function() {
         {
             label = x_GetTrackingTextFromHTML(x_currentPageXML.getAttribute("prompt"), label);
         }
+        debugger
         XTEnterInteraction(x_currentPage, blocknr, 'multiplechoice', label, correctOptions, correctAnswer, correctFeedback, x_currentPageXML.getAttribute("grouping"));
         XTSetInteractionPageXML(x_currentPage, blocknr, x_currentPageXML);
     }
@@ -255,6 +256,7 @@ var mcq = new function() {
         };
         var blocknr = parseFloat(blockid.split("block").pop());
 
+        debugger
         XTExitInteraction(x_currentPage, blocknr-1, result, l_options, l_answers, l_feedbacks);
 
         if (XTGetMode() == "normal")

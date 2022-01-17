@@ -1,54 +1,54 @@
 /* quiz.html */
 
-	.qPanel {
+	.quizBlock .qPanel {
 		overflow:	auto;
 	}
-	
-	#optionHolder {
+
+	.quizBlock .optionHolder {
 		margin-top:	15px;
 		margin-bottom:	15px;
 	}
 
-	#pageContents input {
+	.quizBlock .pageContents input {
 		float:		left;
 		display:	block;
 	}
 
-	#optionHolder .optionGroup {
+	.quizBlock .optionHolder .optionGroup {
 		padding-top:	5px;
 		padding-bottom:	5px;
 	}
-	
-	#pageContents .optionTxt {
+
+	.quizBlock .pageContents .optionTxt {
 		cursor:			pointer;
 		position:		relative;
 		margin-left:	2em;
 		display:		block;
 	}
-	
-	#feedback, #buttonHolder {
+
+	.quizBlock .feedback, .buttonHolder {
 		clear:		both;
 	}
-	
-	#buttonHolder {
+
+	.quizBlock .buttonHolder {
 		float:	right;
 		margin-bottom:	10px;
 		margin-top: 10px;
 		padding-right: 5px;
 	}
 
-	#infoHolder .quizImg {
+	.quizBlock .infoHolder .quizImg {
 		padding:	5px;
 		float:		right;
 		max-width:	50%;
 		height:		auto;
 	}
-	
-	#vidHolder.panel {
+
+	.quizBlock .vidHolder.panel {
 		margin-top:	1em;
 	}
-	
-	#textHolder .quizImg {
+
+	.quizBlock .textHolder .quizImg {
 		padding:	5px;
 		max-width:	80%;
 		display:	block;
@@ -56,27 +56,27 @@
 		margin-right:auto;
 	}
 
-	#textHolder p:first-child {
+	.quizBlock .textHolder p:first-child {
 		margin-top:	0px;
 	}
-	
-	#questionAudio {
+
+	.quizBlock .questionAudio {
 		clear:	both;
 	}
-	
-	#feedback .audioHolder {
+
+	.quizBlock .feedback .audioHolder {
 		margin:	0.5em 0 1em 0;
 	}
 
-	#feedbackGroup h3 {
+	.quizBlock .feedbackGroup h3 {
 		border-top: 1px solid #ccc;
 		padding-top: 1em;
 	}
 
-	#qTxt {
+	.quizBlock .qTxt {
 		width: 100%;
 	}
 
-	#feedbackGroup .feedbackBlock {
+	.quizBlock .feedbackGroup .feedbackBlock {
 		margin-bottom: 0.5em;
 	}
