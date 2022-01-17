@@ -5,23 +5,23 @@
 overflow:	auto;
 }
 
-.opinionBlock #sliderHolder {
+.opinionBlock .sliderHolder {
 margin-top:	5px;
 margin-bottom:	20px;
 }
 
-.opinionBlock #sliderHolder .labelHolder
+.opinionBlock .sliderHolder .labelHolder
 {
     text-align: justify;
 }
 
 
-.opinionBlock #sliderHolder .inputHolder
+.opinionBlock .sliderHolder .inputHolder
 {
     width: 100%;
 }
 
-.opinionBlock #sliderHolder {
+.opinionBlock .sliderHolder {
     margin-top: 1em;
 }
 
@@ -39,7 +39,7 @@ margin-bottom:	20px;
     border: solid 1px #eeeeee;
 }
 
-.opinionBlock #sliderHolder .rangeHolder .slider
+.opinionBlock .sliderHolder .rangeHolder .slider
 {
     width: 100%;
     padding: 0;
@@ -51,7 +51,7 @@ margin-bottom:	20px;
     width: 100%;
 }
 
-.opinionBlock #sliderHolder .labelHolder a p
+.opinionBlock .sliderHolder .labelHolder a p
 {
     width: 100%;
     display: inline-block;
@@ -62,34 +62,34 @@ margin-bottom:	20px;
     color: #000;
 }
 
-.opinionBlock #sliderHolder .labelHolder .leftLabel
+.opinionBlock .sliderHolder .labelHolder .leftLabel
 {
     /* text-align: left; */
 }
 
-.opinionBlock #sliderHolder .labelHolder .rightLabel
+.opinionBlock .sliderHolder .labelHolder .rightLabel
 {
     /* text-align: right; */
 }
 
-.opinionBlock #sliderHolder .labelHolder:after {
+.opinionBlock .sliderHolder .labelHolder:after {
     content: '';
     width: 100%;
 }
 
-.opinionBlock #sliderHolder .rangeHolder
+.opinionBlock .sliderHolder .rangeHolder
 {
     margin-bottom: 2em;
 
     border-radius: 2em;
 }
 
-.opinionBlock #sliderHolder .rangeHolder output
+.opinionBlock .sliderHolder .rangeHolder output
 {
     position: relative;
 }
 
-.opinionBlock #sliderHolder .optionGroup
+.opinionBlock .sliderHolder .optionGroup
 {
 padding-top:	5px;
 padding-bottom:	5px;
