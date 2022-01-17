@@ -43,7 +43,6 @@ var gapFill = new function() {
     }
 
     this.refreshPageVariables = function(blockid){
-        debugger
         $pageContents = jGetElement(blockid, ".pageContents");
         $targetHolder = jGetElement(blockid, ".targetHolder");
         $feedbackTxt = jGetElement(blockid, ".feedbackTxt");
@@ -70,7 +69,7 @@ var gapFill = new function() {
     }
 
     this.leavePage = function(blockid) {
-        this.refreshPageVariables(blockid);
+        gapFill.refreshPageVariables(blockid);
         $pageContents.data({
             'casesensitive': modelState.casesensitive,
             'answerData': modelState.answerData,
@@ -84,15 +83,15 @@ var gapFill = new function() {
         if (modelState.finished == false) {
             if(x_currentPageXML.getAttribute("interactivity") == "Drag Drop")
             {
-                this.dragDropSubmit(true, blockid);
+                gapFill.dragDropSubmit(true, blockid);
             }
             else if(x_currentPageXML.getAttribute("interactivity") == "Fill in Blank")
             {
-                this.fillInSubmit(true, blockid);
+                gapFill.fillInSubmit(true, blockid);
             }
             else if (x_currentPageXML.getAttribute("interactivity") == "Drop Down Menu")
             {
-                this.dropDownSubmit(true, blockid);
+                gapFill.dropDownSubmit(true, blockid);
             }
         }
     };

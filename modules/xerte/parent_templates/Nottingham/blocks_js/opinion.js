@@ -5,7 +5,7 @@ var opinion = new function()
     this.sizeChanged = function(blockid)
     {
 
-        var $panel = jGetElement(blockid, "#pageContents .qPanel"),
+        var $panel = jGetElement(blockid, ".pageContents .qPanel"),
             resized = false;
 
         if (x_browserInfo.mobile == false)
@@ -33,18 +33,18 @@ var opinion = new function()
             }
         });
 
-        var audioHolder = jGetElement(blockid, "#pageContents .audioHolder");
+        var audioHolder = jGetElement(blockid, ".pageContents .audioHolder");
 
         if (audioHolder.length > 0)
         {
             if (resized == false)
             {
                 var audioBarW = 0;
-                jGetElement(blockid, "#pageContents .audioHolder:eq(0) .mejs-inner .mejs-controls").children().each(function() {
+                jGetElement(blockid, ".pageContents .audioHolder:eq(0) .mejs-inner .mejs-controls").children().each(function() {
                     audioBarW += $(this).outerWidth();
                 });
 
-                if (audioBarW - audioHolder.parents("#infoHolder").width() < -2 || audioBarW - audioHolder.parents("#infoHolder").width() > 2)
+                if (audioBarW - audioHolder.parents(".infoHolder").width() < -2 || audioBarW - audioHolder.parents(".infoHolder").width() > 2)
                 {
                     resized = true;
                     $x_window.resize();
@@ -52,18 +52,18 @@ var opinion = new function()
             }
         }
 
-        var width = jGetElement(blockid, "#infoHolder").width(),
-            height = jGetElement(blockid, "#infoHolder").height(),
+        var width = jGetElement(blockid, ".infoHolder").width(),
+            height = jGetElement(blockid, ".infoHolder").height(),
             textSize;
 
         if(width > height) {
-            jGetElement(blockid, "#diagram")
+            jGetElement(blockid, ".diagram")
                 .width(height*0.90)
                 .height(height*0.90);
             textSize = (width - height) / 10;
         }
         else {
-            jGetElement(blockid, "#diagram")
+            jGetElement(blockid, ".diagram")
                 .width(width*0.90)
                 .height(width*0.90);
             textSize = (height - width) / 10;
@@ -111,9 +111,9 @@ var opinion = new function()
         }
         $pageContents.data('showfeedback', showfeedback);
 
-        jGetElement(blockid, "#diagram").hide();
-        jGetElement(blockid, "#qHolder").show();
-        jGetElement(blockid, "#checkBtn")
+        jGetElement(blockid, ".diagram").hide();
+        jGetElement(blockid, ".qHolder").show();
+        jGetElement(blockid, ".checkBtn")
             .show()
             .button("disable");
 
@@ -164,7 +164,7 @@ var opinion = new function()
 
     this.loadQuestions = function(blockid)
     {
-        jGetElement(blockid, "#checkBtn").button("disable");
+        jGetElement(blockid, ".checkBtn").button("disable");
 
         $pageContents.data('radioButtonQuestions', []);
 
@@ -178,22 +178,22 @@ var opinion = new function()
         {
             if (pageMode || (pageMode == undefined && listMode == true))
             {
-                jGetElement(blockid, "#qNo").html($pageContents.data('qNumTxt').replace("{i}", (currentQuestion + 1) + " - " + (Math.min(currentQuestion + pageSize, questions.length))).replace("{n}", questions.length));
-                jGetElement(blockid, "#qHolder").html("");
+                jGetElement(blockid, ".qNo").html($pageContents.data('qNumTxt').replace("{i}", (currentQuestion + 1) + " - " + (Math.min(currentQuestion + pageSize, questions.length))).replace("{n}", questions.length));
+                jGetElement(blockid, ".qHolder").html("");
                 for (i=currentQuestion; i<Math.min(currentQuestion + pageSize, questions.length); i++)
                 {
-                    jGetElement(blockid, "#qHolder").append('<legend id="qTxt' + i + '" class="qTxt"></legend><div id="questionAudio'+ i + '" class="questionAudio"></div><div id="sliderHolder' + i
+                    jGetElement(blockid, ".qHolder").append('<legend id="qTxt' + i + '" class="qTxt"></legend><div id="questionAudio'+ i + '" class="questionAudio"></div><div id="sliderHolder' + i
                         + '" class="sliderHolder"><div id="labelHolder' + i + '" class="labelHolder"></div><div id="rangeHolder' + i + '" class="rangeHolder"></div></div><div class="qSeparator"><hr></div>');
                     this.loadQuestion(i, blockid);
                 }
             }
             else
             {
-                jGetElement(blockid, "#qNo").html($pageContents.data('qNumTxt').replace("{i}", (currentQuestion + 1) + " - " + questions.length).replace("{n}", questions.length));
-                jGetElement(blockid, "#qHolder").html("");
+                jGetElement(blockid, ".qNo").html($pageContents.data('qNumTxt').replace("{i}", (currentQuestion + 1) + " - " + questions.length).replace("{n}", questions.length));
+                jGetElement(blockid, ".qHolder").html("");
                 for (i=currentQuestion; i<questions.length; i++)
                 {
-                    jGetElement(blockid, "#qHolder").append('<legend id="qTxt' + i + '" class="qTxt"></legend><div id="questionAudio'+ i + '" class="questionAudio"></div><div id="sliderHolder' + i
+                    jGetElement(blockid, ".qHolder").append('<legend id="qTxt' + i + '" class="qTxt"></legend><div id="questionAudio'+ i + '" class="questionAudio"></div><div id="sliderHolder' + i
                         + '" class="sliderHolder"><div id="labelHolder' + i + '" class="labelHolder"></div><div id="rangeHolder' + i + '" class="rangeHolder"></div></div><div class="qSeparator"><hr></div>');
                     this.loadQuestion(i, blockid);
                 }
@@ -201,8 +201,8 @@ var opinion = new function()
         }
         else
         {
-            jGetElement(blockid, "#qNo").html($pageContents.data('qNumTxt').replace("{i}", currentQuestion + 1).replace("{n}", questions.length));
-            jGetElement(blockid, "#qHolder").html('<legend id="qTxt' + currentQuestion + '" class="qTxt"></legend><div id="questionAudio'+currentQuestion + '" class="questionAudio"></div><div id="sliderHolder'
+            jGetElement(blockid, ".qNo").html($pageContents.data('qNumTxt').replace("{i}", currentQuestion + 1).replace("{n}", questions.length));
+            jGetElement(blockid, ".qHolder").html('<legend id="qTxt' + currentQuestion + '" class="qTxt"></legend><div id="questionAudio'+currentQuestion + '" class="questionAudio"></div><div id="sliderHolder'
                 + currentQuestion + '" class="sliderHolder"><div id="labelHolder' + currentQuestion + '" class="labelHolder"></div><div id="rangeHolder' + currentQuestion + '" class="rangeHolder"></div></div>');
 
             this.loadQuestion(currentQuestion, blockid);
@@ -221,7 +221,7 @@ var opinion = new function()
         });
         if (checked)
         {
-            jGetElement(blockid, "#checkBtn").button("enable");
+            jGetElement(blockid, ".checkBtn").button("enable");
         }
     };
 
@@ -231,7 +231,7 @@ var opinion = new function()
 
         if ($(x_currentPageXML).children().length == 0)
         {
-            jGetElement(blockid, "#optionHolder").html('<span class="alert">' + x_getLangInfo(x_languageData.find("errorQuestions")[0], "noQ", "No questions have been added") + '</span>');
+            jGetElement(blockid, ".optionHolder").html('<span class="alert">' + x_getLangInfo(x_languageData.find("errorQuestions")[0], "noQ", "No questions have been added") + '</span>');
         }
         else
         {
@@ -243,7 +243,7 @@ var opinion = new function()
             }
             else
             {
-                jGetElement(blockid, "#questionAudio" + currentQuestion).empty();
+                jGetElement(blockid, ".questionAudio" + currentQuestion).empty();
             }
 
             var url = $thisQ.getAttribute("image");
@@ -261,8 +261,8 @@ var opinion = new function()
                 infoString = newString + infoString;
             }
 
-            jGetElement(blockid, "#qTxt" + currentQuestion).html(x_addLineBreaks(infoString));
-            jGetElement(blockid, "#feedback").html("");
+            jGetElement(blockid, ".qTxt" + currentQuestion).html(x_addLineBreaks(infoString));
+            jGetElement(blockid, ".feedback").html("");
 
             if ($($thisQ).children().length == 0)
             {
@@ -399,7 +399,7 @@ var opinion = new function()
 
     this.pageChanged = function()
     {
-        $pageContents = jGetElement(blockid, "#pageContents");
+        $pageContents = jGetElement(blockid, ".pageContents");
     };
 
     this.trackQuestions = function(blockid)
@@ -520,7 +520,7 @@ var opinion = new function()
             this.sizeChanged(blockid);
         }
 
-        jGetElement(blockid, "#qNo").html($pageContents.data("onCompletionText"));
+        jGetElement(blockid, ".qNo").html($pageContents.data("onCompletionText"));
 
         var myScore = 0;
         var answeredValues = $pageContents.data('answeredValues');
@@ -532,19 +532,19 @@ var opinion = new function()
 
         var feedbackText = x_currentPageXML.getAttribute("feedback") != '' ? "<p>" + x_addLineBreaks(x_currentPageXML.getAttribute("feedback")) + "</p>" : '';
         if ($pageContents.data('showfeedback') && feedbackText != '') {
-            jGetElement(blockid, "#feedback").html(feedbackText);
+            jGetElement(blockid, ".feedback").html(feedbackText);
         } else {
-            jGetElement(blockid, "#feedback").remove();
+            jGetElement(blockid, ".feedback").remove();
         }
         jGetElement(blockid, "#questionAudio").empty();
 
         if (x_currentPageXML.getAttribute("diagram") !== "true"){
-            jGetElement(blockid, "#diagram").show();
+            jGetElement(blockid, ".diagram").show();
         } else {
-            jGetElement(blockid, "#diagram").hide();
+            jGetElement(blockid, ".diagram").hide();
         }
-        jGetElement(blockid, "#qHolder").hide();
-        jGetElement(blockid, "#checkBtn").hide();
+        jGetElement(blockid, ".qHolder").hide();
+        jGetElement(blockid, ".checkBtn").hide();
 
         XTSetPageScoreJSON(x_currentPage, myScore, JSON.stringify(JSONGraph), x_currentPageXML.getAttribute("trackinglabel"));
         $pageContents.data('checked', true);
@@ -613,7 +613,7 @@ var opinion = new function()
         }
         var bgColour = hexToRgb(bgColourIn.substr(bgColourIn.length - 6), 0.5);
         var lnColour = hexToRgb(bgColourIn.substr(bgColourIn.length - 6), 1);
-        var ctx = jGetElement(blockid, "#diagram");
+        var ctx = jGetElement(blockid, ".diagram");
 
         var myRadarChart = new Chart(ctx, {
             type: 'radar',
@@ -652,7 +652,7 @@ var opinion = new function()
     this.init = function(pageXML, blockid) {
         x_currentPageXML = pageXML;
 
-        $pageContents = jGetElement(blockid, "#pageContents");
+        $pageContents = jGetElement(blockid, ".pageContents");
 
         $pageContents.data({
             'listMode': false,
@@ -676,12 +676,12 @@ var opinion = new function()
         }
 
         var panelWidth = x_currentPageXML.getAttribute("panelWidth"),
-            $splitScreen = jGetElement(blockid, "#pageContents .splitScreen"),
-            $textHolder = jGetElement(blockid, "#textHolder");
+            $splitScreen = jGetElement(blockid, ".pageContents .splitScreen"),
+            $textHolder = jGetElement(blockid, ".textHolder");
 
         if (panelWidth == "Full")
         {
-            jGetElement(blockid, "#infoHolder .panel").appendTo($pageContents);
+            jGetElement(blockid, ".infoHolder .panel").appendTo($pageContents);
             $splitScreen.remove();
         }
         else
@@ -710,7 +710,7 @@ var opinion = new function()
                     .removeClass("left")
                     .addClass("right")
                     .appendTo($splitScreen);
-                jGetElement(blockid, "#infoHolder")
+                jGetElement(blockid, ".infoHolder")
                     .removeClass("right")
                     .addClass("left");
                 if (panelWidth == "Small")
@@ -757,7 +757,7 @@ var opinion = new function()
         });
 
         // submit button
-        jGetElement(blockid, "#checkBtn")
+        jGetElement(blockid, ".checkBtn")
             .button({
                 label: submitBtnText
             })
@@ -766,7 +766,7 @@ var opinion = new function()
             });
 
         // reset button
-        jGetElement(blockid, "#resetBtn")
+        jGetElement(blockid, ".resetBtn")
             .button({
                 label: resetBtnText
             })

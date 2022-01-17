@@ -1,54 +1,53 @@
 /* mcq.html */
+.mcqBlock .mainPanel{
+	overflow: auto;
+}
 
-	#pageContents .panel {
-		overflow:	auto;
-	}
+.mcqBlock .optionHolder {
+	margin-top:	15px;
+	margin-bottom:	15px;
+}
 
-	#optionHolder {
-		margin-top:	15px;
-		margin-bottom:	15px;
-	}
+.mcqBlock .pageContents input {
+	float:		left;
+	display:	block;
+}
 
-	#pageContents input {
-		float:		left;
-		display:	block;
-	}
+.mcqBlock .optionHolder .optionGroup {
+	padding-top:	5px;
+	padding-bottom:	5px;
+}
 
-	#optionHolder .optionGroup {
-		padding-top:	5px;
-		padding-bottom:	5px;
-	}
+.mcqBlock .pageContents .optionTxt {
+	cursor:			pointer;
+	position:		relative;
+	margin-left:	2em;
+	display:		block;
+}
 
-	#pageContents .optionTxt {
-		cursor:			pointer;
-		position:		relative;
-		margin-left:	2em;
-		display:		block;
-	}
+.mcqBlock .pageContents .checkBtn {
+	margin:		10px;
+	float:		right;
+}
 
-	#pageContents #checkBtn {
-		margin:		10px;
-		float:		right;
-	}
+.mcqBlock .pageContents .feedback {
+	clear:		both;
+}
 
-	#pageContents #feedback {
-		clear:		both;
-	}
-	
-	#feedback .feedbackBlock {
-		margin-bottom: 0.5em;
-	}
-	
-	#feedback .audioHolder {
-		margin:	0.5em 0 1em 0;
-	}
-	
-	#feedback h3 {
-		border-top: 1px solid #ccc;
-		padding-top: 1em;
-	}
-	
-	legend#question {
-		width: 100%;
-	}
+.mcqBlock .feedback .feedbackBlock {
+	margin-bottom: 0.5em;
+}
+
+.mcqBlock .feedback .audioHolder {
+	margin:	0.5em 0 1em 0;
+}
+
+.mcqBlock .feedback h3 {
+	border-top: 1px solid #ccc;
+	padding-top: 1em;
+}
+
+.mcqBlock legend.question {
+	width: 100%;
+}
 

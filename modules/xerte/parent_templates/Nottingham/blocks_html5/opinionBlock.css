@@ -1,133 +1,133 @@
 /* opinion.html */
 
 
-    .qPanel {
-    overflow:	auto;
-    }
+.opinionBlock .qPanel {
+overflow:	auto;
+}
 
-    .sliderHolder {
-    margin-top:	5px;
-    margin-bottom:	20px;
-    }
+.opinionBlock #sliderHolder {
+margin-top:	5px;
+margin-bottom:	20px;
+}
 
-    .sliderHolder .labelHolder
-    {
-        text-align: justify;
-    }
+.opinionBlock #sliderHolder .labelHolder
+{
+    text-align: justify;
+}
 
 
-    .sliderHolder .inputHolder
-    {
-        width: 100%;
-    }
-	
-	.sliderHolder {
-		margin-top: 1em;
-	}
-	
-	.questionAudio {
-		margin-top: 0.5em;
-	}
+.opinionBlock #sliderHolder .inputHolder
+{
+    width: 100%;
+}
 
-    .qSeparator {
-        height:15px;
-    }
+.opinionBlock #sliderHolder {
+    margin-top: 1em;
+}
 
-    .qSeparator hr{
-        background-color: #eeeeee;
-        border-color: #eeeeee;
-        border: solid 1px #eeeeee;
-    }
+.opinionBlock .questionAudio {
+    margin-top: 0.5em;
+}
 
-    .sliderHolder .rangeHolder .slider
-    {
-        width: 100%;
-        padding: 0;
-        margin: 0;
-        height: 20px;
-    }
+.opinionBlock .qSeparator {
+    height:15px;
+}
 
-    .labelHolder table {
-        width: 100%;
-    }
+.opinionBlock .qSeparator hr{
+    background-color: #eeeeee;
+    border-color: #eeeeee;
+    border: solid 1px #eeeeee;
+}
 
-    .sliderHolder .labelHolder a p
-    {
-        width: 100%;
-        display: inline-block;
-        text-align: center;
-        margin: 0;
-        text-decoration: none;
-        font-size: 0.8em;
-        color: #000;
-    }
+.opinionBlock #sliderHolder .rangeHolder .slider
+{
+    width: 100%;
+    padding: 0;
+    margin: 0;
+    height: 20px;
+}
 
-    .sliderHolder .labelHolder .leftLabel
-    {
-        /* text-align: left; */
-    }
+.opinionBlock .labelHolder table {
+    width: 100%;
+}
 
-    .sliderHolder .labelHolder .rightLabel
-    {
-        /* text-align: right; */
-    }
+.opinionBlock #sliderHolder .labelHolder a p
+{
+    width: 100%;
+    display: inline-block;
+    text-align: center;
+    margin: 0;
+    text-decoration: none;
+    font-size: 0.8em;
+    color: #000;
+}
 
-    .sliderHolder .labelHolder:after {
-        content: '';
-        width: 100%;
-    }
+.opinionBlock #sliderHolder .labelHolder .leftLabel
+{
+    /* text-align: left; */
+}
 
-    .sliderHolder .rangeHolder
-    {
-        margin-bottom: 2em;
-       
-        border-radius: 2em;
-    }
+.opinionBlock #sliderHolder .labelHolder .rightLabel
+{
+    /* text-align: right; */
+}
 
-    .sliderHolder .rangeHolder output
-    {
-        position: relative;
-    }
+.opinionBlock #sliderHolder .labelHolder:after {
+    content: '';
+    width: 100%;
+}
 
-    .sliderHolder .optionGroup
-    {
-    padding-top:	5px;
-    padding-bottom:	5px;
-    }
+.opinionBlock #sliderHolder .rangeHolder
+{
+    margin-bottom: 2em;
 
-    #qNo {
-        padding-top: 5px;
-        padding-bottom: 10px;
-    }
-    #buttonHolder
-    {
-    float:	right;
-    margin-bottom:	10px;
-    }
+    border-radius: 2em;
+}
 
-    .optionTxt p
-    {
-        display: inline;
-        padding:0;
-    }
-    
-    .optionGroup .optionTxt {
-        cursor:			pointer;
-        position:		relative;
-        margin-left:	2em;
-        display:		block;
-    }
+.opinionBlock #sliderHolder .rangeHolder output
+{
+    position: relative;
+}
 
-    .optionGroup input
-    {
-        float: left;
-        display: block;
-    }
+.opinionBlock #sliderHolder .optionGroup
+{
+padding-top:	5px;
+padding-bottom:	5px;
+}
 
-    #x_pageDiv .labelCell {
-        vertical-align: bottom;
-    }
+.opinionBlock .qNo {
+    padding-top: 5px;
+    padding-bottom: 10px;
+}
+.opinionBlock .buttonHolder
+{
+float:	right;
+margin-bottom:	10px;
+}
 
-.qImg, .opinionImg {
-	max-width: 90%;
+.opinionBlock .optionTxt p
+{
+    display: inline;
+    padding:0;
+}
+
+.opinionBlock .optionGroup .optionTxt {
+    cursor:			pointer;
+    position:		relative;
+    margin-left:	2em;
+    display:		block;
+}
+
+.opinionBlock .optionGroup input
+{
+    float: left;
+    display: block;
+}
+
+.opinionBlock #x_pageDiv .labelCell {
+    vertical-align: bottom;
+}
+
+.opinionBlock .qImg, .opinionImg {
+max-width: 90%;
 }

@@ -1,63 +1,66 @@
 /* categories.html */
+ .categoriesBlock {
 
-.dragDropHolder {
+ }
+
+.categoriesBlock .dragDropHolder {
     overflow:	auto;
 }
 
-.dragDropHolder .label {
+.categoriesBlock .dragDropHolder .label {
     cursor:				pointer;
     list-style-type:	none;
     padding:			5px;
     position:			relative;
 }
 
-.dragDropHolder .label.focus {
+.categoriesBlock .dragDropHolder .label.focus {
     border:	2px solid yellow;
 }
 
-.dragDropHolder .label.selected {
+.categoriesBlock .dragDropHolder .label.selected {
     border:	2px solid green;
 }
 
-.dragDropHolder .tick {
+.categoriesBlock .dragDropHolder .tick {
     position: absolute;
     bottom: 0px;
     right: 0px
 }
 
-.initHolder {
+.categoriesBlock .initHolder {
     padding:		0px;
     margin-right:	2%;
     float:			right;
 }
 
-.categoryHolder {
+.categoriesBlock .categoryHolder {
     clear:	right;
 }
 
-.categoryHolder .category {
+.categoriesBlock .categoryHolder .category {
     padding:			1%;
     float:				left;
 }
 
-.categoryHolder .category .label {
+.categoriesBlock .categoryHolder .category .label {
     margin-top:		10px;
 }
 
-.categoryHolder h3 {
+.categoriesBlock .categoryHolder h3 {
     text-align:		center;
 }
 
-.button {
+.categoriesBlock .button {
     clear:			left;
     margin-bottom:	10px;
     float:			right;
 }
 
-.feedback {
+.categoriesBlock .feedback {
     clear:	left;
 }
 
-ul.initHolder {
+.categoriesBlock ul.initHolder {
     overflow: visible;
 }
