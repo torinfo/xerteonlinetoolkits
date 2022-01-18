@@ -396,7 +396,7 @@ var quiz = new function() {
                         thisFeedback = rightWrongTxt;
                     }
 
-                    $('.' + feedbackDiv[i] + 'Feedback')
+                    jGetElement(blockid, '.' + feedbackDiv[i] + 'Feedback')
                         .html(thisFeedback)
                         .show();
                 }

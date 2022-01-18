@@ -439,6 +439,7 @@ var opinion = new function()
 
     this.trackQuestion = function(currentQuestion, blockid)
     {
+        x_currentPageXML = XTGetPageXML(x_currentPage, XTGetBlockNr(blockid), questions[currentQuestion]);
         var questions = $pageContents.data('questions'),
             currentQ = $(x_currentPageXML).children().children()[questions[currentQuestion]],
             selected = 0,

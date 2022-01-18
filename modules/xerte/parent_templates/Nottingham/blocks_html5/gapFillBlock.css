@@ -1,112 +1,112 @@
 /* gapFill.html */
-	
-	.fillGapBlock .pageContents{
-		overflow:	auto;
-		position: relative;
-	}
 
-	.fillGapBlock .textHolder {
-		margin-bottom:	10px;
-	}
+.gapFillBlock .pageContents{
+	overflow:	auto;
+	position: relative;
+}
 
-	.fillGapBlock .targetHolder .target {
-		display:		inline-block;
-		text-align:		center;
-		vertical-align:	middle;
-		padding:		5px;
-		margin:			3px 0 5px 0;
-	}
+.gapFillBlock .textHolder {
+	margin-bottom:	10px;
+}
 
-	.fillGapBlock .targetHolder input {
-		margin:		5px 0;
-		text-align:	center;
-	}
+.gapFillBlock .targetHolder .target {
+	display:		inline-block;
+	text-align:		center;
+	vertical-align:	middle;
+	padding:		5px;
+	margin:			3px 0 5px 0;
+}
 
-	.fillGapBlock .targetHolder input[readonly].correct, .targetHolder .target.correct, .targetHolder input[correct] {
-		color:			green;
-		border-color:	transparent;
-	}
+.gapFillBlock .targetHolder input {
+	margin:		5px 0;
+	text-align:	center;
+}
 
-	.fillGapBlock .targetHolder .target.incorrect {
-		color:			#EB0000;
-		border-color:	transparent;
-		font-weight:600;
-	}
+.gapFillBlock .targetHolder input[readonly].correct, .targetHolder .target.correct, .targetHolder input[correct] {
+	color:			green;
+	border-color:	transparent;
+}
 
-	.fillGapBlock .targetHolder input.incorrect, .targetHolder input[incorrect] {
-		color: 			#EB0000;
-		font-weight:600;
-	}
+.gapFillBlock .targetHolder .target.incorrect {
+	color:			#EB0000;
+	border-color:	transparent;
+	font-weight:600;
+}
 
-	.fillGapBlock .targetHolder .target.incorrect {
-		color:			#EB0000;
-		border-color:	transparent;
-		font-weight:600;
-	}
+.gapFillBlock .targetHolder input.incorrect, .targetHolder input[incorrect] {
+	color: 			#EB0000;
+	font-weight:600;
+}
 
-	.fillGapBlock .targetHolder .target.answerShown, .targetHolder input.answerShown {
-		color:			#c36b00;
-		border-color:	transparent;
-	}
+.gapFillBlock .targetHolder .target.incorrect {
+	color:			#EB0000;
+	border-color:	transparent;
+	font-weight:600;
+}
 
-	.fillGapBlock .targetHolder select {
-		margin:	5px 0;
-	}
+.gapFillBlock .targetHolder .target.answerShown, .targetHolder input.answerShown {
+	color:			#c36b00;
+	border-color:	transparent;
+}
 
-	.fillGapBlock .targetHolder select[disabled] {
-		color: #EB0000;
-		font-weight:600;
-	}
+.gapFillBlock .targetHolder select {
+	margin:	5px 0;
+}
 
-	.fillGapBlock .targetHolder select[disabled].correct {
-		color:	green;
-	}
+.gapFillBlock .targetHolder select[disabled] {
+	color: #EB0000;
+	font-weight:600;
+}
 
-	.fillGapBlock .targetHolder select[disabled].answerShown {
-		color:			#c36b00;
-	}
+.gapFillBlock .targetHolder select[disabled].correct {
+	color:	green;
+}
 
-	.fillGapBlock .labelHolder {
-		margin-top:	1em;
-		border-top:	1px solid #ccc;
-	}
+.gapFillBlock .targetHolder select[disabled].answerShown {
+	color:			#c36b00;
+}
 
-	.fillGapBlock .labelHolder .label {
-		display:	inline-block;
-		cursor:		pointer;
-		padding:	7px;
-		margin:		10px;
-		border:		2px solid white;
-	}
+.gapFillBlock .labelHolder {
+	margin-top:	1em;
+	border-top:	1px solid #ccc;
+}
 
-	.fillGapBlock .labelHolder .label.focus {
-		border:		2px solid yellow;
-	}
+.gapFillBlock .labelHolder .label {
+	display:	inline-block;
+	cursor:		pointer;
+	padding:	7px;
+	margin:		10px;
+	border:		2px solid white;
+}
 
-	.fillGapBlock .labelHolder .label.selected {
-		border:		2px solid green;
-	}
+.gapFillBlock .labelHolder .label.focus {
+	border:		2px solid yellow;
+}
 
-	.fillGapBlock .feedbackTxt {
-		margin-top:		1em;
-		padding-top:	1em;
-		border-top:		1px solid #ccc;
-		clear:			both;
-	}
+.gapFillBlock .labelHolder .label.selected {
+	border:		2px solid green;
+}
 
-	.fillGapBlock .feedbackTxt .audioHolder {
-		margin-top:	20px;
-	}
+.gapFillBlock .feedbackTxt {
+	margin-top:		1em;
+	padding-top:	1em;
+	border-top:		1px solid #ccc;
+	clear:			both;
+}
 
-	.fillGapBlock .btnHolder {
-		overflow: auto;
-	}
+.gapFillBlock .feedbackTxt .audioHolder {
+	margin-top:	20px;
+}
 
-	.fillGapBlock .submitBtn, .showBtn {
-		float:	right;
-		margin-bottom:	10px;
-	}
+.gapFillBlock .btnHolder {
+	overflow: auto;
+}
 
-	.fillGapBlock .showBtn {
-		margin-right: 1em;
-	}
+.gapFillBlock .submitBtn, .showBtn {
+	float:	right;
+	margin-bottom:	10px;
+}
+
+.gapFillBlock .showBtn {
+	margin-right: 1em;
+}

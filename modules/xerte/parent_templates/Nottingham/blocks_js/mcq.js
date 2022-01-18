@@ -222,12 +222,12 @@ var mcq = new function() {
                     thisFeedback = rightWrongTxt;
                 }
 
-                jGetElement(blockid, '#' + feedbackDiv[i] + 'Feedback')
+                jGetElement(blockid, '.' + feedbackDiv[i] + 'Feedback')
                     .html(thisFeedback)
                     .show();
 
             } else {
-                jGetElement(blockid, '#' + feedbackDiv[i] + 'Feedback')
+                jGetElement(blockid, '.' + feedbackDiv[i] + 'Feedback')
                     .html('')
                     .hide();
             }

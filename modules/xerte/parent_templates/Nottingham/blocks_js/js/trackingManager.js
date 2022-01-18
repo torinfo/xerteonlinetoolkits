@@ -75,7 +75,6 @@ function TrackingManager(){
     }
 
     function findCreatePageState (page_nr, ia_type, ia_name){
-        debugger
         var tmpid = makeId(page_nr,-1, ia_type, ia_name);
 
         for (var i=0; i<this.pageStates.length; i++)
