@@ -1,0 +1,74 @@
+/* timeline.html */
+
+.timelineBlock .textHolder {
+    margin-bottom:	10px;
+}
+
+.timelineBlock .dragDropHolder {
+    overflow:		auto;
+    margin-bottom:	10px;
+}
+
+.timelineBlock .dragDropHolder .label {
+    cursor:		pointer;
+    padding:	5px;
+}
+
+.timelineBlock .dragDropHolder .label.focus {
+    border:		2px solid yellow;
+}
+
+.timelineBlock .dragDropHolder .label.selected {
+    border:		2px solid green;
+}
+
+.timelineBlock .dragDropHolder .tick {
+    position:	absolute;
+    top:		1em;
+    right:		0.5em;
+}
+
+.timelineBlock .labelHolder {
+    padding:		0px;
+    margin-bottom:	10px;
+    margin-right:	2%;
+    float:			right;
+}
+
+.timelineBlock .targetHolder {
+    clear:		right;
+}
+
+.timelineBlock .targetHolder .target {
+    padding:		1%;
+    margin-top:		10px;
+    margin-bottom:	10px;
+    float:			left;
+    background-position:	center center;
+    background-repeat:		no-repeat;
+}
+
+.timelineBlock .targetHolder .target.bg {
+    background-color:	rgb(220, 220, 220); /* fallback */
+    background-color:	rgba(0, 0, 0, 0.1);
+}
+
+.timelineBlock .targetHolder .target.focus {
+    background-color:	rgb(205, 205, 205); /* fallback - can't use an image instead as the arrow's already the bg on these divs */
+    background-color:	rgba(0, 0, 0, 0.2);
+}
+
+.timelineBlock .targetHolder h3 {
+    text-align:		center;
+}
+
+.timelineBlock .button {
+    clear:			left;
+    margin-bottom:	10px;
+    float:			right;
+}
+
+.timelineBlock .feedback {
+    clear:		left;
+}
+

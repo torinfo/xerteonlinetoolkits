@@ -1,7 +1,7 @@
 <interactiveBlocks>
     <quizBlock name="Quiz">
     </quizBlock>
-    <mcqBlock name="MCQ">
+    <mcqBlock name="Multiple Choice Question">
     </mcqBlock>
     <opinionBlock name="Opinion">
     </opinionBlock>
@@ -14,5 +14,9 @@
     <dragDropLabelBlock name="Drag and Drop Labelling">
     </dragDropLabelBlock>
     <topXQBlock name="Top X Q">
+    </topXQBlock>
+    <timelineBlock name="Timeline">
+    </timelineBlock>
+    <topXQBlock name="X Of Y">
     </topXQBlock>
 </interactiveBlocks>
