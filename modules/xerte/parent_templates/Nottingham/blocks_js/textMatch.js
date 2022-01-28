@@ -29,8 +29,7 @@ var textMatch = new function() {
     // function called every time the size of the LO is changed
     this.sizeChanged = function(blockid) {
         // label width should be same width as part 1 of sentence and target height should fit largest label
-        debugger
-        var $target = jGetElement(blockid, ".targetHolder .target");
+        var $target = jGetElement(blockid, " .targetHolder .target");
         $target.css("height", "auto");
 
 
@@ -257,7 +256,7 @@ var textMatch = new function() {
 
         // create targets
         debugger
-        var $targetHolder = jGetElement(blockid, ".targetHolder"),
+        var $targetHolder = jGetElement(blockid, ".textMatchBlock .targetHolder"),
             $firstTarget = $targetHolder.find(".target"),
             labels = [];
 
