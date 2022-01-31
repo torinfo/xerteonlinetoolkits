@@ -434,8 +434,10 @@ function get_folders_in_this_folder($folder_id, $tree_id, $sort_type, $copy_only
         $shared = "";
         if ($row['role'] != 'creator' && $newtype != 'group'){
             $shared = 'shared';
+
+            //NOTE: do we want different icons for group folders? The icon is available, type would be folder_group
         }
-        $item->type = ($shared == "") ?  "folder" : "folder" . _ .$shared;
+        $item->type = ($shared == "") ?  "folder" : "folder_" .$shared;
         $item->xot_type = "folder";
         $item->published = false;
         $item->shared = false;
@@ -540,8 +542,8 @@ function get_files_in_this_folder($folder_id, $tree_id, $sort_type, $copy_only, 
         if ($row['role'] != 'creator' && $newtype != 'group') {
             $shared = 'shared';
         }
-
-        $item->type = ($newtype == "") ? strtolower($row['parent_template']) : strtolower($row['parent_template']) . "_" . $shared;
+        //NOTE: we use both shared and newtype, newtype can be both shared and group now, do we not want to use the group type?
+        $item->type = ($shared == "") ? strtolower($row['parent_template']) : strtolower($row['parent_template']) . "_" . $shared;
         $item->xot_type = "file";
 
         $item->published = $row['access_to_whom'] != 'Private' || $row['tsugi_published'] == 1;
@@ -762,7 +764,7 @@ function get_workspace_folders($folder_id, $tree_id, $sort_type, $copy_only=fals
             if ($query_response[$index]['role'] != 'creator' && $newtype != 'group'){
                 $shared = 'shared';
             }
-            $query_response[$index]['type'] = ($shared == "") ?  "folder" : "folder" . _ .$shared;
+            $query_response[$index]['type'] = ($shared == "") ?  "folder" : "folder_" .$shared;
             $nextlevel[$row['folder_id']] = $query_response[$index]['tree_id']; // Watch out. do not use $row, it's not filled 2 lines up
         }
         else if ($row['folder_parent'] == $recyclebin)
@@ -773,7 +775,7 @@ function get_workspace_folders($folder_id, $tree_id, $sort_type, $copy_only=fals
             if ($query_response[$index]['role'] != 'creator' && $newtype != 'group'){
                 $shared = 'shared';
             }
-            $query_response[$index]['type'] = ($shared == "") ?  "folder" : "folder" . _ .$shared;
+            $query_response[$index]['type'] = ($shared == "") ?  "folder" : "folder_" .$shared;
             $nextlevel[$row['folder_id']] = $query_response[$index]['tree_id']; // Watch out. do not use $row, it's not filled 2 lines up
         }
         else
@@ -797,7 +799,7 @@ function get_workspace_folders($folder_id, $tree_id, $sort_type, $copy_only=fals
                 if ($query_response[$index]['role'] != 'creator' && $newtype != 'group'){
                     $shared = 'shared';
                 }
-                $query_response[$index]['type'] = ($shared == "") ?  "folder" : "folder" . _ .$shared;
+                $query_response[$index]['type'] = ($shared == "") ?  "folder" : "folder_" .$shared;
                 $nextlevel[$row['folder_id']] = $query_response[$index]['tree_id'];
             }
             else{

@@ -198,7 +198,7 @@ var after_sharing_deleted = false;
 	 */
 
 
-function delete_sharing_template(template_id,id,who_deleted_flag, group=false){
+function delete_sharing_template(template_id,user_id,who_deleted_flag, group=false){
 
 	var answer = confirm(SHARING_CONFIRM);
 	if(answer){
@@ -214,7 +214,8 @@ function delete_sharing_template(template_id,id,who_deleted_flag, group=false){
 			data: {
 				template_id: template_id,
 				user_id: user_id,
-				user_deleting_self: who_deleted_flag
+				user_deleting_self: who_deleted_flag,
+				group: group
 			}
 		})
 		.done(function(response){
