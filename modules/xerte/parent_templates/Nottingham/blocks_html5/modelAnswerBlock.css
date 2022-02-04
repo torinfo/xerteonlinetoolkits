@@ -1,0 +1,26 @@
+/* modelAnswerResults.html */
+
+.modelAnswerBlock .pageContents .panel {
+    overflow:	auto;
+}
+
+.modelAnswerBlock .copyBtn {
+    margin-top:	1em;
+}
+
+.modelAnswerBlock .copyTxt {
+    color:		red;
+    font-size:	0.8em;
+}
+
+.modelAnswerBlock .textHolder hr {
+    margin-top:		20px;
+    margin-bottom:	20px;
+}
+
+.modelAnswerBlock .pageBlock:not(:first-of-type) {
+    margin-top: 1em;
+    padding-top: 1em;
+    border-top: 1px solid #ccc;
+}
+

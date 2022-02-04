@@ -15,8 +15,8 @@
     </dragDropLabelBlock>
     <topXQBlock name="Top X Q">
     </topXQBlock>
-    <timelineBlock name="Timeline">
+    <timelineBlock name="Timelin">
     </timelineBlock>
-    <topXQBlock name="X Of Y">
-    </topXQBlock>
+    <modelAnswerBlock name="Model Answer">
+    </modelAnswerBlock>
 </interactiveBlocks>

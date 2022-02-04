@@ -118,12 +118,14 @@ class XerteXWDBuilder
 
 	public function populateInteractiveBlocks($xwd, $interactiveBlockPath){
 		global $interactiveBlocksXML;
-		$blockNodes = $interactiveBlocksXML->xpath('*');
-
 		$foundBlocks = array();
 
-		foreach ($blockNodes as $interactiveBlock){
-			array_push($foundBlocks, $interactiveBlock->getName());
+		if(!is_null($interactiveBlocksXML)) {
+			$blockNodes = $interactiveBlocksXML->xpath('*');
+
+			foreach ($blockNodes as $interactiveBlock){
+				array_push($foundBlocks, $interactiveBlock->getName());
+			}
 		}
 
 		foreach ($xwd as $model){
