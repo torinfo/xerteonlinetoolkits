@@ -29,13 +29,11 @@ var modelAnswer = new function () {
         }
     };
 
-    this.leavePage = function (blockid) {
-        this.finishTracking(blockid);
-    };
+
 
     this.init = function (pageXML, blockid) {
         x_currentPageXML = pageXML;
-        this.modelAnswer.tracked = false;
+        modelAnswerModel.tracked = false;
         // if language attributes aren't in xml will have to use english fall back
         var instructA = x_currentPageXML.getAttribute("instructHeaderATxt");
         if (instructA == undefined) {
@@ -86,9 +84,9 @@ var modelAnswer = new function () {
 
         var modelAnswerTxt = $('<div>').html(x_currentPageXML.getAttribute("feedback")).text();
         XTEnterInteraction(x_currentPage, XTGetBlockNr(blockid), 'text', label, [], modelAnswerTxt, [], x_currentPageXML.getAttribute("grouping"));
-        XTSetLeavePage(x_currentPage, XTGetBlockNr(blockid), this.leavePage);
+        //XTSetLeavePage(x_currentPage, XTGetBlockNr(blockid), this.leavePage);
         XTSetInteractionPageXML(x_currentPage, XTGetBlockNr(blockid), x_currentPageXML);
-        XTSetInteractionModelState(x_currentPage, XTGetBlockNr(blockid), this.modelAnswerModel);
+        XTSetInteractionModelState(x_currentPage, XTGetBlockNr(blockid), modelAnswerModel);
 
         // feedbackBtnWidth attribute not used as button will be sized automatically
         var panelWidth = x_currentPageXML.getAttribute("panelWidth"),
@@ -219,7 +217,7 @@ var modelAnswer = new function () {
 
                 x_pageContentsUpdated();
 
-                modelAnswer.finishTracking();
+                modelAnswer.finishTracking(blockid);
                 if (x_currentPageXML.getAttribute("copypasteinfo") != undefined && x_currentPageXML.getAttribute("copypasteinfo") != "") {
 
                 }
@@ -277,8 +275,8 @@ var modelAnswer = new function () {
     };
 
     this.finishTracking = function (blockid) {
-        this.modelAnswerModel = XTGetInteractionModelState(x_currentPage, XTGetBlockNr(blockid))
-        if(this.modelAnswerModel.tracked !== true){
+        modelAnswerModel = XTGetInteractionModelState(x_currentPage, XTGetBlockNr(blockid))
+        if(modelAnswerModel.tracked !== true){
             var answerTxt = jGetElement(blockid, ".answerTxt").val();
             result = {
                 success: (answerTxt.trim() == "" ? false : true),
