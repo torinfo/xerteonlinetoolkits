@@ -19,4 +19,6 @@
     </timelineBlock>
     <modelAnswerBlock name="Model Answer">
     </modelAnswerBlock>
+    <annotatedDiagramBlock name="Annotated Diagram">
+    </annotatedDiagramBlock>
 </interactiveBlocks>

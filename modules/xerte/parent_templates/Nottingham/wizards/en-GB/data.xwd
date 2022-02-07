@@ -258,7 +258,31 @@
 
   </learningObject>
 
-<categoriesBlock icon="icLayers"><name label="Page Title" type="TextInput" wysiwyg="true"/><text label="Page Text" type="TextArea" height="200"/><feedback label="Feedback" type="TextArea" height="100"/><buttonLabel label="Button Label" type="TextInput" wysiwyg="true" divider="true" language="true"/><buttonWidth label="Button Width" type="NumericStepper" min="100" max="300" step="10" defaultValue="120" width="100" language="true" deprecated="Width is now set automatically"/><feedbackScore label="Score Feedback" type="TextInput" wysiwyg="true" language="true"/><trackingWeight label="Tracking Score Weight (0=Off)" optional="true" type="textInput" width="120" defaultValue="1.0"/><newNodes>
+<annotatedDiagramBlock icon="icPageWhiteStar"><name label="Page Title" type="TextInput" wysiwyg="true"/><text label="Page Text" type="TextArea" height="250"/><align label="Text Align" type="ComboBox" options="Left,Bottom" data="Left,Top" defaultValue="Left" width="100"/><image type="group" label="Image">
+		<url label="File" type="media"/>
+		<tip label="Description" type="TextInput"/>
+	</image><hs type="group" label="Highlight">
+		<shape label="Type" type="ComboBox" options="Line,Oval,Rectangle,Arrow" data="None,Oval,Rectangle,Arrow" defaultValue="None" width="120"/>
+		<colour label="Colour" type="ColourPicker" defaultValue="0xFFFF00"/>
+	</hs><movieSize label="Video Size (w,h)" type="textInput" defaultValue="320,240" optional="true" deprecated="This property is deprecated."/><newNodes>
+      <hotspotGroup><![CDATA[<hotspotGroup name="Enter Hotspot Group Title Here" text="Description for the hotspot"/>]]></hotspotGroup>
+      <hotspot><![CDATA[<hotspot name="Enter Hotspot Title Here" text="Description for the hotspot" x="0" y="0" w="100" h="100" />]]></hotspot>
+    </newNodes></annotatedDiagramBlock><hotspotGroup menuItem="Hotspot Group" icon="icGroup" remove="true">
+
+    <name label="Group Title" type="TextInput" wysiwyg="true"/>
+    <text label="Text" type="TextArea" height="250"/>
+
+    <newNodes>
+      <hotspot><![CDATA[<hotspot name="Enter Hotspot Title Here" text="Description for the hotspot" x="0" y="0" w="100" h="100" />]]></hotspot>
+    </newNodes>
+
+  </hotspotGroup><hotspot label="Edit Hotspot" menuItem="Hotspot" type="hotSpot" icon="icLayers" remove="true">
+
+    <name label="Title" type="TextInput" wysiwyg="true"/>
+    <text label="Text" type="TextArea" height="250"/>
+	<alttext label="Tooltip Description" type="script" height="100" defaultValue="Enter a Description for Accessibility" optional="true"/>
+
+  </hotspot><categoriesBlock icon="icLayers"><name label="Page Title" type="TextInput" wysiwyg="true"/><text label="Page Text" type="TextArea" height="200"/><feedback label="Feedback" type="TextArea" height="100"/><buttonLabel label="Button Label" type="TextInput" wysiwyg="true" divider="true" language="true"/><buttonWidth label="Button Width" type="NumericStepper" min="100" max="300" step="10" defaultValue="120" width="100" language="true" deprecated="Width is now set automatically"/><feedbackScore label="Score Feedback" type="TextInput" wysiwyg="true" language="true"/><trackingWeight label="Tracking Score Weight (0=Off)" optional="true" type="textInput" width="120" defaultValue="1.0"/><newNodes>
       <category><![CDATA[<category name="Enter Category Name Here"/>]]></category>
     </newNodes></categoriesBlock><category menuItem="Category" icon="icGroup" remove="true">
 
@@ -278,10 +302,12 @@
 		<highlightColour label="Colour" type="ColourPicker" defaultValue="0xFFFF00"/>
 	</highlight><interactivity label="Interactivity" options="Describe,Match" type="ComboBox" data="Describe,Match" defaultValue="Describe" mandatory="true" width="100"/><tryAgainTxt label="Try Again Text" type="TextInput" wysiwyg="true" divider="true" language="true"/><submitText label="Submit button label for Match" type="TextInput" wysiwyg="true" language="true"/><imgWidth label="Image Width" options="Small,Medium,Large" type="ComboBox" data="Small,Medium,Large" defaultValue="Medium" optional="true"/><labelPos label="Label Position" type="ComboBox" data="image,text" options="Below Image,Below Text" defaultValue="image" optional="true"/><trackingWeight label="Tracking Score Weight (0=Off)" optional="true" type="textInput" width="120" defaultValue="1.0"/><newNodes>
 	  <hotspot><![CDATA[<hotspot name="Hotspot" text="Description for the hotspot" x="0" y="0" w="100" h="100" />]]></hotspot>
-    </newNodes></dragDropLabelBlock><hotspot type="hotspot" label="Edit Hotspot" menuItem="Hotspot" icon="icLayers" remove="true">
-    <name label="Title" type="TextInput" wysiwyg="true"/>
+    </newNodes></dragDropLabelBlock><hotspot label="Edit Hotspot" menuItem="Hotspot" type="hotSpot" icon="icLayers" remove="true">
+
+    <name label="Drag Label" type="TextInput" wysiwyg="true"/>
     <text label="Text" type="TextArea" height="250"/>
 	<alttext label="Tooltip Description" type="script" height="100" defaultValue="Enter a Description for Accessibility" optional="true"/>
+
   </hotspot><gapFillBlock icon="icTextEntry"><name label="Page Title" type="TextInput" wysiwyg="true"/><text label="Introductory Text" type="TextArea" height="100"/><passage label="Gap Fill Text" type="TextArea" height="150"/><interactivity label="Interactivity" options="Drag Drop,Fill in Blank,Drop Down Menu" type="ComboBox" data="Drag Drop,Fill in Blank,Drop Down Menu" defaultValue="Drag Drop" width="100"/><feedback label="Feedback" type="TextArea" height="50"/><checkBtn label="Check Button Text" type="TextInput" wysiwyg="true" language="true"/><showBtn label="Show Button Text" type="TextInput" wysiwyg="true" language="true"/><gapFillWrong label="Gap Fill All Wrong" type="TextInput" wysiwyg="true" language="true"/><gapFillPartWrong label="Gap Fill Part Wrong" type="TextInput" wysiwyg="true" language="true"/><gapFillIncomplete label="Gap Fill Incomplete" type="TextInput" wysiwyg="true" language="true"/><answerFieldLabel label="Answer Field Hidden Aria-Label" type="TextInput" wysiwyg="false" language="true" mandatory="true" defaultValue="Answer" tooltip="This is a hidden label specifically for screen reader users so that the text field where they should respond is labelled and the label is spoken to the screenreader user. e.g. Answer."/><gapFillWrongTracking label="Gap Fill All Wrong (Tracking)" type="TextInput" wysiwyg="true" language="true"/><gapFillPartWrongTracking label="Gap Fill Part Wrong (Tracking)" type="TextInput" wysiwyg="true" language="true"/><delimiters type="group" label="Delimiters" optional="true">
 		<mainDelimiter label="Marked Word" type="textInput" defaultValue="|" optional="true" tooltip="The character used to mark words for the exercise"/>
 		<answerDelimiter label="Correct Answer" type="textInput" defaultValue="," optional="true" tooltip="The character separating each correct answer, where there is more than one correct answer for a gap, e.g. |Doctor,Dr|"/>
@@ -896,16 +922,13 @@
 	</variables><lightboxGroup type="group" label="Lightbox" optional="true" tooltip="By default, clicked images will open in a lightbox. Use these properties to turn the lightbox functionality on/off for this page only" common="true">
 		<lightbox type="CheckBox" label="Lightbox Images" defaultValue="true" optional="true"/>
 		<lightboxCaption type="ComboBox" label="Caption" defaultValue="false" optional="true" options="None,Below Image,Above Image" data="false,below,above" tooltip="Add a caption to lightbox images on this page. The caption text is taken from the 'Description' or 'Alt Text' fields."/>
-	</lightboxGroup></annotatedDiagram><hotspotGroup menuItem="Hotspot Group" icon="icGroup" remove="true">
+	</lightboxGroup></annotatedDiagram><hotspot label="Edit Hotspot" menuItem="Hotspot" type="hotSpot" icon="icLayers" remove="true">
 
-    <name label="Group Title" type="TextInput" wysiwyg="true"/>
+    <name label="Title" type="TextInput" wysiwyg="true"/>
     <text label="Text" type="TextArea" height="250"/>
+	<alttext label="Tooltip Description" type="script" height="100" defaultValue="Enter a Description for Accessibility" optional="true"/>
 
-    <newNodes>
-      <hotspot><![CDATA[<hotspot name="Enter Hotspot Title Here" text="Description for the hotspot" x="0" y="0" w="100" h="100" />]]></hotspot>
-    </newNodes>
-
-  </hotspotGroup><audioSlideshow menu="Media" menuItem="Audio Slideshow" hint="Sequence a series of images against an audio soundtrack." icon="icSound" thumb="thumbs/audioSlideshow.jpg" example="https://xot.xerte.org.uk/play_116?hide=bottom#audioslideshow" remove="true">
+  </hotspot><audioSlideshow menu="Media" menuItem="Audio Slideshow" hint="Sequence a series of images against an audio soundtrack." icon="icSound" thumb="thumbs/audioSlideshow.jpg" example="https://xot.xerte.org.uk/play_116?hide=bottom#audioslideshow" remove="true">
 
     <name label="Page Title" type="TextInput" wysiwyg="true"/>
     <sound label="Sound" type="Media"/>
@@ -2676,7 +2699,13 @@
 	</variables><lightboxGroup type="group" label="Lightbox" optional="true" tooltip="By default, clicked images will open in a lightbox. Use these properties to turn the lightbox functionality on/off for this page only" common="true">
 		<lightbox type="CheckBox" label="Lightbox Images" defaultValue="true" optional="true"/>
 		<lightboxCaption type="ComboBox" label="Caption" defaultValue="false" optional="true" options="None,Below Image,Above Image" data="false,below,above" tooltip="Add a caption to lightbox images on this page. The caption text is taken from the 'Description' or 'Alt Text' fields."/>
-	</lightboxGroup></dragDropLabel><embedDiv menu="Links / Feeds" menuItem="Embed Content" hint="A page for including any web page or embed code in your project." icon="icPageWhiteCodeRed" thumb="thumbs/embedDiv.jpg" example="https://xot.xerte.org.uk/play_116?hide=bottom#embedcontent" remove="true">
+	</lightboxGroup></dragDropLabel><hotspot label="Edit Hotspot" menuItem="Hotspot" type="hotSpot" icon="icLayers" remove="true">
+
+    <name label="Drag Label" type="TextInput" wysiwyg="true"/>
+    <text label="Text" type="TextArea" height="250"/>
+	<alttext label="Tooltip Description" type="script" height="100" defaultValue="Enter a Description for Accessibility" optional="true"/>
+
+  </hotspot><embedDiv menu="Links / Feeds" menuItem="Embed Content" hint="A page for including any web page or embed code in your project." icon="icPageWhiteCodeRed" thumb="thumbs/embedDiv.jpg" example="https://xot.xerte.org.uk/play_116?hide=bottom#embedcontent" remove="true">
     
     <name type="TextInput" wysiwyg="true" label="Page Title"/>
     <src label="Embed Code or URL" type="script" height="300"/>
@@ -3418,7 +3447,11 @@
 	</variables><lightboxGroup type="group" label="Lightbox" optional="true" tooltip="By default, clicked images will open in a lightbox. Use these properties to turn the lightbox functionality on/off for this page only" common="true">
 		<lightbox type="CheckBox" label="Lightbox Images" defaultValue="true" optional="true"/>
 		<lightboxCaption type="ComboBox" label="Caption" defaultValue="false" optional="true" options="None,Below Image,Above Image" data="false,below,above" tooltip="Add a caption to lightbox images on this page. The caption text is taken from the 'Description' or 'Alt Text' fields."/>
-	</lightboxGroup></hotspotImage><flexhotspot type="flexhotSpot" upgradefrom="hotspot" label="Edit Hotspot" menuItem="Hotspot" icon="icLayers" remove="true">
+	</lightboxGroup></hotspotImage><hotspot type="hotspot" label="Edit Hotspot" menuItem="Hotspot" icon="icLayers" remove="true">
+    <name label="Title" type="TextInput" wysiwyg="true"/>
+    <text label="Text" type="TextArea" height="250"/>
+	<alttext label="Tooltip Description" type="script" height="100" defaultValue="Enter a Description for Accessibility" optional="true"/>
+  </hotspot><flexhotspot type="flexhotSpot" upgradefrom="hotspot" label="Edit Hotspot" menuItem="Hotspot" icon="icLayers" remove="true">
     <name label="Title" type="TextInput" wysiwyg="true"/>
     <text label="Text" type="TextArea" height="250"/>
 	<alttext label="Tooltip Description" type="script" height="100" defaultValue="Enter a Description for Accessibility" optional="true"/>
@@ -5481,7 +5514,8 @@
     <dragDropLabelBlock name="Enter Page Title" text="Enter text for the page here" imgWidth="Medium" url="Select an Image" interactivity="Describe" submitText="Submit" tip="Enter a Description for Accessibility" align="Left" showHighlight="true" highlightColour="0xFFFF00" tryAgainTxt="Try again"/></dragDropLabelBlock><topXQBlock name="Top X Q">
     <topXQBlock name="Enter Page Title" instruction="Enter Instruction" prompt="Enter a Prompt" align="Left" panelWidth="Medium" numberAnswers="*" caseSensitivity="true" feedbackLabel="Feedback" attemptLabel="Attempts remaining" correctAnswersLabel="Correct answers" passed="Well done, you have completed the activity" failed="Not all of the answers are correct" answerFieldLabel="Answer" checkBtnTxt="Submit"/></topXQBlock><timelineBlock name="Timelin">
     <timelineBlock name="Enter Page Title" text="Enter text for the page here" interactivity="Timeline" feedback="Enter feedback here" checkBtnTxt="Check Answers" allWrong="You have not placed any labels correctly. Try again." allWrongTracking="You have not placed any labels correctly." score="You have scored {i} out of {n}. Try again." scoreTracking="You have scored {i} out of {n}." incomplete="Complete the exercise."/></timelineBlock><modelAnswerBlock name="Model Answer">
-    <modelAnswerBlock name="Enter Page Title" text="Enter text for the page here" prompt="Enter prompt here" feedback="Enter feedback here" panelWidth="Medium" align="left" feedbackBtnTxt="Feedback" instructHeaderATxt="The instruction and question on page" instructHeaderBTxt="was:" responseHeaderTxt="Your response was:" noAnswerHeaderTxt="You didn't answer this question." exampleHeaderTxt="The example answer was:" copyBtnLabel="Select Text" copyShortcutTxt="Press Ctrl + C to copy" closeBtnTxt="close" answerFieldLabel="Answer"/></modelAnswerBlock></interactiveBlocks>
+    <modelAnswerBlock name="Enter Page Title" text="Enter text for the page here" prompt="Enter prompt here" feedback="Enter feedback here" panelWidth="Medium" align="left" feedbackBtnTxt="Feedback" instructHeaderATxt="The instruction and question on page" instructHeaderBTxt="was:" responseHeaderTxt="Your response was:" noAnswerHeaderTxt="You didn't answer this question." exampleHeaderTxt="The example answer was:" copyBtnLabel="Select Text" copyShortcutTxt="Press Ctrl + C to copy" closeBtnTxt="close" answerFieldLabel="Answer"/></modelAnswerBlock><annotatedDiagramBlock name="Annotated Diagram">
+    <annotatedDiagramBlock name="Enter Page Title" text="Enter text for the page here" url="Select an Image" panelWidth="Medium" tip="Enter a Description for Accessibility" colour="0xFFFF00" shape="None" align="Left"/></annotatedDiagramBlock></interactiveBlocks>
 
   </navPage><newWindow menu="Links / Feeds" menuItem="New Window" hint="Allow the user to launch a new window to a URL." icon="icApplication" thumb="thumbs/newWindow.jpg" example="https://xot.xerte.org.uk/play_116?hide=bottom#newwindow" remove="true">
 
