@@ -13,13 +13,13 @@
     <theme type="ThemeList" label="Theme" mandatory="true" defaultValue="default"/>
 	<hideHeader optional="true" type="CheckBox" label="Hide Header" defaultValue="false"/>
 	<hideFooter optional="true" type="CheckBox" label="Hide Footer" defaultValue="false"/>
-	<fixDisplay optional="true" type="TextInput" label="Fixed Display Size" defaultValue="800,600"/>
+	<fixDisplay optional="true" type="TextInput" label="Fixed Display Size" defaultValue="800,600" condition="displayMode=='default'||fixDisplay"/>
 	<maxWidth optional="true" type="NumericStepper" min="800" max="2000" step="10" label="Max Width" defaultValue="1400" tooltip="Use this option to set the maximum width (e.g. 1400px) that the page contents will be displayed on larger displays. Note: some pages like media lesson and hotspot connector will currently still fill the full width of the page."/>
 	<homePage optional="true" type="pagelist" label="Home Page" defaultValue="" tooltip="Home page used when navigation is set to 'Historic'. By default this is the first page in the project."/>
 
     <kblanguage type="ComboBox" options="Croatian,French,German,Italian,Polish,Portuguese,Russian,Serbian,Slovene,Spanish" data="Croatian,French,German,Italian,Polish,Portuguese,Russian,Serbian,Slovene,Spanish" width="120" label="Keyboard Language" optional="true"/>
     <decimalseparator label="Decimal Separator" type="ComboBox" options="Period,Comma" data="period,comma" width="100" defaultValue="period" optional="true"/>
-    <displayMode type="ComboBox" options="Fixed Size,Fill Window" data="default,fill window" label="Display Mode" width="100"/>
+    <displayMode type="ComboBox" options="Fixed Size,Fill Window" data="default,fill window" label="Display Mode" width="100" conditionTrigger="true"/>
 	<responsive type="CheckBox" label="Responsive Text" defaultValue="false" mandatory="true"/>
     <allpagestitlesize optional="true" type="NumericStepper" min="16" max="30" step="1" label="Page Title Size" defaultValue="24" deprecated="This property is deprecated"/>
 	
@@ -502,7 +502,7 @@
         <error label="Error Label" type="TextInput" wysiwyg="true" divider="true" language="true"/>
         <newNodes>
         <!--  <timelinedate><![CDATA[<timelinedate name="" text="" date="Choose Date"/>]]></timelinedate> -->
-          <timeLineText><![CDATA[<timeLineText name="Enter Item Title" text="Enter text for the item here" align="Left" date="Choose Date"/>]]></timeLineText>
+          <timeLineText><![CDATA[<timeLineText name="Enter Item Title" text="Enter text for the item here" align="Left" url="" tip="" date="Choose Date"/>]]></timeLineText>
           <timelineimage><![CDATA[<timelineimage name="Enter Item Title" text="Enter text for the item here" align="Left" url="Select an Image" tip="Enter a Description for Accessibility" date="Choose Date"/>]]></timelineimage>
           <timelinevideo><![CDATA[<timelinevideo name="Enter Item Title" url="Select a Video" text="" pause="True" erase="True" date="Choose Date"/>]]></timelinevideo>
           <timeLineAudio><![CDATA[<timeLineAudio name="Enter Item Title" url="Select an Audio File" text="" pause="True" erase="True" date="Choose Date"/>]]></timeLineAudio>
@@ -767,7 +767,7 @@
 	</lightboxGroup></adaptiveContent><interaction menuItem="Source interaction">
         <name label="Title" type="textinput" wysiwyg="true"/>
         <introduction label="Introduction" type="textarea" height="120" wysiwyg="true"/>
-        <interactionType label="Interaction type" type="combobox" conditionTrigger="true" data="score,answer,opinion,open,grouping,groupings" options="Based on end score,Based on specific answer,Based on 2D opinion,Open answer,Based on grouping,Based on all groupings" tooltip="Score: use 'Score between' to add one or more interaction blocks; Answer: use 'Result label equals' to add one or more interaction block; Based on 2D opinion: use in combination with class to get a score; Open: Just shows one interaction block with all the given answers, all given interaction blocks will just be ignored."/>
+        <interactionType label="Interaction type" type="combobox" conditionTrigger="true" data="score,answer,opinion,open,grouping,groupings,opinionclasses" options="Based on end score,Based on specific answer,Based on 2D opinion,Open answer,Based on grouping,Based on all groupings,Based on all classes" tooltip="Score: use 'Score between' to add one or more interaction blocks; Answer: use 'Result label equals' to add one or more interaction block; Based on 2D opinion: use in combination with class to get a score; Open: Just shows one interaction block with all the given answers, all given interaction blocks will just be ignored."/>
         <xerteurl label="URL of Xerte source installation" type="xerteurl" mandatory="true" defaultValue=""/>
         <xertelo label="ID of Xerte learning object" type="xertelo" mandatory="true" defaultValue=""/>
         <label label="Tracking Label of source" type="TextInput" condition="interactionType!='grouping'" wysiwyg="false"/>
@@ -776,16 +776,17 @@
         <graph type="group" label="Graph" condition="interactionType!='open'" optional="true">
           <graph label="Show graph" type="checkbox" defaultValue="false" optional="true"/>
           <graphType label="Graph type" type="combobox" condition="interactionType!='opinion'||opinionClass!=null" data="bar_answers,bar_marks,bar_comb_marks,hor_bar_comb_marks,pie_marks,line_own_marks,line_average_marks,polar_area_per_category" options="Bar graph for given answers,Bar graph for received marks,Bar graph for combined received marks,Horizontal bar graph for combined received marks,Pie chart for received marks,Line graph for own received marks,Line graph for average marks of others,Polar chart for subject overview" defaultValue="bar_answers" optional="true"/>
-          <colour label="Personal graph" type="colourPicker" condition="interactionType=='opinion'&amp;&amp;opinionClass==null" defaultValue="0xFF0000" optional="true"/>
-          <colourPersonalAvg label="Personal average graph" type="colourPicker" condition="interactionType=='opinion'&amp;&amp;opinionClass==null" defaultValue="0x0000FF" optional="true"/>
-          <colourAvg label="Average graph" type="colourPicker" condition="interactionType=='opinion'&amp;&amp;opinionClass==null" defaultValue="0x00FF00" optional="true"/>
+          <opinionGraphType label="Graph type" type="combobox" conditionTrigger="true" condition="interactionType=='opinion'&amp;&amp;opinionClass==null" data="radar,hor_bar_comb_marks_avg" options="Radar diagram,Horizontal bar graph with averages" defaultValue="radar" optional="true"/>
+          <colour label="Personal graph" type="colourPicker" condition="interactionType=='opinion'&amp;&amp;opinionClass==null&amp;&amp;opinionGraphType=='radar'" defaultValue="0xFF0000" optional="true"/>
+          <colourPersonalAvg label="Personal average graph" type="colourPicker" condition="interactionType=='opinion'&amp;&amp;opinionClass==null&amp;&amp;opinionGraphType=='radar'" defaultValue="0x0000FF" optional="true"/>
+          <colourAvg label="Average graph" type="colourPicker" condition="interactionType=='opinion'&amp;&amp;opinionClass==null&amp;&amp;opinionGraphType=='radar'" defaultValue="0x00FF00" optional="true"/>
           <labelFontSize label="Font size of the labels" type="NumericStepper" min="4" max="100" step="1" condition="interactionType=='opinion'&amp;&amp;opinionClass==null" defaultValue="12" optional="true"/>
           <showExplanation label="Show graph explanation" type="checkbox" optional="true" defaulValue="false" tooltip="Show a box with a legend or other explanation next to the graph"/>
           <graphExplanation label="Graph legend/explanation" type="textArea" height="120" optional="true" defaultValue="" wysiwyg="true" tooltip="The legend or other explanation shown next to the graph"/>
           <graphExplanationPanelWidth label=" Legend panel width" type="textInput" defaultValue="40%" optional="true" tooltip="The width of the legend or other explanation panel, enter an acceptable width like 40% or 250px"/>
           <graphNrDataPoints label="Nr of bars/points" type="NumericStepper" min="0" max="100" step="1" defaultValue="10" optional="true" tooltip="The number of bars in a bargraph, or the number of points in a line graph"/>
         </graph>
-        <showScore label="Show score/answer" type="CheckBox" condition="interactionType=='score'||interactionType=='answer'||(interactionType=='opinion' &amp;&amp; opinionClass!=null)||interactionType=='grouping'||interactionType=='groupings'" optional="true" defaultValue="false" tooltip="Show your score or answer on which the interactionBlocks based"/>
+        <showScore label="Show score/answer" type="CheckBox" condition="interactionType=='score'||interactionType=='answer'||(interactionType=='opinion' &amp;&amp; opinionClass!=null)||interactionType=='grouping'||interactionType=='groupings'||interactionType=='opinionclasses'" optional="true" defaultValue="false" tooltip="Show your score or answer on which the interactionBlocks based"/>
         <scoreText label="Score text" type="TextInput" wysiwyg="true" language="true"/>
         <answerText label="Answer text" type="TextInput" wysiwyg="true" language="true"/>
         <!-- <showAvgScore label="Show average score" type="CheckBox" optional="true" defaultValue="false" tooltip="Show the average score of the whole group" /> -->
@@ -2083,7 +2084,7 @@
 	
 	<newNodes>
 		<resultStep><![CDATA[<resultStep name="e.g. R1" text="Enter result text here" destinationBtn="Continue"/>]]></resultStep>
-		<infoStep><![CDATA[<infoStep name="e.g. I1" target="e.g. Q2" text="Enter text here"/>]]></infoStep>
+		<infoStep><![CDATA[<infoStep name="e.g. I1" targetNew="" text="Enter text here"/>]]></infoStep>
 		<sliderStep><![CDATA[<sliderStep name="e.g. Q1" text="Enter question here" unit="e.g. £" min="0" max="100" step="1" value="0"/>]]></sliderStep>
 		<mcqStep><![CDATA[<mcqStep name="e.g. Q1" text="Enter question here" format="radio"/>]]></mcqStep>
 	</newNodes>
@@ -2149,12 +2150,13 @@
 	<clear label="Clear Progress Text" type="CheckBox" optional="true" tooltip="Clears any Progress Text added in previous steps."/>
 
 	<newNodes>
-		<mcqStepOption><![CDATA[<mcqStepOption name="Enter answer here" target="e.g. Q2"/>]]></mcqStepOption>
+		<mcqStepOption><![CDATA[<mcqStepOption name="Enter answer here" targetNew=""/>]]></mcqStepOption>
 	</newNodes>
 	
   </mcqStep><mcqStepOption icon="icBullet" remove="true" duplicate="true" menuItem="Option">
 	<name label="Answer Option" type="TextInput" wysiwyg="true"/>
-	<target label="Target ID" type="TextInput"/>
+	<target label="Target ID" type="TextInput" optional="true" deprecated="This property has been deprecated - use the Target ID drop down menu to select the target step instead. The ID entered in this field will continue to work until the drop down menu is used"/>
+	<targetNew label="Target ID" type="pageList" listTarget="1" defaultValue="" mandatory="true"/>
 	<resultTxt label="Stored Result Text" type="TextArea" height="100" optional="true" tooltip="Stores text associated with this answer for use in the results. This text will only display on result steps where Compile Stored Results (optional property) is added."/>
 	<displayTxt label="Progress Text" type="TextArea" height="100" optional="true" tooltip="Adds extra text below the Intro Text. Any Progress Text will remain on screen throughout subsequent steps until Clear Progress Text (optional property) is used."/>
 	<clear label="Clear Progress Text" type="CheckBox" optional="true" tooltip="Clears any Progress Text added in previous steps."/>
@@ -2174,13 +2176,14 @@
 	<clear label="Clear Progress Text" type="CheckBox" optional="true" tooltip="Clears any Progress Text added in previous steps."/>
 	
 	<newNodes>
-		<sliderStepOption><![CDATA[<sliderStepOption min="0" max="1" target="e.g. Q2"/>]]></sliderStepOption>
+		<sliderStepOption><![CDATA[<sliderStepOption min="0" max="1" targetNew=""/>]]></sliderStepOption>
 	</newNodes>
 	
   </sliderStep><sliderStepOption icon="icBullet" remove="true" duplicate="true" menuItem="Option">
 	<min label="Range minimum" type="TextInput"/>
 	<max label="Range maximum" type="TextInput"/>
-	<target label="Target ID" type="TextInput"/>
+	<target label="Target ID" type="TextInput" optional="true" deprecated="This property has been deprecated. Use the Target ID drop down menu to select the target step instead. The ID entered in this field will continue to work until the drop down menu is used"/>
+	<targetNew label="Target ID" type="pageList" listTarget="1" defaultValue="" mandatory="true"/>
 	<resultTxt label="Stored Result Text" type="TextArea" height="100" optional="true" tooltip="Stores text associated with this answer for use in the results. This text will only display on result steps where Compile Stored Results (optional property) is added."/>
 	<displayTxt label="Progress Text" type="TextArea" height="100" optional="true" tooltip="Adds extra text below the Intro Text. Any Progress Text will remain on screen throughout subsequent steps until Clear Progress Text (optional property) is used."/>
 	<clear label="Clear Progress Text" type="CheckBox" optional="true" tooltip="Clears any Progress Text added in previous steps."/>
@@ -2189,7 +2192,8 @@
   </sliderStepOption><infoStep icon="icPageWhiteInfo" remove="true" duplicate="true" menuItem="Information Step">
 	<name label="Unique ID" type="TextInput"/>
 	<text label="Text" type="TextArea" height="100"/>
-	<target label="Target ID" type="TextInput"/>
+	<target label="Target ID" type="TextInput" optional="true" deprecated="This property has been deprecated. Use the Target ID drop down menu to select the target step instead. The ID entered in this field will continue to work until the drop down menu is used"/>
+	<targetNew label="Target ID" type="pageList" listTarget="0" defaultValue="" mandatory="true"/>
 	<helpTxt label="More Information" type="TextArea" height="100" optional="true" tooltip="Allows access to extra information via a button and popup dialog."/>
 	<displayTxt label="Progress Text" type="TextArea" height="100" optional="true" tooltip="Adds extra text below the Intro Text. Any Progress Text will remain on screen throughout subsequent steps until Clear Progress Text (optional property) is used."/>
 	<clear label="Clear Progress Text" type="CheckBox" optional="true" tooltip="Clears any Progress Text added in previous steps."/>
