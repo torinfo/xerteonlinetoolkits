@@ -216,8 +216,13 @@ if(is_numeric($_POST['tutorial_id'])){
 
             chmod($new_directory . "media/", 0777);
 
-            $current_directory = $xerte_toolkits_site->root_file_path . $xerte_toolkits_site->users_file_area_short . $tutorial_id . "-" . $_SESSION['toolkits_logon_username'] . "-" . $row_currentdetails['template_name'] . "/";
+            //find creator of the file (useful when co-author is gifting this template)
+            $creator_query = "select {$prefix}logindetails.username from {$prefix}logindetails WHERE login_id in"
+                                . " (select user_id from {$prefix}templaterights where template_id=? and role='creator')";
+            $creator = db_query_one($creator_query, array($tutorial_id));
 
+            $current_directory = $xerte_toolkits_site->root_file_path . $xerte_toolkits_site->users_file_area_short . $tutorial_id . "-" . $creator['username'] . "-" . $row_currentdetails['template_name'] . "/";
+            //TODO: hier wordt de naam van de author gebruikt en niet co-author
             copy_loop($current_directory, $new_directory);
 
             echo "<div class=\"share_top\"><p class=\"header\"><span>" . GIFT_RESPONSE_INSTRUCTIONS . ".<br><br></span></p><p>" . GIFT_RESPONSE_SUCCESS . " " . $row_new_login['firstname'] . " " . $row_new_login['surname'] . "  (" . $row_new_login['username'] . ")</p><form id=\"share_form\"><input name=\"searcharea\" onkeyup=\"javascript:name_select_gift_template()\" type=\"text\" size=\"20\" /></form><div id=\"area2\"><p>" . GIFT_RESPONSE_NAMES . "</p></div><p id=\"area3\"></div>";
