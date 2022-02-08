@@ -589,7 +589,8 @@ function get_workspace_contents($folder_id, $tree_id, $sort_type, $copy_only=fal
 
     global $xerte_toolkits_site;
 
-    $items = array();
+    $items_folders = array();
+    $items_templates = array();
     $folders = get_workspace_folders($folder_id, $tree_id, $sort_type, $copy_only, $type);
     $templates = get_workspace_templates($folder_id, $tree_id, $sort_type, $copy_only, $type);
 
@@ -612,14 +613,14 @@ function get_workspace_contents($folder_id, $tree_id, $sort_type, $copy_only=fal
         $item->published = false;
         $item->shared = false;
 
-        $items[] = $item;
+        $items_folders[] = $item;
 
         if ($folder['type'] == 'folder_shared')
         {
             $files = get_folder_contents($folder['folder_id'], $folder['tree_id'],$sort_type, $copy_only);
             if ($files)
             {
-                $items = array_merge($items, $files);
+                $items_folders = array_merge($items_folders, $files);
             }
         }
         else {
@@ -647,7 +648,7 @@ function get_workspace_contents($folder_id, $tree_id, $sort_type, $copy_only=fal
                 $titem->editor_size = $xerte_toolkits_site->learning_objects->{$template['template_framework'] . "_" . $template['template_name']}->editor_size;
                 $titem->preview_size = $xerte_toolkits_site->learning_objects->{$template['template_framework'] . "_" . $template['template_name']}->preview_size;
 
-                $items[] = $titem;
+                $items_folders[] = $titem;
             }
         }
     }
@@ -678,10 +679,10 @@ function get_workspace_contents($folder_id, $tree_id, $sort_type, $copy_only=fal
         $titem->editor_size = $xerte_toolkits_site->learning_objects->{$template['template_framework'] . "_" . $template['template_name']}->editor_size;
         $titem->preview_size = $xerte_toolkits_site->learning_objects->{$template['template_framework'] . "_" . $template['template_name']}->preview_size;
 
-        $items[] = $titem;
+        $items_templates[] = $titem;
     }
 
-    return $items;
+    return array($items_folders, $items_templates);
 }
 
 /**
@@ -948,16 +949,19 @@ function get_users_projects($sort_type, $copy_only=false)
     $workspace->items[] = $item;
     $workspace->nodes[$item->id] = $item;
     //$items = get_folder_contents($item->xot_id, $item->id, $sort_type, $copy_only, "_top");
-    $items = get_workspace_contents($item->xot_id, $item->id, $sort_type, $copy_only,"_top");
-    if ($items) {
-        $workspace->items = array_merge($workspace->items, $items);
-        foreach($items as $item)
+    list($items_folders, $items_templates) = get_workspace_contents($item->xot_id, $item->id, $sort_type, $copy_only,"_top");
+
+    //first push the top level folders
+    if ($items_folders) {
+        $workspace->items = array_merge($workspace->items, $items_folders);
+        foreach($items_folders as $item)
         {
             $workspace->nodes[$item->id] = $item;
         }
     }
 
-    //group shared content
+    //then push the group content
+    //TODO: clean this up with seperate functions, or include group in the function get_workspace_contents
     //check to which groups the user belongs
     $query = "SELECT * FROM {$prefix}user_group_members ugm, {$prefix}user_groups ug WHERE ugm.login_id = ?".
         " AND ugm.group_id = ug.group_id ";
@@ -992,6 +996,15 @@ function get_users_projects($sort_type, $copy_only=false)
         }
 
         $counter++;
+    }
+
+    //then push the top level templates
+    if ($items_templates) {
+        $workspace->items = array_merge($workspace->items, $items_templates);
+        foreach($items_templates as $item)
+        {
+            $workspace->nodes[$item->id] = $item;
+        }
     }
 
     //recycle bin content
