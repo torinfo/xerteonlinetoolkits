@@ -283,7 +283,7 @@ var quiz = new function() {
 
                 var blocknr = parseFloat(blockid.split("block").pop()) - 1;
                 debugger
-                XTEnterInteraction(x_currentPage, blocknr , 'multiplechoice', name, correctOptions, correctAnswer, correctFeedback, x_currentPageXML.getAttribute("grouping"),  this.questions[this.currentQ]);
+                XTEnterInteraction(x_currentPage, blocknr , 'multiplechoice', name, correctOptions, correctAnswer, correctFeedback, x_currentPageXML.getAttribute("grouping"), null, this.questions[this.currentQ]);
                 XTSetInteractionPageXML(x_currentPage, blocknr, x_currentPageXML, this.questions[this.currentQ]);
                 quiz.checked = false;
             }

@@ -325,7 +325,7 @@ function TrackingManager(){
         tempscore/=page.interactions.length;
 
         page.score = tempscore;
-
+        debugger
         for (i = 0; i < this.toCompletePages.length; i++) {
             var currentPageNr = this.toCompletePages[i];
             if (currentPageNr === page_nr) {

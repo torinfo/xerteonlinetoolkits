@@ -427,7 +427,7 @@ var textMatch = new function() {
         }
         var blocknr = parseFloat(blockid.split("block").pop()) - 1;
 
-        XTEnterInteraction(x_currentPage, blocknr, 'match', label, correctOptions, correctAnswers, correctFeedbacks, x_currentPageXML.getAttribute("grouping"));
+        XTEnterInteraction(x_currentPage, blocknr, 'match', label, correctOptions, correctAnswers, correctFeedbacks, x_currentPageXML.getAttribute("grouping"), null);
         XTSetLeavePage(x_currentPage, blocknr, this.leavePage);
         XTSetInteractionModelState(x_currentPage, blocknr, modelState);
     }

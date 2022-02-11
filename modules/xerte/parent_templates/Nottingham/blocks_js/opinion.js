@@ -391,7 +391,7 @@ var opinion = new function()
                     }
                 }
 
-                XTEnterInteraction(x_currentPage, questions[currentQuestion], 'numeric', name, correctOptions, correctAnswer, null, x_currentPageXML.getAttribute("grouping"));
+                XTEnterInteraction(x_currentPage, questions[currentQuestion], 'numeric', name, correctOptions, correctAnswer, null, x_currentPageXML.getAttribute("grouping"), null);
                 $pageContents.data('checked', false);
             }
         }

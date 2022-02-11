@@ -211,7 +211,7 @@ var dragDropLabel = new function () {
 
         // set up drag events (mouse and keyboard controlled)
         if (interactivity == "Match") {
-            XTEnterInteraction(x_currentPage, XTGetBlockNr(blockid), 'match', x_currentPageXML.getAttribute("name"), correctOptions, correctAnswer, correctFeedback, x_currentPageXML.getAttribute("grouping"));
+            XTEnterInteraction(x_currentPage, XTGetBlockNr(blockid), 'match', x_currentPageXML.getAttribute("name"), correctOptions, correctAnswer, correctFeedback, x_currentPageXML.getAttribute("grouping"), null);
             XTSetLeavePage(x_currentPage, XTGetBlockNr(blockid), this.leavePage);
             XTSetInteractionPageXML(x_currentPage, XTGetBlockNr(blockid), x_currentPageXML);
             jGetElement(blockid, ".labelHolder .label")

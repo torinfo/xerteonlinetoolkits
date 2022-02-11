@@ -343,7 +343,7 @@ var timeline = new function () {
         if (x_currentPageXML.getAttribute("trackinglabel") != null && x_currentPageXML.getAttribute("trackinglabel") != "") {
             label = x_currentPageXML.getAttribute("trackinglabel");
         }
-        XTEnterInteraction(x_currentPage, XTGetBlockNr(blockid), 'match', label, correctOptions, correctAnswers, correctFeedbacks, x_currentPageXML.getAttribute("grouping"));
+        XTEnterInteraction(x_currentPage, XTGetBlockNr(blockid), 'match', label, correctOptions, correctAnswers, correctFeedbacks, x_currentPageXML.getAttribute("grouping"), null);
         XTSetLeavePage(x_currentPage, XTGetBlockNr(blockid), this.leavePage);
         XTSetInteractionPageXML(x_currentPage, XTGetBlockNr(blockid), x_currentPageXML);
         XTSetInteractionModelState(x_currentPage, XTGetBlockNr(blockid), timelineModel);

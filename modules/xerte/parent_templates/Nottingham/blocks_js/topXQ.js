@@ -1,11 +1,6 @@
 var topXQ = new function () {
 
-    var $pageContents;
 
-    // function called every time the page is viewed after it has initially loaded
-    this.pageChanged = function () {
-        $pageContents = jGetElement(blockid, '.pageContents');
-    };
 
     // function called every time the size of the LO is changed
     this.sizeChanged = function (blockid) {
@@ -16,12 +11,13 @@ var topXQ = new function () {
     };
 
     this.leavePage = function (blockid) {
+        let $pageContents = jGetElement(blockid, '.pageContents');
         if (!$pageContents.data('hasExited')) {
             topXQ.fillInputs(blockid);
 
             var checkAnswers = $pageContents.data('checkAnswers');
             for (var i = 0; i < checkAnswers.length; i++) {
-                topXQ.checkSingleAnswer(i);
+                topXQ.checkSingleAnswer(i,blockid);
             }
 
             var answers = $pageContents.data('answers'),
@@ -42,6 +38,7 @@ var topXQ = new function () {
     };
 
     this.fillInputs = function (blockid) {
+        let $pageContents = jGetElement(blockid, '.pageContents');
         var inputs = [];
         jGetElement(blockid, '.input-answer').each(function () {
             inputs.push($(this).val());
@@ -67,7 +64,8 @@ var topXQ = new function () {
         });
     }
 
-    this.checkSingleAnswer = function (i) {
+    this.checkSingleAnswer = function (i, blockid) {
+        let $pageContents = jGetElement(blockid, '.pageContents');
         var inputs = $pageContents.data('inputs'),
             answers = $pageContents.data('answers'),
             checkAnswers = $pageContents.data('checkAnswers'),
@@ -103,6 +101,7 @@ var topXQ = new function () {
     };
 
     this.exitPage = function (blockid) {
+        let $pageContents = jGetElement(blockid, '.pageContents');
         var amountOfCorrect = 0,
             checkAnswers = $pageContents.data('checkAnswers'),
             inputs = $pageContents.data('inputs');
@@ -113,7 +112,8 @@ var topXQ = new function () {
                 success: checkAnswers[i].correct,
                 score: checkAnswers[i].correct ? 100.0 : 0.0
             };
-            XTExitInteraction(x_currentPage, i, result, "", inputs[i], "", x_currentPageXML.getAttribute("trackinglabel"));
+
+            XTExitInteraction(x_currentPage, XTGetBlockNr(blockid), result, "", inputs[i], "", i, x_currentPageXML.getAttribute("trackinglabel"));
 
 
             if (checkAnswers[i].correct) {
@@ -140,18 +140,12 @@ var topXQ = new function () {
 
     this.init = function (pageXML, blockid) {
         x_currentPageXML = pageXML;
-        $pageContents = jGetElement(blockid, '.pageContents');
+        let $pageContents = jGetElement(blockid, '.pageContents');
 
         jGetElement(blockid, '.result, .mainFeedback, .correctAnswer').hide();
 
         $pageContents.data('hasExited', false);
 
-        this.weighting = 1.0;
-
-        if (x_currentPageXML.getAttribute("trackingWeight") != undefined) {
-            this.weighting = x_currentPageXML.getAttribute("trackingWeight");
-        }
-        XTSetPageType(x_currentPage, 'fill-in', 1, this.weighting);
 
         var panelWidth = x_currentPageXML.getAttribute("panelWidth"),
             $splitScreen = jGetElement(blockid, ".pageContents .splitScreen");
@@ -269,6 +263,18 @@ var topXQ = new function () {
         }
         var attempt = 1;
 
+        //Enter the interaction
+        var blankAnswers = [];
+        var correctAnswers = $pageContents.data('answers');
+        for (i = 0; i < correctAnswers.length; i++) {
+            blankAnswers.push(correctAnswers[i].options[0]);
+        }
+        for (i = 0; i < blankAnswers.length; i++) {
+            XTEnterInteraction(x_currentPage, XTGetBlockNr(blockid), "fill-in", x_GetTrackingTextFromHTML(x_currentPageXML.getAttribute("prompt"), ""), "", blankAnswers[i], $pageContents.data('correctOptionsFeedback'), x_currentPageXML.getAttribute("grouping"), null, i);
+
+            XTSetInteractionType(x_currentPage, XTGetBlockNr(blockid), 'fill-in', this.weighting, i);
+        }
+
         jGetElement(blockid, ".checkButton")
             .button({
                 label: checkBtnTxt
@@ -286,14 +292,7 @@ var topXQ = new function () {
                     }
                 }
 
-                var blankAnswers = [];
-                for (i = 0; i < x_currentPageXML.getAttribute("numberAnswers"); i++) {
-                    blankAnswers.push("-");
-                }
 
-                for (i = 0; i < blankAnswers.length; i++) {
-                    XTEnterInteraction(x_currentPage, i, "fill-in", x_GetTrackingTextFromHTML(x_currentPageXML.getAttribute("prompt"), ""), "", blankAnswers[i], $pageContents.data('correctOptionsFeedback'), x_currentPageXML.getAttribute("grouping"));
-                }
 
                 if (!$pageContents.data('hasExited')) {
                     $pageContents.data('hasExited', true);
@@ -346,7 +345,6 @@ var topXQ = new function () {
                             }
                         } else {
                             for (i = 0; i < inputs.length; i++) {
-                                var isCorrect = false;
                                 for (j = 0; j < answers.length; j++) {
                                     for (x = 0; x < answers[j].options.length; x++) {
 
@@ -434,7 +432,7 @@ var topXQ = new function () {
                 if ((attempt < tries && wrong > 0) || tries == undefined) {
                     for (var i = 0; i < checkAnswers.length; i++) {
                         if (checkAnswers[i].correct === false) {
-                            topXQ.checkSingleAnswer(i);
+                            topXQ.checkSingleAnswer(i, blockid);
                             if (checkAnswers[i].correct === false) {
                                 jGetElement(blockid, "#input-answer-" + i).val("");
                             }
@@ -475,7 +473,7 @@ var topXQ = new function () {
                         }
 
                         if (checkAnswers[i].correct === false) {
-                            topXQ.checkSingleAnswer(i);
+                            topXQ.checkSingleAnswer(i, blockid);
                             if (checkAnswers[i].correct === false) {
                                 if (attempt === tries) {
                                     jGetElement(blockid, "#topXQ-result-" + i)

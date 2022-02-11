@@ -330,7 +330,7 @@ var gapFill = new function() {
             for (interactionNumber=0;  interactionNumber<gapFillModelState.answerData.length;  interactionNumber++) {
                 name = "interaction number" + " " + interactionNumber;
                 correctAnswer = gapFillModelState.answerData[interactionNumber];
-                XTEnterInteraction(x_currentPage,  blocknr , 'fill-in', name, [], correctAnswer, "Correct", x_currentPageXML.getAttribute("grouping"), interactionNumber);
+                XTEnterInteraction(x_currentPage,  blocknr , 'fill-in', name, [], correctAnswer, "Correct", x_currentPageXML.getAttribute("grouping"), null, interactionNumber);
                 XTSetLeavePage(x_currentPage, blocknr, this.leavePage);
                 XTSetInteractionPageXML(x_currentPage, blocknr, x_currentPageXML, interactionNumber);
                 XTSetInteractionModelState(x_currentPage, blocknr, gapFillModelState, interactionNumber);
@@ -352,7 +352,7 @@ var gapFill = new function() {
                 correctOptions.push(correctOption);
             }
             debugger
-            XTEnterInteraction(x_currentPage,  blocknr , 'match', name, correctOptions, correctAnswers, "", x_currentPageXML.getAttribute("grouping"));
+            XTEnterInteraction(x_currentPage,  blocknr , 'match', name, correctOptions, correctAnswers, "", x_currentPageXML.getAttribute("grouping"), null);
             XTSetLeavePage(x_currentPage, blocknr, this.leavePage);
             XTSetInteractionPageXML(x_currentPage, blocknr, x_currentPageXML)
             XTSetInteractionModelState(x_currentPage, blocknr, gapFillModelState)
@@ -380,7 +380,7 @@ var gapFill = new function() {
                         result: correctAnswer
                     });
                 }
-                XTEnterInteraction(x_currentPage,  blocknr , 'multiplechoice', name, correctOptions, correctAnswers, "Correct", x_currentPageXML.getAttribute("grouping"), interactionNumber);
+                XTEnterInteraction(x_currentPage,  blocknr , 'multiplechoice', name, correctOptions, correctAnswers, "Correct", x_currentPageXML.getAttribute("grouping"), null, interactionNumber);
                 XTSetLeavePage(x_currentPage, blocknr, this.leavePage);
                 XTSetInteractionPageXML(x_currentPage, blocknr, x_currentPageXML, interactionNumber);
                 XTSetInteractionModelState(x_currentPage, blocknr, gapFillModelState, interactionNumber);

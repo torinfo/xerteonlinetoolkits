@@ -177,7 +177,7 @@ var categories = new function() {
         {
             label = x_currentPageXML.getAttribute("trackinglabel");
         }
-        XTEnterInteraction(x_currentPage, 0, 'match', label, correctOptions, correctAnswer, correctFeedback, x_currentPageXML.getAttribute("grouping"));
+        XTEnterInteraction(x_currentPage, 0, 'match', label, correctOptions, correctAnswer, correctFeedback, x_currentPageXML.getAttribute("grouping"), null);
         var $pageContents = jGetElement(blockid,".pageContents");
         $pageContents.data("labels", labels);
 

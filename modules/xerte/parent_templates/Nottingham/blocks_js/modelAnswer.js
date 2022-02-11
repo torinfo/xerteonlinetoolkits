@@ -83,7 +83,7 @@ var modelAnswer = new function () {
         XTSetPageType(x_currentPage, 'numeric', 1, this.weighting);
 
         var modelAnswerTxt = $('<div>').html(x_currentPageXML.getAttribute("feedback")).text();
-        XTEnterInteraction(x_currentPage, XTGetBlockNr(blockid), 'text', label, [], modelAnswerTxt, [], x_currentPageXML.getAttribute("grouping"));
+        XTEnterInteraction(x_currentPage, XTGetBlockNr(blockid), 'text', label, [], modelAnswerTxt, [], x_currentPageXML.getAttribute("grouping"), null);
         //XTSetLeavePage(x_currentPage, XTGetBlockNr(blockid), this.leavePage);
         XTSetInteractionPageXML(x_currentPage, XTGetBlockNr(blockid), x_currentPageXML);
         XTSetInteractionModelState(x_currentPage, XTGetBlockNr(blockid), modelAnswerModel);
