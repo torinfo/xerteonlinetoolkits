@@ -30,6 +30,7 @@
 require_once("../../../config.php");
 require_once("../user_library.php");
 require_once("../folder_library.php");
+require_once("../folder_status.php");
 require_once("../template_library.php");
 require_once("../template_status.php");
 
@@ -71,8 +72,8 @@ if(is_numeric($_POST['folder_id'])){
 
         // Check all templates within the folder
         // Get all templates within chosen folder
-        $sql = "select td.*, tr.user_id, tr.folder, tr.role, otd.template_framework, otd.template_name as org_template_name from {$prefix}templaterights tr, {$prefix}templatedetails td, {$prefix}originaltemplatesdetails otd where td.template_id=tr.template_id and td.template_type_id=otd.template_type_id and tr.user_id=? and tr.folder=?";
-        $params = array($_SESSION['toolkits_logon_id'], $folder_id);
+        $sql = "select td.*, tr.user_id, tr.folder, tr.role, otd.template_framework, otd.template_name as org_template_name from {$prefix}templaterights tr, {$prefix}templatedetails td, {$prefix}originaltemplatesdetails otd where td.template_id=tr.template_id and td.template_type_id=otd.template_type_id and tr.folder=?";
+        $params = array($folder_id);
 
         $templates = db_query($sql, $params);
         if ($templates !== false) {
@@ -88,6 +89,11 @@ if(is_numeric($_POST['folder_id'])){
             $params = array($_SESSION['toolkits_logon_id'], $parentfolder_id, $folder_name, date('Y-m-d'));
 
             $new_folder_id = db_query($query, $params);
+
+            //Create folderrights for duplicate of folder
+            $rights_query = "INSERT INTO {$prefix}folderrights (folder_id, login_id, folder_parent, role) values (?,?,?,?)";
+            $params = array($new_folder_id, $_SESSION['toolkits_logon_id'], $parentfolder_id, 'creator');
+            db_query($rights_query, $params);
 
             // Create copies (with same name in new folder)
             foreach ($templates as $template) {
