@@ -149,7 +149,10 @@ foreach($query_sharing_rows as $row) {
 
 }
 
-if(!is_user_creator($_POST['template_id'])&&!is_user_admin()){
+//Only show sharing_stop message if this template is directly shared with this person
+//stopping sharing via a group or via a folder cannot be done on a template by template basis
+$role = get_explicit_role($_POST['template_id']);
+if($role != 'creator' && !is_null($role) && !is_user_admin()){
 
     echo "<p><a href=\"javascript:delete_sharing_template('" . $_POST['template_id'] . "','" . $_SESSION['toolkits_logon_id'] . "',true)\">" . SHARING_STOP . "</a></p>";
 

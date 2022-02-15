@@ -779,11 +779,11 @@ function remove_template(template_id) {
         }
     })
     .done(function(response){
-        delete_stateChanged(response);
+        delete_sdeletetateChanged(response);
     });
 }
 
-/**
+/**d
  *
  * Function recycle bin remove all template
  * This function empties the recycle bin

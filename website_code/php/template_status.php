@@ -388,12 +388,11 @@ function is_user_creator($template_id){
 function is_user_creator_or_coauthor($template_id){
 
     global $xerte_toolkits_site;
-
-    $user_id = $_SESSION['toolkits_logon_id'];
-    $row = db_query_one("select role from {$xerte_toolkits_site->database_table_prefix}templaterights where template_id=? AND user_id=?", array($template_id, $user_id));
+    $explicit_role = get_explicit_role($template_id);
     //check for group rights and use highest role
+    $user_id = $_SESSION['toolkits_logon_id'];
     $groupright = get_user_group_access_rights($user_id, $template_id);
-    $roles = array($row['role'], $groupright);
+    $roles = array($explicit_role, $groupright);
     usort($roles, "compare_roles");
 
     if($roles[0]=="creator" || $roles[0]=="co-author"){
@@ -411,6 +410,12 @@ function is_user_creator_or_coauthor($template_id){
         }
         return false;
     }
+}
+
+function get_explicit_role($template_id){
+    $login_id = $_SESSION['toolkits_logon_id'];
+    $row = db_query_one("select role from {$xerte_toolkits_site->database_table_prefix}templaterights where template_id=? AND user_id=?", array($template_id, $login_ids));
+    return $row['role'];
 }
 
 function get_implicit_role($template_id, $login_id){

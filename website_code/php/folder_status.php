@@ -232,7 +232,6 @@ function is_user_creator_or_coauthor_folder($folder_id){
     global $xerte_toolkits_site;
 
     $login_id = $_SESSION['toolkits_logon_id'];
-    //$row = db_query_one("select role from {$xerte_toolkits_site->database_table_prefix}folderrights where folder_id=? AND login_id=?", array($folder_id, $login_id));
     $role = get_implicit_folder_role($login_id, $folder_id);
     //check for group rights and use highest role
     $groupright = get_user_group_access_rights_folder($login_id, $folder_id);
@@ -249,6 +248,13 @@ function is_user_creator_or_coauthor_folder($folder_id){
 
         return false;
     }
+}
+
+
+function get_explicit_folder_role($folder_id){
+    $login_id = $_SESSION['toolkits_logon_id'];
+    $row = db_query_one("select role from {$xerte_toolkits_site->database_table_prefix}folderrights where folder_id=? AND login_id=?", array($folder_id, $login_id));
+    return $row['role'];
 }
 
 function get_implicit_folder_role($login_id, $folder_id, $group_id=-1){
