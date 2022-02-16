@@ -522,7 +522,7 @@
 				$("#infoHolder").remove();
 				$("#contentCover").hide();
 			}
-			
+			let childCount = 0;
 			// create all panels, including the overlay panel
 			for (var i=0; i<panelData.length; i++) {
 				var title = "";
@@ -542,12 +542,18 @@
 						this.setAttribute("overlayPan", "true");
 						this.setAttribute("clearPanel", "true");
 					});
+				} else if(panelData[i].nodeName.includes("Block")){
+					debugger
+					childCount++;
+					x_createBlock($('<div class="panel">' + title + '</div>')
+							.appendTo($panelHolder)
+							.attr("id", mediaLesson.panelbaseid + i), panelData[i], childCount)
 				}
 				// name and id all other panels
 				else{
-                    $('<div class="panel">' + title + '</div>')
-                        .appendTo($panelHolder)
-                        .attr("id", mediaLesson.panelbaseid + i);
+					$('<div class="panel">' + title + '</div>')
+							.appendTo($panelHolder)
+							.attr("id", mediaLesson.panelbaseid + i);
 				}
 			}
 			// layouts where panels are roughly the same size - either in grid or stacked vertically/horizontally

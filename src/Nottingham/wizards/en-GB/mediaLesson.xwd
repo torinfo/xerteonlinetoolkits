@@ -22,6 +22,9 @@
 			<panel><![CDATA[<panel name="Enter Panel Title"/>]]></panel>
 		</newNodes>
 
+		<interactiveBlocks>
+		</interactiveBlocks>
+
 	</mediaLesson>
 	
 	<mediaPanel menuItem="Media Panel" icon="icApplicationMedia" remove="false" duplicate="false">
