@@ -1,4 +1,15 @@
 var mcq = new function() {
+
+    var mcqModel= {
+        optionElements: null
+    };
+
+    this.resetModelState = function () {
+        mcqModel = {
+            optionElements: null
+        };
+    }
+
     // function called every time the page is viewed after it has initially loaded
     this.pageChanged = function() {
 
@@ -87,6 +98,7 @@ var mcq = new function() {
         }
         XTEnterInteraction(x_currentPage, blocknr, 'multiplechoice', label, correctOptions, correctAnswer, correctFeedback, x_currentPageXML.getAttribute("grouping"), null);
         XTSetInteractionPageXML(x_currentPage, blocknr, x_currentPageXML);
+        XTSetInteractionModelState(x_currentPage, blocknr, mcqModel);
     }
 
     this.leavePage = function() {
@@ -101,7 +113,8 @@ var mcq = new function() {
     {
         var blocknr = parseFloat(blockid.split("block").pop()) - 1;
         let currentPageXML = XTGetPageXML(x_currentPage, blocknr);
-        this.optionElements = getOptionElements(currentPageXML);
+        mcqModel = XTGetInteractionModelState(x_currentPage, blocknr);
+        this.optionElements = mcqModel.optionElements;
         var answerFeedback = "",
             genFeedback,
             correct = (currentPageXML.getAttribute("type") == "Multiple Answer"),
@@ -118,7 +131,7 @@ var mcq = new function() {
         }
 
         for (var i=0; i<selected.length; i++) {
-
+            debugger
             var optionIndex = $(selected[i]).parent().index(),
                 selectedOption = this.optionElements[optionIndex],
                 currCorrect;
@@ -255,7 +268,6 @@ var mcq = new function() {
         };
         var blocknr = parseFloat(blockid.split("block").pop());
 
-        debugger
         XTExitInteraction(x_currentPage, blocknr-1, result, l_options, l_answers, l_feedbacks);
 
         if (XTGetMode() == "normal")
@@ -369,6 +381,8 @@ var mcq = new function() {
                     this.optionElements[k] = tmp;
                 }
             }
+
+            mcqModel.optionElements = this.optionElements;
 
             $.each(this.optionElements, function(i, thisOption) {
                 var $thisOptionGroup, $thisOption, $thisOptionTxt;
