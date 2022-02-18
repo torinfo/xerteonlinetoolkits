@@ -85,6 +85,7 @@ var quiz = new function() {
 
         jGetElement(blockid, ".optionHolder").show();
         jGetElement(blockid, ".checkBtn, .nextBtn, .restartBtn").button("disable");
+        jGetElement(blockid, ".feedbackGroup").find('.feedbackBlock').html("");
 
         this.currentQ = 0;
         this.questions = []; // array of questions to use (index)
@@ -292,10 +293,11 @@ var quiz = new function() {
 
     this.showFeedBackandTrackResults = function(blockid)
     {
-
+        debugger
         var blocknr = parseFloat(blockid.split("block").pop()) - 1;
         let currentPageXML = XTGetPageXML(x_currentPage, blocknr, this.questions[this.currentQ]);
         this.tracked = true;
+
 
         var currentQuestion = currentPageXML.children[quiz.questions[quiz.currentQ]];
 
