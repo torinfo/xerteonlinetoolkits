@@ -19,17 +19,30 @@ function pageState(id, page_nr, ia_type, ia_name){
     this.correctAnswers = [];
     this.learnerAnswers = [];
     this.learnerOptions = [];
+    this.duration = 0;
+    this.start = new Date();
+    this.end = this.start;
 
 
     function exit(){
-        for(let i = 0; i < this.interactions.length; i++){
-            if(this.interactions[i].duration > this.duration){
-                this.duration = this.interactions[i].duration;
-            }
-        }
+        debugger
+        this.end = new Date();
+        var duration = this.end.getTime() - this.start.getTime();
+        this.duration += duration
+        // if (duration > 100)
+        // {
+        //     ;
+        //     this.count++;
+        //     return true;
+        // }
+        // else
+        // {
+        //     return false;
+        // }
     }
 
     function enter(){
-
+        debugger
+        this.start = new Date();
     }
 }

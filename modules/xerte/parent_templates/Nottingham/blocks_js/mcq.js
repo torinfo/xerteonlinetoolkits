@@ -85,7 +85,6 @@ var mcq = new function() {
         {
             label = x_GetTrackingTextFromHTML(x_currentPageXML.getAttribute("prompt"), label);
         }
-        debugger
         XTEnterInteraction(x_currentPage, blocknr, 'multiplechoice', label, correctOptions, correctAnswer, correctFeedback, x_currentPageXML.getAttribute("grouping"), null);
         XTSetInteractionPageXML(x_currentPage, blocknr, x_currentPageXML);
     }
