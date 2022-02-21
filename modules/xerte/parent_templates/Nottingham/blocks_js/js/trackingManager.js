@@ -43,6 +43,7 @@ function TrackingManager(){
     this.findPage = findPage;
     this.findInteraction = findInteraction;
     this.findAllInteractions = findAllInteractions;
+    this.findAllSubInteractions = findAllSubInteractions;
     this.verifyResult = verifyResult;
     this.verifyEnterInteractionParameters = verifyEnterInteractionParameters;
     this.verifyExitInteractionParameters = verifyExitInteractionParameters;
@@ -431,7 +432,7 @@ function TrackingManager(){
         return null;
     }
 
-    function findInteraction(page_nr, ia_nr, ia_sub_nr = 0)
+    function findInteraction(page_nr, ia_nr, ia_sub_nr = 0, ignoreSubId = false)
     {
         var page = this.findPage(page_nr)
         if (page == null){
@@ -440,8 +441,16 @@ function TrackingManager(){
         var i=0;
         for (i=0; i<page.interactions.length; i++)
         {
-            if (page.interactions[i].page_nr === page_nr && page.interactions[i].ia_nr === ia_nr && page.interactions[i].ia_sub_nr === ia_sub_nr)
-                return page.interactions[i];
+            if (page.interactions[i].page_nr === page_nr && page.interactions[i].ia_nr === ia_nr){
+                if(!ignoreSubId){
+                    if(page.interactions[i].ia_sub_nr === ia_sub_nr){
+                        return page.interactions[i];
+                    }
+                } else {
+                    return page.interactions[i];
+                }
+            }
+
         }
         return null;
     }
@@ -452,9 +461,22 @@ function TrackingManager(){
             if(this.pageStates[i].page_nr == page_nr){
                 return this.pageStates[i].interactions;
             }
-
         }
+    }
 
+    function findAllSubInteractions(page_nr, ia_nr)
+    {
+        let interactions = [];
+        for(var i = 0; i < this.pageStates.length; i++){
+            if(this.pageStates[i].page_nr == page_nr){
+                for(var j = 0; j < this.pageStates[i].interactions.length; j++){
+                    if(this.pageStates[i].interactions[j].ia_nr === ia_nr){
+                        interactions.push(this.pageStates[i].interactions[j]);
+                    }
+                }
+            }
+        }
+        return interactions;
     }
 
     /**
@@ -936,16 +958,29 @@ function TrackingManager(){
         }
     }
 
-    function setInteractionModelState(page_nr, ia_nr, modelState, ia_sub_nr) {
-        var interaction = this.findInteraction(page_nr, ia_nr, ia_sub_nr);
-        if(interaction != null){
-            interaction.modelState = JSON. parse(JSON. stringify(modelState));
+    function setInteractionModelState(page_nr, ia_nr, modelState, ia_sub_nr, toAll) {
+        if(toAll){
+            for(let i = 0; i < this.pageStates.length; i++){
+                if(this.pageStates[i].page_nr === page_nr){
+                    for(let j = 0; j < this.pageStates[i].interactions.length; j++){
+                        if(this.pageStates[i].interactions[j].ia_nr === ia_nr){
+                            this.pageStates[i].interactions[j].modelState = JSON.parse(JSON.stringify(modelState));
+                        }
+                    }
+                }
+            }
+
+        } else {
+            let interaction = this.findInteraction(page_nr, ia_nr, ia_sub_nr);
+            if(interaction != null){
+                interaction.modelState = JSON.parse(JSON.stringify(modelState));
+            }
         }
     }
 
 
-    function getInteractionModelState(page_nr, ia_nr, ia_sub_nr) {
-        var interaction = this.findInteraction(page_nr, ia_nr, ia_sub_nr);
+    function getInteractionModelState(page_nr, ia_nr, ia_sub_nr, ignoreSubId) {
+        var interaction = this.findInteraction(page_nr, ia_nr, ia_sub_nr, ignoreSubId);
         if(interaction != null){
             return interaction.modelState;
         } else {
