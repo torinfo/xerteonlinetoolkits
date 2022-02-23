@@ -265,6 +265,7 @@
 
 				// column/pane text
 				$("#navChildTitle" + i).html(this.getAttribute("name"));
+				var $navChild = $("#navChild" + i).append(x_addLineBreaks(this.getAttribute("text")));
 
 				/*
 				* 	Interactive Blocks Code

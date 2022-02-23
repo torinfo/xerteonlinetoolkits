@@ -192,7 +192,7 @@ var topXQ = new function () {
         var instruction = x_currentPageXML.getAttribute("instruction");
         $textHolder.html(instruction);
 
-        var $question = jGetElement(blockid, ".question");
+        var $question = jGetElement(blockid, ".titleQuestion .question");
         var prompt = x_currentPageXML.getAttribute("prompt");
         $question.html(prompt);
 
@@ -271,7 +271,7 @@ var topXQ = new function () {
         }
         for (i = 0; i < blankAnswers.length; i++) {
             XTEnterInteraction(x_currentPage, XTGetBlockNr(blockid), "fill-in", x_GetTrackingTextFromHTML(x_currentPageXML.getAttribute("prompt"), ""), "", blankAnswers[i], $pageContents.data('correctOptionsFeedback'), x_currentPageXML.getAttribute("grouping"), null, i);
-
+            XTSetInteractionPageXML(x_currentPage, XTGetBlockNr(blockid), pageXML, i);
             XTSetInteractionType(x_currentPage, XTGetBlockNr(blockid), 'fill-in', this.weighting, i);
         }
 
@@ -298,11 +298,13 @@ var topXQ = new function () {
                     $pageContents.data('hasExited', true);
                 }
 
-                showFeedback = function () {
+                showFeedback = function (blockid) {
+                    let x_currentPageXML = XTGetPageXML(x_currentPage, XTGetBlockNr(blockid));
                     var correctAnswersLabel = x_currentPageXML.getAttribute("correctAnswersLabel"),
                         answers = $pageContents.data('answers');
 
                     jGetElement(blockid, ".correctAnswer").html('');
+                    debugger
                     if (x_currentPageXML.getAttribute("showAnswers") === "true" || x_currentPageXML.getAttribute("showAnswers") === undefined) {
                         jGetElement(blockid, ".correctAnswer").append('<h3>' + correctAnswersLabel + '</h3><ul>');
 
@@ -455,7 +457,7 @@ var topXQ = new function () {
                     attempt++;
 
                     if (tries === undefined) {
-                        showFeedback();
+                        showFeedback(blockid);
                         topXQ.exitPage(blockid);
                     }
 
@@ -488,13 +490,13 @@ var topXQ = new function () {
                         }
                     }
 
-                    showFeedback();
+                    showFeedback(blockid);
                     topXQ.exitPage(blockid);
                 }
 
                 if (wrong === 0) {
                     jGetElement(blockid, '.checkButton').hide();
-                    showFeedback();
+                    showFeedback(blockid);
                     topXQ.exitPage(blockid);
                 }
             })
