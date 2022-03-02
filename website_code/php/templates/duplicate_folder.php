@@ -66,6 +66,11 @@ if(is_numeric($_POST['folder_id'])){
 
         }
 
+        //check if user is creator of parentfolder, if not the new folder should be placed in their workspace directly
+        if($_POST['parentnode_type'] == 'group' || !is_user_creator_folder($parentfolder_id)){
+            $parentfolder_id = get_user_root_folder();
+        }
+
         /*
          * get the maximum id number from templates, as the id for this template
          */

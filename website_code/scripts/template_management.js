@@ -881,13 +881,15 @@ function duplicate_template() {
                 var template_id = node.xot_id;
                 var template_name = node.text;
                 var folder_id = workspace.nodes[node.parent].xot_id;
+                var parent_type = workspace.nodes[node.parent].type;
                 $.ajax({
                     type: "POST",
                     url: "website_code/php/templates/duplicate_template.php",
                     data: {
                         template_id: template_id,
                         template_name: template_name,
-                        folder_id: folder_id
+                        folder_id: folder_id,
+                        parent_type: parent_type
                     }
                 })
                 .done(function(response){
@@ -949,6 +951,7 @@ function duplicate_folder() {
                 var folder_id = node.xot_id;
                 var folder_name = node.text;
                 var parentfolder_id = workspace.nodes[node.parent].xot_id;
+                var parentnode_type = workspace.nodes[node.parent].type;
 
                 $.ajax({
                     type: "POST",
@@ -956,7 +959,8 @@ function duplicate_folder() {
                     data: {
                         folder_id: folder_id,
                         folder_name: folder_name,
-                        parentfolder_id: parentfolder_id
+                        parentfolder_id: parentfolder_id,
+                        parentnode_type: parentnode_type
                     }
                 })
                 .done(function(response){

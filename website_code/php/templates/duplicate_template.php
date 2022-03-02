@@ -58,6 +58,11 @@ if(is_numeric($_POST['template_id'])){
 
         }
 
+        //check if user is creator of the parent folder, if not the new template should be placed in their workspace directly
+        if($_POST['parent_type'] == 'group' || !is_user_creator_folder($folder_id)){
+            $folder_id = get_user_root_folder();
+        }
+
         /*
          * get the maximum id number from templates, as the id for this template
          */
