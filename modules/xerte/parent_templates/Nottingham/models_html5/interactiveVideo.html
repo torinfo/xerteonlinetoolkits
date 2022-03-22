@@ -22,7 +22,7 @@
         // other functions for model should also be in here to avoid conflicts
         var interactiveVideo = new function() {
             var	$panelHolder,
-                plugins = ["textplus", "subtitleplus", "xot", "mediaplus", "mcq", "overlaygeneric" ,"slides", "sortholder"], // list of popcorn plugins to load
+                plugins = ["textplus", "subtitleplus", "xot", "mediaplus", "mcq", "overlaygeneric" ,"slides", "sortholder", "blockpanel"], // list of popcorn plugins to load
                 css = ["subtitleplus", "mcq", "overlaygeneric", "slides"], // list of popcorn plugin css to load
                 numLoaded = 0,
                 duration = 0,
@@ -1425,7 +1425,6 @@
                 // add pause points for mainMedia/mediaPlus
                 for (var j=0; j<synchData.length; j++) {
                     if (synchData[j].nodeName == "synchCue") {
-                        debugger
                         interactiveVideo.setUpPopcornCue(popcornInstance, synchData[j]);
                     }
                 }
@@ -1552,14 +1551,13 @@
                             pluginAttributes.name = pluginAttributes.name + ' <span class="alert">[' + authorSupportTxt + ']</span>';
                         }
 
-                        debugger
                         if(pluginName === "blockpanel"){
-                            x_createBlock($('<div class="panel">mcqDiv</div>')
-                                .appendTo($("#" + targetRef))
-                                .attr("id","testBlock"), data[j].childNodes[0], 0)
-                        } else {
-                            popcornInstance[pluginName](pluginAttributes);
+                            pluginAttributes.targetRef = targetRef;
+                            pluginAttributes.blockData = data[j].childNodes[0];
                         }
+
+                        popcornInstance[pluginName](pluginAttributes);
+
                         // ^^ plugins called are either bespoke ones in popcorn/plugins folder or from popcorn-complete.min.js
                         // ^^ for those from popcorn-complete.min.js, the xwd node names & values must match the expected popcorn properties for the plugin
                         

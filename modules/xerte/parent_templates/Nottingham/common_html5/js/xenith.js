@@ -1848,8 +1848,7 @@ function x_navigateToPage(force, pageInfo, addHistory) { // pageInfo = {type, ID
 
 //INTERN CODE
 function x_createBlock(container, module, modulePosition){
-	debugger
-	//init aanroepen
+	//Create the area for the block to be populated in. Then call the init of the block.
 	var blockid = "block" + modulePosition;
 	var jsName = module.tagName.replace("Block", "")
 	container.append('<div id="block' + modulePosition+'" class="iblock x-card"></div>');
@@ -1857,6 +1856,7 @@ function x_createBlock(container, module, modulePosition){
 		window[jsName].init(module, blockid);
 	});
 
+	//Insert block CSS files. These are different from the not block interactive modules
 	x_insertCSS(x_templateLocation + "blocks_html5/" + module.tagName + ".css", null, false, "page_model_css_"+module.tagName);
 
 

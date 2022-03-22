@@ -482,6 +482,7 @@ optional: feedback page synch play enable
 			},
 			
 			start: function(event, options) {
+				debugger
 				// fire on options.start
 				var correctOptions = [];
 				var correctAnswers = [];
