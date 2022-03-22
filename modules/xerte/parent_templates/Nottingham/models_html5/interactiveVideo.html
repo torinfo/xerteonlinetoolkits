@@ -478,7 +478,7 @@
     
             // function called when popcorn.js & plugin files have all loaded
             this.setUp = function() {
-                // _____ SORT PAGE LAYOUT _____
+            // _____ SORT PAGE LAYOUT _____
                 
                 $panelHolder = $("#panelHolder");
     
@@ -895,7 +895,6 @@
                             segments: []
                         }
                     }
-    
                     panelData.each(function(i) {
                         interactiveVideo.sortPopcorn($(this).children(), interactiveVideo.panelbaseid + i, interactiveVideo.popcornInstance, $(".mainMedia"));
                     });
@@ -1316,7 +1315,6 @@
                             // store previous sibling's start for relative synching to be done against
                             start = 0;
                         }
-                        
                         data.push({
                             type:			this.nodeName,
                             start:			start,
@@ -1396,7 +1394,7 @@
                     }
                     return 0;
                 });
-                
+
                 // add end points for content already on panel if they are to be removed with "Empty Panel" or because new content clears panel
                 for (var j=0; j<data.length; j++) {
                     // is content to be cleared?
@@ -1427,6 +1425,7 @@
                 // add pause points for mainMedia/mediaPlus
                 for (var j=0; j<synchData.length; j++) {
                     if (synchData[j].nodeName == "synchCue") {
+                        debugger
                         interactiveVideo.setUpPopcornCue(popcornInstance, synchData[j]);
                     }
                 }
@@ -1435,7 +1434,6 @@
                     // each synch event
                     var thisContent = data[j],
                         pluginName = thisContent.type.split("ivSynch")[1].toLowerCase();
-                    
                     // ____ ADD SYNCH EVENT ON SLIDER ____
                     // Clear Content should not be counted as an event.
                     if (thisContent.type != "synchEmpty")
@@ -1553,8 +1551,15 @@
                                 authorSupportTxt = thisContent.autoEnd != true ? startTxt + ":" + thisContent.start + " " + endTxt + ":" + thisContent.end : startTxt + ":" + thisContent.start;
                             pluginAttributes.name = pluginAttributes.name + ' <span class="alert">[' + authorSupportTxt + ']</span>';
                         }
-                        
-                        popcornInstance[pluginName](pluginAttributes);
+
+                        debugger
+                        if(pluginName === "blockpanel"){
+                            x_createBlock($('<div class="panel">mcqDiv</div>')
+                                .appendTo($("#" + targetRef))
+                                .attr("id","testBlock"), data[j].childNodes[0], 0)
+                        } else {
+                            popcornInstance[pluginName](pluginAttributes);
+                        }
                         // ^^ plugins called are either bespoke ones in popcorn/plugins folder or from popcorn-complete.min.js
                         // ^^ for those from popcorn-complete.min.js, the xwd node names & values must match the expected popcorn properties for the plugin
                         
@@ -1702,7 +1707,7 @@
                 } else {
                     // disable
                     if(includeMejs == true){}
-                        //$("#overlay").show();
+                        $("#overlay").show();
                     if (media.player) {
                         media.player.controlsEnabled = false;
                         media.player.options.clickToPlayPause = false;
