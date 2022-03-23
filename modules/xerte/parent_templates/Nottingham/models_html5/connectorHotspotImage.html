@@ -294,8 +294,13 @@
 							tempIndex = tempIndex != x_normalPages.length-1 && tempIndex != -1 ? x_normalPages[tempIndex+1] : x_normalPages[x_normalPages.length-1];
 							hsInfo = $(x_pageInfo)[x_normalPages[tempIndex]].linkID;
 						}
+					} else {
+						//If no type has been found, check for blocks | which is the same as checking for any child
+						if(this.childElementCount > 0){
+							hsType = "block";
+						}
 					}
-				
+
 					var _this = this,
 						$hotspot = $('<area class="hotspot transparent" shape="poly" href="#" tabindex="' + (i+2) + '" />');
 
@@ -341,9 +346,12 @@
 							
 							if (hsType != "pageLink" && hsType != "url") $(this).addClass("selected");
 							$("#feedback").html("");
-							
+
+
 							if (hsType == "url") {
 								window.location.href = hsInfo;
+
+								debugger
 							
 							// go to page in LO
 							} else if (hsType == "pageLink") {
@@ -500,6 +508,8 @@
 									popupWindow.document.write((_this.getAttribute("showTitle") == "true" ? '<title>' + _this.getAttribute("name") + '</title>' : '') + _this.getAttribute("htm"));
 									popupWindow.focus();
 								}
+							} else if (hsType === "block"){
+								debugger
 							}
 							// Keep highlighted/selected
 							if (x_currentPageXML.getAttribute("highlight") == "true") {
