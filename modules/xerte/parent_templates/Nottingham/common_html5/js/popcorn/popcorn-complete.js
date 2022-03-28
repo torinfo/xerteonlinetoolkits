@@ -1617,7 +1617,6 @@
         }
       }
       while ( tracks.byStart[ start ] && tracks.byStart[ start ].start <= currentTime ) {
-
         byStart = tracks.byStart[ start ];
         natives = byStart._natives;
         type = natives && natives.type;

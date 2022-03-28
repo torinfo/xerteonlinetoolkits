@@ -44,9 +44,13 @@ language: feedbackLabel singleRight singleWrong multiRight multiWrong checkBtnTx
                 $learningObjectParent = eval(x_currentPageXML.nodeName);
                 $target = $("#" + options.target);
                 $target.hide();
-                x_createBlock($('<div class="panel">mcqDiv</div>')
-                    .appendTo($("#" + options.targetRef))
-                    .attr("id","testBlock"), options.blockData, 0)
+
+
+                $optHolder = $('<div class="optionHolder"/>').appendTo($target);
+
+                x_createBlock($('<div class="panel"></div>')
+                    .appendTo($optHolder)
+                    .attr("id","testBlock"), options.blockData, 0);
             },
 
             start: function(event, options) {
@@ -66,7 +70,6 @@ language: feedbackLabel singleRight singleWrong multiRight multiWrong checkBtnTx
                             "overflow-x": "hidden"
                         });
                         $optHolder.show();
-                        $checkBtn.show();
                     }
                     else {
                         var hh = $(".mainMedia").height();

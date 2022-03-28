@@ -509,7 +509,48 @@
 									popupWindow.focus();
 								}
 							} else if (hsType === "block"){
+								//BLOCK CODE
 								debugger
+								$x_body.append('<div id="x_' + type + '" class="x_popupDialog"></div>');
+
+								var $x_popupDialog = $("#x_" + type);
+								$x_popupDialog
+										.dialog({
+											closeOnEscape:  true,
+											title:          title,
+											closeText:      close,
+											close: function() {
+												$x_popupDialog.parent().detach();
+												if (onclose && typeof onclose == 'function')  onclose();
+											},
+											create: function(event, ui) {
+												$(this).parent(".ui-dialog").find(".ui-dialog-titlebar-close .ui-icon")
+														.removeClass("ui-icon-closethick")
+														.addClass("fa fa-x-close");
+											}
+										})
+										.parent().hide();
+
+								if (load == undefined) { // load dialog contents from a file in the models_html5 folder called [type].html
+									if (typeof modelfilestrs[type] != 'undefined')
+									{
+										load = modelfilestrs[type];
+										$x_popupDialog.html(load);
+										x_setDialogSize($x_popupDialog, position);
+									}
+									else
+									{
+										$x_popupDialog.load(x_templateLocation + "models_html5/" + type + ".html", function () {
+											x_setDialogSize($x_popupDialog, position);
+										});
+									}
+
+								} else {
+									$x_popupDialog.html(load);
+									x_setDialogSize($x_popupDialog, position);
+								}
+
+								x_dialogInfo[i].built = $x_popupDialog.parent();
 							}
 							// Keep highlighted/selected
 							if (x_currentPageXML.getAttribute("highlight") == "true") {
