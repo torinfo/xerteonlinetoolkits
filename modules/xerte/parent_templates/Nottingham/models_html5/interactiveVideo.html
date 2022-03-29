@@ -35,7 +35,8 @@
                 isPlaying = false;
                 isMuted = false;
                 lastTime = -1;
-                trackBarEnabled = true;
+                trackBarEnabled = true,
+                amountOfInteractiveBlocks = 0;
     
             
             // function called every time the page is viewed after it has initially loaded
@@ -1554,6 +1555,8 @@
                         if(pluginName === "blockpanel"){
                             pluginAttributes.targetRef = targetRef;
                             pluginAttributes.blockData = data[j].childNodes[0];
+                            pluginAttributes.amountOfInteractiveBlocks = amountOfInteractiveBlocks;
+                            amountOfInteractiveBlocks++;
                         }
 
                         popcornInstance[pluginName](pluginAttributes);

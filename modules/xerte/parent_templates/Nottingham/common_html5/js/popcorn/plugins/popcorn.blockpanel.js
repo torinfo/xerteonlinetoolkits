@@ -50,7 +50,7 @@ language: feedbackLabel singleRight singleWrong multiRight multiWrong checkBtnTx
 
                 x_createBlock($('<div class="panel"></div>')
                     .appendTo($optHolder)
-                    .attr("id","testBlock"), options.blockData, 0);
+                    .attr("id","testBlock"), options.blockData, options.amountOfInteractiveBlocks);
             },
 
             start: function(event, options) {
