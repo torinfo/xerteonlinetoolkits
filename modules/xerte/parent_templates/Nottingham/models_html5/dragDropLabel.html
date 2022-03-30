@@ -228,9 +228,9 @@
                         }
                         tempData.splice(labelNum, 1);
                     });
-
             // set up drag events (mouse and keyboard controlled)
             if (interactivity == "Match") {
+                debugger
                 XTEnterInteraction(x_currentPage, 0, 'match', x_currentPageXML.getAttribute("name"), correctOptions, correctAnswer, correctFeedback, x_currentPageXML.getAttribute("grouping"));
                 $("#labelHolder .label")
                         .draggable({
@@ -771,7 +771,7 @@
                         success: numCorrect == $(x_currentPageXML).children().length,
                         score: $(x_currentPageXML).children().length === 0 ? 100.0 : numCorrect * 100.0 /  $(x_currentPageXML).children().length
                     };
-                XTExitInteraction(x_currentPage, 0, result, l_options, l_answer, l_feedback, x_currentPageXML.getAttribute("trackinglabel"));
+                XTExitInteraction(x_currentPage, 0, result, l_options, l_answer, l_feedback, 0, x_currentPageXML.getAttribute("trackinglabel"));
 
                 if ($(x_currentPageXML).children().length === 0) {
                     XTSetPageScore(x_currentPage, 100, x_currentPageXML.getAttribute("trackinglabel"));
