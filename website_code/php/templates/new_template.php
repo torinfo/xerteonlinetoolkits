@@ -33,6 +33,7 @@ require_once("../../../config.php");
 require_once("../user_library.php");
 require_once("../template_library.php");
 require_once("../file_library.php");
+require_once("../folder_status.php");
 
 if(empty($_SESSION['toolkits_logon_id'])) {
     die("Please login");
@@ -46,7 +47,7 @@ database_connect("New template connect","new template fail");
 
 $root_folder_id = get_user_root_folder();
 
-if (isset($_POST["folder_id"]) && strlen($_POST["folder_id"]) > 0)
+if (isset($_POST["folder_id"]) && strlen($_POST["folder_id"]) > 0 && is_user_creator_folder($_POST["folder_id"]))
 {
     $folder_id = $_POST["folder_id"];
 }

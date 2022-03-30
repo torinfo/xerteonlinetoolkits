@@ -38,11 +38,15 @@ if (!isset($_SESSION['toolkits_logon_username']))
 
 if (isset($_POST['folder_id']))
 {
-    move_folder($_POST['folder_id'], $_POST['destination']);
+    if (is_user_creator_folder($_POST['folder_id'])){
+        move_folder($_POST['folder_id'], $_POST['destination']);
+    }
 }
 else
 {
-    move_file($_POST['template_id'],$_POST['destination']);
+    if (is_user_creator($_POST['template_id'])){
+        move_file($_POST['template_id'],$_POST['destination']);
+    }
 }
 
 ?>
