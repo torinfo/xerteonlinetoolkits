@@ -135,8 +135,7 @@
 						success: checkAnswers[i].correct,
 						score: checkAnswers[i].correct ? 100.0 : 0.0
 					};
-                    debugger
-					XTExitInteraction(x_currentPage, 0, result, "", inputs[i], "", i, x_currentPageXML.getAttribute("trackinglabel")); 
+					XTExitInteraction(x_currentPage, 0, result, "", inputs[i], "", i, x_currentPageXML.getAttribute("trackinglabel"));
 					if (checkAnswers[i].correct) {
 						amountOfCorrect++;
 					}
@@ -171,8 +170,7 @@
 				
                 if (x_currentPageXML.getAttribute("trackingWeight") != undefined) {
                     this.weighting = x_currentPageXML.getAttribute("trackingWeight");
-                }
-                XTSetPageType(x_currentPage, 'fill-in', 1, this.weighting);
+                } 
 
                 var panelWidth = x_currentPageXML.getAttribute("panelWidth"),
                     $splitScreen = $("#pageContents .splitScreen");

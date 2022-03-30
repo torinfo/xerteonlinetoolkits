@@ -326,6 +326,7 @@ function XTResults(fullcompletion) {
             nrvisited++;
         }
     })
+    debugger
     if (nrcompleted != 0) {
         if (!fullcompletion) {
             completion = Math.round((nrcompleted / nrvisited) * 100);

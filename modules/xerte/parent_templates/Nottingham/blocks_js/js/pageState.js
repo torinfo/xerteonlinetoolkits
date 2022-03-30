@@ -25,7 +25,6 @@ function pageState(id, page_nr, ia_type, ia_name){
 
 
     function exit(){
-        debugger
         this.end = new Date();
         var duration = this.end.getTime() - this.start.getTime();
         this.duration += duration
