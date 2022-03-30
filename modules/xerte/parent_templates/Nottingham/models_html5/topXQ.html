@@ -135,9 +135,8 @@
 						success: checkAnswers[i].correct,
 						score: checkAnswers[i].correct ? 100.0 : 0.0
 					};
-					XTExitInteraction(x_currentPage, i, result, "", inputs[i], "", x_currentPageXML.getAttribute("trackinglabel"));
-
-
+                    debugger
+					XTExitInteraction(x_currentPage, 0, result, "", inputs[i], "", i, x_currentPageXML.getAttribute("trackinglabel")); 
 					if (checkAnswers[i].correct) {
 						amountOfCorrect++;
 					}
@@ -290,6 +289,19 @@
                     checkBtnTxt = "Submit";
                 }
                 var attempt = 1;
+
+                let amountAnswers = 0;
+                if(x_currentPageXML.getAttribute("numberAnswers") === "*"){
+                    amountAnswers = x_currentPageXML.children.length;
+                } else {
+                    amountAnswers = x_currentPageXML.getAttribute("numberAnswers");
+                }
+
+                for (let i = 0; i < amountAnswers; i++) {
+                    XTEnterInteraction(x_currentPage, 0, "fill-in", x_GetTrackingTextFromHTML(x_currentPageXML.getAttribute("prompt"), ""), "", "-", $pageContents.data('correctOptionsFeedback'), x_currentPageXML.getAttribute("grouping"), null, i);
+                    XTSetInteractionPageXML(x_currentPage, 0, x_currentPageXML, i);
+                    XTSetInteractionType(x_currentPage,0, 'fill-in', this.weighting, i);
+                }
 				
 				$("#checkButton")
 					.button({
@@ -308,14 +320,14 @@
 							}
 						}
 
-						var blankAnswers = [];
-						for (i = 0; i < x_currentPageXML.getAttribute("numberAnswers"); i++) {
-							blankAnswers.push("-");
-						}
-						
-						for (i = 0; i < blankAnswers.length; i++) {
-							XTEnterInteraction(x_currentPage, i, "fill-in", x_GetTrackingTextFromHTML(x_currentPageXML.getAttribute("prompt"), ""), "", blankAnswers[i], $pageContents.data('correctOptionsFeedback'), x_currentPageXML.getAttribute("grouping"));
-						}
+						// var blankAnswers = [];
+						// for (i = 0; i < x_currentPageXML.getAttribute("numberAnswers"); i++) {
+						// 	blankAnswers.push("-");
+						// }
+						// for (i = 0; i < blankAnswers.length; i++) {
+						// 	XTEnterInteraction(x_currentPage, i, "fill-in", x_GetTrackingTextFromHTML(x_currentPageXML.getAttribute("prompt"), ""), "", blankAnswers[i], $pageContents.data('correctOptionsFeedback'), x_currentPageXML.getAttribute("grouping"));
+                        //
+                        // }
 						
 						if (!$pageContents.data('hasExited')) {
 							$pageContents.data('hasExited', true);

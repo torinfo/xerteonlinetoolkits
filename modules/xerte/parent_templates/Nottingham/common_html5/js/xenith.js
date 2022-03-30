@@ -1854,6 +1854,7 @@ function x_createBlock(container, module, modulePosition){
 	var jsName = module.tagName.replace("Block", "")
 	container.append('<div id="block' + modulePosition+'" class="iblock x-card"></div>');
 	$("#"+blockid).load(x_templateLocation + "blocks_html5/" + module.tagName+ ".html", function() {
+
 		window[jsName].init(module, blockid);
 	});
 
