@@ -337,7 +337,7 @@ function TrackingManager(){
                 var sit = this.findPage(page_nr);
                 if (sit != null) {
                     // Skip results page completely
-                    if (sit.ia_type !== "result") { 
+                    if (sit.ia_type !== "result") {
                         this.completedPages[i] = this.pageCompleted(sit);
                         sit.exit();
                     }

@@ -92,8 +92,8 @@ optional: feedback page synch play enable
 				score: scormScore
 			};
 			//Push results
-			XTSetPageScore(x_currentPage, scormScore, x_currentPageXML.getAttribute("trackinglabel"));
-			XTExitInteraction(x_currentPage, ia_nr, result, l_options, l_answers, l_feedback, x_currentPageXML.getAttribute("trackinglabel"));
+			//XTSetPageScore(x_currentPage, scormScore, x_currentPageXML.getAttribute("trackinglabel"));
+			XTExitInteraction(x_currentPage, ia_nr, result, l_options, l_answers, l_feedback, 0, x_currentPageXML.getAttribute("trackinglabel"));
             $learningObjectParent.enableControls(media.media, true);
         }
 		
@@ -482,7 +482,6 @@ optional: feedback page synch play enable
 			},
 			
 			start: function(event, options) {
-				debugger
 				// fire on options.start
 				var correctOptions = [];
 				var correctAnswers = [];
