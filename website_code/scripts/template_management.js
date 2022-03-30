@@ -1127,7 +1127,7 @@ function remove_this() {
                     continue;
                 } else if (node.xot_type == "file") {
                     if (node.parent == workspace.recyclebin_id) {
-                        var answer = confirm(DELETE_PERMENANT_PROMPT + " - " + node.text);
+                        var answer = confirm(DELETE_PERMANENT_PROMPT + " - " + node.text);
                         if (answer) {
                             remove_template(node.xot_id);
                         }
@@ -1135,17 +1135,18 @@ function remove_this() {
                         delete_template(node.xot_id);
                     }
                 } else {
-                    var folder_node = tree.get_node(node.id, false);
-
-                    var folder_children = folder_node.children.length;
-
-                    if (folder_children != 0) {
-
-                        alert(DELETE_FOLDER_NOT_EMPTY);
-
-                    } else {
-                        delete_folder(node.xot_id);
-                    }
+                    delete_folder(node.xot_id);
+                    // var folder_node = tree.get_node(node.id, false);
+                    //
+                    // var folder_children = folder_node.children.length;
+                    //
+                    // if (folder_children != 0) {
+                    //
+                    //     alert(DELETE_FOLDER_NOT_EMPTY);
+                    //
+                    // } else {
+                    //     delete_folder(node.xot_id);
+                    // }
                 }
             }
         }

@@ -49,7 +49,7 @@
 
 	var DELETE_PROMPT = "Are you sure you wish to delete?";
 
-	var DELETE_PERMENANT_PROMPT = "Are you sure you want to permenantly delete this project";
+	var DELETE_PERMANENT_PROMPT = "Are you sure you want to permanently delete this project";
 
 	var DELETE_FOLDER_NOT_EMPTY = "Sorry you cannot delete a folder that has projects in it. Please empty the folder first";
 

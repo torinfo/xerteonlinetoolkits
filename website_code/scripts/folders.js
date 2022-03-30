@@ -86,6 +86,9 @@ function delete_folder(folder_id){
 		data: {folder_id: folder_id},
 	})
 	.done(function(response){
+		if (response != ""){
+			alert(response);
+		}
 		refresh_workspace();
 	});
 }

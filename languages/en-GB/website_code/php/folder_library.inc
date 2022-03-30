@@ -15,3 +15,5 @@
 
 	define("FOLDER_LIBRARY_FAIL", "Error creating folder");
 
+    define("FOLDER_LIBRARY_DELETE_FAIL", "Could not delete ");
+

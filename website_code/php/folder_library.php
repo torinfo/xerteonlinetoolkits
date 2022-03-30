@@ -30,11 +30,12 @@ if (file_exists('../../../config.php')) {
 }
 require_once('file_library.php');
 require_once('user_library.php');
+require_once('folder_status.php');
 
 _load_language_file("/website_code/php/folder_library.inc");
 
 /**
- * 
+ *
  * Function make new folder
  * This function is used to send an error email meesage
  * @param string $folder_id = id for the new folder
@@ -89,9 +90,8 @@ function make_new_folder($folder_id,$folder_name){
 /**
  * 
  * Function delete folder
- * This function is used to send an error email meesage
- * @param string $folder_id = id for the new folder
- * @param string $folder_name = Name of the new folder
+ * This function deletes a folder (puts it in recyclebin)
+ * @param string $folder_id = id for the folder
  * @version 1.0
  * @author Patrick Lockley
  */
@@ -103,18 +103,53 @@ function delete_folder($folder_id){
     $database_id = database_connect("Delete folder database connect success","Delete folder database connect failed");
 
     $prefix = $xerte_toolkits_site->database_table_prefix;
-    
-    $query_to_delete_folder = "delete from {$prefix}folderdetails where folder_id=?";
-    $params = array($folder_id); 
 
-    //echo $query_to_delete_folder;
+    //Check if this is the folder's creator:
+    if(!is_user_creator_folder($folder_id)) {
+        $name_query = "SELECT folder_name from {$prefix}}folderdetails WHERE folder_id = ? ";
+        $name = db_query_one($name_query, array($folder_id));
+        echo(FOLDER_LIBRARY_DELETE_FAIL . $name['folder_name']);
+        return;
+    }
+
+    //Do recursively for all folders within this folder (depth first):
+    $query_for_folders = "select folder_id from {$prefix}folderdetails where folder_parent = ?";
+    $folders = db_query($query_for_folders, array($folder_id));
+
+    foreach($folders as $folder){
+        delete_folder($folder['folder_id']);
+    }
+
+    //delete (move to recyclebin) templates in this folder
+    $query_for_templates = "select template_id from {$prefix}templaterights WHERE folder = ?";
+    $templates = db_query($query_for_templates, array($folder_id));
+
+    foreach($templates as $template){
+        delete_template($template['template_id']);
+    }
+
+    //delete this folder from details and all rights
+    $query_to_delete_folder = "delete from {$prefix}folderdetails where folder_id = ? AND login_id = ?";
+    $params = array($folder_id, $_SESSION['toolkits_logon_id']);
 
     $ok = db_query($query_to_delete_folder, $params);
-    if($ok !== false) {
+
+    //delete everyone's rights to this folder
+    $query_to_delete_folder_rights = "delete from {$prefix}folderrights where folder_id = ?";
+    $params = array($folder_id);
+    $ok2 = db_query($query_to_delete_folder_rights, $params);
+
+
+    $query_to_delete_folder_group_rights = "delete from {$prefix}folder_group_rights where folder_id = ?";
+    $params = array($folder_id);
+    $ok3 = db_query($query_to_delete_folder_group_rights, $params);
+
+    if($ok !== false AND $ok2 !== false AND $ok3 !== false) {
         receive_message($_SESSION['toolkits_logon_username'], "USER", "SUCCESS", "Folder " . $folder_id . " deleted for " . $_SESSION['toolkits_logon_username'], "Folder deletion succeeded for " . $_SESSION['toolkits_logon_username']);
     }else{
         receive_message($_SESSION['toolkits_logon_username'], "USER", "CRITICAL", "Folder " . $folder_id . " not deleted for " . $_SESSION['toolkits_logon_username'], "Folder deletion falied for " . $_SESSION['toolkits_logon_username']);
     }
+
 
 }
 
@@ -138,7 +173,9 @@ function move_file($template_id,$destination)
 
     if (($destination != "")) {
 
-
+        if (!is_user_creator_folder($destination)){
+            return;
+        }
         /*
          * Move files in the database
          */
@@ -168,6 +205,9 @@ function move_folder($folder_id,$destination)
 
     if (($destination != "")) {
 
+        if (!is_user_creator_folder($destination)){
+            return;
+        }
 
         /*
          * Move folder in database
