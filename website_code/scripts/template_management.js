@@ -50,60 +50,13 @@ function url_return(url, parameter) {
     switch (url) {
 
         case "edit":
-            if (site_apache == "true") {
-
-                return url + "_" + parameter;
-
-            } else {
-
-                return url + ".php?template_id=" + parameter;
-
-            }
         case "edithtml":
-            if (site_apache == "true") {
-
-                return url + "_" + parameter;
-
-            } else {
-
-                return url + ".php?template_id=" + parameter;
-
-            }
-            break;
         case "preview":
-            if (site_apache == "true") {
-
-                return url + "_" + parameter;
-
-            } else {
-
-                return url + ".php?template_id=" + parameter;
-
-            }
-            break;
         case "play":
-            if (site_apache == "true") {
-
-                return url + "_" + parameter;
-
-            } else {
-
-                return url + ".php?template_id=" + parameter;
-
-            }
-            break;
         case "properties":
-            if (site_apache == "true") {
-
-                return url + "_" + parameter;
-
-            } else {
-
-                return url + ".php?template_id=" + parameter;
-
-            }
-            break;
         case "folderproperties":
+        case "groupproperties":
+        case "publishproperties":
             if (site_apache == "true") {
 
                 return url + "_" + parameter;
@@ -124,18 +77,6 @@ function url_return(url, parameter) {
                 return url + ".php"
 
             }
-        case "publishproperties":
-            if (site_apache == "true") {
-
-                return url + "_" + parameter;
-
-            } else {
-
-                return url + ".php?template_id=" + parameter;
-
-            }
-            break;
-
 
         default:
             break;
@@ -605,7 +546,12 @@ function properties_window(admin) {
             NewWindow.focus();
         } else {
             for (var i = 0; i < ids.length; i++) {
-                if (workspace.nodes[ids[i]].type != "folder" && workspace.nodes[ids[i]].type != "folder_shared" && workspace.nodes[ids[i]].type != "folder_group") {
+                if (workspace.nodes[ids[i]].type == "group") {
+                    var NewWindow = window.open(site_url + url_return("groupproperties", workspace.nodes[ids[i]].xot_id + "_group"), workspace.nodes[ids[i]].xot_id +
+                        "_group", "height=760, width=1000");
+                    NewWindow.window_reference = self;
+                    NewWindow.focus();
+                }else if (workspace.nodes[ids[i]].type != "folder" && workspace.nodes[ids[i]].type != "folder_shared" && workspace.nodes[ids[i]].type != "folder_group") {
                     if (workspace.nodes[ids[i]].parent != workspace.recyclebin_id) {
                         var NewWindow = window.open(site_url + url_return("properties", workspace.nodes[ids[i]].xot_id), workspace.nodes[ids[i]].xot_id,
                             "height=760,width=1000,status=yes");
@@ -614,7 +560,7 @@ function properties_window(admin) {
                     } else {
                         alert(RECYCLE_PROPERTIES);
                     }
-                } else {
+                }else {
                     var NewWindow = window.open(site_url + url_return("folderproperties", workspace.nodes[ids[i]].xot_id + "_folder"), workspace.nodes[ids[i]].xot_id +
                         "_folder", "height=760, width=1000");
                     NewWindow.window_reference = self;

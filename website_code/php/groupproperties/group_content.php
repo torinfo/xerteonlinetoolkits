@@ -20,16 +20,22 @@
  
 /**
  * 
- * copy to new folder page, the sites moves some items from one folder to another
+ * folder content page, used by the site to display a folder's contents
  *
  * @author Patrick Lockley
  * @version 1.0
  * @package
  */
 
-require_once('../../../config.php');
-include '../folder_library.php';
-include '../template_status.php';
+
+require_once("../../../config.php");
+include "../group_status.php";
+include "../user_library.php";
+
+_load_language_file("/website_code/php/groupproperties/group_content.inc");
+
+
+include "../display_library.php";
 
 if (!isset($_SESSION['toolkits_logon_username']))
 {
@@ -37,17 +43,19 @@ if (!isset($_SESSION['toolkits_logon_username']))
     die("Session is invalid or expired");
 }
 
-if (isset($_POST['folder_id']))
-{
-    if (is_user_creator_folder($_POST['folder_id'])){
-        move_folder($_POST['folder_id'], $_POST['destination']);
-    }
-}
-else
-{
-    if (is_user_creator($_POST['template_id'])){
-        move_file($_POST['template_id'],$_POST['destination']);
-    }
+/**
+ * connect to the database
+ */
+
+if(is_numeric($_POST['group_id']) && (is_user_member_group($_POST['group_id']) || is_user_admin())){
+
+    $database_connect_id = database_connect("Group_content_template.php connect success","Group_content_template.php connect failed");
+
+    echo "<p class=\"header\"><span>" . GROUP_CONTENT_TEMPLATE_CONTENTS . "</span></p>";
+    list_folder_contents_event_free($_POST['group_id'],$path = '', $item = false, $input_method = 'link', $group=true);
+    
+}else{
+    echo "<p>" . GROUP_PROPERTIES_FAIL . "</p>";
 }
 
 ?>

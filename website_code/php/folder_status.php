@@ -222,8 +222,9 @@ function is_user_creator_folder($folder_id){
 
     if($row['role']=="creator"){
         return true;
-    }else{
-        return false;
+    }else {
+        $parent = db_query_one("select folder_parent from {$xerte_toolkits_site->database_table_prefix}folderdetails where folder_id = ? and login_id=?", array($folder_id, $_SESSION['toolkits_logon_id']));
+        return ($parent['folder_parent'] == '0'); //could be workspace or recyclebin which is not represented in folderrights
     }
 }
 

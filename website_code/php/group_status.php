@@ -17,37 +17,27 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
- 
+
+
 /**
  * 
- * copy to new folder page, the sites moves some items from one folder to another
+ * Function is_user_member_group
  *
- * @author Patrick Lockley
- * @version 1.0
+ * @params number $group_id - the group ID
+ * @return bool - is ID member of this group
  * @package
  */
 
-require_once('../../../config.php');
-include '../folder_library.php';
-include '../template_status.php';
 
-if (!isset($_SESSION['toolkits_logon_username']))
-{
-    _debug("Session is invalid or expired");
-    die("Session is invalid or expired");
+function is_user_member_group($group_id){
+    global $xerte_toolkits_site;
+    $prefix = $xerte_toolkits_site->database_table_prefix;
+
+    $login_id = $_SESSION['toolkits_logon_id'];
+    $query = db_query_one("select login_id from {$prefix}user_group_members where login_id = ? and group_id = ?", array($login_id, $group_id));
+    return (!is_null($query));
+
+
 }
 
-if (isset($_POST['folder_id']))
-{
-    if (is_user_creator_folder($_POST['folder_id'])){
-        move_folder($_POST['folder_id'], $_POST['destination']);
-    }
-}
-else
-{
-    if (is_user_creator($_POST['template_id'])){
-        move_file($_POST['template_id'],$_POST['destination']);
-    }
-}
 
-?>

@@ -45,13 +45,17 @@ $level = -1;
  * @author Patrick Lockley
  */
 
-function list_folders_in_this_folder_event_free($folder_id, $path = '', $item = false, $input_method = 'link') {
+function list_folders_in_this_folder_event_free($folder_id, $path = '', $item = false, $input_method = 'link', $group = false) {
 
 
   global $xerte_toolkits_site,$level;
 
   $prefix = $xerte_toolkits_site->database_table_prefix;
-  $query = "SELECT folder_id, folder_name FROM {$prefix}folderdetails WHERE folder_parent = ?";
+  if ($group){
+      $query = "SELECT folder_id, folder_name FROM {$prefix}folderdetails WHERE folder_id in  (SELECT folder_id FROM {$prefix}folder_group_rights WHERE group_id = ?)";
+  }else{
+      $query = "SELECT folder_id, folder_name FROM {$prefix}folderdetails WHERE folder_parent = ?";
+  }
   $rows = db_query($query, array($folder_id));
   
   foreach($rows as $row) { 
@@ -87,14 +91,20 @@ $extra2='';
  * @author Patrick Lockley
  */
 
-function list_files_in_this_folder_event_free($folder_id, $path = '', $item = false, $input_method = 'link') {
+function list_files_in_this_folder_event_free($folder_id, $path = '', $item = false, $input_method = 'link', $group = false) {
 
   global $xerte_toolkits_site,$level;
   $prefix = $xerte_toolkits_site->database_table_prefix;
 
-  $query = "SELECT template_name, template_id FROM {$prefix}templatedetails WHERE template_id IN (
+  if ($group){
+      $query = "SELECT template_name, template_id FROM {$prefix}templatedetails WHERE template_id IN (
+      SELECT {$prefix}template_group_rights.template_id FROM {$prefix}template_group_rights WHERE group_id = ?)
+          ORDER BY {$prefix}templatedetails.date_created ASC";
+  }else{
+      $query = "SELECT template_name, template_id FROM {$prefix}templatedetails WHERE template_id IN (
       SELECT {$prefix}templaterights.template_id FROM {$prefix}templaterights WHERE folder = ?)
           ORDER BY {$prefix}templatedetails.date_created ASC";
+  }
 
   $rows = db_query($query, array($folder_id));
   foreach($rows as $row) {
@@ -132,12 +142,12 @@ $extra="<input type=\"radio\" name=\"xerteID\" id=\"xerteID-$item\" value=\"$ite
  * @author Patrick Lockley
  */
 
-function list_folder_contents_event_free($folder_id, $path = '', $item = false, $input_method = 'link') {
+function list_folder_contents_event_free($folder_id, $path = '', $item = false, $input_method = 'link', $group=false) {
   global $level;
   $level++;
-    $item = list_folders_in_this_folder_event_free($folder_id, $path, $item, $input_method);
+    $item = list_folders_in_this_folder_event_free($folder_id, $path, $item, $input_method, $group=$group);
   $level++;
-    $item = list_files_in_this_folder_event_free($folder_id, $path, $item, $input_method);
+    $item = list_files_in_this_folder_event_free($folder_id, $path, $item, $input_method, $group=$group);
   $level--;
   $level--;
   return $item;
