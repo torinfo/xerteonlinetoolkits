@@ -370,11 +370,6 @@ function button_check(){
                 };
                 break;
             case "folder":
-                propertiesbtn.removeAttribute("disabled");
-                propertiesbtn.className = "xerte_workspace_button";
-                propertiesbtn.onclick = function () {
-                    properties_window()
-                };
                 deletebtn.removeAttribute("disabled");
                 deletebtn.className = "xerte_workspace_button";
                 deletebtn.onclick = function () {
@@ -382,6 +377,11 @@ function button_check(){
                 };
             case "folder_shared":
             case "folder_group":
+                propertiesbtn.removeAttribute("disabled");
+                propertiesbtn.className = "xerte_workspace_button";
+                propertiesbtn.onclick = function () {
+                    properties_window()
+                };
 
                 duplicatebtn.removeAttribute("disabled");
                 duplicatebtn.className = "xerte_workspace_button";

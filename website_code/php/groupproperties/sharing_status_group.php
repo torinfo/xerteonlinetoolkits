@@ -71,15 +71,9 @@ foreach($query_sharing_rows as $row) {
     echo "<p class=\"share_border\"></p>";
 
 }
-//
-////Only show sharing_stop message if this folder is directly shared with this person
-////stopping sharing via a group or via a higher up folder cannot be done on a folder by folder basis
-//$role = get_explicit_folder_role($folder_id);
-//if($role != 'creator' && !is_null($role) &&!is_user_admin()){
-//
-//    echo "<p><a href=\"javascript:delete_sharing_folder('" . $folder_id . "','" . $_SESSION['toolkits_logon_id'] . "',true)\">" . SHARING_STOP . "</a></p>";
-//
-//}
+
+echo "<p><a href=\"javascript:leave_group('" . $group_id . "','" . $_SESSION['toolkits_logon_id'] . "',true)\">" . SHARING_STOP . "</a></p>";
+
 
 
 

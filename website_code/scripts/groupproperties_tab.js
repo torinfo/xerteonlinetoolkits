@@ -129,45 +129,31 @@ function share_stateChanged(){
 	}
 }
 
-function delete_sharing_folder(folder_id,id,who_deleted_flag, group=false){
+function leave_group(group_id,id){
 
-	var answer = confirm(SHARING_CONFIRM_FOLDER_PROPERTIES);
-	var after_sharing_deleted = false;
+	var answer = confirm(SHARING_CONFIRM_GROUP_PROPERTIES);
 	if(answer){
-		if(who_deleted_flag){
-			after_sharing_deleted = true;
-		}
-
 		if(setup_ajax()!=false){
 			$.ajax({
 				type: "POST",
-				url: "website_code/php/folderproperties/remove_sharing_folder.php",
+				url: "website_code/php/groupproperties/leave_group.php",
 				data: {
-					folder_id: folder_id,
-					id: id,
-					group: group,
-					user_deleting_self: after_sharing_deleted
+					group_id: group_id,
+					id: id
 				},
 			})
 				.done(function(response){
 					$('#area3').html(response);
 
-					if(after_sharing_deleted){
-						if(typeof window_reference==="undefined"){
-							window.opener.refresh_workspace();
-						}
-						else {
-							window_reference.refresh_workspace();
-						}
-
+					if(typeof window_reference==="undefined"){
+						window.opener.refresh_workspace();
+					}
+					else {
+						window_reference.refresh_workspace();
 					}
 
-					sharing_status_folder()
+					sharing_status_group()
 				});
 		}
 	}
 }
-
-//   	xmlHttp.open("post",properties_ajax_php_path + url,true);
-// 	xmlHttp.onreadystatechange=properties_stateChanged;
-// 	xmlHttp.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");

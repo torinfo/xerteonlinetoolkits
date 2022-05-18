@@ -20,7 +20,7 @@
 
     define("SHARING_REMOVE", "Remove");
 
-    define("SHARING_STOP","Click to stop sharing this folder");
+    define("SHARING_STOP","Click to leave this group");
 
 	define("SHARING_NOT_SHARED","This folder is not shared");
 
