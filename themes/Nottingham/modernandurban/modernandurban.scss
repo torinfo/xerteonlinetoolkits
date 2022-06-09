@@ -87,6 +87,25 @@ img {
 	}
 }
 
+.iblock {
+	box-shadow: 0 4px 8px 0 rgb(0 0 0 / 20%);
+	padding: 16px;
+	background: $brightcolor !important;
+	margin-bottom: 30px;
+	border-radius:6px;
+}
+
+
+#infoHolder{
+	border-radius:$mediumroundedcorners;
+	background: $lightestcolor;
+}
+
+.pageContents
+{
+	color: black;
+}
+
 //* iPads (portrait) ----------- */
 @media only screen
 and (min-device-width : 768px)
@@ -103,3 +122,4 @@ and (orientation : portrait) {
 		right: 0;
 	}
 }
+

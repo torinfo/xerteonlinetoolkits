@@ -576,6 +576,7 @@ function publishproperties_window(admin) {
 
 function properties_window(admin) {
     if (!admin) {
+        debugger
         var tree = $.jstree.reference("#workspace"),
             ids = tree.get_selected();
         if (ids.length == 0)

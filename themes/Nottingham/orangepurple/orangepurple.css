@@ -5,6 +5,13 @@ body {
 	color:		#7c097d;
 }
 
+.iblock {
+	box-shadow: 0 4px 8px 0 rgb(0 0 0 / 20%);
+	padding: 16px;
+	background: #FFFFF0 !important;
+	margin-bottom: 30px;
+}
+
 #x_mainHolder {
 	border:		1px solid #ffffff;
 	background-color: #fffff0;

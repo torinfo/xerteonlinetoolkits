@@ -42,7 +42,9 @@ define("INDEX_WORKSPACE_TITLE","My Projects");
 
 define("INDEX_CREATE","Project Templates");
 
-define("INDEX_DETAILS","Project Details");
+define("INDEX_PROJECTS","Projects");
+
+define("INDEX_DETAILS","Tutorial");
 
 define("INDEX_SORT","Sort");
 

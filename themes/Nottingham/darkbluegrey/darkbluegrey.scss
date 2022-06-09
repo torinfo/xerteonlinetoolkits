@@ -76,6 +76,7 @@ a:hover{
 	color:$linkhover;
 }
 
+
 #x_mainHolder{
 	background:$defaultpagebackground;
 	border-top-right-radius:$largeroundedcorners;
@@ -90,7 +91,7 @@ a:hover{
 }
 #infoHolder{
 	border-radius:$mediumroundedcorners;
-	background: $contrastcolor;
+	background: white;
 }
 
 //*****panel all pages with a panel*****/
@@ -100,6 +101,16 @@ a:hover{
 	background:$contrastcolor;
 	box-shadow: none;
 	color:$whiteorlightest;
+}
+.pageContents
+{
+	color: white;
+}
+.iblock {
+	box-shadow: 0 4px 8px 0 rgb(0 0 0 / 20%);
+	padding: 16px;
+	background: #3F4957 !important;
+	margin-bottom: 30px;
 }
 .panelPage{
 	padding:1%;

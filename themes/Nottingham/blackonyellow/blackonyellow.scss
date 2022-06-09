@@ -15,6 +15,14 @@ body {
 	color:$mainfontcolour;
 	font-family: $mainfonts;
 }
+
+.iblock {
+	box-shadow: 0 4px 8px 0 rgb(0 0 0 / 20%);
+	padding: 16px;
+	background: $bodybackgroundcolor !important;
+	margin-bottom: 30px;
+}
+
 .cke_editable {
 	background: $defaultpagebackground;
 }
@@ -57,7 +65,7 @@ a:visited{color:$linkvisited;}
 }
 #infoHolder{
 	border-radius:$mediumroundedcorners;
-	background: $lightestcolor;
+	background: white;//$lightestcolor;
 }
 /*****panel all pages with a panel*****/
 .panel {

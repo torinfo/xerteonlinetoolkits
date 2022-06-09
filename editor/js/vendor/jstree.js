@@ -93,6 +93,7 @@
 	 * @return {jsTree} the new instance
 	 */
 	$.jstree.create = function (el, options) {
+		debugger
 		var tmp = new $.jstree.core(++instance_counter),
 			opt = options;
 		options = $.extend(true, {}, $.jstree.defaults, options);

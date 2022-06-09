@@ -43,7 +43,7 @@
 
 .ui-accordion .ui-accordion-content {
   border-radius: 1vmin;
-  background: #F9BA32;
+  background: #f9ba32;
   color: #2F3131;
 }
 
@@ -92,8 +92,8 @@
 }
 
 .back.panel {
-  background: #F9BA32;
-  border: #F9BA32;
+  background: #f9ba32;
+  border: #f9ba32;
   color: #2F3131;
 }
 
@@ -148,7 +148,7 @@
 }
 
 a.topic.highlight {
-  background: #F9BA32;
+  background: #f9ba32;
 }
 
 a.topic.highlight:hover {
@@ -156,7 +156,7 @@ a.topic.highlight:hover {
 }
 
 div.infoHolder.ui-tabs.ui-widget.ui-widget-content.ui-corner-all {
-  background: #F9BA32;
+  background: #f9ba32;
 }
 
 #pageContents textarea {
@@ -171,7 +171,7 @@ div.infoHolder.ui-tabs.ui-widget.ui-widget-content.ui-corner-all {
 
 .x_textHighlight_page .ui-tabs {
   border-radius: 2vmin;
-  background: #F9BA32;
+  background: #f9ba32;
 }
 
 #listholder a.listitem, a:visited {
@@ -179,7 +179,7 @@ div.infoHolder.ui-tabs.ui-widget.ui-widget-content.ui-corner-all {
 }
 
 .x_annotatedDiagram_page .highlight {
-  background: #F9BA32;
+  background: #f9ba32;
 }
 
 .x_annotatedDiagram_page .hotspot {
@@ -187,7 +187,7 @@ div.infoHolder.ui-tabs.ui-widget.ui-widget-content.ui-corner-all {
 }
 
 .x_annotatedDiagram_page #infoHolder {
-  background: #F9BA32;
+  background: #f9ba32;
   margin-left: 10px;
 }
 
@@ -274,11 +274,11 @@ a.hotspot, a.hotspot.selected {
 }
 
 .x_list_page .highlight {
-  background: #F9BA32;
+  background: #f9ba32;
 }
 
 #dragDropHolder {
-  background: #F9BA32;
+  background: #f9ba32;
   padding: 10px;
   border-radius: 2vmin;
 }
@@ -359,7 +359,7 @@ table tr.shaded {
 }
 
 tr {
-  background: #F9BA32;
+  background: #f9ba32;
   color: #2F3131;
 }
 
@@ -387,7 +387,7 @@ table.glossary tr.shaded {
 }
 
 #subMenuItems .subMenuItem {
-  background: #F9BA32;
+  background: #f9ba32;
   color: #2F3131;
 }
 
@@ -469,7 +469,7 @@ td, th {
 }
 
 tr.alt td {
-  background-color: #F9BA32;
+  background-color: #f9ba32;
 }
 
 tr.alt td {
@@ -562,39 +562,39 @@ tr.alt td {
 }
 
 #x_nextBtn:after {
-  content: "";
+  content: "\f138";
 }
 
 #x_prevBtn:after {
-  content: "";
+  content: "\f137";
 }
 
 #x_cssBtn:after {
-  content: "";
+  content: "\f066";
 }
 
 #x_colourChangerBtn:after {
-  content: "";
+  content: "\f042";
 }
 
 #x_mediaBtn:after {
-  content: "";
+  content: "\f16a";
 }
 
 #x_glossaryBtn:after {
-  content: "";
+  content: "\f02d";
 }
 
 #x_helpBtn:after {
-  content: "";
+  content: "\f128";
 }
 
 #x_menuBtn:after {
-  content: "";
+  content: "\f0c9";
 }
 
 #x_saveSessionBtn:after {
-  content: "";
+  content: "\f0c7";
   font-family: "Font Awesome 5 Free";
   font-weight: 900;
 }
@@ -604,11 +604,11 @@ tr.alt td {
 }
 
 #x_footerBlock button.ui-state-hover {
-  color: #F9BA32;
+  color: #f9ba32;
 }
 
 #x_footerBlock button.ui-state-focus {
-  color: #F9BA32;
+  color: #f9ba32;
 }
 
 #x_footerBlock button.ui-state-active {
@@ -636,12 +636,12 @@ tr.alt td {
 }
 
 #x_footerChevron:hover {
-  color: #F9BA32;
+  color: #f9ba32;
 }
 
 .ui-dialog .ui-widget-header {
   border: 1px solid #426E86;
-  background: #F9BA32;
+  background: #f9ba32;
   color: #2F3131;
   font-weight: bold;
 }
@@ -739,7 +739,7 @@ tr.alt td {
   display: table;
   padding: 10px;
   font-style: normal;
-  background-color: #F9BA32;
+  background-color: #f9ba32;
   color: #2F3131;
 }
 
@@ -824,7 +824,7 @@ tr.alt td {
   border-left: 5px solid;
   -webkit-box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
-  border-color: #F9BA32;
+  border-color: #f9ba32;
 }
 
 .highlight2 {
@@ -930,7 +930,7 @@ blockquote:after {
 }
 
 .bq1 {
-  border-color: #F9BA32;
+  border-color: #f9ba32;
 }
 
 .bq1:after {
@@ -939,7 +939,7 @@ blockquote:after {
   line-height: 0.1em;
   margin-left: 0.1em;
   vertical-align: -0.6em;
-  color: #F9BA32;
+  color: #f9ba32;
 }
 
 .bq1:before {
@@ -948,7 +948,7 @@ blockquote:after {
   line-height: 0.1em;
   margin-right: 0.25em;
   vertical-align: -0.4em;
-  color: #F9BA32;
+  color: #f9ba32;
 }
 
 .bq2 {
@@ -1062,12 +1062,12 @@ blockquote:after {
 }
 
 .speech-bubble1 {
-  background: #F9BA32;
+  background: #f9ba32;
   color: #2F3131;
 }
 
 .speech-bubble1:after {
-  border-right-color: #F9BA32;
+  border-right-color: #f9ba32;
 }
 
 .speech-bubble2 {
@@ -1142,7 +1142,7 @@ tt a, samp a, code a, .marker a {
 
 var {
   font-family: "Varela Round", sans-serif;
-  background-color: #F9BA32;
+  background-color: #f9ba32;
   color: #2F3131;
   display: table;
   border-radius: 1vmin;
@@ -1358,14 +1358,14 @@ h3 {
 
 #infoHolder {
   border-radius: 2vmin;
-  background: #F9BA32;
+  background: #f9ba32;
 }
 
 .panel {
   border-radius: 2vmin;
-  background: #F9BA32;
+  background: #f9ba32;
   box-shadow: none;
-  border-color: #F9BA32;
+  border-color: #f9ba32;
 }
 
 .panelPage {
@@ -1389,6 +1389,23 @@ img {
     right: 0;
   }
 }
+.iblock {
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+  padding: 16px;
+  background: #f9ba32 !important;
+  margin-bottom: 30px;
+  border-radius: 6px;
+}
+
+#infoHolder {
+  border-radius: 2vmin;
+  background: #F8F1E5;
+}
+
+.pageContents {
+  color: black;
+}
+
 @media only screen and (min-device-width: 768px) and (max-device-width: 1024px) and (orientation: portrait) {
   #x_mainHolder {
     max-width: 98%;

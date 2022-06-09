@@ -4,6 +4,17 @@ body {
 	font-family: Arial, sans-serif;
 }
 
+.iblock {
+	box-shadow: 0 4px 8px 0 rgb(0 0 0 / 20%);
+	padding: 16px;
+	background: #be0f34 !important;
+	margin-bottom: 30px;
+}
+.pageContents
+{
+	color: white;
+}
+
 #x_mainHolder {
 	border:		1px solid #be0f34;
 }

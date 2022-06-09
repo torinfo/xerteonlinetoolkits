@@ -21,9 +21,31 @@
 /* styles we recommend changing to rebrand your version of Xerte Online Toolkits are in themeStyles.css */
 /* changing other styles in this file may cause problems in functionality */
 
+
+
 body {
 	margin: 0px;
 }
+
+/*Doorgevoerd vanuit andere css blocks aanpassingen Alberto*/
+.iblock {
+	box-shadow: 0 4px 8px 0 rgb(0 0 0 / 20%);
+	padding: 16px;
+	margin-bottom: 30px;
+}
+
+#infoHolder{
+	background: white;
+}
+
+.pageContents
+{
+	color: black;
+}
+/*----------------------------------------------------------*/
+
+
+
 
 p {
     padding: 0.3em;

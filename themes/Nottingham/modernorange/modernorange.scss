@@ -72,6 +72,25 @@ a:hover{
 	box-shadow: none;
 	border-color: $brightcolor;
 }
+
+.iblock {
+	box-shadow: 0 4px 8px 0 rgb(0 0 0 / 20%);
+	padding: 16px;
+	background: $brightcolor !important;
+	margin-bottom: 30px;
+}
+
+.pageContents
+{
+	color: white;
+}
+#infoHolder{
+	border-radius:$mediumroundedcorners;
+	background: white;
+}
+
+
+
 .panelPage{
 	padding:1%;
 }
@@ -111,3 +130,5 @@ and (orientation : portrait) {
 		right: 0;
 	}
 }
+
+
