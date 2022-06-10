@@ -6,14 +6,12 @@
 /* Important note: unlike some older Xerte themes this part of this default theme has been developed using sass and scss files */
 /*You should not edit the editorstyles.css file directly or change values directly unless you wish to override something*/
 /*Use SASS and the files in the scss folder name _allvariables.scss to start any customisation*/
-
 /*Doorgevoerd vanuit andere css blocks aanpassingen Alberto*/
 .iblock {
   box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
   padding: 16px;
   margin-bottom: 30px;
 }
-
 
 #infoHolder {
   background: white;

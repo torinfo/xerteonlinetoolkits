@@ -977,6 +977,10 @@ height: 40%;
 	display: inline-block;
 }
 
+.warning {
+	color: red;
+}
+
 .divAccount img
 {
 	height: 100px;

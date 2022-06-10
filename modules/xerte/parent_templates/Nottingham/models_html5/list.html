@@ -97,7 +97,7 @@
 					
 					$thisItem
 						.attr({
-							"href": "#item" + i + "_" + x_pageInfo[x_currentPage].linkID,
+							"href": "#",
 							"aria-label": x_getAriaText(this.getAttribute("name") + instruction)
 							})
 						.html(this.getAttribute("name"))
@@ -110,7 +110,10 @@
 							"movieSize"	:this.getAttribute("movieSize"),
 							"built"	:false
 							})
-						.on("click", function() {
+						.on("click", function(e) {
+
+							e.preventDefault();
+
 							var $this = $(this);
 							if ($this != $(".listItem.highlight")) {
 								var infoString = "<h3>" + $this.data("name") + "</h3>" + "<p>" + x_addLineBreaks($this.data("text")) + "</p>";
@@ -211,8 +214,6 @@
 					'background-color':backgroundColor
 				})
 			}
-
-
 			
 			x_pageLoaded();
 		}
