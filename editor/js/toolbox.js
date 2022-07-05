@@ -53,7 +53,7 @@ var EDITOR = (function ($, parent) {
 
 			// it's a category
 			if (itemData.submenu != undefined) {
-                var subList = $("<ul>");
+                var subList = $("<ul class='categorystyle'>"); /* Edited: was just "<ul>" */
                 $.each(itemData.submenu, function () {
                     if (!this.deprecated && (this.simple_enabled || advanced_toggle)) {
                         subList.append(getMenuItem(this));
@@ -71,7 +71,7 @@ var EDITOR = (function ($, parent) {
 				var $insertInfo = $('<ul class="details"><li><a href="#"><div class="insert_buttons"/>' + hint + '</a></li></ul>'),
 					label = language.insertDialog.$label + ":",
 					pos = label.indexOf('{i}');
-				
+
 				label = pos >= 0 ? label.substr(0, pos) + itemData.name + label.substr(pos + 3) : label;
 
 				$insertInfo.find(".insert_buttons").append('<div>' + label + '</div>');

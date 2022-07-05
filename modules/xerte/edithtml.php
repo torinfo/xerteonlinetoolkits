@@ -169,7 +169,7 @@ function output_editor_code($row_edit, $xerte_toolkits_site, $read_status, $vers
 		}
 		array_multisort($display_name, SORT_ASC, $ThemeList);
 		// Add default theme to beginning
-		array_unshift($ThemeList, array('name' => "default", 'display_name' => "Xerte Online Toolkits", 'description' => "Xerte Online Toolkits", 'preview' => $xerte_toolkits_site->site_url . "modules/xerte/parent_templates/Nottingham/common_html5/default.jpg"));
+		array_unshift($ThemeList, array('name' => "default-dark", 'display_name' => "Xerte Online Toolkits", 'description' => "Xerte Online Toolkits", 'preview' => $xerte_toolkits_site->site_url . "modules/xerte/parent_templates/Nottingham/common_html5/default.jpg"));
     }
 
     /**
@@ -222,9 +222,10 @@ function output_editor_code($row_edit, $xerte_toolkits_site, $read_status, $vers
     
 		<link rel="icon" href="favicon_edit.ico" type="image/x-icon">
 		<link rel="shortcut icon" href="favicon_edit.ico" type="image/x-icon">
-
+    <!-- Added -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
     <link rel="stylesheet" href="editor/css/jquery-ui.css?version=<?php echo $version;?>">
-    <link rel="stylesheet" href="editor/js/vendor/themes/default/style.css?version=<?php echo $version;?>" />
+    <link rel="stylesheet" href="editor/js/vendor/themes/default-dark/style.css?version=<?php echo $version;?>" />
     <link rel="stylesheet" type="text/css" href="website_code/styles/xerte_buttons.css?version=<?php echo $version;?>" />
     <link rel="stylesheet" type="text/css" href="editor/css/complex.css?version=<?php echo $version;?>" />
     <link rel="stylesheet" type="text/css" href="editor/css/fonts.css?version=<?php echo $version;?>" />
@@ -369,7 +370,10 @@ function output_editor_code($row_edit, $xerte_toolkits_site, $read_status, $vers
 <!-- Load latest font awesome after ckeditor, other wise the latest fontawesome is overruled by the fontawsome plugin of ckeditor -->
 <link rel="stylesheet" type="text/css" href="modules/xerte/parent_templates/Nottingham/common_html5/fontawesome-5.6.3/css/all.min.css">
 <link rel="stylesheet" type="text/css" href="modules/xerte/parent_templates/Nottingham/common_html5/fontawesome-5.6.3/css/v4-shims.min.css" />
-
+<!-- Added Bootstrap -->
+<!--
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+-->
 <script>
     <?php
     echo "previewxmlurl=\"" . $preview_url . "\";\n";

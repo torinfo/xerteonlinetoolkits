@@ -487,6 +487,32 @@ button.ui-button::-moz-focus-inner {
 	font-weight: normal;
 	margin: -1px;
 }
+/* Added ---------------------------*/
+.ui-menu
+{
+
+}
+/* Tweede menu */
+.ui-menu .ui-widget
+{
+
+}
+.ui-menu .ui-widget .ui-widget-content
+{
+	display: flex;
+	width: 1000px;
+}
+/* Derde menu */
+.ui-menu .ui-widget .ui-widget-content .ui-corner-all
+{
+	/* color: red; */
+}
+
+.ui-menu .categorystyle
+{
+
+}
+/* -------------------------------- */
 
 .ui-menu .ui-state-disabled {
 	font-weight: normal;

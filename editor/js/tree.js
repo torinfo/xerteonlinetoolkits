@@ -1010,7 +1010,7 @@ var EDITOR = (function ($, parent) {
                                 .addClass('enabled');
                         }
                         var tablerow = $('<tr>')
-                            .append($('<td>')
+                            .append($('<td class="card">')
                                 .append(button));
 
                         if (sorted_options['optional'][i].value.common) {
@@ -1026,7 +1026,7 @@ var EDITOR = (function ($, parent) {
             if (table.find("tr").length > 0) {
                 if (menu_options.menu != undefined) {
                     var tablerow = $('<tr>')
-                        .append('<td class="optPropTitle">' + menu_options.menuItem + '</td>');
+                        .append('<td class="optPropTitle card">' + menu_options.menuItem + '</td>');
                     table.prepend(tablerow);
                 }
                 html.append(table);
@@ -1035,7 +1035,7 @@ var EDITOR = (function ($, parent) {
             if (table2.find("tr").length > 0) {
                 var tablerow = $('<tr>');
                 if (templateframework != 'site') {
-                    tablerow.append('<td class="optPropTitle">' + (language.optionalPropHTML && language.optionalPropHTML.$general ? language.optionalPropHTML.$general : "General") + '</td>');
+                    tablerow.append('<td class="optPropTitle card">' + (language.optionalPropHTML && language.optionalPropHTML.$general ? language.optionalPropHTML.$general : "General") + '</td>');
                 }
                 table2.prepend(tablerow);
                 html.append(table2);
@@ -1534,6 +1534,8 @@ var EDITOR = (function ($, parent) {
         $("#treeview").jstree({
             "plugins": ( /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) ) ? ["types"] : ["types", "dnd"],
             "core" : {
+                // Added themes
+                "themes": { name : "default-dark", dots : false, icons : true},
                 "data" : tree_json,
                 "check_callback" : true, // Need this to allow the copy_node function to work...
                 "multiple" : false // Need to disable this just now as nodes could be on different levels

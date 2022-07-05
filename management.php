@@ -203,6 +203,10 @@ if (empty($_POST["login"]) && empty($_POST["password"])) {
 
                 <link href="website_code/styles/frontpage.css" media="screen" type="text/css" rel="stylesheet" />
                 <link href="website_code/styles/xerte_buttons.css" media="screen" type="text/css" rel="stylesheet" />
+                <!-- Added Bootstrap -->
+
+                <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+
                 <link href="website_code/styles/management.css" media="screen" type="text/css" rel="stylesheet" />
                 <link rel="stylesheet" type="text/css" href="modules/xerte/parent_templates/Nottingham/common_html5/font-awesome-4.3.0/css/font-awesome.min.css">
                 <link rel="stylesheet" type="text/css" href="modules/xerte/parent_templates/Nottingham/common_html5/fontawesome-5.6.3/css/all.min.css">

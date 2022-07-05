@@ -99,6 +99,20 @@ _load_language_file("/user_settings.inc");
                             <input type='password' id="newpassrepeat" ><br>
                             <?php echo "<button type='button' class='xerte_button_c' onclick='changePassword(\"". $_SESSION['toolkits_logon_username'] ."\")'>" . USER_SETTINGS_PASSWORD_SUBMIT . "</button>"?>
                         </form>
+                        <br>
+                        <hr>
+                        <form action="" method="post">
+                            <label for="">Login Background image</label><br>
+                            <select name="loginBackground" id="loginBackground">
+                                <option value="" disabled selected>Choose option</option>
+                                <option value="Xerte">Xerte</option>
+                                <option value="Summa">Summa</option>
+                            </select>
+                            <br>
+                            <br>
+                            <input type="submit" name="submit" value="Select" class="xerte_button_c">
+                        </form>
+
                         <div id="result"></div>
                     </div>
                     </div>

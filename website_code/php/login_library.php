@@ -262,22 +262,58 @@ function login_form($messages, $xerte_toolkits_site)
 </div>
 
 <div class="mainbody">
-    <div class="title_holder">
-        <div class="title_welcome">
-            <?PHP echo $xerte_toolkits_site->welcome_message; ?>
-        </div>
-        <div class="mainbody_holder">
-            <div style="margin:0 7px 4px 0"><?php display_language_selectionform("");?></div>
-            <form method="post" enctype="application/x-www-form-urlencoded" >
-                <p style="margin:4px"><?php echo INDEX_USERNAME; ?>:
-                <input class="xerte_input_box" type="text" size="20" maxlength="100" name="login" id="login_box"/></p>
-                <p style="margin:4px"><?PHP echo INDEX_PASSWORD; ?>:
-                <input class="xerte_input_box" type="password" size="20" maxlength="100" name="password" /></p>
-                <button type="submit" class="xerte_button_c" style="margin:0 3px 0 0"><i class="fa fa-sign-in"></i> <?php echo INDEX_BUTTON_LOGIN; ?></button>
-            </form>
-            <script>document.getElementById("login_box").focus();      </script>
-        </div>
+    <div class="divider"></div>
+    <div class="title_welcome">
+        <?PHP echo $xerte_toolkits_site->welcome_message; ?>
     </div>
+    <div class="divider"></div>
+    <form method="post" enctype="application/x-www-form-urlencoded" style="text-align: center" >
+    <input style="background-color:white;
+        border-radius:40px;
+        font-size:16px;
+        padding:15px;
+        margin:5px;
+        height: 27px;
+        width: 280px;
+        border: none" name="login" id="login_box" type="text" placeholder="Gebruikersnaam">
+    <br>
+    <input style="background-color:white;
+        border-radius:40px;
+        font-size:16px;
+        padding:15px;
+        margin:5px;
+        height: 27px;
+        width: 280px;
+        border: none" type="password" name="password" placeholder="Wachtwoord">
+    <br>
+    <button style="background-color:purple;
+        color: white;
+        border-radius:40px;
+        font-size:16px;
+        padding:15px;
+        margin:5px;
+        height: 60px;
+        width: 315px;
+        border: none;
+        cursor:pointer;" type="submit">
+        <b><?php echo INDEX_BUTTON_LOGIN; ?></b>
+    </button>
+        <br><br>
+        <div text-align="center">
+            <!-- Vergeten wachtwoord -->
+            <a onClick="popitup('website_code/php/forget-password.php')" style="color:#FFFFFF;cursor:pointer;">Wachtwoord vergeten?</a>
+            <script type="text/javascript">
+                function popitup(url) {
+                    newwindow=window.open(url,'name','height=400,width=400');
+                    if (window.focus) {newwindow.focus()}
+                    return false;
+                }
+            </script>
+        </div>
+
+    </form>
+    <script>document.getElementById("login_box").focus();      </script>
+
     <div style="clear:both;"></div>
     <?php if (strlen($xerte_toolkits_site->tutorial_text) > 0) {
         echo "<div class=\"tutorials\">";
@@ -287,15 +323,38 @@ function login_form($messages, $xerte_toolkits_site)
 
 </div>
 <div class="bottompart">
-	<p class="news_title">
-		<?PHP echo INDEX_HELP_TITLE; ?>
-	</p>
-	<p class="news_story">
-		<?php echo INDEX_HELP_INTRODUCTION; ?>
-		<button type="button" class="xerte_button_c" onClick="window.open('<?php echo $xerte_toolkits_site->demonstration_page; ?>','_blank');"><?php echo INDEX_HELP_INTRO_LINK_TEXT; ?></button>
-	</p>
-	<div class="border">
+
+
+    <!--
+    <div class="border">
 	</div>
+    -->
+    <br>
+    <form action="" method="post">
+        <select name="LoginColor">
+            <option value="" disabled selected>Choose option</option>
+            <option value="10046dtp.jpg">Xerte</option>
+            <option value="summa-background.jpg">Summa</option>
+        </select>
+        <input type="submit" name="submitthis" value="Change Theme">
+    </form>
+    <?php
+    if(isset($_POST['submitthis'])){
+        if(!empty($_POST['LoginColor'])) {
+            $selected = $_POST['LoginColor'];
+            //echo 'You have chosen: ' . $selected;
+            echo '<style type="text/css">
+        .mainbody {
+            background-image: linear-gradient(to bottom, rgba(117, 19, 93, 0.73), rgba(245, 246, 252, 0.52)), url(website_code/images/' . $selected . ')!important;
+        }
+        </style>';
+        } else {
+            echo 'Please select the value.';
+        }
+    }
+    ?>
+
+    <br>
 	<p class="copyright">
 		<?php echo $xerte_toolkits_site->copyright; ?> <i class="fa fa-info-circle" aria-hidden="true" style="color:#f86718; cursor: help;" title="<?PHP $vtext = "version.txt";$lines = file($vtext);echo $lines[0];?>"></i>
 	</p><div class="footerlogos"><a href="https://xot.xerte.org.uk/play.php?template_id=214#home" target="_blank" title="Xerte accessibility statement https://xot.xerte.org.uk/play.php?template_id=214"><img src="website_code/images/wcag2.1AA-blue-v.png" border="0"></a> <a href="https://opensource.org/" target="_blank" title="Open Source Initiative: https://opensource.org/"><img src="website_code/images/osiFooterLogo.png" border="0"></a> <a href="https://www.apereo.org" target="_blank" title="Apereo: https://www.apereo.org"><img src="website_code/images/apereoFooterLogo.png" border="0"></a> <a href="https://xerte.org.uk" target="_blank" title="Xerte: https://xerte.org.uk"><img src="website_code/images/xerteFooterLogo.png" border="0"></a></div>

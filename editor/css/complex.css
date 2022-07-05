@@ -15,7 +15,7 @@ button
 }
 
 body {
-    background: #b3b3b5;
+    background: #FFFFFF; /* Edited: was #b3b3b5 */
     /* padding-bottom: 30px; */
 }
 
@@ -38,7 +38,7 @@ div.cke_editable_inline i.fa {
 
 #languagePanel hr { display: none;}
 
-div.ui-layout-north div.content {background-image: none; background-color: #4D585D;}
+div.ui-layout-north div.content {background-image: none; background-color: #FFFFFF;/* Edited: was #4D585D */}
 
 #checkbox_outer .disabled
 {
@@ -150,7 +150,7 @@ input.media, input.date
 .pane ,				/* outer pane class */
 .ui-layout-pane {	/* inner pane class */
 	background-color: #FFF;
-	border: 1px solid #777;
+	/* border: 1px solid #777; Edited out */
 	padding: 0;/* alignment & padding is on the inner-divs */
 	overflow: auto; /* will be auto-set to 'hidden' for any pane with a 'scrolling content div' */
 }
@@ -180,12 +180,118 @@ input.media, input.date
 
 .pane-west .content #treeview {margin-top: 10px; padding-bottom: 25px; overflow-x: auto; height:91%}
 
+/* Added Edit ----------------------------------------------------------------- */
+#treeview {
+	background-color: #FFFFFF;
+}
+
+/* Header color */
+#mainContent .header
+{
+	background-color: #283C53;
+}
+.pane-west .header
+{
+	background-color: #283C53;
+}
+.pane-east .header
+{
+	background-color: #283C53; /* Edited: was #e8a533 */
+	/* #283C53 */
+}
+
+hide ui-layout-west pane pane-west
+{
+	background-color: #FFFFFF;
+	box-shadow: 5px 3px 8px #888888;
+}
+
+/* Edited tree */
+/*
+.testtree
+{
+	height: 100px;
+	background-color: red;
+}
+*/
+
+.jstree-anchor {
+	padding: 10px;
+	width: 100%;
+}
+
+.jstree-leaf, .jstree-closed, .jstree-last
+{
+	/*
+	border-radius: 8px;
+	border-style: solid;
+	border-color: grey;
+	border-radius: 8px;
+	*/
+}
+.jstree-children > li {
+	/*
+	border-radius: 8px 0px 0px 0px;
+	border-top: 5px solid;
+	border-left: 5px solid;
+	border-image: linear-gradient(to right, #C3C2C0, #FFFFFF) 1;
+	*/
+}
+.jstree-icon {
+
+}
+.jstree-default-dark .jstree-clicked {
+	background: #e8a533;
+	/* background-image: linear-gradient(to right, #e8a533 70%, white); */
+	/* border-radius: 8px; */
+	color: white;
+}
+.jstree-default-dark .jstree-anchor {
+	color: black;
+	text-shadow: none;
+	/* Added for Bootstrap */
+	height: 47px;
+}
+.jstree-anchor:hover, .jstree-clicked{
+	color: white;
+	/* border-radius: 8px; */
+}
+.jstree-anchor:hover
+{
+	background-color: #283C53;
+}
+.jstree-default-dark .jstree-clicked,
+.jstree-default-dark .jstree-checked {
+	color: white;
+}
+.jstree-default-dark > .jstree-no-dots .jstree-open > .jstree-ocl {
+	margin-top: 11px;
+}
+.jstree-default-dark > .jstree-no-dots .jstree-closed > .jstree-ocl {
+	margin-top: 11px;
+}
+
+.fa-plus-circle::before
+{
+	color: #fff;
+}
+
+.ui-menu .categorystyle
+{
+	display: flex;
+	height: 600px;
+	width: 600px;
+}
+
+
+/* End Edit ---------------------------------------------------------------------- */
+
 /* inner divs inside Outer East/West panes */
 .header {
     background-image: none;
     background-color: #f0f0f2;
     padding: 10px 5px;
-    height: 35px;
+    height: 60px; /* Edited for Bootstrap: was 35px */
     border-bottom: 1px solid #e0e0e0;
     color: #333;
 	/* font-weight: bold; */
@@ -280,7 +386,7 @@ input.media, input.date
 
 .resizer-west-open ,
 .resizer-east-open {
-	background-color: #999;
+	background-color: #ffffff; /* Edited: was #999 */
 	opacity: 0.1;
 	filter: alpha(opacity=10);
 }
@@ -332,9 +438,9 @@ input.media, input.date
 .resizer-east-closed {
 	/*background: #D1E6FC url(../img/D1E6FC_40x100_textures_10_dots_medium_90.png) 0 0 repeat; */
     /* background: #4d585e url(../img/80ade5_40x100_textures_04_highlight_hard_100.png) 0 50% repeat-x; */
-    background: #b3b3b5;
-	border-top: 1px solid #777;
-	border-bottom: 1px solid #777;
+    background: #ffffff; /* Edited: was #b3b3b5 */
+	/* border-top: 1px solid #777; Edited out */
+	/* border-bottom: 1px solid #777; Edited out */
 }
 
 /*.resizer-west-closed:hover ,
@@ -493,7 +599,8 @@ span.button-close-east			{ background: url(../img/chevron-right_444444_15.png) n
 #optional_title
 {
     margin-top: 4px;
-
+	/* Added */
+	color: #fff;
 }
 
 #pagetype
@@ -533,8 +640,11 @@ span.button-close-east			{ background: url(../img/chevron-right_444444_15.png) n
 }
 
 #insert_menu #menu, #insert_menu #menu > li > ul > li  {
-	width:		auto;
+	width:		1400px; /* Edited: was auto */
 	font-size:	1em;
+	/* Added */
+	display: flex;
+	flex-direction: row-reverse;
 }
 
 #insert_menu .ui-menu {
@@ -547,7 +657,9 @@ span.button-close-east			{ background: url(../img/chevron-right_444444_15.png) n
 	direction: ltr;
 	text-align: left;
     z-index: 6;
-
+	/* Added */
+	display: flex;
+	vertical-align: top;
 }
 
 #insert_menu .ui-menu .ui-menu-item {
@@ -599,20 +711,22 @@ margin-right: 3px;
 
 /* XERTE ADDITIONS */
 div.ui-layout-north div.content {
-	background-image:url(../img/TopBar.jpg);
+	/* background-image:url(../img/TopBar.jpg); Edited out */
 	background-repeat:repeat-x;
 	margin:0 auto;
 	width:100%;
 	padding:0;
+	/* Added */
+	background-color: #283C53;
 }
 
 div.ui-layout-west, div.ui-layout-east {
-    background: #b3b3b5;
+    background: #ffffff; /* Edited: was #b3b3b5 */
     padding: 8px 8px 8px 8px;
 }
 
 div.ui-layout-center {
-    background: #b3b3b5;
+    background: #ffffff; /* Edited: was #b3b3b5 */
     padding: 8px 0px 8px 0px;
 }
 
@@ -803,16 +917,32 @@ td.flashonly, td.deprecated{
 }
 
 .optButtonContainer  table {
-    border-spacing: 0px;
+    border-spacing: 0px 10px; /* Edited: was 0px  */
+	/* Added */
+	padding: 5px;
 }
 
 .optButtonContainer  td {
-    padding: 1px;
+    padding: 10px; /* Edited. Was 1px */
+	/* Added */
+	/*
+	border-style: solid;
+	border-color: lightgrey;
+	border-radius: 8px;
+	*/
+	box-shadow: 0px 2px 4px #888888;
+}
+/* Added */
+.optButtonContainer  td:hover {
+	background-color:#e8a533
+;
 }
 
 .optButtonContainer .optPropTitle {
-	background-color: #f0f0f2;
+	background-color: #e8a533; /* Edited: was #f0f0f2 */
 	padding: 10px;
+	/* Added */
+	color: #FFFFFF;
 }
 
 .divInsertOptParam {
@@ -826,6 +956,8 @@ td.flashonly, td.deprecated{
     text-align: left;
     font-size: 1.0em!important;
     color: #444;
+	/* Added for Bootstrap*/
+	padding: 10px;
 }
 
 .btnInsertOptParam.disabled img {
@@ -1019,7 +1151,7 @@ div.hotspotLightbox button.editorbutton:hover {
     background: #f86718;
 }
 
-.xerte_button_dark {background: transparent; border: 0; color: #333;}
+.xerte_button_dark {background: transparent; border: 0; color: #ffffff; /* Edited: was #333 */}
 
 .xerte-icon.optional { cursor: pointer; }
 
@@ -1128,6 +1260,16 @@ div#bottom_buttons .xerte-icon,  div#top_buttons .xerte-icon {cursor: pointer;}
     color: #444;
     display: inline-block;
 }
+/* Added for Leftbar buttons-------------*/
+#preview_button > .xerte-icon, #publish_button > .xerte-icon, #insert_button > .xerte-icon, #copy_button > .xerte-icon, #delete_button > .xerte-icon
+{
+	color: #fff;
+}
+#pagetype
+{
+	color: #fff;
+}
+/* ----------------- */
 
 
 #bottom_buttons i {color: white;}
@@ -1213,6 +1355,10 @@ div#IconPickerModal.show-all .ip-icons-content .ip-icons-area {
 	margin-right: 5px;
 	color: #ff8c00;
 }
+/* Added */
+.optButtonContainer  td:hover .tooltipIcon{
+	color: black;
+}
 
 .deprecatedIcon.deprecatedLevel_low
 {
@@ -1226,6 +1372,9 @@ div#IconPickerModal.show-all .ip-icons-content .ip-icons-area {
 i.tooltipIcon {
 	padding-left: 6px;
 	padding-right: 3px;
+	/* Added */
+	padding-top: 3.5px;
+	float: right;
 }
 
 .hiddenIcon {
