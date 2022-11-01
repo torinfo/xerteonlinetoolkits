@@ -44,12 +44,16 @@ var EDITOR = (function ($, parent) {
 
             if (itemData.icon != undefined) {
                 data.icon = itemData.icon;
-				data.html = '<img class="icon" src="' + moduleurlvariable + 'icons/' + itemData.icon + '.png"/>' + data.html;
+				data.html = '<img class="icon" src="' + moduleurlvariable + 'icons/' + itemData.icon + '.png"/>' + '<p class="Icon_Text">' + data.html + '</p>';
             }
+            console.log(itemData.item);
+
+
 
             var item = $("<li>")
 				.append($("<a>", data))
-				.attr("item", itemData.item);
+                .attr("item", itemData.item);
+
 
 			// it's a category
 			if (itemData.submenu != undefined) {

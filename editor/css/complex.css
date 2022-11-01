@@ -178,7 +178,7 @@ input.media, input.date
 .pane-center {margin-left: 25px; background: #fff}
 .pane-east {margin-right: 15px}
 
-.pane-west .content #treeview {margin-top: 10px; padding-bottom: 25px; overflow-x: auto; height:91%}
+.pane-west .content #treeview {margin-top: 0px; padding-bottom: 25px; overflow-x: auto; height: 97%;}
 
 /* Added Edit ----------------------------------------------------------------- */
 #treeview {
@@ -275,14 +275,47 @@ hide ui-layout-west pane pane-west
 {
 	color: #fff;
 }
-
+/* edited by Don van Aspert*/
 .ui-menu .categorystyle
 {
 	display: flex;
-	height: 600px;
-	width: 600px;
+	flex-wrap: wrap;
+	flex-direction: row-reverse;
+	height: 94%;
+	width: 21.875em;
 }
-
+.categorystyle li .ui-corner-all
+{
+	height: auto !important;
+	width: 6.25em !important;
+	padding: 5px 5px 5px 5px;
+	float: left;
+	display: flex;
+	flex-direction: column;
+	flex-wrap: wrap;
+	align-content: stretch;
+}
+[role=menuitem] p
+{
+	text-align: center;
+	margin-top: 1%;
+	margin-bottom: 0;
+	width: 100%;
+}
+/* Extra small devices (phones, 600px and down) */
+@media only screen and (max-width: 600px)
+{
+	.categorystyle li .ui-corner-all
+	{
+		height: auto !important;
+		width: 6.25em !important;
+		padding: 5px 5px 5px 5px;
+		float: left;
+		display: flex;
+		flex-direction: column;
+		flex-wrap: nowrap;
+	}
+}
 
 /* End Edit ---------------------------------------------------------------------- */
 
@@ -313,7 +346,7 @@ hide ui-layout-west pane pane-west
 	position: relative;
 	overflow: hidden;
 	white-space: nowrap;
-	height: 26px;
+	height: 50px;
     border-top: 1px solid #777;
     border-bottom-left-radius: 4px;
     border-bottom-right-radius: 4px;
@@ -322,7 +355,6 @@ hide ui-layout-west pane pane-west
 .subhead { border-bottom: 1px solid #777; }
 
 .content {
-	padding:	5px;
 	position:	relative;
 	overflow:	auto;
     background: #fff;
@@ -613,7 +645,7 @@ span.button-close-east			{ background: url(../img/chevron-right_444444_15.png) n
 
 /* INSERT MENU STYLES */
 .ui-menu {
-    width: 250px;
+    width: 14em;
 }
 
 #insert-info {
@@ -640,10 +672,10 @@ span.button-close-east			{ background: url(../img/chevron-right_444444_15.png) n
 }
 
 #insert_menu #menu, #insert_menu #menu > li > ul > li  {
-	width:		1400px; /* Edited: was auto */
+	width:		auto;  /*Edited: was 1400px */
 	font-size:	1em;
-	/* Added */
-	display: flex;
+	/* Added
+	display: flex;*/
 	flex-direction: row-reverse;
 }
 
@@ -667,17 +699,21 @@ span.button-close-east			{ background: url(../img/chevron-right_444444_15.png) n
 }
 
 #insert_menu .icon {
-	padding:	0 0.4em 0 0;
+	padding:	0 0 0 0;
 	border:	none;
+	width: 100%;
+	height: 100%;
 }
 
 #insert_menu .ui-menu.details {
 	padding:	5px;
 	position:	fixed !important;
+
 }
 
 #insert_menu .ui-menu.details li {
 	margin:	0;
+	position: fixed;
 }
 
 #insert_menu .ui-menu.details a {
@@ -727,7 +763,7 @@ div.ui-layout-west, div.ui-layout-east {
 
 div.ui-layout-center {
     background: #ffffff; /* Edited: was #b3b3b5 */
-    padding: 8px 0px 8px 0px;
+    padding: 0px 0px 0px 0px;
 }
 
 div.ui-layout-north div.content img {
@@ -873,6 +909,7 @@ fieldset.wizardgroup .group_info {
 
 #parameter_checkboxes span {
     margin-right: 15px;
+	margin-left: 4px;
 }
 img.optional {
 	cursor: pointer;
@@ -1150,7 +1187,6 @@ div.hotspotLightbox button.editorbutton {
 div.hotspotLightbox button.editorbutton:hover {
     background: #f86718;
 }
-
 .xerte_button_dark {background: transparent; border: 0; color: #ffffff; /* Edited: was #333 */}
 
 .xerte-icon.optional { cursor: pointer; }
@@ -1166,34 +1202,37 @@ button:hover {background: #f86718; color: #000000;}
 
 .ui-menu-item a .ui-menu-icon {
 	margin-top: 2px;
-}
 
+	/* edited by Don van Aspert*/
+	display: none;
+}
+/*end edit */
 #insert_menu .ui-menu.details a.pageExample {
-	cursor: pointer;
-	display: inline;
+cursor: pointer;
+display: inline;
 }
 
 #insert_menu .ui-menu.details a.exampleButton .fa {
-	margin-right: .3em;
-	margin-top: .3em;
+margin-right: .3em;
+margin-top: .3em;
 }
 
 .insert_button, #insert_menu .ui-menu.details a.exampleButton {
-	background: #f0f0f2;
-	border: 2px solid #f0f0f2;
-	border-radius: 0px;
-	font-size:0.8em;
-	margin: 0 2px !important;
-	padding: .3em !important;
+background: #f0f0f2;
+border: 2px solid #f0f0f2;
+border-radius: 0px;
+font-size:0.8em;
+margin: 0 2px !important;
+padding: .3em !important;
 }
 .insert_button:hover, #insert_menu .ui-menu.details a.exampleButton:hover {
-	background: #ff8c00;
-	border-color: #ff8c00;
-	color: #000000;
+background: #ff8c00;
+border-color: #ff8c00;
+color: #000000;
 }
 
 #insert_menu .ui-menu.details a.exampleButton {
-	font-size: 1em;
+font-size: 1em;
 }
 
 .xerte_button {background: transparent; border: 0;}
@@ -1203,7 +1242,7 @@ button:hover {background: #f86718; color: #000000;}
 .xerte_button.disabled:hover {background: transparent; border: 0; color: #ccc; }
 
 .xerte_button.disabled .xerte-icon {
-    color:#ccc;
+color:#ccc;
 }
 
 /*button.hseditModeButton:hover {background: transparent; color: graytext;}*/
