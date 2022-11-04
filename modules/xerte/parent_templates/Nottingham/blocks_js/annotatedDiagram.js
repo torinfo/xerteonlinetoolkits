@@ -125,62 +125,64 @@ var annotatedDiagram = new function () {
         //padding = parseInt($imageHolder.css("padding-left"));
         $hsHolder.css("margin", $imageHolder.css("padding-left"));
 
-        if (x_currentPageXML.getAttribute("url").split(".")[1].slice(0, -1) != "swf") {
-            var imgMaxW = 400, imgMaxH = 450;
-            if (x_browserInfo.mobile == true) {
-                imgMaxW = 250; // mobile
-                imgMaxH = 250;
-            } else if (x_currentPageXML.getAttribute("align") == "Top") {
-                imgMaxW = 600;
-                imgMaxH = 250;
-            }
+       if(x_currentPageXML.getAttribute("url").split(".").length <= 1) {
+           if (x_currentPageXML.getAttribute("url").split(".")[1].slice(0, -1) != "swf") {
+               var imgMaxW = 400, imgMaxH = 450;
+               if (x_browserInfo.mobile == true) {
+                   imgMaxW = 250; // mobile
+                   imgMaxH = 250;
+               } else if (x_currentPageXML.getAttribute("align") == "Top") {
+                   imgMaxW = 600;
+                   imgMaxH = 250;
+               }
 
-            $imageHolder.append('<img />');
-            $img = $imageHolder.find("img");
+               $imageHolder.append('<img />');
+               $img = $imageHolder.find("img");
 
-            $img
-                .css({ // stops flicker on 1st load of image
-                    "opacity": 0,
-                    "filter": 'alpha(opacity=0)'
-                })
-                .one("load", function () {
-                    //x_scaleImg(this, imgMaxW, imgMaxH, true, true);
-                    $(this).css({
-                        "opacity": 1,
-                        "filter": 'alpha(opacity=100)'
-                    })
-                    annotatedDiagram.sizeChanged(blockid);
-                })
-                .attr({
-                    "src": x_evalURL(x_currentPageXML.getAttribute("url")),
-                    "alt": x_currentPageXML.getAttribute("tip")
-                })
-                .each(function () { // called if loaded from cache as in some browsers load won't automatically trigger
-                    if (this.complete) {
-                        $(this).trigger("load");
-                    }
-                });
+               $img
+                   .css({ // stops flicker on 1st load of image
+                       "opacity": 0,
+                       "filter": 'alpha(opacity=0)'
+                   })
+                   .one("load", function () {
+                       //x_scaleImg(this, imgMaxW, imgMaxH, true, true);
+                       $(this).css({
+                           "opacity": 1,
+                           "filter": 'alpha(opacity=100)'
+                       })
+                       annotatedDiagram.sizeChanged(blockid);
+                   })
+                   .attr({
+                       "src": x_evalURL(x_currentPageXML.getAttribute("url")),
+                       "alt": x_currentPageXML.getAttribute("tip")
+                   })
+                   .each(function () { // called if loaded from cache as in some browsers load won't automatically trigger
+                       if (this.complete) {
+                           $(this).trigger("load");
+                       }
+                   });
 
-        } else {
-            // have had to add this in I found one old project where a swf was used instead of an image on this page
-            var size = [300, 300];
-            if (x_currentPageXML.getAttribute("movieSize") != "" && x_currentPageXML.getAttribute("movieSize") != undefined) {
-                var dimensions = x_currentPageXML.getAttribute("movieSize").split(",");
-                if (Number(dimensions[0]) != 0 && Number(dimensions[1]) != 0) {
-                    size = [Number(dimensions[0]), Number(dimensions[1])];
-                }
-            }
+           } else {
+               // have had to add this in I found one old project where a swf was used instead of an image on this page
+               var size = [300, 300];
+               if (x_currentPageXML.getAttribute("movieSize") != "" && x_currentPageXML.getAttribute("movieSize") != undefined) {
+                   var dimensions = x_currentPageXML.getAttribute("movieSize").split(",");
+                   if (Number(dimensions[0]) != 0 && Number(dimensions[1]) != 0) {
+                       size = [Number(dimensions[0]), Number(dimensions[1])];
+                   }
+               }
 
-            $imageHolder.append('<div id="pageSWF"><h3 class="alert">' + x_getLangInfo(x_languageData.find("errorFlash")[0], "label", "You need to install the Flash Player to view this content.") + '</h3><p><a href="http://www.adobe.com/go/getflashplayer"><img class="flashImg" src="http://www.adobe.com/images/shared/download_buttons/get_flash_player.gif" alt="' + x_getLangInfo(x_languageData.find("errorFlash")[0], "description", "Get the Flash Player") + '" /></a></p></div>');
-            $img = jGetElement(blockid, "#pageSWF");
+               $imageHolder.append('<div id="pageSWF"><h3 class="alert">' + x_getLangInfo(x_languageData.find("errorFlash")[0], "label", "You need to install the Flash Player to view this content.") + '</h3><p><a href="http://www.adobe.com/go/getflashplayer"><img class="flashImg" src="http://www.adobe.com/images/shared/download_buttons/get_flash_player.gif" alt="' + x_getLangInfo(x_languageData.find("errorFlash")[0], "description", "Get the Flash Player") + '" /></a></p></div>');
+               $img = jGetElement(blockid, "#pageSWF");
 
-            $img.data("origSize", size);
+               $img.data("origSize", size);
 
-            this.imgLoaded(blockid);
+               this.imgLoaded(blockid);
 
-            swfobject.embedSWF(x_evalURL(x_currentPageXML.getAttribute("url")), "pageSWF", size[0], size[1], "9.0.0", x_templateLocation + "common_html5/expressInstall.swf", "", "", "");
-            jGetElement(blockid, "#pageSWF").attr("title", x_currentPageXML.getAttribute("tip"));
-        }
+               swfobject.embedSWF(x_evalURL(x_currentPageXML.getAttribute("url")), "pageSWF", size[0], size[1], "9.0.0", x_templateLocation + "common_html5/expressInstall.swf", "", "", "");
+               jGetElement(blockid, "#pageSWF").attr("title", x_currentPageXML.getAttribute("tip"));
+           }
+       }
         //this.sizeChanged();
     }
 
