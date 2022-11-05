@@ -106,12 +106,14 @@ var annotatedDiagram = new function () {
 
     this.init = function (pageXML, blockid) {
         x_currentPageXML = pageXML;
+
         $pageContents = jGetElement(blockid, ".pageContents");
         $imageHolder = jGetElement(blockid, ".imageHolder");
         $canvas = jGetElement(blockid, ".canvas");
         $hsHolder = jGetElement(blockid, ".hsHolder");
         $textContents = jGetElement(blockid, ".textContents");
         firstLoad = true;
+
 
         if (x_currentPageXML.getAttribute("align") != "Top") {
             $imageHolder.css("right", $x_pageDiv.css("padding-right"));
@@ -125,7 +127,7 @@ var annotatedDiagram = new function () {
         //padding = parseInt($imageHolder.css("padding-left"));
         $hsHolder.css("margin", $imageHolder.css("padding-left"));
 
-       if(x_currentPageXML.getAttribute("url").split(".").length <= 1) {
+       if(x_currentPageXML.getAttribute("url").split(".").length >= 1) {
            if (x_currentPageXML.getAttribute("url").split(".")[1].slice(0, -1) != "swf") {
                var imgMaxW = 400, imgMaxH = 450;
                if (x_browserInfo.mobile == true) {
