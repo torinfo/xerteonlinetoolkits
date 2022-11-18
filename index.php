@@ -263,81 +263,107 @@ Folder popup is the div that appears when creating a new folder
     </div>
 </div>
 
-<div class="ui-layout-north">
-    <div class="content" id="mainHeader">
+<!---->
+<!--
 
-        <div class="topbar">
-            <?php
-            if (file_exists($xerte_toolkits_site->root_file_path . "branding/logo_right.png"))
-            {
-                ?>
-                <div
-                        style="width:50%; height:100%; float:right; position:relative; background-image:url(branding/logo_right.png); background-repeat:no-repeat; background-position:right; margin-right:10px; float:right">
-                </div>
-                <?php
-            }
-            else {
-                ?>
-                <div
-                        style="width:50%; height:100%; float:right; position:relative; background-image:url(website_code/images/apereoLogo.png); background-repeat:no-repeat; background-position:right; margin-right:10px; float:right">
-                </div>
-                <?php
-            }
-            if (file_exists($xerte_toolkits_site->root_file_path . "branding/logo_left.png"))
-            {
-                ?>
-                <img src="branding/logo_left.png" style="margin-left:10px; float:left"/>
-                <?php
-            }
-            else {
-                ?>
-                <img src="website_code/images/logowhite.png" style="margin-left:10px; float:left"/>
-                <?php
-            }
-            ?>
-        </div>
+    Main part of the page
 
-        <div class="buttonbar">
-            <div class="file_mgt_area_top">
-                <div class="file_mgt_area_buttons">
-                    <!--Workspace buttons-->
+-->
 
-                    <div class="file_mgt_area_middle_button_left">
-                        <button title="<?php echo INDEX_BUTTON_EDIT; ?>" type="button" class="xerte_workspace_button disabled" disabled="disabled"
-                                id="edit"><i class="fa fa-pencil-square-o xerte-icon" style="color: white"></i></button>
-                        <button title="<?php echo INDEX_BUTTON_PROPERTIES; ?>" type="button" class="xerte_workspace_button disabled" disabled="disabled"
-                                id="properties"><i class="fa fa-info-circle xerte-icon" style="color: white"></i></button>
-                        <button title="<?php echo INDEX_BUTTON_PREVIEW; ?>" type="button" class="xerte_workspace_button disabled" disabled="disabled"
-                                id="preview"><i class="fa fa-folder fa-play" style="color: white"></i></button>
-                    </div>
+<!--div gemaakt-->
 
-                    <div class="file_mgt_area_middle_button_left">
-                        <button title="<?php echo INDEX_BUTTON_NEWFOLDER; ?>" type="button" class="xerte_workspace_button" id="newfolder" onClick="javascript:make_new_folder()">
-                            <i class="fa fa-folder xerte-icon" style="color: white"></i>
-                        </button>
-                    </div>
+<div class="ui-layout-center" id="pagecontainer">
+    <div id="hetpuntje">
+        <div class="ui-layout-north">
+            <div class="content" id="mainHeader">
 
-                    <div class="file_mgt_area_middle_button_right">
-                        <button title="<?php echo INDEX_BUTTON_DELETE; ?>" type="button" class="xerte_workspace_button disabled" disabled="disabled"
-                                id="delete"><i class="fa  fa-trash xerte-icon" style="color: white"></i></button>
-                        <button title="<?php echo INDEX_BUTTON_DUPLICATE; ?>" type="button" class="xerte_workspace_button disabled" disabled="disabled"
-                                id="duplicate"><i class="fa fa-copy xerte-icon" style="color: white"></i></button>
-                        <button title="<?php echo INDEX_BUTTON_PUBLISH; ?>" type="button" class="xerte_workspace_button disabled" disabled="disabled"
-                                id="publish"><i class="fa  fa-share xerte-icon" style="color: white"></i></button>
-                    </div>
+                <div class="topbar">
+                    <?php
+                    if (file_exists($xerte_toolkits_site->root_file_path . "branding/logo_right.png"))
+                    {
+                        ?>
+                        <div
+                                style="width:50%; height:100%; float:right; position:relative; background-image:url(branding/logo_right.png); background-repeat:no-repeat; background-position:right; margin-right:10px; float:right">
+                        </div>
+                        <?php
+                    }
+                    else {
+                        ?>
+                        <div
+                                style="width:50%; height:100%; float:right; position:relative; background-image:url(website_code/images/apereoLogo.png); background-repeat:no-repeat; background-position:right; margin-right:10px; float:right">
+                        </div>
+                        <?php
+                    }
+                    if (file_exists($xerte_toolkits_site->root_file_path . "branding/logo_left.png"))
+                    {
+                        ?>
+                        <img src="branding/logo_left.png" style="margin-left:10px; float:left"/>
+                        <?php
+                    }
+                    else {
+                        ?>
+                        <img src="website_code/images/logo.png" style="margin-left:10px; float:left"/>
+                        <?php
+                    }
+                    ?>
                 </div>
 
-            </div>
+                <div class="ui-layout-east">
 
+                    <div class="header" id="inner_right_header">
+                        <p class="heading"><i class="fa  icon-wrench xerte-icon"></i>&nbsp;<?PHP echo INDEX_CREATE; ?></p>
+                    </div>
 
+                    <div class="content">
+                        <div class="new_template_area_middle">
+                            <div id="new_template_area_middle_ajax" class="new_template_area_middle_scroll"><?PHP
+                                list_blank_templates();
+                                ?>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="footer" id="inner_right_footer"></div>
+                </div>
 
-            <div class="userbar">
-                <?PHP //echo "&nbsp;&nbsp;&nbsp;" . INDEX_LOGGED_IN_AS . " " .;
-                echo $_SESSION['toolkits_firstname'] . " " . $_SESSION['toolkits_surname'] ?>
-                <?PHP
-                // only on Db:
-                if ($authmech->canManageUser($jsscript)){
-                    echo '
+                <div class="buttonbar">
+                    <div class="file_mgt_area_top">
+                        <div class="file_mgt_area_buttons">
+                            <!--Workspace buttons-->
+
+                            <div class="file_mgt_area_middle_button_left">
+                                <button title="<?php echo INDEX_BUTTON_EDIT; ?>" type="button" class="xerte_workspace_button disabled" disabled="disabled"
+                                        id="edit"><i class="fa fa-pencil-square-o xerte-icon" style="color: white"></i></button>
+                                <button title="<?php echo INDEX_BUTTON_PROPERTIES; ?>" type="button" class="xerte_workspace_button disabled" disabled="disabled"
+                                        id="properties"><i class="fa fa-info-circle xerte-icon" style="color: white"></i></button>
+                                <button title="<?php echo INDEX_BUTTON_PREVIEW; ?>" type="button" class="xerte_workspace_button disabled" disabled="disabled"
+                                        id="preview"><i class="fa fa-folder fa-play" style="color: white"></i></button>
+                            </div>
+
+                            <div class="file_mgt_area_middle_button_left">
+                                <button title="<?php echo INDEX_BUTTON_NEWFOLDER; ?>" type="button" class="xerte_workspace_button" id="newfolder" onClick="javascript:make_new_folder()">
+                                    <i class="fa fa-folder xerte-icon" style="color: white"></i>
+                                </button>
+                            </div>
+
+                            <div class="file_mgt_area_middle_button_right">
+                                <button title="<?php echo INDEX_BUTTON_DELETE; ?>" type="button" class="xerte_workspace_button disabled" disabled="disabled"
+                                        id="delete"><i class="fa  fa-trash xerte-icon" style="color: white"></i></button>
+                                <button title="<?php echo INDEX_BUTTON_DUPLICATE; ?>" type="button" class="xerte_workspace_button disabled" disabled="disabled"
+                                        id="duplicate"><i class="fa fa-copy xerte-icon" style="color: white"></i></button>
+                                <button title="<?php echo INDEX_BUTTON_PUBLISH; ?>" type="button" class="xerte_workspace_button disabled" disabled="disabled"
+                                        id="publish"><i class="fa  fa-share xerte-icon" style="color: white"></i></button>
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <div class="userbar">
+                        <?PHP //echo "&nbsp;&nbsp;&nbsp;" . INDEX_LOGGED_IN_AS . " " .;
+                        echo $_SESSION['toolkits_firstname'] . " " . $_SESSION['toolkits_surname'] ?>
+                        <?PHP
+                        // only on Db:
+                        if ($authmech->canManageUser($jsscript)){
+                            echo '
                     <div class="settingsDropdown">
                         <button onclick="changepasswordPopup()" title=" ' . INDEX_CHANGE_PASSWORD . ' " class="fa fa-cog xerte_workspace_button settingsButton"></button>
                         <!-- <div id="settings" class="settings-content">
@@ -348,55 +374,193 @@ Folder popup is the div that appears when creating a new folder
                         </div> -->
                     </div>
                 ';
-                }
-                ?>
-                <div style="display: inline-block"><?php display_language_selectionform("general"); ?></div>
-                <?PHP if($xerte_toolkits_site->authentication_method != "Guest") {
-                    ?><button title="<?PHP echo INDEX_BUTTON_LOGOUT; ?>" type="button" class="xerte_button_c_no_width"
-                              onclick="javascript:logout(<?php echo($xerte_toolkits_site->authentication_method == "Saml2" ? "true" : "false"); ?>)">
-                    <i class="fa fa-sign-out xerte-icon"></i><?PHP echo INDEX_BUTTON_LOGOUT; ?>
-                    </button><?PHP } ?>
-            </div>
-            <div style="clear:both;"></div>
-            <div class="separator"></div>
-        </div>
+                        }
+                        ?>
+                        <div style="display: inline-block"><?php display_language_selectionform("general"); ?></div>
+                        <?PHP if($xerte_toolkits_site->authentication_method != "Guest") {
+                            ?><button title="<?PHP echo INDEX_BUTTON_LOGOUT; ?>" type="button" class="xerte_button_c_no_width"
+                                      onclick="javascript:logout(<?php echo($xerte_toolkits_site->authentication_method == "Saml2" ? "true" : "false"); ?>)">
+                            <i class="fa fa-sign-out xerte-icon"></i><?PHP echo INDEX_BUTTON_LOGOUT; ?>
+                            </button><?PHP } ?>
+                    </div>
 
-    </div>
-</div>
-<!--
-
-    Main part of the page
-
--->
-<div class="ui-layout-center" id="pagecontainer">
-
-    <div class="ui-layout-west" id="workspace_layout">
-
-        <div class="content">
-            <div id="workspace"></div>
-        </div>
-        <div class="footer" id="sortContainer">
-            <div class="file_mgt_area_bottom">
-                <div class="sorter">
-                    <form name="sorting" style="float:left;margin:7px 5px 5px 10px;">
-                        <i class="fa  fa-sort xerte-icon"></i>&nbsp;<?PHP echo INDEX_SORT; ?>
-                        <select id="sort-selector" name="type" onChange="refresh_workspace()">>
-                            <option value="alpha_up"><?PHP echo INDEX_SORT_A; ?></option>
-                            <option value="alpha_down"><?PHP echo INDEX_SORT_Z; ?></option>
-                            <option value="date_down" selected><?PHP echo INDEX_SORT_NEW; ?></option>
-                            <option value="date_up"><?PHP echo INDEX_SORT_OLD; ?></option>
-                        </select>
-                    </form>
                 </div>
-                <div class="workspace_search_outer">
-                    <div class="workspace_search">
-                        <i class="fa  fa-search"></i>&nbsp;<?PHP echo INDEX_SEARCH; ?>
-                        <input type="text" id="workspace_search" label="Search" placeholder="<?php echo INDEX_SEARCH_PLACEHOLDER?>">
+            </div>
+        </div>
+    </div>
+
+
+
+<!--                <div class="userbar">-->
+<!--                    --><?PHP ////echo "&nbsp;&nbsp;&nbsp;" . INDEX_LOGGED_IN_AS . " " .;
+//                    echo $_SESSION['toolkits_firstname'] . " " . $_SESSION['toolkits_surname'] ?>
+<!--                    --><?PHP
+//                    // only on Db:
+//                    if ($authmech->canManageUser($jsscript)){
+//                        echo '
+//                    <div class="settingsDropdown">
+//                        <button onclick="changepasswordPopup()" title=" ' . INDEX_CHANGE_PASSWORD . ' " class="fa fa-cog xerte_workspace_button settingsButton"></button>
+//                        <!-- <div id="settings" class="settings-content">
+//                            <button class="xerte_button" onclick="changepasswordPopup()">' . INDEX_CHANGE_PASSWORD . '</button>
+//                            <button class="xerte_button">Placeholder</button>
+//                            <button class="xerte_button">Placeholder</button>
+//                            <button class="xerte_button">Placeholder</button>
+//                        </div> -->
+//                    </div>
+//                ';
+//                    }
+//                    ?>
+<!--                    <div style="display: inline-block">--><?php //display_language_selectionform("general"); ?><!--</div>-->
+<!--                    --><?PHP //if($xerte_toolkits_site->authentication_method != "Guest") {
+//                        ?><!--<button title="--><?PHP //echo INDEX_BUTTON_LOGOUT; ?><!--" type="button" class="xerte_button_c_no_width"-->
+<!--                                  onclick="javascript:logout(--><?php //echo($xerte_toolkits_site->authentication_method == "Saml2" ? "true" : "false"); ?>
+<!--                        <i class="fa fa-sign-out xerte-icon"></i>--><?PHP ////echo INDEX_BUTTON_LOGOUT; ?>
+<!--                        </button>--><?PHP //} ?>
+<!--                </div>-->
+                <div style="clear:both;"></div>
+                <div class="separator"></div>
+
+
+
+
+    <div id="west-center">
+        <div class="ui-layout-west" id="workspace_layout">
+
+            <div class="content">
+              <div id="workspace"></div>
+            </div>
+            <div id="footer-ui-layout-west">
+                <div class="footer" id="sortContainer">
+                    <div class="file_mgt_area_bottom">
+                        <div class="sorter">
+                            <form name="sorting" style="float:left;margin:7px 5px 5px 10px;">
+                                <i class="fa  fa-sort xerte-icon"></i>&nbsp;<?PHP echo INDEX_SORT; ?>
+                                <select id="sort-selector" name="type" onChange="refresh_workspace()">>
+                                    <option value="alpha_up"><?PHP echo INDEX_SORT_A; ?></option>
+                                    <option value="alpha_down"><?PHP echo INDEX_SORT_Z; ?></option>
+                                    <option value="date_down" selected><?PHP echo INDEX_SORT_NEW; ?></option>
+                                    <option value="date_up"><?PHP echo INDEX_SORT_OLD; ?></option>
+                                </select>
+                            </form>
+                        </div>
+                        <div class="workspace_search_outer">
+                            <div class="workspace_search">
+                                <i class="fa  fa-search"></i>&nbsp;<?PHP echo INDEX_SEARCH; ?>
+                                <input type="text" id="workspace_search" label="Search" placeholder="<?php echo INDEX_SEARCH_PLACEHOLDER?>">
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
+
+        <div class="ui-layout-center">
+            <!--<div class="header" id="inner_center_header">
+                <p class="heading"><i class="fa  icon-info-sign xerte-icon"></i>&nbsp;<?PHP echo INDEX_DETAILS; ?></p>
+            </div>-->
+
+            <div class="content">
+                <!-- Slideshow container -->
+                <div id="btns">
+                    <button type="submit" class="buttontje" onclick="myFunction()">Preview</button>
+                    <button type="submit" class="buttontje"  id="info" onclick="myFunction1()">Info</button>
+                </div>
+                <!-- Full-width images with number and caption text -->
+                <div id="previewbtn" style="display: block" >
+                    <h3 id="preview/info" style="text-align: center">Preview</h3>
+                    <iframe  src="http://localhost:8081/xot/preview.php?template_id= header"  style=" margin-left:10%;  width: 600px; height: 305px; top: 160px" title="test"></iframe>
+                </div>
+
+                <?php
+
+
+                require_once(dirname(__FILE__) . "/config.php");
+
+                global $xerte_toolkits_site;
+
+                $extraparams = "";
+                if (isset($_REQUEST['LinkID']))
+                {
+                    $extraparams .= "&LinkID=" . $_REQUEST['LinkID'];
+                }
+
+                if (isset($_REQUEST['Page']))
+                {
+                    $extraparams .= "&Page=" . $_REQUEST['Page'];
+                }
+
+                header("Location: " . $xerte_toolkits_site->site_url . "preview.php?engine=html5&template_id=" . $_REQUEST['template_id'] . $extraparas);
+
+                ?>
+
+
+                <div id="previewbtn1" style="display: none" >
+                    <h3 style="text-align: center">Info</h3>
+                    <div class="projectInformationContainer" id="project_information" style="margin-left: 30%;"></div>
+                </div>
+
+
+
+                <!-- Next and previous buttons -->
+
+                <br>
+
+                <div class="footer" id="inner_center_footer"></div>
+            </div>
+        </div>
     </div>
+<!--    <div id="ui-layout-info">-->
+<!---->
+<!--        <div class="help-layout">-->
+<!--            <section class="info-layout">-->
+<!--                <p class="news_title">Hoe werkt het?</p>-->
+<!--                <p class="demo">-->
+<!--                    <a data-featherlight="iframe" href="https://xot.xerte.org.uk/play.php?template_id=102">Demo</a>-->
+<!--                    <br> Een korte screenvideo waarin een eenvoudig leerobject wordt opgestart, pagina's worden toegevoegd en gepubliceerd voor het web.-->
+<!--                </p>-->
+<!---->
+<!--                <p class="demo">-->
+<!--                    <a data-featherlight="iframe" href="https://xot.xerte.org.uk/play_164">Leerobject Demo</a>-->
+<!--                    <br> Een eenvoudige demo van een leerobject geschikt voor HTML5 waarin diverse paginatypes getoond worden.-->
+<!--                </p>-->
+<!--            </section>-->
+<!--        </div>-->
+<!---->
+<!--        <div class="help-layout">-->
+<!--            <section class="info-layout">-->
+<!--                <p class="news_title">Graag een bijdrage leveren?</p>-->
+<!---->
+<!--                <p class="general">-->
+<!--                    Wanneer u opmerkingen heeft, verzoek om support, ideeen voor nieuwe projecten of problemen te rapporteren, neem dan contact met ons op.-->
+<!--                </p>-->
+<!---->
+<!--                <p class="general">-->
+<!--                    Gebruikt u hiervoor alstublieft het forum van de-->
+<!--                    <a target="_blank&quot;" href="http://www.xerte.org.uk"> Xerte Community Website</a>-->
+<!--                </p>-->
+<!--            </section>-->
+<!--        </div>-->
+<!---->
+<!--        <div class="help-layout">-->
+<!--            <section class="highlightbox">-->
+<!--                <p class="news_title">Handleidingen</p>-->
+<!--                <p class="news_story"><a target="_blank" href="https://toll-net.be/moodle/xertetoolkits/play.php?template_id=34554">De eerste stappen</a></p>-->
+<!--                <p class="news_story"><a target="_blank" href="https://toll-net.be/moodle/xertetoolkits/play.php?template_id=34555">Op weg naar een interactieve module</a></p>-->
+<!--                <p class="news_story"><a target="_blank" href="https://toll-net.be/moodle/xertetoolkits/play.php?template_id=36265">Voor wie bijna alles wil weten</a></p>-->
+<!--                <p class="news_story"><a target="_blank" href="http://www.xerte.org.uk/images/Tutorials/NL/Handleiding_Xerte.pdf">Handleiding Xerte</a></p>-->
+<!--                <p class="news_story"><a target="_blank" href="http://www.xerte.org.uk/images/Tutorials/NL/Snelgids_Xerte.pdf">Snelgids pagina's</a></p>-->
+<!--                <p class="news_story"><a href="https://www.dlearning.nl/index.php/trainingen-events" target="_blank">Trainingen Xerte</a></p>-->
+<!--                <p class="news_story"><a data-featherlight="iframe" href="https://creativecommons.org/choose/">Licentievorm kiezen?</a></p>-->
+<!--            </section>-->
+<!--        </div>-->
+<!--        <span id="south-closer" class="button-close button-close-south" title="Sluit dit paneel"></span>-->
+<!--        <span class="pin-button button-pin button-pin-south button-pin-down button-pin-south-down" pin="down" title="Los maken"></span>-->
+<!--    </div>-->
+<!---->
+<!--</div>-->
+<!--information-->
+
+
 
     <script>
 
@@ -427,81 +591,130 @@ Folder popup is the div that appears when creating a new folder
             }
 
     </script>
-    <div class="ui-layout-center">
-        <!--<div class="header" id="inner_center_header">
-            <p class="heading"><i class="fa  icon-info-sign xerte-icon"></i>&nbsp;<?PHP echo INDEX_DETAILS; ?></p>
-        </div>-->
+<!--    <div class="ui-layout-center">-->
+<!--        <!-<div class="header" id="inner_center_header">-->
+<!--            <p class="heading"><i class="fa  icon-info-sign xerte-icon"></i>&nbsp;--><?PHP //echo INDEX_DETAILS; ?><!--</p>-->
+<!--        </div>-->
+<!---->
+<!--        <div class="content">-->
+<!--            < Slideshow container -->
+<!--<div id="btns">-->
+<!--        <button type="submit" class="buttontje" onclick="myFunction()">Preview</button>-->
+<!--        <button type="submit" class="buttontje"  id="info" onclick="myFunction1()">Info</button>-->
+<!--</div>-->
+<!--                <Full-width images with number and caption text -->
+<!--            <div id="previewbtn" style="display: block" >-->
+<!--                    <h3 id="preview/info" style="text-align: center">Preview</h3>-->
+<!--                    <iframe  src="http://localhost:8081/xot/preview.php?template_id= header"  style=" margin-left:10%;  width: 600px; height: 380px; top: 160px" title="test"></iframe>-->
+<!--            </div>-->
+<!---->
+<!--            --><?php
+//
+//
+//require_once(dirname(__FILE__) . "/config.php");
+//
+//global $xerte_toolkits_site;
+//
+//$extraparams = "";
+//if (isset($_REQUEST['LinkID']))
+//{
+//    $extraparams .= "&LinkID=" . $_REQUEST['LinkID'];
+//}
+//
+//if (isset($_REQUEST['Page']))
+//{
+//    $extraparams .= "&Page=" . $_REQUEST['Page'];
+//}
+//
+//header("Location: " . $xerte_toolkits_site->site_url . "preview.php?engine=html5&template_id=" . $_REQUEST['template_id'] . $extraparas);
+//
+//            ?>
+<!---->
+<!---->
+<!--<div id="previewbtn1" style="display: none" >-->
+<!--                    <h3 style="text-align: center">Info</h3>-->
+<!--                    <div class="projectInformationContainer" id="project_information" style="margin-left: 30%;"></div>-->
+<!--</div>-->
+<!---->
+<!---->
+<!---->
+<!--                 Next and previous buttons -->
+<!---->
+<!--            <br>-->
+<!---->
+<!--        <div class="footer" id="inner_center_footer"></div>-->
+<!--        </div>-->
+<!--</div>-->
 
-        <div class="content">
-            <!-- Slideshow container -->
-<div id="btns">
-        <button type="submit" class="buttontje" onclick="myFunction()">Preview</button>
-        <button type="submit" class="buttontje"  id="info" onclick="myFunction1()">Info</button>
+<!--    <div class="ui-layout-east">-->
+<!---->
+<!--        <div class="header" id="inner_right_header">-->
+<!--            <p class="heading"><i class="fa  icon-wrench xerte-icon"></i>&nbsp;--><?PHP //echo INDEX_CREATE; ?><!--</p>-->
+<!--        </div>-->
+<!---->
+<!--         <div class="content">-->
+<!--            <div class="new_template_area_middle">-->
+<!--                <div id="new_template_area_middle_ajax" class="new_template_area_middle_scroll">--><?PHP
+//                    list_blank_templates();
+//                    ?>
+<!--                </div>-->
+<!--            </div>-->
+<!--        </div>-->
+<!--        <div class="footer" id="inner_right_footer"></div>-->
+<!--    </div>-->
 </div>
-                <!-- Full-width images with number and caption text -->
-            <div id="previewbtn" style="display: block" >
-                    <h3 style="text-align: center">Preview</h3>
-                    <iframe  src="http://localhost:8081/xot/preview.php?template_id= header"  style=" margin-left:10%;  width: 600px; height: 380px; top: 160px" title="test"></iframe>
-            </div>
-
-            <?php
-
-
-require_once(dirname(__FILE__) . "/config.php");
-
-global $xerte_toolkits_site;
-
-$extraparams = "";
-if (isset($_REQUEST['LinkID']))
-{
-    $extraparams .= "&LinkID=" . $_REQUEST['LinkID'];
-}
-
-if (isset($_REQUEST['Page']))
-{
-    $extraparams .= "&Page=" . $_REQUEST['Page'];
-}
-
-header("Location: " . $xerte_toolkits_site->site_url . "preview.php?engine=html5&template_id=" . $_REQUEST['template_id'] . $extraparas);
-
-            ?>
-
-
-<div id="previewbtn1" style="display: none" >
-                    <h3 style="text-align: center">Info</h3>
-                    <div class="projectInformationContainer" id="project_information" style="margin-left: 30%;"></div>
-</div>
-
-
-
-                <!-- Next and previous buttons -->
-
-            <br>
-
-        <div class="footer" id="inner_center_footer"></div>
-        </div>
-</div>
-
-    <div class="ui-layout-east">
-
-        <!--<div class="header" id="inner_right_header">
-            <p class="heading"><i class="fa  icon-wrench xerte-icon"></i>&nbsp;<?PHP echo INDEX_CREATE; ?></p>
-        </div>-->
-
-        <!-- <div class="content">
-            <div class="new_template_area_middle">
-                <div id="new_template_area_middle_ajax" class="new_template_area_middle_scroll"><?PHP
-                    list_blank_templates();
-                    ?>
-                </div>
-            </div>-->
-        </div>
-        <!--<div class="footer" id="inner_right_footer"></div>-->
-    </div>
-</div>
+<!--gesloten-->
 
 
 <div  class="ui-layout-south">
+    <div id="ui-layout-info">
+
+        <div class="help-layout">
+            <section class="info-layout">
+                <p class="news_title">Hoe werkt het?</p>
+                <p class="demo">
+                    <a data-featherlight="iframe" href="https://xot.xerte.org.uk/play.php?template_id=102">Demo</a>
+                    <br> Een korte screenvideo waarin een eenvoudig leerobject wordt opgestart, pagina's worden toegevoegd en gepubliceerd voor het web.
+                </p>
+
+                <p class="demo">
+                    <a data-featherlight="iframe" href="https://xot.xerte.org.uk/play_164">Leerobject Demo</a>
+                    <br> Een eenvoudige demo van een leerobject geschikt voor HTML5 waarin diverse paginatypes getoond worden.
+                </p>
+            </section>
+        </div>
+
+        <div class="help-layout">
+            <section class="info-layout">
+                <p class="news_title">Graag een bijdrage leveren?</p>
+
+                <p class="general">
+                    Wanneer u opmerkingen heeft, verzoek om support, ideeen voor nieuwe projecten of problemen te rapporteren, neem dan contact met ons op.
+                </p>
+
+                <p class="general">
+                    Gebruikt u hiervoor alstublieft het forum van de
+                    <a target="_blank&quot;" href="http://www.xerte.org.uk"> Xerte Community Website</a>
+                </p>
+            </section>
+        </div>
+
+        <div class="help-layout">
+            <section class="highlightbox">
+                <p class="news_title">Handleidingen</p>
+                <p class="news_story"><a target="_blank" href="https://toll-net.be/moodle/xertetoolkits/play.php?template_id=34554">De eerste stappen</a></p>
+                <p class="news_story"><a target="_blank" href="https://toll-net.be/moodle/xertetoolkits/play.php?template_id=34555">Op weg naar een interactieve module</a></p>
+                <p class="news_story"><a target="_blank" href="https://toll-net.be/moodle/xertetoolkits/play.php?template_id=36265">Voor wie bijna alles wil weten</a></p>
+                <p class="news_story"><a target="_blank" href="http://www.xerte.org.uk/images/Tutorials/NL/Handleiding_Xerte.pdf">Handleiding Xerte</a></p>
+                <p class="news_story"><a target="_blank" href="http://www.xerte.org.uk/images/Tutorials/NL/Snelgids_Xerte.pdf">Snelgids pagina's</a></p>
+                <p class="news_story"><a href="https://www.dlearning.nl/index.php/trainingen-events" target="_blank">Trainingen Xerte</a></p>
+                <p class="news_story"><a data-featherlight="iframe" href="https://creativecommons.org/choose/">Licentievorm kiezen?</a></p>
+            </section>
+        </div>
+<!--        <span id="south-closer" class="button-close button-close-south" title="Sluit dit paneel"></span>-->
+        <span class="pin-button button-pin button-pin-south button-pin-down button-pin-south-down" pin="down" title="Los maken"></span>
+    </div>
+
     <div class="content">
         <!-- <div class="border" style="margin:10px"></div>  -->
         <!--
@@ -514,11 +727,11 @@ header("Location: " . $xerte_toolkits_site->site_url . "preview.php?engine=html5
         </div>
         <div class="highlightbox" style="width:31%;float:right;">
             <?PHP
-            //echo $xerte_toolkits_site->demonstration_page;
-            echo $xerte_toolkits_site->news_text;
-            //echo $xerte_toolkits_site->tutorial_text;
-            //echo $xerte_toolkits_site->site_text;
-            ?>
+        //echo $xerte_toolkits_site->demonstration_page;
+        echo $xerte_toolkits_site->news_text;
+        //echo $xerte_toolkits_site->tutorial_text;
+        //echo $xerte_toolkits_site->site_text;
+        ?>
         </div>
 
         <div class="border"></div>-->
@@ -527,10 +740,41 @@ header("Location: " . $xerte_toolkits_site->site_url . "preview.php?engine=html5
             <!--<img src="website_code/images/lt_logo.gif" /><br/>-->
             <?PHP
             echo $xerte_toolkits_site->copyright;
-            ?> <i class="fa fa-info-circle xerte_info_button" aria-hidden="true" style=" cursor: help;" title="<?PHP echo $version;?>"></i></p><div class="footerlogos"><a href="https://xot.xerte.org.uk/play.php?template_id=214#home" target="_blank" title="Xerte accessibility statement https://xot.xerte.org.uk/play.php?template_id=214"><img src="website_code/images/wcag2.1AA-blue-v.png" border="0"></a> <a href="https://opensource.org/" target="_blank" title="Open Source Initiative: https://opensource.org/"><img src="website_code/images/osiFooterLogo.png" border="0"></a> <a href="https://www.apereo.org" target="_blank" title="Apereo: https://www.apereo.org"><img src="website_code/images/apereoFooterLogo.png" border="0"></a> <a href="https://xerte.org.uk" target="_blank" title="Xerte: https://xerte.org.uk"><img src="website_code/images/logowhite.png" border="0"></a></div>
+            ?> <i class="fa fa-info-circle xerte_info_button" aria-hidden="true" style=" cursor: help;" title="<?PHP echo $version;?>"></i></p><div class="footerlogos"><a href="https://xot.xerte.org.uk/play.php?template_id=214#home" target="_blank" title="Xerte accessibility statement https://xot.xerte.org.uk/play.php?template_id=214"><img src="website_code/images/wcag2.1AA-blue-v.png" border="0"></a> <a href="https://opensource.org/" target="_blank" title="Open Source Initiative: https://opensource.org/"><img src="website_code/images/osiFooterLogo.png" border="0"></a> <a href="https://www.apereo.org" target="_blank" title="Apereo: https://www.apereo.org"><img src="website_code/images/apereoFooterLogo.png" border="0"></a> <a href="https://xerte.org.uk" target="_blank" title="Xerte: https://xerte.org.uk"><img src="website_code/images/logo.png" border="0"></a></div>
 
         <div style="clear:both;"></div>
     </div>
+
+</div>
+<!--    <div class="content">-->
+<!--         <div class="border" style="margin:10px"></div>  -->
+<!--        <!-->
+<!--        <div class="help" style="width:31%;float:left;">-->
+<!--            --><?PHP //echo apply_filters('editor_pod_one', $xerte_toolkits_site->pod_one); ?>
+<!--        </div>-->
+<!---->
+<!--        <div class="help" style="width:31%;float:left;">-->
+<!--            --><?PHP //echo apply_filters('editor_pod_two', $xerte_toolkits_site->pod_two); ?>
+<!--        </div>-->
+<!--        <div class="highlightbox" style="width:31%;float:right;">-->
+<!--            --><?PHP
+//            //echo $xerte_toolkits_site->demonstration_page;
+//            echo $xerte_toolkits_site->news_text;
+//            //echo $xerte_toolkits_site->tutorial_text;
+//            //echo $xerte_toolkits_site->site_text;
+//            ?>
+<!--        </div>-->
+<!---->
+<!--        <div class="border"></div>-->-->
+<!---->
+<!--        <p class="copyright">-->
+<!--            <!<img src="website_code/images/lt_logo.gif" /><br/>-->-
+<!--            --><?PHP
+//            echo $xerte_toolkits_site->copyright;
+//            ?><!-- <i class="fa fa-info-circle xerte_info_button" aria-hidden="true" style=" cursor: help;" title="--><?PHP //echo $version;?><!--"></i></p><div class="footerlogos"><a href="https://xot.xerte.org.uk/play.php?template_id=214#home" target="_blank" title="Xerte accessibility statement https://xot.xerte.org.uk/play.php?template_id=214"><img src="website_code/images/wcag2.1AA-blue-v.png" border="0"></a> <a href="https://opensource.org/" target="_blank" title="Open Source Initiative: https://opensource.org/"><img src="website_code/images/osiFooterLogo.png" border="0"></a> <a href="https://www.apereo.org" target="_blank" title="Apereo: https://www.apereo.org"><img src="website_code/images/apereoFooterLogo.png" border="0"></a> <a href="https://xerte.org.uk" target="_blank" title="Xerte: https://xerte.org.uk"><img src="website_code/images/logo.png" border="0"></a></div>-->
+<!---->
+<!--        <div style="clear:both;"></div>-->
+<!--    </div>-->
 </div>
 
 <script>

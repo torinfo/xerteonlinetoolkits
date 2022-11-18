@@ -217,8 +217,8 @@ input.media, input.date
 
 .content {
 	padding:	5px;
-	position:	relative;
-	overflow:	auto;
+	display: flex;
+	/*overflow:	auto;*/
     background: #fff;
 }
 
@@ -607,6 +607,7 @@ div.ui-layout-north div.content {
 }
 
 div.ui-layout-west, div.ui-layout-east {
+	display: flex;
     background: #b3b3b5;
     padding: 8px 8px 8px 8px;
 }
@@ -618,6 +619,7 @@ div.ui-layout-center {
 
 div.ui-layout-north div.content img {
 	margin:0 15px 0 15px;
+	display: flex;
 }
 /*
 div.ui-layout-west div.header {

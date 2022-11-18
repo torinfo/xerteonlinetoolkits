@@ -51,6 +51,8 @@
   border:#fff 1px solid;
   padding:5px;
   cursor: pointer;
+    display: flex;
+    align-items: center;
 }
 
 .xerte_button_c.disabled {
