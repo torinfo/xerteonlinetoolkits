@@ -836,6 +836,8 @@ function init_workspace()
                 workspace.current_node = data.node;
                 showInformationAndSetStatus(data.node);
 
+
+
         })
         .bind('deselect_node.jstree', function (event, data) {
 
@@ -876,7 +878,6 @@ function init_workspace()
          */
 
         $.jstree.defaults.search.search_callback = workspace_search_callback;
-
         var to = false;
         $('#workspace_search').keyup(function () {
             if (to) {

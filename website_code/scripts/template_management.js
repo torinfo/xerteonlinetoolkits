@@ -704,6 +704,8 @@ function getProjectInformation(user_id, template_id) {
                 x_Dashboard.drawActivityChart("", $("#graph_" + info.template_id), startstartofday, todayendofday);
             });
         }
+
+        $("#preview_iframe").attr('src', site_url + "preview.php?template_id=" + info.template_id)
     })
     .fail(function(jqXHR, textStatus, errorThrown)
     {
@@ -760,6 +762,8 @@ function getFolderInformation(user_id, folder_id) {
         }
     });
 }
+
+
 
 
 /**
