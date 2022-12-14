@@ -468,17 +468,16 @@ Folder popup is the div that appears when creating a new folder
                 <!-- Full-width images with number and caption text -->
                 <div id="previewbtn" style="display: block" >
                     <h3 id="preview/info" style="text-align: center">Preview</h3>
-                    <iframe  src="http://localhost:8081/xot/preview.php?template_id= header"  style=" margin-left:10%;  width: 600px; height: 305px; top: 160px" title="test"></iframe>
+                    <iframe src="http://localhost/xot/preview.php?template_id=18#page1" style=" margin-left:10%;  width: 600px; height: 305px; top: 160px" title="test"></iframe>
                 </div>
 
                 <?php
-
 
                 require_once(dirname(__FILE__) . "/config.php");
 
                 global $xerte_toolkits_site;
 
-                $extraparams = "";
+                $extraparams = "&LinkID=";
                 if (isset($_REQUEST['LinkID']))
                 {
                     $extraparams .= "&LinkID=" . $_REQUEST['LinkID'];
@@ -489,7 +488,8 @@ Folder popup is the div that appears when creating a new folder
                     $extraparams .= "&Page=" . $_REQUEST['Page'];
                 }
 
-                header("Location: " . $xerte_toolkits_site->site_url . "preview.php?engine=html5&template_id=" . $_REQUEST['template_id'] . $extraparas);
+                header('Location: ' . $xerte_toolkits_site->site_url . 'preview.php?engine=html5&template_id= '. $_REQUEST['template_id'] . $extraparams);
+
 
                 ?>
 

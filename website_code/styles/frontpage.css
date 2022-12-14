@@ -599,6 +599,7 @@ div#file_area div p{
 	background-color: #fff;
 	padding: 1px;
 	display: flex;
+	height: 107px;
 }
 
 .new_template_area_middle_scroll{
@@ -607,7 +608,7 @@ div#file_area div p{
 	display: flex !important;
 	width: 100%;
 	display: inline-block;
-	height: 100px;
+	/*height: 90px;*/
 }
 
 .template{
@@ -670,6 +671,7 @@ div#file_area div p{
 	margin:3px 0 13px 0;
 	color:#EBB758 ;
 	width:200px;
+	display: flex;
 }
 
 .template_desc a{
