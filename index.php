@@ -468,7 +468,7 @@ Folder popup is the div that appears when creating a new folder
                 <!-- Full-width images with number and caption text -->
                 <div id="previewbtn" style="display: block" >
                     <h3 id="preview/info" style="text-align: center">Preview</h3>
-                    <iframe id="preview_iframe" src="http://localhost/xot/preview.php?template_id=18#page1" style=" margin-left:10%;  width: 600px; height: 305px; top: 160px" title="test"></iframe>
+                    <iframe id="preview_iframe" src="http://localhost/xot/preview.php?template_id=18#page1" style=" margin-left:10%;  width: 770px; height: 350px; top: 160px" title="test"></iframe>
                 </div>
 
                 <?php
@@ -495,7 +495,7 @@ Folder popup is the div that appears when creating a new folder
 
 
                 <div id="previewbtn1" style="display: none" >
-                    <h3 style="text-align: center">Info</h3>
+                    <h3 style="margin-left: 350px">Info</h3>
                     <div class="projectInformationContainer" id="project_information" style="margin-left: 30%;"></div>
                 </div>
 
@@ -588,6 +588,8 @@ Folder popup is the div that appears when creating a new folder
                 }
             }
 
+
+            $('.jstree-node')
 
     </script>
 <!--    <div class="ui-layout-center">-->

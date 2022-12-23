@@ -670,7 +670,7 @@ div#file_area div p{
 .template_desc_p{
 	margin:3px 0 13px 0;
 	color:#EBB758 ;
-	width:200px;
+	width:270px;
 	display: flex;
 }
 
@@ -697,25 +697,29 @@ div#file_area div p{
 	font-weight:bold;
 }
 
-.rename{
-	float:left;
-	position:relative;
-	padding:5px 0 0 0px;
-	margin:0px;
-	overflow:hidden;
-	display:none;
-	clear:left;
-	width:200px;
+
+.rename {
+	float: left;
+	position: absolute;
+	top: 48px;
+	padding: 5px 0 0 0px;
+	margin: 0px;
+	overflow: hidden;
+	display: none;
+	clear: left;
+	width: 400px;
+
 }
 
 .rename span{
 	margin:5px 0 0 0;
 	padding:0px;
+	position: absolute;
 	font-size:85%;
 }
 
 .rename form{
-	margin:5px 0 0 0;
+	margin:5px 0 0 190px;
 	padding:0px;
 }
 
@@ -941,7 +945,7 @@ div.ui-layout-center {
 #pagecontainer .header {
 	background-image: none;
 	background-color: #f0f0f2;
-	padding: 10px 5px;
+	/*padding: 10px 5px;*/
 	/*height: 10%;*/
 	border-bottom: 0px solid #e0e0e0;
 	color: #333;
@@ -983,7 +987,7 @@ div.ui-layout-center {
 
 #footer-ui-layout-west
 {
-	margin-top: 30%;
+	margin-top: 40%;
 }
 
 /*ui-layout info*/
