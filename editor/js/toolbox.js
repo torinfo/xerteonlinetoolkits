@@ -33,24 +33,27 @@ var EDITOR = (function ($, parent) {
 		jqGridSetUp = false,
 		workspace,
 
+
     // Build the "insert page" menu
     create_insert_page_menu = function (advanced_toggle) {
         var getMenuItem = function (itemData) {
             var data = {
                 href: '#',
                 html: itemData.name,
-                class: itemData.name
+                hint: itemData.hint,
+                class: "menu_item_icon_2",
+                click: add_page
             };
+
 
             if (itemData.icon != undefined) {
                 data.icon = itemData.icon;
-				data.html = '<img class="icon" src="' + moduleurlvariable + 'icons/' + itemData.icon + '.png"/>' + '<p class="Icon_Text">' + data.html + '</p>';
+				data.html = '<img class="icon" src="' + moduleurlvariable + 'icons/' + itemData.icon + '.png" onclick="add_page()"/><p class="Icon_Text">' + data.html + '</p><p>' + data.hint + '</p>';
             }
             console.log(itemData.item);
 
 
-
-            var item = $("<li>")
+            var item = $("<li class='menu-item-icon'>")
 				.append($("<a>", data))
                 .attr("item", itemData.item);
 
@@ -72,7 +75,7 @@ var EDITOR = (function ($, parent) {
 				hint = itemData.example != undefined ? hint + '<p><a href="' + itemData.example + '" data-featherlight="iframe" class="pageExample exampleButton"><i class="fa fa-play-circle"></i>' + language.insertDialog.$example + '</a></p>' : hint;
 				hint = hint != "" ? '<hr/>' + hint : hint;
 
-				var $insertInfo = $('<ul class="details"><li><a href="#"><div class="insert_buttons"/>' + hint + '</a></li></ul>'),
+				var $insertInfo = $('<ul class="details detail_container"><li class="detail_container_2"><a href="#" class="button_container"><div class="insert_buttons"/>' + hint + '</a></li></ul>'),
 					label = language.insertDialog.$label + ":",
 					pos = label.indexOf('{i}');
 
@@ -192,6 +195,7 @@ var EDITOR = (function ($, parent) {
 		$("#insert_menu #menu").menu("collapseAll", e, true);
 		parent.tree.addNode($(this).closest("[item]").attr("item"), $(this).attr("value"));
 	},
+
 
     // Get text from html, by putting html in a div, strip out the scripts
     // and convert to text

@@ -1,3 +1,4 @@
+
 /* Loading spinner */
 #loader {
     position: absolute;
@@ -281,14 +282,53 @@ hide ui-layout-west pane pane-west
 	display: flex;
 	flex-wrap: wrap;
 	flex-direction: row-reverse;
-	height: 94%;
-	width: 21.875em;
+	width: 52em;
 }
-.categorystyle li .ui-corner-all
+.detail_container
+{
+	display: flex;
+	justify-content: flex-end;
+}
+.insert_button
+{
+	display: none;
+}
+.button_container
+{
+	display: flex !important;
+	flex-wrap: wrap;
+	flex-direction: column;
+}
+.detail_container_2
+{
+	width: 100% !important;
+}
+#insert_menu ul li:not(.categorystyle li)
+{
+	width: 100% !important;
+}
+.button
+{
+	border-radius: 40px;
+	border: none;
+	margin-bottom: 10px;
+	background-color: transparent !important;
+}
+.button:hover
+{
+	background-color: transparent !important;
+
+}
+.Icon_Text
+{
+	color: #f86718;
+	font-size: 20px !important;
+	font-weight: bold;
+}
+.menu-item-icon
 {
 	height: auto !important;
-	width: 6.25em !important;
-	padding: 5px 5px 5px 5px;
+	width: 10em !important;
 	float: left;
 	display: flex;
 	flex-direction: column;
@@ -302,19 +342,9 @@ hide ui-layout-west pane pane-west
 	margin-bottom: 0;
 	width: 100%;
 }
-/* Extra small devices (phones, 600px and down) */
-@media only screen and (max-width: 600px)
+.menu_item_icon_2
 {
-	.categorystyle li .ui-corner-all
-	{
-		height: auto !important;
-		width: 6.25em !important;
-		padding: 5px 5px 5px 5px;
-		float: left;
-		display: flex;
-		flex-direction: column;
-		flex-wrap: nowrap;
-	}
+	
 }
 
 /* End Edit ---------------------------------------------------------------------- */
@@ -679,7 +709,8 @@ span.button-close-east			{ background: url(../img/chevron-right_444444_15.png) n
 	flex-direction: row-reverse;
 }
 
-#insert_menu .ui-menu {
+#insert_menu .ui-menu
+{
 	overflow-x: hidden;
 	overflow-y: auto;
 	direction:	rtl;
@@ -688,8 +719,9 @@ span.button-close-east			{ background: url(../img/chevron-right_444444_15.png) n
 #insert_menu .ui-menu-item {
 	direction: ltr;
 	text-align: left;
-    z-index: 6;
-	/* Added */
+
+	/*z-index: 6;
+     Added */
 	display: flex;
 	vertical-align: top;
 }
@@ -699,7 +731,7 @@ span.button-close-east			{ background: url(../img/chevron-right_444444_15.png) n
 }
 
 #insert_menu .icon {
-	padding:	0 0 0 0;
+	padding: 0 0 0 0;
 	border:	none;
 	width: 100%;
 	height: 100%;
@@ -707,13 +739,15 @@ span.button-close-east			{ background: url(../img/chevron-right_444444_15.png) n
 
 #insert_menu .ui-menu.details {
 	padding:	5px;
-	position:	fixed !important;
+	position: fixed;
 
+	/*edited by: don van aspert*/
+	display: none !important;
 }
 
 #insert_menu .ui-menu.details li {
 	margin:	0;
-	position: fixed;
+	z-index: 1000 !important;
 }
 
 #insert_menu .ui-menu.details a {
@@ -722,6 +756,7 @@ span.button-close-east			{ background: url(../img/chevron-right_444444_15.png) n
 	border: 	none;
 	padding:	0px;
 	margin:		0px;
+	text-align: center;
 	cursor:		default;
 }
 
@@ -729,6 +764,7 @@ span.button-close-east			{ background: url(../img/chevron-right_444444_15.png) n
 	border: none;
 	background-color: #CCCCCC;
 	height: 1px;
+	margin-left: 50px;
 }
 
 #insert_menu .insert_buttons button {
@@ -743,6 +779,7 @@ margin-right: 3px;
 
 .preview_thumb {
     width: 250px;
+
 }
 
 /* XERTE ADDITIONS */
@@ -1191,7 +1228,7 @@ div.hotspotLightbox button.editorbutton:hover {
 
 .xerte-icon.optional { cursor: pointer; }
 
-button .flash-icon {padding-left: 4px;}
+button .flash-icon {padding-left: 0px;}
 
 button:hover {background: #f86718; color: #000000;}
 
@@ -1205,11 +1242,12 @@ button:hover {background: #f86718; color: #000000;}
 
 	/* edited by Don van Aspert*/
 	display: none;
+
 }
 /*end edit */
-#insert_menu .ui-menu.details a.pageExample {
+#insert_menu .ui-menu.details a .pageExample {
 cursor: pointer;
-display: inline;
+/*display: inline;*/
 }
 
 #insert_menu .ui-menu.details a.exampleButton .fa {
@@ -1231,8 +1269,11 @@ border-color: #ff8c00;
 color: #000000;
 }
 
-#insert_menu .ui-menu.details a.exampleButton {
-font-size: 1em;
+/* the example button on display: none*/
+#insert_menu .ui-menu.details a.exampleButton
+{
+	font-size: 1em;
+	display: none !important;
 }
 
 .xerte_button {background: transparent; border: 0;}
