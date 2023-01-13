@@ -91,7 +91,7 @@ $version = getVersion();
     <link rel="stylesheet" href="editor/js/vendor/themes/default/style.css?version=<?php echo $version;?>" />
     <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
 
-        window.jQuery || document.write('<script src="editor/js/vendor/jquery-1.9.1.min.js"><\/script>')</script>
+        window.jQuery || document.write('<script src="editor/js/vendor/jquery-1.9.1.min.js"></script>')</script>
     <script type="text/javascript" src="editor/js/vendor/jquery.ui-1.10.4.js"></script>
     <script type="text/javascript" src="editor/js/vendor/jquery.layout-1.3.0-rc30.79.min.js"></script>
     <script type="text/javascript" src="editor/js/vendor/jquery.ui.touch-punch.min.js"></script>
@@ -460,14 +460,16 @@ Folder popup is the div that appears when creating a new folder
             </div>-->
 
             <div class="content">
+                <div id="buttons-right-preview-left">
                 <!-- Slideshow container -->
                 <div id="btns">
                     <button type="submit" class="buttontje" onclick="myFunction()">Preview</button>
                     <button type="submit" class="buttontje"  id="info" onclick="myFunction1()">Info</button>
                 </div>
+
                 <!-- Full-width images with number and caption text -->
                 <div id="previewbtn" style="display: block" >
-                    <h3 id="preview/info" style="text-align: center">Preview</h3>
+<!--                    <h3 id="preview/info" style="text-align: center">Preview</h3>-->
                     <iframe id="preview_iframe" src="http://localhost/xot/preview.php?template_id=18#page1" style=" margin-left:10%;  width: 770px; height: 350px; top: 160px" title="test"></iframe>
                 </div>
 
@@ -494,8 +496,8 @@ Folder popup is the div that appears when creating a new folder
                 ?>
 
 
-                <div id="previewbtn1" style="display: none" >
-                    <h3 style="margin-left: 350px">Info</h3>
+                <div id="previewbtn1" style="display: none;" >
+                    <h3 style="margin-left: 65px">Info</h3>
                     <div class="projectInformationContainer" id="project_information" style="margin-left: 30%;"></div>
                 </div>
 
@@ -506,6 +508,7 @@ Folder popup is the div that appears when creating a new folder
                 <br>
 
                 <div class="footer" id="inner_center_footer"></div>
+            </div>
             </div>
         </div>
     </div>
