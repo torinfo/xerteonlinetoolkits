@@ -7,7 +7,8 @@
 }
 
 #text {
-    width: 95%;
+    width: 100%;
+	box-sizing: border-box;
 }
 
 #checkButton {
@@ -21,4 +22,14 @@
 }
 #mainPanel {
 	overflow: auto;
+}
+
+#correctOrNot .markIcon {
+	margin-right: .5em;
+}
+
+h3.fbLabel {
+	padding-top: 1em;
+	padding-bottom: 0.5em;
+	border-top: 1px solid #ccc;
 }

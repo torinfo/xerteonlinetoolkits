@@ -210,8 +210,8 @@
                 }
 
                 var attemptLabel = x_currentPageXML.getAttribute("attemptLabel");
-                if( x_currentPageXML.getAttribute("attemptLabel") == null){
-                    attemptLabel = "Attempt";
+                if( x_currentPageXML.getAttribute("attemptLabel") === null){
+                    attemptLabel = "Attempts remaining";
                 }
 
                 var instruction = x_currentPageXML.getAttribute("instruction");
@@ -227,7 +227,7 @@
                 var $attempts = $("#attempts");
                 var amountofTries = parseInt(x_currentPageXML.getAttribute("amountOfTries"));
 				if (amountofTries != undefined && $.isNumeric(amountofTries)) {
-					$attempts.html(x_currentPageXML.getAttribute("attemptLabel")+ ": "+ amountofTries).show();
+					$attempts.html(attemptLabel+ ": "+ amountofTries).show();
 					$pageContents.data('amountofTries', amountofTries);
 				} else {
 					$attempts.remove();
@@ -266,7 +266,7 @@
 				
                 var answers = [];
                 for (i = 0; i < elements.length; i++) {
-                    var answer = elements[i].answer.split(",");
+                    var answer = elements[i].answer.split(x_currentPageXML.getAttribute("answerDelimiter") != undefined && x_currentPageXML.getAttribute("answerDelimiter") != '' ? x_currentPageXML.getAttribute("answerDelimiter") : ',');
                     answers.push({
                         options: answer,
                         counter: 0,
@@ -300,7 +300,7 @@
                     XTSetInteractionPageXML(x_currentPage, 0, x_currentPageXML, i);
                     XTSetInteractionType(x_currentPage,0, 'fill-in', this.weighting, i);
                 }
-				
+
 				$("#checkButton")
 					.button({
 						label: checkBtnTxt
@@ -312,7 +312,7 @@
 							$pageContents.data('amountofTries', $pageContents.data('amountofTries')-1);
 							
 							if ($pageContents.data('amountofTries') > 0) {
-								$attempts.html(x_currentPageXML.getAttribute("attemptLabel")+ ": "+ $pageContents.data('amountofTries'));
+								$attempts.html(attemptLabel + ": "+ $pageContents.data('amountofTries'));
 							}else{
 								$attempts.html("");
 							}

@@ -73,6 +73,10 @@
     padding-left: 0;
 }
 
+#Across, #Down {
+	padding-left: .3em;
+}
+
 #x_pageDiv table td, #x_pageDiv table th{
     padding: 0;
 }
@@ -111,13 +115,22 @@
      font-size: 15px;
      font-weight: bold;
  }
+ 
+ #crossword.upper input {
+	 text-transform: uppercase;
+ }
 
  .highlighted .crossword-input[type=text]{
      background-color: yellow;
  }
+ 
+ #crossword .correct {
+	 background-color: #24FF00;
+ }
 
  #pageContents-innerContainer{
-     display: flex ;
+     display: flex;
+	 justify-content: center;
  }
 
  #clues-container{
@@ -125,8 +138,13 @@
 	margin-top: 1em;
  }
  
- #clues-container th {
-	 text-decoration: underline;
+ #clues-container table {
+	 width: 100%;
+ }
+ 
+ #x_pageDiv #clues-container table th, #x_pageDiv #clues th {
+	 border-bottom: 2px solid black;
+	 padding: .2em;
  }
  
  #pageContents-innerContainer.crosswordLeft #clues-container {
@@ -178,6 +196,10 @@
      margin-top: 1em;
 	 float: right;
  }
+ 
+ .panel #showButton{
+	 float: none;
+ }
 
  .li-clue{
      cursor: pointer;
@@ -210,4 +232,19 @@
 }
 #pageContents input{
     padding: 0!important;
+}
+
+/*add ticks to correct answers*/
+.x_crossword_page .li-clue p.correct:after {
+	font-family: FontAwesome;
+	content: "\f00c";
+	color: green;
+	margin-left:1px;
+}
+/*show red crosses when incorrect and in tracking mode*/
+.x_crossword_page .li-clue p.incorrect:after {
+	font-family: FontAwesome;
+	content: "\f00d";
+	color: red;
+	margin-left:1px;
 }

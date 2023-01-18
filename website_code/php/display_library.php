@@ -362,7 +362,7 @@ function list_users_projects($sort_type) {
 }
 
 if (!function_exists('str_contains')) {
-    function str_contains(string $haystack, string $needle): bool
+    function str_contains($haystack, $needle)
     {
         return '' === $needle || false !== strpos($haystack, $needle);
     }
@@ -436,6 +436,12 @@ function get_folders_in_this_folder($folder_id, $tree_id, $sort_type, $copy_only
             $shared = 'shared';
         }
         $item->type = ($shared == "") ?  "folder" : "folder" . _ .$shared;
+
+       /* if($row['folder_id'] == $folder_id){
+            $item->type = "folder_shared";
+        }else{
+        }*/
+
         $item->xot_type = "folder";
         $item->published = false;
         $item->shared = false;
@@ -486,7 +492,7 @@ function get_files_in_this_folder($folder_id, $tree_id, $sort_type, $copy_only, 
     } else {
         //select templates the same way as regularly, however, now check for group_id in template_group_rights
         $query = "select td.template_name as project_name, otd.template_name,td.access_to_whom, td.tsugi_published, "
-            . " otd.parent_template, otd.template_framework, td.template_id, tgr.role, 2 as nrshared from {$prefix}templatedetails td, "
+            . " otd.parent_template, otd.template_framework, td.template_id, tgr.role, '' as creator_folder_name, 2 as nrshared from {$prefix}templatedetails td, "
             . " {$prefix}template_group_rights tgr, {$prefix}originaltemplatesdetails otd where td.template_id = tgr.template_id and tgr.group_id = ? "
             . " and otd.template_type_id = td.template_type_id ";
         if ($copy_only)
@@ -541,7 +547,8 @@ function get_files_in_this_folder($folder_id, $tree_id, $sort_type, $copy_only, 
             $shared = 'shared';
         }
 
-        $item->type = ($newtype == "") ? strtolower($row['parent_template']) : strtolower($row['parent_template']) . "_" . $shared;
+
+        $item->type = ($shared == "") ? strtolower($row['parent_template']) : strtolower($row['parent_template']) . "_" . $shared;
         $item->xot_type = "file";
 
         $item->published = $row['access_to_whom'] != 'Private' || $row['tsugi_published'] == 1;
@@ -605,16 +612,22 @@ function get_workspace_contents($folder_id, $tree_id, $sort_type, $copy_only=fal
         $item->xot_id = $folder['folder_id'];
         $item->parent = $folder['tree_parent_id'];
         $item->text = $folder['folder_name'];
-        $item->type = $folder['type'];
+        if($folder['nrshared'] > 1){
+            /*$folder['type'] = "folder_shared";*/
+            $item->type = $folder['type'];
+        }else{
+            $item->type = $folder['type'];
+        }
         $item->xot_type = "folder";
         $item->published = false;
         $item->shared = false;
 
         $items[] = $item;
 
-        if ($folder['type'] == 'folder_shared')
+        if ($folder['type'] == 'folder_shared' || $folder['type'] == 'sub_folder_shared')
         {
             $files = get_folder_contents($folder['folder_id'], $folder['tree_id'],$sort_type, $copy_only);
+
             if ($files)
             {
                 $items = array_merge($items, $files);
@@ -679,7 +692,33 @@ function get_workspace_contents($folder_id, $tree_id, $sort_type, $copy_only=fal
         $items[] = $titem;
     }
 
-    return $items;
+    //remove double items
+
+
+    $uniqueItems = [];
+    foreach ($items as $item => $value){
+        /*if(!in_array($value, $uniqueItems)){
+            $uniqueItems[$item] = $value;
+        }*/
+        $counter = 0;
+        if(count($uniqueItems) > 0){
+            foreach ($uniqueItems as $uniqueItem){
+                if($value->id != $uniqueItem->id){
+                    $counter++;
+                }else{
+                    break;
+                }
+            }
+
+            if(count($uniqueItems) == $counter){
+                $uniqueItems[$item] = $value;
+            }
+        }else{
+            $uniqueItems[$item] = $value;
+        }
+    }
+
+    return $uniqueItems;
 }
 
 /**
@@ -712,8 +751,14 @@ function get_workspace_folders($folder_id, $tree_id, $sort_type, $copy_only=fals
             . " where fd.folder_id = fgr.folder_id AND fgr.group_id = ?";
         $params = array($folder_id);
     }else{
-        $query = "select fd.folder_id, fd.folder_name, fr.folder_parent, fr.role from {$prefix}folderdetails fd, {$prefix}folderrights fr where fr.folder_id = fd.folder_id AND fr.login_id=? and fd.folder_parent != 0";
-        $params = array($_SESSION['toolkits_logon_id']);
+        $query = "select fd.folder_id, fd.folder_name, fd.folder_parent as real_parent, fr.folder_parent, fr.role, cfr.nrshared as nrshared from {$prefix}folderdetails fd, {$prefix}folderrights fr cross join (
+select fd.folder_id, fd.folder_name, fr.folder_parent, fr.id, fr.role, count(fr.folder_id) as nrshared  from {$prefix}folderdetails fd, {$prefix}folderrights fr  where fr.folder_id = fd.folder_id  and fd.folder_parent != 0 and fr.folder_id in 
+                    (
+                        select fd.folder_id from {$prefix}folderdetails fd, {$prefix}folderrights fr where fr.folder_id = fd.folder_id AND fr.login_id=? and fd.folder_parent != 0
+                    )  GROUP BY  fr.folder_id
+) as cfr  where fr.folder_id = fd.folder_id and fr.folder_id = cfr.folder_id AND fr.login_id=? and fd.folder_parent != 0 
+";
+        $params = array($_SESSION['toolkits_logon_id'], $_SESSION['toolkits_logon_id']);
     }
 
     $top = false;
@@ -758,22 +803,12 @@ function get_workspace_folders($folder_id, $tree_id, $sort_type, $copy_only=fals
         {
             $query_response[$index]['tree_id'] = $tree_id . '_F' . $row['folder_id'];
             $query_response[$index]['tree_parent_id'] = $tree_id;
-            $shared = "";
-            if ($query_response[$index]['role'] != 'creator' && $newtype != 'group'){
-                $shared = 'shared';
-            }
-            $query_response[$index]['type'] = ($shared == "") ?  "folder" : "folder" . _ .$shared;
             $nextlevel[$row['folder_id']] = $query_response[$index]['tree_id']; // Watch out. do not use $row, it's not filled 2 lines up
         }
         else if ($row['folder_parent'] == $recyclebin)
         {
             $query_response[$index]['tree_id'] = $recyclebin_tree_id . '_F' . $row['folder_id'];
             $query_response[$index]['tree_parent_id'] = $recyclebin_tree_id;
-            $shared = "";
-            if ($query_response[$index]['role'] != 'creator' && $newtype != 'group'){
-                $shared = 'shared';
-            }
-            $query_response[$index]['type'] = ($shared == "") ?  "folder" : "folder" . _ .$shared;
             $nextlevel[$row['folder_id']] = $query_response[$index]['tree_id']; // Watch out. do not use $row, it's not filled 2 lines up
         }
         else
@@ -781,6 +816,12 @@ function get_workspace_folders($folder_id, $tree_id, $sort_type, $copy_only=fals
             if ($query_response[$index]['role'] == 'creator')
                 $unassigned_found = true;
         }
+        $shared = "";
+        if ($query_response[$index]['role'] != 'creator' && $newtype != 'group'){
+            $shared = 'shared';
+        }
+        $query_response[$index]['type'] = ($shared == "") ?  "folder" : "folder_" .$shared;
+
     }
     while ($unassigned_found)
     {
@@ -797,7 +838,7 @@ function get_workspace_folders($folder_id, $tree_id, $sort_type, $copy_only=fals
                 if ($query_response[$index]['role'] != 'creator' && $newtype != 'group'){
                     $shared = 'shared';
                 }
-                $query_response[$index]['type'] = ($shared == "") ?  "folder" : "folder" . _ .$shared;
+                $query_response[$index]['type'] = ($shared == "") ?  "folder" : "folder_" .$shared;
                 $nextlevel[$row['folder_id']] = $query_response[$index]['tree_id'];
             }
             else{
@@ -809,8 +850,35 @@ function get_workspace_folders($folder_id, $tree_id, $sort_type, $copy_only=fals
         }
     }
 
+    $query = "SELECT * FROM folderdetails where";
+    $params = [];
+    foreach ($query_response as $folder){
+
+        if(intval($folder['nrshared']) > 1){
+            if(count($params) == 0){
+                $query.= " folder_id = ?";
+            }else{
+                $query .= " or folder_id = ?";
+            }
+            array_push($params, $folder['real_parent']);
+        }
+    }
+    if(count($params) > 0){
+        $query_shared_sub_folder = db_query($query, $params);
+
+        foreach ($query_response as $index =>$folder){
+            foreach ($query_shared_sub_folder as $sharedSubFolder){
+                if($folder['real_parent'] ==  $sharedSubFolder['folder_id']){
+                    $query_response[$index]['type'] = 'sub_folder_shared';
+                }
+            }
+        }
+    }
+
+
     return $query_response;
 }
+
 
 /**
  * Builds an array with the files only of the folder suitable for jsTree
@@ -947,11 +1015,28 @@ function get_users_projects($sort_type, $copy_only=false)
     $workspace->nodes[$item->id] = $item;
     //$items = get_folder_contents($item->xot_id, $item->id, $sort_type, $copy_only, "_top");
     $items = get_workspace_contents($item->xot_id, $item->id, $sort_type, $copy_only,"_top");
+    $sharedItems = [];
     if ($items) {
         $workspace->items = array_merge($workspace->items, $items);
         foreach($items as $item)
         {
-            $workspace->nodes[$item->id] = $item;
+            if(count($sharedItems)>0){
+                foreach ($sharedItems as $shared){
+                    if($item->parent == $shared){
+                        $item->ChildOfShared = true;
+                        array_push($sharedItems, $item->id);
+                        $workspace->nodes[$item->id] = $item;
+                    }else{
+                        $workspace->nodes[$item->id] = $item;
+                    }
+                }
+            }else{
+                if($item->type == "folder_shared" || $item->type == "sub_folder_shared"){
+                    array_push($sharedItems, $item->id);
+                }
+                $workspace->nodes[$item->id] = $item;
+            }
+
         }
     }
 
@@ -982,7 +1067,10 @@ function get_users_projects($sort_type, $copy_only=false)
         $workspace->nodes[$item->id] = $item;
         $items = get_folder_contents($item->xot_id, $item->id, $sort_type, $copy_only, $type = "group_top");
         if ($items) {
+
             $workspace->items = array_merge($workspace->items, $items);
+
+
             foreach($items as $item)
             {
                 $workspace->nodes[$item->id] = $item;
@@ -1036,6 +1124,7 @@ function get_users_projects($sort_type, $copy_only=false)
     $workspace->templates = $templates;
     $workspace->grouptemplates = $grouptemplates;
     $workspace->sharedtemplates = $sharedtemplates;
+
 
     return json_encode($workspace);
 }
@@ -1122,18 +1211,18 @@ function list_blank_templates() {
 
           if ($template['display_id'] != 0) {
 
-              echo "</p><a href=\"javascript:example_window('" . $template['display_id'] . "' )\">" . DISPLAY_EXAMPLE . "</a> | ";
+              echo "</p><a href=\"javascript:example_window('" . $template['display_id'] . "')\">" . DISPLAY_EXAMPLE . "<span class='sr-only'> - " . $template['display_name'] . "</span></a> | ";
 
           } else {
 
-              echo "<br>";
+              echo "</p>";
 
           }
 
           ?>
           <button id="<?php echo $template['template_name'] ?>_button" type="button" class="xerte_button_c_no_width"
                   onclick="javascript:template_toggle('<?php echo $template['template_name'] ?>')">
-              <i class="fa  icon-plus-sign xerte-icon"></i><?php echo DISPLAY_CREATE; ?>&nbsp;
+              <i class="fa icon-plus-sign xerte-icon"></i><?php echo DISPLAY_CREATE; ?><span class="sr-only"> <?php echo $template['display_name']; ?></span>
           </button>
           </div>
           <div id="<?php echo $template['template_name']; ?>" class="rename">
@@ -1148,8 +1237,9 @@ function list_blank_templates() {
                       <?php
                   } else {
                       ?>
+					  <label for="<?php echo $template['template_name']; ?>_templatename" class="sr-only"><?php echo DISPLAY_TEMPLATE; ?></label>
                       <select id="<?php echo $template['template_name']; ?>_templatename" name="templatename"
-                              class="select_template">
+                              class="select_template" onchange="javascript:setup_example('<?php echo $template["template_name"]; ?>_templatename')">
 
                           <?php
                           foreach ($derived as $row) {
@@ -1162,10 +1252,14 @@ function list_blank_templates() {
                       <?php
                   }
                   ?>
+				  <label for="<?php echo $template['template_name']; ?>_filename" class="sr-only"><?php echo DISPLAY_PROJECT_NAME; ?></label>
                   <input type="text" width="200" id="<?php echo $template['template_name']; ?>_filename"
                          name="filename"/>
-                  <button type="submit" class="xerte_button_c"><i
-                              class="fa  icon-plus-sign xerte-icon"></i><?php echo DISPLAY_CREATE; ?></button>
+                  <p>
+                      <button type="submit" class="xerte_button_c">
+						<i class="fa icon-plus-sign xerte-icon"></i><?php echo DISPLAY_CREATE; ?><span class="sr-only"> <?php echo $template['display_name']; ?></span>
+					  </button>
+                  </p>
               </form>
           </div>
           </div>

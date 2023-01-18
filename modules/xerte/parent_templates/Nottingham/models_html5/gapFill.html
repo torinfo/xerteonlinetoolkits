@@ -56,7 +56,7 @@
 			score = $pageContents.data('score');
 			attempts = $pageContents.data('attempts');
 			
-			if (XTGetMode() == "normal") { this.isTracked = true; };
+			if (XTGetMode() == "normal") { this.isTracked = true; }
 			
 			$pageContents.find("#hint").remove();
 		}
@@ -198,7 +198,7 @@
 			
             for (var i=0; i<passageArray.length; i++) {
 				if (markedWord == false) {
-					gapFillStr += '<span tabindex="0">' + passageArray[i] + '</span>';
+					gapFillStr += '<span class="staticTxt" tabindex="0">' + passageArray[i] + '</span>';
 					markedWord = true;
 				} else {
 					decodedAnswer = $("<textarea/>").html(passageArray[i]).text();
@@ -223,7 +223,7 @@
 						var dropDownSort = x_currentPageXML.getAttribute("dropDownSort");
 						if (dropDownSort != undefined && dropDownSort != "" && dropDownSort != "alphabetic") // must be random
 						    allAnswers.sort(
-						        function() { return 0.5 - Math.random(); }
+						        function() { return Math.random() - 0.5; }
 						    );
 						else
 						    allAnswers.sort();
@@ -264,6 +264,17 @@
 			}
 			
 			var $gapFillTxt = $('<div>' + gapFillStr + '</div>').appendTo($targetHolder);
+			
+			// remove any staticTxt tags that have other staticTxt tags in them - in FF these can make you get stuck in loop when tabbing and unable to reach draggable labels
+			// these tags are added when layout uses tables
+			$gapFillTxt.find('.staticTxt').each(function() {
+				var $parent = $(this).parents('.staticTxt');
+				if ($parent.length > 0) {
+					$parent[0].removeAttribute('tabindex');
+					$parent.removeClass('staticTxt');
+				}
+			});
+			
 			$gapFillTxt.find("span.target, input").each(function(i) {
 				var $this = $(this);
 				if (x_currentPageXML.getAttribute("interactivity") == "Drag Drop") {
@@ -298,6 +309,11 @@
 					width	:"100%"
 				});
 				
+				// manually add a transcript button to the end of the audio bar
+				if (x_currentPageXML.getAttribute('audioTranscript') != undefined && x_currentPageXML.getAttribute('audioTranscript') != '') {
+					x_addAudioTranscript($audioHolder, x_currentPageXML.getAttribute('audioTranscript'));
+				}
+				
 				$audioHolder.hide();
 				
 			} else {
@@ -331,12 +347,19 @@
 				}
 				for (interactionNumber=0;  interactionNumber<answerData.length;  interactionNumber++) {
 					correctAnswer = answerData[interactionNumber][0];
-					correctAnswer = correctAnswer + "-->" + correctAnswer;
+					correctAnswer = correctAnswer + "-->" + interactionNumber;
 					correctAnswers.push(correctAnswer);
-					correctOption = {source: answerData[interactionNumber][0], target: answerData[interactionNumber][0]}
+					correctOption = {source: answerData[interactionNumber][0], target: interactionNumber + ''}
 					correctOptions.push(correctOption);
 				}
                 XTEnterInteraction(x_currentPage,  0 , 'match', name, correctOptions, correctAnswers, "", x_currentPageXML.getAttribute("grouping"));
+				/* fill-in
+				for (interactionNumber=0;  interactionNumber<answerData.length;  interactionNumber++) {
+					name = "interaction number" + " " + interactionNumber;
+					correctAnswer = answerData[interactionNumber];
+					XTEnterInteraction(x_currentPage,  interactionNumber , 'fill-in', name, [], correctAnswer, "Correct", x_currentPageXML.getAttribute("grouping"));
+				}
+				*/
             }
 			else{ // drop down menu
                 for (interactionNumber=0;  interactionNumber<answerData.length;  interactionNumber++) {
@@ -402,6 +425,7 @@
 						
 						$("#feedbackTxt #txt").html(x_addLineBreaks(x_currentPageXML.getAttribute("feedback")));
 						$feedbackTxt.fadeIn();
+						x_pageContentsUpdated();
 						gapFill.audioFbResize(true);
 					});
 					
@@ -461,6 +485,7 @@
 									if ($targetHolder.find("input.correct").length == $targetHolder.find("input").length) {
 										$("#feedbackTxt #txt").html(x_addLineBreaks(x_currentPageXML.getAttribute("feedback")));
 										$feedbackTxt.fadeIn();
+										x_pageContentsUpdated();
 										gapFill.audioFbResize(true);
 									}
 
@@ -580,6 +605,7 @@
 						$("#submitBtn").hide();
 						$("#feedbackTxt #txt").html(x_addLineBreaks(x_currentPageXML.getAttribute("feedback")));
 						$feedbackTxt.fadeIn();
+						x_pageContentsUpdated();
 						gapFill.audioFbResize(true);
 						
 						finished = true;
@@ -631,6 +657,7 @@
 						$("#submitBtn").hide();
 						$("#feedbackTxt #txt").html(x_addLineBreaks(x_currentPageXML.getAttribute("feedback")));
 						$feedbackTxt.fadeIn();
+						x_pageContentsUpdated();
 						gapFill.audioFbResize(true);
 						
 						finished = true;
@@ -802,6 +829,7 @@
 				$feedbackTxt.fadeIn();
 				gapFill.audioFbResize(true);
                 gapFill.dragDropSubmit();
+				x_pageContentsUpdated();
 			}
 		}
 		
@@ -897,6 +925,7 @@
 				if (forced != true) {
 					$("#feedbackTxt #txt").html('<p>' + x_addLineBreaks(x_currentPageXML.getAttribute("gapFillIncomplete") != undefined && x_currentPageXML.getAttribute("gapFillIncomplete") != "" ? x_currentPageXML.getAttribute("gapFillIncomplete") : "Please complete the exercise.") + '</p>');
 					$feedbackTxt.fadeIn();
+					x_pageContentsUpdated();
 				}
 				
 			// an attempt (even if partial) has been made
@@ -955,7 +984,8 @@
 						$("#feedbackTxt #txt").html(x_addLineBreaks(x_currentPageXML.getAttribute("feedback")));
 						$feedbackTxt.fadeIn();
 						gapFill.audioFbResize(true);
-						
+						x_pageContentsUpdated();
+
 						finished = true;
 						
 					} else {
@@ -994,12 +1024,14 @@
 							$("#feedbackTxt #txt").html('<p>' + gapFillPartWrong + '</p>');
 						}
 						$feedbackTxt.fadeIn();
+						x_pageContentsUpdated();
 					}
 					
 				// if force tracking mode is on then you must fully complete before checking answers
 				} else {
 					$("#feedbackTxt #txt").html('<p>' + x_addLineBreaks(x_currentPageXML.getAttribute("gapFillIncomplete") != undefined && x_currentPageXML.getAttribute("gapFillIncomplete") != "" ? x_currentPageXML.getAttribute("gapFillIncomplete") : "Please complete the exercise.") + '</p>');
 					$feedbackTxt.fadeIn();
+					x_pageContentsUpdated();
 				}
 			}
         };
@@ -1012,6 +1044,7 @@
 				if (forced != true) {
 					$("#feedbackTxt #txt").html('<p>' + x_addLineBreaks(x_currentPageXML.getAttribute("gapFillIncomplete") != undefined && x_currentPageXML.getAttribute("gapFillIncomplete") != "" ? x_currentPageXML.getAttribute("gapFillIncomplete") : "Please complete the exercise.") + '</p>');
 					$feedbackTxt.fadeIn();
+					x_pageContentsUpdated();
 				}
 				
 			// an attempt (even if partial) has been made
@@ -1080,7 +1113,8 @@
 						$("#showBtn,#submitBtn").hide();
 						$feedbackTxt.fadeIn();
 						gapFill.audioFbResize(true);
-						
+						x_pageContentsUpdated();
+
 						finished = true;
 						
 					} else {
@@ -1090,7 +1124,8 @@
 							$("#feedbackTxt #txt").html('<p>' + gapFillPartWrong + '</p>');
 						}
 						$feedbackTxt.fadeIn();
-						
+						x_pageContentsUpdated();
+
 						if (this.isTracked) {
 							$("#submitBtn").hide();
 							$("#showBtn").show();
@@ -1101,6 +1136,7 @@
 				} else {
 					$("#feedbackTxt #txt").html('<p>' + x_addLineBreaks(x_currentPageXML.getAttribute("gapFillIncomplete") != undefined && x_currentPageXML.getAttribute("gapFillIncomplete") != "" ? x_currentPageXML.getAttribute("gapFillIncomplete") : "Please complete the exercise.") + '</p>');
 					$feedbackTxt.fadeIn();
+					x_pageContentsUpdated();
 				}
 			}
 		};
@@ -1113,6 +1149,7 @@
 				if (forced != true) {
 					$("#feedbackTxt #txt").html('<p>' + x_addLineBreaks(x_currentPageXML.getAttribute("gapFillIncomplete") != undefined && x_currentPageXML.getAttribute("gapFillIncomplete") != "" ? x_currentPageXML.getAttribute("gapFillIncomplete") : "Please complete the exercise.") + '</p>');
 					$feedbackTxt.fadeIn();
+					x_pageContentsUpdated();
 				}
 				
 			// an attempt (even if partial) has been made
@@ -1137,29 +1174,57 @@
 					var feedback = "Correct";
 					total = 0;
 					correct_answers = 0;
-					
 					for (var interactionNumber = 0; interactionNumber < answerData.length; interactionNumber++) {
-						var correctAnswer = answerData[interactionNumber][0];
+            var correctAnswer = answerData[interactionNumber][0];
 						var labelSource = labelAnswers[correctAnswer];
-						var option = {source: labelSource, target: correctAnswer};
+						var option = {source: labelSource, target: interactionNumber+''};
 						l_options.push(option);
-						if (option.source == option.target) {
+						if (correctAnswer == labelSource) {
 							correct_answers++;
 						}
 
-						var l_answer = labelSource + "-->" + correctAnswer;
+						var l_answer = labelSource + "-->" + interactionNumber;
 						l_answers.push(l_answer);
 						total++;
 					}
-					var correct = (total == correct_answers);
-					var result = {
+					const correct = (total == correct_answers);
+					const result = {
 						success: correct,
-						score: (correct ? 100.0 : 0.0)
+						score: (correct_answers * 100.0)/total
 					};
 					if (!correct) { feedback = "Incorrect"; }
 
 					XTExitInteraction(x_currentPage, 0, result, l_options, l_answers, feedback);
-					
+
+
+					/* fill-in
+					// track before moving back labels or else results page looks like you haven't attempted to answer
+					total = 0;
+					correct_answers = 0;
+
+					for (var interactionNumber = 0; interactionNumber < answerData.length; interactionNumber++) {
+						var feedback = "Correct",
+							correct = false,
+							correctAnswer = answerData[interactionNumber][0],
+							labelSource = labelAnswers[correctAnswer] == undefined ? '' : labelAnswers[correctAnswer],
+							option = {source: labelSource, target: correctAnswer};
+
+						if (option.source == option.target) {
+							correct_answers++;
+							correct = true;
+						}
+
+						var result = {
+							success: correct,
+							score: (correct ? 100.0 : 0.0)
+						};
+						if (!correct) { feedback = "Incorrect"; }
+
+						total++;
+						XTExitInteraction(x_currentPage, interactionNumber, result, [], labelSource, feedback, x_currentPageXML.getAttribute("trackinglabel"));
+					}
+					var allCorrect = (total == correct_answers);
+					 */
 					gapFill.finishTracking();
 					
 					if (!this.isTracked) {
@@ -1203,7 +1268,8 @@
 						$incorrectTargets.addClass("incorrect");
 						$("#submitBtn").hide();
 						finished = true;
-						
+
+						// if (allCorrect !== true) {
 						if (correct !== true) {
 							$("#showBtn").show();
 						}
@@ -1214,6 +1280,7 @@
 						$("#labelHolder").hide();
 						$("#feedbackTxt #txt").html(x_addLineBreaks(x_currentPageXML.getAttribute("feedback")));
 						$feedbackTxt.fadeIn();
+						x_pageContentsUpdated();
 						gapFill.audioFbResize(true);
 						finished = true;
 					} else {
@@ -1223,12 +1290,14 @@
 							$("#feedbackTxt #txt").html('<p>' + x_addLineBreaks(x_currentPageXML.getAttribute("gapFillPartWrongTracking") != undefined && x_currentPageXML.getAttribute("gapFillPartWrongTracking") != "" ? x_currentPageXML.getAttribute("gapFillPartWrongTracking") : "Your correct answers are shown in green.") + '</p>');
 						}
 						$feedbackTxt.fadeIn();
+						x_pageContentsUpdated();
 					}
 
 				// if force tracking mode is on then you must fully complete before checking answers
 				} else {
 					$("#feedbackTxt #txt").html('<p>' + x_addLineBreaks(x_currentPageXML.getAttribute("gapFillIncomplete") != undefined && x_currentPageXML.getAttribute("gapFillIncomplete") != "" ? x_currentPageXML.getAttribute("gapFillIncomplete") : "Please complete the exercise.") + '</p>');
 					$feedbackTxt.fadeIn();
+					x_pageContentsUpdated();
 				}
 			}
 		}
@@ -1243,10 +1312,10 @@
 			}
 			if (x_currentPageXML.getAttribute("interactivity") == "Drop Down Menu")
 			{
-                XTSetPageType(x_currentPage, 'numeric', answerData.length, this.weighting);
+                XTSetPageType(x_currentPage, 'match', answerData.length, this.weighting);
 			}
 			else { // text fill in blank or drag & drop
-                XTSetPageType(x_currentPage, 'numeric', 1, this.weighting);
+                XTSetPageType(x_currentPage, 'match', 1, this.weighting);
             }
 		}
 		

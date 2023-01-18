@@ -44,6 +44,34 @@ if(!isset($xapi_enabled))
 {
     $xapi_enabled = false;
 }
+if (!isset($lti_enabled))
+{
+    $lti_enabled = false;
+}
+if(!isset($pedit_enabled))
+{
+    $pedit_enabled = false;
+}
+if ((!isset($x_embed)))
+{
+    $x_embed = false;
+}
+
+/*
+if ((!isset($x_embed)))
+{
+    if (isset($_GET['embed']) && $_GET['embed'] === 'true') {
+        $x_embed = true;
+        if ($_GET['activated'] !== 'true')
+        {
+            $x_embed_activated = false;
+        }
+        else{
+            $x_embed_activated = true;
+        }
+    }
+}
+*/
 
 //error_reporting(E_ALL);
 //ini_set('display_errors',"ON");
@@ -222,7 +250,7 @@ db_query("UPDATE {$xerte_toolkits_site->database_table_prefix}templatedetails SE
  * Start to check the access_to_whom settings from templatedetails for this template
  */
 
-if ($tsugi_enabled) {
+if ($tsugi_enabled || $pedit_enabled) {
     /* Tsugi enabled */
     if ($row_play["tsugi_published"] == 1) {
         // Actually published for Tsugi
@@ -297,7 +325,7 @@ if ($tsugi_enabled) {
                     unset($errors);
                 } else
                 {
-                    if (in_array($xerte_toolkits_site->authentication_method, ['Saml2', 'OAuth2'], true))
+                    if (in_array($xerte_toolkits_site->authentication_method, array('Saml2', 'OAuth2'), true))
                     {
                         if (isset($_SESSION['toolkits_logon_username']))
                         {
@@ -327,8 +355,7 @@ if ($tsugi_enabled) {
 
 					show_template($row_play, $xapi_enabled);
                 } else {
-                    html_headers();
-                    login_prompt($errors);
+                    login_prompt($errors, $xerte_toolkits_site);
                 }
                 /*
                  * Check the password

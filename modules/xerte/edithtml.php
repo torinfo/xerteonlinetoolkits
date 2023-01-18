@@ -98,6 +98,8 @@ function output_editor_code($row_edit, $xerte_toolkits_site, $read_status, $vers
             $xwd_file_url = $xwd_url . "data.xwd";
         }
     }
+    $xwd_file_url = $xwd_url . "wizards/getXwd.php";
+
     $module_url = "modules/" . $row_edit['template_framework'] . "/";
 
     $jqgridlangfile = "editor/js/vendor/jqgrid/js/i18n/grid.locale-en.js";
@@ -119,9 +121,12 @@ function output_editor_code($row_edit, $xerte_toolkits_site, $read_status, $vers
     /**
      * Get sublist of pages (if any)
      */
+
     $template_sub_pages = get_template_pagelist($row_edit['template_id']);
     $simple_mode = count($template_sub_pages) != 0;
     $simple_lo_page = get_template_simple_lo_page($row_edit['template_id']);
+
+
 
     /**
      * build an array of available themes for this template
@@ -154,10 +159,12 @@ function output_editor_code($row_edit, $xerte_toolkits_site, $read_status, $vers
                                 break;
                             case "preview" : $themeProperties->preview = $xerte_toolkits_site->site_url . "themes/" . $row_edit['parent_template'] . "/" . $f . "/" . trim($attr_data[1]);
                                 break;
+							case "imgbtns" : $themeProperties->imgbtns = trim($attr_data[1]);
+                                break;
                         }
                     }
                     if (substr($themeProperties->enabled, 0, 1) == "y") {
-                        $ThemeList[] = array('name' => $themeProperties->name, 'display_name' => $themeProperties->display_name, 'description' => $themeProperties->description,  'preview' => $themeProperties->preview);
+                        $ThemeList[] = array('name' => $themeProperties->name, 'display_name' => $themeProperties->display_name, 'description' => $themeProperties->description,  'preview' => $themeProperties->preview, 'imgbtns' => $themeProperties->imgbtns);
                     }
                 }
             }
@@ -169,25 +176,31 @@ function output_editor_code($row_edit, $xerte_toolkits_site, $read_status, $vers
 		}
 		array_multisort($display_name, SORT_ASC, $ThemeList);
 		// Add default theme to beginning
-		array_unshift($ThemeList, array('name' => "default", 'display_name' => "Xerte Online Toolkits", 'description' => "Xerte Online Toolkits", 'preview' => $xerte_toolkits_site->site_url . "modules/xerte/parent_templates/Nottingham/common_html5/default.jpg"));
+		array_unshift($ThemeList, array('name' => "default", 'display_name' => "Xerte Online Toolkits", 'description' => "Xerte Online Toolkits", 'preview' => $xerte_toolkits_site->site_url . "modules/xerte/parent_templates/Nottingham/common_html5/default.jpg", 'imgbtns' => "true"));
     }
 
     /**
      * Build CategoryList
      */
-    $sql = "select * from {$xerte_toolkits_site->database_table_prefix}syndicationcategories";
+    $sql = "select * from {$xerte_toolkits_site->database_table_prefix}syndicationcategories order by category_name asc";
     $categories = db_query($sql);
+
+    /**
+     * Build EducationList
+     */
+    $sql = "select * from {$xerte_toolkits_site->database_table_prefix}educationlevel order by educationlevel_name asc";
+    $educationlevels = db_query($sql);
 
     /**
      * Build Grouping List
      */
-    $sql = "select * from `{$xerte_toolkits_site->database_table_prefix}grouping`";
+    $sql = "select * from `{$xerte_toolkits_site->database_table_prefix}grouping` order by grouping_name asc";
     $grouping = db_query($sql);
 
     /**
      * Build Course List
      */
-    $sql = "select * from {$xerte_toolkits_site->database_table_prefix}course";
+    $sql = "select * from {$xerte_toolkits_site->database_table_prefix}course order by course_name asc";
     $course = db_query($sql);
 
 
@@ -210,6 +223,9 @@ function output_editor_code($row_edit, $xerte_toolkits_site, $read_status, $vers
     /**
      * set up the onunload function used in version control
      */
+    /* Set flag of whther oai-pmh harvesting is configured and available */
+    $oai_pmh = file_exists($xerte_toolkits_site->root_file_path . "oai-pmh/oai_config.php");
+
     _debug("Starting editor page");
 ?>
 <!DOCTYPE html>
@@ -234,7 +250,7 @@ function output_editor_code($row_edit, $xerte_toolkits_site, $read_status, $vers
     <link rel="stylesheet" type="text/css" href="editor/js/vendor/ckeditor/plugins/codemirror/css/codemirror.min.css?version=<?php echo $version;?>" />
 	<link rel="stylesheet" type="text/css" href="editor/js/vendor/pannellum/pannellum.css?version=<?php echo $version;?>" />
     <link rel="stylesheet" type="text/css" href="editor/js/vendor/iconpicker/iconpicker-1.5.0.css?version=<?php echo $version;?>" />
-    <link href='https://fonts.googleapis.com/css?family=Open+Sans' rel='stylesheet' type='text/css'>
+    <!--link href='https://fonts.googleapis.com/css?family=Open+Sans' rel='stylesheet' type='text/css'-->
     <?php
     if (file_exists($xerte_toolkits_site->root_file_path . "branding/branding.css"))
     {
@@ -332,12 +348,7 @@ function output_editor_code($row_edit, $xerte_toolkits_site, $read_status, $vers
 
 <!-- <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script> -->
 <!--script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
-<script>window.jQuery || document.write('<script src="editor/js/vendor/jquery-1.9.1.min.js"><\/script>')</script>
-<?php if (preg_match('~MSIE|Internet Explorer~i', $_SERVER['HTTP_USER_AGENT']) || (strpos($_SERVER['HTTP_USER_AGENT'], 'Trident/7.0; rv:11.0') !== false)) { ?>
-<script src="//ajax.googleapis.com/ajax/libs/jqueryui/1.11.4/jquery-ui.min.js"></script>
-<?php }else{ ?>
-<script type="text/javascript" src="editor/js/vendor/jquery.ui-1.10.4.js"></script -->
-<?php } ?>
+<script>window.jQuery || document.write('<script src="editor/js/vendor/jquery-1.9.1.min.js"><\/script>')</script-->
 <script src="editor/js/vendor/jquery-1.9.1.min.js"></script>
 <script type="text/javascript" src="editor/js/vendor/jquery.ui-1.10.4.js"></script>
 <script type="text/javascript" src="editor/js/vendor/jquery.layout-1.3.0-rc30.79.min.js"></script>
@@ -395,6 +406,7 @@ function output_editor_code($row_edit, $xerte_toolkits_site, $read_status, $vers
     echo "simple_lo_page=" . ($simple_lo_page ? "true" : "false") . ";\n";
     echo "theme_list=" . json_encode($ThemeList) . ";\n";
     echo "category_list=" . json_encode($categories) . ";\n";
+    echo "educationlevel_list=" . json_encode($educationlevels) . ";\n";
     echo "grouping_list=" . json_encode($grouping) . ";\n";
     echo "course_list=" . json_encode($course) . ";\n";
     // Some upgrade.php in teh past prevented the course_freetext_enabled column to be set correctly in the sitedetails table
@@ -407,6 +419,7 @@ function output_editor_code($row_edit, $xerte_toolkits_site, $read_status, $vers
         echo "course_freetext_enabled=" . ($xerte_toolkits_site->course_freetext_enabled == 'true' ? 'true' : 'false') . ";\n";
     }
     echo "templateframework=\"" . $row_edit['template_framework'] . "\";\n";
+    echo "oai_pmh_available=" . ($oai_pmh ? "true" : "false") . ";\n";
     ?>
 
     function bunload(){

@@ -11,8 +11,7 @@ CKEDITOR.editorConfig = function( config ) {
     // The toolbar groups arrangement, optimized for a single toolbar row.
     config.toolbarGroups = [
         { name: 'document',	   groups: [ 'mode' ] },
-        { name: 'clipboard',   groups: [ 'clipboard', 'undo' ] },
-        { name: 'editing',     groups: [ 'spellchecker' ] },
+        { name: 'clipboard',   groups: [ 'clipboard', 'undo', 'find' ] },
         { name: 'basicstyles', groups: [ 'basicstyles', 'cleanup' ] },
         { name: 'links' },
         { name: 'styles' },
@@ -23,7 +22,7 @@ CKEDITOR.editorConfig = function( config ) {
         { name: 'others' }
     ];
 
-    config.extraPlugins = 'dialog,widget,extmathjax,image3,codemirror,oembed,xotlink,xotmarkword,fontawesome,uploadimage,html5audio,rubytext,wrapstyle,link,emoji,xotlightbox,numericinput,lineheight';
+    config.extraPlugins = 'dialog,widget,extmathjax,image3,codemirror,oembed,xotlink,xotmarkword,fontawesome,uploadimage,html5audio,xotrecorder,xotcolumns,rubytext,wrapstyle,link,emoji,xotlightbox,numericinput,lineheight,codesnippet,a11ychecker,find';
     // The default plugins included in the basic setup define some buttons that
     // we don't want too have in a basic editor. We remove them here.
     config.removeButtons = 'Cut,Copy,Paste,Save,NewPage,Preview,Print,PageBreak,CreateDiv,Anchor,Smiley';
@@ -35,12 +34,11 @@ CKEDITOR.editorConfig = function( config ) {
     config.toolbarCanCollapse = true;
     config.allowedContent = true;
     config.extraAllowedContent = 'p(*)[*]{*};div(*)[*]{*};li(*)[*]{*};ul(*)[*]{*}';
-    config.fillEmptyBlocks = false;
+    //config.fillEmptyBlocks = false;
 
     config.uploadUrl = '';
 
     config.contentsCss = ['modules/xerte/parent_templates/Nottingham/common_html5/css/smoothness/jquery-ui-1.8.18.custom.css',
-        'modules/xerte/parent_templates/Nottingham/common_html5/css/themeStyles.css',
         'modules/xerte/parent_templates/Nottingham/common_html5/css/editorStyles.css',
         'modules/xerte/parent_templates/Nottingham/common_html5/css/mainStyles.css',
         'modules/xerte/parent_templates/Nottingham/common_html5/fontawesome-5.6.3/css/all.min.css',
@@ -60,8 +58,22 @@ CKEDITOR.editorConfig = function( config ) {
 	var temp = config.specialChars.slice(0, insertPosition).concat(newCharacters).concat(config.specialChars.slice(insertPosition));
 	config.specialChars = temp;
 
-    //config.scayt_autoStartup = true;
-    //config.scayt_sLang = loLanguage.replace("-", "_");
+	// SCAYT available languages
+    var scayt_languages = ['da_DK', 'de_DE', 'el_GR', 'en_CA', 'en_GB', 'en_US', 'es_ES', 'fi_FI', 'fr_CA', 'fr_FR', 'it_IT', 'nb_NO', 'nl_NL', 'sv_SE'];
+    var loLanguageScayt = (loLanguage || "").replace("-", "_");
+    switch (loLanguageScayt)
+    {
+        case 'nl_BE':
+            loLanguageScayt = 'nl_NL';
+            break;
+    }
+
+    if (scayt_languages.includes(loLanguageScayt)) {
+        config.scayt_autoStartup = true;
+        config.scayt_sLang = loLanguageScayt;
+        config.scayt_disableOptionsStorage = 'lang';
+    }
+
 	// custom fonts can be added here that have been included in fonts.css:
 	//config.font_names = 'fontnametodisplay/yourfontname;' + config.font_names;
 

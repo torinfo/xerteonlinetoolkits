@@ -1,4 +1,16 @@
-@import url('https://fonts.googleapis.com/css?family=Varela+Round');
+/* varela-round-regular - latin-ext_latin */
+@font-face {
+	font-family: 'Varela Round';
+	font-style: normal;
+	font-weight: 400;
+	src: url('../fonts/varela-round-v19-latin-ext_latin-regular.eot'); /* IE9 Compat Modes */
+	src: local(''),
+	url('../fonts/varela-round-v19-latin-ext_latin-regular.eot?#iefix') format('embedded-opentype'), /* IE6-IE8 */
+	url('../fonts/varela-round-v19-latin-ext_latin-regular.woff2') format('woff2'), /* Super Modern Browsers */
+	url('../fonts/varela-round-v19-latin-ext_latin-regular.woff') format('woff'), /* Modern Browsers */
+	url('../fonts/varela-round-v19-latin-ext_latin-regular.ttf') format('truetype'), /* Safari, Android, iOS */
+	url('../fonts/varela-round-v19-latin-ext_latin-regular.svg#VarelaRound') format('svg'); /* Legacy iOS */
+}
 @import "scss/_allvariables"; /*start here and set the default values for all the variables*/
 @import "scss/_header";
 @import "scss/_pagetypes";
@@ -51,9 +63,11 @@ a:hover{
 
 #x_mainHolder{
 	background:$defaultpagebackground;
+	border: none !important;/*remove this to restore the default border*/
+}
+body:not(.sb_right):not(.sb_left) #x_mainHolder {
 	border-top-right-radius:$largeroundedcorners;
 	border-bottom-left-radius:$largeroundedcorners;
-	border: none !important;/*remove this to restore the default border*/
 }
 #x_pageDiv {
 	padding-top: $defaultpagepadding;
@@ -83,7 +97,7 @@ img {
 //******@media changes******/
 @media (min-width: 1366px) {
 	/*tablet and above css below here*/
-	#x_mainHolder{
+	body:not(.sb_right):not(.sb_left) #x_mainHolder{
 		max-width:90%;
 		max-height:92%;
 		margin:auto;
@@ -100,7 +114,7 @@ img {
 and (min-device-width : 768px)
 and (max-device-width : 1024px)
 and (orientation : portrait) {
-	#x_mainHolder{
+	body:not(.sb_right):not(.sb_left) #x_mainHolder{
 		max-width:98%;
 		max-height:98%;
 		margin:auto;

@@ -43,26 +43,40 @@ var x_languageData  = [],
 	x_responsive = [], // list of any responsivetext.css files in use
 	x_cssFiles = [],
 	x_specialTheme = '',
-	x_pageLoadPause = false;
+	x_pageLoadPause = false,
+	x_btnIcons = [
+	// default interface buttons icons can be overriden:
+	// x_params[custom] = should a custom btn icon be used (FA icon selected in editor)? true/false
+	// x_params[name+'Icon'] = the icon to use if custom is true
+	// defaultFA = old themes that use images for buttons can have all btns set to use these default FA icons using themeIcons checkbox
+	// defaultIconClass = if icon isn't customised via icon selectors in editor or themeIcons checkbox, fallback to use this css style (this will mean btn icons/images set in theme will be used)
+		{name: 'max',				defaultIconClass:'x_maximise',						custom: 'fullScreenIcons',	defaultFA: 'fas fa-expand-arrows-alt'}, 	// full screen on
+		{name: 'min',				defaultIconClass:'x_minimise',						custom: 'fullScreenIcons',	defaultFA: 'fas fa-compress-arrows-alt'},	// full screen off
+		{name: 'prev',				defaultIconClass:'x_prev',							custom: 'navIcons',			defaultFA: 'fas fa-chevron-circle-left'},	// previous page
+		{name: 'next',				defaultIconClass:'x_next',							custom: 'navIcons',			defaultFA: 'fas fa-chevron-circle-right'},	// next page
+		{name: 'toc',				defaultIconClass:'x_info',							custom: 'navIcons',			defaultFA: 'fas fa-bars'},					// table of contents
+		{name: 'home',				defaultIconClass:'x_home',							custom: 'navIcons',			defaultFA: 'fas fa-home'},					// home page
+		{name: 'hideTools',			defaultIconClass:'fa fa-angle-double-left fa-lg',	custom: 'footerToolIcons',	defaultFA: 'fas fa-angle-double-left'},		// footer tools hide
+		{name: 'showTools',			defaultIconClass:'fa fa-angle-double-right fa-lg',	custom: 'footerToolIcons',	defaultFA: 'fas fa-angle-double-right'},	// footer tools show
+		{name: 'accessibility',		defaultIconClass:'x_colourChanger',					custom: 'accessibilityIc',	defaultFA: 'fas fa-eye-slash'},				// accessibility options
+		{name: 'help',				defaultIconClass:'x_help',							custom: 'helpIc',			defaultFA: 'fas fa-question'},				// project help file
+		{name: 'saveSession',		defaultIconClass:'x_saveSession',					custom: 'saveSessionIc',	defaultFA: 'fas fa-save'},					// save session
+		{name: 'glossary',			defaultIconClass:'x_glossary',						custom: 'glossaryIc',		defaultFA: 'fas fa-book'},					// glossary
+		{name: 'intro',				defaultIconClass:'x_projectIntro',					custom: 'introIc',			defaultFA: 'fas fa-info'},					// project introduction
+		{name: 'pageIntro',			defaultIconClass:'fas fa-info',						custom: 'pageIntroIc',		defaultFA: 'fas fa-info'},					// page introduction
+		{name: 'sideBarHideLeft',	defaultIconClass:'fa fa-angle-double-left',			custom: 'sideBarBtnIcons',	defaultFA: 'fas fa-angle-double-left'},		// side bar hide (bar on left)
+		{name: 'sideBarHideRight',	defaultIconClass:'fa fa-angle-double-right',		custom: 'sideBarBtnIcons',	defaultFA: 'fas fa-angle-double-right'},	// side bar hide (bar on right)
+		{name: 'sideBarShowLeft',	defaultIconClass:'fa fa-angle-double-right',		custom: 'sideBarBtnIcons',	defaultFA: 'fas fa-angle-double-right'},	// side bar show (bar on left)
+		{name: 'sideBarShowRight',	defaultIconClass:'fa fa-angle-double-left',			custom: 'sideBarBtnIcons',	defaultFA: 'fas fa-angle-double-left'}		// side bar show (bar on right)
+	],
+	x_sideBarBtns = [];
 
 // Determine whether offline mode or not
 var xot_offline = !(typeof modelfilestrs === 'undefined');
 var modelfilestrs = modelfilestrs || [];
 
-var $x_window, $x_body, $x_head, $x_mainHolder, $x_mobileScroll, $x_headerBlock, $x_pageHolder, $x_helperText, $x_pageDiv, $x_footerBlock, $x_footerL, $x_menuBtn, $x_colourChangerBtn, $x_saveSessionBtn, $x_prevBtn, $x_pageNo, $x_nextBtn, $x_background;
-
-// Patch jQuery to add support for .toggle(function, function...) which was removed in jQuery 1.9
-// Code from http://forum.jquery.com/topic/beginner-function-toggle-deprecated-what-to-use-instead
-if (!$.fn.toggleClick) {
-    $.fn.toggleClick = function(){
-		var functions=arguments, iteration=0;
-
-		return this.click(function(){
-			functions[iteration].apply(this,arguments);
-			iteration = (iteration+1) % functions.length;
-		})
-    };
-}
+var $x_window, $x_body, $x_head, $x_mainHolder, $x_mobileScroll, $x_headerBlock, $x_pageHolder, $x_helperText, $x_pageDiv, $x_footerBlock, $x_footerL,
+	$x_introBtn, $x_helpBtn, $x_pageIntroBtn, $x_glossaryBtn, $x_menuBtn, $x_colourChangerBtn, $x_saveSessionBtn, $x_prevBtn, $x_pageNo, $x_nextBtn, $x_cssBtn, $x_background;
 
 $(document).keydown(function(e) {
 	// if lightbox open then don't allow page up/down buttons to change the page open in the background
@@ -124,11 +138,10 @@ $(document).keydown(function(e) {
 });
 
 $(document).ready(function() {
-
-	// Load the script.js dependency loader
+	// Load the loadjs dependency loader
     if (!xot_offline) {
         // TODO - we should move this to play/preview and let it kickstart the loading of all files
-        $.getScript(x_templateLocation + "common_html5/js/script.js");
+        $.getScript(x_templateLocation + "common_html5/js/loadjs.min.js");
     }
 
     $x_mainHolder = $("#x_mainHolder");
@@ -148,7 +161,28 @@ $(document).ready(function() {
         x_browserInfo.Android = true;
     }
 
-    x_browserInfo.touchScreen = !!("ontouchstart" in window);
+	// detect touchscreen function (https://patrickhlauke.github.io/touch/touchscreen-detection/)
+	function detectTouchscreen() {
+		var result = false;
+		if (window.PointerEvent && ('maxTouchPoints' in navigator)) {
+			// if Pointer Events are supported, just check maxTouchPoints
+			if (navigator.maxTouchPoints > 0) {
+			result = true;
+			}
+		} else {
+			// no Pointer Events...
+			if (window.matchMedia && window.matchMedia("(any-pointer:coarse)").matches) {
+				// check for any-pointer:coarse which mostly means touchscreen
+				result = true;
+			} else if (window.TouchEvent || ('ontouchstart' in window)) {
+				// last resort - check for exposed touch events API / event handler
+				result = true;
+			}
+		}
+		return result;
+	}
+
+	x_browserInfo.touchScreen = detectTouchscreen();
 	if (x_browserInfo.touchScreen == true) {
 		$x_mainHolder.addClass("x_touchScreen");
 	}
@@ -168,9 +202,15 @@ $(document).ready(function() {
         x_projectDataLoaded(xmlData);
     }
     else {
+		var now = new Date().getTime();
+    	let url = "website_code/php/templates/get_template_xml.php?file=" + x_projectXML + "&time=" + now;
+    	if (typeof use_url !== "undefined" && use_url)
+		{
+			url = x_projectXML + "?time=" + now;
+		}
         $.ajax({
             type: "GET",
-            url: x_projectXML,
+            url: url,
             dataType: "text",
             success: function (text) {
                 var newString = x_makeAbsolute(x_fixLineBreaks(text)),
@@ -183,7 +223,6 @@ $(document).ready(function() {
             }
         });
     }
-
 });
 
 x_pagesViewed = function()
@@ -428,7 +467,6 @@ x_projectDataLoaded = function(xmlData) {
 		else {
 			pageToHide.push(i);
 		}
-
     });
 	
 	// removes hidden pages from x_pages array
@@ -452,7 +490,6 @@ x_projectDataLoaded = function(xmlData) {
     if (x_normalPages.length < 2) {
         // don't show navigation options if there's only one page
         $("#x_footerBlock .x_floatRight").remove();
-		
     } else {
         if (x_params.navigation == undefined) {
             x_params.navigation = "Linear";
@@ -618,7 +655,7 @@ x_projectDataLoaded = function(xmlData) {
             x_fillWindow = false; // overrides fill window for touchscreen devices
 
         } else if (x_urlParams.display == "fixed" || x_urlParams.display == "default" || x_urlParams.display == "full" || x_urlParams.display == "fill") {
-            if (x_browserInfo.touchScreen == true) {
+            if (x_browserInfo.mobile == true) {
                 x_fillWindow = true;
             }
             if (x_urlParams.display == "fixed" || x_urlParams.display == "default") { // default fixed size using values in css (800,600)
@@ -666,9 +703,7 @@ x_projectDataLoaded = function(xmlData) {
         x_params.theme = x_urlParams.theme;
     }
 
-    x_getLangData(x_params.language); // x_setUp() function called in here after language file loaded
-
-    // Setup nr of pages for tracking
+	// Setup nr of pages for tracking
     XTSetOption('nrpages', x_pageInfo.length);
 	XTSetOption('toComplete', markedPages);
 	XTSetOption('templateId', x_TemplateId);
@@ -677,7 +712,6 @@ x_projectDataLoaded = function(xmlData) {
     if (x_params.trackingMode != undefined) {
         XTSetOption('tracking-mode', x_params.trackingMode);
     }
-
 
 	if (x_params.trackingPassed != undefined)
 	{
@@ -704,7 +738,137 @@ x_projectDataLoaded = function(xmlData) {
     {
         XTSetOption('force_tracking_mode', x_params.forceTrackingMode);
     }
+	if (typeof x_embed == "undefined")
+	{
+		x_embed = false;
+		x_embed_activated = false;
+	}
+	if (x_embed && !x_embed_activated)
+	{
+		// Activate overlay
+		$("#x_embed_overlay")
+			.switchClass("embed-overlay-inactive", "embed-overlay")
+			.click(function(){
+				window.location = x_embed_activation_url;
+			})
+			.append("<span><i class='far fa-play-circle fa-2x'></i></span>");
+	}
 
+	x_getThemeInfo(x_params.theme);
+}
+
+function x_getThemeInfo(thisTheme, themeChg) {
+	// what icons / images will be used on interface buttons?
+	// some older themes use images for interface buttons (not FontAwesome icons) - it's only these themes that can fall back to use the defaultFA (all others should have FA icons set in theme)
+	// these themes should have imgbtns: true in the theme info file
+	if (thisTheme == undefined || thisTheme == "default") {
+		x_setUpThemeBtns({ imgbtns: 'true' }, themeChg);
+
+	} else {
+		$.ajax({
+			type: "GET",
+			url: x_themePath + thisTheme + '/' + thisTheme + '.info',
+			dataType: "text",
+			success: function (text) {
+				const temp = text.split('\n'),
+					themeInfo = {};
+
+				for (let i=0; i<temp.length; i++) {
+					if (temp[i].split(':').length > 1) {
+						themeInfo[temp[i].split(':')[0]] = temp[i].split(':')[1].trim();
+					}
+				}
+
+				x_setUpThemeBtns(themeInfo, themeChg);
+			},
+			error: function() {
+				x_setUpThemeBtns({}, themeChg);
+			}
+		});
+	}
+}
+
+function x_setUpThemeBtns(themeInfo, themeChg) {
+	let themeIcons = x_params.themeIcons;
+	if (themeIcons != 'true' || themeInfo.imgbtns != 'true') {
+		themeIcons = false;
+	}
+
+	// buttons on side bar will always use icons & not images
+	if (themeChg !== true) {
+		x_sideBarBtnInfo();
+	}
+
+	for (let i=0; i<x_btnIcons.length; i++) {
+		x_btnIcons[i].customised = false;
+		x_btnIcons[i].btnImgs = false;
+		x_btnIcons[i].iconClass = x_btnIcons[i].defaultIconClass;
+
+		if (x_params[x_btnIcons[i].custom] == 'true') {
+			// a custom icon has individually been selected in editor for this button
+			x_btnIcons[i].iconClass = x_params[x_btnIcons[i].name + 'Icon'];
+			x_btnIcons[i].customised = true;
+		} else if (themeIcons == 'true' || (themeInfo.imgbtns == 'true' && $.inArray(x_btnIcons[i].name, x_sideBarBtns) != -1)) {
+			// it's an old theme where all button images are to be overridden with the default FontAwesome icons
+			// either because update theme icons is checked or button is on side bar
+			x_btnIcons[i].iconClass = x_btnIcons[i].defaultFA;
+			x_btnIcons[i].customised = true;
+		} else if (themeInfo.imgbtns == 'true') {
+			x_btnIcons[i].btnImgs = true;
+		}
+
+	}
+
+	if (themeChg !== true) {
+		x_getLangData(x_params.language); // x_setUp() function called in here after language file loaded
+
+	} else {
+		// theme has been changed sometime after the project has already loaded
+		// change classes on interface buttons as new theme may use a different type of btn (FontAwesome / image)
+		var btns = [ { btn: $x_helpBtn, name: 'help' }, { btn: $x_introBtn, name: 'intro' }, { btn: $x_colourChangerBtn, name: 'accessibility' }, { btn: $x_nextBtn, name: 'next' }, { btn: $x_saveSessionBtn, name: 'saveSession' }, { btn: $x_glossaryBtn, name: 'glossary' } ];
+
+		for (let i=0; i<btns.length; i++) {
+			if (btns[i].btn != undefined) {
+				const btnIcon = x_btnIcons.filter(function(icon){return icon.name === btns[i].name;})[0];
+				btns[i].btn.button({ icons: { primary: btnIcon.iconClass } });
+				if (btnIcon.customised == true) { btns[i].btn.addClass("customIconBtn"); } else { btns[i].btn.removeClass("customIconBtn");  };
+				if (btnIcon.btnImgs == true) { btns[i].btn.addClass("imgIconBtn"); } else { btns[i].btn.removeClass("imgIconBtn"); };
+			}
+		}
+
+		// now do btns where icon works slightly differently
+		if ($x_cssBtn != undefined) {
+			let btnIcon;
+			if (x_fillWindow == false) {
+				btnIcon = x_btnIcons.filter(function(icon){return icon.name === 'max';})[0];
+			} else {
+				btnIcon = x_btnIcons.filter(function(icon){return icon.name === 'min';})[0];
+			}
+			$x_cssBtn.button({ icons: { primary: btnIcon.iconClass } });
+			if (btnIcon.customised == true) { $x_cssBtn.addClass("customIconBtn"); } else { $x_cssBtn.removeClass("customIconBtn");  };
+			if (btnIcon.btnImgs == true) { $x_cssBtn.addClass("imgIconBtn"); } else { $x_cssBtn.removeClass("imgIconBtn"); };
+		}
+
+		if ($x_prevBtn != undefined) {
+			const btnIcon = x_btnIcons.filter(function(icon){return icon.name === 'prev';})[0];
+			if ((x_params.navigation == "Historic" || x_params.navigation == "LinearWithHistoric") && btnIcon.customised === false) {
+				btnIcon.iconClass = "x_prev_hist";
+			}
+			$x_prevBtn.button({ icons: { primary: btnIcon.iconClass } });
+			if (btnIcon.customised == true) { $x_prevBtn.addClass("customIconBtn"); } else { $x_prevBtn.removeClass("customIconBtn");  };
+			if (btnIcon.btnImgs == true) { $x_prevBtn.addClass("imgIconBtn"); } else { $x_prevBtn.removeClass("imgIconBtn"); };
+		}
+
+		if ($x_menuBtn != undefined) {
+			let btnIcon = x_btnIcons.filter(function(icon){return icon.name === 'toc';})[0];
+			if (x_params.navigation == "Historic") {
+				btnIcon = x_btnIcons.filter(function(icon){return icon.name === 'home';})[0];
+			}
+			$x_menuBtn.button({ icons: { primary: btnIcon.iconClass } });
+			if (btnIcon.customised == true) { $x_menuBtn.addClass("customIconBtn"); } else { $x_menuBtn.removeClass("customIconBtn");  };
+			if (btnIcon.btnImgs == true) { $x_menuBtn.addClass("imgIconBtn"); } else { $x_menuBtn.removeClass("imgIconBtn"); };
+		}
+	}
 }
 
 // browser back / fwd button will trigger this - manually make page change to match #pageX
@@ -724,9 +888,13 @@ window.onhashchange = function() {
 	}
 	
 	// force lightbox to close
-	if (parent.window.$.featherlight.current()) {
-		parent.window.$.featherlight.current().close();
+	// catch error  - in case we're in an iframe, i.e. bootstrap or LMS LTI link
+	try {
+		if (parent.window.$.featherlight.current()) {
+			parent.window.$.featherlight.current().close();
+		}
 	}
+	catch(e) {}
 }
 
 // Get the page info from the URL (called on project load & when page changed via browser fwd/back btns)
@@ -759,7 +927,6 @@ function getHashInfo(urlHash) {
 				thisPage = false;
 			}
 		}
-		
 		return thisPage;
 		
 	} else {
@@ -848,38 +1015,35 @@ function x_evalURL(url)
                 url = url.substr(0,pos) + url.substr(pos + 16);
                 return eval(url);
             }
-            else
-            {
-                return eval(url);
-            }
+            else return eval(url);
         }
-        else {
-            return eval(url)
-        }
+        else return eval(url);
     }
-    else
-    {
-        return url;
-    }
+    else return url;
 }
 
 function x_GetTrackingTextFromHTML(html, fallback)
 {
     var div = $('<div>').html(html);
     var txt = $.trim(div.text());
-    if (txt == "")
-    {
+    if (txt == "") {
         var img = div.find("img");
-        if (img != undefined && img.length > 0)
-        {
-            txt = img[0].attributes['alt'].value;
-        }
+        if (img != undefined && img.length > 0) txt = img[0].attributes['alt'].value;
     }
-    if (txt == "")
-    {
-        txt = fallback;
-    }
+    if (txt == "") txt = fallback;
+
     return txt;
+}
+
+// Gets the trackinglabel of the current page.
+// This is either the page's name or (if set) a custom label.
+function x_GetTrackingLabelOfPage() {
+	var trackinglabel = $('<div>').html(x_currentPageXML.getAttribute("name")).text();
+	if (x_currentPageXML.getAttribute("trackinglabel") != undefined && x_currentPageXML.getAttribute("trackinglabel") != "")
+	{
+		trackinglabel = x_currentPageXML.getAttribute("trackinglabel");
+	}
+	return trackinglabel;
 }
 
 // setup functions load interface buttons and events
@@ -919,6 +1083,8 @@ function x_setUp() {
 			var msg = x_getLangInfo(x_languageData.find("authorSupport")[0], "label", "") != "" && x_getLangInfo(x_languageData.find("authorSupport")[0], "label", "") != null ? x_getLangInfo(x_languageData.find("authorSupport")[0], "label", "") : "Author Support is ON: text shown in red will not appear in live projects.";
 			$x_headerBlock.prepend('<div id="x_authorSupportMsg" class="alert"><p>' + msg + '</p></div>');
 		}
+
+		$x_headerBlock.find('h2').append('<span id="x_pageTitle"></span>');
 
 		// calculate author set variables
 		if (x_params.variables != undefined) {
@@ -961,14 +1127,21 @@ function x_setUp() {
 
 function x_desktopSetUp() {
 	if (x_params.embed != true && x_params.displayMode != 'full screen' && x_params.displayMode != 'fill window') {
-		$x_footerL.prepend('<button id="x_cssBtn"></button>');
-		$("#x_cssBtn")
+		$x_cssBtn = $('<button id="x_cssBtn"></button>').prependTo($x_footerL);
+
+		const maxBtnIcon = x_btnIcons.filter(function(icon){return icon.name === 'max';})[0];
+
+		$x_cssBtn
 			.button({
-				icons:	{primary: "x_maximise"},
-				label: 	x_getLangInfo(x_languageData.find("sizes").find("item")[3], false, "Full screen"),
+				icons:	{
+					primary: maxBtnIcon.iconClass
+				},
+				// label can now be set in editor but fall back to language file if not set
+				label: x_params.maxLabel != undefined && x_params.maxLabel != "" ? x_params.maxLabel : x_getLangInfo(x_languageData.find("sizes").find("item")[3], false, "Full screen"),
 				text:	false
 			})
-            .attr("aria-label", $("#x_cssBtn").attr("title"))
+			.addClass('x_maximise')
+            .attr("aria-label", $x_cssBtn.attr("title"))
 			.click(function() {
 				// Post flag to containing page for iframe resizing
 				if (window && window.parent && window.parent.postMessage) {
@@ -976,7 +1149,9 @@ function x_desktopSetUp() {
 				}
 
 				if (x_fillWindow == false) {
+
 					x_setFillWindow();
+
 				} else {
 					for (var i=0; i<x_responsive.length; i++) {
 						$x_mainHolder.removeClass("x_responsive");
@@ -997,11 +1172,14 @@ function x_desktopSetUp() {
 							});
 					}
 					$x_body.css("overflow", "auto");
-					$(this).button({
-						icons:	{primary: "x_maximise"},
-						label:	x_getLangInfo(x_languageData.find("sizes").find("item")[3], false, "Full screen")
-					});
-					$("#x_cssBtn").addClass("x_maximise").removeClass("x_minimise");
+
+					$(this)
+						.button({
+							icons:	{ primary: x_btnIcons.filter(function(icon){return icon.name === 'max';})[0].iconClass },
+							label:	x_params.maxLabel != undefined && x_params.maxLabel != "" ? x_params.maxLabel : x_getLangInfo(x_languageData.find("sizes").find("item")[3], false, "Full screen")
+						})
+						.addClass('x_maximise').removeClass("x_minimise");
+
 					x_fillWindow = false;
 					x_updateCss();
 				}
@@ -1011,7 +1189,12 @@ function x_desktopSetUp() {
 					.removeClass("ui-state-hover");
 			});
 
-		$("#x_cssBtn").addClass("x_maximise").removeClass("x_minimise");
+		if (maxBtnIcon.customised == true) {
+			$x_cssBtn.addClass("customIconBtn");
+		}
+		if (maxBtnIcon.btnImgs == true) {
+			$x_cssBtn.addClass("imgIconBtn");
+		}
 	}
 
 	if (x_params.displayMode == "full screen" || x_params.displayMode == "fill window") {
@@ -1099,9 +1282,11 @@ function x_cssSetUp(param) {
 			break;
         case "theme":
             if (!xot_offline) {
-                $.getScript(x_themePath + x_params.theme + '/' + x_params.theme + '.js'); // most themes won't have this js file
-                // Set id
-                $('link[href="' + x_themePath + x_params.theme + '/' + x_params.theme + '.js"]').attr('id', 'theme_js');
+            	if (x_params.theme != undefined) {
+					$.getScript(x_themePath + x_params.theme + '/' + x_params.theme + '.js'); // most themes won't have this js file
+					// Set id
+					$('link[href="' + x_themePath + x_params.theme + '/' + x_params.theme + '.js"]').attr('id', 'theme_js');
+				}
             }
             x_cssSetUp("responsive");
             break;
@@ -1118,6 +1303,27 @@ function x_cssSetUp(param) {
 			}
             break;
     }
+}
+
+function x_KeepAlive()
+{
+	const now = new Date().getTime();
+	let url = "website_code/php/keepalive.php" + "?t=" + now;
+	if (sessionParam != undefined)
+	{
+		url = "website_code/php/keepalive.php" + sessionParam + "&t=" + now;
+	}
+
+	setTimeout(function(){
+		$.ajax({
+			type: "GET",
+			url: url,
+			dataType: "json",
+			success: function (data) {
+				x_KeepAlive();
+			}
+		})
+	}, 600000);
 }
 
 // clunky fix for issue where Firefox triggers css loaded event (which then triggers x_continueSetUp1) everytime the responsive stylesheet is enabled when changing from small view to full screen
@@ -1138,18 +1344,24 @@ function x_continueSetUp1() {
 			x_dialogInfo.push({type:'menu', built:false});
 		}
 
+
+		// add project help button to footer bar that opens file (or URL) in new window or lightbox
 		var trimmedNfo = $.trim(x_params.nfo);
 		if (x_params.nfo != undefined && trimmedNfo != '') {
-			$x_footerL.prepend('<button id="x_helpBtn"></button>');
-			$("#x_helpBtn")
+
+			const helpIcon = x_btnIcons.filter(function(icon){return icon.name === 'help';})[0];
+			$x_helpBtn = $('<button id="x_helpBtn"></button>').prependTo($x_footerL);
+
+			$x_helpBtn
 				.button({
 					icons: {
-						primary: "x_help"
+						primary: helpIcon.iconClass
 					},
-					label:	x_getLangInfo(x_languageData.find("helpButton")[0], "label", "Help"),
+					// label can now be set in editor but fall back to language file if not set
+					label: x_params.helpLabel != undefined && x_params.helpLabel != "" ? x_params.helpLabel : x_getLangInfo(x_languageData.find("helpButton")[0], "label", "Help"),
 					text:	false
 				})
-				.attr("aria-label", $("#x_helpBtn").attr("title") + " " + x_params.newWindowTxt)
+				.attr("aria-label", $x_helpBtn.attr("title") + x_params.newWindowTxt)
 				.click(function() {
 					if (x_params.helpTarget != 'lightbox') {
 						window.open(x_evalURL(x_params.nfo), "_blank");
@@ -1162,10 +1374,141 @@ function x_continueSetUp1() {
 						.removeClass("ui-state-focus")
 						.removeClass("ui-state-hover");
 				});
+
+			if (helpIcon.customised == true) {
+				$x_helpBtn.addClass("customIconBtn");
+			}
+			if (helpIcon.btnImgs == true) {
+				$x_helpBtn.addClass("imgIconBtn");
+			}
 		}
 
 		if (x_params.glossary != undefined) XENITH.GLOSSARY.init();
 
+		// add project intro button to footer bar that opens lightbox
+		if (x_getIntroInfo('project') != false) {
+
+			const introInfo = x_getIntroInfo('project');
+			const introIcon = x_btnIcons.filter(function(icon){return icon.name === 'intro';})[0];
+			$x_introBtn = $('<button id="x_introBtn"></button>').prependTo($x_footerL);
+
+			$x_introBtn
+				.button({
+					icons: {
+						primary: introIcon.iconClass
+					},
+					// label can be set in editor but fall back to language file if not set
+					label: x_params.introLabel != undefined && x_params.introLabel != "" ? x_params.introLabel : x_getLangInfo(x_languageData.find("projectIntroButton")[0], "label", "Introduction"),
+					text: false
+				})
+				.click(function() {
+					const $thisBtn = $(this);
+					let lb;
+
+					// set up close btn
+					const $introStartBtn = $('<button id="x_introStartBtn"></button>')
+						.button({ label: $.trim(x_params.introBtnTxt) })
+						.click(function() {
+							parent.window.$.featherlight.current().close();
+						});
+
+					// there are different types of content that might appear in project intro lightbox
+					if (introInfo.type == 'img') {
+
+						lb = $.featherlight({
+							image: introInfo.info.img,
+							afterOpen: function() {
+								this.$content.attr('alt', introInfo.info.tip);
+
+								const $holder = this.$content.parent('.featherlight-content');
+
+								// include project title
+								if (x_params.introTitle == 'true') {
+									$('<h1 id="x_introH1" class="x_introImgH1"></h1>')
+										.prependTo($holder)
+										.html(x_params.name);
+								}
+
+								// include start button to close lightbox
+								if (x_params.introBtn == 'true' && x_params.introBtnTxt != undefined && $.trim(x_params.introBtnTxt)) {
+									$introStartBtn
+										.appendTo($holder)
+										.addClass('x_introImgBtn');
+								}
+
+							}
+						});
+
+					} else if (introInfo.type == 'video') {
+
+						lb = $.featherlight($('<div id="pageIntroVideo"></div>'));
+
+						$('.featherlight-content').addClass('pageIntroVideo');
+
+						if (introInfo.info.video.indexOf("www.youtube.com") != -1 || introInfo.info.video.indexOf("//youtu") != -1) {
+							$('.featherlight-content').addClass('max youTube');
+						}
+
+						$('#pageIntroVideo')
+							.attr('title', introInfo.info.tip)
+							.mediaPlayer({
+								type: 'video',
+								source: introInfo.info.video,
+								width: '100%',
+								height: '100%',
+								pageName: 'introVideo'
+							});
+
+					} else if (introInfo.type == 'url' || introInfo.type == 'file') {
+
+						lb = $.featherlight({
+							iframe: x_evalURL(introInfo.info),
+							iframeMaxWidth: $x_mainHolder.width()*0.8,
+							iframeMaxHeight: $x_mainHolder.height()*0.8
+						});
+
+					} else if (introInfo.type == 'text') {
+
+						const $introHolder = $('<div id="x_pageIntroHolder"><div id="x_pageIntroTxt"><div id="x_pageIntroTxtInner"></div></div></div>');
+
+						$introHolder.find('#x_pageIntroTxtInner').html(introInfo.info);
+
+						// include project title
+						if (x_params.introTitle == 'true') {
+							$('<h1 id="x_introH1"></h1>')
+								.prependTo($introHolder.find('#x_pageIntroTxt'))
+								.html(x_params.name);
+						}
+
+						// include start button to close lightbox
+						if (x_params.introBtn == 'true' && x_params.introBtnTxt != undefined && $.trim(x_params.introBtnTxt)) {
+							$introStartBtn.appendTo($introHolder.find('#x_pageIntroTxt'));
+						}
+
+						lb = $.featherlight($introHolder, { variant: 'lightbox' + (x_browserInfo.mobile != true || x_params.introWidth == 'Full' ? x_params.introWidth : 'Auto' ) });
+					}
+
+					// open page intro after project intro has closed if it's also set to auto-open
+					if (lb != undefined && $x_pageIntroBtn != undefined && x_getIntroInfo(x_currentPageXML) != false && x_currentPageXML.getAttribute("introShow") != 'never') {
+						lb.beforeClose = function() {
+							if ($thisBtn.data('autoOpen') == true) {
+								$x_pageIntroBtn.click();
+								$thisBtn.data('autoOpen', false);
+							}
+						};
+					}
+
+				});
+
+			if (introIcon.customised == true) {
+				$x_introBtn.addClass("customIconBtn");
+			}
+			if (introIcon.btnImgs == true) {
+				$x_introBtn.addClass("imgIconBtn");
+			}
+		}
+
+		// media is deprecated but might still be in old projects
 		if (x_params.media != undefined) {
 			x_checkMediaExists(x_evalURL(x_params.media), function(mediaExists) {
 				if (mediaExists) {
@@ -1191,7 +1534,127 @@ function x_continueSetUp1() {
 			});
 		}
 
-		//add optional progress bar
+
+		// if any of the pages in this project have an intro - add a button to the footer bar that will open intro when clicked
+		let pageIntro = false;
+		for (let i=0; i<x_pages.length; i++) {
+			if (pageIntro != true && x_getIntroInfo(x_pages[i]) != false) {
+				pageIntro = true;
+				break;
+			}
+		}
+
+		// add page intro button to footer bar that opens lightbox if any of the pages in this project have the introduction optional property added
+		if (pageIntro == true) {
+
+			const introIcon = x_btnIcons.filter(function(icon){return icon.name === 'pageIntro';})[0];
+
+			$x_pageIntroBtn = $('<button id="x_pageIntroBtn"></button>').appendTo($('#x_headerBlock h2'));
+
+			if (x_params.pageIntroBg != 'icon') {
+				$x_pageIntroBtn.addClass('pageIntroBg');
+			}
+
+			$x_pageIntroBtn
+				.button({
+					icons: {
+						primary: introIcon.iconClass
+					},
+					// label can be set in editor but fall back to language file if not set
+					label: x_params.pageIntroLabel != undefined && x_params.pageIntroLabel != "" ? x_params.pageIntroLabel : x_getLangInfo(x_languageData.find("pageIntroButton")[0], "label", "Page Introduction"),
+					text: false
+				})
+				.click(function() {
+					const thisPageIntro = x_getIntroInfo(x_currentPageXML);
+
+					// set up close btn
+					const $introStartBtn = $('<button id="x_introStartBtn"></button>')
+						.button()
+						.click(function() {
+							parent.window.$.featherlight.current().close();
+						});
+
+					// there are different types of content that might appear in page intro lightbox
+					if (thisPageIntro.type == 'img') {
+						$.featherlight({
+							image: thisPageIntro.info.img,
+							afterOpen: function() {
+								this.$content.attr('alt', thisPageIntro.info.tip);
+
+								const $holder = this.$content.parent('.featherlight-content');
+
+								// include page title
+								if (x_currentPageXML.getAttribute('introTitle') == 'true') {
+									$('<h1 id="x_introH1" class="x_introImgH1"></h1>')
+										.prependTo($holder)
+										.html(x_currentPageXML.getAttribute('name'));
+								}
+
+								// include start button to close lightbox
+								if (x_currentPageXML.getAttribute('introBtn') == 'true' && x_currentPageXML.getAttribute('introBtnTxt') != undefined && $.trim(x_currentPageXML.getAttribute('introBtnTxt'))) {
+									$introStartBtn
+										.appendTo($holder)
+										.addClass('x_introImgBtn')
+										.button({ label: $.trim(x_currentPageXML.getAttribute('introBtnTxt')) });
+								}
+							}
+						});
+
+					} else if (thisPageIntro.type == 'video') {
+
+						$.featherlight($('<div id="pageIntroVideo"></div>'));
+
+						$('.featherlight-content').addClass('pageIntroVideo');
+
+						if (thisPageIntro.info.video.indexOf("www.youtube.com") != -1 || thisPageIntro.info.video.indexOf("//youtu") != -1) {
+							$('.featherlight-content').addClass('max youTube');
+						}
+
+						$('#pageIntroVideo')
+							.attr('title', thisPageIntro.info.tip)
+							.mediaPlayer({
+								type: 'video',
+								source: thisPageIntro.info.video,
+								width: '100%',
+								height: '100%',
+								pageName: 'introVideo'
+							});
+
+					} else if (thisPageIntro.type == 'url' || thisPageIntro.type == 'file') {
+
+						$.featherlight({
+							iframe: x_evalURL(thisPageIntro.info),
+							iframeMaxWidth: $x_mainHolder.width()*0.8,
+							iframeMaxHeight: $x_mainHolder.height()*0.8
+						});
+
+					} else if (thisPageIntro.type == 'text') {
+
+						const $introHolder = $('<div id="x_pageIntroHolder"><div id="x_pageIntroTxt"><div id="x_pageIntroTxtInner"></div></div></div>');
+
+						$introHolder.find('#x_pageIntroTxtInner').html(thisPageIntro.info);
+
+						// include page title
+						if (x_currentPageXML.getAttribute('introTitle') == 'true') {
+							$('<h1 id="x_introH1"></h1>')
+								.prependTo($introHolder.find('#x_pageIntroTxt'))
+								.html(x_currentPageXML.getAttribute('name'));
+						}
+
+						// include start button to close lightbox
+						if (x_currentPageXML.getAttribute('introBtn') == 'true' && x_currentPageXML.getAttribute('introBtnTxt') != undefined && $.trim(x_currentPageXML.getAttribute('introBtnTxt'))) {
+							$introStartBtn
+								.appendTo($introHolder.find('#x_pageIntroTxt'))
+								.button({ label: $.trim(x_currentPageXML.getAttribute('introBtnTxt')) });
+						}
+
+						$.featherlight($introHolder, { variant: 'lightbox' + (x_browserInfo.mobile != true || x_currentPageXML.getAttribute('introWidth') == 'Full' ? x_currentPageXML.getAttribute('introWidth') : 'Auto' ) });
+					}
+				});
+		}
+
+
+		// add optional progress bar
 		if (x_params.progressBar != undefined && x_params.progressBar != "" && x_params.hideFooter != "true") {
 			//add a div for the progress bar
 			$('#x_footerBlock').append('<div id="x_footerProgress" style="margin:auto; width:20%; text-align:center"></div>');
@@ -1203,96 +1666,97 @@ function x_continueSetUp1() {
 			}
 		}
 
-		//add show/hide footer tools
-		if (x_params.footerTools != "none" && x_params.hideFooter != "true") {
-			var hideMsg=x_getLangInfo(x_languageData.find("footerTools")[0], "hide", "Hide footer tools");
-			var showMsg=x_getLangInfo(x_languageData.find("footerTools")[0], "show", "Hide footer tools");
-			//add a div for the show/hide chevron
-			$('#x_footerBlock .x_floatLeft').before('<div id="x_footerShowHide" ><button id="x_footerChevron"><i class="fa fa-angle-double-left fa-lg " aria-hidden="true"></i></button></div>');
-			$('#x_footerChevron').prop('title', hideMsg);
-			$("#x_footerChevron").attr("aria-label", hideMsg);
+		x_dialogInfo.push({type:'colourChanger', built:false});
 
-			//chevron to show/hide function
-			$('#x_footerChevron').click(function(){
-				$('#x_footerBlock .x_floatLeft').fadeToggle( "slow", function(){
-						if($(this).is(':visible')){
-							$('#x_footerChevron').html('<div class="chevron" id="chevron" title="Hide footer tools"><i class="fa fa-angle-double-left fa-lg " aria-hidden="true"></i></div>');
-							$('#x_footerChevron').prop('title', hideMsg);
-							$("#x_footerChevron").attr("aria-label", hideMsg);
-						}else{
-							$('#x_footerChevron').html('<div class="chevron" id="chevron"><i class="fa fa-angle-double-right fa-lg " aria-hidden="true"></i></div>');
-							$('#x_footerChevron').prop('title', showMsg);
-							$("#x_footerChevron").attr("aria-label", showMsg);
-						}
-					});
-				return(false);
-			});
-			if (x_params.footerTools == "hideFooterTools" || x_browserInfo.mobile) {
-				$('#x_footerBlock .x_floatLeft').hide();
-				$('#x_footerChevron').html('<div class="chevron" id="chevron"><i class="fa fa-angle-double-right fa-lg " aria-hidden="true"></i></div>');
-				$('#x_footerChevron').prop('title', showMsg);
+		if (x_params.accessibilityHide != 'true') {
+
+			const accessibilityIcon = x_btnIcons.filter(function(icon){return icon.name === 'accessibility';})[0];
+
+			$x_colourChangerBtn
+				.button({
+					icons: {
+						primary: accessibilityIcon.iconClass
+					},
+					// label can now be set in editor but fall back to language file if not set
+					label: x_params.accessibilityLabel != undefined && x_params.accessibilityLabel != "" ? x_params.accessibilityLabel : x_getLangInfo(x_languageData.find("colourChanger")[0], "tooltip", "Change Colour"),
+					text:	false
+				})
+				.attr("aria-label", $x_colourChangerBtn.attr("title") + " " + x_params.dialogTxt)
+				.click(function() {
+					if (x_params.accessibilityTarget == "lightbox") {
+
+						$.featherlight($(), {
+							contentFilters: 'ajax',
+							ajax: x_templateLocation + 'models_html5/colourChanger.html',
+							variant: 'lightbox' + (x_browserInfo.mobile != true ? 'Medium' : 'Auto' )
+						});
+
+					} else {
+						x_openDialog(
+							"colourChanger",
+							x_params.accessibilityLabel != undefined && x_params.accessibilityLabel != "" ? x_params.accessibilityLabel : x_getLangInfo(x_languageData.find("colourChanger")[0], "label", "Colour Changer"),
+							x_getLangInfo(x_languageData.find("colourChanger").find("closeButton")[0], "description", "Close Colour Changer"),
+							null,
+							null,
+							function () {
+								$x_colourChangerBtn
+									.blur()
+									.removeClass("ui-state-focus")
+									.removeClass("ui-state-hover");
+							}
+						);
+					}
+				});
+
+			if (accessibilityIcon.customised == true) {
+				$x_colourChangerBtn.addClass("customIconBtn");
 			}
+			if (accessibilityIcon.btnImgs == true) {
+				$x_colourChangerBtn.addClass("imgIconBtn");
+			}
+
+		} else {
+			$x_colourChangerBtn.remove();
 		}
 
 		// default logo used is logo.png in modules/xerte/parent_templates/Nottingham/common_html5/
 		// it's overridden by logo in theme folder
 		// default & theme logos can also be overridden by images uploaded via Icon optional property
-		$('#x_headerBlock img.x_icon').hide();
-		$('#x_headerBlock img.x_icon').data('defaultLogo', $('#x_headerBlock .x_icon').attr('src'));
+		var $logo = $('#x_headerBlock img.x_icon');
+		$logo[x_params.icHide === 'true'  || $logo.attr('src') === '' ? 'hide' : 'show']();
+		//$('#x_headerBlock img.x_icon').data('defaultLogo', $('#x_headerBlock .x_icon').attr('src'));
 
 		var icPosition = "x_floatLeft";
 		if (x_params.icPosition != undefined && x_params.icPosition != "") {
 			icPosition = (x_params.icPosition === 'right') ? "x_floatRight" : "x_floatLeft";
 		}
-		$('#x_headerBlock img.x_icon').addClass(icPosition);
+		$logo.addClass(icPosition);
 
-		var checkExists = function(type, fallback) {
-			if (type == 'LO' && xot_offline) {
-				$('#x_headerBlock img.x_icon').show();
-				return;
-			}
-			$.ajax({
-				url: $('#x_headerBlock img.x_icon').attr('src'),
-				success: function() {
-					$('#x_headerBlock img.x_icon').show();
-					if (x_firstLoad == false) {x_updateCss();};
+		// the theme logo is being used - add a class that will allow for the different size windows to display different logos
+		if (($logo.attr('src') || '').indexOf('themes/') > -1) $logo.addClass('themeLogo');
 
-					// the theme logo is being used - add a class that will allow for the different size windows to display different logos
-					if (type == 'theme') {
-						$('#x_headerBlock img.x_icon').addClass('themeLogo');
-					}
-
-					if (x_params.icTip != undefined && x_params.icTip != "") {
-						$('#x_headerBlock img.x_icon').attr('alt', x_params.icTip);
-					} else {
-						$('#x_headerBlock img.x_icon').attr('aria-hidden', 'true');
-					}
-				},
-				error: function() {
-					if (fallback == 'theme') {
-						$('#x_headerBlock img.x_icon').attr('src', x_themePath + x_params.theme + "/logo.png");
-						checkExists('theme', 'default');
-					} else if (fallback == 'default') {
-						$('#x_headerBlock img.x_icon').attr('src', $('#x_headerBlock img.x_icon').data('defaultLogo'));
-						checkExists();
-					}
-				}
-			});
-		};
-
-		var type, fallback;
-		if (x_params.ic != undefined && x_params.ic != '') {
-			$('#x_headerBlock img.x_icon').attr('src', x_evalURL(x_params.ic));
-			type = 'LO';
-			fallback = x_params.theme != undefined && x_params.theme != "default" ? 'theme' : 'default';
-		} else if (x_params.theme != undefined && x_params.theme != "default") {
-			type = 'theme';
-			$('#x_headerBlock img.x_icon').attr('src', x_themePath + x_params.theme + "/logo.png");
+		if (x_params.icTip != undefined && x_params.icTip != "") {
+			$logo.attr('alt', x_params.icTip);
+		} else {
+			$logo.attr('aria-hidden', 'true');
 		}
-		checkExists(type, fallback);
 
 		// ignores x_params.allpagestitlesize if added as optional property as the header bar will resize to fit any title
-		$("#x_headerBlock h1").html(x_params.name);
+		// add link to LO title?
+		if (x_params.homePageLink != undefined && x_params.homePageLink === 'true') {
+			$("#x_headerBlock h1").prepend(
+				$("<a>")
+					.html(x_params.name)
+					.attr("href", "#")
+					.addClass("x_homePageLink")
+					.attr("title", x_getLangInfo(x_languageData.find("homeLink")[0], "description", "Go to Home page"))
+					.attr("aria-label", x_getLangInfo(x_languageData.find("homeLink")[0], "description", "Go to Home page"))
+					.on("click", x_goHome)
+				);
+		}
+		else {
+			$("#x_headerBlock h1").prepend(x_params.name);
+		}
 
 		// strips code out of page title
 		var div = $("<div>").html(x_params.name);
@@ -1301,17 +1765,18 @@ function x_continueSetUp1() {
 			document.title = strippedText;
 		}
 
-		var prevIcon = "x_prev";
-		if (x_params.navigation == "Historic" || x_params.navigation == "LinearWithHistoric") {
-			prevIcon = "x_prev_hist";
+		const prevIcon = x_btnIcons.filter(function(icon){return icon.name === 'prev';})[0];
+		if ((x_params.navigation == "Historic" || x_params.navigation == "LinearWithHistoric") && prevIcon.customised === false) {
+			prevIcon.iconClass = "x_prev_hist";
 		}
 
 		$x_prevBtn
 			.button({
 				icons: {
-					primary: prevIcon
+					primary: prevIcon.iconClass
 				},
-				label:	x_getLangInfo(x_languageData.find("backButton")[0], "label", "Back"),
+				// label can now be set in editor but fall back to language file if not set
+				label: x_params.prevLabel != undefined && x_params.prevLabel != "" ? x_params.prevLabel : x_getLangInfo(x_languageData.find("backButton")[0], "label", "Back"),
 				text:	false
 			})
 			.attr("aria-label", $("#x_prevBtn").attr("title"))
@@ -1349,12 +1814,22 @@ function x_continueSetUp1() {
 					.removeClass("ui-state-hover");
 			});
 
+		if (prevIcon.customised == true) {
+			$x_prevBtn.addClass("customIconBtn");
+		}
+		if (prevIcon.btnImgs == true) {
+			$x_prevBtn.addClass("imgIconBtn");
+		}
+
+		const nextIcon = x_btnIcons.filter(function(icon){return icon.name === 'next';})[0];
+
 		$x_nextBtn
 			.button({
 				icons: {
-					primary: "x_next"
+					primary: nextIcon.iconClass
 				},
-				label:	x_getLangInfo(x_languageData.find("nextButton")[0], "label", "Next"),
+				// label can now be set in editor but fall back to language file if not set
+				label: x_params.nextLabel != undefined && x_params.nextLabel != "" ? x_params.nextLabel : x_getLangInfo(x_languageData.find("nextButton")[0], "label", "Next"),
 				text:	false
 			})
 			.attr("aria-label", $("#x_nextBtn").attr("title"))
@@ -1362,19 +1837,6 @@ function x_continueSetUp1() {
 				// if it's a standalone page then nothing will happen
 				var pageIndex = $.inArray(x_currentPage, x_normalPages);
 				if (pageIndex != -1) {
-					if (x_params.navigation == "Historic" || x_params.navigation == "LinearWithHistoric") {
-						//when moving forward history is generated so ensure button is historic style
-						prevIcon = "x_prev_hist";
-							$x_prevBtn
-								.button({
-									icons: {
-										primary: prevIcon
-									},
-									label:	x_getLangInfo(x_languageData.find("backButton")[0], "label", "Back"),
-									text:	false
-								});
-					}
-					
 					x_changePage(x_normalPages[pageIndex+1]);
 				}
 				
@@ -1383,20 +1845,27 @@ function x_continueSetUp1() {
 					.removeClass("ui-state-hover");
 			});
 
+		if (nextIcon.customised == true) {
+			$x_nextBtn.addClass("customIconBtn");
+		}
+		if (nextIcon.btnImgs == true) {
+			$x_nextBtn.addClass("imgIconBtn");
+		}
 
-		var	menuIcon = "x_info",
-			menuLabel = x_getLangInfo(x_languageData.find("tocButton")[0], "label", "Table of Contents");
+		// icon & label can new be set up in editor but fall back to default if not set
+		let	menuIcon = x_btnIcons.filter(function(icon){return icon.name === 'toc';})[0];
+			menuLabel = x_params.tocLabel != undefined && x_params.tocLabel != "" ? x_params.tocLabel : x_getLangInfo(x_languageData.find("tocButton")[0], "label", "Table of Contents");
 
 		if (x_params.navigation == "Historic") {
-			menuIcon = "x_home";
-			menuLabel = x_getLangInfo(x_languageData.find("homeButton")[0], "label", "Home");
+			menuIcon = x_btnIcons.filter(function(icon){return icon.name === 'home';})[0];
+			menuLabel = x_params.homeLabel != undefined && x_params.homeLabel != "" ? x_params.homeLabel : x_getLangInfo(x_languageData.find("homeButton")[0], "label", "Home");
 			$x_menuBtn.addClass("x_home");
 		}
 
 		$x_menuBtn
 			.button({
 				icons: {
-					primary: menuIcon
+					primary: menuIcon.iconClass
 				},
 				label:	menuLabel,
 				text:	false
@@ -1404,24 +1873,30 @@ function x_continueSetUp1() {
 			.attr("aria-label", $("#x_menuBtn").attr("title") + (x_params.navigation == "Linear" || x_params.navigation == undefined ? " " + x_params.dialogTxt : ""))
 			.click(function() {
 				if (x_params.navigation == "Linear" || x_params.navigation == "LinearWithHistoric" || x_params.navigation == undefined) {
-					x_openDialog(
-						"menu",
-						x_getLangInfo(x_languageData.find("toc")[0], "label", "Table of Contents"),
-						x_getLangInfo(x_languageData.find("toc").find("closeButton")[0], "description", "Close Table of Contents"),
-						null,
-						null,
-						function () {
-							$x_menuBtn
-								.blur()
-								.removeClass("ui-state-focus")
-								.removeClass("ui-state-hover");
-						}
-					);
-				} else if (x_params.navigation == "Historic" && x_params.homePage != undefined && x_params.homePage != "") {
-					x_navigateToPage(false, {type:'linkID', ID:x_params.homePage});
-				} else {
-					x_changePage(0);
-				}
+					if (x_params.tocTarget == "lightbox") {
+
+						$.featherlight($(), {
+							contentFilters: 'ajax',
+							ajax: x_templateLocation + 'models_html5/menu.html',
+							variant: 'lightbox' + (x_browserInfo.mobile != true ? 'Medium' : 'Auto' )
+						});
+
+					} else {
+						x_openDialog(
+							"menu",
+							x_params.tocLabel != undefined && x_params.tocLabel != "" ? x_params.tocLabel : x_getLangInfo(x_languageData.find("toc")[0], "label", "Table of Contents"),
+							x_getLangInfo(x_languageData.find("toc").find("closeButton")[0], "description", "Close Table of Contents"),
+							null,
+							null,
+							function () {
+								$x_menuBtn
+									.blur()
+									.removeClass("ui-state-focus")
+									.removeClass("ui-state-hover");
+							}
+						);
+					}
+				} else x_goHome();
 				
 				$(this)
 					.blur()
@@ -1429,48 +1904,34 @@ function x_continueSetUp1() {
 					.removeClass("ui-state-hover");
 			});
 
-		x_dialogInfo.push({type:'colourChanger', built:false});
-		$x_colourChangerBtn
-			.button({
-				icons: {
-					primary: "x_colourChanger"
-				},
-				label:	x_getLangInfo(x_languageData.find("colourChanger")[0], "tooltip", "Change Colour"),
-				text:	false
-			})
-			.attr("aria-label", $("#x_colourChangerBtn").attr("title") + " " + x_params.dialogTxt)
-			.click(function() {
-				x_openDialog(
-					"colourChanger",
-					x_getLangInfo(x_languageData.find("colourChanger")[0], "label", "Colour Changer"),
-					x_getLangInfo(x_languageData.find("colourChanger").find("closeButton")[0], "description", "Close Colour Changer"),
-					null,
-					null,
-					function () {
-						$x_colourChangerBtn
-							.blur()
-							.removeClass("ui-state-focus")
-							.removeClass("ui-state-hover");
-					}
-				);
-			});
+		if (menuIcon.customised == true) {
+			$x_menuBtn.addClass("customIconBtn");
+		}
+		if (menuIcon.btnImgs == true) {
+			$x_menuBtn.addClass("imgIconBtn");
+		}
 
 		if (x_params["hideSaveSession"] !== "true" && (XTTrackingSystem().indexOf("SCORM") >= 0 || XTTrackingSystem() === "xAPI" || (typeof lti_enabled != "undefined" && lti_enabled))) {
 			x_dialogInfo.push({type:'saveSession', built:false});
-			var tooltip = x_getLangInfo(x_languageData.find("saveSession")[0], "tooltip", "Save Session");
+
+			// labels can now be set in editor but fall back to language file if not set
+			var tooltip = x_params.saveSessionLabel != undefined && x_params.saveSessionLabel != "" ? x_params.saveSessionLabel : x_getLangInfo(x_languageData.find("saveSession")[0], "tooltip", "Save Session");
 			if (typeof lti_enabled != "undefined" && lti_enabled)
 			{
-				tooltip = x_getLangInfo(x_languageData.find("saveSession")[0], "tooltip_ltionly", "Close Session");
+				tooltip = x_params.closeSessionLabel != undefined && x_params.closeSessionLabel != "" ? x_params.closeSessionLabel : x_getLangInfo(x_languageData.find("saveSession")[0], "tooltip_ltionly", "Close Session");
 			}
+
+			const saveSessionIcon = x_btnIcons.filter(function(icon){return icon.name === 'saveSession';})[0];
+
 			$x_saveSessionBtn
 				.button({
 					icons: {
-						primary: "x_saveSession"
+						primary: saveSessionIcon.iconClass
 					},
 					label: tooltip,
 					text: false
 				})
-				.attr("aria-label", $("#x_saveSessionBtn").attr("title") + " " + x_params.dialogTxt)
+				.attr("aria-label", $x_saveSessionBtn.attr("title") + " " + x_params.dialogTxt)
 				.click(function () {
 					x_openDialog(
 						"saveSession",
@@ -1486,11 +1947,63 @@ function x_continueSetUp1() {
 						}
 					);
 				});
+
+			if (saveSessionIcon.customised == true) {
+				$x_saveSessionBtn.addClass("customIconBtn");
+			}
+			if (saveSessionIcon.btnImgs == true) {
+				$x_saveSessionBtn.addClass("imgIconBtn");
+			}
 		}
 		else
 		{
 			$x_saveSessionBtn.remove();
+			$x_saveSessionBtn = undefined;
 		}
+		// If this LO is being tracked and is part of the install (not SCORM) keep session open
+		if (XTTrackingSystem() === "xAPI" || (typeof lti_enabled != "undefined" && lti_enabled)) {
+			x_KeepAlive();
+		}
+		// create side bar
+		x_setUpSideBar();
+
+		//add show/hide footer tools
+		if (x_params.footerTools != "none" && x_params.hideFooter != "true" && $x_footerL.find('button').length > 0) {
+
+			// labels can now be set in editor but fall back to language file if not set
+			var hideMsg = x_params.hideToolsLabel != undefined && x_params.hideToolsLabel != "" ? x_params.hideToolsLabel : x_getLangInfo(x_languageData.find("footerTools")[0], "hide", "Hide footer tools"),
+				showMsg = x_params.showToolsLabel != undefined && x_params.showToolsLabel != "" ? x_params.showToolsLabel : x_getLangInfo(x_languageData.find("footerTools")[0], "show", "Hide footer tools");
+
+			const hideIcon = x_btnIcons.filter(function(icon){return icon.name === 'hideTools';})[0];
+			const showIcon = x_btnIcons.filter(function(icon){return icon.name === 'showTools';})[0];
+
+			// add a div for the show/hide chevron
+			$('#x_footerBlock .x_floatLeft').before('<div id="x_footerShowHide" ><button id="x_footerChevron"><i class="' + hideIcon.iconClass + '" aria-hidden="true"></i></button></div>');
+			$('#x_footerChevron').prop('title', hideMsg);
+			$("#x_footerChevron").attr("aria-label", hideMsg);
+
+			// chevron to show/hide function
+			$('#x_footerChevron').click(function(){
+				$('#x_footerBlock .x_floatLeft').fadeToggle( "slow", function(){
+						if($(this).is(':visible')){
+							$('#x_footerChevron').html('<div class="chevron" id="chevron" title="Hide footer tools"><i class="' + hideIcon.iconClass + '" aria-hidden="true"></i></div>');
+							$('#x_footerChevron').prop('title', hideMsg);
+							$("#x_footerChevron").attr("aria-label", hideMsg);
+						}else{
+							$('#x_footerChevron').html('<div class="chevron" id="chevron"><i class="' + showIcon.iconClass + '" aria-hidden="true"></i></div>');
+							$('#x_footerChevron').prop('title', showMsg);
+							$("#x_footerChevron").attr("aria-label", showMsg);
+						}
+					});
+				return(false);
+			});
+			if (x_params.footerTools == "hideFooterTools" || x_browserInfo.mobile) {
+				$('#x_footerBlock .x_floatLeft').hide();
+				$('#x_footerChevron').html('<div class="chevron" id="chevron"><i class="' + showIcon.iconClass + '" aria-hidden="true"></i></div>');
+				$('#x_footerChevron').prop('title', showMsg);
+			}
+		}
+
 		if (x_params.kblanguage != undefined) {
 			if (typeof charpadstr != 'undefined')
 			{
@@ -1511,7 +2024,6 @@ function x_continueSetUp1() {
 				});
 			}
 		}
-
 
 		$x_window.resize(function() {
 			if (x_fillWindow == true) {
@@ -1534,7 +2046,6 @@ function x_continueSetUp1() {
 				x_updateCss();
 			}
 		});
-
 
 		if (x_browserInfo.touchScreen == true) {
 			// Set start orientation
@@ -1610,6 +2121,258 @@ function x_continueSetUp1() {
 		} else {
 			x_continueSetUp2();
 		}
+	}
+}
+
+// returns intro info - could be text, image, url or file
+function x_getIntroInfo(xml) {
+	function getInfo(attr) {
+		if (xml == 'project') {
+			return x_params[attr];
+		} else {
+			if (attr == 'intro') {
+				return xml.getAttribute('pageIntro');
+			} else {
+				return xml.getAttribute(attr);
+			}
+		}
+	}
+
+	if (xml == 'menu') {
+		return false;
+	} else if (getInfo('introType') == 'image' && getInfo('introImg') != undefined && $.trim(getInfo('introImg')) != '') {
+		return {type: 'img', info: {img: getInfo('introImg'), tip: getInfo('introTip')}};
+	} else if (getInfo('introType') == 'video' && getInfo('introVideo') != undefined && $.trim(getInfo('introVideo')) != '') {
+		return {type: 'video', info: {video: getInfo('introVideo'), tip: getInfo('introTip')}};
+	} else if (getInfo('introType') == 'url' && getInfo('introURL') != undefined && $.trim(getInfo('introURL')) != '') {
+		return {type: 'url', info: getInfo('introURL')};
+	} else if (getInfo('introType') == 'file' && getInfo('introFile') != undefined && $.trim(getInfo('introFile')) != '') {
+		return {type: 'file', info: getInfo('introFile')};
+	} else if (getInfo('intro') != undefined && $.trim(getInfo('intro')) != '') {
+		return {type: 'text', info: getInfo('intro')};
+	} else {
+		return false;
+	}
+}
+
+function x_sideBarBtnInfo() {
+	// work out what buttons will show on side bar
+	if (x_params.sideBar == 'true') {
+
+		// project level buttons
+		if (x_params.sbToC == 'true') {
+			x_sideBarBtns.push('toc');
+		}
+		if (x_params.sbProjectIntro == 'true' && x_params.intro != undefined && $.trim(x_params.intro) != '') {
+			x_sideBarBtns.push('intro');
+		}
+		if (x_params.sbProjectHelp == 'true' && x_params.nfo != undefined && $.trim(x_params.nfo) != '') {
+			x_sideBarBtns.push('help');
+		}
+
+		if (x_params.sbGlossary == 'true' && x_params.glossary != undefined) {
+			x_sideBarBtns.push('glossary');
+		}
+		if (x_params.sbAccessibility == 'true' && x_params.accessibilityHide != 'true') {
+			x_sideBarBtns.push('accessibility');
+		}
+
+		// page level buttons (what the button does will change on each page)
+		// does at least one page in project have some page info added?
+		if (x_params.sbPageIntro == 'true') {
+			for (let i=0; i<x_pages.length; i++) {
+				if (x_pageInfo[i].type != "menu") {
+					if (x_params.sbPageIntro == 'true' && (
+							(x_pages[i].getAttribute('introType') == 'text' && $.trim(x_pages[i].getAttribute('pageIntro')) != '') ||
+							(x_pages[i].getAttribute('introType') == 'image' && $.trim(x_pages[i].getAttribute('introImg')) != '') ||
+							(x_pages[i].getAttribute('introType') == 'video' && $.trim(x_pages[i].getAttribute('introVideo')) != '') ||
+							(x_pages[i].getAttribute('introType') == 'url' && $.trim(x_pages[i].getAttribute('introURL')) != '') ||
+							(x_pages[i].getAttribute('introType') == 'file' && $.trim(x_pages[i].getAttribute('introFile')) != '')
+					)) {
+						x_sideBarBtns.push('pageIntro');
+						break;
+					}
+				}
+			}
+		}
+	}
+}
+
+function x_setUpSideBar() {
+	// only create side bar if there are some buttons that will appear on it
+	if (x_sideBarBtns.length > 0) {
+
+		const overlay = ((x_params.sideBarSize == 'small' && x_params.sideBarBtnTxt == 'true') || x_params.sideBarSize == 'large') && x_browserInfo.mobile ? true : false ;
+
+		const $x_sideBar = $('<div id="x_sideBar"><button id="x_sideBarToggleBtn"></button><div id="x_sideBarBtnHolder"></div></div>'),
+			$x_sideBarBtnHolder = $x_sideBar.find('#x_sideBarBtnHolder'),
+			$x_sideBarToggleBtn = $x_sideBar.find('#x_sideBarToggleBtn');
+
+		const minW = 30, borderW = 1;
+		let maxW = 100;
+
+		if (x_params.sideBarSize == 'large') {
+			$x_sideBar.addClass('sideBarLarge');
+		} else {
+			$x_sideBar.addClass('sideBarSmall');
+
+			if (x_params.sideBarBtnTxt != 'true') {
+				maxW = 60;
+			}
+		}
+
+		// labels can be set in editor but fall back to language file if not set
+		const closeLabel = x_params.sideBarHideLabel != undefined && x_params.sideBarHideLabel != "" ? x_params.sideBarHideLabel : x_getLangInfo(x_languageData.find("sideBar")[0], "hide", "Hide side bar"),
+			openLabel = x_params.sideBarShowLabel != undefined && x_params.sideBarShowLabel != "" ? x_params.sideBarShowLabel : x_getLangInfo(x_languageData.find("sideBar")[0], "show", "Show side bar"),
+			closeIcon = x_params.sideBarPosition == 'right' ? x_btnIcons.filter(function(icon){return icon.name === 'sideBarHideRight';})[0].iconClass : x_btnIcons.filter(function(icon){return icon.name === 'sideBarHideLeft';})[0].iconClass,
+			openIcon = x_params.sideBarPosition == 'right' ? x_btnIcons.filter(function(icon){return icon.name === 'sideBarShowRight';})[0].iconClass : x_btnIcons.filter(function(icon){return icon.name === 'sideBarShowLeft';})[0].iconClass;
+
+		if (x_params.sideBarPosition == 'right') {
+			$x_sideBar.insertAfter($x_mainHolder);
+			$x_body.addClass('sb_right');
+		} else {
+			$x_sideBar.insertBefore($x_mainHolder);
+			$x_body.addClass('sb_left');
+		}
+
+		// side bar open / close
+		$x_sideBar.data('state', x_params.sideBarShow);
+
+		$x_sideBarToggleBtn
+			.button({
+				icons: { primary: x_params.sideBarShow == 'closed' ? openIcon : closeIcon },
+				label: x_params.sideBarShow == 'closed' ? openLabel : closeLabel,
+				text: false
+			})
+			.attr("aria-label", $x_sideBarToggleBtn.attr("title"))
+			.click(function() {
+
+				if ($x_sideBar.data('state') == 'open') {
+					$x_sideBar
+						.animate({width: minW + 'px'})
+						.data('state', 'closed');
+
+					$x_headerBlock.add($x_pageHolder).add($x_footerBlock).add($x_background)
+						.animate({'width': $x_body.width() - minW + borderW});
+
+					$x_mainHolder
+						.animate({['padding-' + x_params.sideBarPosition]: (minW - borderW) + 'px'}, function() { $x_sideBarBtnHolder.hide(); x_updateCss(true); });
+
+					$(this).button({ icons: { primary: openIcon }, label: openLabel, text: false });
+
+				} else {
+					if (overlay) {
+						$x_sideBar
+							.animate({width: maxW})
+							.data('state', 'open');
+
+					} else {
+						$x_sideBar
+							.animate({width: maxW + 'px'})
+							.data('state', 'open');
+
+						$x_headerBlock.add($x_pageHolder).add($x_footerBlock).add($x_background)
+							.animate({'width': $x_body.width() - maxW + borderW});
+
+						$x_mainHolder
+							.animate({['padding-' + x_params.sideBarPosition]: (maxW - borderW) + 'px'}, function() { x_updateCss(true); });
+					}
+
+					$(this).button({ icons: { primary: closeIcon }, label: closeLabel, text: false });
+
+					$x_sideBarBtnHolder.show();
+				}
+			});
+
+		// add buttons to side bar
+		const btnTxt = x_params.sideBarBtnTxt == 'true' ? true : false;
+
+		if ($.inArray('toc', x_sideBarBtns) != -1) {
+			$x_menuBtn
+				.appendTo($x_sideBarBtnHolder)
+				.button({ text: btnTxt });
+		}
+		if ($.inArray('intro', x_sideBarBtns) != -1) {
+			$x_introBtn
+				.appendTo($x_sideBarBtnHolder)
+				.button({ text: btnTxt });
+		}
+		if ($.inArray('help', x_sideBarBtns) != -1) {
+			$x_helpBtn
+				.appendTo($x_sideBarBtnHolder)
+				.button({ text: btnTxt });
+		}
+		if ($.inArray('glossary', x_sideBarBtns) != -1) {
+			$x_glossaryBtn
+				.appendTo($x_sideBarBtnHolder)
+				.button({ text: btnTxt });
+		}
+		if ($.inArray('accessibility', x_sideBarBtns) != -1) {
+			$x_colourChangerBtn
+				.appendTo($x_sideBarBtnHolder)
+				.button({ text: btnTxt });
+		}
+		if ($.inArray('pageIntro', x_sideBarBtns) != -1) {
+			$x_pageIntroBtn
+				.appendTo($x_sideBarBtnHolder)
+				.button({ text: btnTxt });
+		}
+
+		if (x_params.sideBarSize == 'small' && x_params.sideBarBtnTxt == 'true') {
+			let widestBtn = 0;
+
+			$x_sideBarBtnHolder.find('button').each(function() {
+				widestBtn = Math.max(widestBtn, $(this).outerWidth());
+			});
+
+			maxW = widestBtn + 30;
+
+			$x_sideBarBtnHolder.find('button').width('90%');
+		}
+
+		if (overlay) {
+			maxW = '100%';
+			$x_sideBar.width(maxW);
+			$x_headerBlock.add($x_pageHolder).add($x_footerBlock).add($x_background).width($x_body.width() - minW + borderW);
+			$x_mainHolder.css('padding-' + x_params.sideBarPosition, (minW - borderW) + 'px');
+		} else {
+			$x_sideBar.width(maxW + 'px');
+			$x_headerBlock.add($x_pageHolder).add($x_footerBlock).add($x_background).width($x_body.width() - maxW + borderW);
+			$x_mainHolder.css('padding-' + x_params.sideBarPosition, (maxW - borderW) + 'px');
+
+			// the text may overlap side bar - make sure sidebar expands but without text forced to be on a single line
+			if (x_params.sideBarBtnTxt == 'true' && x_params.sideBarSize == 'large') {
+
+				let widestBtn = 0;
+				$x_sideBarBtnHolder.find('button').each(function() {
+					widestBtn = Math.max(widestBtn, $(this).outerWidth());
+				});
+
+				if ($x_sideBarBtnHolder.innerWidth() < widestBtn) {
+					$x_sideBar.width('min-content');
+
+					maxW = $x_sideBar.width();
+					$x_headerBlock.add($x_pageHolder).add($x_footerBlock).add($x_background).width($x_body.width() - maxW + borderW);
+					$x_mainHolder.css('padding-' + x_params.sideBarPosition, (maxW - borderW) + 'px');
+				}
+			}
+		}
+
+		if (x_params.sideBarShow == 'closed') {
+			$x_sideBar.width(minW + 'px');
+			$x_sideBarBtnHolder.hide();
+			$x_headerBlock.add($x_pageHolder).add($x_footerBlock).add($x_background).width($x_body.width() - minW + borderW);
+			$x_mainHolder.css('padding-' + x_params.sideBarPosition, (minW - borderW) + 'px');
+		}
+	}
+}
+
+function x_goHome() {
+	// home page can be changed from page 1 (except for menu pages where home page will always be TOC)
+	if (x_params.navigation != 'Menu' && x_params.navigation != 'Menu with Page Controls' && x_params.homePage != undefined && x_params.homePage != "") {
+		x_navigateToPage(false, {type:'linkID', ID:x_params.homePage});
+	} else {
+		x_changePage(0);
 	}
 }
 
@@ -1750,100 +2513,111 @@ function x_charmapLoaded(xml)
 }
 
 function x_dialog(text){
-
     window.open('','','width=300,height=450').document.write('<p style="font-family:sans-serif; font-size:12px">' + text + '</p>');
-
 }
-
 
 // function called after interface first setup (to load 1st page) and for links to other pages in the text on a page
 function x_navigateToPage(force, pageInfo, addHistory) { // pageInfo = {type, ID}
-    var page = XTStartPage();
-    if (force && page >= 0) {  // this is a resumed tracked LO, go to the page saved by the LO
-        x_changePage(page, addHistory);
-    }
-    else {
-		
-		// if it's first page then we've already found x_deepLink
-		if (x_firstLoad == false || addHistory == false) {
-			var deepLinkInfo = getDeepLink(pageInfo.ID);
-			pageInfo.ID = deepLinkInfo[0];
-			
-			if (deepLinkInfo.length > 1) {
-				x_deepLink = deepLinkInfo[1];
+    var page,
+		inclHistory = false;
+
+	// if it's first page then we've already found x_deepLink
+	if (x_firstLoad == false || addHistory == false) {
+		var deepLinkInfo = getDeepLink(pageInfo.ID);
+		pageInfo.ID = deepLinkInfo[0];
+
+		if (deepLinkInfo.length > 1) {
+			x_deepLink = deepLinkInfo[1];
+		} else {
+			x_deepLink = '';
+		}
+	}
+
+	if (pageInfo.type == "linkID" || pageInfo.type == "pageID") {
+		// relative links added from WYSIWYG xerte page links button
+		if (String(pageInfo.ID).indexOf('[') > -1 && (pageInfo.ID).indexOf(']') > -1) {
+			var pageIndex = $.inArray(x_currentPage, x_normalPages);
+
+			switch ((pageInfo.ID).substring(1, pageInfo.ID.length-1)) {
+				case "next":
+					// won't change if this is a standalone page
+					if (pageIndex != -1 && pageIndex < x_normalPages.length-1)
+						page = x_normalPages[pageIndex + 1];
+					break;
+				case "previous":
+					if (pageIndex != -1 && pageIndex > 0) {
+						page = x_normalPages[pageIndex - 1];
+					} else {
+						// ** it's a standalone page - do historic back
+					}
+					break;
+				case "first":
+					if (pageIndex !== 0) {
+						page = x_normalPages[0];
+					}
+					break;
+				case "last":
+					if (pageIndex < x_normalPages.length-1) {
+						page = x_normalPages[x_normalPages.length-1]
+					}
+					break;
+			}
+		}
+		else {
+			// could be the linkID generated automatically in XML or a custom ID added in editor
+			page = x_lookupPage(pageInfo.type, pageInfo.ID);
+
+			// id was a deeplink so info about page & deeplink has been returned
+			if ($.isArray(page)) {
+				x_deepLink = page.slice(1, page.length);
+				page = page[0];
+			}
+
+			if (page !== false) {
+				if (page != x_currentPage) {
+					inclHistory = true;
+				} else {
+					x_doDeepLink();
+				}
 			} else {
 				x_deepLink = '';
-			}
-		}
-		
-		if (pageInfo.type == "linkID" || pageInfo.type == "pageID") {
-			// relative links added from WYSIWYG xerte page links button
-        	if (String(pageInfo.ID).indexOf('[') > -1 && (pageInfo.ID).indexOf(']') > -1) {
-				var pageIndex = $.inArray(x_currentPage, x_normalPages);
-				
-				switch ((pageInfo.ID).substring(1, pageInfo.ID.length-1)) {
-					case "next":
-						// won't change if this is a standalone page
-						if (pageIndex != -1 && pageIndex < x_normalPages.length-1)
-							x_changePage(x_normalPages[pageIndex + 1]);
-						break;
-					case "previous":
-						if (pageIndex != -1 && pageIndex > 0) {
-							x_changePage(x_normalPages[pageIndex - 1]);
-						} else {
-							// ** it's a standalone page - do historic back
-						}
-						break;
-					case "first":
-						if (pageIndex !== 0) {
-							x_changePage(x_normalPages[0]);
-						}
-						break;
-					case "last":
-						if (pageIndex < x_normalPages.length-1) {
-							x_changePage(x_normalPages[x_normalPages.length-1]);
-						}
-						break;
-				}
-        	}
-        	else {
-				// could be the linkID generated automatically in XML or a custom ID added in editor
-				page = x_lookupPage(pageInfo.type, pageInfo.ID);
-				
-				// id was a deeplink so info about page & deeplink has been returned
-				if ($.isArray(page)) {
-					x_deepLink = page.slice(1, page.length);
-					page = page[0];
-				}
-				
-				if (page !== false) {
-					if (page != x_currentPage) {
-						x_changePage(page, addHistory);
-					}
-				} else {
-					x_deepLink = '';
-					if (force == true) {
-						x_changePage(0, addHistory);
-					}
+				if (force == true) {
+					inclHistory = true;
 				}
 			}
-        }
-        else if (pageInfo.type == "index") {
-			x_changePage(pageInfo.ID, addHistory);
-			
-        } else {
-			page = parseInt(pageInfo.ID);
-            if (page > 0 && page <= x_pages.length) {
-                x_changePage(page-1, addHistory);
-            }
-            else {
-            	x_deepLink = '';
-            	if (force == true) {
-                	x_changePage(0, addHistory);
-                }
-            }
 		}
-    }
+	}
+	else if (pageInfo.type == "index") {
+		page = pageInfo.ID;
+		inclHistory = true;
+
+	} else {
+		page = parseInt(pageInfo.ID);
+		if (page > 0 && page <= x_pages.length) {
+			page = page-1;
+			inclHistory = true;
+		}
+		else {
+			x_deepLink = '';
+			if (force == true) {
+				page = 0;
+				inclHistory = true;
+			}
+		}
+	}
+
+	var resumeLO = XTStartPage();
+
+	// this is a resumed tracked LO, go to the page saved by the LO - unless it's currently trying to show a standalone page in a lightbox
+	if (force && resumeLO >= 0 && (x_pageInfo[page].standalone != true || x_pages[page].getAttribute('linkTarget') == 'new' || x_pages[page].getAttribute('linkTarget') == 'same')) {
+		x_changePage(resumeLO, addHistory);
+
+	} else if (inclHistory == true) {
+		x_changePage(page, addHistory);
+
+	} else {
+		x_changePage(page);
+	}
 }
 
 //INTERN CODE
@@ -1866,10 +2640,7 @@ function x_createBlock(container, module, modulePosition){
 
 // function returns page no. of page with matching linkID / pageID & whether it's from array of normal pages or standalone pages
 function x_lookupPage(type, id) {
-	var	pageType,
-		found = x_checkPages(type, id, x_pageInfo);
-	
-	return found;
+	return x_checkPages(type, id, x_pageInfo);
 }
 
 // checks through the pageArray specified for a page with matching ID
@@ -1882,9 +2653,7 @@ function x_checkPages(type, id, pageArray) {
 			// added this to catch any broken links because the HTML editor always creates links of linkID type even when there was a pageID
 			(type == "linkID" && pageArray[i].pageID && pageArray[i].pageID == id) ||
 			(type == "pageID" && pageArray[i].linkID && pageArray[i].linkID == id)
-		){
-            return i;
-		}
+		) return i;
     }
 	
 	// Now check the children of each page
@@ -1924,9 +2693,10 @@ function x_checkPages(type, id, pageArray) {
 
 	return false;
 }
+
 function x_setMaxWidth() {
 	if (x_params.maxWidth != undefined && x_params.maxWidth != "") {
-		var workingPages = ['QRcode','accNav','adaptiveContent','annotatedDiagram','audioSlideshow','bullets','buttonNav','buttonQuestion','buttonSequence','cMcq','categories','chart','columnPage','connectorMenu','crossword','customHotspots','decision','delicious','dialog','dictation','documentation','dragDropLabel','embedDiv','flashCards','flickr','gapFill','glossary','grid','hangman','hotSpotQuestion','hotspotImage','imageViewer','interactiveText','inventory','language','links','list','map','mcq','media360','menu','modelAnswer','modelAnswerResults','modify','morphImages','nav','newWindow','opinion','orient','pdf','perspectives','quiz','results','resumeSession','rss','rssdownload','saveSession','scenario','showGraph','slideshow','stopTracking','summary','tabNav','tabNavExtra','table','text','textCorrection','textDrawing','textGraphics','textMatch','textSWF','textVideo','thumbnailViewer','timeline','topXQ','transcriptReader','videoSynch','wiki','wordsearch','youtube','youtuberss',];
+		var workingPages = ['QRcode','accNav','adaptiveContent','annotatedDiagram','audioSlideshow','bleedingImage','bullets','buttonNav','buttonQuestion','buttonSequence','cMcq','categories','chart','columnPage','connectorHotspotImage','connectorMenu','crossword','customHotspots','decision','delicious','dialog','dictation','documentation','dragDropLabel','embedDiv','flashCards','flickr','gapFill','glossary','grid','hangman','hotSpotQuestion','hotspotImage','imageSequence','imageViewer','interactiveText','inventory','language','links','list','map','mcq','media360','mediaLesson','memory','menu','modelAnswer','modelAnswerResults','modify','morphImages','nav','newWindow','opinion','orient','pdf','perspectives','quiz','results','resumeSession','rss','rssdownload','saveSession','scenario','showGraph','SictTimeline','slideshow','stopTracking','summary','tabNav','tabNavExtra','table','text','textCorrection','textDrawing','textGraphics','textHighlight','textMatch','textSWF','textVideo','thumbnailViewer','timeline','topXQ','transcriptReader','videoSynch','wiki','wordsearch','youtube','youtuberss',];
 		var styleString = '<style>';
 		for (var i=0; i<workingPages.length; i++) {
 			if (i>0) { styleString += ', '; }
@@ -1951,11 +2721,16 @@ function x_changePage(x_gotoPage, addHistory) {
 	}
 	
 	// if this page is already shown in a lightbox then don't try to open another lightbox - load in the existing one
-	if (standAlonePage && x_pages[x_gotoPage].getAttribute('linkTarget') == 'lightbox' && parent.window.$.featherlight.current()) {
-		standAlonePage = false;
-		addHistory = false;
+	// catch error - when in iframe, i.e. in bootstrap or LMS LTI
+	try {
+		if (standAlonePage && x_pages[x_gotoPage].getAttribute('linkTarget') == 'lightbox' &&
+			parent.window.$ && parent.window.$.featherlight && parent.window.$.featherlight.current()) {
+			standAlonePage = false;
+			addHistory = false;
+		}
 	}
-	
+	catch(e) {}
+
 	if (x_params.forcePage1 == 'true') {
 		addHistory = false;
 	}
@@ -2005,7 +2780,8 @@ function x_changePage(x_gotoPage, addHistory) {
 		
 	// standalone page opening in lightbox
 	} else {
-
+		$.featherlight.defaults.beforeClose = x_closeStandAlonePage;
+		//$.featherlight({iframe: window.location.href.split('#')[0] + '#' + pageHash, iframeWidth: $x_mainHolder.width()*0.8, iframeHeight: $x_mainHolder.height()*0.8}, {beforeClose: x_closeStandAlonePage});
 		$.featherlight({iframe: window.location.href.split('#')[0] + '#' + pageHash, iframeWidth: $x_mainHolder.width()*0.8, iframeHeight: $x_mainHolder.height()*0.8});
 		
 		// update progress bar & record that it's been opened in lightbox
@@ -2015,6 +2791,43 @@ function x_changePage(x_gotoPage, addHistory) {
 		}
 		
 		x_pageInfo[x_gotoPage].viewedLightBox = true;
+	}
+
+	// if side bar and on mobile, close sidebar when page changed (as it covers whole of page)
+	const overlay = ((x_params.sideBarSize == 'small' && x_params.sideBarBtnTxt == 'true') || x_params.sideBarSize == 'large') && x_browserInfo.mobile ? true : false ;
+	if (overlay && !x_firstLoad && $('#x_sideBar').length > 0 && $('#x_sideBar').data('state') == 'open') {
+		$('#x_sideBar #x_sideBarToggleBtn').click();
+	}
+}
+
+
+function x_closeStandAlonePage(event) {
+	$.featherlight.defaults.beforeClose = $.noop;
+
+	var standAlonePage = this.$content[0].contentWindow.x_currentPage
+	var template_id = this.$content[0].contentWindow.x_TemplateId;
+	if (template_id == x_TemplateId) {
+		// Tom Reijnders @022-10-06
+		// We're going to do some juggling with variables/code from the standalone page
+		// Assumptions:
+		// 1. The standalone page is using the same template as the main page
+		// 2. Therefore the standalone page is using the same x_pageInfo array as the main page
+		// 3. The XTInitialise code made sure that the iframe state variable is actually pointing to the main state vairable
+		//    i.e. when calling the leavePage inside the ifraeme, it's updateing the main state variable
+		// 4. It is necessary to call the leavePage from the ifarem in case the pagetype has not been yet in the main page
+		var pageObj, pageObjType;
+
+		if (x_pageInfo[standAlonePage].type == "text") {
+			pageObjType = 'simpleText';
+		} else {
+			pageObjType = x_pageInfo[standAlonePage].type
+		}
+		pageObj = eval('this.$content[0].contentWindow.' + pageObjType);
+		if (typeof pageObj.leavePage === 'function') {
+			pageObj.leavePage();
+		}
+
+		XTExitPage(standAlonePage);
 	}
 }
 
@@ -2069,7 +2882,13 @@ function x_changePageStep4(x_gotoPage) {
 }
 
 function x_endPageTracking(pagechange, x_gotoPage) {
-    // End page tracking of x_curreniuysPage
+    if (pagechange == undefined) {
+		pagechange = false;
+	}
+	if (x_gotoPage == undefined) {
+		x_gotoPage = -1;
+	}
+	// End page tracking of x_currentPage
     if (x_currentPage != -1 && !x_isMenu() && (!pagechange || x_currentPage != x_gotoPage) && x_pageInfo[x_currentPage].passwordPass != false)
     {
         var pageObj;
@@ -2094,6 +2913,7 @@ function x_endPageTracking(pagechange, x_gotoPage) {
         XTExitPage(x_currentPage);
     }
 }
+
 function x_changePageStep5(x_gotoPage) {
 	x_setMaxWidth();
 	
@@ -2280,7 +3100,7 @@ function x_passwordPage(pswds) {
 			
 			x_pageInfo[x_currentPage].passwordPass = false;
 			
-			$("#x_headerBlock h2").html(pageTitle);
+			$("#x_headerBlock h2 #x_pageTitle").html(pageTitle);
 			$(document).prop('title', $('<p>' + pageTitle +' - ' + x_params.name + '</p>').text());
 			
 			x_updateCss(false);
@@ -2320,7 +3140,7 @@ function x_passwordPage(pswds) {
 			
 			// Queue reparsing of MathJax - fails if no network connection
 			try { MathJax.Hub.Queue(["Typeset",MathJax.Hub]); } catch (e){};
-			
+
 			x_setUpPage();
 		}
 
@@ -2331,12 +3151,21 @@ function x_passwordPage(pswds) {
 }
 
 function x_changePageStep6() {
-    $("#x_headerBlock h2").html(pageTitle);
+    $("#x_headerBlock h2 #x_pageTitle").html(pageTitle);
 	$(document).prop('title', $('<p>' + pageTitle +' - ' + x_params.name + '</p>').text());
 
     x_updateCss(false);
 
 	$("#x_pageDiv").show();
+
+	// enable page intro button depending on whether this info exists for the current page
+	if ($x_pageIntroBtn != undefined) {
+		if (!x_isMenu() && x_getIntroInfo(x_currentPageXML) != false) {
+			$x_pageIntroBtn.show();
+		} else {
+			$x_pageIntroBtn.hide();
+		}
+	}
 
     // x_currentPage has already been viewed so is already loaded
     if (x_pageInfo[x_currentPage].built != false) {
@@ -2355,6 +3184,10 @@ function x_changePageStep6() {
         $x_pageDiv.append(builtPage);
         builtPage.hide();
         builtPage.fadeIn();
+
+		// get short page type var
+		var pt = x_pageInfo[x_currentPage].type;
+		if (pt == "text") pt = 'simpleText'; // errors if you just call text.pageChanged()
 
 		if (!x_isMenu() && x_currentPageXML.getAttribute("script") != undefined && x_currentPageXML.getAttribute("script") != "" && x_currentPageXML.getAttribute("run") == "all") {
 			$("#x_pageScript").remove();
@@ -2381,10 +3214,6 @@ function x_changePageStep6() {
 		}
 
         x_setUpPage();
-
-        // get short page type var
-        var pt = x_pageInfo[x_currentPage].type;
-        if (pt == "text") pt = 'simpleText'; // errors if you just call text.pageChanged()
 
         // calls function in current page model (if it exists) which does anything needed to reset the page (if it needs to be reset)
         if (typeof window[pt].pageChanged === "function") window[pt].pageChanged();
@@ -2424,8 +3253,15 @@ function x_changePageStep6() {
                 }
             }
         }
-		
+
+		$("#customHeaderStyle").prop('disabled', x_specialTheme !== '');
+
 		x_focusPageContents(false);
+
+		// show page introduction immediately if set to always auto open
+		if (!x_isMenu() && $x_pageIntroBtn != undefined && x_currentPageXML.getAttribute("introShow") == 'always') {
+			$x_pageIntroBtn.click();
+		}
 
     // x_currentPage hasn't been viewed previously - load model file
     } else {
@@ -2528,6 +3364,11 @@ function x_pageContentsUpdated() {
 	
 	// lightbox image links might also need to be added
 	x_setUpLightBox();
+
+	// update codesnippet code blocks
+	let codeblocks = $("pre code").each(function(){
+		hljs.highlightBlock(this);
+	});
 }
 
 // by default images can be clicked to open larger version in lightbox viewer - this can be overridden with optional properties at LO & page level
@@ -2547,8 +3388,14 @@ function x_setUpLightBox() {
 		
 		$.featherlight.prototype.afterContent = function () {
 			if (this.$currentTarget != undefined) {
+
 				var caption = this.$currentTarget.find('img').attr('alt');
 				
+				if (this.$currentTarget[0].nodeName === 'A' && this.$currentTarget.attr('data-image-alt') != undefined) {
+					this.$content.attr('alt', this.$currentTarget.attr('data-image-alt'));
+					caption = this.$content.attr('alt');
+				}
+
 				if (caption != undefined && caption != '') {
 					this.$instance.find('.featherlight-content img').attr('alt', caption);
 					
@@ -2582,9 +3429,13 @@ function x_loadPage(response, status, xhr) {
     // Queue reparsing of MathJax - fails if no network connection
     try { MathJax.Hub.Queue(["Typeset",MathJax.Hub]); } catch (e){}
 
-    x_setUpPage();
-}
+	// Activate highlighting
+	let codeblocks = $("pre code").each(function(){
+		hljs.highlightBlock(this);
+	});
 
+	x_setUpPage();
+}
 
 // get deep link info
 function getDeepLink(info) {
@@ -2617,7 +3468,6 @@ function x_doDeepLink() {
 	}
 }
 
-
 // function called when page model loaded/appended - sorts button states etc.
 function x_setUpPage() {
     $x_pageDiv.parent().scrollTop(0);
@@ -2648,16 +3498,7 @@ function x_setUpPage() {
 	
     if (pageIndex != 0 || ((x_params.navigation == "Historic" || x_params.navigation == "LinearWithHistoric") && x_pageHistory.length > 1)) {
         $x_prevBtn.button("enable");
-		
-		if (x_params.navigation == "Historic" || x_params.navigation == "LinearWithHistoric") {
-			// should the normal back or historic back button be used?
-			if (x_pageHistory.length > 1) {
-				$x_prevBtn.button({ icons: { primary: 'x_prev_hist' } });
-			} else {
-				$x_prevBtn.button({ icons: { primary: 'x_prev' } });
-			}
-		}
-		
+
     } else {
         $x_prevBtn
             .button("disable")
@@ -2704,7 +3545,15 @@ function x_setUpPage() {
     }
 
     if (x_firstLoad == true) {
+        // project intro can be set to never auto-open, always auto-open or only auto-open when project loaded on first page
+		if ($x_introBtn != undefined && (x_params.introShow == 'always' || (x_params.introShow == 'first' && x_currentPage == 0))) {
+			$x_introBtn
+				.data('autoOpen', true)
+				.click();
+		}
+
         $x_mainHolder.css("visibility", "visible");
+
 		if (x_params.backgroundGrey == "true") {
 			$("#x_mainBg").show();
 			$("#x_mainBg").gray(); // won't work properly if called when hidden
@@ -2716,10 +3565,10 @@ function x_setUpPage() {
 			}
 		}
 		$('#preventFlash').remove();
-        x_firstLoad = false;
+
+		x_firstLoad = false;
     }
 }
-
 
 // function called from each model when fully loaded to trigger fadeIn
 function x_pageLoaded() {
@@ -2748,14 +3597,43 @@ function x_pageLoaded() {
 	if (!x_isMenu()) {
 		x_setUpLightBox();
 		
+		// plugin files are loaded after page is loaded
+		if (plugins[pt] != undefined) {
+			if (plugins[pt].script != undefined && plugins[pt].script != "" && $("#x_pagePluginScript").length == 0) {
+				$("#x_page" + x_currentPage).append('<script id="x_pagePluginScript">' +  plugins[pt].script + '</script>');
+				// calls function in current page model (if it exists) which does anything needed to reset the page (if it needs to be reset)
+				if (typeof window[pt].initPlugin === "function") window[pt].initPlugin();
+			}
+			if (plugins[pt].css != undefined && plugins[pt].css != "" && $("#x_pagePluginCSS").length == 0) {
+				$("#x_page" + x_currentPage).append('<style type="text/css" id="x_pagePluginCSS">' +  plugins[pt].css + '</style>');
+			}
+		}
+
 		// script & style optional properties for each page added after page is otherwise set up
 		if (x_currentPageXML.getAttribute("script") != undefined && x_currentPageXML.getAttribute("script") != "") {
 			$("#x_page" + x_currentPage).append('<script id="x_pageScript">' +  x_currentPageXML.getAttribute("script") + '</script>');
 		}
-		if (x_currentPageXML.getAttribute("styles") != undefined && x_currentPageXML.getAttribute("styles") != "") {
-			$("#x_page" + x_currentPage).append('<style type="text/css">' +  x_currentPageXML.getAttribute("styles") + '</style>');
+		if (x_currentPageXML.getAttribute("styles") != undefined && x_currentPageXML.getAttribute("styles") != "" && $("#x_pageCSS").length == 0) {
+			$("#x_page" + x_currentPage).append('<style type="text/css" id="x_pageCSS">' +  x_currentPageXML.getAttribute("styles") + '</style>');
 		}
 	}
+
+	// Check if page headerBgColour/headerTextColour has been set
+	if (!x_isMenu() && ((x_currentPageXML.getAttribute("headerBgColor") != undefined && x_currentPageXML.getAttribute("headerBgColor") != "") || (x_currentPageXML.getAttribute("headerTextColor") != undefined && x_currentPageXML.getAttribute("headerTextColor") != ""))) {
+		const bgCol = x_currentPageXML.getAttribute("headerBgColor");
+		const textCol = x_currentPageXML.getAttribute("headerTextColor");
+		let customHeaderStyle = '';
+		if (bgCol != undefined && bgCol != "") {
+			customHeaderStyle += 'background: ' + formatColour(bgCol) + ';';
+			customHeaderStyle += 'background-color: ' + formatColour(bgCol) + ';';
+		}
+		if (textCol != undefined && textCol != "") {
+			customHeaderStyle += 'color: ' + formatColour(x_currentPageXML.getAttribute('headerTextColor')) + ';';
+		}
+		customHeaderStyle = '<style id="customHeaderStyle" type="text/css">#x_headerBlock {' + customHeaderStyle + '}</style>';
+		$('#x_page' + x_currentPage).append(customHeaderStyle);
+	}
+	$("#customHeaderStyle").prop('disabled', x_specialTheme !== '');
 
 	XENITH.VARIABLES.handleSubmitButton();
 
@@ -2772,6 +3650,19 @@ function x_pageLoaded() {
 	
 	var pagesLoaded = $(x_pageInfo).filter(function(i){ return this.built != false; }).length;
 	x_focusPageContents(pagesLoaded <= 1 ? true : false);
+
+	// show page introduction immediately on page load if set to auto open - unless the project intro is also set to auto-open at this time
+	if ($x_pageIntroBtn != undefined && x_getIntroInfo(x_currentPageXML) != false && x_currentPageXML.getAttribute("introShow") != 'never') {
+		var projectIntroOpening = x_firstLoad == true && (x_params.introShow == 'always' || (x_params.introShow == 'first' && x_currentPage == 0)) ? true : false;
+		if (projectIntroOpening != true) {
+			$x_pageIntroBtn.click();
+		}
+	}
+}
+
+//convert picker color to #value
+function formatColour(col) {
+	return (col.length > 3 && col.substr(0,2) == '0x') ? '#' + col.substr(2) : col;
 }
 
 // detect page loaded change and update progress bar
@@ -2802,6 +3693,11 @@ function x_addNarration(funct, arguments) {
 					autoPlay    :x_currentPageXML.getAttribute("playNarration"),
 					autoNavigate:x_currentPageXML.getAttribute("narrationNavigate")
 				});
+
+				// manually add a transcript button to the end of the narration bar
+				if (x_currentPageXML.getAttribute("narrationTranscript") != undefined && x_currentPageXML.getAttribute("narrationTranscript") != '') {
+					x_addAudioTranscript($("#x_footerBlock #x_pageNarration"), x_currentPageXML.getAttribute("narrationTranscript"));
+				}
 			}
 			
 			if (funct != undefined) {
@@ -2815,11 +3711,28 @@ function x_addNarration(funct, arguments) {
 	}
 }
 
+// function adds transcript button to the end of audio bars, e.g. page narration - but also called from page models
+function x_addAudioTranscript($audioHolder, transcriptTxt, decode) {
+
+	if (decode == true) {
+		transcriptTxt = $("<div/>").html(transcriptTxt).text();
+	}
+
+	$audioHolder.addClass('audioTranscript');
+
+	const transcriptLabel = x_getLangInfo(x_languageData.find('mediaElementControls').find('transcriptButton')[0], 'label', 'Transcript');
+
+	$('<div class="audioTranscriptBtn mejs-button"><button class="fas fa-comment-dots" type="button" aria-controls="mep_0" title="' + transcriptLabel + '" aria-label="' + transcriptLabel + '"><span class="sr-only">' + transcriptLabel + '</span></button></div>')
+		.appendTo($audioHolder.find('.mejs-container .mejs-controls'))
+		.click(function() {
+			$.featherlight(transcriptTxt);
+		});
+}
 
 // function adds timer bar above main controls on interface - optional property that can be added to any interactivity page
 function x_addCountdownTimer() {
     var x_timerLangInfo = [
-		x_getLangInfo(x_languageData.find("timer").find("remaining")[0], "name", "Time remaining"),
+		x_currentPageXML.getAttribute("timerText") != null && x_currentPageXML.getAttribute("timerText") != "" ? x_currentPageXML.getAttribute("timerText") : x_getLangInfo(x_languageData.find("timer").find("remaining")[0], "name", "Time remaining"),
 		x_currentPageXML.getAttribute("timerLabel") != null && x_currentPageXML.getAttribute("timerLabel") != "" ? x_currentPageXML.getAttribute("timerLabel") : x_getLangInfo(x_languageData.find("timer").find("timeUp")[0], "name", "Time up"),
 		x_getLangInfo(x_languageData.find("timer").find("seconds")[0], "name", "seconds")
 	];
@@ -2871,7 +3784,6 @@ function x_addCountdownTimer() {
         x_timer = setInterval(x_countdownTicker, 1000);
     }
 }
-
 
 // function adds individual page backgrounds & sets up all the attributes of it (opacity, size etc.)
 function x_loadPageBg(loadModel) {
@@ -2960,15 +3872,10 @@ function x_loadPageBg(loadModel) {
 				"filter" :"alpha(opacity=" + x_currentPageXML.getAttribute("bgImageDark") + ")"
 			})
 			.show();
-	} else {
-		$("#x_bgDarken").hide();
 	}
-
-
+	else $("#x_bgDarken").hide();
 
 	if (x_currentPageXML.getAttribute("bgImageGrey") == "true") {
-		//setTimeout(function(){$pageBg.gray();}, 100);
-		//$pageBg.gray();
 		if ($("#pageBg" + x_currentPage).length < 1) { // IE where the greyscale is done differently - make sure the div that has replaced the original pageBg is given the pageBg id
 			$(".grayscale:not(#x_mainBg):not('[id]')").addClass("pageBg").attr("id", "pageBg" + x_currentPage);
 			$pageBg = $("#pageBg" + x_currentPage);
@@ -2976,16 +3883,18 @@ function x_loadPageBg(loadModel) {
 		}
 		$("#pageBg").gray().fadeIn();
 	}
-
-
-
 	$("#x_mainBg").hide();
 }
-
 
 // function sorts out css that's dependant on screensize
 function x_updateCss(updatePage) {
 	if (updatePage != false) {
+
+		if ($('#x_sideBar').length > 0) {
+			$x_headerBlock.add($x_pageHolder).add($x_footerBlock).add($x_background)
+				.width($x_body.width() - $('#x_sideBar').width() + 1);
+		}
+
 		// adjust width of narration controls - to get this to work consistently across browsers and with both html5/flash players the audio needs to be reset
 		if ($("#x_pageNarration").length > 0) {
 			if ($("#x_pageNarration audio").css("display") == "none") { // flash
@@ -3095,6 +4004,10 @@ function x_openDialog(type, title, close, position, load, onclose) {
                     {
                         $x_popupDialog.load(x_templateLocation + "models_html5/" + type + ".html", function () {
                             x_setDialogSize($x_popupDialog, position);
+
+							if (type == "menu") {
+								menu.showCurrent();
+							}
                         });
                     }
 
@@ -3116,7 +4029,7 @@ function x_openDialog(type, title, close, position, load, onclose) {
 function x_setDialogSize($x_popupDialog, position) {
     var width = $x_mainHolder.width()/2,
         height = undefined,
-        left = $x_mainHolder.width()/4,
+        left = $x_mainHolder.width()/4 + $x_mainHolder.position.left,
         top = $x_mainHolder.height()/4;
 
     if (x_browserInfo.mobile == true) {
@@ -3167,7 +4080,6 @@ function x_setDialogSize($x_popupDialog, position) {
     }
 }
 
-
 // function called from button on footer bar or from link in main text e.g. <a onclick="x_openMediaWindow(); return false;" href="#">Open media in new window</a>
 function x_openMediaWindow() {
     // get info about how to display captions - if none are found the code in the mediaViewer folder will look for details in tt file - otherwise it will use defaults
@@ -3194,7 +4106,6 @@ function x_openInfoWindow(text){
     window.open('','','width=300,height=450,scrollbars=yes').document.write('<p style="font-family:sans-serif; font-size:12px">' + text + '</p>');
 
 }
-
 
 // function returns correct phrase from language file or uses fallback if no matches / no language file
 function x_getLangInfo(node, attribute, fallBack) {
@@ -3301,7 +4212,6 @@ function x_insertText(node, exclude, list, data) {
     node.nodeValue = tempText;
 }
 
-
 // function maximises LO size to fit window
 function x_setFillWindow(updatePage) {
 	x_fillWindow = true;
@@ -3314,8 +4224,7 @@ function x_setFillWindow(updatePage) {
     }
 
     $x_mainHolder.css({
-        // The right broder is cut off when embedding if setting to 100%
-		"width"     :"99.8%",
+		"width"     :"100%",
         "height"    :"100%"
     });
 
@@ -3323,14 +4232,16 @@ function x_setFillWindow(updatePage) {
     x_updateCss(updatePage);
     window.scrolling = false;
 
-    $("#x_cssBtn").button({
-        icons:  {primary: "x_minimise"},
-        label:  x_getLangInfo(x_languageData.find("sizes").find("item")[0], false, "Default")
-    });
-
-	$("#x_cssBtn").addClass("x_minimise").removeClass("x_maximise");
+    $("#x_cssBtn")
+		.button({
+			icons:  {
+				primary: x_btnIcons.filter(function(icon){return icon.name === 'min';})[0].iconClass
+			},
+			// label can now be set in editor but fall back to language file if not set
+			label: x_params.minLabel != undefined && x_params.minLabel != "" ? x_params.minLabel : x_getLangInfo(x_languageData.find("sizes").find("item")[0], false, "Default")
+		})
+		.addClass('x_minimise').removeClass("x_maximise");
 }
-
 
 // function applies CSS file to page - can't do this using media attribute in link tag or the jQuery way as in IE the page won't update with new styles
 function x_insertCSS(href, func, disable, id, keep) {
@@ -3394,10 +4305,7 @@ function x_insertCSS(href, func, disable, id, keep) {
         }
         else
         {
-            if (func != undefined)
-            {
-                func();
-            }
+            if (func != undefined) func();
         }
     }
     else {
@@ -3414,23 +4322,19 @@ function x_checkDecimalSeparator(value, forcePeriod) {
 			var temp = value.replace(/\,/g, '.');
 			if ($.isNumeric(temp)) {
 				return temp;
-			} else {
-				return value;
 			}
-		} else {
-			return value;
+			else return value;
 		}
-		
-	} else {
+		else return value;
+	}
+	else {
 		// convert to , as it is to be shown on page
 		if ($.isNumeric(value) && x_params.decimalseparator !== undefined && x_params.decimalseparator === 'comma') {
 			return String(value).replace('.', ',');
-		} else {
-			return value;
 		}
+		else return value;
 	}
 }
-
 
 // ___ FUNCTIONS CALLED FROM PAGE MODELS ___
 
@@ -3449,19 +4353,14 @@ function x_scaleImg(img, maxW, maxH, scale, firstScale, setH, enlarge) {
         }
 
 		if (enlarge != true) {
-			if (maxW > imgW) {
-				maxW = imgW;
-			}
-			if (maxH > imgH) {
-				maxH = imgH;
-			}
+			maxW = Math.min(maxW, imgW);
+			maxH = Math.min(maxH, imgH);
 		}
 
         if (imgW > maxW || imgH > maxH || firstScale != true || enlarge == true) {
-            var scaleW = maxW / imgW;
-            var scaleH = maxH / imgH;
-            var scaleFactor;
-			scaleFactor = Math.min(scaleW, scaleH);
+            var scaleW = maxW / imgW,
+                scaleH = maxH / imgH,
+                scaleFactor = Math.min(scaleW, scaleH);
 
             imgW = Math.round(imgW * scaleFactor);
             imgH = Math.round(imgH * scaleFactor);
@@ -3475,7 +4374,6 @@ function x_scaleImg(img, maxW, maxH, scale, firstScale, setH, enlarge) {
 
     $img.css("visibility", "visible"); // kept hidden until resize is done
 }
-
 
 // function called from model pages - swaps line breaks in xml text attributes and CDATA to br tags
 function x_addLineBreaks(text, override) {
@@ -3544,7 +4442,6 @@ function x_addLineBreaks(text, override) {
     }
 }
 
-
 // function called from model pages - returns reference to swfs (different depending on browser)
 function x_getSWFRef(swfID) {
     var flashMovie;
@@ -3560,7 +4457,6 @@ function x_getSWFRef(swfID) {
     }
     return flashMovie;
 }
-
 
 // function sorts initObject data for any pages where swfs or custom html can be added (e.g. textSWF, xerteModel, navigators)
 function x_sortInitObject(initObj) {
@@ -3588,7 +4484,6 @@ function x_sortInitObject(initObj) {
     return initObject;
 }
 
-
 // function selects text (e.g. when users are to be prompted to copy text on screen)
 function x_selectText(element) {
     var     text = document.getElementById(element),
@@ -3607,12 +4502,10 @@ function x_selectText(element) {
     }
 }
 
-
 // function deals with hex values that might be abbreviated ones from the flash editor
 function x_getColour(colour) {
 	return colour.substring(0, 2) == '0x' ? '#' + Array(9-colour.length).join('0') + colour.substring(2) : colour;
 }
-
 
 // function returns black or white depending on which contrasts best with a given colour (e.g. for text over background colour)
 function x_blackOrWhite(colour) {
@@ -3634,15 +4527,8 @@ function x_hexToRgb(hex, opa) {
 
 // function randomises the order of items in an array
 function x_shuffleArray(array) {
-	for (var i = array.length - 1; i > 0; i--) {
-		var j = Math.floor(Math.random() * (i + 1));
-		var temp = array[i];
-		array[i] = array[j];
-		array[j] = temp;
-	}
-	return array;
+    return array.sort(function() {return Math.random()-0.5})
 }
-
 
 // function returns whether string is a url to a youtube or vimeo video
 function x_isYouTubeVimeo(url) {
@@ -3655,15 +4541,30 @@ function x_isYouTubeVimeo(url) {
 	}
 }
 
+// Based somewhat on these regexps for YouTube and Vimeo (check there for updates)
+//   https://stackoverflow.com/questions/19377262/regex-for-youtube-url
+//   https://stackoverflow.com/questions/5008609/vimeo-video-link-regex
+function x_fixYouTubeVimeo(url) {
+	var path = url.trim();
+	let result = url.match(/(^|<iframe.+?src=["'])((?:https?:)?\/\/)?((?:www|m)\.)?((?:youtube(-nocookie)?\.com|youtu.be))(\/(?:[\w\-]+\?v=|embed\/|v\/)?)([\w\-]+)(\S+)?.*?(<\/iframe>|$)$/);
+	if (result) return "www.youtube.com/watch?v=" + result[7] + (result[8] !== undefined ? result[8] : "");
+	result = url.match(/(^|<iframe.+?src=["'])(?:http|https)?:?\/?\/?(?:www\.)?(?:player\.)?vimeo\.com\/(?:channels\/(?:\w+\/)?|groups\/(?:[^\/]*)\/videos\/|video\/|)(\d+)(?:|\/\?).*?(<\/iframe>|$)/);
+	if (result) return "vimeo.com/" + result[2];
+	return url;
+}
 
 // strip html tags and return just text which is appropriate for screen reader
 function x_getAriaText(text) {
 	return $('<p>' + text + '</p>').text();
 }
 
-// Script to check whther saveSession button is styled in theme
+// Script to check whether saveSession button is styled in theme
 function x_saveSessionBtnIsStyled() {
-	if (x_params.theme != undefined && x_params.theme == "default")
+	// In offline the line below with r.rules causes a CORS error.
+	// Offline doesn't use save session anyway, so return true
+	if (xot_offline)
+		return true;
+	if (x_params.theme == undefined || x_params.theme == "default") // old projects might not have a theme so fall back to using default
 		return true;
 	var files = $.map(document.styleSheets, function(s) {
 		// All css files in the themes folders except responsivetext.css
@@ -3679,6 +4580,26 @@ function x_saveSessionBtnIsStyled() {
 }
 
 
+// video has loaded to intro lightbox - make sure it's sized correctly (MP4 only)
+function x_introMediaMetadata($video, wh) {
+	$video.data({
+		width: wh[0],
+		height: wh[1]
+	});
+
+	$video.closest(".mejs-video").css({
+		"maxWidth": wh[0] + 'px',
+		"maxHeight": wh[1] + 'px'
+	});
+
+	// resize if the media is the wrong size for its holder
+	// this is done by manually triggering the window resize event (mediaelement.js listens to this event)
+	$('.featherlight-content').addClass('max');
+	$x_window.resize();
+	$('.featherlight-content').removeClass('max');
+}
+
+
 // ***** VARIABLES *****
 var XENITH = (function ($, parent) { var self = parent.VARIABLES = {};
 
@@ -3688,7 +4609,6 @@ var XENITH = (function ($, parent) { var self = parent.VARIABLES = {};
 			variableErrors = [],
 			dynamicCalcs = [],
 			dynamicID = 1,
-
 
 	// function starts the calculation of variables set by author via the variables optional property
 	init = function (variableData) {
@@ -3737,16 +4657,13 @@ var XENITH = (function ($, parent) { var self = parent.VARIABLES = {};
 				i--;
 			}
 		}
-		
 		calcVariables(toCalc);
 	},
-
 
 	// Check if we have any variables to deal with
 	exist = function () {
 		return variables.length > 0;
 	},
-
 
 	calcVariables = function (toCalc) {
 		var lastLength, checkDefault,
@@ -3793,7 +4710,6 @@ var XENITH = (function ($, parent) { var self = parent.VARIABLES = {};
 			$("#x_authorSupportMsg p").append('<span class="x_varMsg"></br>' + '<a onclick="XENITH.VARIABLES.showVariables()" href="javascript:void(0)" style="color:red">' + x_getLangInfo(x_languageData.find("authorVars")[0], "label", "View variable data") + '</a></span>');
 		}
 	},
-
 
 	// function calculates the value of any author set variables
 	calcVar = function (thisVar, recalc, checkDefault) {
@@ -4026,7 +4942,7 @@ var XENITH = (function ($, parent) { var self = parent.VARIABLES = {};
 		return thisVar;
 	},
 
-	 getVariable = function(name) {
+	getVariable = function(name) {
 		for (var i=0; i<variables.length; i++)
 		{
 			if (variables[i].name == name)
@@ -4118,7 +5034,6 @@ var XENITH = (function ($, parent) { var self = parent.VARIABLES = {};
 		}
 	},
 
-
 	// function displays author set variables in popup when in author support mode
 	showVariables = function () {
 		var varHeadings = ["Name", "Fixed Value", "Random", "Min", "Max", "Step", "DP", "SF", "Trailing Zeros", "Exclude", "Default"];
@@ -4155,8 +5070,7 @@ var XENITH = (function ($, parent) { var self = parent.VARIABLES = {};
 
 		window.open('','','width=300,height=450').document.write('<p style="font-family:sans-serif; font-size:12px">' + pageText + '</p>');
 	},
-	
-	
+
 	replaceVariables = function (tempText, decimalSeparator, dataInfo) {
 		tempText = tempText.replace(
 			new RegExp('\\[\\{(.*?)\\}(?:\\s|&nbsp;)*(?:(?:\\,(?:\\s|&nbsp;)*?(\\d+?)?))?\\]|<span class="x_var x_dyn_(.*?)">(?:.*?)</span>', 'g'),
@@ -4189,7 +5103,7 @@ var XENITH = (function ($, parent) { var self = parent.VARIABLES = {};
 				// we're looking at the data for chart, documetaion, grid and table pages - these are treated differently to normal text
 				// replace with the variable text
 				var regExp = new RegExp('\\[' + variables[k].name + '\\]', 'g');
-				tempText = tempText.replace(regExp, x_checkDecimalSeparator(variables[k].value));
+				tempText = tempText.replace(regExp, x_checkDecimalSeparator('[' + variables[k].name + '::'+ variables[k].value + ']'));
 				
 			} else {
 				// if it's first attempt to replace vars on this page look at vars in image, iframe, a & mathjax tags first
@@ -4347,7 +5261,9 @@ var XENITH = (function ($, parent) { var self = parent.GLOSSARY = {};
     // Declare local variables
 	var 	x_glossary      = [],
 			$x_glossaryHover,
-
+			multiple_terms = false, // link all terms on page or just the first - default is FIRST ONLY
+			ignore_space = true,  // ignore and remove all multiple whitespace within terms, including - default is IGNORE AND REMOVE
+									// we always remove leading and trailing whitespace
 
 	init = function () {
 		
@@ -4361,10 +5277,12 @@ var XENITH = (function ($, parent) { var self = parent.GLOSSARY = {};
 			items = x_params.glossary.split("||");
 
 		for (i=0, len=items.length; i<len; i++) {
-			item = items[i].split("|"),
-			word = {word:item[0], definition:item[1]};
+			item = items[i].split("|");
+			item[0] = item[0].replace(/^(\s|&nbsp;)+|(\s|&nbsp;)+$/g, "");
+			if (ignore_space) item[0] = item[0].replace(/(\s|&nbsp;)+/g, " ");
+			word = { word : item[0], definition : item[1] };
 
-			if (word.word.replace(/^\s+|\s+$/g, "") != "" && word.definition.replace(/^\s+|\s+$/g, "") != "") {
+			if (word.word.replace(/^(\s|&nbsp;)+|(\s|&nbsp;)+$/g, "") != "" && word.definition.replace(/^(\s|&nbsp;)+|(\s|&nbsp;)+$/g, "") != "") {
 				x_glossary.push(word);
 			}
 		}
@@ -4373,38 +5291,69 @@ var XENITH = (function ($, parent) { var self = parent.GLOSSARY = {};
 				return a.word.length > b.word.length ? -1 : 1;
 			});
 
-			$x_footerL.prepend('<button id="x_glossaryBtn"></button>');
-			$("#x_glossaryBtn")
+			const glossaryIcon = x_btnIcons.filter(function(icon){return icon.name === 'glossary';})[0];
+			$x_glossaryBtn = $('<button id="x_glossaryBtn"></button>').prependTo($x_footerL);
+
+			$x_glossaryBtn
 				.button({
 					icons: {
-						primary: "x_glossary"
+						primary: glossaryIcon.iconClass
 					},
-					label:	x_getLangInfo(x_languageData.find("glossaryButton")[0], "label", "Glossary"),
+					// label can now be set in editor but fall back to language file if not set
+					label: x_params.glossaryLabel != undefined && x_params.glossaryLabel != "" ? x_params.glossaryLabel : x_getLangInfo(x_languageData.find("glossaryButton")[0], "label", "Glossary"),
 					text:	false
 				})
-				.attr("aria-label", $("#x_glossaryBtn").attr("title") + " " + x_params.dialogTxt)
+				.attr("aria-label", $x_glossaryBtn.attr("title") + " " + x_params.dialogTxt)
 				.click(function() {
-					x_openDialog(
-						"glossary",
-						x_getLangInfo(x_languageData.find("glossary")[0], "label", "Glossary"),
-						x_getLangInfo(x_languageData.find("glossary").find("closeButton")[0], "description", "Close Glossary List Button"),
-						null,
-						null,
-						function () {
-							$("#x_glossaryBtn")
-								.blur()
-								.removeClass("ui-state-focus")
-								.removeClass("ui-state-hover");
-						}
-					);
+					if (x_params.glossaryTarget == "lightbox") {
+
+						$.featherlight($(), {
+							contentFilters: 'ajax',
+							ajax: x_templateLocation + 'models_html5/glossary.html',
+							variant: 'lightbox' + (x_browserInfo.mobile != true ? 'Medium' : 'Auto' )
+						});
+
+					} else {
+						x_openDialog(
+							"glossary",
+							x_getLangInfo(x_languageData.find("glossary")[0], "label", "Glossary"),
+							x_getLangInfo(x_languageData.find("glossary").find("closeButton")[0], "description", "Close Glossary List Button"),
+							null,
+							null,
+							function () {
+								$x_glossaryBtn
+									.blur()
+									.removeClass("ui-state-focus")
+									.removeClass("ui-state-hover");
+							}
+						);
+					}
 				});
+
+			if (glossaryIcon.customised == true) {
+				$x_glossaryBtn.addClass("customIconBtn");
+			}
+			if (glossaryIcon.btnImgs == true) {
+				$x_glossaryBtn.addClass("imgIconBtn");
+			}
+
+			// Handle the closing of glossary bubble with escape key
+			var $activeTooltip, escapeHandler = function(e) {
+				e = e || window.event; //IE
+				if ((e.keyCode ? e.keyCode : e.which) === 27) { // Escape
+					$activeTooltip.trigger("mouseleave");
+					e.stopPropagation();
+				}
+			};
 
 			$x_pageDiv
 				.on("mouseenter", ".x_glossary", function(e) {
-					$(this).trigger("mouseleave");
+					$activeTooltip = $(this);
+					$activeTooltip.trigger("mouseleave");
 
-					var $this = $(this),
-						myText = $this.text().trim(),
+					window.addEventListener('keydown', escapeHandler);
+
+					var myText = $activeTooltip.text().replace(/(\s|&nbsp;)+/g, " ").trim(),
 						myDefinition, i, len;
 
 					for (i=0, len=x_glossary.length; i<len; i++) {
@@ -4421,13 +5370,13 @@ var XENITH = (function ($, parent) { var self = parent.GLOSSARY = {};
 					$x_glossaryHover
 						.html(myDefinition)
 						.css({
-						"left"	:$(this).offset().left + 20,
-						"top"	:$(this).offset().top + 20
+						"left"	:$activeTooltip.offset().left + 20,
+						"top"	:$activeTooltip.offset().top + 20
 					});
 					
 					// Queue reparsing of MathJax - fails if no network connection
 					try { MathJax.Hub.Queue(["Typeset",MathJax.Hub]); } catch (e){};
-					
+
 					$x_glossaryHover.fadeIn("slow");
 					
 					if (x_browserInfo.touchScreen == true) {
@@ -4436,8 +5385,8 @@ var XENITH = (function ($, parent) { var self = parent.GLOSSARY = {};
 				})
 				.on("mouseleave", ".x_glossary", function(e) {
 					$x_mainHolder.off("click.glossary");
-					
 					$x_glossaryHover.hide();
+					window.removeEventListener("keydown", escapeHandler);
 				})
 				.on("mousemove", ".x_glossary", function(e) {
 					var leftPos,
@@ -4473,42 +5422,94 @@ var XENITH = (function ($, parent) { var self = parent.GLOSSARY = {};
 	
 	// glossary page generation
 	buildPage = function() {
-		var tableData = '<table class="glossary">';
 			
 		var x_glossary_temp = x_glossary.slice(0);
 		x_glossary.sort(function(a, b){ // sort alphabetically
 			return a.word.toLowerCase() < b.word.toLowerCase() ? -1 : 1;
 		});
 
+		var tableData = "<table class=\"glossary\">";
 		for (var i=0; i<x_glossary.length; i++) {
 			tableData += "<tr><td>" + x_glossary[i].word + "</td><td>" + x_glossary[i].definition + "</td></tr>";
 		}
-		
 		tableData += "</table>";
+
+		if ($("#glossaryItems").parents('.featherlight').length > 0) {
+			tableData = '<div class="glossaryHolder">' + tableData + '</div>';
+		}
+
 		$("#glossaryItems").append(tableData);
 		
 		x_pageContentsUpdated();
 		
-		// add class for shaded rows rather than using css selector as doesn't work for IE8 & below
+		// add class for shaded rows rather than using css selector as doesnt work for IE8 & below
 		$("#glossaryItems .glossary tr:nth-child(even)").addClass("shaded");
+
+		// lightbox
+		if ($("#glossaryItems").parents('.featherlight').length > 0) {
+
+			$('#glossaryItems').prepend('<h1 id="x_introH1">' + (x_params.glossaryLabel != undefined && x_params.glossaryLabel != "" ? x_params.glossaryLabel : x_getLangInfo(x_languageData.find("glossaryButton")[0], "label", "Glossary")) + '</h1>');
+
+			$('#glossaryItems .glossaryHolder')
+				.height($('.featherlight-content').height() - $('#x_introH1').outerHeight())
+				.css('overflow', 'auto');
+		}
 	},
-	
+
 	insertText = function(tempText, exclude, list) {
 		// check text for glossary words - if found replace with a link
 		if (x_glossary.length > 0 && (exclude == undefined || (exclude == false && list.indexOf("glossary") > -1) || (exclude == true && list.indexOf("glossary") == -1))) {
+
+			// Create a fragment and traverse the DOM tree, checking for terms in each node separately
+			let fragment = document.createRange().createContextualFragment(tempText);
+			let nodes = getTextNodes(fragment);
+			let index = 'textContent' in document.body ? 'textContent' : 'innerText';
 			for (var k=0, len=x_glossary.length; k<len; k++) {
-				var regExp = new RegExp('(^|[\\s\(>]|&nbsp;)(' + x_glossary[k].word + ')([\\s\\.,!?:;\)<]|$|&nbsp;)', 'i');
-				tempText = tempText.replace(regExp, '$1{|{'+k+'::$2}|}$3');
+				nodes.some(function(node) { // .some exits after true is returned - after first find unless multiple terms selected
+					let term = ignore_space ? x_glossary[k].word.replace(/\s/g, '(?:\\s|&nbsp;)+') : x_glossary[k].word;
+					let regExp = new RegExp('\\b(' + term + ')\\b', multiple_terms ? 'ig' : 'i');
+					let found = regExp.test(node[index]);
+
+					node[index] = node[index].replace(regExp, '{|{'+k+'::$1}|}');
+					return found && !multiple_terms;
+				});
 			}
+			// Need to treat single text node differently but rebuild from fragmant OLD WAY
+			//let arr = Array.prototype.slice.call(fragment.childNodes);
+			//tempText = arr.length === 1 && nodes.length > 0 ? nodes[0].textContent : [].map.call(fragment.childNodes, x => x.nodeType === x.TEXT_NODE ? x.textContent : x.outerHTML).join('');
+
+			// Instead we'll just let the DOM do the heavy lifting
+			let div = document.createElement("div");
+			div.appendChild(fragment);
+			tempText = div.innerHTML;
+			$(div).remove();
+
+			// Replace all our tokens with the glossary tag
 			for (var k=0, len=x_glossary.length; k<len; k++) {
-				var regExp = new RegExp('(^|[\\s\(>]|&nbsp;)(\\{\\|\\{' + k + '::(.*?)\\}\\|\\})([\\s\\.,!?:;\)<]|$|&nbsp;)', 'i');
-				tempText = tempText.replace(regExp, '$1<span class="x_glossary" aria-describedby="x_glossaryHover" tabindex="0" role="link">$3</span>$4');
+				let regExp = new RegExp('{\\|{' + k + '::(.*?)}\\|}', 'ig');
+				tempText = tempText.replace(regExp, '<span class="x_glossary" aria-describedby="x_glossaryHover" tabindex="0" role="link">$1</span>');
 			}
 		}
-		
+
 		return tempText;
 	},
-	
+
+	getTextNodes = function (fragment) {
+		let textNodes = [];
+		(function recurse(node) {
+
+		  if (node = node.firstChild)
+			  while (node != null) {
+				  if (node.nodeType === Node.TEXT_NODE) {
+						if (node && node.parentNode && node.parentNode.nodeName !== "A") textNodes.push(node);
+				  }
+				  else if (node.nodeType === Node.ELEMENT_NODE) recurse(node);
+				  node = node.nextSibling;
+			  }
+		})(fragment);
+		return textNodes;
+	},
+
 	touchStartHandler = function() {
 		$x_mainHolder.off("click.glossary");
 		if ($x_glossaryHover != undefined) {
@@ -4520,6 +5521,7 @@ var XENITH = (function ($, parent) { var self = parent.GLOSSARY = {};
 	self.init = init;
     self.buildPage = buildPage;
 	self.insertText = insertText;
+	self.getTextNodes = getTextNodes;
 	self.touchStartHandler = touchStartHandler;
 
 return parent; })(jQuery, XENITH || {});
@@ -4530,11 +5532,9 @@ return parent; })(jQuery, XENITH || {});
 // allows surfacing of any global variables
 
 var XENITH = (function ($, parent) { var self = parent.GLOBALVARS = {};
-	
+
 	var	replaceGlobalVars = function (tempText) {
-		var regExp = new RegExp('\\{(.*?)\\}', 'g');
-		
-		var matches = tempText.match(regExp);
+		var matches = tempText.match(/\{(.*?)\}/g);
 		if (matches != null) {
 			for (var m=0; m<matches.length; m++) {
 				try {
@@ -4542,10 +5542,9 @@ var XENITH = (function ($, parent) { var self = parent.GLOBALVARS = {};
 				} catch (e){}
 			}
 		}
-		
 		return tempText;
 	};
-	
+
 	// make some public methods
 	self.replaceGlobalVars = replaceGlobalVars;
 

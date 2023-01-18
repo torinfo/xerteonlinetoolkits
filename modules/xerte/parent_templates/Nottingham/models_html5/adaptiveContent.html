@@ -18,53 +18,59 @@
  * limitations under the License.
  */
 
-  String.prototype.replaceAll = function (search, replacement) {
-    var target = this;
-    return target.replace(new RegExp(search, "g"), replacement);
-  };
 
-  this.createDiagram = function (data, identifier, showall_only, interaction) {
-    var importData = data;
-    var numSubmits = importData.length;
-    var latest_ts = "";
-    var mean_all = [];
-    var mean = [];
-    var latest = null;
-    var objlabel = null;
-    var classnames = [];
-    var classtitles = [];
-    var numUserSubmits = 0;
-    var xertelo = interaction.getAttribute("xertelo");
-    var textSize = Math.round(interaction.getAttribute("labelFontSize"));
+    String.prototype.replaceAll = function(search, replacement) {
+        var target = this;
+        return target.replace(new RegExp(search, 'g'), replacement);
+    };
 
-    if (textSize == null || textSize == 0) textSize = 12;
+    this.createDiagram = function(data, identifier, showall_only, interaction) {
+        var importData = data;
+        var numSubmits = importData.length;
+        var latest_ts = "";
+        var mean_all = [];
+        var mean = [];
+        var latest = null;
+        var objlabel = null;
+        var classnames = [];
+        var classtitles = [];
+        var numUserSubmits = 0;
+        var xertelo = interaction.getAttribute('xertelo');
+        var textSize = Math.round(interaction.getAttribute("labelFontSize"));
 
-    // We assume the data contains identical data sets
-    // TODO: Check this
-    if (numSubmits == 0) {
-      return;
-    }
+        if (textSize == null || textSize == 0) textSize = 12;
 
-    if (showall_only === "true") {
-      showall_only = true;
-    }
-    if (showall_only === "false") {
-      showall_only = false;
-    }
-    importData.forEach(function (obj) {
-      if (objlabel == null) {
-        objlabel = obj.graph.label;
-      }
-
-      for (var i = 0; i < obj.graph.classvalues.length; i++) {
-        if (mean_all[i] == null) {
-          mean_all[i] = obj.graph.classvalues[i];
-        } else {
-          mean_all[i] += obj.graph.classvalues[i];
+        // We assume the data contains identical data sets
+        // TODO: Check this
+        if (numSubmits == 0) {
+            return;
         }
 
+        if (showall_only === "true")
+        {
+            showall_only = true;
+        }
+        if (showall_only === "false")
+        {
+            showall_only = false;
+        }
+        importData.forEach(function(obj)
+        {
+            if (objlabel == null) {
+                objlabel = obj.graph.label;
+            }
+
+            for (var i = 0; i < obj.graph.classvalues.length; i++) {
+                if (mean_all[i] == null) {
+                    mean_all[i] = obj.graph.classvalues[i];
+                }
+                else
+                {
+                    mean_all[i] += obj.graph.classvalues[i];
+                }
+
         if (classnames[i] == null) {
-          classnames[i] = obj.graph.classnames[i];
+          classnames[i] = x_GetTrackingTextFromHTML(obj.graph.classnames[i], obj.graph.classnames[i]);
         }
         if (classtitles[i] == null) {
           if (
@@ -72,7 +78,7 @@
             typeof obj.graph.classtitles[i] != "undefined" &&
             obj.graph.classtitles[i] != ""
           ) {
-            classtitles[i] = obj.graph.classtitles[i];
+            classtitles[i] = x_GetTrackingTextFromHTML(obj.graph.classtitles[i], obj.graph.classtitles[i]);
           } else {
             classtitles[i] = classnames[i];
           }
@@ -94,23 +100,19 @@
           }
           break;
         case 3:
-          if (
-            obj.actor.account != undefined &&
-            obj.actor.account.name == groupname
-          ) {
+          if (obj.actor.account != undefined &&
+              obj.actor.account.name == groupname) {
             matchactor = true;
           }
           break;
       }
-      if (
-        !matchactor &&
+      if (!matchactor &&
         xertelo == x_TemplateId &&
         obj.context != undefined &&
         obj.context.extensions != undefined &&
-        obj.context.extension["http://xerte.org.uk/sessionId"] != undefined &&
-        obj.context.extension["http://xerte.org.uk/sessionId"] ==
-          state.sessionId
-      ) {
+        obj.context.extensions["http://xerte.org.uk/sessionId"] != undefined &&
+        obj.context.extensions["http://xerte.org.uk/sessionId"] ==
+          state.sessionId) {
         matchactor = true;
       }
 
@@ -184,19 +186,24 @@
       1
     );
 
-    var avgAllLabelText = interaction.getAttribute("AvgLabel");
+    var avgAllLabelText = interaction.getAttribute("avgAllLabelText");
     if (avgAllLabelText == undefined) {
       avgAllLabelText = "Avg. of all attempts";
     }
 
-    var personalLabelText = interaction.getAttribute("PersonalLastLabel");
+    var personalLabelText = interaction.getAttribute("personalLabelText");
     if (personalLabelText == undefined) {
       personalLabelText = "Your last attempt";
     }
 
-    var personalAvgLabelText = interaction.getAttribute("PersonalAvgLabel");
+    var personalAvgLabelText = interaction.getAttribute("personalAvgLabelText");
     if (personalAvgLabelText == undefined) {
       personalAvgLabelText = "Avg. of your attempts";
+    }
+
+    var groupAverageLabelText = interaction.getAttribute("groupAverageLabelText");
+    if (groupAverageLabelText == undefined) {
+        groupAverageLabelText = "Group Average";
     }
 
     var datasets = [];
@@ -248,12 +255,23 @@
             r: {
               beginAtZero: true,
               max: 100,
-              fontSize: textSize - 10,
+              pointLabels: {
+                  font: {
+                      size: textSize
+                  },
+              },
+              ticks: {
+                  font: {
+                      size: textSize - 4
+                  },
+              }
             },
           },
           legend: {
             labels: {
-              fontSize: textSize,
+              font: {
+                  size: textSize
+              },
             },
           },
           responsive: true,
@@ -278,74 +296,113 @@
 
       let labelCounter = 0;
       let data = [];
-      datasets[0].data.forEach((val, key) => {
-        data.push({
-          x: classtitles[key],
-          y: Math.round(val, 2),
-          goals: [
-            {
-              name: "Group average",
-              value: datasets[2].data[key],
-              strokeWidth: 5,
-              strokeColor: "#775DD0",
-            },
-          ],
-        });
-        labelCounter += 1;
-      });
-      var options = {
-        series: [
-          {
-            data,
-          },
-        ],
-        chart: {
-          toolbar: {
-            show: false,
-          },
-          height: 350,
-          type: "bar",
-        },
-        plotOptions: {
-          bar: {
-            horizontal: true,
-            distributed: true,
-          },
-        },
-        colors: [
-          "#FF6384",
-          "#4BC0C0",
-          "#FFCD56",
-          "#C9CBCF",
-          "#36A2EB",
-          "#B284BE",
-        ],
-        dataLabels: {
-          formatter: function (val, opt) {
-            const goals =
-              opt.w.config.series[opt.seriesIndex].data[opt.dataPointIndex]
-                .goals;
+      if (datasets.length < 2)
+      {
+          var insufficientDataText = interaction.getAttribute("insufficientDataText");
+          if (insufficientDataText == undefined) {
+              insufficientDataText = "There is insufficient data for this graph";
+          }
+          $(ctx).parent().append('<p><em>' + insufficientDataText + '</em></p>');
+      }
+      else {
+          const avgDataSet = datasets.length - 1;
 
-            if (goals && goals.length) {
-              return `${val}%`;
-            }
-            return val;
-          },
-        },
-        legend: {
-          show: true,
-          showForSingleSeries: true,
-          customLegendItems: ["Group Average"],
-          markers: {
-            fillColors: ["#775DD0"],
-          },
-        },
-      };
-      var chart = new ApexCharts(
-        document.querySelector(`${ctx}`),
-        options
-      );
-      chart.render();
+          datasets[0].data.forEach((val, key) => {
+              data.push({
+                  x: classtitles[key],
+                  y: Math.round(val, 2),
+                  goals: [
+                      {
+                          name: groupAverageLabelText,
+                          value: datasets[avgDataSet].data[key],
+                          strokeWidth: 5,
+                          strokeColor: "#775DD0",
+                      },
+                  ],
+              });
+              labelCounter += 1;
+          });
+          let colors = [
+              "#FF6384",
+              "#4BC0C0",
+              "#FFCD56",
+              "#C9CBCF",
+              "#36A2EB",
+              "#B284BE",
+          ];
+          if (interaction.getAttribute('graphColorScale') != null && interaction.getAttribute('graphColorScale') != "") {
+              colors = interaction.getAttribute('graphColorScale').split(",");
+          }
+          var options = {
+              series: [
+                  {
+                      data,
+                  },
+              ],
+              chart: {
+                  toolbar: {
+                      show: false,
+                  },
+                  height: 350,
+                  type: "bar",
+              },
+              plotOptions: {
+                  bar: {
+                      horizontal: true,
+                      distributed: true,
+                  },
+              },
+              colors: colors,
+              dataLabels: {
+                  formatter: function (val, opt) {
+                      const goals =
+                          opt.w.config.series[opt.seriesIndex].data[opt.dataPointIndex]
+                              .goals;
+
+                      if (goals && goals.length) {
+                          return `${val}%`;
+                      }
+                      return val;
+                  },
+                  style: {
+                      fontSize: textSize + 'px',
+                  }
+              },
+              legend: {
+                  show: true,
+                  showForSingleSeries: true,
+                  customLegendItems: [groupAverageLabelText],
+                  markers: {
+                      fillColors: ["#775DD0"],
+                  },
+                  style: {
+                      fontSize: textSize + 'px',
+                  }
+              },
+              xaxis: {
+                  position: 'bottom',
+                  labels: {
+                      offsetY: 1,
+                      style: {
+                          fontSize: textSize + 'px',
+                      },
+                  },
+              },
+              yaxis: {
+                  labels: {
+                      style: {
+                          fontSize: textSize + 'px',
+                      },
+                  },
+              },
+          };
+          var chart = new ApexCharts(
+              document.querySelector(`${ctx}`),
+              options
+          );
+          chart.render();
+          $(ctx + ' svg text').css('font-size', textSize + 'px');
+      }
     }
   };
 
@@ -358,9 +415,9 @@
       return true;
     } else {
       if (
-        interaction.getAttribute("interactionType") !== "open" &&
-        interaction.getAttribute("interactionType") !== "opinion" &&
-        interaction.getAttribute("opinionClass") != undefined
+        (interaction.getAttribute("interactionType") !== "open" &&
+            (interaction.getAttribute("interactionType") !== "opinion"
+             || interaction.getAttribute("opinionClass") == undefined))
       ) {
         if (interaction.getAttribute("graph") === "true") {
           return (
@@ -383,40 +440,37 @@
     );
   }
 
-  function matchActor(statement, xertelo) {
-    switch (studentidmode) {
-      case 0:
-      case 2:
-        if (statement.actor.mbox == "mailto:" + username) {
-          return true;
+    function matchActor(statement, xertelo)
+    {
+        switch (studentidmode) {
+            case 0:
+            case 2:
+                if (statement.actor.mbox == 'mailto:' + username) {
+                    return true;
+                }
+                break;
+            case 1:
+                if (statement.actor.mbox_sha1sum == mboxsha1) {
+                    return true;
+                }
+                break;
+            case 3:
+                if (statement.actor.account != undefined
+                            && statement.actor.account.name == groupname) {
+                    return true;
+                }
+                break;
         }
-        break;
-      case 1:
-        if (statement.actor.mbox_sha1sum == mboxsha1) {
-          return true;
+        if (xertelo != undefined && xertelo == x_TemplateId
+            && statement.context != undefined
+            && statement.context.extensions != undefined
+            && statement.context.extensions['http://xerte.org.uk/sessionId'] != undefined
+            && statement.context.extensions['http://xerte.org.uk/sessionId'] == state.sessionId)
+        {
+            return true;
         }
-        break;
-      case 3:
-        if (
-          statement.actor.account != undefined &&
-          statement.actor.account.name == groupname
-        ) {
-          return true;
-        }
-        break;
+        return false;
     }
-    if (
-      xertelo != undefined &&
-      xertelo == x_TemplateId &&
-      obj.context != undefined &&
-      obj.context.extensions != undefined &&
-      obj.context.extension["http://xerte.org.uk/sessionId"] != undefined &&
-      obj.context.extension["http://xerte.org.uk/sessionId"] == state.sessionId
-    ) {
-      return true;
-    }
-    return false;
-  }
 
   function filterOwnStatements(data, xertelo) {
     var statements = [];
@@ -554,13 +608,14 @@
     retrieveAll,
     interactionIndex,
     group,
+    filter_context_id,
     fullWidth,
     handler,
     secondHandler
   ) {
     var url;
-    var q = {};
-    if (type != "grouping") {
+    var q = {}
+    if (type != "grouping" && type != "opinionclasses") {
       url = getUrl(xerteurl, xertelo, xertelabel, opinionClass);
     } else {
       url = getUrl(xerteurl, xertelo);
@@ -609,6 +664,9 @@
     q["verb"] = verb;
     if (group != "") {
       q["group"] = group;
+    }
+    if (filter_context_id) {
+      q["lti_context_id"] = (typeof lti_context_id != "undefined" ? lti_context_id : "");
     }
     if (startDate != "") {
       var date = moment(startDate).toISOString();
@@ -796,18 +854,13 @@
 
             for (var i = 0; i < data.length; i++) {
               if (
-                data[i].context != undefined &&
-                data[i].context.extensions != undefined &&
-                data[i].context.extensions[
-                  "http://xerte.org.uk/learningObjectLevel"
-                ] != undefined &&
-                data[i].context.extensions[
-                  "http://xerte.org.uk/learningObjectLevel"
-                ] == "interactivity" &&
-                data[i].context.extensions[
-                  "http://xerte.org.uk/opinionClass"
-                ] != undefined &&
-                data[i].context.contextActivities != undefined
+                  data[i].context != undefined &&
+                  data[i].context.extensions != undefined &&
+                  data[i].context.extensions["http://xerte.org.uk/learningObjectLevel"] != undefined &&
+                  data[i].context.extensions["http://xerte.org.uk/learningObjectLevel"] == "interactivity" &&
+                  data[i].context.extensions["http://xerte.org.uk/opinionClass"] != undefined &&
+                  data[i].context.contextActivities != undefined &&
+                  data[i].object.id.indexOf(url + '/' + xertelabel) != -1
               ) {
                 statements.push(data[i]);
               }
@@ -897,6 +950,7 @@
     var url = "";
     var divUrl = "";
     var group = "";
+    var filter_context_id = false;
     var dashboardMode = "false";
 
     this.loadJS = function () {
@@ -963,12 +1017,7 @@
     // Function called every time the page is viewed after it has initially loaded.
     this.pageChanged = function () {
       $("#adaptiveContentMain").html("");
-      var displayMode = x_currentPageXML.getAttribute("displayMode");
-      if (displayMode == "Listed") {
-        this.setUpListed();
-      } else {
-        this.setUpUnlisted();
-      }
+      this.init();
     };
 
     // Function called every time the size of the LO is changed.
@@ -1000,6 +1049,7 @@
     };
 
     this.init = function () {
+      debugger;
       var loadFiles = true;
       for (var i = 0; i < x_pageInfo.length; i++) {
         if (
@@ -1061,7 +1111,7 @@
         nrParticipantsText = "The number of participants is {0}";
       }
 
-      if (interactionType != "grouping") {
+      if (interactionType != "grouping" && interactionType != "opinionclasses") {
         url = getUrl(xerteurl, xertelo, xertelabel, opinionClass);
       } else {
         url = getUrl(xerteurl, xertelo);
@@ -1085,7 +1135,9 @@
           "</div>";
       }
       let adviceHeader = "";
-      if (interaction.children.length !== 0 && !adaptiveContent.dashboardMode) {
+      if (interaction.children.length !== 0
+          && adaptiveContent.dashboardMode !== 'true'
+          && interaction.getAttribute("AdviceText") != null) {
         adviceHeader = `<h4>${interaction.getAttribute("AdviceText")}</h4>`;
       }
 
@@ -1112,17 +1164,15 @@
           specificationDiv !== '' ||
           adviceHeader !== '' ||
           interaction.getAttribute("showNrOfParticipants") === "true" ||
-          interaction.getAttribute("showScore") === "true"
+          interaction.getAttribute("showScore") === "true" ||
+          interactionType === "open"
         ) {
         summaryDiv = '<div class="summary">' +
           summaryText +
           '<div class="score">' +
           '<div class="stats-div"><ul class="stats"></ul></div>' +
           specificationDiv +
-          '<div class="advice">' +
-          adviceHeader +
-          '<div class="message"></div>' +
-          "</div>" +
+
           "</div>" +
           "</div>";
       }
@@ -1131,14 +1181,19 @@
       if (summaryDiv == '') {
           graphContainer = '<div class="graph-container graph-container-wide"></div>';
         }
-
+      let adviceDiv = '<div class="advice">' +
+          adviceHeader +
+          '<div class="message"></div>' +
+          "</div>";
       div.html(
         `<h2><p>${name}</p></h2>` +
           `<div class='introduction'>${introductionText}</div>` +
+          '<div class="interaction_load" id="interaction_load_' + interactionIndex + '"><img class="loading-gif" src="' + x_templateLocation + 'common_html5/loading16.gif"/></div>' +
           '<div class="summary-container">' +
           summaryDiv +
           graphContainer +
-          "</div>"
+          "</div>" +
+          adviceDiv
       );
       //}
       //else
@@ -1190,6 +1245,7 @@
             hasToRetrieveAll(interaction),
             interactionIndex,
             group,
+            filter_context_id,
             fullWidth,
             this.drawScore
           );
@@ -1217,6 +1273,7 @@
             hasToRetrieveAll(interaction),
             interactionIndex,
             group,
+            filter_context_id,
             fullWidth,
             this.drawAnswer
           );
@@ -1244,6 +1301,7 @@
             hasToRetrieveAll(interaction),
             interactionIndex,
             group,
+            filter_context_id,
             fullWidth,
             this.drawOpinion
           );
@@ -1272,6 +1330,7 @@
             hasToRetrieveAll(interaction),
             interactionIndex,
             group,
+            filter_context_id,
             fullWidth,
             this.drawOpen
           );
@@ -1300,6 +1359,7 @@
             hasToRetrieveAll(interaction),
             interactionIndex,
             group,
+            filter_context_id,
             fullWidth,
             this.drawGroupedScore
           );
@@ -1328,12 +1388,14 @@
             hasToRetrieveAll(interaction),
             interactionIndex,
             group,
+            filter_context_id,
             fullWidth,
             this.drawGroupedScores
           );
         }
       } else if (interactionType == "opinionclasses") {
         // check open question special options
+        debugger;
         var verb = "http://adlnet.gov/expapi/verbs/answered";
         if (interaction.data != null) {
           var url = getUrl(xerteurl, xertelo, xertelabel, opinionClass);
@@ -1356,6 +1418,7 @@
             hasToRetrieveAll(interaction),
             interactionIndex,
             group,
+            filter_context_id,
             fullWidth,
             this.drawGroupedScores
           );
@@ -1371,6 +1434,8 @@
       interactionIndex,
       fullWidth
     ) {
+      // remove loader
+      $("#interaction_load_" + interactionIndex).remove();
       let scoreLabelText = interaction.getAttribute("scoreText");
       if (scoreLabelText == null) {
         scoreLabelText = "Your score is {0}";
@@ -1398,7 +1463,7 @@
         IncorrectText = "Incorrect";
       }
       var xertelo = interaction.getAttribute("xertelo");
-      //var statements = filterOwnStatements(data, xertelo);
+      var ownstatements = filterOwnStatements(data, xertelo);
       var statements = data;
       xerteurl = interaction.getAttribute("xerteurl");
       xertelabel = interaction.getAttribute("label");
@@ -1546,7 +1611,14 @@
             }
             score = score / statements.length;
           } else {
-            score = statements[0].result.score.raw;
+            // If a graph is also shown, statements might contain statements of other people, select the last one of the current user
+            if (ownstatements.length > 0) {
+              score = ownstatements[0].result.score.raw;
+            }
+            else
+            {
+                score = 0;
+            }
           }
           if (interaction.getAttribute("showScore") == "true") {
             var txt = scoreLabelText;
@@ -1631,20 +1703,21 @@
           div.append(
             "<div class='graph'><svg id='" +
               escapeUrl(url, type, interactionIndex) +
-              "-graph'></svg></div>"
+              "-graph' width='700' height='300' viewBox='0 0 700 300'></svg></div>"
           );
-          document.getElementById(escapeUrl(url, type, interactionIndex) + "-graph").setAttribute("width", '700');
-          document.getElementById(escapeUrl(url, type, interactionIndex) + "-graph").setAttribute("height", '300');
+
+          //document.getElementById(escapeUrl(url, type, interactionIndex) + "-graph").setAttribute("width", '700');
+          //document.getElementById(escapeUrl(url, type, interactionIndex) + "-graph").setAttribute("height", '300');
           //document.getElementById(escapeUrl(url, type, interactionIndex) + "-graph").setAttribute("preserveAspectRatio", "xMinYMin meet");
-          document.getElementById(escapeUrl(url, type, interactionIndex) + "-graph").setAttribute("viewBox", "0 0 700 300");
+          //document.getElementById(escapeUrl(url, type, interactionIndex) + "-graph").setAttribute("viewBox", "0 0 700 300");
           //document.getElementById(escapeUrl(url, type, interactionIndex) + "-graph").setAttribute('viewBox','0 0 '+Math.min(width,height) +' '+Math.min(width,height) )
         //.attr('preserveAspectRatio','xMinYMin')
         }
         if (showExplanation == "true" && Explanation != "") {
+          var textSize = Math.round(interaction.getAttribute("labelFontSize"));
+          if (textSize == null || textSize == 0) textSize = 12;
           div.append(
-            '<div class="panel legend" style="width: ' +
-              ExplanationPanelWidth +
-              ';">' +
+            '<div class="panel legend" style="width: ' + ExplanationPanelWidth + '; font-size: ' + textSize + 'px;">' +
               Explanation +
               "</div>"
           );
@@ -1746,14 +1819,18 @@
           let ldPassing = [];
           let visitedGroups = {};
           for (let statement in statements) {
-            let group =
-              statements[statement].context.contextActivities.grouping[0]
-                .definition.name["en-US"];
-            if (!(group in visitedGroups)) {
-              visitedGroups[group] = [statements[statement].result.score.raw];
-            } else {
-              visitedGroups[group].push(statements[statement].result.score.raw);
-            }
+              try {
+                  let group =
+                      statements[statement].context.contextActivities.grouping[0]
+                          .definition.name["en-US"];
+                  if (!(group in visitedGroups)) {
+                      visitedGroups[group] = [statements[statement].result.score.raw];
+                  } else {
+                      visitedGroups[group].push(statements[statement].result.score.raw);
+                  }
+              } catch (e) {
+                  //console.log(e);
+              }
           }
           const sortObject = (obj) =>
             Object.keys(obj)
@@ -2007,6 +2084,9 @@
             "#36A2EB",
             "#B284BE",
           ];
+          if (interaction.getAttribute("graphColorScale") != undefined && interaction.getAttribute("graphColorScale") != "") {
+            backgroundColors = interaction.getAttribute("graphColorScale").split(",");
+          }
           let visitedGroups = {};
           for (let statement in statements) {
             let group =
@@ -2043,7 +2123,9 @@
               let singleQuestion = questionsGroup[index];
               labels.push(singleQuestion[0][0]);
               dataValues.push(singleQuestion[1]);
-              backgroundColor.push(backgroundColors[labelCounter]);
+              if (labelCounter < backgroundColors.length) {
+                backgroundColor.push(backgroundColors[labelCounter]);
+              }
             }
             labelCounter += 1;
           }
@@ -2125,6 +2207,18 @@
             });
             labelCounter += 1;
           }
+          let colors = [
+              "#FF6384",
+              "#4BC0C0",
+              "#FFCD56",
+              "#C9CBCF",
+              "#36A2EB",
+              "#B284BE",
+          ];
+          if (interaction.getAttribute('graphColorScale') != null && interaction.getAttribute('graphColorScale') != '')
+          {
+              colors = interaction.getAttribute('graphColorScale').split(",");
+          }
           var options = {
             series: [
               {
@@ -2144,14 +2238,7 @@
                 distributed: true,
               },
             },
-            colors: [
-              "#FF6384",
-              "#4BC0C0",
-              "#FFCD56",
-              "#C9CBCF",
-              "#36A2EB",
-              "#B284BE",
-            ],
+            colors: colors,
             dataLabels: {
               formatter: function (val, opt) {
                 const goals =
@@ -2167,7 +2254,7 @@
             legend: {
               show: true,
               showForSingleSeries: true,
-              customLegendItems: ["Average"],
+              customLegendItems: ["Passing Score"],
               markers: {
                 fillColors: ["#775DD0"],
               },
@@ -2190,6 +2277,9 @@
       interactionIndex,
       fullWidth
     ) {
+      // remove loader
+      $("#interaction_load_" + interactionIndex).remove();
+
       var answerLabelText = interaction.getAttribute("answerText");
       if (answerLabelText == undefined) {
         answerLabelText = "Your answer is {0}";
@@ -2209,10 +2299,11 @@
         var givenAnswer = statements[0].result.response;
         if (interaction.getAttribute("showScore") == "true") {
           var txt = answerLabelText;
-          txt = txt.replace(/\{0\}/, givenAnswer);
+          const givenAnswerCleanedUp = givenAnswer.replace(/\[\,\]/g, ",<br>").replace(/\[\.\]/g, " ==> ");
+          txt = txt.replace(/\{0\}/, givenAnswerCleanedUp);
           $(
             "#" + escapeUrl(url, type, interactionIndex) + " .score .stats"
-          ).append("<p>" + txt + "</p>");
+          ).append("<li>" + txt + "</li>");
         }
         for (
           blockIndex = 0;
@@ -2233,7 +2324,7 @@
         txt = txt.replace(/\{0\}/, data.length);
         $(
           "#" + escapeUrl(url, type, interactionIndex) + " .score .stats"
-        ).append("<p>" + txt + "</p>");
+        ).append("<li>" + txt + "</li>");
       }
       if (interaction.getAttribute("graph") === "true") {
         var showExplanation = interaction.getAttribute("showExplanation");
@@ -2253,24 +2344,49 @@
         div = $(
           "#" + escapeUrl(url, type, interactionIndex) + " .graph-container"
         );
-
         div.append(
-          "<div class='x_floatLeft'><svg id='" +
-            escapeUrl(url, type, interactionIndex) +
-            "-graph'></svg></div>"
+          "<div class='graph'><svg id='" +
+          escapeUrl(url, type, interactionIndex) +
+          "-graph' width='700' height='300' viewBox='0 0 700 300'></svg></div>"
         );
         if (showExplanation == "true" && Explanation != "") {
-          div.append(
-            '<div class="panel legend" style="width: ' +
-              ExplanationPanelWidth +
-              ';" >' +
+            var textSize = Math.round(interaction.getAttribute("labelFontSize"));
+            if (textSize == null || textSize == 0) textSize = 12;
+
+            div.append(
+            '<div class="panel legend" style="width: ' + ExplanationPanelWidth + '; font-size: ' + textSize + 'px;" >' +
               Explanation +
               "</div>"
           );
         }
         if (interaction.getAttribute("graphType") == "bar_answers") {
+          // Check if data has responses with multiple answers
+          var multipleAnswers = false;
+          data.forEach(function(s){
+            if (s.result.response.indexOf('[,]') >= 0) {
+              multipleAnswers = true;
+            }
+          });
+          if (multipleAnswers)
+          {
+            // Create pseudo dataset with statement for each answer
+            var dataset = [];
+            data.forEach(function(s){
+              const answers = s.result.response.split('[,]');
+              answers.forEach(function(a){
+                // clone statement
+                var statement = JSON.parse(JSON.stringify(s));
+                statement.result.response = a;
+                dataset.push(statement);
+              });
+            });
+          }
           var dash = new ADL.XAPIDashboard();
-          dash.addStatements(data);
+          if (!multipleAnswers) {
+            dash.addStatements(data);
+          } else {
+            dash.addStatements(dataset);
+          }
           var xAxisLabelBarAnswers = interaction.getAttribute(
             "xAxisLabelBarAnswers"
           );
@@ -2463,6 +2579,9 @@
       interactionIndex,
       fullWidth
     ) {
+      // remove loader
+      $("#interaction_load_" + interactionIndex).remove();
+
       var scoreLabelText = interaction.getAttribute("scoreText");
       if (scoreLabelText == null) {
         scoreLabelText = "Your score is {0}";
@@ -2490,7 +2609,7 @@
         txt = txt.replace(/\{0\}/, data.length);
         $(
           "#" + escapeUrl(url, type, interactionIndex) + " .score .stats"
-        ).append("<p>" + txt + "</p>");
+        ).append("<li>" + txt + "</li>");
       }
       jsonData = data.map(function (d) {
         var obj = {};
@@ -2508,6 +2627,7 @@
       jsonData = jsonData.filter(function (x) {
         return x != undefined;
       });
+      debugger;
       div = $(
         "#" + escapeUrl(url, type, interactionIndex) + " .graph-container"
       );
@@ -2525,10 +2645,10 @@
         );
       }
       if (showExplanation == "true" && Explanation != "") {
+        var textSize = Math.round(interaction.getAttribute("labelFontSize"));
+        if (textSize == null || textSize == 0) textSize = 12;
         div.append(
-          '<div class="panel legend" style="width: ' +
-            ExplanationPanelWidth +
-            ';" >' +
+          '<div class="panel legend" style="width: ' + ExplanationPanelWidth + '; font-size: ' + textSize + 'px;" >' +
             Explanation +
             "</div>"
         );
@@ -2550,6 +2670,9 @@
       interactionIndex,
       fullWidth
     ) {
+      // remove loader
+      $("#interaction_load_" + interactionIndex).remove();
+
       var answerLabelText = interaction.getAttribute("answerText");
       if (answerLabelText == undefined) {
         answerLabelText = "Your answer is {0}";
@@ -2690,6 +2813,9 @@
       interactionIndex,
       fullWidth
     ) {
+      // remove loader
+      $("#interaction_load_" + interactionIndex).remove();
+
       // reshuffle
       var groupingStatements = [];
       var userGrouping = [];
@@ -2927,7 +3053,7 @@
         } else {
           if (group == "true") {
             if (x_urlParams["group"] != undefined) {
-              group = x_urlParams["group"];
+              group = decodeURIComponent(x_urlParams["group"]);
             } else {
               if (interaction.getAttribute("groupName") != undefined) {
                 group = interaction.getAttribute("groupName");
@@ -2939,6 +3065,7 @@
             group = "";
           }
         }
+        filter_context_id = (interaction.getAttribute("contextFilter") == 'true'? true : false);
         promises.push(
           new Promise(function (resolve, reject) {
             var verb = "http://adlnet.gov/expapi/verbs/scored";
@@ -2958,6 +3085,7 @@
               hasToRetrieveAll(interaction),
               interactionIndex,
               group,
+              filter_context_id,
               false,
               function (
                 data,
@@ -3172,49 +3300,198 @@
     };
 
     this.setUpUnlisted = function () {
-      $("#adaptiveContentMain").append(
-          '<div id="button-placeholder"><button id="printBtn" hidden></button></div><div id="introductionText"></div><div id="adaptiveContent"></div>'
-      );
+      if (x_currentPageXML.getAttribute('disableprinting') !== 'true') {
+        $("#adaptiveContentMain").append(
+            '<div id="button-placeholder"><button id="printBtn" hidden></button></div>'
+        );
 
-      $("#printBtn")
-      .button({
-        label: 'print'
-      })
-      .click(async function() {
-          let printableItems = $("#adaptiveContent").clone();
-          //$(printableItems).find(".panel").removeClass("panel");
-          //$(printableItems).find(".panel").css("box-shadow", "none !important");
-          $("#adaptiveContent .panel").addClass("panel-print");
-          $("#adaptiveContent .panel").removeClass("panel");
-          $(".panel-print").css("width", "794px");
-          $(".panel-print").css("height", "210px");
-          $(".summary-container").css("display", "block");
-          $(".graph-container").css("float", "unset");
-          $(".graph-container").css("width", "100%");
-          $("canvas").css("width", "100%");
-          $("canvas").css("height", "100%");
-          $("p").css("font-size", "16px");
-          $("ul").css("font-size", "16px");
-          let opt = {
-              filename: 'xerte-adaptive-content.pdf',
-              jsPDF: { unit: 'in', format: 'a4', orientation: 'portrait' }
-            };
-          html2pdf().set(opt).from($("#adaptiveContent")[0]).toPdf().get('pdf').then(function (pdf) {
-            $("#adaptiveContent .panel-print").addClass("panel");
-            $("#adaptiveContent .panel").removeClass("panel-print");
-            $(".panel").css("width", "100%");
-            $(".panel").css("height", "fit-content");
-            $(".summary-container").css("display", "flex");
-            $(".graph-container").css("float", "graph");
-            $(".graph-container").css("width", "45%");
-            $("canvas").css("width", "100%");
-            $("canvas").css("height", "100%");
-            $("p").css("font-size", "2.5vmin");
-            $("ul").css("font-size", "2.5vmin");
-          }).save();
-          // Wait 10 seconds before placing the class back. This should be refactored at some point.
-          //await new Promise(resolve => setTimeout(resolve, 10000));
-      });
+        $("#printBtn")
+        .button({
+          label: 'print'
+        })
+        .click(async function() {
+            $("#adaptiveContentMain").prepend("<div id='print-overlay'><img id='print-overlay-spinner' src='" + x_templateLocation + "common_html5/loading16.gif'></div>");
+            let filename = 'xerte-adaptive-content.pdf';
+            if (x_currentPageXML.getAttribute('name') != null) {
+                filename = $("<div>").html(x_currentPageXML.getAttribute('name')).text().replace('\/ ', '_') + '.pdf';
+            }
+            if (x_params['ic'] != null) {
+                logoimg = x_params['ic'];
+                // Determine the type of image and set the correct header
+                if (logoimg.indexOf('.png') > -1) {
+                    logoImgType = 'PNG';
+                } else if (logoimg.indexOf('.jpg') > -1) {
+                    logoImgType = 'JPEG';
+                } else if (logoimg.indexOf('.gif') > -1) {
+                    logoImgType = 'GIF';
+                } else if (logoimg.indexOf('.svg') > -1) {
+                    logoImgType = 'SVG';
+                }
+                else {
+                    logoImgType = '';
+                }
+                logoImg = new Image();
+                logoImg.src = logoimg;
+                //logo = '<img class="print-logo" src="' + logoimg + '" style="float:right; height: 20px; margin-top: -40px; padding-right:80px; margin-right:80px;">';
+            }
+            else
+            {
+                logoImg = '';
+            }
+            let pageTitle = $("<div>").html(x_currentPageXML.getAttribute('name')).text();
+          /*  $("#adaptiveContent").addClass("hide-screen");
+            $(".hide-screen").css("background-color", "black");
+            $(".hide-screen").css("z-index", "999");*/
+            var canvasWidthHeights = [];
+
+            $(".html2pdf__page-break").each(function (index){
+                canvasWidthHeights.push({width: $(this).children().eq(2).children().eq(1).children().eq(0).children().width(), height: $(this).children().eq(2).children().eq(1).children().eq(0).children().height(), parentHeight: $(this).height()})
+                $(this).find('.summary-container').addClass('container-print');
+                if($(this).find('.graph-container').find('.panel').length > 0){
+                    $(this).find('.graph-container').find('.noStyle').addClass("graph-panel");
+                }else{
+                    $(this).find('.graph-container').find('.noStyle').addClass("graph-no-panel");
+                }
+            })
+
+            $(".graph-container .panel").addClass("panel-legend");
+            $(".graph-container .panel").removeClass("panel");
+            $(".panel-legend").css("padding-left", "0px");
+            //$(".panel-legend").css("width", "90px");
+            $(".panel-legend").css("height", "90px");
+
+
+            $("#adaptiveContent .panel").addClass("panel-print");
+            $("#adaptiveContent .panel").removeClass("panel");
+            $(".panel-print").css("width", "794px");
+            //$(".panel-print").css("height", "210px");
+            $(".panel-print").css("padding", "79.4px");
+            //$(".panel-print").prepend(
+            //    `<div class="print-title" style="font-size: 20px"><div style="width:500px"><h1>${x_currentPageXML.getAttribute("name")}</h1></div>` + logo + `</div>`
+            //);
+
+            $("#adaptiveContent .advice").addClass("advice-print");
+            $("#adaptiveContent .advice").removeClass("advice");
+            $(".advice-print").css("width", "635px");
+
+
+           /* $(".graph-container").css("float", "unset");*/
+            $(".graph-container").css("width", "635px");
+            //$(".graph-container").css("height", "365px");
+            $(".graph-panel canvas").css("min-width", "400px");
+            $(".graph-panel canvas").css("min-height", "270px");
+            $(".graph-panel canvas").css("max-width", "535px");
+            $(".graph-panel canvas").css("max-height", "365px");
+            $(".graph-panel").css({
+                'width' : '535px',
+                //'height' : '295px'
+            });
+            $(".graph-no-panel").css("width", "635px");
+            $(".introduction").css("width", "635px");
+            $("p").css("font-size", "14px");
+            $("ul").css("font-size", "14px");
+            adaptiveContent.sizeChanged();
+            debugger;
+
+            await new Promise(resolve => setTimeout(resolve, 1500));
+            let opt = {
+                filename: filename,
+                margin: [10, 0, 10, 0],
+                pagebreak: {
+                    mode: ['css', 'legacy'],
+                    avoid: [ 'p', 'li', 'table', 'thead', 'tfoot', 'tbody', 'tr', 'th', 'td', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6' ]
+                },
+                html2canvas: { scale: 2 },
+                jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+              };
+            html2pdf().set(opt).from($("#adaptiveContent")[0]).toPdf().get('pdf').then(function (pdf) {
+
+
+
+                $(".graph-container .panel-legend").addClass("panel");
+                $(".graph-container .panel-legend").removeClass("panel-legend");
+
+                $("#print-title").remove();
+              /*  $("#adaptiveContent .panel").css({'padding' : "0", 'padding-bottom' : "20px"});*/
+                $(".panel-print").css("padding", "");
+                $("#adaptiveContent .panel-print").addClass("panel");
+                $("#adaptiveContent .panel").removeClass("panel-print");
+                $(".panel").css("width", "");
+                $(".panel").css("height", "");
+
+                $("#adaptiveContent .advice-print").addClass("advice");
+                $("#adaptiveContent .advice-print").removeClass("advice-print");
+                $(".advice").css("width", "");
+                $(".advice").css("padding", "");
+
+                $(".graph-panel canvas").css("min-width", "");
+                $(".graph-panel canvas").css("min-height", "");
+                $(".graph-panel canvas").css("max-width", "");
+                $(".graph-panel canvas").css("max-height", "");
+                $(".graph-panel").css("width", "").removeClass("graph-panel");
+                $(".graph-no-panel").css("width", "").removeClass("graph-no-panel");
+
+                $(".graph-container").css("width", "");
+                $(".graph-container").css("float", "");
+
+                $(".graph").css("width", "");
+
+                $(".introduction").css("width", "");
+
+                $("p").css("font-size", "");
+                $("ul").css("font-size", "");
+                $(".panel .legend p").css("font-size", "");
+
+                $(".html2pdf__page-break").each(function (index){
+                    $(this).css({'height' : canvasWidthHeights[index].parentHeight, 'padding' : "20px"})
+                    $(this).find('.graph').css({'width': canvasWidthHeights[index].width, 'height' : canvasWidthHeights[index].height})
+                    $(this).find('.container-print').removeClass('container-print');
+                    if($(this).find('.graph-container').find('.graph-panel').length > 0){
+                        $(this).find('.graph-container').find('.graph-panel').removeClass("graph-panel")
+                        $(this).find('.graph-container').find('.graph-panel').children().css({'width': canvasWidthHeights[index].width, 'height' : canvasWidthHeights[index].height})
+
+                    }else{
+                        $(this).find('.graph-container').find('.graph-no-panel').removeClass("graph-no-panel")
+                    }
+                })
+                $("#print-overlay").remove();
+                $(".print-title").remove();
+
+                // Add the page header and footer
+                const totalPages = pdf.internal.getNumberOfPages();
+
+                for (let i = 1; i <= totalPages; i++) {
+                    // set footer to every page
+                    pdf.setPage(i);
+                    // set footer font
+                    pdf.setFontSize(12);  //12pt
+
+                    // Set title in the header
+                    pdf.text(21, 14, pageTitle);
+                    // Add Logo to the right of the header
+                    if (logoImg != '')
+                    {
+                        const imgWidth = logoImg.naturalWidth;
+                        const imgHeight = logoImg.naturalHeight;
+                        const imgRatio = imgWidth / imgHeight;
+                        const logoHeight = 5.3;  //mm = 20px
+                        const logoWidth = logoHeight * imgRatio;
+                        pdf.addImage(logoImg, logoImgType, pdf.internal.pageSize.getWidth() - logoWidth - 21, 10, logoWidth, logoHeight);
+                    }
+                    // Add the footer text
+                    // this example gets internal pageSize just as an example to locate your text near the borders in case you want to do something like "Page 3 out of 4"
+                    const pagenr = x_getLangInfo(x_languageData.find("vocab").find("page")[0], false, "") + " " + (i) + " " + x_getLangInfo(x_languageData.find("vocab").find("of")[0], false, "-") + " " + totalPages
+                    const textwidth = pdf.getTextWidth(pagenr);
+                    pdf.setFontSize(10);  //10pt
+                    pdf.text(pdf.internal.pageSize.getWidth() - textwidth - 21, pdf.internal.pageSize.getHeight() - 7, pagenr);
+
+                }
+            }).save();
+        });
+      }
+      $("#adaptiveContentMain").append(
+          '<div id="introductionText"></div><div id="adaptiveContent"></div>'
+      );
       $("#adaptiveContentMain").addClass("unlisted");
       $("#introductionText").html(
         x_currentPageXML.getAttribute("introduction")
@@ -3254,7 +3531,7 @@
         } else {
           if (group == "true") {
             if (x_urlParams["group"] != undefined) {
-              group = x_urlParams["group"];
+              group = decodeURIComponent(x_urlParams["group"]);
             } else {
               if (interaction.getAttribute("groupName") != undefined) {
                 group = interaction.getAttribute("groupName");
@@ -3266,6 +3543,7 @@
             group = "";
           }
         }
+        filter_context_id = (interaction.getAttribute("contextFilter") == 'true'? true : false);
 
         url = xerteurl + xertelo + "/" + xertelabel;
         if (opinionClass != "") {

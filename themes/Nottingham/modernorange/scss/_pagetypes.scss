@@ -177,13 +177,13 @@ div.infoHolder.ui-tabs.ui-widget.ui-widget-content.ui-corner-all{
 }
 .x_annotatedDiagram_page .highlight{
   background:$brightcolor;
+  color: $whiteorlightest;
 }
 .x_annotatedDiagram_page .hotspot{
   background:none;
 }
 .x_annotatedDiagram_page #infoHolder{
-  background:$brightcolor;
-  margin-left:10px;
+  background:$defaultpagebackground;
 }
 //*******Drag and Drop Labelling*********/
 .target.ui-droppable.border.highlight {
@@ -257,6 +257,10 @@ a.hotspot, a.hotspot.selected {
 .hsinfo{
   padding:1%;
 }
+
+.x_hotspotImage_page #infoHolder {
+  background: none;
+}
 //******Interactive lists*******/
 .x_interactiveText_page .highlight{
   background: $lightestcolor;
@@ -307,9 +311,6 @@ a.hotspot, a.hotspot.selected {
 .x_timeline_page .label.panel.ui-draggable {
   background: $lightestcolor;
 }
-.x_grid_page table tr.shaded {
-  background: #E3FFD6;
-}
 //***********************************Connectors*************************************/
 //*****menu connector*****/
 #subMenuItems .subMenuItem {
@@ -318,13 +319,6 @@ a.hotspot, a.hotspot.selected {
 }
 //***********************************Charts*************************************/
 //***Charts Table***/
-table tr.shaded {
-  background: $lightestcolor;
-}
-table.header.shaded tr:first-child {
-  background: $accent1;
-  color:$whiteorlightest;
-}
 table.header.simple tr:first-child {
   border:none;
 }
@@ -387,15 +381,11 @@ div#shorturltodisplay a{
   color: darkblue;
 }
 //*****results page*****/
-td, th {
-  border-radius: $mediumroundedcorners;
-}
-tr.alt td {
-  background-color: $brightcolor;
+.x_results_page tr td {
+  background-color: lighten($contrastcolor, 50%);
 }
 tr.alt td{
-  background: $contrastcolor;
-  color:$whiteorlightest;
+  background-color: lighten($contrastcolor, 55%);
 }
 .details th {
   background: $lightestcolor;
@@ -413,5 +403,33 @@ tr.alt td{
 }
 
 
+//***********************************Tables*************************************/
+//default background of table rows
+.x_grid_page table tr,
+.x_table_page table tr,
+.x_interactiveText_page table tr,
+.x_documentation_page table tr,
+.x_results_page table tr {
+	background: $defaultpagebackground;
+	color: $darkestcolor;
+}
 
+//background of shaded/alternate rows
+table tr.shaded {
+	background: $lightestcolor;
+	color: $blackordarkest;
+}
 
+// header/footer shaded
+table.header.shaded thead tr:first-child,
+table.header.shaded tr.header,
+table.header.shaded :not(tbody) > tr:first-child,
+table.footer.shaded tbody tr:last-child {
+	background:	$accent1;
+	color: $whiteorlightest;
+}
+
+.x_grid_page table.header.shaded tr:first-child,
+table.headerCol.shaded td.header {
+	background-color: $brightcolor;
+}

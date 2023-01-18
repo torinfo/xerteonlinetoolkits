@@ -36,6 +36,9 @@ var defaultHeaderCss;
 var urlParams = {};
 var categories;
 var validPages = [];
+var collapseBanner = false;
+var collapseHeight = -1;
+var fullscreenBannerTitleMargin=10;
 
 function init(){
 	loadContent();
@@ -123,9 +126,15 @@ function initSidebar(){
 }
 
 function loadContent(){
+	var now = new Date().getTime();
+	let url = "website_code/php/templates/get_template_xml.php?file=" + projectXML + "&time=" + now;
+	if (typeof use_url !== "undefined" && use_url)
+	{
+		url = projectXML + "?time=now";
+	}
 	$.ajax({
 		type: "GET",
-		url: projectXML,
+		url: url,
 		dataType: "text",
 		success: function(text) {
 			var newString = makeAbsolute(text);
@@ -180,6 +189,14 @@ function loadContent(){
 		
 		fixSideBar();
 	});
+
+	setTimeout(function() {
+		$('div.nav-collapse li a').click(function () {
+			$('.navbar-toggler').click();
+		});
+	}, 500);
+
+	x_xAPI_SessionId = new Date().getTime() + "" + Math.round(Math.random() * 1000000);
 }
 
 function fixSideBar() {
@@ -385,14 +402,25 @@ function setup() {
 			if ($(data).find('learningObject').attr('glossaryHover') == undefined || $(data).find('learningObject').attr('glossaryHover') == "true") {
 
 				x_checkForText($(data).find('page'), 'glossary');
-
+				
+				// Handle the closing of glossary bubble with escape key
+				var $activeTooltip, escapeHandler = function(e) {
+					e = e || window.event; //IE
+					if ((e.keyCode ? e.keyCode : e.which) === 27) { // Escape
+						$activeTooltip.trigger("mouseleave");
+						e.stopPropagation();
+					}
+				};
+				
 				// add events to control what happens when you rollover glossary words
 				$("body > .container")
 					.on("mouseenter", ".glossary", function(e) {
-						$(this).trigger("mouseleave");
-
-						var $this = $(this),
-							myText = $this.text(),
+						$activeTooltip = $(this);
+						$activeTooltip.trigger("mouseleave");
+						
+						window.addEventListener('keydown', escapeHandler);
+						
+						var myText = $activeTooltip.text().replace(/(\s|&nbsp;)+/g, " ").trim(),
 							myDefinition, i, len;
 
 						for (i=0, len=glossary.length; i<len; i++) {
@@ -402,11 +430,11 @@ function setup() {
 							}
 						}
 
-						$(this).parents('.container').append('<div id="glossaryHover" class="glossaryTip">' + myDefinition + '</div>');
+						$activeTooltip.parents('.container').append('<div id="glossaryHover" class="glossaryTip">' + myDefinition + '</div>');
 
 						$("#glossaryHover").css({
-							"left"	:$(this).offset().left + 20,
-							"top"	:$(this).offset().top + 20
+							"left"	:$activeTooltip.offset().left + 20,
+							"top"	:$activeTooltip.offset().top + 20
 						});
 						$("#glossaryHover").fadeIn("slow");
 					})
@@ -416,6 +444,7 @@ function setup() {
 						if ($("#glossaryHover") != undefined) {
 							$("#glossaryHover").remove();
 						}
+						window.removeEventListener('keydown', escapeHandler);
 					})
 					.on("mousemove", ".glossary", function(e) {
 						$("#glossaryHover").css({
@@ -493,10 +522,15 @@ function setup() {
 
 			// remove size & background color styles from links on nav bar
 			if ($('<p>' + name + '</p>').children().length > 0) {
-				name = $(name);
+				name = $('<p>' + name + '</p>');
 				name.css({ 'font-size': '', 'background-color': 'transparent' });
 				name.find('[style*="font-size"]').css('font-size', '');
 				name.find('[style*="background-color"]').css('background-color', 'transparent');
+				name = name.html();
+			}
+			
+			if ($(this).attr('pageLink') != undefined && $(this).attr('pageLink') != '') {
+				name = $(this).attr('pageLink');
 			}
 
 			var $link = $('<li class=""><a href="javascript:parseContent({ type: \'index\', id: ' + index + ' })"></a></li>').appendTo('#nav');
@@ -508,11 +542,23 @@ function setup() {
 	// if pages have customLinkID then make sure they don't include spaces - convert to underscore
 	$(data).find('page').each( function(index, value){
 		var tempID = $(this).attr('customLinkID');
+		var $page = $(this);
 		if (tempID != undefined && tempID != "") {
 			tempID = $.trim(tempID);
 			tempID = tempID.split(" ").join("_");
 			$(this).attr('customLinkID', tempID);
 		}
+
+		//also check if page contains sections with customLinkID that includes spaces
+		$page.find('section').each( function(index, value){
+			var secTempID = $(this).attr('customLinkID');
+			if (secTempID != undefined && secTempID != "") {
+				secTempID = $.trim(secTempID);
+				secTempID = secTempID.split(" ").join("_");
+				$(this).attr('customLinkID', secTempID);
+			}
+		})
+
 	});
 
 	// make list of all the normal pages (not hidden or standalone) to display in TOC
@@ -812,7 +858,6 @@ function setup() {
 								}
 							}
 							catMatches = catMatches.substring(0, catMatches.length - 2);
-
 							var linkAction;
 							if (index.length == 1) {
 								linkAction = "x_navigateToPage(false, { type:'linkID', ID:'" + $(data).find('page').eq(index[0]).attr('linkID') + "' }); $.featherlight.close(true); return false;";
@@ -911,75 +956,23 @@ function setup() {
 		$(".jumbotron").remove();
 
 	} else {
-
-		// default logos used are logo_left.png & logo.png in modules/site/parent_templates/site/common/img/
-		// they are overridden by any logos in theme folders
-		// they can also be overridden by images uploaded via Header Logo optional properties
-		$('#overview div.logoR, #overview div.logoL').hide();
-		$('#overview div.logoR').data('defaultLogo', $('#overview .logoR img').attr('src'));
-		$('#overview .logoR img').attr('alt', '');
-		$('#overview div.logoL').data('defaultLogo', $('#overview .logoL img').attr('src'));
-		$('#overview .logoL img').attr('alt', '');
-
-		var checkExists = function(logoClass, type, fallback) {
-			$.ajax({
-				url: $('#overview .' + logoClass + ' img').attr('src'),
-				success: function() {
-					$('#overview').addClass(logoClass);
-					$('#overview div.' + logoClass).show();
-
-					// the theme logo is being used - add a class that will allow for the different size windows to display different logos
-					if (type == 'theme') {
-						$('#overview .' + logoClass + ' img.' + logoClass).addClass('themeLogo');
-					}
-				},
-				error: function() {
-					if ($(data).find('learningObject').attr(logoClass + 'Hide') == 'true') {
-						$('#overview .' + logoClass + ' img').removeAttr('src');
-					} else {
-						if (fallback == 'theme') {
-							$('#overview .' + logoClass + ' img').attr('src', themePath + $(data).find('learningObject').attr('theme') + '/logo' + (logoClass == 'logoL' ? '_left' : '') + '.png');
-							checkExists(logoClass, 'theme', 'default');
-						} else if (fallback == 'default') {
-							$('#overview .' + logoClass + ' img').attr('src', $('#overview div.' + logoClass).data('defaultLogo'));
-							checkExists(logoClass);
-						}
-					}
-				}
-			});
-		}
-
-		var type, fallback;
-		if ($(data).find('learningObject').attr('logoR') != undefined && $(data).find('learningObject').attr('logoR') != '') {
-			$('#overview .logoR img').attr('src', $(data).find('learningObject').attr('logoR'));
-			$('#overview .logoR img').attr('alt', $(data).find('learningObject').attr('logoRAlt'));
-			type = 'LO';
-			fallback = $(data).find('learningObject').attr('theme') != undefined && $(data).find('learningObject').attr('theme') != "default" ? 'theme' : 'default';
-		} else if ($(data).find('learningObject').attr('logoRHide') != 'true' && $(data).find('learningObject').attr('theme') != undefined && $(data).find('learningObject').attr('theme') != 'default') {
-			type = 'theme';
-			$('#overview .logoR img').attr('src', themePath + $(data).find('learningObject').attr('theme') + '/logo.png');
-		}
-		if ((type == undefined || type == 'theme') && $(data).find('learningObject').attr('logoRHide') == 'true') {
-			$('#overview .logoR img').removeAttr('src');
-		} else {
-			checkExists('logoR', type, fallback);
-		}
-
-		var type, fallback;
-		if ($(data).find('learningObject').attr('logoL') != undefined && $(data).find('learningObject').attr('logoL') != '') {
-			$('#overview .logoL img').attr('src', $(data).find('learningObject').attr('logoL'));
-			$('#overview .logoL img').attr('alt', $(data).find('learningObject').attr('logoLAlt'));
-			type = 'LO';
-			fallback = $(data).find('learningObject').attr('theme') != undefined && $(data).find('learningObject').attr('theme') != "default" ? 'theme' : 'default';
-		} else if ($(data).find('learningObject').attr('logoLHide') != 'true' && $(data).find('learningObject').attr('theme') != undefined && $(data).find('learningObject').attr('theme') != 'default') {
-			type = 'theme';
-			$('#overview .logoL img').attr('src', themePath + $(data).find('learningObject').attr('theme') + '/logo_left.png');
-		}
-		if ((type == undefined || type == 'theme') && $(data).find('learningObject').attr('logoLHide') == 'true') {
-			$('#overview .logoL img').removeAttr('src');
-		} else {
-			checkExists('logoL', type, fallback);
-		}
+		var $logo, LO = $(data).find('learningObject');
+		['logoL', 'logoR'].forEach(function(logo) {
+			$('#overview').addClass(logo);
+			$('#overview .' + logo + ' img').addClass(logo);
+			$('#overview div.' + logo).data('defaultLogo', $('#overview .' + logo + ' img').attr('src'));
+			$logo = $('#overview .' + logo + ' img');
+			$logo.attr('alt', LO.attr(logo + 'Alt'));
+			if (LO.attr('theme') != undefined && LO.attr('theme') != 'default') {
+				$logo.addClass('themeLogo');
+			}
+			// Hide logo if no src value or 'Hide' is ticked, otherwise show it
+			$('#overview div.' + logo)[  LO.attr(logo + 'Hide') === 'true' || $logo.attr('src') === '' ? 'hide' : 'show'  ]();
+			
+			if (LO.attr(logo + 'Hide') === 'true' || $logo.attr('src') === '') {
+				$('#overview').removeClass(logo); 
+			}
+		});
 
 		// apply all the header css optional properties
 		var $jumbotron = $(".jumbotron");
@@ -1014,9 +1007,13 @@ function setup() {
 		if ($(data).find('learningObject').attr('headerRepeat') != undefined) {
 			$jumbotron.css('background-repeat', $(data).find('learningObject').attr('headerRepeat'));
 		}
+		if ($(data).find('learningObject').attr('headerSize') != undefined && $(data).find('learningObject').attr('headerSize') != "not-set") {
+			$jumbotron.css('background-size', $(data).find('learningObject').attr('headersize'));
+		}
 		if ($(data).find('learningObject').attr('headerTextColour') != undefined && $(data).find('learningObject').attr('headerTextColour') != '' && $(data).find('learningObject').attr('headerTextColour') != '0x') {
 			$jumbotron.find('#pageTitle, #pageSubTitle').css('color', formatColour($(data).find('learningObject').attr('headerTextColour')));
 		}
+
 
 	}
 
@@ -1026,6 +1023,7 @@ function setup() {
 		header: $jumbotron.css('background-image'),
 		headerPos: $jumbotron.css('background-position'),
 		headerRepeat: $jumbotron.css('background-repeat'),
+		headerSize: $jumbotron.css('background-size'),
 		headerColour: $jumbotron.css('background-color'),
 		headerTextColour: $jumbotron.find('#pageTitle').css('color')
 	};
@@ -1301,6 +1299,7 @@ function x_navigateToPage(force, pageInfo) { // pageInfo = {type, ID}
 		if (tempPageIndex != undefined) {
 			parseContent({ type: "index", id: tempPageIndex });
 		}
+		this.x_CheckBanner(tempPageIndex)
 
 	// Then try to look them up by ID
 	} else {
@@ -1321,16 +1320,29 @@ function x_navigateToPage(force, pageInfo) { // pageInfo = {type, ID}
 
 			// link to section
 			if (pages[i].childNodes.length > 0) {
+				// only check sections that aren't hidden
+				var sectionVisibleIndex = 0;
+				
 				for (var j=0; j<pages[i].childNodes.length; j++) {
-					if (pages[i].childNodes[j].getAttribute && pages[i].childNodes[j].getAttribute("linkID") == pageInfo.ID) {
-						var destination = pages[i].getAttribute("linkID");
-						if (pages[i].getAttribute("customLinkID") != undefined && pages[i].getAttribute("customLinkID") != "") {
-							// page has customID so use this instead of auto-generated linkID
-							destination = pages[i].getAttribute("customLinkID");
+					
+					var hideSection = checkIfHidden(pages[i].childNodes[j].getAttribute('hidePage'), pages[i].childNodes[j].getAttribute('hideOnDate'), pages[i].childNodes[j].getAttribute('hideOnTime'), pages[i].childNodes[j].getAttribute('hideUntilDate'), pages[i].childNodes[j].getAttribute('hideUntilTime'), 'Section');
+					if ($.isArray(hideSection)) {
+						hideSection = hideSection[0];
+					}
+
+					if (hideSection == false || authorSupport == true) {
+						if (pages[i].childNodes[j].getAttribute && pages[i].childNodes[j].getAttribute("linkID") == pageInfo.ID) {
+							var destination = pages[i].getAttribute("linkID");
+							if (pages[i].getAttribute("customLinkID") != undefined && pages[i].getAttribute("customLinkID") != "") {
+								// page has customID so use this instead of auto-generated linkID
+								destination = pages[i].getAttribute("customLinkID");
+							}
+							parseContent({ type: "id", id: destination }, sectionVisibleIndex+1);
+							found = true;
+							break;
 						}
-						parseContent({ type: "id", id: destination }, j+1);
-						found = true;
-						break;
+						
+						sectionVisibleIndex++;
 					}
 				}
 			}
@@ -1343,8 +1355,140 @@ function x_navigateToPage(force, pageInfo) { // pageInfo = {type, ID}
 		if (found == false) {
 			console.log("Page/section with ID *" + pageInfo.ID + "* not found");
 		}
+		this.x_CheckBanner(i)
 	}
 }
+
+function x_CheckBanner(index){
+	// This routine potentially breaks themes/customcode based on Cardiff's example
+	// if .scale is set on the jumbotron class, do nothing! Better would be to have a version in the xml of which version created the xml
+	if ($(".jumbotron").hasClass('scale'))
+	{
+		return;
+	}
+	// Remove introtext if visible
+	$("#x_clickableWrapper").remove();
+
+	// Title alignment
+	const alignmentLO = $(data).find('learningObject').attr('headerTitleAlign');
+	let alignment = $(data).find('page').eq(index).attr('headerTitleAlign');
+	if (alignment == undefined)
+	{
+		alignment = alignmentLO;
+	}
+	if (alignment != undefined)
+	{
+		$(".jumbotron .titles")
+			.css('float', 'none')
+			.css('text-align', alignment);
+	}
+	else
+	{
+		// remove
+		$(".jumbotron .titles")
+			.css('float', '')
+			.css('text-align', '');
+	}
+
+	const banner = $(data).find('page').eq(index).attr('headerBanner');
+	if(banner == "fullscreen"){
+		$(".jumbotron").addClass("x_scale");
+		var viewHeight = $(this).height();
+		$(".x_scale").height(viewHeight);
+		// check collapse
+		const collapse = $(data).find('page').eq(index).attr('bannerCollapse');
+		if (collapse != undefined && collapse=="true")
+		{
+			collapseBanner = true;
+			let height=-1;
+			if ($(data).find('page').eq(index).attr('bannerFixedHeight') === 'true'
+				&& $(data).find('page').eq(index).attr('bannerHeight') !== undefined)
+			{
+				height = $(data).find('page').eq(index).attr('bannerHeight');
+			}
+			collapseHeight = height;
+		}
+		else
+		{
+			collapseBanner = false;
+		}
+		// check info
+		const checkinfo = $(data).find('page').eq(index).attr('bannerFullScrolldownInfo');
+		if (checkinfo != undefined && checkinfo=="true")
+		{
+			// Add fullscreen info in clickableWrapper
+			// Get text from bannerFullScrolldownText property or fall back to use languageData string
+			const label = $(data).find('page').eq(index).attr('bannerFullScrolldownText') != undefined && $(data).find('page').eq(index).attr('bannerFullScrolldownText') != '' ? $(data).find('page').eq(index).attr('bannerFullScrolldownText') :
+			(languageData.find("fullScreenBannerInfo")[0] != undefined && languageData.find("fullScreenBannerInfo")[0].getAttribute('label') != null ? languageData.find("fullScreenBannerInfo")[0].getAttribute('label') : 'Scroll down for more information...');
+			setTimeout(function () {
+				if ($(".arrow").length) {
+					return false;
+				}
+				$("<div id='x_clickableWrapper'><div class='x_arrow x_bounce'><i class='fa fa-chevron-down fa-2x' aria-hidden='true'></i></div><div class='x_promptText'>" + label + "</div></div>").appendTo(".jumbotron .container").hide().fadeIn(1000);
+			}, 800);
+		}
+		// Check title top margin
+		const titlemargin = $(data).find('page').eq(index).attr('headerTopMargin');
+		if (titlemargin != undefined && titlemargin != "")
+		{
+			fullscreenBannerTitleMargin = titlemargin;
+			$(".jumbotron .titles").css("margin-top", titlemargin + "%");
+		}
+		else
+		{
+			fullscreenBannerTitleMargin = -1;
+			$(".jumbotron .titles").css("margin-top", "");
+		}
+
+	}else { //if (banner == "fixedheight") {
+		let height=-1;
+		if ($(data).find('page').eq(index).attr('bannerFixedHeight') === 'true'
+			&& $(data).find('page').eq(index).attr('bannerHeight') !== undefined)
+		{
+			height = $(data).find('page').eq(index).attr('bannerHeight');
+		}
+		collapseHeight = height;
+		$(".jumbotron").removeClass("x_scale");
+		if (height != -1) {
+			$(".jumbotron").css('height', height + "vh");
+		}
+		else {
+			// remove height
+			$(".jumbotron").css('height', '');
+		}
+		fullscreenBannerTitleMargin = -1;
+		$(".jumbotron .titles").css("margin-top", "");
+		$("#x_clickableWrapper").remove();
+	}
+}
+
+//this is the main scroll function
+$(window).scroll(function () {
+	if ($(document).scrollTop() > 20) {
+		if (collapseBanner) {
+			$(".x_scale").addClass("x_shrink");
+			if (collapseHeight != -1) {
+				$(".x_scale").css("height", collapseHeight + "vh");
+			}
+			else
+			{
+				$(".x_scale").css("height", "");
+			}
+			$(".jumbotron .titles").css("margin-top", "");
+		}
+		$("#x_clickableWrapper").remove();
+	} else {
+		if (collapseBanner) {
+			$(".x_scale").removeClass("x_shrink");
+			$(".x_scale").css("height", Math.max(document.documentElement.clientHeight, window.innerHeight || 0));
+			if (fullscreenBannerTitleMargin != -1)
+			{
+				$(".jumbotron .titles").css("margin-top", fullscreenBannerTitleMargin + "%");
+			}
+		}
+	}
+});
+
 
 // function loads a new page
 function parseContent(pageRef, sectionNum, contentNum, addHistory) {
@@ -1352,25 +1496,54 @@ function parseContent(pageRef, sectionNum, contentNum, addHistory) {
 	// can be 'index' (of page in data), 'id' (linkID/customLinkID, 'start' or 'check' (these last two could be index or id so extra checks are needed)
 	var pageRefType = pageRef.type,
 		pageID = pageRef.id,
+		pageLinkType = true;
 		found = false;
 
 	// check if pageIndex exists & can be shown
 	var pageIndex;
+	// used to set active on nav item.
+	var activeIndex = pageID;
 
 	// pageID might be an ID - see if it matches either a linkID or a customLinkID
 	if (pageRefType != 'index') {
 		$(data).find('page').each(function(index, value) {
 			var $page = $(this);
+			var $pageIndex = index;
 			if (pageID == $page.attr('linkID') || pageID == $page.attr('customLinkID')) {
-				// an ID match has been found
+				// an ID match has been found for a page
 				pageIndex = index;
+				activeIndex = index;
 				found = true;
 				pageRefType = 'id';
 
 				return false;
 			}
+			$page.find('section').each(function (index, value) {
+				var $section = $(this);
+				if (pageID == $section.attr('linkID') || pageID == $section.attr('customLinkID')) {
+					//an ID match has been found for a section
+					pageIndex = $pageIndex;
+					activeIndex = $pageIndex;
+					found = true;
+					if (sectionNum == undefined) {
+						sectionNum = index + 1;
+					}
+					pageLinkType = false;
+					pageRefType = 'id';
+
+					return false;
+				}
+			});
 		});
 	}
+	//assign active class for current navbar
+	$("#nav li").not(':first-child').each(function(i, el){
+		if ($(el).hasClass("active") && i !== activeIndex){
+			$(el).removeClass("active")
+		} else if (i == activeIndex){
+			$(el).addClass("active")
+		}
+	})
 
 	// check if it's a valid page index
 	if (pageRefType != 'id') {
@@ -1421,8 +1594,15 @@ function parseContent(pageRef, sectionNum, contentNum, addHistory) {
 		}
 
 		var page = $(data).find('page').eq(pageIndex);
-		var pageHash = page.attr('customLinkID') != undefined && page.attr('customLinkID') != '' ? page.attr('customLinkID') : (standAlonePage ? page.attr('linkID') : 'page' + (validPages.indexOf(pageIndex)+1));
-		
+
+		var pageHash = ""
+		if (pageLinkType) {
+			pageHash = page.attr('customLinkID') != undefined && page.attr('customLinkID') != '' ? page.attr('customLinkID') : (standAlonePage ? page.attr('linkID') : 'page' + (validPages.indexOf(pageIndex) + 1));
+			//pageHash = pageHash.replace(/\./g, '_');  //TOR delete for now
+		} else {
+			var section = page.find('section').eq(sectionNum - 1); //
+			pageHash = section.attr('customLinkID');
+		}
 		// Load page as normal as it's not opening in a new window
 		if (!standAlonePage || (standAlonePage && $(data).find('page').eq(pageIndex).attr('newWindow') != 'true') || (window.location.href.split('section')[0] == window.location.href.split('section')[0].split('#')[0] + '#' + pageHash) || pageRefType == 'start') {
 
@@ -1443,6 +1623,7 @@ function parseContent(pageRef, sectionNum, contentNum, addHistory) {
 
 			// store current page
 			currentPage = pageIndex;
+			this.x_CheckBanner(currentPage)
 
 			//set the main page title and subtitle
 			$('#pageTitle').html(page.attr('name'));
@@ -1453,7 +1634,7 @@ function parseContent(pageRef, sectionNum, contentNum, addHistory) {
 					$(".jumbotron").hide();
 
 				} else {
-					setHeaderFormat(page.attr('header'), page.attr('headerPos'), page.attr('headerRepeat'), page.attr('headerColour'), page.attr('headerTextColour'));
+					setHeaderFormat(page.attr('header'), page.attr('headerPos'), page.attr('headerRepeat'), page.attr('headerSize'), page.attr('headerColour'), page.attr('headerTextColour'));
 					$(".jumbotron").show();
 				}
 			}
@@ -1493,7 +1674,6 @@ function parseContent(pageRef, sectionNum, contentNum, addHistory) {
 					}
 				}
 			}
-			
 			if (pswds.length > 0) {
 				passwordPage(page, pageHash, sectionNum, contentNum, pageIndex, standAlonePage, pswds);
 			} else {
@@ -1502,11 +1682,20 @@ function parseContent(pageRef, sectionNum, contentNum, addHistory) {
 			
 		// Page is a stand alone page opening in a new window
 		} else {
-			window.open(window.location.href.split('#')[0] + '#' + pageHash + (sectionNum != undefined ? 'section' + sectionNum : ''));
+			if (pageLinkType) {
+				window.open(window.location.href.split('#')[0] + '#' + pageHash + (sectionNum != undefined ? 'section' + sectionNum : ''));
+			} else {
+				window.open(window.location.href.split('#')[0] + '#' + pageHash);
+			}
 		}
 	} else {
+		//TOOD add section num, if we are already at page
+
 		afterLoadPage(sectionNum, contentNum, pageIndex, standAlonePage);
 	}
+	//dynamically change the skip link for each page
+	var skipLinkTarget='#page'+(currentPage+1)+'section1';
+	$(".srskip").prop("href", skipLinkTarget)
 }
 
 function loadPage(page, pageHash, sectionNum, contentNum, pageIndex, standAlonePage, pswds) {
@@ -1515,8 +1704,10 @@ function loadPage(page, pageHash, sectionNum, contentNum, pageIndex, standAloneP
 		$('#pageSubTitle').append(' <span class="alertMsg">' + (languageData.find("password")[0] != undefined && languageData.find("password")[0].getAttribute('pageSupport') != null ? languageData.find("password")[0].getAttribute('pageSupport') : 'In live projects, an access code must be entered to view this page') + ': ' + pswds + '</span>');
 	}
 	
+	var sectionVisibleIndex = 0;
+	
 	//create the sections
-	page.find('section').each( function(index, value){
+	page.find('section').each( function(sectionIndex, value){
 
 		// work out whether the section is hidden or not - can be simply hidden or hidden between specific dates/times
 		var hideSection = checkIfHidden($(this).attr('hidePage'), $(this).attr('hideOnDate'), $(this).attr('hideOnTime'), $(this).attr('hideUntilDate'), $(this).attr('hideUntilTime'), 'Section');
@@ -1526,8 +1717,6 @@ function loadPage(page, pageHash, sectionNum, contentNum, pageIndex, standAloneP
 		}
 
 		if (hideSection == false || authorSupport == true) {
-			
-			var sectionIndex = index;
 
 			//expand mainContent if section menu hidden and expand option is true
 			if (page.attr('sectionMenu') == 'true' && page.attr('expandMain') == 'true') {
@@ -1542,16 +1731,17 @@ function loadPage(page, pageHash, sectionNum, contentNum, pageIndex, standAloneP
 
 				//add a TOC entry
 				var tocName = $(this).attr('name');
-
+				
 				// remove size & background color styles from links on toc
-				if ($('<p>' + tocName + '</p>').children().length > 0 && tocName.indexOf("sup") < 0) {
-					tocName = $(tocName);
+				if ($('<p>' + tocName + '</p>').children().length > 0) {
+					tocName = $('<p>'+tocName+'</p>');
 					tocName.css({ 'font-size': '', 'background-color': 'transparent' });
 					tocName.find('[style*="font-size"]').css('font-size', '');
 					tocName.find('[style*="background-color"]').css('background-color', 'transparent');
+					tocName = tocName.html();
 				}
 
-				var $link = $('<li' + (index==0?' class="active"':'') +'><a href="#' + pageHash + 'section' + (index+1) + '"></a></li>').appendTo('#toc');
+				var $link = $('<li' + (sectionVisibleIndex==0?' class="active"':'') +'><a href="#' + pageHash + 'section' + (sectionVisibleIndex+1) + '"></a></li>').appendTo('#toc');
 				$link.find('a').append(tocName);
 			}
 
@@ -1561,8 +1751,7 @@ function loadPage(page, pageHash, sectionNum, contentNum, pageIndex, standAloneP
 				subHeadings = ($(this).attr('menu') != 'menu' && $(this).attr('menu') != 'neither') ? '<h1>' + $(this).attr('name') + '</h1>' : '';
 
 			var pageHeader = subHeadings + extraTitle + links != '' ? '<div class="page-header">' + subHeadings + extraTitle + links + '</div>' : '';
-
-			var section = $('<section id="' + pageHash + 'section' + (index+1) + '">' + pageHeader + '</section>');
+			var section = $('<section id="' + pageHash + 'section' + (sectionVisibleIndex+1) + '">' + pageHeader + '</section>');
 			
 			var pswds = [];
 			if ($.trim($(this).attr('password')).length > 0) {
@@ -1576,13 +1765,15 @@ function loadPage(page, pageHash, sectionNum, contentNum, pageIndex, standAloneP
 			}
 			
 			if (pswds.length > 0) {
-				passwordSection(this, section, sectionIndex, index, page, pageHash, pageIndex, pswds);
+				passwordSection(this, section, sectionVisibleIndex, page, pageHash, pageIndex, pswds);
 			} else {
-				loadSection(this, section, sectionIndex, index, page, pageHash, pageIndex);
+				loadSection(this, section, sectionVisibleIndex, page, pageHash, pageIndex);
 			}
 
 			//add the section to the document
 			$('#mainContent').append(section);
+			
+			sectionVisibleIndex++;
 		}
 	});
 	
@@ -1598,9 +1789,9 @@ function loadPage(page, pageHash, sectionNum, contentNum, pageIndex, standAloneP
 
 	//the following fixes the side bar active highlight issue but requires changes to makeNav
 	//so commented out until we can discuss on next dev day
-	//$('[data-spy="scroll"]').each(function () {
-	//	var $spy = $(this).scrollspy('refresh')
-	//})
+	$('[data-spy="scroll"]').each(function () {
+		var $spy = $(this).scrollspy('refresh')
+	})
 
 	//force facebook / twitter objects to initialise
 	//twttr.widgets.load(); // REMOVED??
@@ -1608,9 +1799,46 @@ function loadPage(page, pageHash, sectionNum, contentNum, pageIndex, standAloneP
 	//FB.XFBML.parse(); // REMOVED??
 	
 	afterLoadPage(sectionNum, contentNum, pageIndex, standAlonePage);
+
+	//has the back to top button be set to round
+	var topBtnRound=$(data).find('learningObject').attr('topBtnRound');
+	if (topBtnRound == 'true') {
+		//additional round back to top button optional properties
+		var topBtnRoundColour=$(data).find('learningObject').attr('topBtnRoundColour');
+		var topBtnRoundHoverColour=$(data).find('learningObject').attr('topBtnRoundHoverColour');
+		var topBtnRoundIconColour=$(data).find('learningObject').attr('topBtnRoundIconColour');
+		if(topBtnRoundColour != '0x' && topBtnRoundColour != 'undefined') {
+            //change the background colour
+			$(".top-round").css('background-color', formatColour(topBtnRoundColour));
+        }
+        if(topBtnRoundHoverColour != '0x' && topBtnRoundHoverColour != 'undefined') {
+            //change the hover background colour
+			$(".top-round").hover(function() {
+            $(this).css("background-color",formatColour(topBtnRoundHoverColour))
+            }, function(){
+                $(this).css("background-color", formatColour(topBtnRoundColour));
+                });
+            //also change the focus background colour
+			$(".top-round").focus(function() {
+            $(this).css("background-color",formatColour(topBtnRoundHoverColour));
+                });
+			$(".top-round").blur(function() {
+                $(this).css("background-color",formatColour(topBtnRoundColour));
+            });
+        }
+            //change the icon colour
+        if(topBtnRoundIconColour != '0x' && topBtnRoundIconColour != 'undefined') {
+			$(".top-round").css('color', formatColour(topBtnRoundIconColour));
+        }
+	}
+	//if alternating sections enabled add classes
+	if ($(data).find('learningObject').attr('alternatingSections') =='true'){
+		$("section:nth-child(2n+0)").addClass("evenSection");
+		$("section:nth-child(2n+1)").addClass("oddSection");
+	}
 }
 
-function loadSection(thisSection, section, sectionIndex, index, page, pageHash, pageIndex, pswds) {
+function loadSection(thisSection, section, sectionIndex, page, pageHash, pageIndex, pswds) {
 	
 	if (authorSupport == true && $(thisSection).attr('passwordPass') == 'true') {
 		if (section.find('.sectionSubLinks').length > 0) {
@@ -1622,26 +1850,27 @@ function loadSection(thisSection, section, sectionIndex, index, page, pageHash, 
 
 	//add the section contents
 	$(thisSection).children().each( function(itemIndex, value){
-		if (($(this).attr('name') != '' && $(this).attr('name') != undefined && $(this).attr('showTitle') == 'true') || ($(this).attr('showTitle') == undefined && (this.nodeName == 'audio' || this.nodeName == 'video'))) {
+		if ($(this).attr('name') != '' && $(this).attr('name') != undefined && ($(this).attr('showTitle') == 'true' || $(this).attr('showTitleFix') == 'true')) {
 
-			if ($(this).attr('showTitle') == 'true') {
+			if ($(this).attr('showTitle') == 'true' || $(this).attr('showTitleFix') == 'true') {
 				var subLinkName = $(this).attr('name');
 
 				// remove size & background color styles from links on toc
 				if ($('<p>' + subLinkName + '</p>').children().length > 0) {
-					subLinkName = $(subLinkName);
+					subLinkName = $("<div>").html(subLinkName);
 					subLinkName.css({ 'font-size': '', 'background-color': 'transparent' });
 					subLinkName.find('[style*="font-size"]').css('font-size', '');
 					subLinkName.find('[style*="background-color"]').css('background-color', 'transparent');
+					subLinkName = subLinkName.html();
 				}
 				
 				var tempLink = validPages.indexOf(pageIndex) != -1 ? 'page' + (validPages.indexOf(pageIndex)+1) : (page.attr("customLinkID") != "" && page.attr("customLinkID") != undefined ? page.attr("customLinkID") : page.attr('linkID'));
-				var $link = $('<span class="subLink"> ' + (section.find('.sectionSubLinks .subLink').length > 0 && section.find('.sectionSubLinks').hasClass('hlist') ? '| ' : '') + '<a href="#' + tempLink + 'section' + (index+1) + 'content' + (itemIndex+1) + '"></a> </span>').appendTo(section.find('.sectionSubLinks'));
+				var $link = $('<span class="subLink"> ' + (section.find('.sectionSubLinks .subLink').length > 0 && section.find('.sectionSubLinks').hasClass('hlist') ? '| ' : '') + '<a href="#' + tempLink + 'section' + (sectionIndex+1) + 'content' + (itemIndex+1) + '"></a> </span>').appendTo(section.find('.sectionSubLinks'));
 				$link.find('a').append(subLinkName);
 
 			}
 
-			section.append( '<h2 id="' + pageHash + 'section' + (index+1) + 'content' + (itemIndex+1) + '">' + $(this).attr('name') + '</h2>');
+			section.append( '<h2 id="' + pageHash + 'section' + (sectionIndex+1) + 'content' + (itemIndex+1) + '">' + $(this).attr('name') + '</h2>');
 		}
 
 		if (this.nodeName == 'text'){
@@ -1770,15 +1999,29 @@ function loadSection(thisSection, section, sectionIndex, index, page, pageHash, 
 		
 	}
 
-	//a return to top button
-	if ($(this).attr('menu') != 'menu' && $(this).attr('menu') != 'neither') {
-
-		section.append( $('<p><br><a class="btn btn-mini pull-right" href="#">' + (languageData.find("top")[0] != undefined && languageData.find("top")[0].getAttribute('label') != null ? languageData.find("top")[0].getAttribute('label') : 'Top')  + '</a></p>'));
-
+	//a back to top button (if not set to hidden)
+	if ($(this).attr('menu') != 'menu' && $(this).attr('menu') != 'neither' && $(data).find('learningObject').attr('topBtnHide') != 'true') {
+		//has the back to top button be set to round
+		var topBtnRound=$(data).find('learningObject').attr('topBtnRound');
+		if (topBtnRound == 'true') {
+			//add FA icon and make button round via .top-round class
+			//create round button
+			var $button = $('<a class="btn btn-mini pull-right top-round" href="#"><span class="sr-only">' + (languageData.find("top")[0] != undefined && languageData.find("top")[0].getAttribute('label') != null ? languageData.find("top")[0].getAttribute('label') : 'Top') + '</span><i class="fa fa-angle-up fa-2x" aria-hidden="true"></i></a>');
+			//attach the button
+			section.append(
+				$('<p>')
+					.append($('<br>'))
+					.append($button));
+		} else {
+			//original default button
+			section.append($('<p><br><a class="btn btn-mini pull-right" href="#">' + (languageData.find("top")[0] != undefined && languageData.find("top")[0].getAttribute('label') != null ? languageData.find("top")[0].getAttribute('label') : 'Top') + '</a></p>'));
+		}
+	} else if ($(data).find('learningObject').attr('topBtnHide') == 'true') {
+		section.append($('<p>').append($('<br>')));
 	}
-	
+
 	// lightbox image links might also need to be added
-	setUpLightBox(page, $(thisSection));
+	setUpLightBox(page, $(thisSection), section);
 }
 
 function updateContent($section) {
@@ -1804,6 +2047,11 @@ function updateContent($section) {
 	
 	// Queue reparsing of MathJax - fails if no network connection
 	try { MathJax.Hub.Queue(["Typeset",MathJax.Hub]); } catch (e){};
+
+	// update codesnippet code blocks
+	let codeblocks = $("pre code").each(function(){
+		hljs.highlightBlock(this);
+	});
 }
 
 function afterLoadPage(sectionNum, contentNum, pageIndex, standAlonePage) {
@@ -1813,7 +2061,11 @@ function afterLoadPage(sectionNum, contentNum, pageIndex, standAlonePage) {
 	if (sectionNum != undefined) {
 
 		var page = $(data).find('page').eq(pageIndex),
-			pageTempInfo = page.attr('customLinkID') != undefined && page.attr('customLinkID') != '' ? page.attr('customLinkID') : (standAlonePage ? page.attr('linkID') : 'page' + (validPages.indexOf(pageIndex)+1));
+			pageTempInfo = page.attr('customLinkID') != undefined && page.attr('customLinkID') != '' ? page.attr('customLinkID') : (standAlonePage ? page.attr('linkID') : 'page' + (validPages.indexOf(pageIndex)+1)),
+			section =  page.find('section').eq(sectionNum-1);
+
+		//if direct navigation using customLink for sections
+		pageTempInfo =  section.attr('customLinkID') != undefined && section.attr('customLinkID') != '' ? section.attr('customLinkID') : pageTempInfo;
 
 		var contentInfo = contentNum != undefined ? 'content' + contentNum : '';
 
@@ -1873,11 +2125,15 @@ function passwordPage(page, pageHash, sectionNum, contentNum, pageIndex, standAl
 		}
 
 	} else {
-		loadPage(page, pageHash, sectionNum, contentNum, pageIndex, standAlonePage);
+		if (authorSupport == true) {
+			loadPage(page, pageHash, sectionNum, contentNum, pageIndex, standAlonePage, pswds);
+		} else {
+			loadPage(page, pageHash, sectionNum, contentNum, pageIndex, standAlonePage);
+		}
 	}
 }
 
-function passwordSection(thisSection, $section, sectionIndex, index, page, pageHash, pageIndex, pswds) {
+function passwordSection(thisSection, $section, sectionIndex, page, pageHash, pageIndex, pswds) {
 	
 	if ($(thisSection).attr('passwordPass') != 'true') {
 		
@@ -1885,7 +2141,7 @@ function passwordSection(thisSection, $section, sectionIndex, index, page, pageH
 			
 			$(thisSection).attr('passwordPass', true);
 			
-			loadSection(thisSection, $section, sectionIndex, index, page, pageHash, pageIndex, pswds);
+			loadSection(thisSection, $section, sectionIndex, page, pageHash, pageIndex, pswds);
 			
 		} else {
 		
@@ -1905,7 +2161,7 @@ function passwordSection(thisSection, $section, sectionIndex, index, page, pageH
 						$(thisSection).attr('passwordPass', true);
 						$section.find('.pswdBlock').remove();
 						$section.find('.sectionSubLinks').show();
-						loadSection(thisSection, $section, sectionIndex, index, page, pageHash, pageIndex);
+						loadSection(thisSection, $section, sectionIndex, page, pageHash, pageIndex);
 						updateContent($section);
 						
 					} else {
@@ -1923,7 +2179,7 @@ function passwordSection(thisSection, $section, sectionIndex, index, page, pageH
 		}
 		
 	} else {
-		loadSection(thisSection, $section, sectionIndex, index, page, pageHash, pageIndex);
+		loadSection(thisSection, $section, sectionIndex, page, pageHash, pageIndex);
 	}
 }
 
@@ -2028,7 +2284,7 @@ function goToSection(pageId) {
 }
 
 // LO level header background settings will be overridden by individual page ones (& returned to LO settings if page contains no background properties)
-function setHeaderFormat(header, headerPos, headerRepeat, headerColour, headerTextColour) {
+function setHeaderFormat(header, headerPos, headerRepeat, headerSize, headerColour, headerTextColour) {
 
 	var $overview = $('#overview'),
 		bgImg = '';
@@ -2092,6 +2348,8 @@ function setHeaderFormat(header, headerPos, headerRepeat, headerColour, headerTe
 
 	}
 
+
+
 	if (col != '' && col != '0x' && col != 'rgba(0, 0, 0, 0)') {
 
 		if (col.indexOf('rgb(') >= 0) {
@@ -2126,6 +2384,17 @@ function setHeaderFormat(header, headerPos, headerRepeat, headerColour, headerTe
 			'background': bgImg
 		});
 
+	}
+
+	let size = 'not-set';
+	if (headerSize != undefined && headerSize != '' && headerSize != 'not-set') {
+		size = headerSize;
+	} else if (defaultHeaderCss.headerSize != undefined && defaultHeaderCss.headerSize != '' && defaultHeaderCss.headerSize != 'not-set') {
+		size = defaultHeaderCss.headerSize;
+	}
+	if (size != 'not-set')
+	{
+		$overview.css('background-size', size);
 	}
 
 	var txtCol = '';
@@ -2187,9 +2456,9 @@ function makeNav(node,section,type, sectionIndex, itemIndex){
 		var i = index;
 
 		$(this).children().each( function(x, value){
-
-			if ($(this).attr('showTitle') == 'true' || ($(this).attr('showTitle') == undefined && (this.nodeName == 'audio' || this.nodeName == 'video'))) {
-				tab.append('<p><b>' + $(this).attr('name') + '</b></p>');
+			
+			if ($(this).attr('name') != '' && $(this).attr('name') != undefined && ($(this).attr('showTitle') == 'true' || $(this).attr('showTitleFix') == 'true')) {
+				tab.append('<h3>' + $(this).attr('name') + '</h3>');
 			}
 
 			if (this.nodeName == 'text'){
@@ -2338,6 +2607,12 @@ function makeAccordion(node,section, sectionIndex, itemIndex){
 		var inner = $('<div class="accordion-inner" tabindex="0">');
 
 		$(this).children().each( function(i, value){
+			
+			// there was a bug in versions before 3.12 which meant audio & video on accordion always showed title & other content never did (regardless of whether show titles ticked or not)
+			// fix here for new content added to accordions - it doesn't fix for old content as then titles may unexpectedly appear / disappear after upgrade without the author editing
+			if ($(this).attr('name') != '' && $(this).attr('name') != undefined && (($(this).attr('showTitle') == 'true' && (this.nodeName == 'audio' || this.nodeName == 'video')) || $(this).attr('showTitleFix') == 'true' || ($(this).attr('showTitleFix') == undefined && (this.nodeName == 'audio' || this.nodeName == 'video')))) {
+				inner.append('<h3>' + $(this).attr('name') + '</h3>');
+			}
 
 			if (this.nodeName == 'text'){
 				inner.append( '<p>' + $(this).text() + '</p>');
@@ -2348,12 +2623,12 @@ function makeAccordion(node,section, sectionIndex, itemIndex){
 			}
 
 			if (this.nodeName == 'audio'){
-				inner.append('<p><b>' + $(this).attr('name') + '</b></p><p><audio src="' + $(this).attr('url') + '" type="audio/mp3" id="player1" controls="controls" preload="none" width="100%"></audio></p>')
+				inner.append('<p><audio src="' + $(this).attr('url') + '" type="audio/mp3" id="player1" controls="controls" preload="none" width="100%"></audio></p>')
 			}
 
 			if (this.nodeName == 'video'){
 				var videoInfo = setUpVideo($(this).attr('url'), $(this).attr('iframeRatio'), currentPage + '_' + sectionIndex + '_' + itemIndex + '_' + index);
-				inner.append('<p><b>' + $(this).attr('name') + '</b></p><p>' + videoInfo[0] + '</p>');
+				inner.append('<p>' + videoInfo[0] + '</p>');
 
 				if (videoInfo[1] != undefined) {
 					inner.find('.vidHolder').last().data('iframeRatio', videoInfo[1]);
@@ -2411,10 +2686,10 @@ function makeCarousel(node, section, sectionIndex, itemIndex){
 
 	var itemIndex = itemIndex;
 
-	var carDiv = $('<div id="car' + sectionIndex + '_' + itemIndex + '" class="navigator carousel slide"/>');
-
+	var carDiv = $('<div id="car' + sectionIndex + '_' + itemIndex + '" class="navigator carousel slide" data-interval="false"/>');
+	
 	if (node.attr('autoPlay') == 'true') {
-
+		carDiv = $('<div id="car' + sectionIndex + '_' + itemIndex + '" class="navigator carousel slide"/>');
 		if ($.isNumeric(node.attr('delaySecs')) && node.attr('delaySecs') != '4') {
 
 			carDiv.carousel({ interval: Number(node.attr('delaySecs')) * 1000 });
@@ -2448,6 +2723,12 @@ function makeCarousel(node, section, sectionIndex, itemIndex){
 		}
 
 		$(this).children().each( function(i, value){
+			
+			// there was a bug in versions before 3.12 which meant audio & video on carousel always showed title & other content never did (regardless of whether show titles ticked or not)
+			// fix here for new content added to carousel - it doesn't fix for old content as then titles may unexpectedly appear / disappear after upgrade without the author editing
+			if ($(this).attr('name') != '' && $(this).attr('name') != undefined && (($(this).attr('showTitle') == 'true' && (this.nodeName == 'audio' || this.nodeName == 'video')) || $(this).attr('showTitleFix') == 'true' || ($(this).attr('showTitleFix') == undefined && (this.nodeName == 'audio' || this.nodeName == 'video')))) {
+				pane.append('<h3>' + $(this).attr('name') + '</h3>');
+			}
 
 			if (this.nodeName == 'text'){
 				pane.append( '<p>' + $(this).text() + '</p>');
@@ -2458,12 +2739,12 @@ function makeCarousel(node, section, sectionIndex, itemIndex){
 			}
 
 			if (this.nodeName == 'audio'){
-				pane.append('<p><b>' + $(this).attr('name') + '</b></p><p><audio src="' + $(this).attr('url') + '" type="audio/mp3" id="player1" controls="controls" preload="none" width="100%"></audio></p>')
+				pane.append('<p><audio src="' + $(this).attr('url') + '" type="audio/mp3" id="player1" controls="controls" preload="none" width="100%"></audio></p>')
 			}
 
 			if (this.nodeName == 'video'){
 				var videoInfo = setUpVideo($(this).attr('url'), $(this).attr('iframeRatio'), currentPage + '_' + sectionIndex + '_' + itemIndex + '_' + index);
-				pane.append('<p><b>' + $(this).attr('name') + '</b></p><p>' + videoInfo[0] + '</p>');
+				pane.append('<p>' + videoInfo[0] + '</p>');
 
 				if (videoInfo[1] != undefined) {
 					pane.find('.vidHolder').last().data('iframeRatio', videoInfo[1]);
@@ -2557,10 +2838,18 @@ function loadXotContent($this) {
 	}
 
 	// If this bootstrap LO is started using LTI, launch Xerte as an LTI tool as well.
-	if (typeof lti_enabled != 'undefined' && lti_enabled)
+	if (typeof lti_enabled != 'undefined' && lti_enabled) {
+		xotLink += separator + 'site=' + x_TemplateId;
+		if (window.location.pathname.indexOf("lti13_launch") !== false) {
+			xotLink = xotLink.replace('play.php?', lti13Endpoint);
+		} else {
+			xotLink = xotLink.replace('play.php?', ltiEndpoint);
+		}
+	}
+	else if (typeof pedit_enabled != 'undefined' && pedit_enabled)
 	{
 		xotLink += separator + 'site=' + x_TemplateId;
-		xotLink = xotLink.replace('play.php?', ltiEndpoint);
+		xotLink = xotLink.replace('play.php?', peditEndpoint);
 	}
 	else if (typeof xapi_enabled != 'undefined' && xapi_enabled)
 	{
@@ -2569,7 +2858,9 @@ function loadXotContent($this) {
 		xotLink += separator + 'group=' + urlParams.group;
 	}
 	// the embed url parameter makes it responsive, full screen & hides minimise/maximise button (these can be overridden by manually adding other params to the url entered in editor)
-	xotLink += separator + "embedded_from=" + encodeURIComponent(x_SiteUrl + x_TemplateId) + separator + "embedded_fromTitle=" + encodeURIComponent($(data).find('learningObject').attr('name'));
+	xotLink += separator + "embedded_from=" + encodeURIComponent(x_SiteUrl + x_TemplateId);
+	xotLink += separator + "embedded_fromTitle=" + encodeURIComponent($(data).find('learningObject').attr('name'));
+	xotLink += separator + "embedded_fromSessionId=" + encodeURIComponent(x_xAPI_SessionId);
 
 	// add back any url params that haven't been overridden
 	for (var i=0; i<params.length; i++) {
@@ -2591,7 +2882,7 @@ function loadXotContent($this) {
 	// If $this.attr('showEmbed') is undefined, it still is != 'false', so only need to check on != false
 	if ($this.attr('showEmbed') != 'false')
 	{
-		html += warning + '<iframe width="' + xotWidth + '" height="' + xotHeight + '" src="' + xotLink + separator + 'embed=true' + '" frameborder="0" style="float:left; position:relative; top:0px; left:0px; z-index:0;"></iframe>';
+		html += warning + '<iframe width="' + xotWidth + '" height="' + xotHeight + '" src="' + xotLink + separator + 'x_embed=true' + '" frameborder="0" style="float:left; position:relative; top:0px; left:0px; z-index:0;"></iframe>';
 	}
 	if ($this.attr('showLink') != undefined && $this.attr('showLink') == 'true')
 	{
@@ -2813,11 +3104,10 @@ function setUpVideo(url, iframeRatio, id) {
 }
 
 // by default images can be clicked to open larger version in lightbox viewer - this can be overridden with optional properties at LO, page & section level
-function setUpLightBox(thisPageInfo, thisSectionInfo) {
+function setUpLightBox(thisPageInfo, thisSectionInfo, $section) {
 	if (thisSectionInfo.attr("lightbox") == "true" || (thisSectionInfo.attr("lightbox") != "false" && (thisPageInfo.attr("lightbox") == "true" || (thisPageInfo.attr("lightbox") != "false" && $(data).find('learningObject').attr('lightbox') != "false")))) {
-
 		// use the x_noLightBox class to force images to not open in lightboxes
-		$("#mainContent img:not('.x_noLightBox')").each(function( index ) {
+		$section.find("img:not('.x_noLightBox')").each(function( index ) {
 			var $this = $(this);
 			if ($this.closest('a').length == 0) {
 				if (!$this.parent().hasClass('lightboxWrapper')) {

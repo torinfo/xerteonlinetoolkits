@@ -407,11 +407,14 @@ function button_check(){
                 editbtn.className = "xerte_workspace_button";
                 editbtn.onclick = function (e) {
                     if (e.shiftKey) {
-                        edit_window(false, "edit");
+                        edit_window(false, "edithtml");
                     }
                     else if (e.ctrlKey) {
                         win = edit_window(false, "edithtml", "_blank");
                         win.focus();
+                    }
+                    else if (e.altKey) {
+                        win = edit_window(false, "edithtml", "lightbox");
                     }
                     else
                     {
@@ -701,6 +704,8 @@ function getIcon(nodetype)
                 icon = "website_code/images/Icon_Folder_Group.gif";
             }else if (nodetype == "folder_shared"){
                 icon = "website_code/images/Icon_Folder_Shared.gif";
+            }else if(nodetype == 'sub_folder_shared'){
+                icon = "website_code/images/Icon_Sub_Shared_Folder.png"
             }else{
                 icon = "website_code/images/Icon_Folder.gif";
             }
@@ -819,8 +824,9 @@ function init_workspace()
             },
             "dnd": {
                 "is_draggable" : function(node) {
+                    debugger
                     console.log('is_draggable called: ', node[0]);
-                    if (node[0].type.includes("_group") || node[0].type.includes("_shared")) {
+                    if (node[0].type.includes("_group") || node[0].type.includes("_shared") || node[0].original.ChildOfShared) {
                         return false;
                     }
                     return true;

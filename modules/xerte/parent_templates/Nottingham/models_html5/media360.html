@@ -28,7 +28,8 @@
 			scenes,
 			lockedHs,
 			currentScene,
-			videoResize = true;
+			videoResize = true,
+			firstLoad;
 		
 		// function called every time the page is viewed after it has initially loaded
 		this.pageChanged = function() {
@@ -56,11 +57,10 @@
 		
 		// function called every time the size of the LO is changed
 		this.sizeChanged = function() {
-			
 			// if this has been triggered from window.resize() called manually for video sizing then skip all this
 			if (videoResize == true) {
 				
-				if (window.$.featherlight.current() != null) {
+				if (window.$.featherlight.current() != null && firstLoad != true) {
 					window.$.featherlight.current().close();
 				}
 				
@@ -102,6 +102,7 @@
 		}
 		
 		this.begin = function() {
+			firstLoad = true;
 			var $mainText = $("#mainText");
 		
 			var panelWidth = x_currentPageXML.getAttribute('size') == undefined ? 'large' : x_currentPageXML.getAttribute('size');
@@ -164,21 +165,34 @@
 			var firstScene;
 			scenes = {};
 			lockedHs = [];
-			
+
 			// collate info about different scenes
 			$(x_currentPageXML).children().each(function(i) {
-				
-				var scene = {
-					'tip': this.getAttribute('tip'),
-					'type': 'equirectangular',
-					'panorama': this.getAttribute('file'),
-					'compass': this.getAttribute('compass') == 'true' ? true : false,
-					'autoRotate': this.getAttribute('rotate') == 'true' ? Number( (this.getAttribute('direction') == 'right' ? '-' : '') + this.getAttribute('speed') ) : 0,
-					'autoRotateInactivityDelay': this.getAttribute('continueRotate') != undefined && this.getAttribute('continueRotate') != '0' ? Number(this.getAttribute('continueRotate')) * 1000 : undefined,
-					'tooltipBg': this.getAttribute('tooltipBg'),
-					'titleBg': this.getAttribute('titleBg'),
-					'hotSpots': []
-				};
+				if (this.getAttribute('cubemapcb')=='true') {
+					var scene = {
+						'tip': this.getAttribute('cubemaptip'),
+						'type': 'cubemap',
+						'cubeMap': [this.getAttribute('front'),this.getAttribute('right'),this.getAttribute('back'),this.getAttribute('left'),this.getAttribute('top'),this.getAttribute('bottom')],
+						'compass': this.getAttribute('compass') == 'true' ? true : false,
+						'autoRotate': this.getAttribute('rotate') == 'true' ? Number((this.getAttribute('direction') == 'right' ? '-' : '') + this.getAttribute('speed')) : 0,
+						'autoRotateInactivityDelay': this.getAttribute('continueRotate') != undefined && this.getAttribute('continueRotate') != '0' ? Number(this.getAttribute('continueRotate')) * 1000 : undefined,
+						'tooltipBg': this.getAttribute('tooltipBg'),
+						'titleBg': this.getAttribute('titleBg'),
+						'hotSpots': []
+					};
+				}else{
+					var scene = {
+						'tip': this.getAttribute('tip'),
+						'type': 'equirectangular',
+						'panorama': this.getAttribute('file'),
+						'compass': this.getAttribute('compass') == 'true' ? true : false,
+						'autoRotate': this.getAttribute('rotate') == 'true' ? Number((this.getAttribute('direction') == 'right' ? '-' : '') + this.getAttribute('speed')) : 0,
+						'autoRotateInactivityDelay': this.getAttribute('continueRotate') != undefined && this.getAttribute('continueRotate') != '0' ? Number(this.getAttribute('continueRotate')) * 1000 : undefined,
+						'tooltipBg': this.getAttribute('tooltipBg'),
+						'titleBg': this.getAttribute('titleBg'),
+						'hotSpots': []
+					};
+				}
 				
 				if (this.getAttribute('title') == 'true' && this.getAttribute('name') != '') {
 					scene.title = this.getAttribute('name');
@@ -322,7 +336,8 @@
 									type: 'lightbox',
 									sound: this.getAttribute('hotspotSound'),
 									start: this.getAttribute('soundStart'),
-									end: this.getAttribute('soundEnd')
+									end: this.getAttribute('soundEnd'),
+									transcript: this.getAttribute('soundTranscript')
 								};
 							}
 							
@@ -535,6 +550,7 @@
 			}
 			
 			this.sizeChanged();
+			firstLoad = false;
 			x_pageLoaded();
 		}
 		
@@ -551,9 +567,19 @@
 				initIcon = x_currentPageXML.getAttribute('lockIcon') != undefined && x_currentPageXML.getAttribute('lockIcon') != '' ? x_currentPageXML.getAttribute('lockIcon') : 'fas fa-lock';
 				$hotspotDiv.addClass('lock');
 			}
-			
+
+			// Handle the closing of hotspot bubble with escape key
+			var escapeHandler = function(e) {
+				e = e || window.event; //IE
+				if ((e.keyCode ? e.keyCode : e.which) === 27) { // Escape
+					$hotspotDiv.mouseleave();
+					e.stopPropagation();
+				}
+			};
+
 			// add hotspot styles, icon etc.
 			$hotspotDiv
+				.on("mouseleave", function(){window.removeEventListener('keydown', escapeHandler);})
 				.attr({
 					'id': args.id,
 					'tabindex': 0
@@ -579,6 +605,9 @@
 							'box-shadow': '0px 0px ' + ($this.data('size')/2) + 'px ' + $this.data('colour2'),
 							'z-index': 1000
 						});
+
+						window.removeEventListener('keydown', escapeHandler);
+						window.addEventListener('keydown', escapeHandler);
 						
 						$('.hotspot360Icon').find('.tip').not($this.find('.tip')).mouseleave();
 						
@@ -771,6 +800,11 @@
 									width: '100%',
 									startEndFrame: [Number(args.start), Number(args.end)]
 								});
+							
+							// manually add a transcript button to the end of the audio bar
+							if (args.transcript != undefined && args.transcript != '') {
+								x_addAudioTranscript($("#pageAudio"), args.transcript);
+							}
 							
 						} else if (args.video != undefined) {
 							var $pageVideo = $('<div id="pageVideo"></div>');

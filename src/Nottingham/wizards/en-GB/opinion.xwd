@@ -4,14 +4,15 @@
       <opinion><![CDATA[<opinion name="Enter Page Title" order="sequence" align="left" panelWidth="Medium" instructions="Enter Instruction" showfeedback="true" feedback="Provide feedback here"
 	  quesCount="Question {i} of {n}"
 	  onCompletion="You have completed the questionnaire" score="You answered {i} / {n}"
-	  submitBtnText="Submit" 
+	  submitBtnText="Submit"
 	  resetBtnText="Reset"
+	  backBtnText="Back"
 	  />]]></opinion>
     </newNodes>
   </pageWizard>
 
   <!-- OPINION=============================== -->
-    <opinion menu="Interactivity" menuItem="Opinion" icon="icOpinion" remove="true" thumb="thumbs/opinion.jpg" example="https://xot.xerte.org.uk/play_116?hide=bottom#opinion" hint="Create an opinion with questions that can be slider or radio button interactions or a mix of both.">
+    <opinion menu="Interactivity" menuItem="Opinion" icon="icOpinion" remove="true" thumb="thumbs/opinion.jpg" example="https://xot.xerte.org.uk/play_116?hide=bottom#opinion" wiki="https://xerte.org.uk/wiki/doku.php?id=interactivity_opinion_page" hint="Create an opinion with questions that can be slider or radio button interactions or a mix of both.">
     <name label="Page Title" type="TextInput" wysiwyg="true" />
 	<instructions label="Instructions" type="textArea"  height="120"/>
     <align label="Align Text" options="Left,Right" type="comboBox"  data="left,right" defaultValue="left" width="120"/>
@@ -24,9 +25,10 @@
     <onCompletion label="Completion Text" type="TextInput" wysiwyg="true" language="true" />
     <submitBtnText label="Submit Button Label" type="TextInput" wysiwyg="true" language="true" />
     <resetBtnText label="Reset Button Label" type="TextInput" wysiwyg="true" mandatory="true" defaultValue="Reset" language="true" />
+    <backBtnText label="Back Button Label" type="TextInput" wysiwyg="true" mandatory="true" defaultValue="Back" language="true" />
 
 	<trackingWeight label="Tracking Score Weight (0=Off)" optional="true" type="textInput" width="120" defaultValue="1.0" />
-	
+
 	<imgGroup type="group" label="Image" optional="true">
 		<img label="File" type="media" defaultValue="Select an Image" optional="true"/>
 		<tip label="Description" type="textInput" optional="true" defaultValue="Enter a Description for Accessibility"/>
@@ -37,7 +39,9 @@
 		<colour label="Colour" type="colourPicker" defaultValue="0x000000" optional="true" condition="diagram!='true'" tooltip="The colour used for this page on the graph"/>
 		<key label="Show Key" type="CheckBox" defaultValue="true" optional="true" condition="diagram!='true'" tooltip="Show a key listing page names and colours"/>
 	</graph>
-	
+
+    <disableprinting label="Disable printing" type="CheckBox" optional="true" defaultValue="false" />
+
     <layout label="Layout" type="group" optional="true">
       <list label="Question Layout" type="ComboBox" options="One Per Page,List in Pages,List All" data="false,true,all" optional="true" defaultValue="false" conditionTrigger="true"/>
       <paging label="Use Paging" type="checkbox" optional="true" tooltip="Group question list in pages if using list mode" defaultValue="true" deprecated="This property is deprecated - use the List in Pages question layout to create pages of questions"/>
@@ -71,7 +75,11 @@
 	</imgGroup>
 	
     <scale label="Reverse scale" type="CheckBox" />  
-    <sound label="Sound" type="Media" optional="true"/>
+	
+	<soundGroup type="group" label="Audio" optional="true" tooltip="Add an audio player below the question text">
+		<sound label="File" type="Media" optional="true"/>
+		<soundTranscript label="Transcript" type="textArea" height="100" defaultValue="" optional="true" tooltip="A transcript button will appear on the audio player when text is added here"/>
+	</soundGroup>
 		
     <newNodes>
       <opinionOption><![CDATA[<opinionOption name="Answer" text="Here is an option" />]]></opinionOption>

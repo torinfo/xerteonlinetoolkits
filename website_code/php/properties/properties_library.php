@@ -87,7 +87,7 @@ function properties_display($xerte_toolkits_site,$tutorial_id,$change,$msgtype){
 
     $_POST['template_id'] = (int) $_POST['template_id'];
 
-    if(is_user_creator_or_coauthor($_POST['template_id'])){
+    if(is_user_creator_or_coauthor($_POST['template_id']) || is_user_admin()){
 
         $query_for_template_name = "select template_name from {$prefix}templatedetails where template_id= ?";
         $params = array($_POST['template_id']);
@@ -491,19 +491,19 @@ function project_info($template_id){
 
     $row_template_name = db_query_one($query_for_template_name, $params);
 
-    $info = "<b>" . PROJECT_INFO_NAME . ":</b> " . str_replace('_', ' ', $row_template_name['template_name']) . "<br/>";
+    $info = PROJECT_INFO_NAME . ": " . str_replace('_', ' ', $row_template_name['template_name']) . "<br/>";
 
-    $info .= "<b>" . PROJECT_INFO_ID . ":</b> " . $row['template_id'] . "<br/>";
+    $info .= PROJECT_INFO_ID . ": " . $row['template_id'] . "<br/>";
 
-    $info .= "<b>" . PROJECT_INFO_CREATED . ":</b> " . $row['date_created'] . "<br/>";
+    $info .= PROJECT_INFO_CREATED . ": " . $row['date_created'] . "<br/>";
 
-    $info .=  "<b>" . PROJECT_INFO_MODIFIED . ":</b> " . $row['date_modified'] . "<br/>";
+    $info .=  PROJECT_INFO_MODIFIED . ": " . $row['date_modified'] . "<br/>";
 
 
 
     include "../../../modules/" . $row['template_framework'] . "/module_functions.php";
 
-    $info .=  "<b>" . PROJECT_INFO_RUNTIME  . ":</b> ";
+    $info .=  PROJECT_INFO_RUNTIME  . ": ";
 
     if (get_default_engine($template_id) == 'flash')
     {
@@ -517,7 +517,7 @@ function project_info($template_id){
 
     if(template_access_settings($template_id)!='Private'){
 
-        $info .= '<br/><b>' . PROJECT_INFO_URL . ":</b> ";
+        $info .= '<br/>' . PROJECT_INFO_URL . ": ";
 
         $info .=  "<a target=\"new\" href='" . $xerte_toolkits_site->site_url .
             url_return("play", $_POST['template_id']) . "'>" .
@@ -566,7 +566,7 @@ function project_info($template_id){
 
         $temp_array = explode(",",$temp_string);
 
-        $info .=  '<br/><b>' . PROJECT_INFO_EMBEDCODE . ":</b><br/><form><textarea rows='3' cols='30' onfocus='this.select()'><iframe src=\""  . $xerte_toolkits_site->site_url .  url_return("play", $_POST['template_id']) .  "\" width=\"" . $temp_array[0] . "\" height=\"" . $temp_array[1] . "\" frameborder=\"0\" style=\"position:relative; top:0px; left:0px; z-index:0;\"></iframe></textarea></form><br/>";
+        $info .=  '<br/><form><label for="embed_text_area">' . PROJECT_INFO_EMBEDCODE . ":</label><br/><textarea readonly id='embed_text_area' rows='3' cols='30' onfocus='this.select()'><iframe src=\""  . $xerte_toolkits_site->site_url .  url_return("play", $_POST['template_id']) .  "\" width=\"" . $temp_array[0] . "\" height=\"" . $temp_array[1] . "\" frameborder=\"0\" style=\"position:relative; top:0px; left:0px; z-index:0;\"></iframe></textarea></form><br/>";
 
     }
     return $info;
@@ -706,6 +706,27 @@ function statistics_prepare($template_id, $force=false)
     return $info;
 }
 
+function folder_size($dir_path)
+{
+    $quota = 0;
+    $d = opendir($dir_path);
+
+    while ($f = readdir($d)) {
+        $full = $dir_path . "/" . $f;
+        if (!is_dir($full)) {
+            $quota += filesize($full);
+        }
+        else
+        {
+            if ($f != "." && $f != "..") {
+                $quota += folder_size($full);
+            }
+        }
+    }
+    closedir($d);
+    return $quota;
+}
+
 function media_quota_info($template_id)
 {
     global $xerte_toolkits_site;
@@ -744,15 +765,8 @@ function media_quota_info($template_id)
 
         if (file_exists($dir_path))
         {
-            $d = opendir($dir_path);
-
-            while ($f = readdir($d)) {
-                $full = $dir_path . "/" . $f;
-                if (!is_dir($full)) {
-                    $quota += filesize($full);
-                }
-            }
-            $info =  "<b>" . PROJECT_INFO_MEDIA . ":</b> ";
+            $quota += folder_size($dir_path);
+            $info =  PROJECT_INFO_MEDIA . ": ";
             $info .=  (round($quota/10000, 0)/100) . " MB<br/>";
             return $info;
         }
@@ -782,7 +796,7 @@ function sharing_info($template_id)
 
     $query_group_sharing_rows = db_query($sql, array($template_id));
 
-    $info =  "<b>" . PROJECT_INFO_SHARED . ":</b> ";
+    $info =  PROJECT_INFO_SHARED . ": ";
 
     if(sizeof($query_sharing_rows)==1 && empty($query_group_sharing_rows)){
         $info .= PROJECT_INFO_NOTSHARED . "<br/>";
@@ -911,8 +925,10 @@ function folder_sharing_info($folder_id)
 
 function nr_user_groups()
 {
+    global $xerte_toolkits_site;
+
     $count = 0;
-    $sql = "select count(*) as count from user_groups";
+    $sql = "select count(*) as count from {$xerte_toolkits_site->database_table_prefix}user_groups";
     $res = db_query($sql);
 
     if ($res !== false && $res != null)
@@ -969,7 +985,7 @@ function access_info($template_id){
 
     $row_access = db_query_one($query_for_template_access, $params);
 
-    $info = "<b>" . PROJECT_INFO_ACCESS . ":</b> ";
+    $info = PROJECT_INFO_ACCESS . ": ";
 
     $accessStr = template_access_settings($_POST['template_id']);
     switch ($accessStr)
@@ -1003,7 +1019,7 @@ function access_info($template_id){
     if (isset($nrViews) && $nrViews!= "")
     {
        /* $info .= str_replace("%n", $nrViews, PROJECT_INFO_NRVIEWS);*/
-		$info .= "<br/><b>" . PROJECT_INFO_NRVIEWSTITLE . "</b>: " . $nrViews;
+		$info .= "<br/>" . PROJECT_INFO_NRVIEWSTITLE . ": " . $nrViews;
     }
     $info .= "<br/>";
     return $info;
@@ -1217,7 +1233,6 @@ function tsugi_display($id, $lti_def, $mesg = "")
         <label for="tsugi_useglobal"><?php echo PROPERTIES_LIBRARY_TSUGI_USEGLOBAL; ?></label><input type="checkbox" onchange="javascript:tsugi_toggle_useglobal('<?php echo htmlspecialchars(json_encode($lti_def));?>')" <?php echo($lti_def->published ? "" : "disabled"); ?> name="tsugi_useglobal" id="tsugi_useglobal" <?php echo ($lti_def->tsugi_useglobal ? "checked" : "");?>><br>
         <label for="tsugi_useprivateonly"><?php echo PROPERTIES_LIBRARY_TSUGI_USEPRIVATEONLY; ?></label><input type="checkbox" <?php echo($lti_def->published ? "" : "disabled"); ?> name="tsugi_useprivateonly" id="tsugi_useprivateonly" <?php echo ($lti_def->tsugi_privateonly ? "checked" : "");?>><br>
         <table>
-            <tr><td><label for="tsugi_title"><?php echo PROPERTIES_LIBRARY_TSUGI_NAME; ?></label></td><td><input id="tsugi_title"  name="tsugi_title" type="text" <?php echo ($lti_def->tsugi_useglobal || !$lti_def->published ? "disabled value=\"\"" : "value=\"" . $lti_def->title . "\"");?>></td></tr>
             <tr><td><label for="tsugi_key"><?php echo PROPERTIES_LIBRARY_TSUGI_KEY; ?></label></td><td><input id="tsugi_key" name="tsugi_key" type="text" <?php echo ($lti_def->tsugi_useglobal || !$lti_def->published ? "disabled value=\"\"" : "value=\"" .  $lti_def->key . "\"");?>></td></tr>
             <tr><td><label for="tsugi_secret"><?php echo PROPERTIES_LIBRARY_TSUGI_SECRET; ?></label></td><td><input id="tsugi_secret" name="tsugi_secret" type="text" <?php echo ($lti_def->tsugi_useglobal || !$lti_def->published ? "disabled value=\"\"" : "value=\"" .  $lti_def->secret . "\"");?>></td></tr>
         </table>

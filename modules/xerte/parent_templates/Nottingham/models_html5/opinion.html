@@ -20,27 +20,8 @@
 	
 	var opinion = new function()
 	{
-		var $pageContents;
-
-    this.loadJS = function () {
-      if (numLoaded < 5) {
-        var fileToLoad;
-        if (numLoaded == 0) {
-          fileToLoad = x_templateLocation + "common_html5/js/html2pdf.bundle.min.js";
-        }
-
-        $.getScript(fileToLoad)
-          .done(function (script, textStatus) {
-            numLoaded++;
-            adaptiveContent.loadJS();
-          })
-          .fail(function (jqxhr, settings, exception) {
-            console.log("Failed to load chart scripts");
-          });
-      }
-    };
-    numLoaded = 0;
-    this.loadJS();
+		var $pageContents,
+			printAvailable = false;
 
 		this.sizeChanged = function()
 		{
@@ -91,20 +72,19 @@
 			}
 			
 			var width = $("#mainPanel").width(),
-				height = $("#mainPanel").height(),
-				textSize;
-			
+					height = $("#pageContents").innerHeight() - $("#qNo").outerHeight(true) - $("#feedback").outerHeight(true) - $("#buttonHolder").outerHeight(true),
+					textSize;
+			let paddingHeightMainPanel = $("#mainPanel").outerHeight(true) - $("#mainPanel").innerHeight() + parseFloat($("#mainPanel").css('padding-top')) + parseFloat($("#mainPanel").css('padding-bottom'));
+			let paddingWidthMainPanel = $("#mainPanel").outerWidth(true) - $("#mainPanel").innerWidth() + parseFloat($("#mainPanel").css('padding-left')) + parseFloat($("#mainPanel").css('padding-right'));
+			width -= paddingWidthMainPanel;
+			height -= paddingHeightMainPanel;
+			height *= 0.98; // Build in some extra space
 			if(width > height) {
-				$("#diagram")
-					.width(height*0.90)
-					.height(height*0.90);
 				textSize = (width - height) / 10;
 			}
 			else {
-				$("#diagram")
-					.width(width*0.90)
-					.height(width*0.90);
 				textSize = (height - width) / 10;
+				height = width;
 			}
 			if (textSize > 20) {
 				textSize = 20;
@@ -112,19 +92,28 @@
 			else if (textSize < 12) {
 				textSize = 12;
 			}
-			
 			$pageContents.data('textSize', textSize);
+			
+			$("#canvas-container")
+					.css('width', width)
+					.css('height', height);
+
 		};
 
-		this.loadAudio = function(currentQuestion, soundFile)
+		this.loadAudio = function(currentQuestion, soundFile, transcript)
 		{
 			if (soundFile != undefined && soundFile != "")
-			{
+			{	
 				$("#questionAudio" + currentQuestion).mediaPlayer({
 					type	:"audio",
 					source	:soundFile,
 					width	:"100%"
 				});
+				
+				// manually add a transcript button to the end of the audio bar
+				if (transcript != undefined && transcript != '') {
+					x_addAudioTranscript($("#questionAudio" + currentQuestion), transcript);
+				}
 			}
 		};
 
@@ -148,7 +137,7 @@
             }
 			$pageContents.data('showfeedback', showfeedback);
 
-			$("#diagram").hide();
+			$("#canvas-container").hide();
             $("#qHolder").show();
 			$("#checkBtn")
 				.show()
@@ -201,7 +190,6 @@
 
 		this.loadQuestions = function()
 		{
-			debugger;
             $("#checkBtn").button("disable");
 			
             $pageContents.data('radioButtonQuestions', []);
@@ -261,6 +249,15 @@
 			{
                 $("#checkBtn").button("enable");
 			}
+			const currQ = $pageContents.data('currentQuestion');
+			if (currQ == 0)
+			{
+				$("#backBtn").button("disable");
+			}
+			else
+			{
+				$("#backBtn").button("enable");
+			}
 		};
 
 		this.loadQuestion = function(currentQuestion)
@@ -278,7 +275,7 @@
 				var infoString = $thisQ.getAttribute("prompt");
 
 				if ($thisQ.getAttribute("sound") != undefined && $thisQ.getAttribute("sound") != "") {
-					this.loadAudio(currentQuestion, $thisQ.getAttribute("sound"));
+					this.loadAudio(currentQuestion, $thisQ.getAttribute("sound"), $thisQ.getAttribute('soundTranscript'));
 				}
 				else
 				{
@@ -333,7 +330,14 @@
                             );
                         });
 
-                        $.each(currentAnswers, function (index, value) {
+						let answers = $pageContents.data('answeredValues');
+						let selected = -1;
+						if (answers[currentQuestion] !== undefined)
+						{
+							selected = (currentAnswers.length-1) * answers[currentQuestion]/100;
+						}
+
+						$.each(currentAnswers, function (index, value) {
                             var $thisOptionGroup, $thisOption, $thisOptionTxt;
 
                             if (index != 0) {
@@ -361,13 +365,22 @@
                                     opinion.checkButtonState();
                                 });
                             $thisOption[0].score = index;
+
                             $thisOptionTxt
                                 .attr("for", "option" + currentQuestion + "_" + index)
                                 .data("option", $thisOption)
                                 .html(x_addLineBreaks(value.text));
                         });
 
-                        name = $thisQ.getAttribute("prompt");
+						if (selected != -1)
+						{
+							let $thisOptions = $optionHolder.find("input");
+							$($thisOptions[selected]).prop('checked', true);
+							radioButtonQuestions[currentQuestion] = true;
+							$pageContents.data('radioButtonQuestions', radioButtonQuestions);
+						}
+
+                        name = x_GetTrackingTextFromHTML($thisQ.getAttribute("prompt"), "");
 
                         if ($thisQ.getAttribute("name")) {
                             name = $thisQ.getAttribute("name");
@@ -386,6 +399,13 @@
 
                         var max = $($thisQ).children().length - 1;
                         var numberOfOptions = max + 1;
+
+						let answers = $pageContents.data('answeredValues');
+						let selected = -1;
+						if (answers[currentQuestion] !== undefined)
+						{
+							selected = max * answers[currentQuestion]/100;
+						}
 
 						$rangeHolder.html('<form id="form' + currentQuestion + '"> <input id="slider' + currentQuestion + '" aria-label="slider' + currentQuestion + '" type="range" min="0" max = "' + max + '" step="1" class="slider"/> </form> ');
 
@@ -417,12 +437,17 @@
                             correctAnswer.push(value.getAttribute("text"));
                         });
 
+						if (selected != -1)
+						{
+							$("#slider" + currentQuestion).val(selected);
+						}
+
                         var cellWidth = 100.0/numberOfOptions;
                         $("td.labelCell").css("width", cellWidth + "%");
                         $("#slider" + currentQuestion).css("width", 100-cellWidth + 2 +"%");
                         $("#slider" + currentQuestion).css("margin-left", cellWidth/2 - 1 + "%");
 
-                        name = $thisQ.getAttribute("prompt");
+						name = x_GetTrackingTextFromHTML($thisQ.getAttribute("prompt"), "");
 
                         if ($thisQ.getAttribute("name"))
                         {
@@ -441,7 +466,7 @@
 			$pageContents = $('#pageContents');
 		};
 
-		this.trackQuestions = function()
+		this.trackQuestions = function(goingBack = false)
 		{
 			var listMode = $pageContents.data('listMode'),
 				pageMode = $pageContents.data('pageMode'),
@@ -455,28 +480,28 @@
                 {
                     for (i=currentQuestion; i<Math.min(currentQuestion + pageSize, questions.length); i++)
                     {
-                        this.trackQuestion(i);
+                        this.trackQuestion(i, goingBack);
                     }
                 }
                 else
                 {
                     for (i=currentQuestion; i<questions.length; i++)
                     {
-                        this.trackQuestion(i);
+                        this.trackQuestion(i, goingBack);
                     }
                 }
             }
             else
             {
-                this.trackQuestion(currentQuestion);
+                this.trackQuestion(currentQuestion, goingBack);
             }
-            if ($pageContents.data('resultShown') == false)
+            if (!goingBack && $pageContents.data('resultShown') == false)
 			{
 			    this.loadQuestions();
 			}
 		};
 
-		this.trackQuestion = function(currentQuestion)
+		this.trackQuestion = function(currentQuestion, goingBack)
 		{
 			var questions = $pageContents.data('questions'),
 				currentQ = $(x_currentPageXML).children().children()[questions[currentQuestion]],
@@ -538,25 +563,31 @@
 			
 			XTExitInteraction(x_currentPage, questions[currentQuestion], result, l_options, l_answer, null, 0, x_currentPageXML.getAttribute("trackinglabel"));
 
-			// Continue to next question
-			$pageContents.data('currentQuestion', $pageContents.data('currentQuestion')+1);
+			if (!goingBack) {
+				// Continue to next question
+				$pageContents.data('currentQuestion', $pageContents.data('currentQuestion') + 1);
 
-			// If last question has been answered - show results, else continue
-			if ($pageContents.data('currentQuestion') == questions.length)
-			{
-				this.trackOpinion();
-				$pageContents.data('resultShown', true);
+				// If last question has been answered - show results, else continue
+				if ($pageContents.data('currentQuestion') == questions.length) {
+					this.trackOpinion();
+					$pageContents.data('resultShown', true);
+					opinion.showPrintButton();
+				}
+				x_pageContentsUpdated();
 			}
-
-            x_pageContentsUpdated();
 		};
 
 		this.trackOpinion = function() {
             // Last question answered - show results
             var JSONGraph = this.createGraphObject();
-            if (x_currentPageXML.getAttribute("diagram") !== "true"){
-                this.createDiagram(JSONGraph);
+            if (x_currentPageXML.getAttribute("diagram") !== "true") {
+				if (x_currentPageXML.getAttribute("diagram") !== "true") {
+					$("#canvas-container").show();
+				} else {
+					$('#canvas-container').hide();
+				}
 				this.sizeChanged();
+				this.createDiagram(JSONGraph);
 			}
 
             $("#qNo").html($pageContents.data("onCompletionText"));
@@ -577,13 +608,6 @@
 			}
             $("#questionAudio").empty();
 
-			if (x_currentPageXML.getAttribute("diagram") !== "true"){
-				$("#diagram").show();
-        $("#printBtn").show()
-			} else {
-				$('#diagram').hide();
-        $("#printBtn").hide();
-			}
             $("#qHolder").hide();
             $("#checkBtn").hide();
 
@@ -668,6 +692,14 @@
                     }]
                 },
 				options: {
+          layout: {
+              padding: {
+                  left: 10,
+                  right: 10,
+                  top: 10,
+                  bottom: 10
+                }
+            },
 					scale: {
 						ticks: {
 							suggestedMin: 0,
@@ -685,13 +717,16 @@
 						display: x_currentPageXML.getAttribute("key") == 'false' ? false : true,
 					},
 					responsive: true,
-					maintainAspectRatio: true
+					maintainAspectRatio: false
 				}
             });
 		};
 
 		this.init = function()
 		{
+
+			$("#printBtn").hide();
+
 			$pageContents = $('#pageContents');
 			
 			$pageContents.data({
@@ -710,10 +745,20 @@
             if (x_currentPageXML.getAttribute("paging") != undefined) {
                 $pageContents.data('pageMode', x_currentPageXML.getAttribute("paging") === "true");
             }
+            else {
+				if ($pageContents.data('listMode') === 'all') {
+					$pageContents.data('pageMode', false);
+				} else {
+					$pageContents.data('pageMode', true);
+				}
+			}
 
-            if (x_currentPageXML.getAttribute("pagesize") != undefined) {
+            if ($pageContents.data('listMode') && x_currentPageXML.getAttribute("pagesize") != undefined) {
                 $pageContents.data('pageSize', parseInt(x_currentPageXML.getAttribute("pagesize")));
             }
+			else {
+				$pageContents.data('pageSize', 1);
+			}
 
             var panelWidth = x_currentPageXML.getAttribute("panelWidth"),
 				$splitScreen = $("#pageContents .splitScreen"),
@@ -775,6 +820,12 @@
 				$textHolder.append('<img class="opinionImg" src="' + x_evalURL(x_currentPageXML.getAttribute("img")) + '"' + tip +'>');
 			}
 
+			var backBtnText = x_currentPageXML.getAttribute("backBtnText");
+			if (backBtnText == undefined)
+			{
+				backBtnText = "Back";
+			}
+
 			var submitBtnText = x_currentPageXML.getAttribute("submitBtnText");
 			if (submitBtnText == undefined)
 			{
@@ -796,6 +847,39 @@
 				"onCompletionText"	:onCompletionText,
 			});
 
+			// BackBtn
+
+			$("#backBtn")
+				.button({
+					label:backBtnText
+				})
+				.click(function(){
+					let pageSize = $pageContents.data('pageSize');
+					let currentQuestion = $pageContents.data('currentQuestion');
+					if (currentQuestion >= pageSize)
+					{
+						$("#mainPanel").animate({ scrollTop: 0 }, "fast");
+						const questions = $pageContents.data('questions');
+
+						if (currentQuestion == questions.length) {
+							opinion.showPrintButton(false);
+							opinion.resetGraph();
+							$("#qHolder").show();
+							$("#checkBtn").show();
+							$pageContents.data('resultShown', false);
+						}
+						else
+						{
+							if ($("#checkBtn").is(":enabled"))
+							{
+								opinion.trackQuestions(true);
+							}
+						}
+						currentQuestion -= pageSize;
+						$pageContents.data('currentQuestion', currentQuestion);
+						opinion.loadQuestions();
+					}
+				});
             // submit button
             $("#checkBtn")
 				.button({
@@ -807,7 +891,7 @@
 				});
 			
 			// reset button
-        $("#resetBtn")
+            $("#resetBtn")
 				.button({
 					label: resetBtnText
 				})
@@ -818,29 +902,118 @@
 							'diagramLabels': [],
 							'diagramAnswers': []
 						});
-						
-            $('#printBtn').hide();
+
+						opinion.showPrintButton(false);
 						opinion.startQuestions();
 					}
 				});
 
-        $("#printBtn")
-				.button({
-					label: 'print'
-				})
-				.click(function() {
-            html2pdf($("#mainPanel")[0]);
-				});
-        $("#printBtn").hide();
+			// Uses new loadjs with experimental .path() method
+			loadjs.path(x_templateLocation + 'common_html5/js/');
+			loadjs(['html2pdf.bundle.min.js'], {
+				success: function() {
+    				printAvailable = true;
+				}
+			});
 
+        let startHeight;
+        let startWidth;
+        let panelStartWidth;
+        let startPadding;
+        let canvasStartHeight;
+        let canvasStartWidth;
+        let canvasStartPadding;
+    	    $("#printBtn")
+				.button({
+					label: 'Print'
+				})
+				.click(async function() {
+					$("#pageContents").prepend("<div id='print-overlay'><img id='print-overlay-spinner' src='" + x_templateLocation + "common_html5/loading16.gif'></div>");
+					$("#mainPanel").prepend(
+							'<div id="print-title" style="font-size: 30px"><h1>${x_currentPageXML.getAttribute("name")}</h1></div>'
+					);
+					$("#mainPanel .panel").addClass("panel-print");
+					$("#mainPanel .panel").removeClass("panel");
+					startHeight = $("#mainPanel")[0].style.height;
+					startWidth = $("#pageContents")[0].style.width;
+					panelStartWidth = $("#mainPanel")[0].style.width;
+					startPadding = $("#mainPanel")[0].style.padding;
+					canvasStartHeight = $("#canvas-container")[0].style.height;
+					canvasStartWidth = $("#canvas-container")[0].style.width;
+					$("#mainPanel #buttonHolder").hide();
+					$("#pageContents").css("width", "794px");
+					//$("#mainPanel").css("width", "764px");
+					$("#mainPanel").css("max-height", "794px");
+					$("#canvas-container canvas").css("min-width", "540px");
+					$("#canvas-container canvas").css("min-height", "270px");
+					$("#canvas-container canvas").css("max-width", "764px");
+					$("#canvas-container canvas").css("max-height", "764px");
+					//$("#mainPanel").css("padding", "79.4px");
+					/*
+					$("#canvas-container").css("width", "794px");
+					$("#canvas-container").css("height", "750px");
+					*/
+					opinion.sizeChanged();
+					$("p").css("font-size", "16px");
+					$("h3").css("font-size", "18px");
+					setTimeout(function(){
+						let opt = {
+							filename: `xerte-opinion${x_currentPageXML.getAttribute("name")}.pdf`,
+							html2canvas: { scale: 2 },
+							jsPDF: {unit: 'in', format: 'a4', orientation: 'portrait'}
+						};
+						html2pdf().set(opt).from($("#mainPanel")[0]).toPdf().get('pdf').then(function (pdf) {
+							$("#mainPanel .panel-print").addClass("panel");
+							$("#mainPanel .panel").removeClass("panel-print");
+							$("#pageContents").css("width", startWidth);
+							//$("#mainPanel").css("width", panelStartWidth);
+							$("#mainPanel").css("height", startHeight);
+							$("#mainPanel").css("padding", startPadding);
+							$("#canvas-container canvas").css("min-width", "");
+							$("#canvas-container canvas").css("min-height", "");
+							$("#canvas-container canvas").css("max-width", "");
+							$("#canvas-container canvas").css("max-height", "");
+							$("#mainPanel").css("max-height", "");
+
+							/*
+							$("#canvas-container").css("width", canvasStartWidth);
+							$("#canvas-container").css("height", canvasStartHeight);
+							*/
+							$("#print-title").remove();
+							$("#print-overlay").remove();
+							$("#buttonHolder").show();
+							$("p").css("font-size", "");
+							$("h3").css("font-size", "");
+							opinion.sizeChanged();
+						}).save();
+					}, 4000)
+				});
+	        $("#printBtn").hide();
 			this.startQuestions();
 			this.sizeChanged();
 			x_pageLoaded();
 		}
+
+		this.showPrintButton = function (force) {
+			$("#printBtn")[printAvailable && force !== false && x_currentPageXML.getAttribute('disableprinting') != 'true' ? 'show' : 'hide']();
+		}
+
+		this.resetGraph = function () {
+			// Throw away iframe
+			$("#mainPanel fieldset iframe").remove();
+			// Reset feedbak and diagram
+
+			$("#feedback").remove();
+			$("#canvas-container").hide();
+
+			$("#mainPanel fieldset").prepend(
+					"<div id=\"feedback\" aria-live=\"polite\"></div>\n"
+			);
+		}
 	};
 
 	opinion.init();
-
+	
 </script>
 
 <div id="pageContents">
@@ -858,13 +1031,16 @@
 				<fieldset class="noStyle">
 
 					<div id="feedback" aria-live="polite"></div>
-					<canvas id="diagram" aria-live="polite"></canvas>
+          <div id="canvas-container">
+            <canvas id="diagram" aria-live="polite"></canvas>
+          </div>
 
 					<div id="wrapper">
 						<div id="qHolder"></div>
 						<div id="buttonHolder">
-							<button id="printBtn" hidden></button>
+							<button id="printBtn"></button>
 							<button id="resetBtn"></button>
+							<button id="backBtn"></button>
 							<button id="checkBtn"></button>
 						</div>
 					</div>

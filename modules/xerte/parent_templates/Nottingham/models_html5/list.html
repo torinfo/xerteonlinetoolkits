@@ -171,6 +171,8 @@
 									});
 								}
 								
+								$infoHolder.focus();
+								
 								list.mediaLoad($infoHolder, this, url);
 								
 								x_pageContentsUpdated();
@@ -179,42 +181,41 @@
 				});
 			
 			if(x_currentPageXML.getAttribute('hicol') !== null){
-				var color = "#" + x_currentPageXML.getAttribute('hicol').substr(2)
-			}else{
-				color = "#000000"
-			}
-			if(x_currentPageXML.getAttribute('hicolback') !== null){
-				var backgroundColor = "#" + x_currentPageXML.getAttribute('hicolback').substr(2)
-			}else{
-				backgroundColor = "#FFFFFF"
-			}
-
-			if(x_currentPageXML.getAttribute('hicolHover') !== null){
-				var hicolHover = "#" + x_currentPageXML.getAttribute('hicolHover').substr(2)
-			}
-
-			if(x_currentPageXML.getAttribute('hicolHover') !== null && x_currentPageXML.getAttribute('hicolHover') !== undefined){
+				var color = "#" + x_currentPageXML.getAttribute('hicol').substr(2);
 				$(".listItem").css({
-					'color': color,
-					'background-color':backgroundColor,
-				}).on({
+					'color': color
+				});
+			}
+			
+			if(x_currentPageXML.getAttribute('hicolback') !== null){
+				var backgroundColor = "#" + x_currentPageXML.getAttribute('hicolback').substr(2);
+				$(".listItem").css({
+					'background-color': backgroundColor
+				});
+			}
+			
+			if(x_currentPageXML.getAttribute('hicolHover') !== null && x_currentPageXML.getAttribute('hicolHover') !== undefined){
+				var hicolHover = "#" + x_currentPageXML.getAttribute('hicolHover').substr(2);
+				
+				$(".listItem").css({
+					'background-color': x_currentPageXML.getAttribute('hicolback') !== null ? backgroundColor : 'auto'
+				})
+				.on({
 					mouseenter: function (event) {
 						$( this ).css({
-							'background-color':hicolHover,
+							'background-color': hicolHover,
 						})
 					},
 					mouseleave: function (event) {
 						$( this ).css({
-							'background-color':backgroundColor,
-
+							'background-color': x_currentPageXML.getAttribute('hicolback') !== null ? backgroundColor : 'auto'
 						})
 					}
 				})
-			}else{
-				$(".listItem").css({
-					'color': color,
-					'background-color':backgroundColor
-				})
+			}
+			
+			if (x_currentPageXML.getAttribute('openFirst') == "true") {
+				$(".listItem:first").click();
 			}
 			
 			x_pageLoaded();
@@ -304,7 +305,7 @@
 		</div>
 		
 		<div class="right">
-			<div id="infoHolder" class="panel" aria-live="polite">
+			<div id="infoHolder" class="panel" aria-live="polite" tabindex="0">
 			</div>
 		</div>
 		

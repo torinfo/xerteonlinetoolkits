@@ -83,17 +83,31 @@ DashboardState.prototype.getStatementsxAPI = function(q, one, callback) {
         function getmorestatements(err, res, body) {
             for (x = 0; x < body.statements.length; x++) {
                 var statement = body.statements[x];
+                if ($this.info.role == "Teacher") {
+                    if (statement.actor.mbox != undefined) {
+                        if ($this.info.users.findIndex(u => 'email:' + u.email === statement.actor.mbox) === -1) {
+                            // Skip this user
+                            continue;
+                        }
+                    }
+                    else if (statement.actor.mbox_sha1sum != undefined) {
+                        if ($this.info.users.findIndex(u => u.sha1 === statement.actor.mbox.mbox_sha1sum) === -1) {
+                            // Skip this user
+                            continue;
+                        }
+                    }
+                }
                 if ($this.info.dashboard.anonymous) {
                     if (statement.actor.mbox != undefined) {
                         // Key is email
                         // cutoff mailto: and calc sha1:
-                        var key = statement.actor.mbox.substr(7).trim();
-                        var sha1 = toSHA1(key);
+                        var sha1 = toSHA1(statement.actor.mbox);
                         statement.actor.mbox_sha1sum = sha1;
                         delete statement.actor.mbox;
                         if (statement.actor.name) {
                             delete statement.actor.name;
                         }
+
                     } else if (statement.actor.mbox_sha1sum != undefined) {
                         // Nothing to do
 
@@ -106,7 +120,7 @@ DashboardState.prototype.getStatementsxAPI = function(q, one, callback) {
                         if (key != undefined) {
                             delete statement.actor;
 
-                            var sha1 = toSHA1(key);
+                            var sha1 = toSHA1('mailto:' + key + '@example.com');
                             statement.actor = {
                                 'mbox_sha1sum': sha1
                             };
@@ -158,7 +172,7 @@ DashboardState.prototype.getStatementsxAPI = function(q, one, callback) {
 };
 
 DashboardState.prototype.getStatementsAggregate = function(q, one, callback) {
-    var role = "teacher";
+    var role = (this.info ? this.info.role : "");
     var matchLaunched = '{"statement.verb.id" : { "$eq" : "http://adlnet.gov/expapi/verbs/launched" } }';
     var matchCourse = '';
     if (typeof q['activities'] != "undefined")
@@ -192,6 +206,17 @@ DashboardState.prototype.getStatementsAggregate = function(q, one, callback) {
     if (typeof q['actor'] != "undefined")
     {
         matchActor = '{"statement.actor.mbox" : "mailto:' + q['actor'] + '"}';
+    }
+    if (role == "Teacher") {
+        matchActor = '{"statement.actor.mbox" :  { "$in": [';
+        this.info.users.forEach(function (user,i){
+            matchActor += '"mailto:' + user.email + '"';
+            if (i < this.info.users.length - 1)
+            {
+                matchActor += ', ';
+            }
+        });
+        matchActor += '] } }';
     }
     var matchDateRange = '';
     if (typeof q['since'] != "undefined" && typeof q['until'] != "undefined") {
@@ -237,7 +262,7 @@ DashboardState.prototype.getStatementsAggregate = function(q, one, callback) {
 
 DashboardState.prototype.retrieveDataThroughAggregate = function(q, dashboard_state, data, callback)
 {
-    var role = "teacher";
+    var role = (this.info ? this.info.role : "");
     var startDate = moment(q['since']);
     var endDate = moment(q['until']);
 
@@ -290,6 +315,17 @@ DashboardState.prototype.retrieveDataThroughAggregate = function(q, dashboard_st
     if (typeof q['actor'] != "undefined")
     {
         matchActor = '{"statement.actor.mbox" : "mailto:' + q['actor'] + '"}';
+    }
+    if (role == "Teacher") {
+        matchActor = '{"statement.actor.mbox" :  { "$in": [';
+        this.info.users.forEach(function (user,i){
+            matchActor += '"mailto:' + user.email + '"';
+            if (i < this.info.users.length - 1)
+            {
+                matchActor += ', ';
+            }
+        });
+        matchActor += '] } }';
     }
 
     var matchVerb = '';
@@ -477,7 +513,8 @@ DashboardState.prototype.groupStatements = function(data) {
             data = this.rawData;
         }
     }
-    groups = [];
+    const groups = [];
+    const $this = this;
     data.forEach(function(statement, i) {
         var participant = {
             'attemptkeys' : [],
@@ -494,75 +531,108 @@ DashboardState.prototype.groupStatements = function(data) {
                 groups.push(group);
             }
         }
-        if (statement.actor.mbox != undefined) {
-            // Key is email
-            // Cutoff mailto:
-            var key = statement.actor.mbox.substr(7).trim();
-            if (groupedData[key] == undefined) {
-                participant['mode'] = 'mbox';
-                participant['mbox'] = key;
-                participant['key'] = key;
-                if (statement.actor.name != undefined) {
-                    participant['username'] = statement.actor.name;
+        if ($this.info.users !== undefined) {
+            if (statement.actor.mbox != undefined)
+            {
+                var key = statement.actor.mbox.substr(7).trim();
+                var user = $this.info.users.find(x => x.email == key);
+            }
+            else if (statement.actor.mbox_sha1sum != undefined) {
+                var key = statement.actor.mbox_sha1sum.trim();
+                var user = $this.info.users.find(x => x.sha1 == key);
+            }
+            else
+            {
+                var key = undefined;
+            }
+            if (user != undefined) {
+                key = user.email;
+                if (groupedData[key] == undefined) {
+                    participant['username'] = user.name;
                     participant['mode'] = 'username';
+                    participant['mbox'] = user.email;
+                    participant['key'] = key;
+                    groupedData[key] = participant;
                 }
-                groupedData[key] = participant;
+            }
+            else
+            {
+                key = undefined;
+            }
+        }
+        else
+        {
+            if (statement.actor.mbox != undefined) {
+                // Key is email
+                // Cutoff mailto:
+                var key = statement.actor.mbox.substr(7).trim();
+                if (groupedData[key] == undefined) {
+                    participant['mode'] = 'mbox';
+                    participant['mbox'] = key;
+                    participant['key'] = key;
+                    if (statement.actor.name != undefined) {
+                        participant['username'] = statement.actor.name;
+                        participant['mode'] = 'username';
+                    }
+                    groupedData[key] = participant;
+                } else {
+                    if (statement.actor.name != undefined && groupedData[key]['username'] == undefined) {
+                        groupedData[key]['username'] = statement.actor.name;
+                        groupedData[key]['mode'] = 'username';
+                    }
+                }
+            } else if (statement.actor.mbox_sha1sum != undefined) {
+                // Key is sha1(email)
+                var key = statement.actor.mbox_sha1sum;
+                if (groupedData[key] == undefined) {
+                    participant['mode'] = 'mbox_sha1sum';
+                    participant['mbox_sha1sum'] = key;
+                    participant['key'] = key;
+                    groupedData[key] = participant;
+                }
             } else {
-                if (statement.actor.name != undefined && groupedData[key]['username'] == undefined) {
-                    groupedData[key]['username'] = statement.actor.name;
-                    groupedData[key]['mode'] = 'username';
-                }
-            }
-        } else if (statement.actor.mbox_sha1sum != undefined) {
-            // Key is sha1(email)
-            var key = statement.actor.mbox_sha1sum;
-            if (groupedData[key] == undefined) {
-                participant['mode'] = 'mbox_sha1sum';
-                participant['mbox_sha1sum'] = key;
-                participant['key'] = key;
-                groupedData[key] = participant;
-            }
-        } else {
-            // Key is group, session_id (if group is available), otherwise just session
-            var group = (statement.actor.group != undefined ? statement.actor.group.name : 'global');
-            if (statement.context != undefined &&
-                statement.context.extensions != undefined &&
-                statement.context.extensions['http://xerte.org.uk/sessionId'] != undefined) {
-                var key = statement.context.extensions['http://xerte.org.uk/sessionId'];
-                if (key == undefined) {
-                    key = statement.context.extensions[site_url + "sessionId"];
-                }
-                if (key != undefined) {
-                    key = group + ' ' + key;
-                    if (groupedData[key] == undefined) {
-                        participant['mode'] = 'session';
-                        participant['sessionid'] = key;
-                        participant['key'] = key;
-                        groupedData[key] = participant;
+                // Key is group, session_id (if group is available), otherwise just session
+                var group = (statement.actor.group != undefined ? statement.actor.group.name : 'global');
+                if (statement.context != undefined &&
+                    statement.context.extensions != undefined &&
+                    statement.context.extensions['http://xerte.org.uk/sessionId'] != undefined) {
+                    var key = statement.context.extensions['http://xerte.org.uk/sessionId'];
+                    if (key == undefined) {
+                        key = statement.context.extensions[site_url + "sessionId"];
+                    }
+                    if (key != undefined) {
+                        key = group + ' ' + key;
+                        if (groupedData[key] == undefined) {
+                            participant['mode'] = 'session';
+                            participant['sessionid'] = key;
+                            participant['key'] = key;
+                            groupedData[key] = participant;
+                        }
                     }
                 }
             }
         }
-        if (statement.context != undefined &&
-            statement.context.extensions != undefined &&
-            statement.context.extensions['http://xerte.org.uk/sessionId'] != undefined) {
-            var attemptkey = statement.context.extensions['http://xerte.org.uk/sessionId'];
-            if (groupedData[key]['attempts'][attemptkey] ==undefined)
-            {
-                groupedData[key]['attempts'][attemptkey] = {
-                    key : attemptkey,
-                    parentattempt : null,
-                    subattempts : [],
-                    statementidxs : []
-                };
-                groupedData[key]['attemptkeys'].push(
-                    {
-                        key : attemptkey,
-                    }
-                );
+        if (key != undefined) {
+            if (statement.context != undefined &&
+                statement.context.extensions != undefined &&
+                statement.context.extensions['http://xerte.org.uk/sessionId'] != undefined) {
+                var attemptkey = statement.context.extensions['http://xerte.org.uk/sessionId'];
+                if (groupedData[key]['attempts'][attemptkey] == undefined) {
+                    groupedData[key]['attempts'][attemptkey] = {
+                        key: attemptkey,
+                        parentattempt: null,
+                        subattempts: [],
+                        statementidxs: []
+                    };
+                    groupedData[key]['attemptkeys'].push(
+                        {
+                            key: attemptkey,
+                        }
+                    );
+                }
+                groupedData[key]['statementidxs'].push(i);
+                groupedData[key]['attempts'][attemptkey]['statementidxs'].push(i);
             }
-            groupedData[key]['statementidxs'].push(i);
-            groupedData[key]['attempts'][attemptkey]['statementidxs'].push(i);
         }
     });
     // prepare statistics

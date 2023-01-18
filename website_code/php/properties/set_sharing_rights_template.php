@@ -29,6 +29,7 @@
 
 require_once("../../../config.php");
 include "../template_status.php";
+include "../user_library.php";
 
 $prefix = $xerte_toolkits_site->database_table_prefix;
 if(is_numeric($_POST['id'])&&is_numeric($_POST['template_id'])){

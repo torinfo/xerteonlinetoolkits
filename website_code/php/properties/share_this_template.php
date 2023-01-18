@@ -28,6 +28,7 @@
 
 require_once("../../../config.php");
 require_once("../template_status.php");
+include "../user_library.php";
 _load_language_file("/website_code/php/properties/share_this_template.inc");
 
 

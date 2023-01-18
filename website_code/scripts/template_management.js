@@ -199,8 +199,8 @@ function edit_window(admin, edit, location) {
 
     if (!admin) {
 
-        var tree = $.jstree.reference("#workspace"),
-            ids = tree.get_selected();
+        var jstree = $.jstree.reference("#workspace"),
+            ids = jstree.get_selected();
         if (ids.length == 0)
             return;
 
@@ -249,7 +249,27 @@ function edit_window(admin, edit, location) {
 
 
                         if (location != null) {
-                            var NewEditWindow = window.open(site_url + url_return(edit, node.xot_id), location);
+                            if (location === "_blank") {
+                                var NewEditWindow = window.open(site_url + url_return(edit, node.xot_id), location);
+                            }
+                            else
+                            {
+                                var NewEditWindow = $.featherlight(
+                                    {
+                                        iframe: site_url + url_return(edit, node.xot_id),
+                                        iframeWidth: '95%',
+                                        iframeHeight: '95%',
+                                        beforeClose: function(){
+                                            if (typeof this.$content[0].contentWindow.WIZARD_EDITOR != "undefined") {
+                                                this.$content[0].contentWindow.WIZARD_EDITOR.tree.savepreviewasync(false);
+                                                //tree.savepreviewasync(false);
+                                                // Fake path, only id is used
+                                                edit_window_close(node.xot_id + "-");
+                                            }
+                                        },
+                                        closeOnClick: false,
+                                    });
+                            }
                         }
                         else {
                             if (size.length == 1) {
@@ -279,7 +299,8 @@ function edit_window(admin, edit, location) {
                         NewEditWindow.ajax_handle = xmlHttp;
                         self.last_reference = self;
 
-                        NewEditWindow.focus();
+                        if (!NewEditWindow.iframe)
+                            NewEditWindow.focus();
 
                         edit_window_open.push({
                             id: node.id,
@@ -393,7 +414,7 @@ function file_need_save(response) {
         if (response) {
             $.ajax({
                 type: "POST",
-                url: "wwebsite_code/php/versioncontrol/update_file.php",
+                url: "website_code/php/versioncontrol/update_file.php",
                 data: {
                     file_path: result[1],
                     template_id: result[2]
@@ -775,7 +796,7 @@ function remove_template(template_id) {
         type: "POST",
         url: "website_code/php/templates/remove_template.php",
         data: {
-            template_id: template_id.substr(template_id.indexOf("_") + 1, template_id.length)
+            template_id: template_id
         }
     })
     .done(function(response){
@@ -800,7 +821,7 @@ function recycle_bin_remove_all_template(template_id) {
         type: "POST",
         url: "website_code/php/templates/remove_template.php",
         data: {
-            template_id: template_id.substr(template_id.indexOf("_") + 1, template_id.length)
+            template_id: template_id
         }
     })
     .done(function(response){
@@ -826,7 +847,7 @@ function delete_template(template_id) {
         type: "POST",
         url: "website_code/php/templates/delete_template.php",
         data: {
-            template_id: template_id.substr(template_id.indexOf("_") + 1, template_id.length)
+            template_id: template_id
         }
     })
     .done(function(response){

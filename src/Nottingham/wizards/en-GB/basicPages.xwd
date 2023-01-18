@@ -1,6 +1,7 @@
 <commonNodes>
 	<narrate type="group" label="Narration" optional="true" tooltip="Add an audio player to the bottom of the page">
 		<narration label="Audio File" type="media" defaultValue="Select an Audio File" optional="true"/>
+		<narrationTranscript label="Transcript" type="textArea" height="100" defaultValue="" optional="true"/>    
 		<playNarration label="Auto-Play" type="CheckBox" defaultValue="false" optional="true" tooltip="Automatically play the audio when the page is viewed. Note: some browsers prevent media from auto-playing"/>
 		<narrationNavigate label="Navigate at End" type="CheckBox" defaultValue="false" optional="true" tooltip="Automatically move to the next page when the audio is played to the end"/>
 	</narrate>
@@ -11,7 +12,7 @@
 		<home label="Home / Table of Contents Button" type="CheckBox" defaultValue="true" optional="true"/>
 		<back label="Back / Previous Button" type="CheckBox" defaultValue="true" optional="true"/>
 		<next label="Next Button" type="CheckBox" defaultValue="true" optional="true"/>
-		<save label="Save session Button" type="CheckBox" defaultValue="true" optional="true"/>
+		<save label="Save Session Button" type="CheckBox" defaultValue="true" optional="true"/>
 	</navBtns>
 	
 	<hideShow type="group" label="Hide/Show Page" optional="true" tooltip="Hide the page completely or hide/show the page between specified dates" info="Hide this page from view at all times or use the 'From' &amp; 'Until' fields to specify when it should be available">
@@ -38,7 +39,22 @@
 		<passwordSubmit label="Button Label" type="TextInput" optional="true" defaultValue="Submit" tooltip="The label on the submit button"/>
 	</passwordGroup>
 	
-	<customLinkGroup type="group" label="Page ID" optional="true" tooltip="Create a customised URL to this page" info="Create a link directly to this page by adding #yourPageID to the end of the project URL&lt;br/&gt;Avoid using spaces and the words 'page' and 'section' in page IDs">
+	<introGroup type="group" label="Introduction" optional="true" tooltip="Add a Page Introduction button to the footer tools, which opens information in a lightbox when clicked. This introduction can be set to open automatically when the page first loads.">
+		<introType type="ComboBox" label="Content Type" defaultValue="text" options="Text,Image,Video,URL,File" data="text,image,video,url,file" conditionTrigger="true" optional="true" tooltip="The type of content used as an introduction for this page"/>
+		<pageIntro label="Text" type="TextArea" height="100" defaultValue="" condition="introType=='text'||introType==undefined" optional="true"/>
+		<introImg label="Image" type="media" height="100" defaultValue="" condition="introType=='image'" optional="true"/>
+		<introVideo label="Video" type="media" height="100" defaultValue="" condition="introType=='video'" optional="true"/>
+		<introTip label="Description" type="TextInput" defaultValue="Enter a Description for Accessibility" condition="introType=='image'||introType=='video'" optional="true"/>
+		<introURL label="URL" type="TextInput" defaultValue="" condition="introType=='url'" optional="true"/>
+		<introFile label="File" type="media" height="100" defaultValue="" condition="introType=='file'" optional="true"/>
+		<introTitle type="CheckBox" label="Include Title" defaultValue="true" condition="introType=='text'||introType==undefined||introType=='image'" optional="true" tooltip="Include the page title above the introduction"/>
+		<introBtn type="CheckBox" label="Start Button" defaultValue="true" conditionTrigger="true" condition="introType=='text'||introType==undefined||introType=='image'" optional="true" tooltip="Include a 'start' button below the introduction that closes the lightbox when clicked"/>
+		<introBtnTxt label="Start Button Text" type="TextInput" defaultValue="Start" condition="introBtn=='true'&amp;&amp;(introType=='text'||introType==undefined||introType=='image')" wysiwyg="true" optional="true"/>
+		<introWidth label="Lightbox Width" options="Auto,Small,Medium,Large,Full" type="ComboBox" data="Auto,Small,Medium,Large,Full" defaultValue="Auto" condition="introType=='text'||introType==undefined" optional="true"/>
+		<introShow type="ComboBox" label="Auto-open" defaultValue="first" options="Every time this page is viewed,The first time this page is viewed,Never" data="always,first,never" optional="true" tooltip="Specify whether the introduction will automatically open when the page is viewed"/>
+	</introGroup>
+	
+	<customLinkGroup type="group" label="Page ID" optional="true" tooltip="Create a customised URL to this page" info="Create a link directly to this page by adding #yourPageID to the end of the project URL&lt;br/&gt;Avoid using spaces, special characters and the words 'page' and 'section' in page IDs">
 		<pageID label="Page ID" type="TextInput" optional="true"/>
 	</customLinkGroup>
 		
@@ -68,6 +84,7 @@
 		<showTimer label="Show Timer" optional="true" type="CheckBox" defaultValue="true"/>
 		<timer label="Time Limit (seconds)" defaultValue="60" type="NumericStepper" min="0" step="1" width="100" optional="true" />
 		<timerLabel label="Time's Up Text" type="TextInput" optional="true" defaultValue="Time up"/>
+		<timerText label="Timer Label" type="TextInput" optional="true" defaultValue="Time remaining"/>
 	</pageTimer>
 	
 	<notes label="Notes" type="TextArea" height="150" defaultValue="" optional="true" tooltip="Your notes for the page. These are not shown in the live project."/>
@@ -81,5 +98,10 @@
 		<lightbox type="CheckBox" label="Lightbox Images" defaultValue="true" optional="true"/>
 		<lightboxCaption type="ComboBox" label="Caption" defaultValue="false" optional="true" options="None,Below Image,Above Image" data="false,below,above" tooltip="Add a caption to lightbox images on this page. The caption text is taken from the 'Description' or 'Alt Text' fields."/>
 	</lightboxGroup>
+
+	<pageHeaderGroup type="group" label="Header Colours" optional="true" tooltip="Change the header background colour and/or the colour of the titles for this page.">
+    <headerBgColor type="ColourPicker" label="Header Background Colour" defaultValue="" optional="true" tooltip="This will change the header background colour for this page only. If necessary remember to change the colour of the titles too in order to maintain acceptable contrast for accessibility."/>
+    <headerTextColor type="ColourPicker" label="Header Titles Colour" defaultValue="" optional="true" tooltip="Note this will not overide a colour applied to the titles directly."/>
+    </pageHeaderGroup>
 	
 </commonNodes>

@@ -143,35 +143,37 @@ var EDITOR = (function ($, parent) {
                 menu_data.menu[i].submenu.sort(compare);
             }
 
-            $($(this).children()).each(function() {
-                //console.log("   sub node: " + $(this)[0].nodeName);
-                var node_params = {};
-                for (var j=0, a=$(this)[0].attributes; j<a.length; j++) {
-                    node_params[a[j].name] = a[j].value;
-                }
-                all_options.push({name: $(this)[0].nodeName, value: node_params});
-				
-				// include the children of property groups
-				if (node_params.type == "group" && $(this).children().length > 0) {
-					for (var k=0; k<$(this).children().length; k++) {
-						var child_node_params = {};
-						for (var j=0, a=$(this).children()[k].attributes; j<a.length; j++) {
-							child_node_params[a[j].name] = a[j].value;
-						}
-						child_node_params.group = $(this)[0].nodeName;
-						
-						if (node_params.optional == "true") {
-							child_node_params.optional = node_params.optional;
-						}
-						
-						all_options.push({name: $(this).children()[k].nodeName, value: child_node_params});
+			function setUpOptions (node, isGroup, groupName) {
+				$($(node).children()).each(function() {
+					//console.log("   sub node: " + $(this)[0].nodeName);
+					var node_params = {};
+					for (var j=0, a=$(this)[0].attributes; j<a.length; j++) {
+						node_params[a[j].name] = a[j].value;
 					}
-				}
-            });
+
+					if (isGroup == true) {
+						node_params.group = groupName;
+
+						if (parent.optional == "true") {
+							node_params.optional = node_params.optional;
+						}
+					}
+					all_options.push({name: $(this)[0].nodeName, value: node_params});
+
+					// include the children of property groups
+					if (node_params.type == "group" && $(this).children().length > 0) {
+						setUpOptions(this, true, $(this)[0].nodeName);
+					//	setUpOptions(this, true, (groupName == undefined ? '' : groupName + '.') + $(this)[0].nodeName);
+					}
+				});
+
+			}
+
+			setUpOptions(this);
 
             // search attribute name and put that as the first one
             $(all_options).each(function(key, option) {
-                if (option.name == 'name' && option.value.wysiwyg != undefined && option.value.wysiwyg == "true")
+                if (option.name == 'name')
                 {
                     name_option.push(option);
                 }
@@ -202,7 +204,7 @@ var EDITOR = (function ($, parent) {
                 {
                     lang_options.push(option);
                 }
-                else if (option.name != 'name' || option.value.wysiwyg == undefined || option.value.wysiwyg != "true")
+                else if (option.name != 'name')
                 {
                     normal_options.push(option);
                 }
@@ -224,7 +226,7 @@ var EDITOR = (function ($, parent) {
         });
         //wizard_data.menus = String(wizard_xml[0].attributes["menus"].value).split(',');
 
-        // Now add whether apge should be visible according to simple_mode and templates_sub_pages
+        // Now add whether page should be visible according to simple_mode and templates_sub_pages
         if (simple_mode) {
             $(menu_data.menu).each(function (i, menu) {
                 var enabled = false;
@@ -251,8 +253,6 @@ var EDITOR = (function ($, parent) {
 
 
     process_language_file = function (xml) {
-       console.log(languagecodevariable + " language file is loaded...");
-
         // Parse the file
         var x2js = new X2JS({
             // XML attributes. Default is "_"
@@ -263,7 +263,6 @@ var EDITOR = (function ($, parent) {
     },
 
     process_language_fallback = function (xml) {
-        console.log("en_GB fall-back language file is loaded...");
         // Parse the file
         var x2js = new X2JS({
             // XML attributes. Default is "_"
@@ -285,14 +284,15 @@ var EDITOR = (function ($, parent) {
             // set language_def
             language = selected_language;
         }
-        console.log("language files are merged:");
-        console.log(language);
+        //console.log("language files are merged:");
+        //console.log(language);
 
         waitonlanguage();
     },
 
     process_data_xwd = function (xml) {
-        console.log("data.xwd is loaded...");
+        //console.log("data.xwd is loaded...");
+
         var wizard_xml = $($.parseXML(xml)).find("wizard");
 
         parse_wizard_xml(wizard_xml);
@@ -300,7 +300,7 @@ var EDITOR = (function ($, parent) {
     },
 
     process_config_file = function (xml) {
-        console.log("config file is loaded...");
+        //console.log("config file is loaded...");
 
         // Used by the language selection box, ref. EDITOR.displayDataType (toolbox.js)
         installed_languages = [];
@@ -417,7 +417,7 @@ var EDITOR = (function ($, parent) {
                 type: "GET",
                 url: _this.u,
                 dataType: "text",
-                success: function (data) { //console.log("**** " + _this.u); console.log(data);
+                success: function (data) {
                     _this.loaded = true;
                     _this.c(data);
                 }

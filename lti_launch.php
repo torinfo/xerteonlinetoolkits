@@ -34,6 +34,10 @@ global $tsugi_enabled;
 global $xapi_enabled;
 global $lti_enabled;
 global $xerte_toolkits_site;
+global $x_embed;
+global $x_embed_activated;
+
+_debug("LTI launch request: " . print_r($_POST, true));
 
 if (isset($_GET["template_id"])) {
     $id = $_GET["template_id"];
@@ -115,8 +119,39 @@ if(is_numeric($id) || $id == null)
     {
         $xerte_toolkits_site->module = $module;
     }
-    if (isset($_REQUEST['module'])) {
-        $xerte_toolkits_site->course = $_REQUEST['module'];
+    $lticontextid = $LAUNCH->ltiParameter('context_id');
+    if ($lticontextid === false)
+    {
+        $lticontextid = $LAUNCH->ltiCustomGet('context_id');
+    }
+    if ($lticontextid===false && isset($_REQUEST['context_id']))
+    {
+        $lticontextid = $_REQUEST['context_id'];
+    }
+    if ($lticontextid === false)
+    {
+        $lticontextid = $LAUNCH->context->id;
+    }
+    if ($lticontextid !== false)
+    {
+        $xerte_toolkits_site->lti_context_id = $lticontextid;
+    }
+    $lticontextname = $LAUNCH->ltiParameter('context_title');
+    if ($lticontextname === false)
+    {
+        $lticontextname = $LAUNCH->ltiCustomGet('context_title');
+    }
+    if ($lticontextname===false && isset($_REQUEST['context_title']))
+    {
+        $lticontextname = $_REQUEST['context_title'];
+    }
+    if ($lticontextname === false)
+    {
+        $lticontextname = $LAUNCH->context->title;
+    }
+    if ($lticontextname !== false)
+    {
+        $xerte_toolkits_site->lti_context_name = $lticontextname;
     }
 
     // Get LRS endpoint and see if xAPI is enabled
@@ -148,7 +183,16 @@ if(is_numeric($id) || $id == null)
         $_SESSION['XAPI_PROXY'] = $lrs;
     }
 
+    if ($_GET['x_embed'] === 'true') {
+        $x_embed = true;
+        if ($_GET['activated'] !== 'true') {
+            $lti_enabled = false;
+            $xapi_enabled = false;
+            $x_embed_activated = false;
+        } else {
+            $x_embed_activated = true;
+        }
+    }
     require("play.php");
-
 }
 ?>

@@ -5,9 +5,10 @@ require_once("../../config.php");
 require( "../../" . $xerte_toolkits_site->php_library_path . "screen_size_library.php" );
 require( "../../" . $xerte_toolkits_site->php_library_path . "template_status.php" );
 require( "../../" . $xerte_toolkits_site->php_library_path . "display_library.php" );
-require( "../../" . $xerte_toolkits_site->php_library_path . "user_library.php" );
 
-function merge_pages_to_project($source_project_id, $source_pages, $target_project, $target_page_location, $merge_glossary)
+require( "../../" . $xerte_toolkits_site->php_library_path . "xmlInspector.php" );
+
+function merge_pages_to_project($source_project_id, $source_pages, $target_project, $target_page_location, $merge_glossary, $overwrite_glossary)
 {
 	global $xerte_toolkits_site;
 	
@@ -31,14 +32,16 @@ function merge_pages_to_project($source_project_id, $source_pages, $target_proje
 	
 	$xmlTarget = new DOMDocument();
 	$xmlTarget->load($target_file);
-	$xmlSource = new DOMDocument();
-	$xmlSource->load($source_file);
+    $xmlSource = new DOMDocument();
+    $xmlSource->load($source_file);
+	$xmlSourceInspector = new XerteXMLInspector();
+	$xmlSourceInspector->loadTemplateXML($source_file);
+
 	$nodes = array();
 	$i = 0;
 
-	$filemapping = getFileMapping($source_folder . "/media/", $target_folder . "/media/");
+	$filemapping = getFileMapping($source_folder . "/media", $target_folder . "/media");
     $filesToCopy = array();
-
 	if($merge_glossary === "true")
 	{
 		$str_glossary = $xmlSource->documentElement->getAttribute("glossary");
@@ -49,11 +52,27 @@ function merge_pages_to_project($source_project_id, $source_pages, $target_proje
 		{
 			$orig_glossary = $xmlTarget->documentElement->getAttribute("glossary");
 		}
-		if($orig_glossary != "")
-		{
-			$orig_glossary .= "||";
-		}
-		$orig_glossary .= $str_glossary;
+        if ($overwrite_glossary === "false") {
+            if ($orig_glossary != "") {
+                $orig_glossary .= "||";
+            }
+            $orig_glossary .= $str_glossary;
+        } else {
+            if ($orig_glossary === "") {
+                $orig_glossary .= $str_glossary;
+            } else {
+                $orig_gloss_array = glossaryToArray($orig_glossary);
+                $str_gloss_array = glossaryToArray($str_glossary);
+                $doubles = array_uintersect($orig_gloss_array, $str_gloss_array, 'compareTerms');
+                foreach ($doubles as $key => $var){
+                    unset($orig_gloss_array[$key]);
+                }
+                $orig_glossary = arrayToGlossary($orig_gloss_array);
+                $orig_glossary .= "||";
+                $orig_glossary .= $str_glossary;
+            }
+
+        }
 		$xmlTarget->documentElement->setAttribute("glossary", $orig_glossary);
 	}
 	$bannedLinkIDs = array();
@@ -112,7 +131,7 @@ function merge_pages_to_project($source_project_id, $source_pages, $target_proje
 
         // Convert to text, do filemapping, go back to xml
         $nodeXmlStr = $xmlSource->saveXML($node);
-        $nodeXmlStr = doFileMapping($nodeXmlStr, $filemapping, $filesToCopy);
+        $nodeXmlStr = doFileMapping($nodeXmlStr, $filemapping, $filesToCopy, $page, $xmlSourceInspector);
         $fragment = $xmlTarget->createDocumentFragment();
         $fragment->appendXml($nodeXmlStr);
 
@@ -133,11 +152,32 @@ function merge_pages_to_project($source_project_id, $source_pages, $target_proje
 
 
 }
+//converts a glossary to an array.
+function glossaryToArray($glossary){
+    $glosArray = array();
+    $rows = explode('||', $glossary);
+    foreach ($rows as $key => $row){
+        $glosArray[$key] = explode('|', $row);
+    }
+    return $glosArray;
+}
+//returns the indexes of all terms in source that are also in target
+function compareTerms($source, $target){
+    return strcmp($source[0], $target[0]);
+}
+//converts an array to a glossary
+function arrayToGlossary($inputArray) {
+    $glossary = "";
+    foreach ($inputArray as $row) {
+        $glossary .= $row[0] . "|" . $row[1] . "||";
+    }
+    return substr($glossary, 0, -2);
+}
 
 function getFileMapping($source_media_folder, $target_media_folder)
 {
-    $source_files = scandir($source_media_folder);
-    $target_files = scandir($target_media_folder);
+    $source_files = recursive_scanDir($source_media_folder);
+    $target_files = recursive_scanDir($target_media_folder);
 
     $mappings = array();
     foreach($source_files as $file)
@@ -146,12 +186,18 @@ function getFileMapping($source_media_folder, $target_media_folder)
             if (in_array($file, $target_files)) {
                 $new_file = $file;
                 while (in_array($new_file, $target_files) || in_array($new_file, $mappings) || isset($files[$new_file])) {
-                    $new_file_parts = explode("-", $new_file);
+
+                    $new_filepath_parts = explode('/', $new_file);
+                    $new_file_parts = explode("-", end($new_filepath_parts));
+
+                    array_pop($new_filepath_parts);
+                    $temp_filepath = implode('/', $new_filepath_parts);
+
                     if (is_numeric($new_file_parts[0])) {
                         $new_file_parts[0]++;
-                        $new_file = implode("-", $new_file_parts);
+                        $new_file = ($temp_filepath == "") ? implode("-", $new_file_parts) :  $temp_filepath . "/" . implode("-", $new_file_parts);
                     } else {
-                        $new_file = "1-" . $new_file;
+                        $new_file = ($temp_filepath == "") ? "1-" . implode("-", $new_file_parts) : $temp_filepath . "/" . "1-" . implode("-", $new_file_parts);
                     }
                 }
                 $mappings[$file] = $new_file;
@@ -165,11 +211,33 @@ function getFileMapping($source_media_folder, $target_media_folder)
     return $mappings;
 }
 
-function doFileMapping($str, $filemapping, &$fileToCopy)
+function recursive_scanDir($dir){
+    $result = [];
+    foreach(scandir($dir) as $filename) {
+        if ($filename[0] === '.') continue;
+        $filePath = $dir . '/' . $filename;
+        if (is_dir($filePath)) {
+            foreach (recursive_scanDir($filePath) as $childFilename) {
+                $result[] = $filename . "/" . $childFilename;
+            }
+        } else {
+            $result[] = $filename;
+        }
+    }
+    return $result;
+}
+
+function doFileMapping($str, $filemapping, &$fileToCopy, $page=null, $xmlSourceInspector=null)
 {
     foreach ($filemapping as $file => $mapping) {
-        $pos = strpos($str, 'media/' . $file);
-        if ($pos !== false)
+        if ($page !== null) {
+            $found = $xmlSourceInspector->fileIsUsed($file, $page);
+        }
+        else {
+            $pos = strpos($str, 'media/' . $file);
+            $found = $pos !== false;
+        }
+        if ($found)
         {
             array_push($fileToCopy, $file);
             $str = str_replace('media/' . $file, 'media/' . $mapping, $str);
@@ -183,7 +251,17 @@ function copyMediaFiles($source_media_folder, $target_media_folder, $filemapping
 {
     foreach($files as $file)
     {
-        copy($source_media_folder . $file, $target_media_folder . $filemapping[$file]);
+        copy_and_make_dir($source_media_folder . $file, $target_media_folder . $filemapping[$file]);
+    }
+}
+
+function copy_and_make_dir($s1, $s2) {
+    $path = pathinfo($s2);
+    if (!file_exists($path['dirname'])) {
+        mkdir($path['dirname'], 0777, true);
+    }
+    if (!copy($s1, $s2)) {
+        echo "copy failed \n";
     }
 }
 
@@ -206,9 +284,7 @@ function addNode($index, $node, $root)
 		$count = count($root->childNodes);
 		if($count == 0)
 		{
-			echo "First";
 			$root->appendChild($node);
-			echo "Last";
 		}
 		if($index == 0)
 		{
@@ -233,5 +309,6 @@ if($_REQUEST["source_pages"] == "")
 $target_project = $_REQUEST["target_project"];
 $target_insert_page_position = $_REQUEST["target_page_position"];
 $merge_glossary= $_REQUEST["merge_glossary"];
-merge_pages_to_project($source_project, $source_pages, $target_project, $target_insert_page_position, $merge_glossary);
+$overwrite_glossary = $_REQUEST["overwrite_glossary"];
+merge_pages_to_project($source_project, $source_pages, $target_project, $target_insert_page_position, $merge_glossary, $overwrite_glossary);
 

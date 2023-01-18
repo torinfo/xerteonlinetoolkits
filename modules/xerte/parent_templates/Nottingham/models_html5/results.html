@@ -57,6 +57,7 @@
       filesToLoad = [
         'NotoSerif-Bold.js',
         'NotoSerif-Normal.js',
+        'FileSaver.min.js',
         'jspdf.min.js',
         'jspdf.plugin.autotable.min.js'
       ],
@@ -196,7 +197,7 @@
       $("#startTime").html(xtresults.start);
       var detailstables = 0;
       var firstnormalrow = true;
-      var detailstable = $("<table class='details'>");
+      var detailstable = $("<table class='details header shaded'>");
       var scoretxt;
 
 
@@ -232,8 +233,9 @@
         if (xtresults.mode == 'normal-results') {
           $("#specific").show();
           $("#specificResultsTxt").hide();
+		  var $hrow = $();
           if (firstnormalrow) {
-            $("#questionScores").append("<th>" + nameTxt + "</th><th>" + scoreTxt + "</th><th>" + durationTxt + "</th><th>" + weightingTxt + "</th><th>" + completedTxt + "</th>");
+            $("#questionScores").append("<thead><tr><th>" + nameTxt + "</th><th>" + scoreTxt + "</th><th>" + durationTxt + "</th><th>" + weightingTxt + "</th><th>" + completedTxt + "</th></tr></thead>");
             normalcolumns = [x_GetTrackingTextFromHTML(nameTxt, ""), scoreTxt, durationTxt, weightingTxt, completedTxt];
             firstnormalrow = false;
           }
@@ -247,7 +249,7 @@
           $("#specificResultsTxt").show();
           if (firstnormalrow) {
             normalcolumns = [x_GetTrackingTextFromHTML(nameTxt, ""), scoreTxt, durationTxt, weightingTxt, completedTxt, detailsTxt];
-            $("#questionScores").append("<th>" + nameTxt + "</th><th>" + scoreTxt + "</th><th>" + durationTxt + "</th><th>" + weightingTxt + "</th><th>" + completedTxt + "</th><th>" + detailsTxt + "</th>");
+            $("#questionScores").append("<thead><tr><th>" + nameTxt + "</th><th>" + scoreTxt + "</th><th>" + durationTxt + "</th><th>" + weightingTxt + "</th><th>" + completedTxt + "</th><th>" + detailsTxt + "</th></tr></thead>");
             firstnormalrow = false;
           }
           $("#questionScores").append("<tr " + (altnormalrow ? "class='alt'" : "") + "><td>" + x.title + "</td><td class='td-center'>" + scoretxt + "</td><td class='td-center'>" + x.duration + "s</td><td class='td-center'>" + x.weighting +
@@ -257,7 +259,7 @@
           altnormalrow = !altnormalrow;
           altfullrow = false;
           if (x.subinteractions.length > 0 && x.type != 'page') {
-            detailstable.append("<tr><th class='correct th'></th><th class='question'>" + x.title + "</th><th class='answer'>" + yourAnswerTxt + "</th><th class='correctanswer'>" + correctAnswerTxt + "</th></tr>");
+            detailstable.append("<tr class='header'><th class='correct th'></th><th class='question'>" + x.title + "</th><th class='answer'>" + yourAnswerTxt + "</th><th class='correctanswer'>" + correctAnswerTxt + "</th></tr>");
             var detailstablecolumns = ["", x_GetTrackingTextFromHTML(x.title, ""), yourAnswerTxt, correctAnswerTxt];
             var detailstablerows = [];
             altfullrow = false;
@@ -279,7 +281,7 @@
               altfullrow = !altfullrow;
             });
             $("#fullResults").append(detailstable);
-            detailstable = $("<table class='details'>");
+            detailstable = $("<table class='details header shaded'>");
             detailstablescolumns.push(detailstablecolumns);
             detailstablesrows.push(detailstablerows);
           }
@@ -382,7 +384,7 @@
         pdf.addFont('NotoSerif_Bold.ttf', 'NotoSerif', 'bold');
       }
 
-      var loTitle = x_params.name;
+      var loTitle = $('<div>').html(x_params.name).text();
       var cursor = pdfPageMargins.top;
 
       pdf.setFont('NotoSerif', 'normal');
@@ -411,7 +413,7 @@
             font: 'NotoSerif',
             fontStyle: 'normal',
             overflow: 'linebreak',
-            cellWidth: 'wrap'
+            cellWidth: 'auto'
           }
         });
         cursor = pdf.autoTable.previous.finalY + pdfPostTableSpacing;
@@ -432,7 +434,7 @@
               font: 'NotoSerif',
               fontStyle: 'normal',
               overflow: 'linebreak',
-              cellWidth: 'wrap',
+              cellWidth: 'auto',
               halign: 'center'
             },
             headStyles: {
@@ -480,7 +482,7 @@
               font: 'NotoSerif',
               fontStyle: 'normal',
               overflow: 'linebreak',
-              cellWidth: 'wrap',
+              cellWidth: 'auto',
               halign: 'center'
             },
             headStyles: {
@@ -530,16 +532,17 @@
                 font: 'NotoSerif',
                 fontStyle: 'normal',
                 overflow: 'linebreak',
-                cellWidth: 'wrap',
+                cellWidth: 'auto',
               },
               headStyles: {
                 fillColor: [128, 128, 128],
                 fontStyle: 'bold'
               },
               columnStyles: {
-                0: {
-                  cellWidth: 15
-                },
+                0: {cellWidth: 14},
+                1: {cellWidth: 68},
+                2: {cellWidth: 54},
+                3: {cellWidth: 54},
               },
               didParseCell: function(chd) {
                 if (chd.section === 'body' && chd.column.dataKey === 0) {
@@ -559,8 +562,18 @@
           }
         }
       }
-      var name = x_params.name + "_" + XTResults().start + ".pdf";
-      pdf.save(name.replace(/ /g, "_"));
+      var name = $('<div>').html(x_params.name + "_" + XTResults().start + ".pdf").text();
+
+      // Workaround for Firefox/98.0 default opening issue
+      let firefox = navigator.userAgent.indexOf("Firefox");
+      if (parseInt(navigator.userAgent.substr(firefox + 8, 4)) >= 98) {
+          console.warn('Firefox 98+ detected - using alternative PDF save way...');
+          let blob = pdf.output('blob');
+          blob = blob.slice(0, blob.size, 'application/octet-stream');
+          saveAs(blob, name.replace(/ /g, "_"));
+      }
+      else
+        pdf.save(name.replace(/ /g, "_"));
     }
   };
   results.init();
@@ -602,7 +615,7 @@
     <div id="specific">
       <h3 id="interactivityResultsTxt"></h3>
       <h3 id="globalResultsTxt"></h3>
-      <table id="questionScores" rules="rows">
+      <table id="questionScores" rules="rows" class="header shaded">
       </table>
       <br />
       <h3 id="specificResultsTxt"></h3>

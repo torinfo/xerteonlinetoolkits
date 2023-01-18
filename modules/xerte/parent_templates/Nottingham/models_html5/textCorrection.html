@@ -113,7 +113,7 @@
                         if (panelWidth == "Small") {
                             $splitScreen.addClass("medium");
                         } else if (panelWidth == "Large") {
-                            $splitScreen.addClass("large");
+                            $splitScreen.addClass("xlarge");
                         } else {
                             $splitScreen.addClass("large");
                         }
@@ -132,7 +132,7 @@
 						convertedAnswer = '<p>' + answer.replace(/(?:\r\n|\r|\n)/g, '<br>') + '</p>';
 					
 					$answer
-						.append("<h3>" + correctLabel + "</h3>")
+						.append("<h3 class='fbLabel'>" + correctLabel + "</h3>")
 						.append(convertedAnswer)
 						.hide();
 				} else {
@@ -154,20 +154,20 @@
                 }
 
                 $("#FurtherClarification")
-					.append("<h3>" + x_currentPageXML.getAttribute("FurtherClarificationLabel") + "</h3>")
+					.append("<h3 class='fbLabel'>" + x_currentPageXML.getAttribute("FurtherClarificationLabel") + "</h3>")
                     .append(x_currentPageXML.getAttribute("FurtherClarification"))
 					.hide();
 
-				var correctIcon = '<span class="fa fa-fw fa-x-tick"></span>';
-                var incorrectIcon = '<span class="fa fa-fw fa-x-cross"></span>';
+				var correctIcon = '<span class="markIcon fa fa-fw fa-x-tick"></span>';
+                var incorrectIcon = '<span class="markIcon fa fa-fw fa-x-cross"></span>';
                 var incorrect = '<p>' + incorrectIcon + x_currentPageXML.getAttribute("textWrong") + '</p>';
-                var incompleet = '<p>' + incorrectIcon + x_currentPageXML.getAttribute("textIncomplete") + '</p>';
+                var incompleet = '<p>' + x_currentPageXML.getAttribute("textIncomplete") + '</p>';
                 var correct = '<p>' + correctIcon + x_currentPageXML.getAttribute("textRight") + '</p>';
                 var checkButtonTxt = x_currentPageXML.getAttribute("checkBtn");
                 var attemptLabel = x_currentPageXML.getAttribute("attemptLabel");
 				
                 if( x_currentPageXML.getAttribute("attemptLabel") == null){
-                    attemptLabel = "Attempt";
+                    attemptLabel = "Attempts remaining";
                 }
 				
 				// no. of tries allowed
@@ -199,8 +199,12 @@
 						if ($attempts.length > 0) {
 							$attempts.html('<p>' + attemptLabel + ": " + $pageContents.data('triesLeft') + '</p>');
 						}
-						
-                        XTEnterInteraction(x_currentPage, 0, "text", x_GetTrackingTextFromHTML(x_currentPageXML.getAttribute("introduction"), ""), "",$pageContents.data('answer'), FurtherClarification);
+                        var label=x_GetTrackingTextFromHTML(x_currentPageXML.getAttribute("introduction"), "");
+                        if (x_currentPageXML.getAttribute("trackinglabel") != null && x_currentPageXML.getAttribute("trackinglabel") != "")
+                        {
+                            label = x_currentPageXML.getAttribute("trackinglabel");
+                        }
+                        XTEnterInteraction(x_currentPage, 0, "text", label, "",$pageContents.data('answer'), FurtherClarification);
 						
 						var $correctOrNot = $("#correctOrNot");
                         $correctOrNot.html("");

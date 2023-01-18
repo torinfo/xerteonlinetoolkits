@@ -1,5 +1,29 @@
-/* change this file to rebrand your version of Xerte Online Toolkits */
-@import url('https://fonts.googleapis.com/css?family=Permanent+Marker|Schoolbell');
+/* schoolbell-regular - latin */
+@font-face {
+	font-family: 'Schoolbell';
+	font-style: normal;
+	font-weight: 400;
+	src: url('fonts/schoolbell-v18-latin-regular.eot'); /* IE9 Compat Modes */
+	src: local(''),
+	url('fonts/schoolbell-v18-latin-regular.eot?#iefix') format('embedded-opentype'), /* IE6-IE8 */
+	url('fonts/schoolbell-v18-latin-regular.woff2') format('woff2'), /* Super Modern Browsers */
+	url('fonts/schoolbell-v18-latin-regular.woff') format('woff'), /* Modern Browsers */
+	url('fonts/schoolbell-v18-latin-regular.ttf') format('truetype'), /* Safari, Android, iOS */
+	url('fonts/schoolbell-v18-latin-regular.svg#Schoolbell') format('svg'); /* Legacy iOS */
+}
+/* permanent-marker-regular - latin */
+@font-face {
+	font-family: 'Permanent Marker';
+	font-style: normal;
+	font-weight: 400;
+	src: url('fonts/permanent-marker-v16-latin-regular.eot'); /* IE9 Compat Modes */
+	src: local(''),
+	url('fonts/permanent-marker-v16-latin-regular.eot?#iefix') format('embedded-opentype'), /* IE6-IE8 */
+	url('fonts/permanent-marker-v16-latin-regular.woff2') format('woff2'), /* Super Modern Browsers */
+	url('fonts/permanent-marker-v16-latin-regular.woff') format('woff'), /* Modern Browsers */
+	url('fonts/permanent-marker-v16-latin-regular.ttf') format('truetype'), /* Safari, Android, iOS */
+	url('fonts/permanent-marker-v16-latin-regular.svg#PermanentMarker') format('svg'); /* Legacy iOS */
+}
 @import url("editorstyles.css");
 
 body {
@@ -163,9 +187,45 @@ h3 {
 .ui-button.ui-state-focus .ui-icon.x_saveSession {	background-position: -42px 0px; }
 .ui-button.ui-state-active .ui-icon.x_saveSession {	background-position: -84px 0px; }
 
+.ui-button .ui-icon.x_projectIntro { background-image: url("project_intro.svg");background-position: 0px 0px;}
+.ui-button.ui-state-hover .ui-icon.x_projectIntro {	background-position: -42px 0px; }
+.ui-button.ui-state-focus .ui-icon.x_projectIntro {	background-position: -42px 0px; }
+.ui-button.ui-state-active .ui-icon.x_projectIntro {	background-position: -84px 0px; }
+
+#x_footerBlock button.customIconBtn {
+	color: #D3D7CF;
+}
+
+#x_footerBlock button.customIconBtn:not(.ui-state-disabled):hover, #x_footerBlock button.customIconBtn:not(.ui-state-disabled):focus {
+	color: #000000;
+}
+
 .ui-dialog .ui-widget-header {
 border: 1px solid #164883;
 background: #ffffff;
 color: #000000;
 font-weight: bold;
+}
+
+
+#x_headerBlock #x_pageIntroBtn {
+	color: #D3D7CF;
+}
+
+#x_headerBlock #x_pageIntroBtn.pageIntroBg {
+	color: white;
+	background-color: #D3D7CF;
+}
+
+#x_headerBlock #x_pageIntroBtn.ui-button.ui-state-hover, #x_headerBlock #x_pageIntroBtn.ui-button.ui-state-focus, #x_headerBlock #x_pageIntroBtn.ui-state-active {
+	color: black;
+}
+
+#x_headerBlock #x_pageIntroBtn.pageIntroBg.ui-button.ui-state-hover, #x_headerBlock #x_pageIntroBtn.pageIntroBg.ui-button.ui-state-focus, #x_headerBlock #x_pageIntroBtn.pageIntroBg.ui-state-active {
+	color: white;
+	background-color: black;
+}
+
+#x_introStartBtn {
+	background-color: white;
 }
