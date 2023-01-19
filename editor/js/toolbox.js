@@ -38,26 +38,49 @@ var EDITOR = (function ($, parent) {
 
     create_insert_page_menu = function (advanced_toggle) {
         var getMenuItem = function (itemData) {
+
             var data = {
                 href: '#',
                 html: itemData.name,
                 hint: itemData.hint,
                 class: "menu_item_icon_2",
+                wiki: itemData.example,
                 click: add_page
             };
 
+            var wiki = {
+                href: data.wiki,
+                html: data.html,
+                class: "Icon_Text",
+                target: "_blank"
+            };
 
+            var hint = {
+                html: data.hint
+            }
 
             if (itemData.icon != undefined) {
                 data.icon = itemData.icon;
-				data.html = '<img class="icon" src="' + moduleurlvariable + 'icons/' + itemData.icon + '.png" onclick="add_page()"/><a class="Icon_Text" href="' + data.wiki + '" target=_blank>' + data.html + '</a><p>' + data.hint + '</p>';
+				data.html = '<img class="icon" src="' + moduleurlvariable + 'icons/' + itemData.icon + '.png"/>';
             }
-            console.log(itemData.item);
 
 
             var item = $("<li class='menu-item-icon'>")
 				.append($("<a>", data))
                 .attr("item", itemData.item);
+
+            if(itemData.submenu == null){
+                var item = $("<li class='menu-item-icon'>")
+                    .append($("<a>", data))
+                    .append($("<a>", wiki))
+                    .append($("<p>", hint))
+                    .attr("item", itemData.item);
+            }else{
+                var item = $("<li class='menu-item-icon'>")
+                    .append($("<a>", data))
+                    .attr("item", itemData.item);
+            }
+
 
 
 			// it's a category
