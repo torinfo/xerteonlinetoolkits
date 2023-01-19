@@ -35,6 +35,7 @@ var EDITOR = (function ($, parent) {
 
 
     // Build the "insert page" menu
+
     create_insert_page_menu = function (advanced_toggle) {
         var getMenuItem = function (itemData) {
             var data = {
@@ -46,9 +47,10 @@ var EDITOR = (function ($, parent) {
             };
 
 
+
             if (itemData.icon != undefined) {
                 data.icon = itemData.icon;
-				data.html = '<img class="icon" src="' + moduleurlvariable + 'icons/' + itemData.icon + '.png" onclick="add_page()"/><p class="Icon_Text">' + data.html + '</p><p>' + data.hint + '</p>';
+				data.html = '<img class="icon" src="' + moduleurlvariable + 'icons/' + itemData.icon + '.png" onclick="add_page()"/><a class="Icon_Text" href="' + data.wiki + '" target=_blank>' + data.html + '</a><p>' + data.hint + '</p>';
             }
             console.log(itemData.item);
 
@@ -101,6 +103,8 @@ var EDITOR = (function ($, parent) {
                 )
             };
         });
+
+
 
 		// create insert buttons above the page hints / thumbs
             $([

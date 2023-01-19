@@ -321,9 +321,15 @@ hide ui-layout-west pane pane-west
 }
 .Icon_Text
 {
-	color: #f86718;
+	color: #f86718 !important;
 	font-size: 20px !important;
+	margin: 0 !important;
+	padding: 3px !important;
 	font-weight: bold;
+}
+a .Icon_Text
+{
+	cursor: pointer !important;
 }
 .menu-item-icon
 {
@@ -335,7 +341,7 @@ hide ui-layout-west pane pane-west
 	flex-wrap: wrap;
 	align-content: stretch;
 }
-[role=menuitem] p
+[role=menuitem] a
 {
 	text-align: center;
 	margin-top: 1%;
