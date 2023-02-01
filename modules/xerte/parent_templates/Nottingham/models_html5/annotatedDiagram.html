@@ -17,12 +17,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-if(false) {
-	debugger; //wsl wordt het multinav ding in xenith geladen
-	//kan ook nog callstack bekijken (VM nummer)
+if(true) {
 
-
-	//Create the area for the block to be populated in. Then call the init of the block.
+	//Create the area for the block to be populated in. Then call the init of the block. (basically same code as INTERN CODE in xenith.js)
 	var blockid = "block1";
 	var jsName = "annotatedDiagram";
 	$("#" + blockid).load(x_templateLocation + "blocks_html5/annotatedDiagramBlock.html", function () {
@@ -633,7 +630,9 @@ if(false) {
 	
 </script>
 
+<div id="block1" ></div>
 
+<!--
 <div id="pageContents">
 	<div id="panel" class="panel inline">
 		<div id="imageHolder">
@@ -643,7 +642,6 @@ if(false) {
 	</div>
 
 	<canvas id="canvas"></canvas>
-	
 	<div id="textContents">
 		<div id="mainText"></div>
 		<div id="listHolder"></div>

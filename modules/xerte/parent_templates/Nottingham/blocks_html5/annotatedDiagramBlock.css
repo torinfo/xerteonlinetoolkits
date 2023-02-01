@@ -1,37 +1,73 @@
 /* annotatedDiagram.html */
 
-.annotatedDiagramBlock .imageHolder, .canvas, .hsHolder {
-    position:	absolute;
-    margin:		0;
+.annotatedBlock .listHolder {
+    display: inline-block;
 }
 
-.annotatedDiagramBlock .pageContents .hotspot {
+.annotatedBlock .listItem {
+    font-weight: bold;
+    display: block;
+    padding: 0.3em;
+}
+
+.annotatedBlock .panel.right {
+    float: right;
+    margin: 0 0 20px 20px;
+}
+
+.annotatedBlock .panel.left {
+    float: left;
+    margin: 0 20px 20px 0;
+}
+
+.annotatedBlock .imageHolder {
+    position: relative;
+}
+
+.annotatedBlock .pageContents .hotspot {
+    position: absolute;
+    cursor: pointer;
+}
+
+.annotatedBlock .infoHolder {
+    padding-top: 10px;
+}
+
+.annotatedBlock .mainText {
+    padding-bottom: 10px;
+}
+
+.annotatedBlock .pageContents .highlightBorder {
+    border: 1px solid;
+    margin-top: -1px;
+    margin-left: -1px;
+}
+
+.annotatedBlock .pageContents .selected {
+    margin-top: -2px;
+    margin-left: -2px;
+}
+
+.annotatedBlock .canvas {
+    position: absolute;
+    margin: 0;
+    pointer-events: none;
+    left: 0;
+    top: 0;
+}
+
+.annotatedBlock .pageContents .hsHolder:not(.mapster) {
+    position: absolute;
+    top: 0;
+}
+
+.annotatedBlock .pageContents .hsHolder:not(.mapster) .hotspot {
     position:	absolute;
     cursor:		pointer;
+    border:		2px solid transparent;
 }
 
-.annotatedDiagramBlock .pageContents .oval {
+.annotatedBlock .pageContents .hsHolder:not(.mapster).oval .hotspot {
     -moz-border-radius:	50% 50%;
     border-radius:		50% 50%;
 }
-
-.annotatedDiagramBlock .hsHolder a.selected, .hsHolder .hsGroup.selected a {
-    border:		2px solid;
-}
-
-.annotatedDiagramBlock .textContents {
-    position: 	absolute;
-    top:		0;
-    left:		0;
-}
-
-.annotatedDiagramBlock .textContents div {
-    padding:	10px;
-}
-
-.annotatedDiagramBlock .listItem {
-    font-weight:	bold;
-    display:		block;
-    padding:		5px;
-}
-	

@@ -2622,6 +2622,7 @@ function x_navigateToPage(force, pageInfo, addHistory) { // pageInfo = {type, ID
 
 //INTERN CODE
 function x_createBlock(container, module, modulePosition){
+	debugger;
 	//Create the area for the block to be populated in. Then call the init of the block.
 	var blockid = "block" + modulePosition;
 	var jsName = module.tagName.replace("Block", "")
