@@ -17,7 +17,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-if(true) {
+if(false) {
+	debugger; //wsl wordt het multinav ding in xenith geladen
+	//kan ook nog callstack bekijken (VM nummer)
+
+
 	//Create the area for the block to be populated in. Then call the init of the block.
 	var blockid = "block1";
 	var jsName = "annotatedDiagram";
@@ -90,6 +94,7 @@ if(true) {
 		}
 
 		this.init = function () {
+			debugger;
 			$pageContents = $("#pageContents");
 			$img = $("#imageHolder img");
 			$hsHolder = $("#hsHolder");

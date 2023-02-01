@@ -105,6 +105,8 @@ var annotatedDiagram = new function () {
     };
 
     this.init = function (pageXML, blockid) {
+        debugger;
+        alert(blockid);
         x_currentPageXML = pageXML;
 
         $pageContents = jGetElement(blockid, ".pageContents");
