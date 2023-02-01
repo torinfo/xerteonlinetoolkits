@@ -51,12 +51,13 @@ var EDITOR = (function ($, parent) {
             var wiki = {
                 href: data.wiki,
                 html: data.html,
-                class: "Icon_Text",
-                target: "_blank"
+                class: "Icon_Text icon_hover",
+                target: "_blank",
             };
 
             var hint = {
-                html: data.hint
+                html: data.hint,
+                class: "hint_text"
             }
 
             if (itemData.icon != undefined) {
