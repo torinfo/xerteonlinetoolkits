@@ -279,7 +279,7 @@ var textMatch = new function() {
                     })
                     .find("h3").html(x_addLineBreaks(this.getAttribute("p1")));
 
-                labels.push({text:this.getAttribute("p2"), correct:$thisTarget, audio:this.getAttribute("audioFeedback")});
+                labels.push({text:this.getAttribute("p2"), correct:$thisTarget, audio:this.getAttribute("audioFeedback"), transcript:this.getAttribute("audioTranscript")});
             });
 
         var $pageContents = jGetElement(blockid, ".pageContents");
@@ -459,13 +459,20 @@ var textMatch = new function() {
                 }
 
                 $('<div class="audioHolder"/>')
-                    .appendTo($thisLabel)
+                    .prependTo($thisLabel.find('.labelTxt'))
                     .hide()
                     .mediaPlayer({
                         type		:"audio",
                         source		:labels[i].audio,
                         width		:25
                     })
+
+                // manually add a transcript button to the end of the audio bar
+                if (labels[i].transcript != undefined && labels[i].transcript != '') {
+                    x_addAudioTranscript($thisLabel.find('.labelTxt').find('.audioHolder'), labels[i].transcript);
+                }
+
+                $thisLabel.addClass('audioFB');
             }
 
             if (i != 0) {

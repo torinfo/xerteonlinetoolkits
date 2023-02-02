@@ -28,17 +28,23 @@
 
 .textMatchBlock .dragDropHolder .audioHolder {
     float: left;
+    margin-right: .5em;
 }
 
-.textMatchBlock .dragDropHolder .audioHolder .mejs-controls div:not (.mejs-playpause-button
-	) {
+.textMatchBlock .dragDropHolder .audioHolder .mejs-controls div:not(.mejs-playpause-button):not(.audioTranscriptBtn) {
     display: none;
 }
-
+.textMatchBlock .dragDropHolder .audioHolder.audioTranscript .mejs-container {
+    width: 60px !important;
+}
 .textMatchBlock .dragDropHolder .tick {
     position: absolute;
     top: 0.5em;
-    right: 0.5em;
+    right: 0em;
+}
+
+.dragDropHolder .audioFB .tick {
+    right: -1.5em;
 }
 
 .textMatchBlock .labelHolder {

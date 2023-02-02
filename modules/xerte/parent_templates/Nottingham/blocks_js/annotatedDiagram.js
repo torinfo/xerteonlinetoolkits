@@ -340,6 +340,7 @@ var annotatedDiagram = new function () {
     }
 
     this.createHotspot = function (hsXML, $parent, $listItem, groupXML) {
+        debugger;
         var $hotspot = $('<div class="hotspot" tabindex="0"/>'),
             hsName = hsXML.getAttribute("name");
         if (groupXML != undefined) { // hs in a group
@@ -374,9 +375,9 @@ var annotatedDiagram = new function () {
                     $(this).trigger("click");
                 }
             });
-        $parent.append($hotspot);
-    }
-
+        $parent.append($hot
+    spot);
+}
     this.drawLine = function (context, $hs, $listItem, shape) {
         // startX/Y = centre of hotspot
         var startX = $hs.offset().left - $(context.canvas).offset().left + ($hs.width() / 2);
