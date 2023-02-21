@@ -155,6 +155,112 @@ input.media, input.date
 	overflow: auto; /* will be auto-set to 'hidden' for any pane with a 'scrolling content div' */
 }
 
+in complex:
+
+183
+#treeview {
+	background-color: #FFFFFF;
+}
+
+/* Header color */
+#mainContent .header
+{
+	background-color: #283C53;
+}
+.pane-west .header
+{
+	background-color: #283C53;
+}
+.pane-east .header
+{
+	background-color: #283C53; /* Edited: was #e8a533 */
+	/* #283C53 */
+}
+
+hide ui-layout-west pane pane-west
+{
+	background-color: #FFFFFF;
+	box-shadow: 5px 3px 8px #888888;
+}
+
+/* Edited tree */
+/*
+.testtree
+{
+	height: 100px;
+	background-color: red;
+}
+*/
+
+.jstree-anchor {
+	padding: 10px;
+	width: 100%;
+}
+
+.jstree-leaf, .jstree-closed, .jstree-last
+{
+	/*
+	border-radius: 8px;
+	border-style: solid;
+	border-color: grey;
+	border-radius: 8px;
+	*/
+}
+.jstree-children > li {
+	/*
+	border-radius: 8px 0px 0px 0px;
+	border-top: 5px solid;
+	border-left: 5px solid;
+	border-image: linear-gradient(to right, #C3C2C0, #FFFFFF) 1;
+	*/
+}
+.jstree-icon {
+
+}
+.jstree-default-dark .jstree-clicked {
+	background: #e8a533;
+	/* background-image: linear-gradient(to right, #e8a533 70%, white); */
+	/* border-radius: 8px; */
+	color: white;
+}
+.jstree-default-dark .jstree-anchor {
+	color: black;
+	text-shadow: none;
+	/* Added for Bootstrap */
+	height: 47px;
+}
+.jstree-anchor:hover, .jstree-clicked{
+	color: white;
+	/* border-radius: 8px; */
+}
+.jstree-anchor:hover
+{
+	background-color: #283C53;
+}
+.jstree-default-dark .jstree-clicked,
+.jstree-default-dark .jstree-checked {
+	color: white;
+}
+.jstree-default-dark > .jstree-no-dots .jstree-open > .jstree-ocl {
+	margin-top: 11px;
+}
+.jstree-default-dark > .jstree-no-dots .jstree-closed > .jstree-ocl {
+	margin-top: 11px;
+}
+
+.fa-plus-circle::before
+{
+	color: #fff;
+}
+
+.ui-menu .categorystyle
+{
+	display: flex;
+	height: 600px;
+	width: 600px;
+}
+
+
 
 /*
 *	OUTER-LAYOUT PANE FORMATTING
