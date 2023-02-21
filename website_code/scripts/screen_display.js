@@ -810,6 +810,7 @@ function init_workspace()
         $workspace = $("#workspace").jstree({
             "plugins": ( /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) ) ? ["types", "search", "state"] : ["types", "dnd", "search", "state"],
             "core": {
+                "themes": { dots : false, icons : true},
                 "data": workspace.items,
                 "check_callback": true, // Need this to allow the copy_node function to work...
                 "multiple": true // Need to disable this just now as nodes could be on different levels
