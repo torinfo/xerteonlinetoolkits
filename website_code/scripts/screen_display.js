@@ -645,7 +645,7 @@ function setupMainLayout()
 
     // ** Add close buttons and wire them up **
     $("<span></span>").attr("id", "east-closer").prependTo( right_column );
-    xerteinner_layout.addCloseBtn("#east-closer", "east");
+//    xerteinner_layout.addCloseBtn("#east-closer", "east");
 
     $("<span></span>").attr("id", "south-closer").prependTo( south_pane );
     xertemain_layout.addCloseBtn("#south-closer", "south");
@@ -673,7 +673,7 @@ function dynamicResize()
         xerteinner_layout.close('east');
     }
     // Make west panel 60% of windowWidth
-    xerteinner_layout.sizePane('west', windowWidth * 0.45);
+    //xerteinner_layout.sizePane('west', windowWidth * 0.45);
 
     // If window is low, close south panel
     if (windowHeight < 400)

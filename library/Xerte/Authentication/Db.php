@@ -68,6 +68,7 @@ class Xerte_Authentication_Db extends Xerte_Authentication_Abstract
         return null;
     }
 
+
     public function check()
     {
         global $xerte_toolkits_site;

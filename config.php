@@ -140,6 +140,7 @@ $xerte_toolkits_site->demonstration_page = $xerte_toolkits_site->site_url . $row
 $xerte_toolkits_site->news_text = base64_decode($row['news_text']);
 $xerte_toolkits_site->pod_one = base64_decode($row['pod_one']);
 $xerte_toolkits_site->pod_two = base64_decode($row['pod_two']);
+
 //$xerte_toolkits_site->copyright = utf8_decode($row['copyright']);
 
 $site_texts = explode("~~~", $row['site_text']);

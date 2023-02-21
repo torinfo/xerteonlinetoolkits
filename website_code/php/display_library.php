@@ -1070,6 +1070,20 @@ function get_project_info($template_id)
  * @author Patrick Lockley
  */
 
+function get_blank_templates(){
+    global $xerte_toolkits_site;
+
+
+    $prefix = $xerte_toolkits_site->database_table_prefix;
+
+    $query_parent_templates = "select * from {$prefix}originaltemplatesdetails where "
+        . "template_name=parent_template and active= ? order by date_uploaded DESC";
+
+    $parent_templates = db_query($query_parent_templates, array(1));
+
+    return $parent_templates;
+}
+
 function list_blank_templates() {
 
   /*
@@ -1081,10 +1095,7 @@ function list_blank_templates() {
   
   $prefix = $xerte_toolkits_site->database_table_prefix;
 
-  $query_parent_templates = "select * from {$prefix}originaltemplatesdetails where "
-  . "template_name=parent_template and active= ? order by date_uploaded DESC";
-
-  $parent_templates = db_query($query_parent_templates, array(1));
+  $parent_templates = get_blank_templates();
 
   $query_for_blank_templates = "select * from {$prefix}originaltemplatesdetails where "
   . "active= ? order by parent_template, date_uploaded DESC";

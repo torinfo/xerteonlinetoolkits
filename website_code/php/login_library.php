@@ -493,6 +493,16 @@ function login_processing2($firstname = false, $surname = false, $username = fal
       $_SESSION['toolkits_firstname'] = $firstname == false ? $authmech->getFirstname() : $firstname;
       $_SESSION['toolkits_surname'] = $surname == false ? $authmech->getSurname() : $surname;
       $_SESSION['toolkits_logon_username'] = $username == false ? $authmech->getUsername() : $username;
+
+      $themeRow = db_query_one("SELECT theme FROM {$xerte_toolkits_site->database_table_prefix}logindetails WHERE username = ? ", array($_SESSION['toolkits_logon_username']));
+
+      if($themeRow['theme'] != ""){
+          $_SESSION['theme'] = $themeRow['theme'];
+      }else{
+          $_SESSION['theme'] = $xerte_toolkits_site->default_theme;
+      }
+
+
   }
 
   require_once dirname(__FILE__) . '/user_library.php';
