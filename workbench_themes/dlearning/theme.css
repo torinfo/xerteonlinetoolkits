@@ -224,7 +224,7 @@ body{
 
 .dlearning-footer{
     display: flex;
-    background-color: white;
+    background-color: #f8f9fa !important;
     align-items: center;
     justify-content: space-between;
     margin-top: 30px;

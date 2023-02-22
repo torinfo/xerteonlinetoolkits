@@ -90,6 +90,8 @@ $version = getVersion();
     <link rel="stylesheet" href="editor/css/jquery-ui.css">
     <link rel="stylesheet" href="workbench_themes/dlearning/theme.css" type="text/css"/>
     <link rel="stylesheet" href="editor/js/vendor/themes/default/style.css?version=<?php echo $version;?>" />
+    <link rel="stylesheet" href="editor/js/vendor/themes/default-dark/style.css?version=<?php echo $version;?>" />
+
     <!-- <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script> -->
     <!-- <script>window.jQuery || document.write('<script src="editor/js/vendor/jquery-1.9.1.min.js"><\/script>')</script> -->
     <script src="editor/js/vendor/jquery-1.9.1.min.js"></script>

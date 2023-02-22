@@ -1101,7 +1101,7 @@
   }
 }
 .jstree-default-dark {
-  background: #333;
+  background: #f8f9fa !important;
 }
 .jstree-default-dark .jstree-anchor {
   color: #999;
@@ -1143,4 +1143,107 @@
 }
 .jstree-default-dark-large.jstree-rtl .jstree-last {
   background: transparent;
+}
+
+#treeview {
+  background-color: #FFFFFF;
+}
+
+/* Header color */
+#mainContent .header
+{
+  background-color: #283C53;
+}
+.pane-west .header
+{
+  background-color: #283C53;
+}
+.pane-east .header
+{
+  background-color: #283C53; /* Edited: was #e8a533 */
+  /* #283C53 */
+}
+
+hide ui-layout-west pane pane-west
+{
+  background-color: #FFFFFF;
+  box-shadow: 5px 3px 8px #888888;
+}
+
+/* Edited tree */
+/*
+.testtree
+{
+	height: 100px;
+	background-color: red;
+}
+*/
+
+.jstree-anchor {
+  padding: 10px;
+  width: 80%;
+}
+
+.jstree-leaf, .jstree-closed, .jstree-last
+{
+  /*
+  border-radius: 8px;
+  border-style: solid;
+  border-color: grey;
+  border-radius: 8px;
+  */
+}
+.jstree-children > li {
+  /*
+  border-radius: 8px 0px 0px 0px;
+  border-top: 5px solid;
+  border-left: 5px solid;
+  border-image: linear-gradient(to right, #C3C2C0, #FFFFFF) 1;
+  */
+}
+.jstree-icon {
+
+}
+.jstree-default-dark .jstree-clicked {
+  background: linear-gradient(90deg, rgba(178, 218, 236, 0.65) 0%, rgba(86, 185, 228, 0.65) 43.23%, rgba(43, 171, 227, 0.65) 100%);
+  /* background-image: linear-gradient(to right, #e8a533 70%, white); */
+  /* border-radius: 8px; */
+  color: black;
+}
+.jstree-default-dark .jstree-anchor {
+  color: black;
+  text-shadow: none;
+  /* Added for Bootstrap */
+  height: 47px;
+}
+.jstree-anchor:hover, .jstree-clicked{
+  color: black !important;
+  /* border-radius: 8px; */
+}
+.jstree-anchor:hover
+{
+  background: linear-gradient(90deg, rgba(178, 218, 236, 0.65) 0%, rgba(86, 185, 228, 0.65) 43.23%, rgba(43, 171, 227, 0.65) 100%);
+
+}
+.jstree-default-dark .jstree-clicked,
+.jstree-default-dark .jstree-checked {
+  color: white;
+}
+.jstree-default-dark > .jstree-no-dots .jstree-open > .jstree-ocl {
+  margin-top: 11px;
+}
+.jstree-default-dark > .jstree-no-dots .jstree-closed > .jstree-ocl {
+  margin-top: 11px;
+}
+
+.fa-plus-circle::before
+{
+  color: #fff;
+}
+
+.ui-menu .categorystyle
+{
+  display: flex;
+  height: 600px;
+  width: 600px;
 }
