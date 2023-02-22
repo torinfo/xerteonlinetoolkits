@@ -84,6 +84,7 @@ var textMatch = new function() {
     }
 
     this.leavePage = function(blockid) {
+        debugger;
         var blocknr = XTGetBlockNr(blockid);
         x_currentPageXML = XTGetPageXML(x_currentPage, blocknr);
         if ($(x_currentPageXML).children().length > 0 && this.tracked != true) {
@@ -255,7 +256,6 @@ var textMatch = new function() {
 
 
         // create targets
-        debugger
         var $targetHolder = jGetElement(blockid, ".textMatchBlock .targetHolder"),
             $firstTarget = $targetHolder.find(".target"),
             labels = [];

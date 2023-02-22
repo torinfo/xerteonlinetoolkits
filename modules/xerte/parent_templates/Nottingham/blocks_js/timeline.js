@@ -79,12 +79,12 @@ var timeline = new function () {
     this.leavePage = function (blockid) {
         x_currentPageXML = XTGetPageXML(x_currentPage, XTGetBlockNr(blockid));
         if ($(x_currentPageXML).children().length > 0 && timelineModel.tracked != true) {
+            debugger;
             this.finishTracking(blockid);
         }
     };
 
     this.init = function (pageXML, blockid) {
-        debugger;
         x_currentPageXML = pageXML;
         this.resetModelState();
         // store strings used to give titles to labels and targets when keyboard is being used (for screen readers)
@@ -273,7 +273,8 @@ var timeline = new function () {
         x_pageLoaded();
     }
 
-    this.finishTracking = function (blockid) {
+    this.finishTracking = function(blockid)
+    {
         timelineModel = XTGetInteractionModelState(x_currentPage, XTGetBlockNr(blockid));
 
         var l_options = [],
