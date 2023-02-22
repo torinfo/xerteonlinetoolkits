@@ -375,8 +375,7 @@ var annotatedDiagram = new function () {
                     $(this).trigger("click");
                 }
             });
-        $parent.append($hot
-    spot);
+        $parent.append($hotspot);
 }
     this.drawLine = function (context, $hs, $listItem, shape) {
         // startX/Y = centre of hotspot

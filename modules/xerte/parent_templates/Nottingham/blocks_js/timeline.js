@@ -84,6 +84,7 @@ var timeline = new function () {
     };
 
     this.init = function (pageXML, blockid) {
+        debugger;
         x_currentPageXML = pageXML;
         this.resetModelState();
         // store strings used to give titles to labels and targets when keyboard is being used (for screen readers)
