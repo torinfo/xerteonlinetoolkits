@@ -194,9 +194,69 @@ Folder popup is the div that appears when creating a new folder
         <a class="navbar-brand dlearning-brand" href="#">
             <img src="http://localhost/xot/website_code/images/logo.png" id="xerte-logo" alt="">
         </a>
+        <div class="workspace_search_outer">
+            <div class="workspace_search">
+                <i class="fa  fa-search"></i>&nbsp;<label for="workspace_search"><?PHP echo INDEX_SEARCH; ?></label>
+                <input type="text" id="workspace_search" placeholder="<?php echo INDEX_SEARCH_PLACEHOLDER?>">
+            </div>
+        </div>
+        <div class="userbar">
+            <?PHP //echo "&nbsp;&nbsp;&nbsp;" . INDEX_LOGGED_IN_AS . " " .;
+            echo $_SESSION['toolkits_firstname'] . " " . $_SESSION['toolkits_surname'] ?>
+            <?PHP
+            // only on Db:
+            if ($authmech->canManageUser($jsscript)){
+                echo '
+                    <div class="settingsDropdown">
+                        <button onclick="changepasswordPopup()" title=" ' . INDEX_CHANGE_PASSWORD . ' " class="fa fa-cog xerte_workspace_button settingsButton"></button>
+                        <!-- <div id="settings" class="settings-content">
+                            <button class="xerte_button" onclick="changepasswordPopup()">' . INDEX_CHANGE_PASSWORD . '</button>
+                            <button class="xerte_button">Placeholder</button>
+                            <button class="xerte_button">Placeholder</button>
+                            <button class="xerte_button">Placeholder</button>
+                        </div> -->
+                    </div>
+                ';
+            }
+            ?>
+            <div style="display: inline-block"><?php display_language_selectionform("general", false); ?></div>
+            <?PHP if($xerte_toolkits_site->authentication_method != "Guest") {
+                ?><button title="<?PHP echo INDEX_BUTTON_LOGOUT; ?>" type="button" class="xerte_button_c_no_width"
+                          onclick="javascript:logout(<?php echo($xerte_toolkits_site->authentication_method == "Saml2" ? "true" : "false"); ?>)">
+                <i class="fa fa-sign-out xerte-icon"></i><?PHP echo INDEX_BUTTON_LOGOUT; ?>
+                </button><?PHP } ?>
+        </div>
     </nav>
     <div class="ui-workbench">
         <div class="ui-tree">
+            <div class="dlearning-filter" id="sortContainer">
+                <div class="file_mgt_area_bottom">
+                    <div class="sorter">
+                        <form name="sorting input-prepend input-append" style="float:left;margin:7px 5px 5px 10px;">
+                            <div class="btn-group">
+
+                                <button class="btn dropdown-toggle dlearning-dropdown" name="recordinput" data-toggle="dropdown">
+                                    <?PHP echo INDEX_SORT_A; ?>
+                                    <span class="caret"></span>
+                                </button>
+                                <ul class="dropdown-menu">
+                                    <li><a href="#"><?PHP echo INDEX_SORT_Z; ?></a></li>
+                                    <li><a href="#"><?PHP echo INDEX_SORT_NEW; ?></a></li>
+                                    <li><a href="#"><?PHP echo INDEX_SORT_OLD; ?></a></li>
+                                </ul>
+
+                            </div>
+                           <!-- <label for="sort-selector"><?PHP /*echo INDEX_SORT; */?></label>-->
+                           <!-- <select id="sort-selector" name="type" onChange="refresh_workspace()">>
+                                <option value="alpha_up"><?PHP /*echo INDEX_SORT_A; */?></option>
+                                <option value="alpha_down"><?PHP /*echo INDEX_SORT_Z; */?></option>
+                                <option value="date_down" selected><?PHP /*echo INDEX_SORT_NEW; */?></option>
+                                <option value="date_up"><?PHP /*echo INDEX_SORT_OLD; */?></option>
+                            </select>-->
+                        </form>
+                    </div>
+                </div>
+            </div>
             <div class="content">
                 <div id="workspace"></div>
             </div>
@@ -322,6 +382,11 @@ Folder popup is the div that appears when creating a new folder
     $(document).ready(function () {
         setupMainLayout();
         refresh_workspace();
+    });
+
+    $(".dropdown-menu li a").click(function(){
+        var selText = $(this).text();
+        $(this).parents('.btn-group').find('.dropdown-toggle').html(selText+' <span class="caret"></span>');
     });
 </script>
 <?php body_end(); ?></body>

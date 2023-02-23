@@ -34,6 +34,8 @@ body{
 .ui-tree{
     background-color: #f8f9fa ;
     width: 350px;
+    display: flex;
+    flex-direction: column;
 }
 
 .ui-middle{
@@ -241,4 +243,8 @@ body{
 
 .footerlogos{
     margin-right: 30px !important;
+}
+
+.dlearning-dropdown{
+    background-color:#f8f9fa !important;
 }
