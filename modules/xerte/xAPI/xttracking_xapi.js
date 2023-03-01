@@ -3826,7 +3826,7 @@ function XTResults(fullcompletion) {
 function jGetElement(blockid, element) {
 
     if(element.includes(",")){
-        debugger
+        debugger;
         var finalElement = "";
         var elements = element.split(",");
         for( var i=0; i< elements.length; i++){

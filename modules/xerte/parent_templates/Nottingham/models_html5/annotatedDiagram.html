@@ -18,7 +18,7 @@
  * limitations under the License.
  */
 if(false) {
-
+    alert("block");
 	//Create the area for the block to be populated in. Then call the init of the block. (basically same code as INTERN CODE in xenith.js)
 	var blockid = "block1";
 	var jsName = "annotatedDiagram";
@@ -32,7 +32,7 @@ if(false) {
 
 }else {
 
-
+    alert("Original");
 	// pageChanged & sizeChanged functions are needed in every model file
 	// other functions for model should also be in here to avoid conflicts
 	var annotatedDiagram = new function () {
@@ -91,7 +91,6 @@ if(false) {
 		}
 
 		this.init = function () {
-			debugger;
 			$pageContents = $("#pageContents");
 			$img = $("#imageHolder img");
 			$hsHolder = $("#hsHolder");

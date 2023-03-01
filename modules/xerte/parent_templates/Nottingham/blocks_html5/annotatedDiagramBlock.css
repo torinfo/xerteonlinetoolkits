@@ -1,54 +1,54 @@
 /* annotatedDiagram.html */
 
-.annotatedBlock .listHolder {
+.annotatedDiagramBlock .listHolder {
     display: inline-block;
 }
 
-.annotatedBlock .listItem {
+.annotatedDiagramBlock .listItem {
     font-weight: bold;
     display: block;
     padding: 0.3em;
 }
 
-.annotatedBlock .panel.right {
+.annotatedDiagramBlock .panel.right {
     float: right;
     margin: 0 0 20px 20px;
 }
 
-.annotatedBlock .panel.left {
+.annotatedDiagramBlock .panel.left {
     float: left;
     margin: 0 20px 20px 0;
 }
 
-.annotatedBlock .imageHolder {
+.annotatedDiagramBlock .imageHolder {
     position: relative;
 }
 
-.annotatedBlock .pageContents .hotspot {
+.annotatedDiagramBlock .pageContents .hotspot {
     position: absolute;
     cursor: pointer;
 }
 
-.annotatedBlock .infoHolder {
+.annotatedDiagramBlock .infoHolder {
     padding-top: 10px;
 }
 
-.annotatedBlock .mainText {
+.annotatedDiagramBlock .mainText {
     padding-bottom: 10px;
 }
 
-.annotatedBlock .pageContents .highlightBorder {
+.annotatedDiagramBlock .pageContents .highlightBorder {
     border: 1px solid;
     margin-top: -1px;
     margin-left: -1px;
 }
 
-.annotatedBlock .pageContents .selected {
+.annotatedDiagramBlock .pageContents .selected {
     margin-top: -2px;
     margin-left: -2px;
 }
 
-.annotatedBlock .canvas {
+.annotatedDiagramBlock .canvas {
     position: absolute;
     margin: 0;
     pointer-events: none;
@@ -56,18 +56,18 @@
     top: 0;
 }
 
-.annotatedBlock .pageContents .hsHolder:not(.mapster) {
+.annotatedDiagramBlock .pageContents .hsHolder:not(.mapster) {
     position: absolute;
     top: 0;
 }
 
-.annotatedBlock .pageContents .hsHolder:not(.mapster) .hotspot {
+.annotatedDiagramBlock .pageContents .hsHolder:not(.mapster) .hotspot {
     position:	absolute;
     cursor:		pointer;
     border:		2px solid transparent;
 }
 
-.annotatedBlock .pageContents .hsHolder:not(.mapster).oval .hotspot {
+.annotatedDiagramBlock .pageContents .hsHolder:not(.mapster).oval .hotspot {
     -moz-border-radius:	50% 50%;
     border-radius:		50% 50%;
 }
