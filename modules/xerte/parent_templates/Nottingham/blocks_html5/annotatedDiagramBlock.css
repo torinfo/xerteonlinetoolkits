@@ -24,7 +24,7 @@
     position: relative;
 }
 
-.annotatedDiagramBlock .pageContents .hotspot {
+.annotatedDiagramBlock.pageContents .hotspot {
     position: absolute;
     cursor: pointer;
 }
@@ -37,13 +37,13 @@
     padding-bottom: 10px;
 }
 
-.annotatedDiagramBlock .pageContents .highlightBorder {
+.annotatedDiagramBlock.pageContents .highlightBorder {
     border: 1px solid;
     margin-top: -1px;
     margin-left: -1px;
 }
 
-.annotatedDiagramBlock .pageContents .selected {
+.annotatedDiagramBlock.pageContents .selected {
     margin-top: -2px;
     margin-left: -2px;
 }
@@ -56,18 +56,18 @@
     top: 0;
 }
 
-.annotatedDiagramBlock .pageContents .hsHolder:not(.mapster) {
+.annotatedDiagramBlock.pageContents .hsHolder:not(.mapster) {
     position: absolute;
     top: 0;
 }
 
-.annotatedDiagramBlock .pageContents .hsHolder:not(.mapster) .hotspot {
+.annotatedDiagramBlock.pageContents .hsHolder:not(.mapster) .hotspot {
     position:	absolute;
     cursor:		pointer;
     border:		2px solid transparent;
 }
 
-.annotatedDiagramBlock .pageContents .hsHolder:not(.mapster).oval .hotspot {
+.annotatedDiagramBlock.pageContents .hsHolder:not(.mapster).oval .hotspot {
     -moz-border-radius:	50% 50%;
     border-radius:		50% 50%;
 }
