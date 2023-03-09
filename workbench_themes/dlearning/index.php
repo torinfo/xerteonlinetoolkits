@@ -24,8 +24,12 @@
 startup();
 
 /*require_once(dirname(__FILE__) . "/config.php");*/
+require_once("config.php");
 
 _load_language_file("/index.inc");
+require_once("website_code/php/settings_library.php");
+
+
 
 /**
  *
@@ -58,7 +62,8 @@ if (isset($_SESSION['pwprotected_url']))
     unset($_SESSION['pwprotected_url']);
     header("Location: " . $redirect);
 }
-
+$toolkits_logon_id = $_SESSION['toolkits_logon_id'];
+$image = get_user_image($toolkits_logon_id);
 
 /*If the authentication method isn't set to Moodle
 * the code in the required file below is simply skipped
@@ -87,6 +92,8 @@ $version = getVersion();
 
     -->
     <title><?PHP echo apply_filters("head_title", $xerte_toolkits_site->site_title); ?></title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+
     <link rel="stylesheet" href="editor/css/jquery-ui.css">
     <link rel="stylesheet" href="workbench_themes/dlearning/theme.css" type="text/css"/>
     <link rel="stylesheet" href="editor/js/vendor/themes/default/style.css?version=<?php echo $version;?>" />
@@ -116,6 +123,7 @@ $version = getVersion();
     <!--<link href="website_code/styles/frontpage.css?version=<?php /*echo $version;*/?>" media="all" type="text/css" rel="stylesheet"/>-->
     <link rel="stylesheet" href="modules/xerte/parent_templates/Nottingham/common_html5/js/featherlight/featherlight.min.css?version=<?php echo $version;?>" />
     <link rel="stylesheet" href="modules/xerte/parent_templates/Nottingham/common_html5/js/featherlight/featherlight.gallery.min.css?version=<?php echo $version;?>" />
+    <script type="text/javascript" src="website_code/scripts/user_settings.js"></script>
 
 
     <?php
@@ -186,49 +194,188 @@ body_scroll handles the calculation of the documents actual height in IE.
 Folder popup is the div that appears when creating a new folder
 
 -->
+<div class="modal fade" id="templates" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Templates</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="ui-container-templates">
+                    <?php
+                    $templates = get_blank_templates();
+                    foreach ($templates as $template) {
+                        echo "<div class=\"card ui-container-templates-item " . strtolower($template['parent_template']) . "\">"
+                            . "<div class=\"template-info\">"
+                            . "<h1 class=\"template-title\"><strong>".$template['display_name']."</strong></h1>"
+                            . "<p class=\"template-desc\">".$template['description']."</p>"
+                            . "</div>"
+                            ."<div class=\"template-button-container\">"
+                            ."<button id=\" ".$template['template_name']."_button\" type=\"button\" class=\"xerte_button_c_no_width template-plus-icon\""
+                            ."onclick=\"javascript:template_toggle('" . $template['template_name']."')\">"
+                            ."<i class=\"fa fa-plus\"></i><span class=\"sr-only\"> " . $template['display_name'] ."</span>"
+                            ."</button>"
+                            ."</div>"
+                            ."</div>";
+                    }
+                    ?>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="changeImage" tabindex="-1" role="dialog" aria-labelledby="changeImage" aria-hidden="true">
+    <div class="modal-dialog customModal" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Change Image</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <?php if(count($image) > 0 && $image){ ?>
+                    <div id="userContainerSettings" >
+                        <img id="userSettings" src="data:image/png;charset=utf8;base64,<?php echo $image[0]['profileimage']; ?>" alt="User" />
+                    </div>
+                <?php }else{ ?>
+                    <div id="userContainerSettings">
+                        <img id="userSettings" src="website_code/images/user_placeholder.jpg" alt="User">
+                    </div>
+                <?php } ?>
+                <form action="website_code/php/upload_profile_image.php" id="imageForm" method="post" enctype="multipart/form-data">
+                    <div class="input-group">
+                        <div class="custom-file">
+                            <input type="file" name="fileToUpload" id="fileToUpload" class="custom-file-input">
+                            <label class="custom-file-label" for="fileToUpload">Choose file</label>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn" data-dismiss="modal">Close</button>
+                <button type="submit" name="submit" value="Upload" form="imageForm" class="btn input-group-text submit">Upload</button>
+            </div>
+        </div>
+    </div>
+</div>
 
 
+<div class="modal fade" id="changePassword" tabindex="-1" role="dialog" aria-labelledby="changePassword" aria-hidden="true">
+    <div class="modal-dialog customModal" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Change Password</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form action="" onclick='changePassword(<?php echo $_SESSION['toolkits_logon_username'] ?>)' id="passwordForm" method="post" enctype="multipart/form-data">
+                    <div class="form-group">
+                        <label for="recipient-name" class="col-form-label">Current Password</label>
+                        <input type="text" class="form-control" id="oldpass">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="recipient-name" class="col-form-label">New Password</label>
+                        <input type="text" class="form-control" id="newpass">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="recipient-name" class="col-form-label">Repeat Password</label>
+                        <input type="text" class="form-control" id="newpassrepeat">
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn" data-dismiss="modal">Close</button>
+                <button type="submit" name="submit" value="Upload" form="passwordForm" class="btn input-group-text submit">Submit</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="changeTheme" tabindex="-1" role="dialog" aria-labelledby="changeTheme" aria-hidden="true">
+    <div class="modal-dialog customModal" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Change Theme</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form action="website_code/php/change_theme.php" id="themeForm" method="post" enctype="multipart/form-data">
+                    <select name="theme" class="form-select" aria-label="Default select example">
+                        <option selected value="dlearning">Dlearning</option>
+                        <option value="xerte">Xerte</option>
+                    </select>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn" data-dismiss="modal">Close</button>
+                <button type="submit" name="submit" value="Upload" form="themeForm" class="btn input-group-text submit">Change</button>
+            </div>
+        </div>
+    </div>
+</div>
 
 <div class="ui-container">
-    <nav class="navbar navbar-light bg-light dlearning-navbar">
+    <nav class="navbar navbar-light dlearning-navbar">
         <a class="navbar-brand dlearning-brand" href="#">
             <img src="http://localhost/xot/website_code/images/logo.png" id="xerte-logo" alt="">
         </a>
-        <div class="workspace_search_outer">
-            <div class="workspace_search">
-                <i class="fa  fa-search"></i>&nbsp;<label for="workspace_search"><?PHP echo INDEX_SEARCH; ?></label>
-                <input type="text" id="workspace_search" placeholder="<?php echo INDEX_SEARCH_PLACEHOLDER?>">
-            </div>
-        </div>
+
         <div class="userbar">
-            <?PHP //echo "&nbsp;&nbsp;&nbsp;" . INDEX_LOGGED_IN_AS . " " .;
-            echo $_SESSION['toolkits_firstname'] . " " . $_SESSION['toolkits_surname'] ?>
-            <?PHP
-            // only on Db:
-            if ($authmech->canManageUser($jsscript)){
-                echo '
-                    <div class="settingsDropdown">
-                        <button onclick="changepasswordPopup()" title=" ' . INDEX_CHANGE_PASSWORD . ' " class="fa fa-cog xerte_workspace_button settingsButton"></button>
-                        <!-- <div id="settings" class="settings-content">
-                            <button class="xerte_button" onclick="changepasswordPopup()">' . INDEX_CHANGE_PASSWORD . '</button>
-                            <button class="xerte_button">Placeholder</button>
-                            <button class="xerte_button">Placeholder</button>
-                            <button class="xerte_button">Placeholder</button>
-                        </div> -->
+           <!-- <div id="username"><?php /*echo $_SESSION['toolkits_firstname'] . " " . $_SESSION['toolkits_surname'] */?> </div>-->
+            <?php if(count($image) > 0 && $image){ ?>
+                    <div id="userContainer" >
+                        <img id="user" data-toggle="collapse" href="#settingsCollapse" aria-expanded="false" aria-controls="settingsCollapse" src="data:image/png;charset=utf8;base64,<?php echo $image[0]['profileimage']; ?>" alt="User" />
                     </div>
-                ';
-            }
-            ?>
-            <div style="display: inline-block"><?php display_language_selectionform("general", false); ?></div>
-            <?PHP if($xerte_toolkits_site->authentication_method != "Guest") {
-                ?><button title="<?PHP echo INDEX_BUTTON_LOGOUT; ?>" type="button" class="xerte_button_c_no_width"
-                          onclick="javascript:logout(<?php echo($xerte_toolkits_site->authentication_method == "Saml2" ? "true" : "false"); ?>)">
-                <i class="fa fa-sign-out xerte-icon"></i><?PHP echo INDEX_BUTTON_LOGOUT; ?>
-                </button><?PHP } ?>
+
+                <div class="card settings collapse" id="settingsCollapse" aria-expanded="false" aria-controls="settingsCollapse">
+                    <div class="card-body settingsCollapseBody">
+                        <h5>Manage your account</h5>
+                        <hr>
+                        <div class="settingsItem"><button class="btn settingsButton text-left" type="button" data-toggle="modal" data-target="#changeImage" aria-expanded="false" aria-controls="changeImage">Change profile</button></div>
+                        <div class="settingsItem"><button class="btn settingsButton text-left" type="button" data-toggle="modal" data-target="#changePassword" aria-expanded="false" aria-controls="changePassword">Change password</button></div>
+                        <div class="settingsItem"><button class="btn settingsButton text-left" type="button" data-toggle="modal" data-target="#changeTheme" aria-expanded="false" aria-controls="changePassword">Change theme</button></div>
+                        <div class="settingsItem"><button class="btn settingsButton text-left" type="button" onclick="logout(<?php echo($xerte_toolkits_site->authentication_method == "Saml2" ? "true" : "false"); ?>)">Log out</button></div>
+                    </div>
+                </div>
+
+            <?php }else{ ?>
+                <div id="userContainer">
+                    <img id="user" src="website_code/images/user_placeholder.jpg" alt="User">
+                </div>
+            <?php } ?>
+
+            <div style="display: inline-block"><?php display_language_selectionform_modern("general", false); ?></div>
+            <div class="theme-switch-wrapper">
+                <label class="theme-switch" for="checkbox">
+                    <input type="checkbox" id="checkbox" />
+                    <div class="slider round"></div>
+                </label>
+            </div>
         </div>
     </nav>
     <div class="ui-workbench">
         <div class="ui-tree">
+
+            <button class="btn btn-primary add_template_button" data-toggle="modal" type="button" data-target="#templates"><i class="fa fa-plus icon-mr-20"></i>Create new template</button>
+            <div class="workspace_search_outer">
+                <div class="workspace_search">
+                    <input class="form-control" type="text" id="workspace_search" placeholder="Search by <?php echo INDEX_SEARCH_PLACEHOLDER?>">
+                </div>
+            </div>
+            <div class="content">
+                <div id="workspace"></div>
+            </div>
             <div class="dlearning-filter" id="sortContainer">
                 <div class="file_mgt_area_bottom">
                     <div class="sorter">
@@ -246,19 +393,9 @@ Folder popup is the div that appears when creating a new folder
                                 </ul>
 
                             </div>
-                           <!-- <label for="sort-selector"><?PHP /*echo INDEX_SORT; */?></label>-->
-                           <!-- <select id="sort-selector" name="type" onChange="refresh_workspace()">>
-                                <option value="alpha_up"><?PHP /*echo INDEX_SORT_A; */?></option>
-                                <option value="alpha_down"><?PHP /*echo INDEX_SORT_Z; */?></option>
-                                <option value="date_down" selected><?PHP /*echo INDEX_SORT_NEW; */?></option>
-                                <option value="date_up"><?PHP /*echo INDEX_SORT_OLD; */?></option>
-                            </select>-->
                         </form>
                     </div>
                 </div>
-            </div>
-            <div class="content">
-                <div id="workspace"></div>
             </div>
         </div>
         <div class="ui-middle">
@@ -288,28 +425,6 @@ Folder popup is the div that appears when creating a new folder
                 </div>
             </div>
 
-            <div class="ui-container-templates">
-                <?php
-                $templates = get_blank_templates();
-                foreach ($templates as $template) {
-                    echo "<div class=\"card ui-container-templates-item " . strtolower($template['parent_template']) . "\">"
-                            . "<div class=\"template-info\">"
-                                . "<h1 class=\"template-title\"><strong>".$template['display_name']."</strong></h1>"
-                                . "<p class=\"template-desc\">".$template['description']."</p>"
-                            . "</div>"
-                            ."<div class=\"template-button-container\">"
-                                ."<button id=\" ".$template['template_name']."_button\" type=\"button\" class=\"xerte_button_c_no_width template-plus-icon\""
-                                ."onclick=\"javascript:template_toggle('" . $template['template_name']."')\">"
-                                ."<i class=\"fa fa-plus\"></i><span class=\"sr-only\"> " . $template['display_name'] ."</span>"
-                                ."</button>"
-                            ."</div>"
-                        ."</div>";
-                }
-                    ?>
-            </div>
-           <!-- <div class="card" id="ui-container-preview">
-
-            </div>-->
 
             <div class="ui-container-information">
                 <div class="card ui-container-general-information preview" id="ui-container-details">
@@ -317,7 +432,10 @@ Folder popup is the div that appears when creating a new folder
                         <h5 class="information-title"><strong>Preview</strong></h5>
                     </div>
                     <div class="card-body">
-                        <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
+                        <iframe id="preview_iframe" src="" style=" margin-left:10%;  width: 600px; height: 305px; top: 160px" title="test">
+
+                        </iframe>
+
                     </div>
                 </div>
                 <div class="card ui-container-general-information details" id="ui-container-shared">
@@ -326,7 +444,7 @@ Folder popup is the div that appears when creating a new folder
                     </div>
                     <div class="card-body">
                         <nav>
-                            <div class="nav nav-tabs nav-fill" id="nav-tab" role="tablist">
+                            <div class="nav nav-tabs nav-fill dlearning-tabs" id="nav-tab" role="tablist">
                                 <a class="nav-item nav-link active" id="nav-home-tab" data-toggle="tab" href="#general" role="tab" aria-controls="nav-home" aria-selected="true">General details</a>
                                 <a class="nav-item nav-link" id="nav-profile-tab" data-toggle="tab" href="#shared" role="tab" aria-controls="nav-profile" aria-selected="false">Project shared</a>
                             </div>
@@ -348,17 +466,17 @@ Folder popup is the div that appears when creating a new folder
                 </div>
 
             <div class="ui-help">
-                <div class="card ui-container-general-information preview flex1-1" id="ui-container-details">
+                <div class="card ui-container-general-help preview flex1-1" id="ui-container-details">
                     <div class="card-body">
                         <?PHP echo apply_filters('editor_pod_one', $xerte_toolkits_site->pod_one); ?>
                     </div>
                 </div>
-                <div class="card ui-container-general-information preview flex1-1" id="ui-container-details">
+                <div class="card ui-container-general-help preview flex1-1" id="ui-container-details">
                     <div class="card-body">
                         <?PHP echo apply_filters('editor_pod_two', $xerte_toolkits_site->pod_two); ?>
                     </div>
                 </div>
-                <div class="card ui-container-general-information flex1-1" id="ui-container-details">
+                <div class="card ui-container-general-help flex1-1" id="ui-container-details">
                     <div class="card-body">
                         <?PHP echo $xerte_toolkits_site->news_text; ?>
                     </div>
@@ -384,10 +502,42 @@ Folder popup is the div that appears when creating a new folder
         refresh_workspace();
     });
 
+    $("#preview_iframe").on("load", function() {
+        let head = $("#preview_iframe").contents().find("head");
+        let css = '<link rel="stylesheet" href="workbench_themes/dlearning/theme.css" type="text/css"/>';
+        $(head).append(css);
+    });
+
     $(".dropdown-menu li a").click(function(){
         var selText = $(this).text();
         $(this).parents('.btn-group').find('.dropdown-toggle').html(selText+' <span class="caret"></span>');
     });
+
+    $(".custom-file-input").on("change", function() {
+        var fileName = $(this).val().split("\\").pop();
+        $(this).siblings(".custom-file-label").addClass("selected").html(fileName);
+    });
+
+    const toggleSwitch = document.querySelector('.theme-switch input[type="checkbox"]');
+
+    function switchTheme(e) {
+
+        let preview = document.getElementById("preview_iframe").contentDocument
+        if (e.target.checked) {
+            document.documentElement.setAttribute('data-theme', 'dark');
+            preview.documentElement.setAttribute('data-theme', 'dark');
+
+        }
+        else {
+            document.documentElement.setAttribute('data-theme', 'light');
+            preview.documentElement.setAttribute('data-theme', 'light');
+
+        }
+    }
+
+    toggleSwitch.addEventListener('change', switchTheme, false);
+
+
 </script>
 <?php body_end(); ?></body>
 </html>

@@ -1101,7 +1101,7 @@
   }
 }
 .jstree-default-dark {
-  background: #f8f9fa !important;
+  background: #f8f9fa;
 }
 .jstree-default-dark .jstree-anchor {
   color: #999;

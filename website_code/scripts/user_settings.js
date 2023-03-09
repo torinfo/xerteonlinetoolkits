@@ -78,6 +78,7 @@ function ajax_send(url, mesg, success){
 }
 
 function changePassword(username){
+    debugger
     var oldpass = $("#oldpass").val();
     var passwd1 = $("#newpass").val();
     var passwd2 = $("#newpassrepeat").val();
