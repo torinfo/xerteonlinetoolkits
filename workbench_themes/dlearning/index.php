@@ -325,6 +325,31 @@ Folder popup is the div that appears when creating a new folder
     </div>
 </div>
 
+<div class="modal fade" id="MakeFolder" tabindex="-1" role="dialog" aria-labelledby="MakeFolder" aria-hidden="true">
+    <div class="modal-dialog customModal" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Create Folder</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form onclick='create_folder()' id="MakeFolder" method="post" enctype="multipart/form-data">
+                    <div class="form-group">
+                        <label for="recipient-name" class="col-form-label"><?php echo INDEX_FOLDER_NAME ?></label>
+                        <input type="text" class="form-control" id="foldername">
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn" data-dismiss="modal">Close</button>
+                <button type="submit" name="submit" value="Upload" form="MakeFolder" class="btn input-group-text submit">Submit</button>
+            </div>
+        </div>
+    </div>
+</div>
+
 <div class="ui-container">
     <nav class="navbar navbar-light dlearning-navbar">
         <a class="navbar-brand dlearning-brand" href="#">
@@ -410,7 +435,7 @@ Folder popup is the div that appears when creating a new folder
                 </div>
 
                 <div class="file_mgt_area_left">
-                    <button title="<?php echo INDEX_BUTTON_NEWFOLDER; ?>" type="button" class="xerte_workspace_button" id="newfolder" onClick="javascript:make_new_folder()">
+                    <button title="<?php echo INDEX_BUTTON_NEWFOLDER; ?>" type="button" class="xerte_workspace_button" id="newfolder" data-toggle="modal" data-target="#MakeFolder" aria-expanded="false">
                         <i class="fa fa-folder xerte-icon"></i>New folder
                     </button>
                 </div>

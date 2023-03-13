@@ -354,7 +354,7 @@ function button_check(){
                 newfolderbtn.removeAttribute("disabled");
                 newfolderbtn.className = "xerte_workspace_button";
                 newfolderbtn.onclick = function () {
-                    make_new_folder()
+
                 };
                 break;
             case "recyclebin":
@@ -366,7 +366,7 @@ function button_check(){
                 newfolderbtn.removeAttribute("disabled");
                 newfolderbtn.className = "xerte_workspace_button";
                 newfolderbtn.onclick = function () {
-                    make_new_folder()
+
                 };
                 break;
             case "folder":
@@ -391,7 +391,7 @@ function button_check(){
                 newfolderbtn.removeAttribute("disabled");
                 newfolderbtn.className = "xerte_workspace_button";
                 newfolderbtn.onclick = function () {
-                    make_new_folder()
+
                 };
                 break;
             case "group":
@@ -449,7 +449,7 @@ function button_check(){
                 newfolderbtn.removeAttribute("disabled");
                 newfolderbtn.className = "xerte_workspace_button";
                 newfolderbtn.onclick = function () {
-                    make_new_folder()
+
                 };
         }
     }
@@ -807,33 +807,63 @@ function init_workspace()
         tree.refresh();
     }
     else {
-        $workspace = $("#workspace").jstree({
-            "plugins": ( /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) ) ? ["types", "search", "state"] : ["types", "dnd", "search", "state"],
-            "core": {
-                "themes": { name : "default-dark", dots : false, icons : true},
-                "data": workspace.items,
-                "check_callback": true, // Need this to allow the copy_node function to work...
-                "multiple": true // Need to disable this just now as nodes could be on different levels
-            },
-            "types": node_types,
-            "search": {
-                "show_only_matches": true,
-                "fuzzy": false,
-                "search_callback" : workspace_search_callback,
-            },
-            "dnd": {
-                "is_draggable" : function(node) {
-                    console.log('is_draggable called: ', node[0]);
-                    if (node[0].type.includes("_group") || node[0].type.includes("_shared")) {
-                        return false;
-                    }
-                    return true;
+        if(workspace['theme'] === "xerte" || workspace['theme']==="" || workspace['theme'] === null){
+            $workspace = $("#workspace").jstree({
+                "plugins": ( /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) ) ? ["types", "search", "state"] : ["types", "dnd", "search", "state"],
+                "core": {
+                    "data": workspace.items,
+                    "check_callback": true, // Need this to allow the copy_node function to work...
+                    "multiple": true // Need to disable this just now as nodes could be on different levels
                 },
-                "settings": {
-                    "threshold": /Android|AppleWebKit|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) ? 50 : 5
+                "types": node_types,
+                "search": {
+                    "show_only_matches": true,
+                    "fuzzy": false,
+                    "search_callback" : workspace_search_callback,
+                },
+                "dnd": {
+                    "is_draggable" : function(node) {
+                        console.log('is_draggable called: ', node[0]);
+                        if (node[0].type.includes("_group") || node[0].type.includes("_shared")) {
+                            return false;
+                        }
+                        return true;
+                    },
+                    "settings": {
+                        "threshold": /Android|AppleWebKit|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) ? 50 : 5
+                    }
                 }
-            }
-        });
+            });
+        }else{
+            $workspace = $("#workspace").jstree({
+                "plugins": ( /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) ) ? ["types", "search", "state"] : ["types", "dnd", "search", "state"],
+                "core": {
+                    "themes": { name : "default-dark", dots : false, icons : true},
+                    "data": workspace.items,
+                    "check_callback": true, // Need this to allow the copy_node function to work...
+                    "multiple": true // Need to disable this just now as nodes could be on different levels
+                },
+                "types": node_types,
+                "search": {
+                    "show_only_matches": true,
+                    "fuzzy": false,
+                    "search_callback" : workspace_search_callback,
+                },
+                "dnd": {
+                    "is_draggable" : function(node) {
+                        console.log('is_draggable called: ', node[0]);
+                        if (node[0].type.includes("_group") || node[0].type.includes("_shared")) {
+                            return false;
+                        }
+                        return true;
+                    },
+                    "settings": {
+                        "threshold": /Android|AppleWebKit|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) ? 50 : 5
+                    }
+                }
+            });
+        }
+
         $workspace.bind('select_node.jstree', function (event, data) {
 
                 button_check();

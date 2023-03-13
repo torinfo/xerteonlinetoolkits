@@ -913,6 +913,7 @@ function get_users_projects($sort_type, $copy_only=false)
 
     $workspace = new stdClass();
     $workspace->user = $_SESSION['toolkits_logon_id'];
+    $workspace->theme = $_SESSION['theme'];
     $workspace->items = array();
 
     /**

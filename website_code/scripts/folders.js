@@ -100,6 +100,7 @@ function delete_folder(folder_id){
 
 
 function create_folder(){
+	debugger
 
     var foldername = $('#foldername').val();
 	if(is_ok_name(foldername)) {
@@ -187,6 +188,7 @@ function make_new_folder(){
 	
 	file_area_width = document.getElementById("file_area").offsetWidth;
 */
+	debugger
 	document.getElementById("foldername").value = '';
 	document.getElementById("folder_feedback").innerHTML = '';
 
