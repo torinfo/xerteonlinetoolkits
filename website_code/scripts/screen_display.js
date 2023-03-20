@@ -834,6 +834,29 @@ function init_workspace()
                     }
                 }
             });
+
+            $workspace.bind('select_node.jstree', function (event, data) {
+
+                button_check();
+                workspace.current_node = data.node;
+                showInformationAndSetStatus(data.node);
+
+            })
+                .bind('deselect_node.jstree', function (event, data) {
+
+                    button_check();
+                    workspace.current_node = "";
+                    showInformationAndSetStatus();
+
+                })
+                .bind('move_node.jstree',function(event,data)
+                {
+
+                    console.log(event);
+                    console.log(data);
+                    copy_to_folder(data);
+
+                });
         }else{
             $workspace = $("#workspace").jstree({
                 "plugins": ( /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) ) ? ["types", "search", "state"] : ["types", "dnd", "search", "state"],
@@ -862,30 +885,32 @@ function init_workspace()
                     }
                 }
             });
-        }
 
-        $workspace.bind('select_node.jstree', function (event, data) {
+            $workspace.bind('select_node.jstree', function (event, data) {
 
                 button_check();
                 workspace.current_node = data.node;
-                showInformationAndSetStatus(data.node);
+                showInformationAndSetStatusInTable(data.node);
 
-        })
-        .bind('deselect_node.jstree', function (event, data) {
+            })
+                .bind('deselect_node.jstree', function (event, data) {
 
-            button_check();
-            workspace.current_node = "";
-            showInformationAndSetStatus();
+                    button_check();
+                    workspace.current_node = "";
+                    showInformationAndSetStatusInTable();
 
-        })
-        .bind('move_node.jstree',function(event,data)
-        {
+                })
+                .bind('move_node.jstree',function(event,data)
+                {
 
-                console.log(event);
-                console.log(data);
-                copy_to_folder(data);
+                    console.log(event);
+                    console.log(data);
+                    copy_to_folder(data);
 
-        });
+                });
+        }
+
+
 
         /*
          .bind("copy_node.jstree", function (event, data) {
@@ -981,4 +1006,38 @@ function showInformationAndSetStatus(node)
 				getProjectInformation(workspace.user, xot_id);
 		}
 	}
+}
+
+function showInformationAndSetStatusInTable(node)
+{
+    if (node == undefined || (typeof node == "string" && node == "")) {
+        $("#project_information").html("");
+
+    } else {
+        var type = node.type;
+        var id = node.id;
+        var xot_id = node.original.xot_id;
+
+        debugger
+        switch(type)
+        {
+            case "folder":
+            case "folder_shared":
+            case "folder_group":
+                getFolderInformation(workspace.user, xot_id);
+                break;
+            case "group":
+                $("#project_information").html(node.text);
+                break;
+            case "workspace":
+            case "recyclebin":
+                $("#project_information").html("");
+                $('#project_shared').html("");
+                $('#project_graph').html("");
+
+                break;
+            default:
+                getProjectInformation(workspace.user, xot_id);
+        }
+    }
 }

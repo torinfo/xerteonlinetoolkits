@@ -363,7 +363,7 @@ p{
     color: var(--font-color) !important;
 }
 
-a, button, div, input, h3, td{
+a, button, div, input, h3, td, th{
     color: var(--font-color) !important;
 
 }
@@ -452,6 +452,31 @@ li, ul, input{
     box-shadow: rgba(60, 64, 67, 0.3) 0px 1px 2px 0px, rgba(60, 64, 67, 0.15) 0px 2px 6px 2px;
 }
 
+.projectSharedContainer{
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.sharedUser{
+    border-radius: 50%;
+    box-shadow: rgba(60, 64, 67, 0.3) 0px 1px 2px 0px, rgba(60, 64, 67, 0.15) 0px 2px 6px 2px;
+    width: 100%;
+}
+
+.sharedUserIcon{
+    width: 25%;
+    padding: 5%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.iconName{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
 .settings{
     position: absolute !important;
     top: 75px;
@@ -485,4 +510,20 @@ li, ul, input{
 
 .submit{
     background-color: #e9ecef !important;
+}
+
+.table th, .table td{
+    border-bottom: 1px solid #dee2e6;
+}
+
+.nav-link.active{
+    border-color: #dee2e6 #dee2e6 var(--primary-color) !important;
+}
+
+.iconRole{
+    margin: 0 !important;
+}
+
+.iconFullName{
+    white-space: nowrap;
 }

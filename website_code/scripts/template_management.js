@@ -674,7 +674,7 @@ function refresh_workspace() {
         url: "website_code/php/templates/get_templates_sorted.php",
         dataType: 'json',
         data: {
-            //sort_type: document.sorting.type.value
+            sort_type: document.sorting.type.value
         }
     })
     .done(function(response){
@@ -684,6 +684,7 @@ function refresh_workspace() {
 }
 
 function getProjectInformation(user_id, template_id) {
+    debugger
     // if (setup_ajax() != false) {
     //     var url = "website_code/php/templates/get_template_info.php";
     //
@@ -692,14 +693,43 @@ function getProjectInformation(user_id, template_id) {
     //     xmlHttp.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
     //     xmlHttp.send('user_id=' + user_id + '&template_id=' + template_id);
     // }
-    $.ajax({
-        type: "POST",
-        url: "website_code/php/templates/get_template_info.php",
-        dataType: 'json',
-        data: {user_id: user_id, template_id: template_id},
+    if(workspace["theme"] === "xerte" || workspace["theme"] == null || workspace["theme"] === undefined || workspace["theme"] === "" ){
+        var ajaxInfo = $.ajax({
+            type: "POST",
+            url: "website_code/php/templates/get_template_info.php",
+            dataType: 'json',
+            data: {user_id: user_id, template_id: template_id},
+        })
+    }else{
+        var ajaxInfo =  $.ajax({
+            type: "POST",
+            url: "website_code/php/templates/get_template_info_table.php",
+            dataType: 'json',
+            data: {user_id: user_id, template_id: template_id},
+        })
+        var ajaxIcon =  $.ajax({
+            type: "POST",
+            url: "website_code/php/templates/get_template_shared_users.php",
+            dataType: 'json',
+            data: {user_id: user_id, template_id: template_id},
+        })
+        var ajaxLrs = $.ajax({
+            type: "POST",
+            url: "website_code/php/templates/get_template_lrs.php",
+            dataType: 'json',
+            data: {user_id: user_id, template_id: template_id},
+        })
+    }
+    ajaxIcon.done(function (info){
+        document.getElementById('project_shared').innerHTML = info.properties;
     })
-    .done(function(info) {
+    ajaxLrs.done(function (info){
+        document.getElementById('project_graph').innerHTML = info.properties;
+    })
+    ajaxInfo.done(function(info) {
+        debugger
         document.getElementById('project_information').innerHTML = info.properties;
+
         disableReadOnlyButtons(info);
         if (info.fetch_statistics) {
             url = site_url + info.template_id;
@@ -770,17 +800,43 @@ function disableReadOnlyButtons(info){
 }
 
 function getFolderInformation(user_id, folder_id) {
-    $.ajax({
-        type: "POST",
-        url: "website_code/php/folders/get_folder_info.php",
-        data: {folder_id: folder_id},
-        dataType: "json",
-        success: function (info) {
-            document.getElementById('project_information').innerHTML = info.properties;
-            disableReadOnlyButtons(info);
+    if(workspace["theme"] === "xerte" || workspace["theme"] == null || workspace["theme"] === undefined || workspace["theme"] === "" ){
+        $.ajax({
+            type: "POST",
+            url: "website_code/php/folders/get_folder_info.php",
+            data: {folder_id: folder_id},
+            dataType: "json",
+            success: function (info) {
+                document.getElementById('project_information').innerHTML = info.properties;
+                disableReadOnlyButtons(info);
 
-        }
-    });
+            }
+        });
+    }else{
+        $.ajax({
+            type: "POST",
+            url: "website_code/php/folders/get_folder_info_table.php",
+            data: {folder_id: folder_id},
+            dataType: "json",
+            success: function (info) {
+                document.getElementById('project_information').innerHTML = info.properties;
+                disableReadOnlyButtons(info);
+                $.ajax({
+                    type: "POST",
+                    url: "website_code/php/folders/get_folder_user_icon.php",
+                    data: {folder_id: folder_id},
+                    dataType: "json",
+                    success: function (info) {
+                        document.getElementById('project_shared').innerHTML = info.properties;
+                        disableReadOnlyButtons(info);
+
+                    }
+                });
+
+            }
+        });
+    }
+
 }
 
 

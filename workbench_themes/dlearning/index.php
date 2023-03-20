@@ -238,7 +238,7 @@ Folder popup is the div that appears when creating a new folder
                 </button>
             </div>
             <div class="modal-body">
-                <?php if(count($image) > 0 && $image){ ?>
+                <?php if($image[0]["profileimage"] !== null){ ?>
                     <div id="userContainerSettings" >
                         <img id="userSettings" src="data:image/png;charset=utf8;base64,<?php echo $image[0]['profileimage']; ?>" alt="User" />
                     </div>
@@ -275,7 +275,7 @@ Folder popup is the div that appears when creating a new folder
                 </button>
             </div>
             <div class="modal-body">
-                <form action="" onclick='changePassword(<?php echo $_SESSION['toolkits_logon_username'] ?>)' id="passwordForm" method="post" enctype="multipart/form-data">
+                <form id="passwordForm" method="post" enctype="multipart/form-data">
                     <div class="form-group">
                         <label for="recipient-name" class="col-form-label">Current Password</label>
                         <input type="text" class="form-control" id="oldpass">
@@ -294,7 +294,7 @@ Folder popup is the div that appears when creating a new folder
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn" data-dismiss="modal">Close</button>
-                <button type="submit" name="submit" value="Upload" form="passwordForm" class="btn input-group-text submit">Submit</button>
+                <button onclick='changePassword(<?php echo $_SESSION['toolkits_logon_username'] ?>)' type="submit" name="submit" value="Upload" form="passwordForm" class="btn input-group-text submit">Submit</button>
             </div>
         </div>
     </div>
@@ -314,6 +314,7 @@ Folder popup is the div that appears when creating a new folder
                     <select name="theme" class="form-select" aria-label="Default select example">
                         <option selected value="dlearning">Dlearning</option>
                         <option value="xerte">Xerte</option>
+                        <option value="biotheme">Biotheme</option>
                     </select>
                 </form>
             </div>
@@ -335,7 +336,7 @@ Folder popup is the div that appears when creating a new folder
                 </button>
             </div>
             <div class="modal-body">
-                <form onclick='create_folder()' id="MakeFolder" method="post" enctype="multipart/form-data">
+                <form id="MakeFolder" method="post" enctype="multipart/form-data">
                     <div class="form-group">
                         <label for="recipient-name" class="col-form-label"><?php echo INDEX_FOLDER_NAME ?></label>
                         <input type="text" class="form-control" id="foldername">
@@ -344,7 +345,7 @@ Folder popup is the div that appears when creating a new folder
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn" data-dismiss="modal">Close</button>
-                <button type="submit" name="submit" value="Upload" form="MakeFolder" class="btn input-group-text submit">Submit</button>
+                <button onclick="create_folder()" type="submit" form="MakeFolder" class="btn input-group-text submit">Submit</button>
             </div>
         </div>
     </div>
@@ -358,27 +359,27 @@ Folder popup is the div that appears when creating a new folder
 
         <div class="userbar">
            <!-- <div id="username"><?php /*echo $_SESSION['toolkits_firstname'] . " " . $_SESSION['toolkits_surname'] */?> </div>-->
-            <?php if(count($image) > 0 && $image){ ?>
+            <?php if($image[0]["profileimage"] !== null){ ?>
                     <div id="userContainer" >
                         <img id="user" data-toggle="collapse" href="#settingsCollapse" aria-expanded="false" aria-controls="settingsCollapse" src="data:image/png;charset=utf8;base64,<?php echo $image[0]['profileimage']; ?>" alt="User" />
                     </div>
 
-                <div class="card settings collapse" id="settingsCollapse" aria-expanded="false" aria-controls="settingsCollapse">
-                    <div class="card-body settingsCollapseBody">
-                        <h5>Manage your account</h5>
-                        <hr>
-                        <div class="settingsItem"><button class="btn settingsButton text-left" type="button" data-toggle="modal" data-target="#changeImage" aria-expanded="false" aria-controls="changeImage">Change profile</button></div>
-                        <div class="settingsItem"><button class="btn settingsButton text-left" type="button" data-toggle="modal" data-target="#changePassword" aria-expanded="false" aria-controls="changePassword">Change password</button></div>
-                        <div class="settingsItem"><button class="btn settingsButton text-left" type="button" data-toggle="modal" data-target="#changeTheme" aria-expanded="false" aria-controls="changePassword">Change theme</button></div>
-                        <div class="settingsItem"><button class="btn settingsButton text-left" type="button" onclick="logout(<?php echo($xerte_toolkits_site->authentication_method == "Saml2" ? "true" : "false"); ?>)">Log out</button></div>
-                    </div>
-                </div>
-
             <?php }else{ ?>
                 <div id="userContainer">
-                    <img id="user" src="website_code/images/user_placeholder.jpg" alt="User">
+                    <img id="user" data-toggle="collapse" href="#settingsCollapse" src="website_code/images/user_placeholder.jpg" aria-expanded="false" aria-controls="settingsCollapse" alt="User">
                 </div>
+
             <?php } ?>
+            <div class="card settings collapse" id="settingsCollapse" aria-expanded="false" aria-controls="settingsCollapse">
+                <div class="card-body settingsCollapseBody">
+                    <h5>Manage your account</h5>
+                    <hr>
+                    <div class="settingsItem"><button class="btn settingsButton text-left" type="button" data-toggle="modal" data-target="#changeImage" aria-expanded="false" aria-controls="changeImage">Change profile</button></div>
+                    <div class="settingsItem"><button class="btn settingsButton text-left" type="button" data-toggle="modal" data-target="#changePassword" aria-expanded="false" aria-controls="changePassword">Change password</button></div>
+                    <div class="settingsItem"><button class="btn settingsButton text-left" type="button" data-toggle="modal" data-target="#changeTheme" aria-expanded="false" aria-controls="changePassword">Change theme</button></div>
+                    <div class="settingsItem"><button class="btn settingsButton text-left" type="button" onclick="logout(<?php echo($xerte_toolkits_site->authentication_method == "Saml2" ? "true" : "false"); ?>)">Log out</button></div>
+                </div>
+            </div>
 
             <div style="display: inline-block"><?php display_language_selectionform_modern("general", false); ?></div>
             <div class="theme-switch-wrapper">
@@ -404,20 +405,13 @@ Folder popup is the div that appears when creating a new folder
             <div class="dlearning-filter" id="sortContainer">
                 <div class="file_mgt_area_bottom">
                     <div class="sorter">
-                        <form name="sorting input-prepend input-append" style="float:left;margin:7px 5px 5px 10px;">
-                            <div class="btn-group">
-
-                                <button class="btn dropdown-toggle dlearning-dropdown" name="recordinput" data-toggle="dropdown">
-                                    <?PHP echo INDEX_SORT_A; ?>
-                                    <span class="caret"></span>
-                                </button>
-                                <ul class="dropdown-menu">
-                                    <li><a href="#"><?PHP echo INDEX_SORT_Z; ?></a></li>
-                                    <li><a href="#"><?PHP echo INDEX_SORT_NEW; ?></a></li>
-                                    <li><a href="#"><?PHP echo INDEX_SORT_OLD; ?></a></li>
-                                </ul>
-
-                            </div>
+                        <form name="sorting" class="input-prepend input-append" style="float:left;margin:7px 5px 5px 10px;">
+                            <select id="sort-selector" class="form-select" name="type" onChange="refresh_workspace()">
+                                <option value="alpha_up"><?PHP echo INDEX_SORT_A; ?></option>
+                                <option value="alpha_down"><?PHP echo INDEX_SORT_Z; ?></option>
+                                <option value="date_down" selected><?PHP echo INDEX_SORT_NEW; ?></option>
+                                <option value="date_up"><?PHP echo INDEX_SORT_OLD; ?></option>
+                            </select>
                         </form>
                     </div>
                 </div>
@@ -472,6 +466,7 @@ Folder popup is the div that appears when creating a new folder
                             <div class="nav nav-tabs nav-fill dlearning-tabs" id="nav-tab" role="tablist">
                                 <a class="nav-item nav-link active" id="nav-home-tab" data-toggle="tab" href="#general" role="tab" aria-controls="nav-home" aria-selected="true">General details</a>
                                 <a class="nav-item nav-link" id="nav-profile-tab" data-toggle="tab" href="#shared" role="tab" aria-controls="nav-profile" aria-selected="false">Project shared</a>
+                                <a class="nav-item nav-link" id="nav-profile-tab" data-toggle="tab" href="#lrs" role="tab" aria-controls="nav-profile" aria-selected="false">LTI</a>
                             </div>
                         </nav>
                         <div class="tab-content py-3 px-3 px-sm-0" id="nav-tabContent">
@@ -481,7 +476,15 @@ Folder popup is the div that appears when creating a new folder
                                 </div>
                             </div>
                             <div class="tab-pane fade" id="shared" role="tabpanel" aria-labelledby="nav-shared-tab">
-                                Et et consectetur ipsum labore excepteur est proident excepteur ad velit occaecat qui minim occaecat veniam. Fugiat veniam incididunt anim aliqua enim pariatur veniam sunt est aute sit dolor anim. Velit non irure adipisicing aliqua ullamco irure incididunt irure non esse consectetur nostrud minim non minim occaecat. Amet duis do nisi duis veniam non est eiusmod tempor incididunt tempor dolor ipsum in qui sit. Exercitation mollit sit culpa nisi culpa non adipisicing reprehenderit do dolore. Duis reprehenderit occaecat anim ullamco ad duis occaecat ex.
+                                <div class="projectSharedContainer" id="project_shared">
+
+                                </div>
+                            </div>
+
+                            <div class="tab-pane fade" id="lrs" role="tabpanel" aria-labelledby="nav-shared-tab">
+                                <div class="projectGraphContainer" id="project_graph">
+
+                                </div>
                             </div>
 
                         </div>

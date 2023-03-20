@@ -573,6 +573,103 @@ function project_info($template_id){
 
 }
 
+function project_info_table($template_id){
+
+    global $xerte_toolkits_site;
+
+    $prefix = $xerte_toolkits_site->database_table_prefix;
+
+    $query_for_names = "select {$prefix}templatedetails.template_name, template_id, template_framework, date_created, date_modified, extra_flags from "
+        . "{$prefix}templatedetails, {$prefix}originaltemplatesdetails where template_id= ? and {$prefix}originaltemplatesdetails.template_type_id =  {$prefix}templatedetails.template_type_id ";
+
+    $params = array($template_id);
+    $row = db_query_one($query_for_names, $params);
+
+    $query_for_template_name = "select template_name from {$prefix}templatedetails where template_id= ?";
+    $params = array($template_id);
+
+    $row_template_name = db_query_one($query_for_template_name, $params);
+    include "../../../modules/" . $row['template_framework'] . "/module_functions.php";
+
+    $info = "<table class='table'>
+                <tbody> 
+                <tr><th scope='row'>".PROJECT_INFO_NAME.": </th> <td>".str_replace('_', ' ', $row_template_name['template_name'])."</td></tr>".
+                "<tr><th scope='row'>".PROJECT_INFO_ID.": </th> <td>". $row['template_id']."</td></tr>".
+                "<tr><th scope='row'>".PROJECT_INFO_CREATED.": </th> <td>". $row['date_created'] ."</td></tr>".
+                "<tr><th scope='row'>".PROJECT_INFO_MODIFIED.": </th> <td>". $row['date_modified'] ."</td></tr>";
+
+                if(get_default_engine($template_id) == 'flash'){
+                   $info.="<tr><th scope='row'>".PROJECT_INFO_RUNTIME.": </th> <td>". PROPERTIES_LIBRARY_DEFAULT_FLASH ."</td></tr>";
+                }else{
+                    $info.="<tr><th scope='row'>".PROJECT_INFO_RUNTIME.": </th> <td>". PROPERTIES_LIBRARY_DEFAULT_HTML5 ."</td></tr>";
+                }
+
+                if(template_access_settings($template_id)!='Private'){
+                    $info.="<tr><th scope='row'>".PROJECT_INFO_URL.": </th> <td>". $xerte_toolkits_site->site_url ."</td></tr>";
+                    $info.="<tr><th scope='row'>".PROJECT_INFO_EMBEDCODE.": </th> <td>". $xerte_toolkits_site->site_url ."</td></tr>";
+
+                }
+
+
+
+    /*if(template_access_settings($template_id)!='Private'){
+
+        $info .= '<br/>' . PROJECT_INFO_URL . ": ";
+
+        $info .=  "<a target=\"new\" href='" . $xerte_toolkits_site->site_url .
+            url_return("play", $_POST['template_id']) . "'>" .
+            $xerte_toolkits_site->site_url . url_return("play", $_POST['template_id']) . "</a><br/>";
+
+        $template = explode("_", get_template_type($_POST['template_id']));
+
+
+        if(file_exists($xerte_toolkits_site->root_file_path . "/modules/" . $template[0] . "/play_links.php")){
+
+            require_once($xerte_toolkits_site->root_file_path . "/modules/" . $template[0] . "/play_links.php");
+
+            //show_play_links($template[1]);
+
+        }
+
+        // Get the template screen size
+
+        $query_for_template_name = "select {$prefix}originaltemplatesdetails.template_name, "
+            . "{$prefix}originaltemplatesdetails.template_framework from "
+            . "{$prefix}originaltemplatesdetails, {$prefix}templatedetails where"
+            . " {$prefix}templatedetails.template_type_id = {$prefix}originaltemplatesdetails.template_type_id AND template_id = ?";
+
+        $params = array($template_id);
+
+        $row_name = db_query_one($query_for_template_name, $params);
+
+
+        if(isset($xerte_toolkits_site->learning_objects->{$row_name['template_framework'] . "_" . $row_name['template_name']}->preview_size)){
+
+            if($xerte_toolkits_site->learning_objects->{$row_name['template_framework'] . "_" . $row_name['template_name']}->preview_size!="*"){
+
+                $temp_string = $xerte_toolkits_site->learning_objects->{$row_name['template_framework'] . "_" . $row_name['template_name']}->preview_size;
+
+            }else{
+
+                $temp_string = "100%,100%";
+
+            }
+
+        }else{
+
+            $temp_string = "100%,100%";
+
+        }
+
+        $temp_array = explode(",",$temp_string);
+
+        $info .=  '<br/><form><label for="embed_text_area">' . PROJECT_INFO_EMBEDCODE . ":</label><br/><textarea readonly id='embed_text_area' rows='3' cols='30' onfocus='this.select()'><iframe src=\""  . $xerte_toolkits_site->site_url .  url_return("play", $_POST['template_id']) .  "\" width=\"" . $temp_array[0] . "\" height=\"" . $temp_array[1] . "\" frameborder=\"0\" style=\"position:relative; top:0px; left:0px; z-index:0;\"></iframe></textarea></form><br/>";
+
+    }*/
+    return $info;
+
+}
+
 function folder_info($folder_id){
 
     global $xerte_toolkits_site;
@@ -590,6 +687,30 @@ function folder_info($folder_id){
     $info .= PROJECT_INFO_ID . ": " . $row['folder_id'] . "<br/>";
 
     $info .= PROJECT_INFO_CREATED . ": " . $row['date_created'] . "<br/>";
+
+    return $info;
+
+}
+
+function folder_info_table($folder_id){
+
+    global $xerte_toolkits_site;
+
+    $prefix = $xerte_toolkits_site->database_table_prefix;
+
+    $query = "select folder_name, folder_id, date_created from "
+        . "{$prefix}folderdetails where folder_id= ?";
+
+    $params = array($folder_id);
+    $row = db_query_one($query, $params);
+
+    $info = "<table class='table'>
+                <tbody> 
+                <tr><th scope='row'>".PROJECT_INFO_NAME.": </th> <td>".str_replace('_', ' ', $row['folder_name'])."</td></tr>".
+        "<tr><th scope='row'>".PROJECT_INFO_ID.": </th> <td>". $row['folder_id']."</td></tr>".
+        "<tr><th scope='row'>".PROJECT_INFO_CREATED.": </th> <td>". $row['date_created'] ."</td></tr>
+                </tbody>
+            </table>";
 
     return $info;
 
@@ -777,6 +898,55 @@ function media_quota_info($template_id)
     }
 }
 
+function media_quota_info_table($template_id)
+{
+    global $xerte_toolkits_site;
+    $quota=0;
+
+    if (has_rights_to_this_template($template_id, $_SESSION['toolkits_logon_id']) || is_user_admin()) {
+
+        $prefix = $xerte_toolkits_site->database_table_prefix;
+        $sql = "select {$prefix}originaltemplatesdetails.template_name, {$prefix}templaterights.folder, {$prefix}logindetails.username FROM " .
+            "{$prefix}originaltemplatesdetails, {$prefix}templatedetails, {$prefix}templaterights, {$prefix}logindetails WHERE " .
+            "{$prefix}originaltemplatesdetails.template_type_id = {$prefix}templatedetails.template_type_id AND " .
+            "{$prefix}templaterights.template_id = {$prefix}templatedetails.template_id AND " .
+            "{$prefix}templatedetails.creator_id = {$prefix}logindetails.login_id AND " .
+            "{$prefix}templatedetails.template_id = ? AND (role = ? OR role = ?)";
+
+        $row_path = db_query_one($sql, array($_POST['template_id'], 'creator', 'co-author'));
+
+        $end_of_path = $_POST['template_id'] . "-" . $row_path['username'] . "-" . $row_path['template_name'];
+
+        /**
+         * Set the paths
+         */
+
+        $dir_path = $xerte_toolkits_site->users_file_area_full . $end_of_path . "/media";
+
+        $xmlpath = $xerte_toolkits_site->users_file_area_full . $end_of_path . "/data.xml";
+
+        $previewpath = $xerte_toolkits_site->users_file_area_full . $end_of_path . "/preview.xml";
+
+        if (file_exists($xerte_toolkits_site->users_file_area_full . $end_of_path . "/preview.xml")) {
+
+            $quota = filesize($xerte_toolkits_site->users_file_area_full . $end_of_path . "/data.xml")
+                + filesize($xerte_toolkits_site->users_file_area_full . $end_of_path . "/preview.xml");
+
+        }
+
+        if (file_exists($dir_path))
+        {
+            $quota += folder_size($dir_path);
+
+            return "<tr><th scope='row'>".PROJECT_INFO_MEDIA.": </th> <td>". (round($quota/10000, 0)/100) . " MB</td></tr>";
+        }
+        else
+        {
+            return "";
+        }
+    }
+}
+
 function sharing_info($template_id)
 {
     global $xerte_toolkits_site;
@@ -850,6 +1020,80 @@ function sharing_info($template_id)
     return $info;
 }
 
+function sharing_info_icon($template_id)
+{
+    global $xerte_toolkits_site;
+
+    if(!has_rights_to_this_template($template_id, $_SESSION['toolkits_logon_id']) && !is_user_admin()) {
+        return "";
+    }
+
+    $sql = "SELECT template_id, user_id, firstname, surname, username, role, profileimage FROM " .
+        " {$xerte_toolkits_site->database_table_prefix}templaterights tr, {$xerte_toolkits_site->database_table_prefix}logindetails ld WHERE " .
+        " ld.login_id = tr.user_id and template_id= ?";
+
+    $query_sharing_rows = db_query($sql, array($template_id));
+
+    $sql = "SELECT group_name, role FROM {$xerte_toolkits_site->database_table_prefix}template_group_rights tgr, " .
+        "{$xerte_toolkits_site->database_table_prefix}user_groups ug WHERE template_id = ? AND tgr.group_id = ug.group_id";
+
+    $query_group_sharing_rows = db_query($sql, array($template_id));
+
+    if(sizeof($query_sharing_rows)==1 && empty($query_group_sharing_rows)){
+        return PROJECT_INFO_NOTSHARED;
+    }
+    $info = "";
+    foreach($query_sharing_rows as $row) {
+        $info .= "<div class='sharedUserIcon'>
+                    <div>
+                        <img class='sharedUser' src='data:image/png;charset=utf8;base64,". $row['profileimage'] ."' alt='User' />
+                    </div>
+                    <div class='iconName'>
+                        <p class='iconFullName'>".substr($row['firstname'], 0, 1).".". $row['surname'] ."</p>";
+
+        switch($row['role'])
+        {
+            case "creator":
+                $info .=  "<p class='iconRole'>".SHARING_CREATOR."</p>";
+                break;
+            case "co-author":
+                $info .=  "<p class='iconRole'>".SHARING_COAUTHOR."</p>";
+                break;
+            case "editor":
+                $info .=  "<p class='iconRole'>".SHARING_EDITOR."</p>";
+                break;
+            case "read-only":
+                $info .=  "<p class='iconRole'>".SHARING_READONLY."</p>";
+                break;
+        }
+        $info .=  "</div>
+                </div>";
+    }
+    foreach($query_group_sharing_rows as $row) {
+        $info .=  "<li><span>" . $row['group_name'] . "  -  (";
+        switch($row['role'])
+        {
+            case "creator":
+                $info .=  SHARING_CREATOR;
+                break;
+            case "co-author":
+                $info .=  SHARING_COAUTHOR;
+                break;
+            case "editor":
+                $info .=  SHARING_EDITOR;
+                break;
+            case "read-only":
+                $info .=  SHARING_READONLY;
+                break;
+        }
+
+        $info .=  ")</span></li>";
+
+    }
+
+    return $info;
+}
+
 function folder_sharing_info($folder_id)
 {
     global $xerte_toolkits_site;
@@ -896,6 +1140,83 @@ function folder_sharing_info($folder_id)
         }
 
         $info .=  ")</span></li>";
+    }
+    foreach($query_group_sharing_rows as $row) {
+        $info .=  "<li><span>" . $row['group_name'] . "  -  (";
+        switch($row['role'])
+        {
+            case "creator":
+                $info .=  SHARING_CREATOR;
+                break;
+            case "co-author":
+                $info .=  SHARING_COAUTHOR;
+                break;
+            case "editor":
+                $info .=  SHARING_EDITOR;
+                break;
+            case "read-only":
+                $info .=  SHARING_READONLY;
+                break;
+        }
+
+        $info .=  ")</span></li>";
+    }
+
+    $info .=  "</ul>";
+
+    return $info;
+}
+
+function folder_sharing_info_table($folder_id)
+{
+    global $xerte_toolkits_site;
+
+    if(!has_rights_to_this_folder($folder_id, $_SESSION['toolkits_logon_id']) && !is_user_admin()) {
+        return "";
+    }
+
+    $sql = "SELECT folder_id, logindetails.login_id, firstname, surname, username, role, profileimage FROM " .
+        " {$xerte_toolkits_site->database_table_prefix}folderrights, {$xerte_toolkits_site->database_table_prefix}logindetails WHERE " .
+        " {$xerte_toolkits_site->database_table_prefix}logindetails.login_id = {$xerte_toolkits_site->database_table_prefix}folderrights.login_id and folder_id= ?";
+
+    $query_sharing_rows = db_query($sql, array($folder_id));
+
+    $sql = "SELECT group_name, role FROM {$xerte_toolkits_site->database_table_prefix}folder_group_rights, " .
+        "{$xerte_toolkits_site->database_table_prefix}user_groups WHERE folder_id = ? AND folder_group_rights.group_id = user_groups.group_id";
+
+    $query_group_sharing_rows = db_query($sql, array($folder_id));
+
+    if(sizeof($query_sharing_rows)==1 && empty($query_group_sharing_rows)){
+        $info .= PROJECT_INFO_NOTSHARED . "<br/>";
+        return $info;
+    }
+
+    $info = "";
+    foreach($query_sharing_rows as $row) {
+        $info .= "<div class='sharedUserIcon'>
+                    <div>
+                        <img class='sharedUser' src='data:image/png;charset=utf8;base64,". $row['profileimage'] ."' alt='User' />
+                    </div>
+                    <div class='iconName'>
+                        <p class='iconFullName'>".substr($row['firstname'], 0, 1).".". $row['surname'] ."</p>";
+        switch($row['role'])
+        {
+            case "creator":
+                $info .=  "<p class='iconRole'>".SHARING_CREATOR."</p>";
+                break;
+            case "co-author":
+                $info .=  "<p class='iconRole'>".SHARING_COAUTHOR."</p>";
+                break;
+            case "editor":
+                $info .=  "<p class='iconRole'>".SHARING_EDITOR."</p>";
+                break;
+            case "read-only":
+                $info .=  "<p class='iconRole'>".SHARING_READONLY."</p>";
+                break;
+        }
+
+        $info .=  "</div>
+                </div>";
     }
     foreach($query_group_sharing_rows as $row) {
         $info .=  "<li><span>" . $row['group_name'] . "  -  (";
@@ -975,6 +1296,46 @@ function rss_syndication($template_id)
 
 }
 
+function rss_syndication_table($template_id)
+{
+    global $xerte_toolkits_site;
+
+    if(!has_rights_to_this_template($template_id, $_SESSION['toolkits_logon_id']) && !is_user_admin()) {
+        return "";
+    }
+
+    $prefix = $xerte_toolkits_site->database_table_prefix;
+    $sql = "SELECT * FROM {$prefix}templatesyndication WHERE template_id = ?";
+
+    $row = db_query_one($sql, array($template_id));
+    $info="<tr><th scope='row'>".PROJECT_INFO_RSS_SYNDICATION.": </th>";
+
+
+    if ($row == null || ($row['rss'] != 'true' && $row['export'] != 'true' && $row['syndication'] != 'true'))
+    {
+        return "";
+    }
+    else
+    {
+        if ($row['rss'] == 'true')
+        {
+            $info .= "<td>". PROJECT_INFO_RSS_SYNDICATION_RSSENABLED ."</td></tr>";
+
+        }
+        if ($row['export'] == 'true')
+        {
+            $info .= "<td>". PROJECT_INFO_RSS_SYNDICATION_EXPORTENABLED ."</td></tr>";
+        }
+        if ($row['syndication'] == 'true')
+        {
+            $info .= "<td>". PROJECT_INFO_RSS_SYNDICATION_SYNDICATIONENABLED ."</td></tr>";
+        }
+
+        return $info;
+    }
+
+}
+
 function access_info($template_id){
 
     global $xerte_toolkits_site;
@@ -1022,6 +1383,55 @@ function access_info($template_id){
 		$info .= "<br/>" . PROJECT_INFO_NRVIEWSTITLE . ": " . $nrViews;
     }
     $info .= "<br/>";
+    return $info;
+}
+
+function access_info_table($template_id){
+
+    global $xerte_toolkits_site;
+
+    $prefix =  $xerte_toolkits_site->database_table_prefix ;
+    $query_for_template_access = "select access_to_whom, number_of_uses from {$prefix}templatedetails where template_id= ? ";
+    $params = array($template_id);
+
+    $row_access = db_query_one($query_for_template_access, $params);
+    $info="<tr><th scope='row'>".PROJECT_INFO_ACCESS.": </th>";
+
+    $accessStr = template_access_settings($_POST['template_id']);
+    switch ($accessStr)
+    {
+        case "Public":
+            $accessTranslation = PROJECT_INFO_PUBLIC;
+            $nrViews = $row_access["number_of_uses"];
+            break;
+        case "Private":
+            $accessTranslation = PROJECT_INFO_PRIVATE;
+            $nrViews = $row_access["number_of_uses"];
+            break;
+        case "Password":
+            $accessTranslation = PROJECT_INFO_PASSWORD;
+            $nrViews = $row_access["number_of_uses"];
+            break;
+        default:
+            if (substr($accessStr,0,5) == "Other")
+            {
+                $accessTranslation = PROJECT_INFO_OTHER . " ('" . substr($accessStr,5) . "')";
+                $accessStr = "Other";
+                $nrViews = $row_access["number_of_uses"];
+            }
+            else
+            {
+                $accessTranslation = "'" . $accessStr . "'";
+                $nrViews = $row_access["number_of_uses"];
+            }
+    }
+    $info .= "<td>". $accessTranslation ."</td></tr>";
+    if (isset($nrViews) && $nrViews!= "")
+    {
+        /* $info .= str_replace("%n", $nrViews, PROJECT_INFO_NRVIEWS);*/
+        $info.="<tr><th scope='row'>".PROJECT_INFO_NRVIEWSTITLE.": </th> <td>". $nrViews ."</td></tr>";
+
+    }
     return $info;
 }
 
