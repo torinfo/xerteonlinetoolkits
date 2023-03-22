@@ -27,6 +27,7 @@ var annotatedDiagram = new function () {
     }
 
     this.pageChanged = function (blockid) {
+        debugger;
         $pageContents = jGetElement(blockid, ".pageContents");
         $img = jGetElement(blockid, ".imageHolder img");
         $hsHolder = jGetElement(blockid, ".hsHolder");
@@ -136,7 +137,8 @@ var annotatedDiagram = new function () {
                 $hsHolder.addClass("mapster");
 
             } else {
-                var newStyles = "<style type='text/css'> .pageContents .hsHolder:not(.mapster).oval .hotspot.selected, .pageContents .hsHolder:not(.mapster).oval .hsGroup.selected .hotspot { border-color: " + highlightColour + ";} <style>";
+                debugger;
+                var newStyles = "<style type='text/css'> .annotatedDiagramBlock.pageContents .hsHolder:not(.mapster).oval .hotspot.selected, .pageContents .hsHolder:not(.mapster).oval .hsGroup.selected .hotspot { border-color: " + highlightColour + ";} </style>";
                 $pageContents.prepend($(newStyles));
             }
         }
@@ -145,7 +147,7 @@ var annotatedDiagram = new function () {
 
         // create links
         $(x_currentPageXML).children().each(function (i) {
-            var $listItem = $('<a class="listItem" href="#"></a>').appendTo(".listHolder");
+            var $listItem = $('<a class="listItem" href="#"></a>').appendTo("#" + blockid + " .listHolder");
 
             // create list of links to each hs / hs group
             $listItem
@@ -162,7 +164,7 @@ var annotatedDiagram = new function () {
                     // not already selected - so select, show text & highlight hotspots
                     if (!$this.is(jGetElement(blockid, ".listItem.highlight"))) {
                         annotatedDiagram.deselect(blockid);
-                        annotatedDiagram.selectLink($this);
+                        annotatedDiagram.selectLink($this, blockid);
 
                         if ($pageContents.data("hsType") == "flex") {
                             $("area." + $this.data("group")).mapster("select");
@@ -206,48 +208,62 @@ var annotatedDiagram = new function () {
                 });
         });
 
-        if (x_currentPageXML.getAttribute("url").split(".")[1].slice(0, -1) != "swf") {
 
-            $img
-                .data('firstLoad', true)
-                .css({
-                    "opacity": 0,
-                    "filter": 'alpha(opacity=0)'
-                })
-                .one("load", function () {
-                    annotatedDiagram.setUp(blockid);
+        let url = x_currentPageXML.getAttribute("url").split(".");
+        if (url.length > 1) {
+            if (url[1].slice(0, -1) != "swf") {
 
-                    // call this function in every model once everything's loaded
-                    x_pageLoaded();
-                })
-                .attr({
-                    "src": x_evalURL(x_currentPageXML.getAttribute("url")),
-                    "alt": x_currentPageXML.getAttribute("tip")
-                })
-                .each(function () { // called if loaded from cache as in some browsers load won't automatically trigger
-                    if (this.complete) {
-                        setTimeout(function () {
-                            $(this).trigger("load");
-                        }, 1);
-                    }
-                });
+                $img
+                    .data('firstLoad', true)
+                    .css({
+                        "opacity": 0,
+                        "filter": 'alpha(opacity=0)'
+                    })
+                    .one("load", function () {
+                        annotatedDiagram.setUp(blockid);
 
-            if ($pageContents.data("hsType") == "flex") {
-                $img.attr("usemap", "#hsHolder_map");
+                        // call this function in every model once everything's loaded
+                        x_pageLoaded();
+                    })
+                    .attr({
+                        "src": x_evalURL(x_currentPageXML.getAttribute("url")),
+                        "alt": x_currentPageXML.getAttribute("tip")
+                    })
+                    .each(function () { // called if loaded from cache as in some browsers load won't automatically trigger
+                        if (this.complete) {
+                            setTimeout(function () {
+                                $(this).trigger("load");
+                            }, 1);
+                        }
+                    });
+
+                if ($pageContents.data("hsType") == "flex") {
+                    $img.attr("usemap", "#hsHolder_map" + blockid);
+                }
+
+            } else {
+                // have had to add this in I found one old project where a swf was used instead of an image on this page
+                jGetElement(blockid, ".imageHolder").html('<p>Flash files (.swf) are no longer supported</p>');
+                x_pageLoaded();
             }
-
-        } else {
-            // have had to add this in I found one old project where a swf was used instead of an image on this page
-            jGetElement(blockid, ".imageHolder").html('<p>Flash files (.swf) are no longer supported</p>');
+        }else{
+            // If no image was selected
+            jGetElement(blockid, ".imageHolder").html('<p>No image selected.</p>');
             x_pageLoaded();
         }
-
         if (x_currentPageXML.getAttribute("link") == "true") {
             jGetElement(blockid, ".listHolder").css("display", "none")
         }
     }
 
     this.setUp = function (blockid) {
+
+        $pageContents = jGetElement(blockid, ".pageContents");
+        $img = jGetElement(blockid, ".imageHolder img");
+        $hsHolder = jGetElement(blockid, ".hsHolder");
+        $panel = jGetElement(blockid, ".panel");
+
+        debugger;
         // if old style hotspots are used, resize the canvas first
         if ($pageContents.data("hsType") == "flex") {
             $img.mapster('unbind');
@@ -285,13 +301,12 @@ var annotatedDiagram = new function () {
             });
 
         if ($pageContents.data("hsType") == "centre" && align == "Left") {
-            $(".listItem").css("minWidth", $x_pageDiv.width() - $panel.outerWidth(true) - 50);
+            jGetElement(blockid, ".listItem").css("minWidth", $x_pageDiv.width() - $panel.outerWidth(true) - 50);
         }
 
         // now get info about hotspots & create them
         if ($pageContents.data("hsType") == "flex") {
-
-            $hsHolder.html('<map id="hsHolder_map" name="hsHolder_map"></map>');
+            $hsHolder.html('<map id="hsHolder_map' + blockid + '" name="hsHolder_map' + blockid + '"></map>');
 
             var stroke = true,
                 strokeWidth = borderW,
@@ -346,6 +361,7 @@ var annotatedDiagram = new function () {
         }
 
         $(x_currentPageXML).children().each(function (i) {
+            debugger;
             var _this = this;
             if (this.nodeName == "hotspotGroup") {
 
@@ -356,21 +372,22 @@ var annotatedDiagram = new function () {
                 }
 
                 $(this).children().each(function (j) {
-
+                    debugger;
                     if ($pageContents.data("hsType") != "flex") {
                         annotatedDiagram.createHs(blockid, this, i, $hsGroup);
 
                     } else {
-                        annotatedDiagram.createHs(blockid, this, i, $("#hsHolder_map"));
+                        annotatedDiagram.createHs(blockid, this, i, $("#hsHolder_map"+ blockid));
                     }
                 });
 
             } else {
+                debugger;
                 if ($pageContents.data("hsType") != "flex") {
                     annotatedDiagram.createHs(blockid, this, i, $hsHolder);
 
                 } else {
-                    annotatedDiagram.createHs(blockid, this, i, $("#hsHolder_map"));
+                    annotatedDiagram.createHs(blockid, this, i, $("#hsHolder_map"+blockid));
                 }
             }
         });
@@ -382,6 +399,10 @@ var annotatedDiagram = new function () {
 
 
     this.createHs = function (blockid, hsInfo, groupIndex, $parent) {
+        debugger;
+        $pageContents = jGetElement(blockid, ".pageContents");
+        $img = jGetElement(blockid, ".imageHolder img");
+
         var $listItem = jGetElement(blockid, ".listHolder .listItem:eq(" + groupIndex + ")"),
             $hotspot;
 
@@ -435,7 +456,7 @@ var annotatedDiagram = new function () {
                     // not already selected - so select link, show text & highlight hotspots
                     if (!$this.data("listItem").is($(".listItem.highlight"))) {
                         annotatedDiagram.deselect(blockid);
-                        annotatedDiagram.selectLink($(this).data("listItem"));
+                        annotatedDiagram.selectLink($(this).data("listItem"), blockid);
 
                         // only trigger selection on hotspots that aren't $this - otherwise $this is unselected
                         $("area." + $this.data("listItem").data("group")).each(function () {
@@ -554,7 +575,11 @@ var annotatedDiagram = new function () {
         $parent.append($hotspot);
     }
 
-    this.selectLink = function ($link) {
+    this.selectLink = function ($link, blockid = 0) {
+        debugger;
+        if (blockid != 0){
+            $infoHolder = jGetElement(blockid, ".infoHolder");
+        }
         $link.addClass("highlight");
         $infoHolder.html(x_addLineBreaks($link.data("text")));
         x_pageContentsUpdated();

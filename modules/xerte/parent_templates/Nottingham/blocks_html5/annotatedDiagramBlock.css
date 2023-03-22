@@ -37,6 +37,10 @@
     padding-bottom: 10px;
 }
 
+.annotatedDiagramBlock.pageContents{
+    height: fit-content;
+}
+
 .annotatedDiagramBlock.pageContents .highlightBorder {
     border: 1px solid;
     margin-top: -1px;
