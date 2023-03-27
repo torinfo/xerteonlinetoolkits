@@ -1018,7 +1018,6 @@ function showInformationAndSetStatusInTable(node)
         var id = node.id;
         var xot_id = node.original.xot_id;
 
-        debugger
         switch(type)
         {
             case "folder":

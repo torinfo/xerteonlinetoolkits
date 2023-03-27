@@ -669,6 +669,7 @@ function refresh_workspace() {
     //     xmlHttp.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
     //     xmlHttp.send('sort_type=' + document.sorting.type.value);
     // }
+    debugger
     $.ajax({
         type: "POST",
         url: "website_code/php/templates/get_templates_sorted.php",
@@ -684,7 +685,6 @@ function refresh_workspace() {
 }
 
 function getProjectInformation(user_id, template_id) {
-    debugger
     // if (setup_ajax() != false) {
     //     var url = "website_code/php/templates/get_template_info.php";
     //
@@ -712,25 +712,48 @@ function getProjectInformation(user_id, template_id) {
             url: "website_code/php/templates/get_template_shared_users.php",
             dataType: 'json',
             data: {user_id: user_id, template_id: template_id},
+        }).done(function (info){
+            document.getElementById('project_shared').innerHTML = info.properties;
         })
+
         var ajaxLrs = $.ajax({
             type: "POST",
             url: "website_code/php/templates/get_template_lrs.php",
             dataType: 'json',
             data: {user_id: user_id, template_id: template_id},
+        }).done(function (info){
+            document.getElementById('project_graph').innerHTML = info.properties;
+            if (info.fetch_statistics) {
+                url = site_url + info.template_id;
+                q = {};
+
+                if (info.lrs.site_allowed_urls != null && info.lrs.site_allowed_urls != undefined && info.lrs.site_allowed_urls != "") {
+                    q['activities'] = [url].concat(info.lrs.lrsurls.split(",")).concat(info.lrs.site_allowed_urls.split(",").map(function(url) {return url + info.template_id})).filter(function(url) {return  url != ""});
+                }
+                q['activity'] = url;
+
+                q['verb'] = "http://adlnet.gov/expapi/verbs/launched";
+                q['related_activities'] = false;
+
+                var today = new Date();
+                var start = new Date(today.getTime() - info.dashboard.default_period * 24 * 60 * 60 * 1000);
+                var startstartofday = new Date(start.getFullYear(), start.getMonth(), start.getDate(), 0, 0, 0, 0);
+                var todayendofday = new Date(today.getFullYear(), today.getMonth(), today.getDate(), 23, 59, 59, 0);
+                q['since'] = startstartofday.toISOString();
+                x_Dashboard = new xAPIDashboard(info);
+                x_Dashboard.getStatements(q, false, function() {
+                    $("#graph_" + info.template_id).html("");
+                    x_Dashboard.drawActivityChart("", $("#graph_" + info.template_id), startstartofday, todayendofday);
+                });
+            }
+            $("#preview_iframe").attr('src', site_url + "preview.php?template_id=" + info.template_id)
         })
     }
-    ajaxIcon.done(function (info){
-        document.getElementById('project_shared').innerHTML = info.properties;
-    })
-    ajaxLrs.done(function (info){
-        document.getElementById('project_graph').innerHTML = info.properties;
-    })
     ajaxInfo.done(function(info) {
-        debugger
         document.getElementById('project_information').innerHTML = info.properties;
 
         disableReadOnlyButtons(info);
+
         if (info.fetch_statistics) {
             url = site_url + info.template_id;
             q = {};
@@ -755,6 +778,7 @@ function getProjectInformation(user_id, template_id) {
             });
         }
         $("#preview_iframe").attr('src', site_url + "preview.php?template_id=" + info.template_id)
+
 
     })
     .fail(function(jqXHR, textStatus, errorThrown)
@@ -1406,6 +1430,7 @@ function open_created_node(template_id, folder_id) {
  */
 
 function create_tutorial(tutorial) {
+    debugger
     if (setup_ajax() != false) {
         var url = "website_code/php/templates/new_template.php";
         active_div = tutorial;
