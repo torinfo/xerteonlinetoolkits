@@ -3826,7 +3826,6 @@ function XTResults(fullcompletion) {
 function jGetElement(blockid, element) {
 
     if(element.includes(",")){
-        debugger;
         var finalElement = "";
         var elements = element.split(",");
         for( var i=0; i< elements.length; i++){
@@ -3840,6 +3839,7 @@ function jGetElement(blockid, element) {
     }
     return $("#" + blockid + ' ' + element)
 }
+
 
 function XTGetBlockNr(blockid){
     if(blockid){

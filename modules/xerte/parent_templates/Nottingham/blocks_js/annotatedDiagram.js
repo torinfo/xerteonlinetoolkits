@@ -9,8 +9,7 @@ var annotatedDiagram = new function () {
         options,
         $canvas,
         context,
-        borderW = 2,
-        x_currentPageXML;
+        borderW = 2;
 
 
     // Called from xenith if tab level deeplinking is available
@@ -99,7 +98,8 @@ var annotatedDiagram = new function () {
     */
 
     this.init = function (pageXML, blockid) {
-        x_currentPageXML = pageXML;
+        debugger;
+        var blockXML = x_getBlockXML(blockid);
 
         $pageContents = jGetElement(blockid, ".pageContents");
         $img = jGetElement(blockid, ".imageHolder img");
@@ -109,21 +109,21 @@ var annotatedDiagram = new function () {
 
 
         if (x_browserInfo.mobile != true) {
-            if (x_currentPageXML.getAttribute("align") == "Right") {
+            if (blockXML.getAttribute("align") == "Right") {
                 $panel.addClass("left");
-            } else if (x_currentPageXML.getAttribute("align") != "Top") {
+            } else if (blockXML.getAttribute("align") != "Top") {
                 $panel.addClass("right");
             }
         }
 
-        var highlightColour = x_currentPageXML.getAttribute("colour") != undefined && x_currentPageXML.getAttribute("colour") != "" ? x_getColour(x_currentPageXML.getAttribute("colour")) : "#FFFF00";
+        var highlightColour = blockXML.getAttribute("colour") != undefined && blockXML.getAttribute("colour") != "" ? x_getColour(blockXML.getAttribute("colour")) : "#FFFF00";
         $pageContents.data("highlightColour", highlightColour);
 
         // if shape is set to oval, line or arrow, the hs can't be drawn with mapster - use old method
         // when shape is outline (previously called rectangle), mapster is used - even if the hotspot is just a simple rectangle
         $pageContents.data("hsType",
-            x_currentPageXML.getAttribute("shape") == "Oval" ? "oval" :
-                x_currentPageXML.getAttribute("shape") == "None" || x_currentPageXML.getAttribute("shape") == "Arrow" ? "centre" : "flex"
+            blockXML.getAttribute("shape") == "Oval" ? "oval" :
+                blockXML.getAttribute("shape") == "None" || blockXML.getAttribute("shape") == "Arrow" ? "centre" : "flex"
         );
 
         if ($pageContents.data("hsType") == "centre") {
@@ -143,10 +143,10 @@ var annotatedDiagram = new function () {
             }
         }
 
-        jGetElement(blockid, ".mainText").html(x_addLineBreaks(x_currentPageXML.getAttribute("text")));
+        jGetElement(blockid, ".mainText").html(x_addLineBreaks(blockXML.getAttribute("text")));
 
         // create links
-        $(x_currentPageXML).children().each(function (i) {
+        $(blockXML).children().each(function (i) {
             var $listItem = $('<a class="listItem" href="#"></a>').appendTo("#" + blockid + " .listHolder");
 
             // create list of links to each hs / hs group
@@ -170,7 +170,7 @@ var annotatedDiagram = new function () {
                             $("area." + $this.data("group")).mapster("select");
 
                         } else {
-                            var shape = x_currentPageXML.getAttribute("shape");
+                            var shape = blockXML.getAttribute("shape");
                             if (shape == "Oval") {
                                 $hsHolder.find(".selected").removeClass("selected");
                                 $($hsHolder.children()[$this.index()]).addClass("selected");
@@ -182,18 +182,18 @@ var annotatedDiagram = new function () {
                                 if ($hs.hasClass("hsGroup")) {
                                     $hs.children()
                                         .each(function () {
-                                            if (x_currentPageXML.getAttribute("link") == "false" || x_currentPageXML.getAttribute("link") == undefined) {
-                                                annotatedDiagram.drawLine($(this), $this, shape);
+                                            if (blockXML.getAttribute("link") == "false" || blockXML.getAttribute("link") == undefined) {
+                                                annotatedDiagram.drawLine($(this), $this, shape, blockXML);
                                             } else {
-                                                annotatedDiagram.drawLineToText(blockid, $(this), shape);
+                                                annotatedDiagram.drawLineToText(blockid, $(this), shape, blockXML);
                                             }
 
                                         });
                                 } else {
-                                    if (x_currentPageXML.getAttribute("link") == "false" || x_currentPageXML.getAttribute("link") == undefined) {
-                                        annotatedDiagram.drawLine($hs, $this, shape);
+                                    if (blockXML.getAttribute("link") == "false" || blockXML.getAttribute("link") == undefined) {
+                                        annotatedDiagram.drawLine($hs, $this, shape, blockXML);
                                     } else {
-                                        annotatedDiagram.drawLineToText(blockid, $hs, shape);
+                                        annotatedDiagram.drawLineToText(blockid, $hs, shape, blockXML);
                                     }
 
                                 }
@@ -209,7 +209,7 @@ var annotatedDiagram = new function () {
         });
 
 
-        let url = x_currentPageXML.getAttribute("url").split(".");
+        let url = blockXML.getAttribute("url").split(".");
         if (url.length > 1) {
             if (url[1].slice(0, -1) != "swf") {
 
@@ -226,8 +226,8 @@ var annotatedDiagram = new function () {
                         x_pageLoaded();
                     })
                     .attr({
-                        "src": x_evalURL(x_currentPageXML.getAttribute("url")),
-                        "alt": x_currentPageXML.getAttribute("tip")
+                        "src": x_evalURL(blockXML.getAttribute("url")),
+                        "alt": blockXML.getAttribute("tip")
                     })
                     .each(function () { // called if loaded from cache as in some browsers load won't automatically trigger
                         if (this.complete) {
@@ -251,12 +251,13 @@ var annotatedDiagram = new function () {
             jGetElement(blockid, ".imageHolder").html('<p>No image selected.</p>');
             x_pageLoaded();
         }
-        if (x_currentPageXML.getAttribute("link") == "true") {
+        if (blockXML.getAttribute("link") == "true") {
             jGetElement(blockid, ".listHolder").css("display", "none")
         }
     }
 
     this.setUp = function (blockid) {
+        var blockXML = x_getBlockXML(blockid);
 
         $pageContents = jGetElement(blockid, ".pageContents");
         $img = jGetElement(blockid, ".imageHolder img");
@@ -277,11 +278,11 @@ var annotatedDiagram = new function () {
         }
 
         // if position is left or right then image size will constrain the image width - if position is top then image size will constrain the image height
-        var maxPanel = x_currentPageXML.getAttribute("panelWidth") == "Large" ? 0.8 : x_currentPageXML.getAttribute("panelWidth") == "Small" ? 0.3 : 0.55,
+        var maxPanel = blockXML.getAttribute("panelWidth") == "Large" ? 0.8 : blockXML.getAttribute("panelWidth") == "Small" ? 0.3 : 0.55,
             panelOuterW = $panel.outerWidth() - $panel.width(),
             panelOuterH = $panel.outerHeight() - $panel.height();
 
-        var align = x_browserInfo.mobile == true ? "Top" : x_currentPageXML.getAttribute("align");
+        var align = x_browserInfo.mobile == true ? "Top" : blockXML.getAttribute("align");
 
         var imgMaxW = Math.round($x_pageHolder.width() * (align == "Top" ? 1 : maxPanel) - panelOuterW - (align == "Top" ? parseInt($x_pageDiv.css("padding-left")) * 2 : 0)),
             imgMaxH = $x_pageHolder.height() * (align == "Top" ? maxPanel : 1) - (parseInt($x_pageDiv.css("padding-left")) * 2) - panelOuterH;
@@ -360,7 +361,7 @@ var annotatedDiagram = new function () {
             }
         }
 
-        $(x_currentPageXML).children().each(function (i) {
+        $(blockXML).children().each(function (i) {
             debugger;
             var _this = this;
             if (this.nodeName == "hotspotGroup") {
@@ -400,6 +401,7 @@ var annotatedDiagram = new function () {
 
     this.createHs = function (blockid, hsInfo, groupIndex, $parent) {
         debugger;
+        var blockXML = x_getBlockXML(blockid);
         $pageContents = jGetElement(blockid, ".pageContents");
         $img = jGetElement(blockid, ".imageHolder img");
 
@@ -535,8 +537,8 @@ var annotatedDiagram = new function () {
 
             var hsName = hsInfo.getAttribute("name");
 
-            if ($(x_currentPageXML).children(groupIndex).nodeName == "hotspotGroup") { // hs in a group
-                hsName = $(x_currentPageXML).children(groupIndex).getAttribute("name");
+            if ($(blockXML).children(groupIndex).nodeName == "hotspotGroup") { // hs in a group
+                hsName = $(blockXML).children(groupIndex).getAttribute("name");
             }
 
             $hotspot
@@ -602,8 +604,8 @@ var annotatedDiagram = new function () {
         }
     }
 
-    this.drawLine = function ($hs, $listItem, shape) {
-        var align = x_browserInfo.mobile == true ? "Top" : x_currentPageXML.getAttribute("align");
+    this.drawLine = function ($hs, $listItem, shape, blockXML) {
+        var align = x_browserInfo.mobile == true ? "Top" : blockXML.getAttribute("align");
 
         // startX/Y = centre of hotspot
         var startX = $hs.offset().left - $(context.canvas).offset().left + ($hs.width() / 2);
@@ -625,8 +627,8 @@ var annotatedDiagram = new function () {
         }
     }
 
-    this.drawLineToText = function (blockid, $hs, shape) {
-        var align = x_browserInfo.mobile == true ? "Top" : x_currentPageXML.getAttribute("align");
+    this.drawLineToText = function (blockid, $hs, shape, blockXML) {
+        var align = x_browserInfo.mobile == true ? "Top" : blockXML.getAttribute("align");
         var $panel = jGetElement(blockid, ".panel");
         var startX = $hs.offset().left - $(context.canvas).offset().left + ($hs.width() / 2);
         var startY = $hs.offset().top - $(context.canvas).offset().top + ($hs.height() / 2);

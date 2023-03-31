@@ -23,7 +23,7 @@ var timeline = new function () {
 
     // function called every time the page is viewed after it has initially loaded
     this.pageChanged = function (blockid) {
-        timelineModel = XTGetInteractionModelState(x_currentPage, XTGetBlockNr(blockid));
+        timelineModel = XTGetInteractionModelState(x_currentPage, x_getBlockNr(blockid));
         jGetElement(blockid, ".labelHolder .label").remove();
         $feedback = jGetElement(blockid, ".feedback").hide();
         jGetElement(blockid, ".targetHolder .target")
@@ -77,7 +77,7 @@ var timeline = new function () {
     };
 
     this.leavePage = function (blockid) {
-        x_currentPageXML = XTGetPageXML(x_currentPage, XTGetBlockNr(blockid));
+        x_currentPageXML = XTGetPageXML(x_currentPage, x_getBlockNr(blockid));
         if ($(x_currentPageXML).children().length > 0 && timelineModel.tracked != true) {
             debugger;
             this.finishTracking(blockid);
@@ -275,7 +275,7 @@ var timeline = new function () {
 
     this.finishTracking = function(blockid)
     {
-        timelineModel = XTGetInteractionModelState(x_currentPage, XTGetBlockNr(blockid));
+        timelineModel = XTGetInteractionModelState(x_currentPage, x_getBlockNr(blockid));
 
         var l_options = [],
             l_answers = [],
@@ -284,7 +284,7 @@ var timeline = new function () {
             l_total = 0;
 
         timelineModel.tracked = true;
-        XTSetInteractionModelState(x_currentPage, XTGetBlockNr(blockid), timelineModel);
+        XTSetInteractionModelState(x_currentPage, x_getBlockNr(blockid), timelineModel);
 
         jGetElement(blockid, ".labelHolder .label").each(function (i) {
 
@@ -316,7 +316,7 @@ var timeline = new function () {
                 score: (l_correct * 100.0) / l_total
             };
 
-        XTExitInteraction(x_currentPage, XTGetBlockNr(0), result, l_options, l_answers, l_feedbacks);
+        XTExitInteraction(x_currentPage, x_getBlockNr(0), result, l_options, l_answers, l_feedbacks);
     }
 
     this.initTracking = function (blockid) {
@@ -345,10 +345,10 @@ var timeline = new function () {
         if (x_currentPageXML.getAttribute("trackinglabel") != null && x_currentPageXML.getAttribute("trackinglabel") != "") {
             label = x_currentPageXML.getAttribute("trackinglabel");
         }
-        XTEnterInteraction(x_currentPage, XTGetBlockNr(blockid), 'match', label, correctOptions, correctAnswers, correctFeedbacks, x_currentPageXML.getAttribute("grouping"), null);
-        XTSetLeavePage(x_currentPage, XTGetBlockNr(blockid), this.leavePage);
-        XTSetInteractionPageXML(x_currentPage, XTGetBlockNr(blockid), x_currentPageXML);
-        XTSetInteractionModelState(x_currentPage, XTGetBlockNr(blockid), timelineModel);
+        XTEnterInteraction(x_currentPage, x_getBlockNr(blockid), 'match', label, correctOptions, correctAnswers, correctFeedbacks, x_currentPageXML.getAttribute("grouping"), null);
+        XTSetLeavePage(x_currentPage, x_getBlockNr(blockid), this.leavePage);
+        XTSetInteractionPageXML(x_currentPage, x_getBlockNr(blockid), x_currentPageXML);
+        XTSetInteractionModelState(x_currentPage, x_getBlockNr(blockid), timelineModel);
     }
 
 
@@ -443,7 +443,7 @@ var timeline = new function () {
 
     // function called when label dropped on target - by mouse or keyboard
     this.dropLabel = function ($thisTarget, $thisLabel, blockid) {
-        timelineModel = XTGetInteractionModelState(x_currentPage, XTGetBlockNr(blockid))
+        timelineModel = XTGetInteractionModelState(x_currentPage, x_getBlockNr(blockid))
         var prevLabel = $thisTarget.data("currentLabel"),
             prevTarget = $thisLabel.data("currentTarget");
 

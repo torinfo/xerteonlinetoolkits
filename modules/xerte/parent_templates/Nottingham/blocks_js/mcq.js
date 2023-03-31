@@ -48,7 +48,7 @@ var mcq = new function() {
             correctAnswer = [],
             correctFeedback = [],
             judge = false,
-            blocknr = XTGetBlockNr(blockid); // is there a correct answer for the question?
+            blocknr = x_getBlockNr(blockid); // is there a correct answer for the question?
 
         this.checked = false;
         // Track the quiz page

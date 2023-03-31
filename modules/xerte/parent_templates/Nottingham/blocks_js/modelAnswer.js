@@ -83,10 +83,10 @@ var modelAnswer = new function () {
         XTSetPageType(x_currentPage, 'numeric', 1, this.weighting);
 
         var modelAnswerTxt = $('<div>').html(x_currentPageXML.getAttribute("feedback")).text();
-        XTEnterInteraction(x_currentPage, XTGetBlockNr(blockid), 'text', label, [], modelAnswerTxt, [], x_currentPageXML.getAttribute("grouping"), null);
-        //XTSetLeavePage(x_currentPage, XTGetBlockNr(blockid), this.leavePage);
-        XTSetInteractionPageXML(x_currentPage, XTGetBlockNr(blockid), x_currentPageXML);
-        XTSetInteractionModelState(x_currentPage, XTGetBlockNr(blockid), modelAnswerModel);
+        XTEnterInteraction(x_currentPage, x_getBlockNr(blockid), 'text', label, [], modelAnswerTxt, [], x_currentPageXML.getAttribute("grouping"), null);
+        //XTSetLeavePage(x_currentPage, x_getBlockNr(blockid), this.leavePage);
+        XTSetInteractionPageXML(x_currentPage, x_getBlockNr(blockid), x_currentPageXML);
+        XTSetInteractionModelState(x_currentPage, x_getBlockNr(blockid), modelAnswerModel);
 
         // feedbackBtnWidth attribute not used as button will be sized automatically
         var panelWidth = x_currentPageXML.getAttribute("panelWidth"),
@@ -275,7 +275,7 @@ var modelAnswer = new function () {
     };
 
     this.finishTracking = function (blockid) {
-        modelAnswerModel = XTGetInteractionModelState(x_currentPage, XTGetBlockNr(blockid))
+        modelAnswerModel = XTGetInteractionModelState(x_currentPage, x_getBlockNr(blockid))
         if(modelAnswerModel.tracked !== true){
             var answerTxt = jGetElement(blockid, ".answerTxt").val();
             result = {
@@ -283,7 +283,7 @@ var modelAnswer = new function () {
                 score: (answerTxt.trim() == "" ? 0.0 : 100.0)
             };
 
-            XTExitInteraction(x_currentPage, XTGetBlockNr(blockid), result, [], answerTxt, []);
+            XTExitInteraction(x_currentPage, x_getBlockNr(blockid), result, [], answerTxt, []);
             this.tracked = true;
         }
 

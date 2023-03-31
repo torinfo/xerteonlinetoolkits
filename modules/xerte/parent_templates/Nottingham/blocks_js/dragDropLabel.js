@@ -76,7 +76,7 @@ var dragDropLabel = new function () {
     };
 
     this.leavePage = function (blockid) {
-        x_currentPageXML = XTGetPageXML(x_currentPage, XTGetBlockNr(blockid));
+        x_currentPageXML = XTGetPageXML(x_currentPage, x_getBlockNr(blockid));
         if ($(x_currentPageXML).children().length > 0) {
             if (!this.checked) {
                 this.showFeedBackandTrackResults(blockid);
@@ -211,9 +211,9 @@ var dragDropLabel = new function () {
 
         // set up drag events (mouse and keyboard controlled)
         if (interactivity == "Match") {
-            XTEnterInteraction(x_currentPage, XTGetBlockNr(blockid), 'match', x_currentPageXML.getAttribute("name"), correctOptions, correctAnswer, correctFeedback, x_currentPageXML.getAttribute("grouping"), null);
-            XTSetLeavePage(x_currentPage, XTGetBlockNr(blockid), this.leavePage);
-            XTSetInteractionPageXML(x_currentPage, XTGetBlockNr(blockid), x_currentPageXML);
+            XTEnterInteraction(x_currentPage, x_getBlockNr(blockid), 'match', x_currentPageXML.getAttribute("name"), correctOptions, correctAnswer, correctFeedback, x_currentPageXML.getAttribute("grouping"), null);
+            XTSetLeavePage(x_currentPage, x_getBlockNr(blockid), this.leavePage);
+            XTSetInteractionPageXML(x_currentPage, x_getBlockNr(blockid), x_currentPageXML);
             jGetElement(blockid, ".labelHolder .label")
                 .draggable({
                     containment: "#" + blockid + " #x_pageHolder",
@@ -422,8 +422,8 @@ var dragDropLabel = new function () {
     };
 
     this.imgLoaded = function (blockid) {
-        if(XTGetPageXML(x_currentPage, XTGetBlockNr(blockid)) != undefined){
-            x_currentPageXML = XTGetPageXML(x_currentPage, XTGetBlockNr(blockid));
+        if(XTGetPageXML(x_currentPage, x_getBlockNr(blockid)) != undefined){
+            x_currentPageXML = XTGetPageXML(x_currentPage, x_getBlockNr(blockid));
         }
         // labels have been created and image loaded - can now resize image to fit space and create targets on it
         var $image = jGetElement(blockid, ".image"),
@@ -667,7 +667,7 @@ var dragDropLabel = new function () {
     };
 
     this.showFeedBackandTrackResults = function (blockid) {
-        x_currentPageXML = XTGetPageXML(x_currentPage, XTGetBlockNr(blockid));
+        x_currentPageXML = XTGetPageXML(x_currentPage, x_getBlockNr(blockid));
         var correct = false,
             numCorrect = 0,
             l_options = [],
@@ -751,7 +751,7 @@ var dragDropLabel = new function () {
                     success: numCorrect == $(x_currentPageXML).children().length,
                     score: $(x_currentPageXML).children().length === 0 ? 100.0 : numCorrect * 100.0 / $(x_currentPageXML).children().length
                 };
-            XTExitInteraction(x_currentPage, XTGetBlockNr(blockid), result, l_options, l_answer, l_feedback, 0, x_currentPageXML.getAttribute("trackinglabel"));
+            XTExitInteraction(x_currentPage, x_getBlockNr(blockid), result, l_options, l_answer, l_feedback, 0, x_currentPageXML.getAttribute("trackinglabel"));
 
             if (XTGetMode() != "normal") {
                 if (numCorrect == $(x_currentPageXML).children().length) {

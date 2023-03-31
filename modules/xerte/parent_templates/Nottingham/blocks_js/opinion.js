@@ -391,8 +391,8 @@ var opinion = new function()
                     }
                 }
                 debugger 
-                XTEnterInteraction(x_currentPage, XTGetBlockNr(blockid), 'numeric', name, correctOptions, correctAnswer, null, x_currentPageXML.getAttribute("grouping"), null, questions[currentQuestion]);
-                XTSetInteractionPageXML(x_currentPage, XTGetBlockNr(blockid), questions[currentQuestion]);
+                XTEnterInteraction(x_currentPage, x_getBlockNr(blockid), 'numeric', name, correctOptions, correctAnswer, null, x_currentPageXML.getAttribute("grouping"), null, questions[currentQuestion]);
+                XTSetInteractionPageXML(x_currentPage, x_getBlockNr(blockid), questions[currentQuestion]);
                 $pageContents.data('checked', false);
             }
         }
@@ -440,7 +440,7 @@ var opinion = new function()
 
     this.trackQuestion = function(currentQuestion, blockid)
     {
-        x_currentPageXML = XTGetPageXML(x_currentPage, XTGetBlockNr(blockid), currentQuestion);
+        x_currentPageXML = XTGetPageXML(x_currentPage, x_getBlockNr(blockid), currentQuestion);
         var questions = $pageContents.data('questions'),
             currentQ = $(x_currentPageXML).children().children()[questions[currentQuestion]],
             selected = 0,

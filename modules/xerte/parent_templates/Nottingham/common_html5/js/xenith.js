@@ -28,6 +28,7 @@ var x_languageData  = [],
 	x_startPage		= {type : "index", ID : "0"},
     x_currentPage   = -1,
     x_currentPageXML,
+	x_currentPageBlocksXML = [],
     x_specialChars  = [],
     x_inputFocus    = false,
     x_dialogInfo    = [], // (type, built)
@@ -2620,6 +2621,7 @@ function x_navigateToPage(force, pageInfo, addHistory) { // pageInfo = {type, ID
 	}
 }
 
+// ---- Block code ----
 //INTERN CODE
 function x_createBlock(container, module, modulePosition){
 	//Create the area for the block to be populated in. Then call the init of the block.
@@ -2627,7 +2629,6 @@ function x_createBlock(container, module, modulePosition){
 	var jsName = module.tagName.replace("Block", "")
 	container.append('<div id="block' + modulePosition+'" class="iblock x-card"></div>');
 	$("#"+blockid).load(x_templateLocation + "blocks_html5/" + module.tagName+ ".html", function() {
-        debugger;
 		window[jsName].init(module, blockid);
 	});
 
@@ -2635,6 +2636,42 @@ function x_createBlock(container, module, modulePosition){
 	x_insertCSS(x_templateLocation + "blocks_html5/" + module.tagName + ".css", null, false, "page_model_css_"+module.tagName);
 
 
+}
+
+function jGetElement(blockid, element) {
+
+	if(element.includes(",")){
+
+		var finalElement = "";
+		var elements = element.split(",");
+		for( var i=0; i< elements.length; i++){
+			var e = "#"+blockid+" "+elements[i];
+			if(i !== elements.length-1){
+				e += ", "
+			}
+			finalElement += e;
+		}
+		return $(finalElement)
+	}
+	return $("#" + blockid + ' ' + element)
+}
+
+
+function x_getBlockXML(blockid){
+	debugger;
+	var blocknr = x_getBlockNr(blockid);
+	if (x_currentPageBlocksXML.length >= blocknr){
+		return x_currentPageBlocksXML[blocknr];
+	}
+	return null;
+}
+
+function x_getBlockNr(blockid){
+	if(blockid){
+		return parseInt(blockid.replace('block',"")) - 1;
+	} else{
+		return 0;
+	}
 }
 
 
@@ -2951,7 +2988,6 @@ function x_changePageStep5(x_gotoPage) {
 }
 
 function x_changePageStep5a(x_gotoPage) {
-	
     var prevPage = x_currentPage;
 
     // disable onload of #special_theme_css
@@ -2966,6 +3002,14 @@ function x_changePageStep5a(x_gotoPage) {
     x_currentPage = x_gotoPage;
     x_currentPageXML = x_pages[x_currentPage];
 
+    // if there are blocks on this page: set x_currentPageBlocksXML
+	debugger;
+	var nodes = x_currentPageXML.ownerDocument.evaluate("//*[contains(name(),'Block')]", x_currentPageXML, null, XPathResult.ANY_TYPE, null);
+	var result = nodes.iterateNext();
+	while (result) {
+		x_currentPageBlocksXML.push(result);
+		result = nodes.iterateNext();
+	}
 
     if ($x_pageDiv.children().length > 0) {
         // remove everything specific to previous page that's outside $x_pageDiv

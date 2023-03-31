@@ -113,7 +113,7 @@ var topXQ = new function () {
                 score: checkAnswers[i].correct ? 100.0 : 0.0
             };
 
-            XTExitInteraction(x_currentPage, XTGetBlockNr(blockid), result, "", inputs[i], "", i, x_currentPageXML.getAttribute("trackinglabel"));
+            XTExitInteraction(x_currentPage, x_getBlockNr(blockid), result, "", inputs[i], "", i, x_currentPageXML.getAttribute("trackinglabel"));
 
 
             if (checkAnswers[i].correct) {
@@ -270,9 +270,9 @@ var topXQ = new function () {
             blankAnswers.push(correctAnswers[i].options[0]);
         }
         for (i = 0; i < blankAnswers.length; i++) {
-            XTEnterInteraction(x_currentPage, XTGetBlockNr(blockid), "fill-in", x_GetTrackingTextFromHTML(x_currentPageXML.getAttribute("prompt"), ""), "", blankAnswers[i], $pageContents.data('correctOptionsFeedback'), x_currentPageXML.getAttribute("grouping"), null, i);
-            XTSetInteractionPageXML(x_currentPage, XTGetBlockNr(blockid), pageXML, i);
-            XTSetInteractionType(x_currentPage, XTGetBlockNr(blockid), 'fill-in', this.weighting, i);
+            XTEnterInteraction(x_currentPage, x_getBlockNr(blockid), "fill-in", x_GetTrackingTextFromHTML(x_currentPageXML.getAttribute("prompt"), ""), "", blankAnswers[i], $pageContents.data('correctOptionsFeedback'), x_currentPageXML.getAttribute("grouping"), null, i);
+            XTSetInteractionPageXML(x_currentPage, x_getBlockNr(blockid), pageXML, i);
+            XTSetInteractionType(x_currentPage, x_getBlockNr(blockid), 'fill-in', this.weighting, i);
         }
 
         jGetElement(blockid, ".checkButton")
@@ -299,7 +299,7 @@ var topXQ = new function () {
                 }
 
                 showFeedback = function (blockid) {
-                    let x_currentPageXML = XTGetPageXML(x_currentPage, XTGetBlockNr(blockid));
+                    let x_currentPageXML = XTGetPageXML(x_currentPage, x_getBlockNr(blockid));
                     var correctAnswersLabel = x_currentPageXML.getAttribute("correctAnswersLabel"),
                         answers = $pageContents.data('answers');
 

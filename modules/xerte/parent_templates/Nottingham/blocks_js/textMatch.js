@@ -10,7 +10,7 @@ var textMatch = new function() {
 
     // function called every time the page is viewed after it has initially loaded
     this.pageChanged = function(blockid) {
-        var blocknr = XTGetBlockNr(blockid);
+        var blocknr = x_getBlockNr(blockid);
         modelState = XTGetInteractionModelState(x_currentPage, blocknr);
         modelState.numAttempts = 0;
         jGetElement(blockid, ".labelHolder .label, .targetHolder .hint").remove();
@@ -85,7 +85,7 @@ var textMatch = new function() {
 
     this.leavePage = function(blockid) {
         debugger;
-        var blocknr = XTGetBlockNr(blockid);
+        var blocknr = x_getBlockNr(blockid);
         x_currentPageXML = XTGetPageXML(x_currentPage, blocknr);
         if ($(x_currentPageXML).children().length > 0 && this.tracked != true) {
             this.finishTracking(blockid);
