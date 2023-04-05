@@ -2658,7 +2658,6 @@ function jGetElement(blockid, element) {
 
 
 function x_getBlockXML(blockid){
-	debugger;
 	var blocknr = x_getBlockNr(blockid);
 	if (x_currentPageBlocksXML.length >= blocknr){
 		return x_currentPageBlocksXML[blocknr];
@@ -3003,7 +3002,6 @@ function x_changePageStep5a(x_gotoPage) {
     x_currentPageXML = x_pages[x_currentPage];
 
     // if there are blocks on this page: set x_currentPageBlocksXML
-	debugger;
 	var nodes = x_currentPageXML.ownerDocument.evaluate("//*[contains(name(),'Block')]", x_currentPageXML, null, XPathResult.ANY_TYPE, null);
 	var result = nodes.iterateNext();
 	while (result) {

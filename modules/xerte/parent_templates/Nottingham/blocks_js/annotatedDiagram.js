@@ -98,7 +98,6 @@ var annotatedDiagram = new function () {
     */
 
     this.init = function (pageXML, blockid) {
-        debugger;
         var blockXML = x_getBlockXML(blockid);
 
         $pageContents = jGetElement(blockid, ".pageContents");
@@ -167,7 +166,7 @@ var annotatedDiagram = new function () {
                         annotatedDiagram.selectLink($this, blockid);
 
                         if ($pageContents.data("hsType") == "flex") {
-                            $("area." + $this.data("group")).mapster("select");
+                            $("area." + blockid + "." + $this.data("group")).mapster("select");
 
                         } else {
                             var shape = blockXML.getAttribute("shape");
@@ -178,7 +177,7 @@ var annotatedDiagram = new function () {
                             } else {
                                 // arrow or line
                                 var $hs = $($hsHolder.children()[$this.index()]);
-
+                                debugger;
                                 if ($hs.hasClass("hsGroup")) {
                                     $hs.children()
                                         .each(function () {
@@ -203,6 +202,7 @@ var annotatedDiagram = new function () {
 
                         // already selected - so deselect, hide text & remove hotspots
                     } else {
+                        debugger;
                         annotatedDiagram.deselect(blockid);
                     }
                 });
@@ -257,6 +257,7 @@ var annotatedDiagram = new function () {
     }
 
     this.setUp = function (blockid) {
+        debugger;
         var blockXML = x_getBlockXML(blockid);
 
         $pageContents = jGetElement(blockid, ".pageContents");
@@ -264,7 +265,6 @@ var annotatedDiagram = new function () {
         $hsHolder = jGetElement(blockid, ".hsHolder");
         $panel = jGetElement(blockid, ".panel");
 
-        debugger;
         // if old style hotspots are used, resize the canvas first
         if ($pageContents.data("hsType") == "flex") {
             $img.mapster('unbind');
@@ -362,7 +362,6 @@ var annotatedDiagram = new function () {
         }
 
         $(blockXML).children().each(function (i) {
-            debugger;
             var _this = this;
             if (this.nodeName == "hotspotGroup") {
 
@@ -383,7 +382,6 @@ var annotatedDiagram = new function () {
                 });
 
             } else {
-                debugger;
                 if ($pageContents.data("hsType") != "flex") {
                     annotatedDiagram.createHs(blockid, this, i, $hsHolder);
 
@@ -413,7 +411,7 @@ var annotatedDiagram = new function () {
                 coords = [],
                 coords_string = "";
 
-            $hotspot = $('<area class="hotspot" shape="poly" href="#" tabindex="0" />');
+            $hotspot = $('<area class="hotspot ' + blockid + '" shape="poly" href="#" tabindex="0" />');
 
             if (hsInfo.getAttribute("mode") == undefined && hsInfo.getAttribute("x") != undefined && hsInfo.getAttribute("y") != undefined && hsInfo.getAttribute("w") != undefined && hsInfo.getAttribute("h") != undefined) {
                 // old way of specifying hotspot: x,y,w,h
@@ -461,7 +459,7 @@ var annotatedDiagram = new function () {
                         annotatedDiagram.selectLink($(this).data("listItem"), blockid);
 
                         // only trigger selection on hotspots that aren't $this - otherwise $this is unselected
-                        $("area." + $this.data("listItem").data("group")).each(function () {
+                        $("area." + blockid + "." + $this.data("listItem").data("group")).each(function () {
                             if (!$this.is($(this))) {
                                 $(this).mapster("select");
                             }
@@ -577,22 +575,23 @@ var annotatedDiagram = new function () {
         $parent.append($hotspot);
     }
 
-    this.selectLink = function ($link, blockid = 0) {
-        debugger;
-        if (blockid != 0){
-            $infoHolder = jGetElement(blockid, ".infoHolder");
-        }
+    this.selectLink = function ($link, blockid) {
         $link.addClass("highlight");
+
+        $infoHolder = jGetElement(blockid, ".infoHolder");
+        debugger;
         $infoHolder.html(x_addLineBreaks($link.data("text")));
         x_pageContentsUpdated();
     }
 
     this.deselect = function (blockid) {
+        debugger;
+        $infoHolder = jGetElement(blockid, ".infoHolder");
         jGetElement(blockid, ".listItem.highlight").removeClass("highlight");
         $infoHolder.html("");
 
         if ($pageContents.data("hsType") == "flex") {
-            $("area").mapster('set', false);
+            $("area." + blockid).mapster('set', false);
 
         } else {
             // remove highlights on list links & hotspots
