@@ -208,23 +208,75 @@ Folder popup is the div that appears when creating a new folder
                 <div class="ui-container-templates">
                     <?php
                     $templates = get_blank_templates();
-                    foreach ($templates as $template) { ?>
-                        <div class="card ui-container-templates-item <?php echo strtolower($template['parent_template'])?>">
+                    $prefix = $xerte_toolkits_site->database_table_prefix;
+
+                    $query_for_blank_templates = "select * from {$prefix}originaltemplatesdetails where "
+                        . "active= ? order by parent_template, date_uploaded DESC";
+
+                    $rows = db_query($query_for_blank_templates, array(1));
+
+                    foreach ($templates as $template) {
+                        if(access_check($template['access_rights'])){
+                            $derived = array($template);
+                            foreach ($rows as $row) {
+                                if ($row['template_name'] != $row['parent_template'] && $template['parent_template'] == $row['parent_template'] && access_check($row['access_rights'])) {
+                                    array_push($derived, $row);
+                                }
+                            }
+
+                            ?>
+                            <div class="card ui-container-templates-item <?php echo strtolower($template['parent_template'])?>">
                                 <div class="template-info">
                                     <h1 class="template-title"><strong> <?php echo $template['display_name']?></strong></h1>
                                     <p class="template-desc"><?php echo$template['description']?></p>
                                 </div>
-                                <div class="template-button-container">
-                                <form action="javascript:create_tutorial('<?php echo $template['parent_template'] ?>')" method='post' enctype='text/plain'>
-                                    <input type='text' class='form-control' id='<?php echo $template['template_name']?>_filename' name='templatename'>
-                                    <button id="<?php echo $template['template_name']?> _button" type="submit" class="xerte_button_c_no_width template-plus-icon">
-                                    <i class="fa fa-plus"></i><span class="sr-only"><?php echo $template['display_name']?></span>
+                                <div class="toggle-button template-button-container flex" id="<?php echo $template['parent_template']?>_toggle">
+                                    <button onclick="javascript:show_template('<?php echo $template['parent_template']?>')" class="xerte_button_c_no_width template-plus-icon">
+                                        <i class="fa fa-plus"></i><span class="sr-only"><?php echo $template['display_name']?></span>
                                     </button>
-                                </form>
-                                    
+                                </div>
+                                <div class="template-button-container hide" id="<?php echo $template['parent_template']?>">
+                                    <form class="template_form" action="javascript:create_tutorial('<?php echo $template['parent_template'] ?>')" method='post' enctype='text/plain'>
+                                        <?php
+                                        if (count($derived) == 1) {
+                                            ?>
+                                            <input type="hidden" id="<?php echo $template['template_name']; ?>_templatename"
+                                                   name="templatename" value="<?php echo $template['template_name']; ?>"/>
+                                            <?php
+                                        } else {
+                                            ?>
+                                            <label for="<?php echo $template['template_name']; ?>_templatename" class="sr-only"><?php echo DISPLAY_TEMPLATE; ?></label>
+                                            <select id="<?php echo $template['template_name']; ?>_templatename" name="templatename"
+                                                    class="select_template form-select" onchange="javascript:setup_example('<?php echo $template["template_name"]; ?>_templatename')">
+
+                                                <?php
+                                                foreach ($derived as $row) {
+                                                    ?>
+                                                    <option value="<?php echo $row['template_name']; ?>" <?php ($row['template_name'] == $row['parent_template'] ? "\"selected\"" : ""); ?> ><?php echo($row['template_name'] == $row['parent_template'] ? DISPLAY_DEFAULT_TEMPLATE : $row['display_name']); ?></option>
+                                                    <?php
+                                                }
+                                                ?>
+                                            </select>
+                                            <?php
+                                        }
+                                        ?>
+                                        <div class="d-flex flex-row">
+                                            <input type="hidden" id="<?php echo $template['template_name']; ?>_templatename"
+                                                   name="templatename" value="<?php echo $template['template_name']; ?>"/>
+                                            <label for="<?php echo $template['template_name']; ?>_filename" class="sr-only"><?php echo DISPLAY_PROJECT_NAME; ?></label>
+                                            <input  type='text' class='form-control w-100 form-input' id='<?php echo $template['template_name']?>_filename' name='templatename'>
+                                            <button id="<?php echo $template['template_name']?> _button" type="submit" class="xerte_button_c_no_width template-plus-icon">
+                                                <i class="fa fa-plus"></i><span class="sr-only"><?php echo $template['display_name']?></span>
+                                            </button>
+                                        </div>
+
+                                    </form>
+
                                 </div>
                             </div>
+
                 <?php
+                        }
                     }
                     ?>
                 </div>
@@ -575,6 +627,7 @@ Folder popup is the div that appears when creating a new folder
     container.addEventListener("mouseup", function (e) {
         drag = false;
     });
+
 
     const toggleSwitch = document.querySelector('.theme-switch input[type="checkbox"]');
 

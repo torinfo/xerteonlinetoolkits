@@ -139,7 +139,7 @@ function getIcon(nodetype)
             icon = "website_code/images/folder_workspace.gif";
             break;
         case "recyclebin":
-            icon = "website_code/images/rb_empty.gif";
+            icon = "website_code/images/rb_empty.png";
             break;
         case "folder":
             if (nodetype == "folder_group"){

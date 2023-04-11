@@ -697,7 +697,7 @@ function getIcon(nodetype)
             icon = "website_code/images/folder_workspace.gif";
             break;
         case "recyclebin":
-            icon = "website_code/images/rb_empty.gif";
+            icon = "website_code/images/rb_empty.png";
             break;
         case "folder":
             if (nodetype == "folder_group"){
@@ -705,14 +705,14 @@ function getIcon(nodetype)
             }else if (nodetype == "folder_shared"){
                 icon = "website_code/images/Icon_Folder_Shared.gif";
             }else{
-                icon = "website_code/images/Icon_Folder.gif";
+                icon = "website_code/images/Icon_Folder.png";
             }
             break;
         case "group":
             icon = "website_code/images/Icon_Shared.gif";
             break;
         default:
-            icon = "website_code/images/Icon_Page_" + nodetypetemp + ".gif";
+            icon = "website_code/images/Icon_Page_" + nodetypetemp + ".png";
     }
     return icon;
 }

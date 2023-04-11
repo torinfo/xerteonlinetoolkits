@@ -346,11 +346,11 @@ function list_users_projects($sort_type) {
 
   if (sizeof($query_response_for_folder_content) == 0) {
 
-    echo " src=\"{$xerte_toolkits_site->site_url}/website_code/images/rb_empty.gif\"";
+    echo " src=\"{$xerte_toolkits_site->site_url}/website_code/images/rb_empty.png\"";
 
   } else {
 
-    echo " src=\"{$xerte_toolkits_site->site_url}/website_code/images/rb_full.gif\"";
+    echo " src=\"{$xerte_toolkits_site->site_url}/website_code/images/rb_full.png\"";
   }
 
   echo " />" . DISPLAY_RECYCLE . "</p></div><div id=\"folderchild_recyclebin\" class=\"folder_content\">";

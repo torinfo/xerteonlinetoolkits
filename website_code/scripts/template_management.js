@@ -669,7 +669,6 @@ function refresh_workspace() {
     //     xmlHttp.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
     //     xmlHttp.send('sort_type=' + document.sorting.type.value);
     // }
-    debugger
     $.ajax({
         type: "POST",
         url: "website_code/php/templates/get_templates_sorted.php",
@@ -700,7 +699,8 @@ function getProjectInformation(user_id, template_id) {
             dataType: 'json',
             data: {user_id: user_id, template_id: template_id},
         })
-    }else{
+    }else
+    {
         var ajaxInfo =  $.ajax({
             type: "POST",
             url: "website_code/php/templates/get_template_info_table.php",
@@ -1431,6 +1431,15 @@ function open_created_node(template_id, folder_id) {
 
 function create_tutorial(tutorial) {
     debugger
+    var toggel = $('#' + tutorial + '_toggle');
+    var templatetype = $('#' + tutorial);
+
+    toggel.removeClass('hide');
+    toggel.addClass('flex')
+    templatetype.removeClass('flex')
+    templatetype.addClass('hide')
+
+    $('#templates').modal('hide');
     if (setup_ajax() != false) {
         var url = "website_code/php/templates/new_template.php";
         active_div = tutorial;
@@ -1460,11 +1469,23 @@ function create_tutorial(tutorial) {
             })
             .done(function(response){
                 tutorial_created(response);
+                $('#'+tutorial+" .form-input").val('');
+
             });
         } else {
             alert(NAME_FAIL);
         }
     }
+}
+
+function show_template(template){
+    var toggel = $('#' + template + '_toggle');
+    var templatetype = $('#' + template);
+
+    toggel.removeClass('flex')
+    toggel.addClass('hide');
+    templatetype.removeClass('hide')
+    templatetype.addClass('flex')
 }
 
 function template_submit()
