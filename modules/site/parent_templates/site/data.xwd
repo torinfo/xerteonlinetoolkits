@@ -20,6 +20,7 @@
 			<headerRepeat type="ComboBox" data="repeat,repeat-x,repeat-y,no-repeat" options="Horizontal and Vertical Repeat,Horizontal Repeat,Vertical Repeat,No Repeat" optional="true" label="Image Repeat" defaultValue="repeat" width="175"/>
 			<headerColour type="ColourPicker" optional="true" defaultValue='' label="Background Colour"/>
 			<headerTextColour type="ColourPicker" optional="true" devaultValue='' label="Text Colour"/>
+            <highlightColour type="ColourPicker" optional="true" label="Highlight Colour"/>
 			<logoR type="Media" optional="true" label="Logo (Right)"/>
 			<logoL type="Media" optional="true" label="Logo (Left)"/>
 			<logoRHide label="Hide Default Logo (Right)" type="Checkbox" defaultValue="false" optional="true"/>
@@ -79,6 +80,7 @@
 		<headerRepeat type="ComboBox" data="repeat,repeat-x,repeat-y,no-repeat" options="Horizontal and Vertical Repeat,Horizontal Repeat,Vertical Repeat,No Repeat" optional="true" label="Image Repeat" defaultValue="repeat" width="175"/>
 		<headerColour type="ColourPicker" optional="true" label="Background Colour"/>
 		<headerTextColour type="ColourPicker" optional="true" label="Text Colour"/>
+        <highlightColour type="ColourPicker" optional="true" label="Highlight Colour"/>
 	</headerGroup><hideShow type="group" label="Hide/Show Page" optional="true" tooltip="Hide the page completely or hide/show the page between specified dates" info="Hide this page from view at all times or use the 'From' &amp; 'Until' fields to specify when it should be available" common="true">
 		<hidePage label="Hide Page" type="CheckBox" defaultValue="false" optional="true"/>
 		<hideOnDate label="From (dd/mm/yyyy)" type="DateField" defaultValue="" optional="true"/>

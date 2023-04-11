@@ -978,6 +978,7 @@ function setup() {
 
 		// apply all the header css optional properties
 		var $jumbotron = $(".jumbotron");
+
 		if ($(data).find('learningObject').attr('headerColour') != undefined && $(data).find('learningObject').attr('headerColour') != '' && $(data).find('learningObject').attr('headerColour') != '0x') {
 			if ($(data).find('learningObject').attr('headerColour').indexOf('rgb(') >= 0) {
 				$jumbotron.css('background-color', formatColour($(data).find('learningObject').attr('headerColour')));
@@ -1013,10 +1014,8 @@ function setup() {
 			$jumbotron.css('background-size', $(data).find('learningObject').attr('headersize'));
 		}
 		if ($(data).find('learningObject').attr('headerTextColour') != undefined && $(data).find('learningObject').attr('headerTextColour') != '' && $(data).find('learningObject').attr('headerTextColour') != '0x') {
-			$jumbotron.find('#pageTitle, #pageSubTitle').css('color', formatColour($(data).find('learningObject').attr('headerTextColour')));
+			$jumbotron.find('#pageTitle, #pageSubTitle').css('background-color', formatColour($(data).find('learningObject').attr('headerTextColour')));
 		}
-
-
 	}
 
 	// store initial header css as it might be needed later if page level header optional property is used
@@ -1087,6 +1086,7 @@ function setup() {
 				function() { $(this).css('color', navBarText); }
 			);
 		}
+
 	}
 
 	// --------------- Optional Footer properties --------------------
@@ -1686,18 +1686,28 @@ function parseContent(pageRef, sectionNum, contentNum, addHistory) {
 	
 	//assign active class for current navbar
 	var pageOffset = pageIndex - validPages.indexOf(pageIndex);
-	
+
+	debugger
 	$("#nav li").not(':first-child').each(function(i, el){
+
 		if ($(el).hasClass("activePage") && i !== pageIndex - pageOffset){
 			$(el)
 				.removeClass("activePage")
-				.removeAttr("aria-current");
+				.removeAttr("aria-current")
+				.css('background-color', "");
+
 		} else if (i == pageIndex - pageOffset){
 			$(el)
 				.addClass("activePage")
 				.attr("aria-current", "page");
+
+			if ($(data).find('learningObject').attr('highlightColour') !== undefined && $(data).find('learningObject').attr('highlightColour') !== '' && $(data).find('learningObject').attr('highlightColour') != '0x') {
+				$('.activePage').css('background-color', formatColour($(data).find('learningObject').attr('highlightColour')));
+			}
 		}
+
 	})
+
 	
 	//dynamically change the skip link for each page
 	var skipLinkTarget='#page'+(currentPage+1)+'section1';

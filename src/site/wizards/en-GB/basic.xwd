@@ -28,6 +28,7 @@
 			<headerTitleAlign type="ComboBox" optional="true" label="Title Position" data="left,center,right" options="Left,Center,Right" defaultValue="center" tooltip="The horizontal alignment of the title" />
 			<headerColour type="ColourPicker" optional="true" label="Background Colour"/>
 			<headerTextColour type="ColourPicker" optional="true" label="Text Colour"/>
+            <highlightColour type="ColourPicker" optional="true" label="Highlight Colour"/>
 			<logoR type="Media" optional="true" label="Logo (Right)"/>
 			<logoRAlt label="Logo Right Alt text" type="TextInput" defaultValue="Enter a Description for Accessibility" optional="true" mandatory="true"/>
 			<logoL type="Media" optional="true" label="Logo (Left)"/>
