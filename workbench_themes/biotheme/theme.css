@@ -1,20 +1,12 @@
 :root {
     --background-color: #EEE ;
-    --primary-color: #f8f9fa;
+    --primary-color: #BBEAD6C1;
     --secondary-color: #536390;
     --font-color: #212529;
     --bg-color: #fff;
     --heading-color: #292922;
 }
 
-[data-theme="dark"] {
-    --background-color: black ;
-    --primary-color: #1D1D1D;
-    --secondary-color: #818cab;
-    --font-color: #e1e1ff;
-    --bg-color: #161625;
-    --heading-color: #818cab;
-}
 
 html {
     overflow: auto !important;
@@ -142,6 +134,10 @@ body{
     height: 505px;
 }
 
+th{
+    background-color: #BBEAD6C1 !important;
+}
+
 .ui-container-general-information{
     background-color: var(--primary-color) !important;
     border-color: var(--background-color) !important;
@@ -168,6 +164,13 @@ body{
     justify-content: center;
     flex: 1 1 !important;
     height: 505px;
+}
+
+.graph-svg-wrapper
+{
+    background-color: #BBEAD6C1 !important;
+    border: 3px solid #BBEAD6 !important;
+    border-radius: 7px !important;
 }
 
 .xerte_workspace_button.disabled {
@@ -375,7 +378,7 @@ p{
     color: var(--font-color) !important;
 }
 
-a, button, div, input, h3, td{
+a, div, input, h3, td{
     color: var(--font-color) !important;
 
 }
