@@ -189,6 +189,7 @@ body_scroll handles the calculation of the documents actual height in IE.
 
 <body >
 <?php body_start(); ?>
+
 <!--
 
 Folder popup is the div that appears when creating a new folder
@@ -207,19 +208,23 @@ Folder popup is the div that appears when creating a new folder
                 <div class="ui-container-templates">
                     <?php
                     $templates = get_blank_templates();
-                    foreach ($templates as $template) {
-                        echo "<div class=\"card ui-container-templates-item " . strtolower($template['parent_template']) . "\">"
-                            . "<div class=\"template-info\">"
-                            . "<h1 class=\"template-title\"><strong>".$template['display_name']."</strong></h1>"
-                            . "<p class=\"template-desc\">".$template['description']."</p>"
-                            . "</div>"
-                            ."<div class=\"template-button-container\">"
-                            ."<button id=\" ".$template['template_name']."_button\" type=\"button\" class=\"xerte_button_c_no_width template-plus-icon\""
-                            ."onclick=\"javascript:template_toggle('" . $template['template_name']."')\">"
-                            ."<i class=\"fa fa-plus\"></i><span class=\"sr-only\"> " . $template['display_name'] ."</span>"
-                            ."</button>"
-                            ."</div>"
-                            ."</div>";
+                    foreach ($templates as $template) { ?>
+                        <div class="card ui-container-templates-item <?php echo strtolower($template['parent_template'])?>">
+                                <div class="template-info">
+                                    <h1 class="template-title"><strong> <?php echo $template['display_name']?></strong></h1>
+                                    <p class="template-desc"><?php echo$template['description']?></p>
+                                </div>
+                                <div class="template-button-container">
+                                <form action="javascript:create_tutorial('<?php echo $template['parent_template'] ?>')" method='post' enctype='text/plain'>
+                                    <input type='text' class='form-control' id='<?php echo $template['template_name']?>_filename' name='templatename'>
+                                    <button id="<?php echo $template['template_name']?> _button" type="submit" class="xerte_button_c_no_width template-plus-icon">
+                                    <i class="fa fa-plus"></i><span class="sr-only"><?php echo $template['display_name']?></span>
+                                    </button>
+                                </form>
+                                    
+                                </div>
+                            </div>
+                <?php
                     }
                     ?>
                 </div>
@@ -417,6 +422,7 @@ Folder popup is the div that appears when creating a new folder
                 </div>
             </div>
         </div>
+        <div class="resize" id="resize"></div>
         <div class="ui-middle">
             <div class="card" id="ui-container-buttons">
                 <div class="file_mgt_area_left">
@@ -466,7 +472,7 @@ Folder popup is the div that appears when creating a new folder
                             <div class="nav nav-tabs nav-fill dlearning-tabs" id="nav-tab" role="tablist">
                                 <a class="nav-item nav-link active" id="nav-home-tab" data-toggle="tab" href="#general" role="tab" aria-controls="nav-home" aria-selected="true">General details</a>
                                 <a class="nav-item nav-link" id="nav-profile-tab" data-toggle="tab" href="#shared" role="tab" aria-controls="nav-profile" aria-selected="false">Project shared</a>
-                                <a class="nav-item nav-link" id="nav-profile-tab" data-toggle="tab" href="#lrs" role="tab" aria-controls="nav-profile" aria-selected="false">LTI</a>
+                                <a class="nav-item nav-link" id="nav-profile-tab" data-toggle="tab" href="#lrs" role="tab" aria-controls="nav-profile" aria-selected="false">Dashboard</a>
                             </div>
                         </nav>
                         <div class="tab-content py-3 px-3 px-sm-0" id="nav-tabContent">
@@ -544,6 +550,30 @@ Folder popup is the div that appears when creating a new folder
     $(".custom-file-input").on("change", function() {
         var fileName = $(this).val().split("\\").pop();
         $(this).siblings(".custom-file-label").addClass("selected").html(fileName);
+    });
+
+    var resize = document.querySelector("#resize");
+    var left = document.querySelector(".ui-tree");
+    var container = document.querySelector(".ui-workbench");
+    var moveX =
+        left.getBoundingClientRect().width +
+        resize.getBoundingClientRect().width / 2;
+
+    var drag = false;
+    resize.addEventListener("mousedown", function (e) {
+        drag = true;
+        moveX = e.x;
+    });
+
+    container.addEventListener("mousemove", function (e) {
+        moveX = e.x;
+        if (drag)
+            left.style.width =
+                moveX - resize.getBoundingClientRect().width / 2 + "px";
+    });
+
+    container.addEventListener("mouseup", function (e) {
+        drag = false;
     });
 
     const toggleSwitch = document.querySelector('.theme-switch input[type="checkbox"]');

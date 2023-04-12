@@ -46,6 +46,7 @@ body{
 .ui-workbench{
     background-color: var(--background-color);
     width: 100%;
+    height: 100%;
     display: flex;
 }
 
@@ -57,7 +58,7 @@ body{
 }
 
 .ui-middle{
-    width: 100%;
+    flex-grow: 1;
     height: 100%;
 }
 
@@ -363,7 +364,7 @@ p{
     color: var(--font-color) !important;
 }
 
-a, button, div, input, h3, td, th{
+a, button, div, input, h3, td, th, select{
     color: var(--font-color) !important;
 
 }
@@ -373,7 +374,7 @@ a, button, div, input, h3, td, th{
     border-color: var(--primary-color);
 }
 
-li, ul, input{
+li, ul, input, select{
     background-color: var(--primary-color) !important;
 }
 
@@ -526,4 +527,14 @@ li, ul, input{
 
 .iconFullName{
     white-space: nowrap;
+}
+
+.resize {
+    background: #e2e2e2;
+    height: 100%;
+    width: 14px;
+    cursor: col-resize;
+    flex-shrink: 0;
+    position: relative;
+    z-index: 10;
 }

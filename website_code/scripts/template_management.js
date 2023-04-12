@@ -669,6 +669,7 @@ function refresh_workspace() {
     //     xmlHttp.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
     //     xmlHttp.send('sort_type=' + document.sorting.type.value);
     // }
+    debugger
     $.ajax({
         type: "POST",
         url: "website_code/php/templates/get_templates_sorted.php",
@@ -699,15 +700,14 @@ function getProjectInformation(user_id, template_id) {
             dataType: 'json',
             data: {user_id: user_id, template_id: template_id},
         })
-    }else
-    {
-        var ajaxInfo = $.ajax({
+    }else{
+        var ajaxInfo =  $.ajax({
             type: "POST",
             url: "website_code/php/templates/get_template_info_table.php",
             dataType: 'json',
             data: {user_id: user_id, template_id: template_id},
         })
-        var ajaxIcon = $.ajax({
+        var ajaxIcon =  $.ajax({
             type: "POST",
             url: "website_code/php/templates/get_template_shared_users.php",
             dataType: 'json',
@@ -728,7 +728,7 @@ function getProjectInformation(user_id, template_id) {
                 q = {};
 
                 if (info.lrs.site_allowed_urls != null && info.lrs.site_allowed_urls != undefined && info.lrs.site_allowed_urls != "") {
-                    q['activities'] = [url].concat(info.lrs.lrsurls.split(",")).concat(info.lrs.site_allowed_urls.split(",").map(function(url) {return url + info.template_id})).filter(function(url) {return url != ""});
+                    q['activities'] = [url].concat(info.lrs.lrsurls.split(",")).concat(info.lrs.site_allowed_urls.split(",").map(function(url) {return url + info.template_id})).filter(function(url) {return  url != ""});
                 }
                 q['activity'] = url;
 
@@ -759,7 +759,7 @@ function getProjectInformation(user_id, template_id) {
             q = {};
 
             if (info.lrs.site_allowed_urls != null && info.lrs.site_allowed_urls != undefined && info.lrs.site_allowed_urls != "") {
-                q['activities'] = [url].concat(info.lrs.lrsurls.split(",")).concat(info.lrs.site_allowed_urls.split(",").map(function(url) {return url + info.template_id})).filter(function(url) {return url != ""});
+                q['activities'] = [url].concat(info.lrs.lrsurls.split(",")).concat(info.lrs.site_allowed_urls.split(",").map(function(url) {return url + info.template_id})).filter(function(url) {return  url != ""});
             }
             q['activity'] = url;
 
@@ -781,10 +781,10 @@ function getProjectInformation(user_id, template_id) {
 
 
     })
-        .fail(function(jqXHR, textStatus, errorThrown)
-        {
+    .fail(function(jqXHR, textStatus, errorThrown)
+    {
 
-        });
+    });
 }
 
 function disableReadOnlyButtons(info){
@@ -1430,6 +1430,7 @@ function open_created_node(template_id, folder_id) {
  */
 
 function create_tutorial(tutorial) {
+    debugger
     if (setup_ajax() != false) {
         var url = "website_code/php/templates/new_template.php";
         active_div = tutorial;
