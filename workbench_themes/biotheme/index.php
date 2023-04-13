@@ -26,6 +26,7 @@ startup();
 /*require_once(dirname(__FILE__) . "/config.php");*/
 
 _load_language_file("/index.inc");
+require_once("website_code/php/settings_library.php");
 
 /**
  *
@@ -58,7 +59,8 @@ if (isset($_SESSION['pwprotected_url']))
     unset($_SESSION['pwprotected_url']);
     header("Location: " . $redirect);
 }
-
+$toolkits_logon_id = $_SESSION['toolkits_logon_id'];
+$image = get_user_image($toolkits_logon_id);
 
 /*If the authentication method isn't set to Moodle
 * the code in the required file below is simply skipped
@@ -186,19 +188,216 @@ body_scroll handles the calculation of the documents actual height in IE.
 Folder popup is the div that appears when creating a new folder
 
 -->
+<div class="modal fade" id="templates" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Templates</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="ui-container-templates">
+                    <?php
+                    $templates = get_blank_templates();
+                    foreach ($templates as $template) {
+                        echo "<div class=\"card ui-container-templates-item " . strtolower($template['parent_template']) . "\">"
+                            . "<div class=\"template-info\">"
+                            . "<h1 class=\"template-title\"><strong>".$template['display_name']."</strong></h1>"
+                            . "<p class=\"template-desc\">".$template['description']."</p>"
+                            . "</div>"
+                            ."<div class=\"template-button-container\">"
+                            ."<button id=\" ".$template['template_name']."_button\" type=\"button\" class=\"xerte_button_c_no_width template-plus-icon\""
+                            ."onclick=\"javascript:template_toggle('" . $template['template_name']."')\">"
+                            ."<i class=\"fa fa-plus\"></i><span class=\"sr-only\"> " . $template['display_name'] ."</span>"
+                            ."</button>"
+                            ."</div>"
+                            ."</div>";
+                    }
+                    ?>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 
+<div class="modal fade" id="changeLanguage" tabindex="-1" role="dialog" aria-labelledby="changeLanguage" aria-hidden="true">
+    <div class="modal-dialog customModal" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Change Theme</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form action="website_code/php/change_theme.php" id="themeForm" method="post" enctype="multipart/form-data">
+                    <select name="theme" class="form-select" aria-label="Default select example">
+                        <option selected value="dlearning">Dlearning</option>
+                        <option value="xerte">Xerte</option>
+                    </select>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn" data-dismiss="modal">Close</button>
+                <button type="submit" name="submit" value="Upload" form="themeForm" class="btn input-group-text submit">Change</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal-dialog customModal" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Change Language</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <?php display_language_selectionform_modern("general", false); ?>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="changeImage" tabindex="-1" role="dialog" aria-labelledby="changeImage" aria-hidden="true">
+    <div class="modal-dialog customModal" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Change Image</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <?php if(count($image) > 0 && $image){ ?>
+                    <div id="userContainerSettings" >
+                        <img id="userSettings" src="data:image/png;charset=utf8;base64,<?php echo $image[0]['profileimage']; ?>" alt="User" />
+                    </div>
+                <?php }else{ ?>
+                    <div id="userContainerSettings">
+                        <img id="userSettings" src="website_code/images/user_placeholder.jpg" alt="User">
+                    </div>
+                <?php } ?>
+                <form action="website_code/php/upload_profile_image.php" id="imageForm" method="post" enctype="multipart/form-data">
+                    <div class="input-group">
+                        <div class="custom-file">
+                            <input type="file" name="fileToUpload" id="fileToUpload" class="custom-file-input">
+                            <label class="custom-file-label" for="fileToUpload">Choose file</label>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn" data-dismiss="modal">Close</button>
+                <button type="submit" name="submit" value="Upload" form="imageForm" class="btn input-group-text submit">Upload</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div class="modal fade" id="changePassword" tabindex="-1" role="dialog" aria-labelledby="changePassword" aria-hidden="true">
+    <div class="modal-dialog customModal" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Change Password</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form action="" onclick='changePassword(<?php echo $_SESSION['toolkits_logon_username'] ?>)' id="passwordForm" method="post" enctype="multipart/form-data">
+                    <div class="form-group">
+                        <label for="recipient-name" class="col-form-label">Current Password</label>
+                        <input type="text" class="form-control" id="oldpass">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="recipient-name" class="col-form-label">New Password</label>
+                        <input type="text" class="form-control" id="newpass">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="recipient-name" class="col-form-label">Repeat Password</label>
+                        <input type="text" class="form-control" id="newpassrepeat">
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn" data-dismiss="modal">Close</button>
+                <button type="submit" name="submit" value="Upload" form="passwordForm" class="btn input-group-text submit">Submit</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="changeTheme" tabindex="-1" role="dialog" aria-labelledby="changeTheme" aria-hidden="true">
+    <div class="modal-dialog customModal" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Change Theme</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form action="website_code/php/change_theme.php" id="themeForm" method="post" enctype="multipart/form-data">
+                    <select name="theme" class="form-select" aria-label="Default select example">
+                        <option value="dlearning">Dlearning</option>
+                        <option value="xerte">Xerte</option>
+                        <option selected value="biotheme">Biotheme</option>
+                    </select>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn" data-dismiss="modal">Close</button>
+                <button type="submit" name="submit" value="Upload" form="themeForm" class="btn input-group-text submit">Change</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="MakeFolder" tabindex="-1" role="dialog" aria-labelledby="MakeFolder" aria-hidden="true">
+    <div class="modal-dialog customModal" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Create Folder</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form onclick='create_folder()' id="MakeFolder" method="post" enctype="multipart/form-data">
+                    <div class="form-group">
+                        <label for="recipient-name" class="col-form-label"><?php echo INDEX_FOLDER_NAME ?></label>
+                        <input type="text" class="form-control" id="foldername">
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn" data-dismiss="modal">Close</button>
+                <button type="submit" name="submit" value="Upload" form="MakeFolder" class="btn input-group-text submit">Submit</button>
+            </div>
+        </div>
+    </div>
+</div>
 
 
 <div class="ui-container">
     <nav class="navbar navbar-light dlearning-navbar mint">
-        <a class="navbar-brand dlearning-brand" href="#">
+<!--        <a class="navbar-brand dlearning-brand" href="#">
             <img src="http://localhost/xot/website_code/images/logo.png" id="xerte-logo" alt="">
         </a>
         <div class="userbar">
-            <?PHP //echo "&nbsp;&nbsp;&nbsp;" . INDEX_LOGGED_IN_AS . " " .;
-            echo $_SESSION['toolkits_firstname'] . " " . $_SESSION['toolkits_surname'] ?>
+            <?PHP /*//echo "&nbsp;&nbsp;&nbsp;" . INDEX_LOGGED_IN_AS . " " .;
+            echo $_SESSION['toolkits_firstname'] . " " . $_SESSION['toolkits_surname'] */?>
             <?PHP
-            // only on Db:
+/*            // only on Db:
             if ($authmech->canManageUser($jsscript)){
                 echo '
                     <div class="settingsDropdown">
@@ -212,81 +411,73 @@ Folder popup is the div that appears when creating a new folder
                     </div>
                 ';
             }
-            ?>
-            <div style="display: inline-block"><?php display_language_selectionform("general", false); ?></div>
-            <?PHP if($xerte_toolkits_site->authentication_method != "Guest") {
-                ?><button title="<?PHP echo INDEX_BUTTON_LOGOUT; ?>" type="button" class="xerte_button_c_no_width"
-                          onclick="javascript:logout(<?php echo($xerte_toolkits_site->authentication_method == "Saml2" ? "true" : "false"); ?>)">
-                <i class="fa fa-sign-out xerte-icon"></i><?PHP echo INDEX_BUTTON_LOGOUT; ?>
-                </button><?PHP } ?>
+            */?>
+            <div style="display: inline-block"><?php /*display_language_selectionform("general", false); */?></div>
+            <?PHP /*if($xerte_toolkits_site->authentication_method != "Guest") {
+                */?><button title="<?PHP /*echo INDEX_BUTTON_LOGOUT; */?>" type="button" class="xerte_button_c_no_width"
+                          onclick="javascript:logout(<?php /*echo($xerte_toolkits_site->authentication_method == "Saml2" ? "true" : "false"); */?>)">
+                <i class="fa fa-sign-out xerte-icon"></i><?PHP /*echo INDEX_BUTTON_LOGOUT; */?>
+                </button><?PHP /*} */?>
+        </div>-->
+        <a class="navbar-brand dlearning-brand" href="#">
+            <img src="http://localhost/xot/website_code/images/logo.png" id="xerte-logo" alt="">
+        </a>
+
+        <div class="userbar">
+            <!-- <div id="username"><?php /*echo $_SESSION['toolkits_firstname'] . " " . $_SESSION['toolkits_surname'] */?> </div>-->
+            <?php if(count($image) > 0 && $image){ ?>
+                <div id="userContainer" >
+                    <img id="user" data-toggle="collapse" href="#settingsCollapse" aria-expanded="false" aria-controls="settingsCollapse" src="data:image/png;charset=utf8;base64,<?php echo $image[0]['profileimage']; ?>" alt="User" />
+                </div>
+
+                <div class="card settings collapse green-popup" id="settingsCollapse" aria-expanded="false" aria-controls="settingsCollapse">
+                    <div class="card-body settingsCollapseBody">
+                        <h5>Manage your account</h5>
+                        <hr>
+                        <div class="settingsItem"><button class="btn settingsButton text-left green-border" type="button" data-toggle="modal" data-target="#changeLanguage" aria-expanded="false" aria-controls="changeLanguage">Change language</button></div>
+                        <div class="settingsItem"><button class="btn settingsButton text-left green-border" type="button" data-toggle="modal" data-target="#changeImage" aria-expanded="false" aria-controls="changeImage">Change profile</button></div>
+                        <div class="settingsItem"><button class="btn settingsButton text-left green-border" type="button" data-toggle="modal" data-target="#changePassword" aria-expanded="false" aria-controls="changePassword">Change password</button></div>
+                        <div class="settingsItem"><button class="btn settingsButton text-left green-border" type="button" data-toggle="modal" data-target="#changeTheme" aria-expanded="false" aria-controls="changePassword">Change theme</button></div>
+                        <div class="settingsItem"><button class="btn settingsButton text-left green-border" type="button" onclick="logout(<?php /*echo($xerte_toolkits_site->authentication_method == "Saml2" ? "true" : "false"); */?>)">Log out</button></div>
+                    </div>
+                </div>
+
+            <?php }else{ ?>
+                <div id="userContainer">
+                    <img id="user" src="website_code/images/user_placeholder.jpg" alt="User">
+                </div>
+            <?php } ?>
+
+            <!--<div style="display: inline-block"><?php /*display_language_selectionform_modern("general", false); */?></div>-->
         </div>
     </nav>
     <div class="ui-workbench">
         <div class="ui-tree mint">
             <div class="workspace_search_outer">
                 <div class="workspace_search">
-                    <i class="fa  fa-search"></i>&nbsp;<label for="workspace_search"><?PHP echo INDEX_SEARCH; ?></label>
-                    <input type="text" id="workspace_search" placeholder="<?php echo INDEX_SEARCH_PLACEHOLDER?>">
+                    <input class="form-control" type="text" id="workspace_search" placeholder="Search by <?php echo INDEX_SEARCH_PLACEHOLDER?>">
                 </div>
             </div>
             <div class="dlearning-filter" id="sortContainer">
                 <div class="file_mgt_area_bottom">
                     <div class="sorter">
-                        <form name="sorting input-prepend input-append" style="float:left;margin:7px 5px 5px 10px;">
-                            <div class="btn-group">
-
-                                <button class="btn dropdown-toggle dlearning-dropdown" name="recordinput" data-toggle="dropdown">
-                                    <?PHP echo INDEX_SORT_A; ?>
-                                    <span class="caret"></span>
-                                </button>
-                                <ul class="dropdown-menu">
-                                    <li><a href="#"><?PHP echo INDEX_SORT_Z; ?></a></li>
-                                    <li><a href="#"><?PHP echo INDEX_SORT_NEW; ?></a></li>
-                                    <li><a href="#"><?PHP echo INDEX_SORT_OLD; ?></a></li>
-                                </ul>
-
-                            </div>
-                            <!-- <label for="sort-selector"><?PHP /*echo INDEX_SORT; */?></label>-->
-                            <!-- <select id="sort-selector" name="type" onChange="refresh_workspace()">>
-                                <option value="alpha_up"><?PHP /*echo INDEX_SORT_A; */?></option>
-                                <option value="alpha_down"><?PHP /*echo INDEX_SORT_Z; */?></option>
-                                <option value="date_down" selected><?PHP /*echo INDEX_SORT_NEW; */?></option>
-                                <option value="date_up"><?PHP /*echo INDEX_SORT_OLD; */?></option>
-                            </select>-->
+                        <form name="sorting" class="input-prepend input-append" style="float:left;margin:7px 5px 5px 10px;">
+                            <select id="sort-selector" class="form-select" name="type" onChange="refresh_workspace()">
+                                <option value="alpha_up"><?PHP echo INDEX_SORT_A; ?></option>
+                                <option value="alpha_down"><?PHP echo INDEX_SORT_Z; ?></option>
+                                <option value="date_down" selected><?PHP echo INDEX_SORT_NEW; ?></option>
+                                <option value="date_up"><?PHP echo INDEX_SORT_OLD; ?></option>
+                            </select>
                         </form>
                     </div>
                 </div>
             </div>
             <div class="content">
-                <div id="workspace" class="jstree-default-dark green-border"></div>
+                <div id="workspace"></div>
             </div>
         </div>
         <div class="ui-middle plant">
-            <div class="card green-opacity-50 green-border" id="ui-container-buttons">
-                <div class="file_mgt_area_left">
-                    <button title="<?php echo INDEX_BUTTON_EDIT; ?>" type="button" class="xerte_workspace_button disabled" disabled="disabled"
-                            id="edit"><i class="fa fa-pencil-square-o xerte-icon"></i>Edit</button>
-                    <button title="<?php echo INDEX_BUTTON_PROPERTIES; ?>" type="button" class="xerte_workspace_button disabled" disabled="disabled"
-                            id="properties"><i class="fa fa-info-circle xerte-icon"></i>Properties</button>
-                    <button title="<?php echo INDEX_BUTTON_PREVIEW; ?>" type="button" class="xerte_workspace_button disabled" disabled="disabled"
-                            id="preview"><i class="fa fa-play xerte-icon"></i> Preview</button>
-                </div>
 
-                <div class="file_mgt_area_left">
-                    <button title="<?php echo INDEX_BUTTON_NEWFOLDER; ?>" type="button" class="xerte_workspace_button" id="newfolder" onClick="javascript:make_new_folder()">
-                        <i class="fa fa-folder xerte-icon"></i>New folder
-                    </button>
-                </div>
-
-                <div class="file_mgt_area_right">
-                    <button title="<?php echo INDEX_BUTTON_DELETE; ?>" type="button" class="xerte_workspace_button disabled" disabled="disabled"
-                            id="delete"><i class="fa  fa-trash xerte-icon"></i>Delete</button>
-                    <button title="<?php echo INDEX_BUTTON_DUPLICATE; ?>" type="button" class="xerte_workspace_button disabled" disabled="disabled"
-                            id="duplicate"><i class="fa fa-copy xerte-icon"></i>Duplicate</button>
-                    <button title="<?php echo INDEX_BUTTON_PUBLISH; ?>" type="button" class="xerte_workspace_button disabled" disabled="disabled"
-                            id="publish"><i class="fa  fa-share xerte-icon"></i>Publish</button>
-                </div>
-            </div>
 
             <div class="ui-container-templates">
                 <?php
@@ -294,18 +485,47 @@ Folder popup is the div that appears when creating a new folder
                 foreach ($templates as $template) {
                     echo "<div class=\"card ui-container-templates-item " . strtolower($template['parent_template']) . "\">"
                         . "<div class=\"template-info\">"
-                        . "<h1 class=\"template-title\"><strong>".$template['display_name']."</strong></h1>"
-                        . "<p class=\"template-desc\">".$template['description']."</p>"
-                        . "</div>"
-                        ."<div class=\"template-button-container\">"
+                        . "<h1 class=\"template-title\" style='position: relative; float: left;'><strong>".$template['display_name']."</strong></h1>"
+                        ."<div class=\"template-button-container\" style='position: relative; float: right;'>"
                         ."<button id=\" ".$template['template_name']."_button\" type=\"button\" class=\"xerte_button_c_no_width template-plus-icon\""
                         ."onclick=\"javascript:template_toggle('" . $template['template_name']."')\">"
                         ."<i class=\"fa fa-plus\"></i><span class=\"sr-only\"> " . $template['display_name'] ."</span>"
                         ."</button>"
                         ."</div>"
+                        ."<div class='template-desc-container'>"
+                        . "<p class=\"template-desc\" style='width: 100%; position: relative; float: bottom'>".$template['description']."</p>"
+                        ."</div>"
+                        . "</div>"
                         ."</div>";
                 }
                 ?>
+            </div>
+
+
+            <div class="card green-opacity-50 green-border" id="ui-container-buttons">
+                <div class="file_mgt_area_left">
+                    <button title="<?php echo INDEX_BUTTON_EDIT; ?>" type="button" class="xerte_workspace_button disabled" disabled="disabled"
+                            id="edit"><i class="fa fa-pencil-square-o xerte-icon" style="color: #FFFFFF;"></i>Edit</button>
+                    <button title="<?php echo INDEX_BUTTON_PROPERTIES; ?>" type="button" class="xerte_workspace_button disabled" disabled="disabled"
+                            id="properties"><i class="fa fa-info-circle xerte-icon" style="color: #FFFFFF;"></i>Properties</button>
+                    <button title="<?php echo INDEX_BUTTON_PREVIEW; ?>" type="button" class="xerte_workspace_button disabled" disabled="disabled"
+                            id="preview"><i class="fa fa-play xerte-icon" style="color: #FFFFFF;"></i> Preview</button>
+                </div>
+
+                <div class="file_mgt_area_left">
+                    <button title="<?php echo INDEX_BUTTON_NEWFOLDER; ?>" type="button" class="xerte_workspace_button" id="newfolder" onClick="javascript:make_new_folder()">
+                        <i class="fa fa-folder xerte-icon" style="color: #FFFFFF;"></i>New folder
+                    </button>
+                </div>
+
+                <div class="file_mgt_area_right">
+                    <button title="<?php echo INDEX_BUTTON_DELETE; ?>" type="button" class="xerte_workspace_button disabled" disabled="disabled"
+                            id="delete"><i class="fa  fa-trash xerte-icon" style="color: #FFFFFF;"></i>Delete</button>
+                    <button title="<?php echo INDEX_BUTTON_DUPLICATE; ?>" type="button" class="xerte_workspace_button disabled" disabled="disabled"
+                            id="duplicate"><i class="fa fa-copy xerte-icon" style="color: #FFFFFF;"></i>Duplicate</button>
+                    <button title="<?php echo INDEX_BUTTON_PUBLISH; ?>" type="button" class="xerte_workspace_button disabled" disabled="disabled"
+                            id="publish"><i class="fa  fa-share xerte-icon" style="color: #FFFFFF;"></i>Publish</button>
+                </div>
             </div>
             <!-- <div class="card" id="ui-container-preview">
 
@@ -320,45 +540,48 @@ Folder popup is the div that appears when creating a new folder
                         <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
                     </div>
                 </div>
-                <div class="card no-bg-color ui-container-general-information details green-border" id="ui-container-shared">
-                    <div class="card-header information-header">
-                        <h5 class="information-title"><strong>Project details</strong></h5>
-                    </div>
-                    <div class="card-body green-opacity-50">
-                        <nav>
-                            <div class="nav nav-tabs nav-fill no-transparency" id="nav-tab" role="tablist">
-                                <a class="nav-item nav-link active" id="nav-home-tab" data-toggle="tab" href="#general" role="tab" aria-controls="nav-home" aria-selected="true">General details</a>
-                                <a class="nav-item nav-link" id="nav-profile-tab" data-toggle="tab" href="#shared" role="tab" aria-controls="nav-profile" aria-selected="false">Project shared</a>
-                            </div>
-                        </nav>
-                        <div class="tab-content py-3 px-3 px-sm-0" id="nav-tabContent">
-                            <div class="tab-pane fade show active" id="general" role="tabpanel" aria-labelledby="nav-general-tab">
-                                <div class="projectInformationContainer" id="project_information">
-
+                <div class="d-flex ui-container-detailed-information flex-column">
+                    <div class="card details no-bg-color ui-container-general-information green-border" id="ui-container-shared">
+                        <div class="card-header information-header">
+                            <h5 class="information-title"><strong>Project details</strong></h5>
+                        </div>
+                        <div class="card-body green-opacity-50">
+                            <nav>
+                                <div class="nav nav-tabs nav-fill no-transparency" id="nav-tab" role="tablist">
+                                    <a class="nav-item nav-link active" id="nav-home-tab" data-toggle="tab" href="#general" role="tab" aria-controls="nav-home" aria-selected="true">General details</a>
+                                    <a class="nav-item nav-link" id="nav-profile-tab" data-toggle="tab" href="#project_shared" role="tab" aria-controls="nav-profile" aria-selected="false">Project shared</a>
                                 </div>
-                            </div>
-                            <div class="tab-pane fade" id="shared" role="tabpanel" aria-labelledby="nav-shared-tab">
-                                Et et consectetur ipsum labore excepteur est proident excepteur ad velit occaecat qui minim occaecat veniam. Fugiat veniam incididunt anim aliqua enim pariatur veniam sunt est aute sit dolor anim. Velit non irure adipisicing aliqua ullamco irure incididunt irure non esse consectetur nostrud minim non minim occaecat. Amet duis do nisi duis veniam non est eiusmod tempor incididunt tempor dolor ipsum in qui sit. Exercitation mollit sit culpa nisi culpa non adipisicing reprehenderit do dolore. Duis reprehenderit occaecat anim ullamco ad duis occaecat ex.
-                            </div>
+                            </nav>
+                            <div class="tab-content py-3 px-3 px-sm-0" id="nav-tabContent">
+                                <div class="tab-pane fade show active" id="general" role="tabpanel" aria-labelledby="nav-general-tab">
+                                    <div class="projectInformationContainer" id="project_information">
 
+                                    </div>
+                                </div>
+                                <div class="tab-pane fade" id="project_shared" role="tabpanel" aria-labelledby="nav-shared-tab">
+                                </div>
+
+                            </div>
                         </div>
                     </div>
+                    <div class="card card-body green-opacity-50 ui-container-general-information green-border" id="project_graph">
 
+                    </div>
                 </div>
             </div>
 
             <div class="ui-help">
-                <div class="card no-bg-color ui-container-general-information preview flex1-1 green-border" id="ui-container-details">
+                <div class="card no-bg-color ui-container-general-help preview flex1-1 green-border" id="ui-container-details">
                     <div class="card-body green-opacity-50">
                         <?PHP echo apply_filters('editor_pod_one', $xerte_toolkits_site->pod_one); ?>
                     </div>
                 </div>
-                <div class="card no-bg-color ui-container-general-information preview flex1-1 green-border" id="ui-container-details">
+                <div class="card no-bg-color ui-container-general-help preview flex1-1 green-border" id="ui-container-details">
                     <div class="card-body green-opacity-50">
                         <?PHP echo apply_filters('editor_pod_two', $xerte_toolkits_site->pod_two); ?>
                     </div>
                 </div>
-                <div class="card no-bg-color ui-container-general-information flex1-1 green-border" id="ui-container-details">
+                <div class="card no-bg-color ui-container-general-help flex1-1 green-border" id="ui-container-details">
                     <div class="card-body green-opacity-50">
                         <?PHP echo $xerte_toolkits_site->news_text; ?>
                     </div>

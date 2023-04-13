@@ -1,14 +1,25 @@
+:root {
+    --background-color: #EEE ;
+    --primary-color: #BBEAD6C1;
+    --secondary-color: #536390;
+    --font-color: #212529;
+    --bg-color: #fff;
+    --heading-color: #292922;
+}
+
+
 html {
     overflow: auto !important;
 }
 
 body{
-    background-color: #EEE !important;
+    background-color: var(--primary-color) !important;
     overflow: auto !important;
 }
 
 .dlearning-navbar{
     height: 75px;
+    background-color: var(--primary-color);
 }
 
 .dlearning-brand{
@@ -21,31 +32,29 @@ body{
 }
 
 .ui-container{
-
+    height: 100%;
 }
 
 .ui-workbench{
-    background-color: #EEE;
+    background-color: var(--background-color);
     width: 100%;
-    height: 100%;
     display: flex;
 }
 
 .ui-tree{
-    background-color: #f8f9fa ;
+    background-color: var(--primary-color) ;
     width: 350px;
     display: flex;
     flex-direction: column;
 }
 
 .ui-middle{
-    background-color: #0a8bee;
     width: 100%;
     height: 100%;
 }
 
 #ui-container-buttons{
-    margin: 30px !important;
+    margin: 30px 30px 0px 30px !important;
     height: 65px;
     display: flex;
     justify-content: flex-start;
@@ -53,8 +62,9 @@ body{
 }
 
 .ui-container-templates{
+    margin-top: 30px;
     width: 100%;
-    height: 250px;
+    height: 160px;
     display: flex;
     justify-content: space-between;
 }
@@ -75,8 +85,8 @@ body{
 #ui-container-preview{
     margin: 30px !important;
     height: 600px;
-    background-color: white;
-    border-color: #EEE !important;
+    background-color: var(--primary-color);
+    border-color: var(--background-color) !important;
 }
 
 .ui-container-information{
@@ -105,6 +115,7 @@ body{
 
 .information-title{
     margin: 0!important;
+    color: white !important;
 }
 
 .preview{
@@ -112,21 +123,54 @@ body{
     display: flex;
     justify-content: center;
     margin-right: 15px !important;
+    flex: 2 1 !important;
+    height: 1000px;
 }
 
 .details{
-    width: 33% !important;
     display: flex;
     justify-content: center;
+    flex: 1 1 !important;
+    height: 505px;
+}
+
+th{
+    background-color: #BBEAD6C1 !important;
 }
 
 .ui-container-general-information{
-    background-color: white !important;
-    border-color: #EEE !important;
+    background-color: var(--primary-color) !important;
+    border-color: var(--background-color) !important;
+    margin-left: 0 !important;
+    margin-top: 30px !important;
+
+}
+
+.ui-container-detailed-information{
+    width: 33% !important;
+}
+
+.ui-container-general-help{
+    background-color: var(--primary-color) !important;
+    border-color: var(--background-color) !important;
     height: 300px;
     margin-left: 0 !important;
     margin-top: 30px !important;
 
+}
+
+#project_graph{
+    display: flex;
+    justify-content: center;
+    flex: 1 1 !important;
+    height: 505px;
+}
+
+.graph-svg-wrapper
+{
+    background-color: #BBEAD6C1 !important;
+    border: 3px solid #BBEAD6 !important;
+    border-radius: 7px !important;
 }
 
 .xerte_workspace_button.disabled {
@@ -171,20 +215,20 @@ body{
 
 .nottingham{
     background: linear-gradient(90deg, #BBEAD6 0%, #9DF1CE 35.69%, #68FFBF 100%); !important;
-    border-color: #EEE !important;
+    border-color: var(--background-color) !important;
     border-radius: 7px!important;
 
 }
 .site{
     background: linear-gradient(90deg, #C8F1F2 0%, #79CDCF 100%) !important;
-    border-color: #EEE !important;
+    border-color: var(--background-color) !important;
     border-radius: 7px!important;
 
 }
 
 .decision{
     background: linear-gradient(90deg, #BB98B5 0%, #7D5175 100%); !important;
-    border-color: #EEE !important;
+    border-color: var(--background-color) !important;
     border-radius: 7px!important;
 
 }
@@ -195,10 +239,19 @@ body{
 }
 .template-title{
     font-size: 24px !important;
+    color: #212529 !important;
 }
 
 .template-desc{
     font-size: 18px !important;
+    color: #212529!important; ;
+}
+
+.template-desc-container{
+    display: flex;
+    justify-content: flex-end;
+    align-content: flex-end;
+    width: 100%;
 }
 
 .template-button-container{
@@ -213,6 +266,7 @@ body{
     border: none !important;
     font-size: xx-large !important;
     transition: all .2s ease-in-out;
+    color: white !important;
 }
 
 .template-plus-icon:hover{
@@ -245,7 +299,203 @@ body{
 }
 
 .dlearning-dropdown{
-    background-color:#f8f9fa !important;
+    background-color:var(--primary-color) !important;
+}
+
+#lightSwitch{
+    font-size: 2em;
+    padding-left: 3em;
+}
+
+.userbar{
+    display: flex;
+    align-items: center;
+}
+
+.theme-switch-wrapper {
+    display: flex;
+    align-items: center;
+}
+em {
+    margin-left: 10px;
+    font-size: 1rem;
+}
+
+.theme-switch {
+    display: inline-block;
+    height: 34px;
+    position: relative;
+    width: 60px;
+}
+
+.theme-switch input {
+    display:none;
+}
+
+.slider {
+    background-color: var(--background-color);
+    bottom: 0;
+    cursor: pointer;
+    left: 0;
+    position: absolute;
+    right: 0;
+    top: 0;
+    transition: .4s;
+}
+
+.slider:before {
+    background-color: #fff;
+    bottom: 4px;
+    content: "";
+    height: 26px;
+    left: 4px;
+    position: absolute;
+    transition: .4s;
+    width: 26px;
+}
+
+input:checked + .slider {
+    background-color: var(--background-color);
+}
+
+input:checked + .slider:before {
+    transform: translateX(26px);
+}
+
+.slider.round {
+    border-radius: 34px;
+}
+
+.slider.round:before {
+    border-radius: 50%;
+}
+
+.jstree-default-dark {
+    background: var(--primary-color) !important;
+}
+
+p{
+    color: var(--font-color) !important;
+}
+
+a, div, input, h3, td{
+    color: var(--font-color) !important;
+
+}
+
+.active{
+    background-color: var(--primary-color) !important;
+    border-color: var(--primary-color);
+}
+
+.dlearning-filter{
+    position: fixed;
+    bottom: 0;
+    margin-bottom: 20px;
+}
+
+.workspace_search_outer{
+    margin: 10px 20px 0 20px;
+}
+
+.add_template_button{
+    margin: 20px 20px 0;
+    color: white !important;
+    background-color: #00AEEF !important;
+    transition: all .2s ease-in-out !important;
+}
+
+.add_template_button:hover{
+    transform: scale(1.1);
+}
+
+.icon-mr-20{
+    margin-right: 20px;
+}
+
+.modal-content{
+    background-color: var(--primary-color) !important;
+}
+
+#preview_iframe{
+    margin: 0 !important;
+    height: 100% !important;
+    width: 100% !important;
+}
+
+#x_headerBlock > div, #x_pageNo{
+    color: white !important;
+}
+
+.ui-button-text{
+    color: black!important;
+}
+
+#userContainer{
+    padding: 5px 20px 5px 5px;
+    display: flex;
+    justify-content: end;
+}
+
+#user{
+    max-height: 100%;
+    border-radius: 50%;
+    width: 8% !important;
+    box-shadow: rgba(60, 64, 67, 0.3) 0px 1px 2px 0px, rgba(60, 64, 67, 0.15) 0px 2px 6px 2px;
+    transition: all .2s ease-in-out;
+}
+
+#user:hover{
+    cursor: pointer;
+    transform: scale(1.1);
+}
+
+#userContainerSettings{
+    padding-bottom: 3rem;
+    display: flex;
+    justify-content: center;
+}
+
+#userSettings{
+    max-height: 100%;
+    border-radius: 50%;
+    width: 50% !important;
+    box-shadow: rgba(60, 64, 67, 0.3) 0px 1px 2px 0px, rgba(60, 64, 67, 0.15) 0px 2px 6px 2px;
+}
+
+.settings{
+    position: absolute !important;
+    top: 75px;
+    right: 20px;
+    z-index: 1;
+    width: 250px !important;
+    background-color: var(--primary-color) !important;
+    border-color: var(--background-color) !important;
+}
+
+.settingsCollapseBody{
+    display: flex;
+    flex-direction: column;
+
+}
+
+.settingsItem{
+    width: 100% !important;
+    height: 50px;
+    display: flex;
+    align-items: center;
+}
+
+.settingsButton{
+    width: 100%;
+}
+
+.customModal{
+    max-width: 30% !important;
+}
+
+.submit{
+    background-color: #e9ecef !important;
 }
 
 .mint
@@ -281,10 +531,16 @@ body{
 {
     border: 3px solid #BBEAD6 !important;
     border-radius: 7px !important;
-    box-shadow: 0px 2px 5px #00000088;
 }
 
 #workspace
 {
     background: none !important;
+}
+
+.green-popup
+{
+    background-color: #EFFFFF !important;
+    border: 3px solid #6BD1BF !important;
+    border-radius: 7px !important;
 }
