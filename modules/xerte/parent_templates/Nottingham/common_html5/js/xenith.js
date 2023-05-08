@@ -29,6 +29,7 @@ var x_languageData  = [],
     x_currentPage   = -1,
     x_currentPageXML,
 	x_currentPageBlocksXML = [],
+    x_currentPageDict = {},
     x_specialChars  = [],
     x_inputFocus    = false,
     x_dialogInfo    = [], // (type, built)
@@ -2638,6 +2639,7 @@ function x_createBlock(container, module, modulePosition){
 
 }
 
+// Function that does a jquery query but with blockid
 function jGetElement(blockid, element) {
 
 	if(element.includes(",")){
@@ -2655,7 +2657,23 @@ function jGetElement(blockid, element) {
 	}
 	return $("#" + blockid + ' ' + element)
 }
+// The following functions are necessary as the pages javascript files
+// cannot use global variables anymore as multiple blocks would use the same
+// global variables:
 
+// Pushes a dom element to x_currentPageDict with optional blockid
+// returns the given element for convenience (stored by reference not copy)
+function x_pushToPageDict(element, name, blockid = -1){
+    let key = blockid == -1 ? name : name + "_" + blockid;
+    x_currentPageDict[key] = element;
+    return element;
+}
+
+// Gets a dom element from x_currentPageDict with optional blockid
+function x_getPageDict(name, blockid = -1){
+    let key = blockid == -1 ? name : name + "_" + blockid;
+    return x_currentPageDict[key];
+}
 
 function x_getBlockXML(blockid){
 	var blocknr = x_getBlockNr(blockid);
@@ -4383,9 +4401,11 @@ function x_checkDecimalSeparator(value, forcePeriod) {
 // function called from model pages to scale images - scale, firstScale & setH are optional
 function x_scaleImg(img, maxW, maxH, scale, firstScale, setH, enlarge) {
     var $img = $(img);
+    debugger;
     if (scale != false) {
-        var imgW = $img.width(),
-            imgH = $img.height();
+        var imgW = $img.attr("width"),
+            imgH = $img.attr("height");
+
 
         if (firstScale == true) { // store orig dimensions - will need them if resized later so it doesn't get larger than orignial size
             $img.data("origSize", [imgW, imgH]);
