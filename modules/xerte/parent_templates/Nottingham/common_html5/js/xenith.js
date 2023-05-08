@@ -4403,8 +4403,8 @@ function x_scaleImg(img, maxW, maxH, scale, firstScale, setH, enlarge) {
     var $img = $(img);
     debugger;
     if (scale != false) {
-        var imgW = $img.attr("width"),
-            imgH = $img.attr("height");
+        var imgW = $img[0].width,
+            imgH = $img[0].height;
 
 
         if (firstScale == true) { // store orig dimensions - will need them if resized later so it doesn't get larger than orignial size

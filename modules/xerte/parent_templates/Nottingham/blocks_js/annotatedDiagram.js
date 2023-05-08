@@ -343,8 +343,9 @@ var annotatedDiagram = new function () {
 
         } else {
             // Make hsHolder with same width and height as img
-            let width = img.attr("width");
-            let height = img.attr("height");
+            debugger;
+            let width = img[0].width;
+            let height = img[0].height;
             hsHolder
                 .width(width)
                 .height(height);
@@ -507,7 +508,7 @@ var annotatedDiagram = new function () {
 
             // take current scale into account
             var w, h, x, y,
-                scale = img.attr("width") / img.data("origSize")[0];
+                scale = img[0].width / img.data("origSize")[0];
             if (hsInfo.getAttribute("mode") !== null) {
                 // this was drawn with polygon tool so not a rectangular hotspot
                 // if oval, draw oval using furthest top, bottom, left & right points
