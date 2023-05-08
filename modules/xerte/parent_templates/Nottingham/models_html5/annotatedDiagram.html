@@ -17,7 +17,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-if(true) {
+if(false) {
     alert("block");
 	//Create the area for the block to be populated in. Then call the init of the block. (basically same code as INTERN CODE in xenith.js)
 	var blockid = "block1";
@@ -195,7 +195,7 @@ if(true) {
 							}
 						});
 			});
-
+			debugger;
 			let url = x_currentPageXML.getAttribute("url").split(".");
 			if (url.length > 1) {
 				if (url[1].slice(0, -1) != "swf") {
@@ -639,18 +639,18 @@ if(true) {
 <div id="block1" ></div>
 
 
-<!--<div id="pageContents">-->
-<!--	<div id="panel" class="panel inline">-->
-<!--		<div id="imageHolder">-->
-<!--			<img id="image" class="x_noLightBox" />-->
-<!--			<div id="hsHolder"></div>-->
-<!--		</div>-->
-<!--	</div>-->
+<div id="pageContents">
+	<div id="panel" class="panel inline">
+		<div id="imageHolder">
+			<img id="image" class="x_noLightBox" />
+			<div id="hsHolder"></div>
+		</div>
+	</div>
 
-<!--	<canvas id="canvas"></canvas>-->
-<!--	<div id="textContents">-->
-<!--		<div id="mainText"></div>-->
-<!--		<div id="listHolder"></div>-->
-<!--		<div id="infoHolder" aria-live="polite"></div>-->
-<!--	</div>-->
-<!--</div>-->
+	<canvas id="canvas"></canvas>
+	<div id="textContents">
+		<div id="mainText"></div>
+		<div id="listHolder"></div>
+		<div id="infoHolder" aria-live="polite"></div>
+	</div>
+</div>

@@ -2627,7 +2627,7 @@ function x_navigateToPage(force, pageInfo, addHistory) { // pageInfo = {type, ID
 function x_createBlock(container, module, modulePosition){
 	//Create the area for the block to be populated in. Then call the init of the block.
 	var blockid = "block" + modulePosition;
-	var jsName = module.tagName.replace("Block", "")
+	var jsName = module.tagName; //.replace("Block", "")
 	container.append('<div id="block' + modulePosition+'" class="iblock x-card"></div>');
 	$("#"+blockid).load(x_templateLocation + "blocks_html5/" + module.tagName+ ".html", function() {
 		window[jsName].init(module, blockid);
@@ -4401,7 +4401,6 @@ function x_checkDecimalSeparator(value, forcePeriod) {
 // function called from model pages to scale images - scale, firstScale & setH are optional
 function x_scaleImg(img, maxW, maxH, scale, firstScale, setH, enlarge) {
     var $img = $(img);
-    debugger;
     if (scale != false) {
         var imgW = $img[0].width,
             imgH = $img[0].height;

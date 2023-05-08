@@ -1,4 +1,4 @@
-var annotatedDiagram = new function () {
+var annotatedDiagramBlock = new function () {
     var //tabfocusoptions,
         //options,
         //canvas,
@@ -44,48 +44,6 @@ var annotatedDiagram = new function () {
 
         this.setUp(blockid);
     }
-    /*
-        this.resizeImg = function (firstLoad, blockid) {
-            var imgMaxW, imgMaxH;
-            var footerMargin = parseInt($x_footerBlock.css('margin-bottom'));
-            imgMaxH = $x_pageHolder.height() - $x_footerBlock.height() - footerMargin - 50;
-            if (x_currentPageXML.getAttribute("panelWidth") == "Large") {
-                imgMaxW = Math.round($x_pageHolder.width() * 0.8 - 20);
-            } else if (x_currentPageXML.getAttribute("panelWidth") == "Small") {
-                imgMaxW = Math.round($x_pageHolder.width() * 0.3 - 20);
-            } else {
-                imgMaxW = Math.round($x_pageHolder.width() * 0.55 - 20);
-            }
-            $img.mapster('unbind');
-
-            x_scaleImg($img, imgMaxW, imgMaxH, true, firstLoad, true);
-
-            $img.css({
-                "opacity": 1,
-                "filter": 'alpha(opacity=100)',
-            });
-
-
-            if (x_currentPageXML.getAttribute("align") === "Left") {
-                var totalWidth = jGetElement(blockid, ".canvas").width();
-                var imageWidth = jGetElement(blockid, ".imageHolder").width();
-                var textWidth = totalWidth - imageWidth;
-                jGetElement(blockid, ".textContents").css({
-                    "width": textWidth + "px"
-                })
-
-            } else {
-                var imageHeight = jGetElement(blockid, ".imageHolder").height();
-                imageHeight *= 1.2;
-                jGetElement(blockid, ".textContents").css({
-                    "top": imageHeight + "px"
-                })
-            }
-
-            jGetElement(blockid, ".hsHolder").children().remove();
-            this.imgLoaded(blockid);
-        };
-    */
 
     this.init = function (pageXML, blockid) {
         var blockXML = x_getBlockXML(blockid);
@@ -154,8 +112,8 @@ var annotatedDiagram = new function () {
                     hsHolder = x_getPageDict("hsHolder", blockid);
                     // not already selected - so select, show text & highlight hotspots
                     if (!$this.is(jGetElement(blockid, ".listItem.highlight"))) {
-                        annotatedDiagram.deselect(blockid);
-                        annotatedDiagram.selectLink($this, blockid);
+                        annotatedDiagramBlock.deselect(blockid);
+                        annotatedDiagramBlock.selectLink($this, blockid);
                         if (pageContents.data("hsType") == "flex") {
                             $("area." + blockid + "." + $this.data("group")).mapster("select");
 
@@ -172,17 +130,17 @@ var annotatedDiagram = new function () {
                                     $hs.children()
                                         .each(function () {
                                             if (blockXML.getAttribute("link") == "false" || blockXML.getAttribute("link") == undefined) {
-                                                annotatedDiagram.drawLine($(this), $this, shape, blockXML, blockid);
+                                                annotatedDiagramBlock.drawLine($(this), $this, shape, blockXML, blockid);
                                             } else {
-                                                annotatedDiagram.drawLineToText($(this), shape, blockXML, blockid);
+                                                annotatedDiagramBlock.drawLineToText($(this), shape, blockXML, blockid);
                                             }
 
                                         });
                                 } else {
                                     if (blockXML.getAttribute("link") == "false" || blockXML.getAttribute("link") == undefined) {
-                                        annotatedDiagram.drawLine($hs, $this, shape, blockXML, blockid);
+                                        annotatedDiagramBlock.drawLine($hs, $this, shape, blockXML, blockid);
                                     } else {
-                                        annotatedDiagram.drawLineToText($hs, shape, blockXML, blockid);
+                                        annotatedDiagramBlock.drawLineToText($hs, shape, blockXML, blockid);
                                     }
 
                                 }
@@ -192,7 +150,7 @@ var annotatedDiagram = new function () {
 
                         // already selected - so deselect, hide text & remove hotspots
                     } else {
-                        annotatedDiagram.deselect(blockid);
+                        annotatedDiagramBlock.deselect(blockid);
                     }
                 });
         });
@@ -209,7 +167,8 @@ var annotatedDiagram = new function () {
                     })
                     .one("load", function () {
                         setTimeout(function() {
-                            annotatedDiagram.setUp(blockid);
+                            debugger;
+                            annotatedDiagramBlock.setUp(blockid);
 
                             // call this function in every model once everything's loaded
                             x_pageLoaded();
@@ -375,19 +334,19 @@ var annotatedDiagram = new function () {
 
                 $(this).children().each(function (j) {
                     if (pageContents.data("hsType") != "flex") {
-                        annotatedDiagram.createHs(blockid, this, i, $hsGroup);
+                        annotatedDiagramBlock.createHs(blockid, this, i, $hsGroup);
 
                     } else {
-                        annotatedDiagram.createHs(blockid, this, i, $("#hsHolder_map"+ blockid));
+                        annotatedDiagramBlock.createHs(blockid, this, i, $("#hsHolder_map"+ blockid));
                     }
                 });
 
             } else {
                 if (pageContents.data("hsType") != "flex") {
-                    annotatedDiagram.createHs(blockid, this, i, hsHolder);
+                    annotatedDiagramBlock.createHs(blockid, this, i, hsHolder);
 
                 } else {
-                    annotatedDiagram.createHs(blockid, this, i, $("#hsHolder_map"+blockid));
+                    annotatedDiagramBlock.createHs(blockid, this, i, $("#hsHolder_map"+blockid));
                 }
             }
         });
@@ -456,8 +415,8 @@ var annotatedDiagram = new function () {
 
                     // not already selected - so select link, show text & highlight hotspots
                     if (!$this.data("listItem").is($(".listItem.highlight"))) {
-                        annotatedDiagram.deselect(blockid);
-                        annotatedDiagram.selectLink($(this).data("listItem"), blockid);
+                        annotatedDiagramBlock.deselect(blockid);
+                        annotatedDiagramBlock.selectLink($(this).data("listItem"), blockid);
 
                         // only trigger selection on hotspots that aren't $this - otherwise $this is unselected
                         $("area." + blockid + "." + $this.data("listItem").data("group")).each(function () {
@@ -468,7 +427,7 @@ var annotatedDiagram = new function () {
 
                         // already selected - so deselect link, hide text & remove hotspots
                     } else {
-                        annotatedDiagram.deselect(blockid);
+                        annotatedDiagramBlock.deselect(blockid);
 
                         // need this otherwise the hs that's been clicked stays highlighted
                         setTimeout(function () {
@@ -763,14 +722,14 @@ var annotatedDiagram = new function () {
                                     if ($hs.hasClass("hsGroup")) {
                                         $hs.children()
                                             .each(function () {
-                                                annotatedDiagram.drawLine(context, $(this), $this, shape);
+                                                annotatedDiagramBlock.drawLine(context, $(this), $this, shape);
                                             });
                                     } else {
-                                        annotatedDiagram.drawLine(context, $hs, $this, shape);
+                                        annotatedDiagramBlock.drawLine(context, $hs, $this, shape);
                                     }
                                 }
 
-                                annotatedDiagram.checkHeight();
+                                annotatedDiagramBlock.checkHeight();
                                 x_pageContentsUpdated();
                             }
                         })
@@ -781,10 +740,10 @@ var annotatedDiagram = new function () {
                         $hsHolder.append($hsGroup);
                         $(this).children()
                             .each(function () {
-                                var $hs = annotatedDiagram.createHotspot(this, $hsGroup, $thisItem, groupXML);
+                                var $hs = annotatedDiagramBlock.createHotspot(this, $hsGroup, $thisItem, groupXML);
                             });
                     } else {
-                        annotatedDiagram.createHotspot(this, $hsHolder, $thisItem);
+                        annotatedDiagramBlock.createHotspot(this, $hsHolder, $thisItem);
                     }
                 });
 
