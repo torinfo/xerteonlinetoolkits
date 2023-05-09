@@ -28,10 +28,12 @@ var x_languageData  = [],
 	x_startPage		= {type : "index", ID : "0"},
     x_currentPage   = -1,
     x_currentPageXML,
-	x_currentPageBlocksXML = [],
-    x_currentPageBlocksInfo = [],
-    x_currentPageDict = {},
-    x_specialChars  = [],
+	//blocks:
+	x_blocksXML = [],
+    x_blocksInfo = [],
+    x_pageDicts = [],
+
+	x_specialChars  = [],
     x_inputFocus    = false,
     x_dialogInfo    = [], // (type, built)
     x_browserInfo   = {iOS:false, Android:false, touchScreen:false, mobile:false, orientation:"portrait"}, // holds info about browser/device
@@ -482,7 +484,15 @@ x_projectDataLoaded = function(xmlData) {
 			offset++;
 		}
 	}
-	
+
+	// Set up blocks variables
+	for (let i=0; i<numPages; i++){
+		x_blocksXML[i] = [];
+		x_blocksInfo[i] = [];
+		x_pageDicts[i] = {};
+	}
+
+
 	// make array containing indexes of normal pages (not standalone)
 	for (var i=0; i<x_pageInfo.length; i++) {
 		if (x_pageInfo[i].standalone != true) {
@@ -2662,24 +2672,24 @@ function jGetElement(blockid, element) {
 // cannot use global variables anymore as multiple blocks would use the same
 // global variables:
 
-// Pushes a dom element to x_currentPageDict with optional blockid
+// Pushes a dom element to x_pageDicts with optional blockid
 // returns the given element for convenience (stored by reference not copy)
 function x_pushToPageDict(element, name, blockid = -1){
     let key = blockid == -1 ? name : name + "_" + blockid;
-    x_currentPageDict[key] = element;
+    x_pageDicts[x_currentPage][key] = element;
     return element;
 }
 
-// Gets a dom element from x_currentPageDict with optional blockid
+// Gets a dom element from x_pageDicts with optional blockid
 function x_getPageDict(name, blockid = -1){
     let key = blockid == -1 ? name : name + "_" + blockid;
-    return x_currentPageDict[key];
+    return x_pageDicts[x_currentPage][key];
 }
 
 function x_getBlockXML(blockid){
 	var blocknr = x_getBlockNr(blockid);
-	if (x_currentPageBlocksXML.length >= blocknr){
-		return x_currentPageBlocksXML[blocknr];
+	if (x_blocksXML[x_currentPage].length >= blocknr){
+		return x_blocksXML[x_currentPage][blocknr];
 	}
 	return null;
 }
@@ -3020,16 +3030,16 @@ function x_changePageStep5a(x_gotoPage) {
     x_currentPage = x_gotoPage;
     x_currentPageXML = x_pages[x_currentPage];
 
-    // if there are blocks on this page: (re)set x_currentPageBlocksXML etc
-    x_currentPageBlocksXML = [];
-    x_currentPageBlocksInfo = [];
-	x_currentPageDict = {};
+    // if there are blocks on this page: set x_blocksXML etc
 	let nodes = Array.from(x_currentPageXML.querySelectorAll("*")).filter(n=>n.nodeName.includes('Block'));
-	for (let i=0; i < nodes.length; i++){
-		x_currentPageBlocksXML.push(nodes[i]);
-		let page = {type: nodes[i].nodeName};
-		x_currentPageBlocksInfo.push(page);
+	if (x_blocksXML[x_currentPage].length == 0) {
+		for (let i = 0; i < nodes.length; i++) {
+			x_blocksXML[x_currentPage].push(nodes[i]);
+			let page = {type: nodes[i].nodeName};
+			x_blocksInfo[x_currentPage].push(page);
+		}
 	}
+
 
     if ($x_pageDiv.children().length > 0) {
         // remove everything specific to previous page that's outside $x_pageDiv
@@ -4001,9 +4011,9 @@ function x_updateCss2(updatePage) {
                 simpleText.sizeChanged(); // errors if you just call text.sizeChanged()
             } else {
                 eval(x_pageInfo[x_currentPage].type).sizeChanged();
-                for (let i = 0, len=x_currentPageBlocksXML.length; i<len; i++){
+                for (let i = 0, len=x_blocksXML[x_currentPage].length; i<len; i++){
                     let blockid = "block" + (i + 1);
-                    eval(x_currentPageBlocksInfo[i].type).sizeChanged(blockid);
+                    eval(x_blocksInfo[x_currentPage][i].type).sizeChanged(blockid);
                 }
             }
         }
