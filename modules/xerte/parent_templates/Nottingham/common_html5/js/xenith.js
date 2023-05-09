@@ -29,6 +29,7 @@ var x_languageData  = [],
     x_currentPage   = -1,
     x_currentPageXML,
 	x_currentPageBlocksXML = [],
+    x_currentPageBlocksInfo = [],
     x_currentPageDict = {},
     x_specialChars  = [],
     x_inputFocus    = false,
@@ -3019,12 +3020,15 @@ function x_changePageStep5a(x_gotoPage) {
     x_currentPage = x_gotoPage;
     x_currentPageXML = x_pages[x_currentPage];
 
-    // if there are blocks on this page: set x_currentPageBlocksXML
-	var nodes = x_currentPageXML.ownerDocument.evaluate("//*[contains(name(),'Block')]", x_currentPageXML, null, XPathResult.ANY_TYPE, null);
-	var result = nodes.iterateNext();
-	while (result) {
-		x_currentPageBlocksXML.push(result);
-		result = nodes.iterateNext();
+    // if there are blocks on this page: (re)set x_currentPageBlocksXML etc
+    x_currentPageBlocksXML = [];
+    x_currentPageBlocksInfo = [];
+	x_currentPageDict = {};
+	let nodes = Array.from(x_currentPageXML.querySelectorAll("*")).filter(n=>n.nodeName.includes('Block'));
+	for (let i=0; i < nodes.length; i++){
+		x_currentPageBlocksXML.push(nodes[i]);
+		let page = {type: nodes[i].nodeName};
+		x_currentPageBlocksInfo.push(page);
 	}
 
     if ($x_pageDiv.children().length > 0) {
@@ -3997,6 +4001,10 @@ function x_updateCss2(updatePage) {
                 simpleText.sizeChanged(); // errors if you just call text.sizeChanged()
             } else {
                 eval(x_pageInfo[x_currentPage].type).sizeChanged();
+                for (let i = 0, len=x_currentPageBlocksXML.length; i<len; i++){
+                    let blockid = "block" + (i + 1);
+                    eval(x_currentPageBlocksInfo[i].type).sizeChanged(blockid);
+                }
             }
         }
         catch(e) {} // Catch error thrown when you call sizeChanged() on an unloaded model

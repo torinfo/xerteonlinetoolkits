@@ -35,8 +35,9 @@ var annotatedDiagramBlock = new function () {
 
     // function called every time the size of the LO is changed
     this.sizeChanged = function (blockid) {
+        debugger;
         this.deselect(blockid);
-        let img = x_getPageDict("ïmg", blockid);
+        let img = x_getPageDict("img", blockid);
         img.css({
             "opacity": 0,
             "filter": 'alpha(opacity=0)'
@@ -49,7 +50,6 @@ var annotatedDiagramBlock = new function () {
         var blockXML = x_getBlockXML(blockid);
 
         //Set "global variables" for this block
-        debugger;
         let pageContents = x_pushToPageDict(jGetElement(blockid, ".pageContents"), "pageContents", blockid);
         let img = x_pushToPageDict(jGetElement(blockid, ".imageHolder img"), "img", blockid);
         let hsHolder = x_pushToPageDict(jGetElement(blockid, ".hsHolder"), "hsHolder", blockid);
@@ -167,7 +167,6 @@ var annotatedDiagramBlock = new function () {
                     })
                     .one("load", function () {
                         setTimeout(function() {
-                            debugger;
                             annotatedDiagramBlock.setUp(blockid);
 
                             // call this function in every model once everything's loaded
@@ -211,11 +210,9 @@ var annotatedDiagramBlock = new function () {
 
         let pageContents = x_getPageDict("pageContents", blockid);
         let img = x_getPageDict( "img", blockid);
-        let img2 = jGetElement(blockid, ".imageHolder img");
         let hsHolder = x_getPageDict( "hsHolder", blockid);
         let panel = x_getPageDict("panel", blockid);
 
-        debugger;
         // if old style hotspots are used, resize the canvas first
         if (pageContents.data("hsType") == "flex") {
             img.mapster('unbind');
@@ -234,16 +231,20 @@ var annotatedDiagramBlock = new function () {
             panelOuterH = panel.outerHeight() - panel.height();
 
         var align = x_browserInfo.mobile == true ? "Top" : blockXML.getAttribute("align");
-
-        var imgMaxW = Math.round($x_pageHolder.width() * (align == "Top" ? 1 : maxPanel) - panelOuterW - (align == "Top" ? parseInt($x_pageDiv.css("padding-left")) * 2 : 0)),
-            imgMaxH = $x_pageHolder.height() * (align == "Top" ? maxPanel : 1) - (parseInt($x_pageDiv.css("padding-left")) * 2) - panelOuterH;
-
+        var imgMaxW = Math.round($("#"+blockid).parent().width() * (align == "Top" ? 1 : maxPanel) - panelOuterW - (align == "Top" ? parseInt($("#"+blockid).css("padding-left")) * 2 : 0)),
+            imgMaxH = $("#"+blockid).parent().height() * (align == "Top" ? maxPanel : 1) - (parseInt($("#"+blockid).css("padding-left")) * 2) - panelOuterH;
 
         x_scaleImg(img, imgMaxW, imgMaxH, true, img.data('firstLoad'), false);
 
+        //debugger
+        jGetElement(blockid, ".mainText").html( "blockid: "+ blockid +
+                                                ",<br>imgMaxW: " + imgMaxW +
+                                                ",<br> imgMaxH:" + imgMaxH +
+                                                ",<br> maxPanel:" + maxPanel +
+                                                ",<br> panelOuter:" + panelOuterW + ", " + panelOuterH);
         // position imageHolder correctly
         if (align == "Top") {
-            panel.css("margin-left", ($x_pageDiv.width() - panel.outerWidth()) / 2);
+            panel.css("margin-left", ($("#"+blockid).width() - panel.outerWidth()) / 2);
         }
 
         img
@@ -254,7 +255,7 @@ var annotatedDiagramBlock = new function () {
             });
 
         if (pageContents.data("hsType") == "centre" && align == "Left") {
-            jGetElement(blockid, ".listItem").css("minWidth", $x_pageDiv.width() - panel.outerWidth(true) - 50);
+            jGetElement(blockid, ".listItem").css("minWidth", $("#"+blockid).width() - panel.outerWidth(true) - 50);
         }
 
         // now get info about hotspots & create them
@@ -302,7 +303,6 @@ var annotatedDiagramBlock = new function () {
 
         } else {
             // Make hsHolder with same width and height as img
-            debugger;
             let width = img[0].width;
             let height = img[0].height;
             hsHolder
@@ -545,8 +545,7 @@ var annotatedDiagramBlock = new function () {
     this.deselect = function (blockid) {
         let infoHolder = x_getPageDict("infoHolder", blockid);
         jGetElement(blockid, ".listItem.highlight").removeClass("highlight");
-        infoHolder.html("");
-
+        $(infoHolder).html("");
         let pageContents = x_getPageDict("pageContents", blockid);;
         if (pageContents.data("hsType") == "flex") {
             $("area." + blockid).mapster('set', false);
@@ -564,7 +563,6 @@ var annotatedDiagramBlock = new function () {
     }
 
     this.drawLine = function ($hs, $listItem, shape, blockXML, blockid) {
-        debugger;
         var align = x_browserInfo.mobile == true ? "Top" : blockXML.getAttribute("align");
         let context = x_getPageDict("context", blockid);
 
@@ -589,7 +587,6 @@ var annotatedDiagramBlock = new function () {
     }
 
     this.drawLineToText = function ($hs, shape, blockXML, blockid) {
-        debugger;
         var align = x_browserInfo.mobile == true ? "Top" : blockXML.getAttribute("align");
         let context = x_getPageDict("context", blockid);
         let panel = x_getPageDict("panel", blockid);
@@ -612,14 +609,14 @@ var annotatedDiagramBlock = new function () {
     }
 
     this.resizeCanvas = function (blockid) {
-        $x_pageHolder.css('overflow', 'hidden');
+        $(blockid).parent().css('overflow', 'hidden');
         let canvas = x_getPageDict("canvas", blockid);
         canvas.attr({
-            width: $x_pageDiv.width(),
-            height: $x_pageHolder.height() - parseInt($x_pageDiv.css("padding-top")) * 2
+            width: $("#"+ blockid).width(),
+            height: $("#"+blockid).parent().height() - parseInt($("#" + blockid).css("padding-top")) * 2
         });
 
-        $x_pageHolder
+        $("#" +blockid).parent()
             .css('overflow', 'auto')
             .scrollTop(0);
     }
