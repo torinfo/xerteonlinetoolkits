@@ -83,6 +83,7 @@ var EDITOR = (function ($, parent) {
             return item;
         };
 
+
 		// create 1st level of menu and call getMenuItem to add every item and submenu to it
         var $menu = $("<ul>", {
             id: 'menu'
@@ -93,6 +94,77 @@ var EDITOR = (function ($, parent) {
                 $menu.append(
                     getMenuItem(this)
                 )
+            };
+        });
+
+
+        var $accordion = $(".accordion");
+        $.each(menu_data.menu, function () {
+            if (!this.deprecated && (this.simple_enabled || advanced_toggle)) {
+
+                var text = document.createTextNode(this.name);
+
+                var button = document.createElement("button");
+                button.setAttribute('id', this.name.replace(/ +/g, "").replace("/","")+'-heading');
+                button.setAttribute('class', 'accordion-button collapsed');
+                button.setAttribute('type', 'button');
+                button.setAttribute('data-bs-toggle', 'collapse');
+                button.setAttribute('data-bs-target', '#'+this.name.replace(/ +/g, "").replace("/","")+'-collapse');
+                button.setAttribute('aria-expanded', 'false');
+                button.setAttribute('aria-controls', 'flush'+this.name.replace(/ +/g, "").replace("/","")+'-collapse');
+                button.appendChild(text);
+
+
+                var header  = document.createElement("h2");
+                header.setAttribute('class', 'accordion-header');
+                header.setAttribute('id', 'flush-headingOne');
+                header.appendChild(button);
+
+
+                var collapsebody = document.createElement("div");
+                collapsebody.setAttribute('class', 'accordion-body');
+
+                $.each(this.submenu, function(){
+                    var item = this.item
+                    var name = document.createTextNode(this.name);
+                    var p = document.createElement("p");
+                    p.appendChild(name)
+
+                    var image = document.createElement("img");
+                    image.src = moduleurlvariable + 'icons/' + this.icon + '.png';
+
+                    var module = document.createElement("div");
+                    module.setAttribute('class', 'd-flex align-items-center item');
+                    module.appendChild(p)
+                    module.appendChild(image)
+                    module.ondblclick = function (){
+                        add_page_ondbclick(item, "after")
+                    }
+
+                    collapsebody.appendChild(module);
+                })
+
+
+
+
+                var collapse = document.createElement("div");
+                collapse.setAttribute('id', this.name.replace(/ +/g, "").replace("/","")+'-collapse');
+                collapse.setAttribute('class', 'accordion-collapse collapse');
+                collapse.setAttribute('aria-labelledby', this.name.replace(/ +/g, "").replace("/","")+'-heading');
+                collapse.setAttribute('data-bs-parent', '#accordion');
+                collapse.appendChild(collapsebody);
+
+
+                var item = document.createElement("div");
+                item.setAttribute('class', 'accordion-item');
+                item.appendChild(header);
+                item.appendChild(collapse);
+
+
+
+
+                $accordion.append(item);
+
             };
         });
 
@@ -189,6 +261,10 @@ var EDITOR = (function ($, parent) {
 		$("#insert_menu #menu").menu("collapseAll", e, true);
 		parent.tree.addNode($(this).closest("[item]").attr("item"), $(this).attr("value"));
 	},
+
+    add_page_ondbclick = function(name, value) {
+        parent.tree.addNode(name, value);
+    },
 
     // Get text from html, by putting html in a div, strip out the scripts
     // and convert to text

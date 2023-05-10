@@ -1560,7 +1560,7 @@ var EDITOR = (function ($, parent) {
         });
 
         var treeview = $('<div />').attr('id', 'treeview');
-        $(".ui-layout-west .content").append(treeview);
+        $(".content").append(treeview);
         $("#treeview").jstree({
             "plugins": ( /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) ) ? ["types"] : ["types", "dnd"],
             "core" : {
