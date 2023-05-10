@@ -366,7 +366,7 @@ var EDITOR = (function ($, parent) {
     proceed = function () {
         advanced_mode = false;
         parent.data.wait(1, {});
-        parent.layout.setup();
+        //parent.layout.setup();
         if (simple_mode)
         {
             $("div.ui-layout-center").css("padding-right", "8px");

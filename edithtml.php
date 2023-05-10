@@ -137,8 +137,13 @@ if(isset($_SESSION['toolkits_logon_id'])){
 
 							if(update_access_time($row_edit)){
 
-								require $xerte_toolkits_site->root_file_path . "modules/" . $row_edit['template_framework'] . "/edithtml.php";
-								output_editor_code($row_edit, $xerte_toolkits_site, "true", true);
+                                if($_SESSION['theme'] == "xerte"){
+                                    require $xerte_toolkits_site->root_file_path . "modules/" . $row_edit['template_framework'] . "/edithtml.php";
+                                    output_editor_code($row_edit, $xerte_toolkits_site, "true", true);
+                                }else{
+                                    require $xerte_toolkits_site->root_file_path . "workbench_themes/dlearning/edithtml.php";
+                                    output_editor_code($row_edit, $xerte_toolkits_site, "true", true);
+                                }
 							}
 							else {
 								error_show_template();
@@ -166,8 +171,14 @@ if(isset($_SESSION['toolkits_logon_id'])){
 
 					// Update the time this template was last edited
 					if(update_access_time($row_edit)){
-						require $xerte_toolkits_site->root_file_path . "modules/" . $row_edit['template_framework'] . "/edithtml.php";
-						output_editor_code($row_edit, $xerte_toolkits_site, "true", true);
+                        if($_SESSION['theme'] == "xerte"){
+                            require $xerte_toolkits_site->root_file_path . "modules/" . $row_edit['template_framework'] . "/edithtml.php";
+                            output_editor_code($row_edit, $xerte_toolkits_site, "true", true);
+                        }else{
+                            require $xerte_toolkits_site->root_file_path . "workbench_themes/dlearning/edithtml.php";
+                            output_editor_code($row_edit, $xerte_toolkits_site, "true", true);
+                        }
+
 					}else{
 						error_show_template();
 						exit(0);
@@ -195,8 +206,13 @@ if(isset($_SESSION['toolkits_logon_id'])){
 	}
 	else if(is_user_admin()) {
 		// Is the current user an administrator - If so access here.
-		require $xerte_toolkits_site->root_file_path . "modules/" . $row_edit['template_framework'] . "/edithtml.php";
-		output_editor_code($row_edit, $xerte_toolkits_site, "false", false);
+        if($_SESSION['theme'] == "xerte"){
+            require $xerte_toolkits_site->root_file_path . "modules/" . $row_edit['template_framework'] . "/edithtml.php";
+            output_editor_code($row_edit, $xerte_toolkits_site, "false", false);
+        }else{
+            require $xerte_toolkits_site->root_file_path . "workbench_themes/dlearning/edithtml.php";
+            output_editor_code($row_edit, $xerte_toolkits_site, "false", false);
+        }
 	}
 	else {
 		// Wiki mode - check to see if template allows anonymous editing.
@@ -207,8 +223,13 @@ if(isset($_SESSION['toolkits_logon_id'])){
 			die("Permission denied");
 		}else{
 			// Wiki mode set
-			require $xerte_toolkits_site->root_file_path . "modules/" . $row_edit['template_framework'] . "/edithtml.php";
-			output_editor_code($row_edit, $xerte_toolkits_site, "true", false);
+            if($_SESSION['theme'] == "xerte"){
+                require $xerte_toolkits_site->root_file_path . "modules/" . $row_edit['template_framework'] . "/edithtml.php";
+                output_editor_code($row_edit, $xerte_toolkits_site, "true", false);
+            }else{
+                require $xerte_toolkits_site->root_file_path . "workbench_themes/dlearning/edithtml.php";
+                output_editor_code($row_edit, $xerte_toolkits_site, "true", false);
+            }
 		}
 	}
 
