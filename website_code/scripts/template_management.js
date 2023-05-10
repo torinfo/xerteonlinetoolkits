@@ -1479,12 +1479,18 @@ function create_tutorial(tutorial) {
 }
 
 function show_template(template){
-    debugger
     var toggel = $('#' + template + '_toggle');
     var templatetype = $('#' + template);
 
     toggel.removeClass('flex')
     toggel.addClass('hide');
+    templatetype.removeClass('hide')
+    templatetype.addClass('flex')
+}
+
+function show_template_bio(template){
+    debugger
+    var templatetype = $('#' + template);
     templatetype.removeClass('hide')
     templatetype.addClass('flex')
 }
