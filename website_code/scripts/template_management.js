@@ -1479,6 +1479,7 @@ function create_tutorial(tutorial) {
 }
 
 function show_template(template){
+    debugger
     var toggel = $('#' + template + '_toggle');
     var templatetype = $('#' + template);
 

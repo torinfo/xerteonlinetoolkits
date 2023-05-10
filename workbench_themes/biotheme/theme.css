@@ -64,7 +64,7 @@ body{
 .ui-container-templates{
     margin-top: 30px;
     width: 100%;
-    height: 160px;
+    height: fit-content;
     display: flex;
     justify-content: space-between;
 }
@@ -72,6 +72,7 @@ body{
 .ui-container-templates-item{
     width: 31%;
     margin-left: 0 !important;
+    height: fit-content !important;
 }
 
 .ui-container-templates>:first-child{
@@ -131,7 +132,7 @@ body{
     display: flex;
     justify-content: center;
     flex: 1 1 !important;
-    height: 505px;
+    height: fit-content;
 }
 
 th{
@@ -543,4 +544,33 @@ a, div, input, h3, td{
     background-color: #EFFFFF !important;
     border: 3px solid #6BD1BF !important;
     border-radius: 7px !important;
+}
+
+.hide{
+    display: none!important;
+}
+
+.flex{
+    display: flex!important;
+}
+
+.template_form{
+    display: flex!important;
+    width: 100%;
+    flex-direction: column;
+}
+
+.form-input{
+    animation-duration: 1s;
+    animation-name: slidein;
+}
+
+@keyframes slidein {
+    from {
+        margin-left: 70%;
+    }
+
+    to {
+        margin-left: 0%;
+    }
 }

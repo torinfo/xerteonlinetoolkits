@@ -156,4 +156,46 @@ function display_language_selectionform_modern($formclass, $showLabel)
     </form>
     <?php
 }
+
+
+function display_language_selectionform_extra($formclass, $showLabel)
+{
+    $cssClass = $showLabel == false ? "sr-only" : "";
+    if ($formclass != "")
+    {
+        ?>
+        <form action='' method='POST' class="<?php echo $formclass; ?>" id="languageForm">
+        <label for="language-selector" class="<?php echo $cssClass; ?>"><?PHP echo LANGUAGE_PROMPT; ?> </label>
+        <?php
+    }
+    else
+    {
+        ?>
+        <form action='' method='POST' id="languageForm>
+        <label for="language-selector" class="<?php echo $cssClass; ?>"><?PHP echo LANGUAGE_PROMPT; ?> </label>
+        <?php
+    }
+    ?>
+
+    <select name='language' style="width:145px;margin:0 -2px 0 0;" id="language-selector">
+        <?php
+        /* I've just specified a random list of possible languages; "Nonsense" is minimal and just there so you can see the login page switch around */
+        $languages = getLanguages();
+        //$languages = array('en-GB' => 'English', 'nl-NL' => 'Nederlands', 'en-XX' => 'Nonsense', 'fr-FR' => 'French', 'es-ES' => 'Spanish', 'it-IT' => 'Italian', 'ca-ES' => "Catalan");
+        foreach ($languages as $key => $value) {
+            $selected = '';
+            if (isset($_SESSION['toolkits_language']) && $_SESSION['toolkits_language'] == $key) {
+                $selected = " selected=selected ";
+            }
+            echo "<option value='{$key}' $selected>{$value}</option>\n";
+        }
+        ?>
+    </select>
+    <!--<input type='submit' class="xerte_button" value='<?PHP /*echo LANGUAGE_BUTTON_TEXT; */?>' name='submit'/>-->
+    </form>
+    <?php
+}
+
+
+
 ?>

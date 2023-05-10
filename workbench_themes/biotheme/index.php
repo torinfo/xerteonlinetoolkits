@@ -93,6 +93,8 @@ $version = getVersion();
     <link rel="stylesheet" href="workbench_themes/biotheme/theme.css" type="text/css"/>
     <link rel="stylesheet" href="editor/js/vendor/themes/default/style.css?version=<?php echo $version;?>" />
     <link rel="stylesheet" href="editor/js/vendor/themes/default-dark/style.css?version=<?php echo $version;?>" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+
 
     <!-- <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script> -->
     <!-- <script>window.jQuery || document.write('<script src="editor/js/vendor/jquery-1.9.1.min.js"><\/script>')</script> -->
@@ -118,6 +120,7 @@ $version = getVersion();
     <!--<link href="website_code/styles/frontpage.css?version=<?php /*echo $version;*/?>" media="all" type="text/css" rel="stylesheet"/>-->
     <link rel="stylesheet" href="modules/xerte/parent_templates/Nottingham/common_html5/js/featherlight/featherlight.min.css?version=<?php echo $version;?>" />
     <link rel="stylesheet" href="modules/xerte/parent_templates/Nottingham/common_html5/js/featherlight/featherlight.gallery.min.css?version=<?php echo $version;?>" />
+    <script type="text/javascript" src="website_code/scripts/user_settings.js"></script>
 
 
     <?php
@@ -188,64 +191,9 @@ body_scroll handles the calculation of the documents actual height in IE.
 Folder popup is the div that appears when creating a new folder
 
 -->
-<div class="modal fade" id="templates" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalLabel">Templates</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <div class="modal-body">
-                <div class="ui-container-templates">
-                    <?php
-                    $templates = get_blank_templates();
-                    foreach ($templates as $template) {
-                        echo "<div class=\"card ui-container-templates-item " . strtolower($template['parent_template']) . "\">"
-                            . "<div class=\"template-info\">"
-                            . "<h1 class=\"template-title\"><strong>".$template['display_name']."</strong></h1>"
-                            . "<p class=\"template-desc\">".$template['description']."</p>"
-                            . "</div>"
-                            ."<div class=\"template-button-container\">"
-                            ."<button id=\" ".$template['template_name']."_button\" type=\"button\" class=\"xerte_button_c_no_width template-plus-icon\""
-                            ."onclick=\"javascript:template_toggle('" . $template['template_name']."')\">"
-                            ."<i class=\"fa fa-plus\"></i><span class=\"sr-only\"> " . $template['display_name'] ."</span>"
-                            ."</button>"
-                            ."</div>"
-                            ."</div>";
-                    }
-                    ?>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
+
 
 <div class="modal fade" id="changeLanguage" tabindex="-1" role="dialog" aria-labelledby="changeLanguage" aria-hidden="true">
-    <div class="modal-dialog customModal" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalLabel">Change Theme</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <div class="modal-body">
-                <form action="website_code/php/change_theme.php" id="themeForm" method="post" enctype="multipart/form-data">
-                    <select name="theme" class="form-select" aria-label="Default select example">
-                        <option selected value="dlearning">Dlearning</option>
-                        <option value="xerte">Xerte</option>
-                    </select>
-                </form>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn" data-dismiss="modal">Close</button>
-                <button type="submit" name="submit" value="Upload" form="themeForm" class="btn input-group-text submit">Change</button>
-            </div>
-        </div>
-    </div>
-
     <div class="modal-dialog customModal" role="document">
         <div class="modal-content">
             <div class="modal-header">
@@ -255,10 +203,11 @@ Folder popup is the div that appears when creating a new folder
                 </button>
             </div>
             <div class="modal-body">
-                <?php display_language_selectionform_modern("general", false); ?>
+                <?php display_language_selectionform_extra("general", false); ?>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn" data-dismiss="modal">Close</button>
+                <button type="submit" name="submit" value="Upload" form="languageForm" class="btn input-group-text submit">Change</button>
             </div>
         </div>
     </div>
@@ -390,28 +339,28 @@ Folder popup is the div that appears when creating a new folder
 
 <div class="ui-container">
     <nav class="navbar navbar-light dlearning-navbar mint">
-<!--        <a class="navbar-brand dlearning-brand" href="#">
+        <!--        <a class="navbar-brand dlearning-brand" href="#">
             <img src="http://localhost/xot/website_code/images/logo.png" id="xerte-logo" alt="">
         </a>
         <div class="userbar">
             <?PHP /*//echo "&nbsp;&nbsp;&nbsp;" . INDEX_LOGGED_IN_AS . " " .;
             echo $_SESSION['toolkits_firstname'] . " " . $_SESSION['toolkits_surname'] */?>
             <?PHP
-/*            // only on Db:
-            if ($authmech->canManageUser($jsscript)){
-                echo '
-                    <div class="settingsDropdown">
-                        <button onclick="changepasswordPopup()" title=" ' . INDEX_CHANGE_PASSWORD . ' " class="fa fa-cog xerte_workspace_button settingsButton"></button>
-                        <!-- <div id="settings" class="settings-content">
-                            <button class="xerte_button" onclick="changepasswordPopup()">' . INDEX_CHANGE_PASSWORD . '</button>
-                            <button class="xerte_button">Placeholder</button>
-                            <button class="xerte_button">Placeholder</button>
-                            <button class="xerte_button">Placeholder</button>
-                        </div> -->
-                    </div>
-                ';
-            }
-            */?>
+        /*            // only on Db:
+                    if ($authmech->canManageUser($jsscript)){
+                        echo '
+                            <div class="settingsDropdown">
+                                <button onclick="changepasswordPopup()" title=" ' . INDEX_CHANGE_PASSWORD . ' " class="fa fa-cog xerte_workspace_button settingsButton"></button>
+                                <!-- <div id="settings" class="settings-content">
+                                    <button class="xerte_button" onclick="changepasswordPopup()">' . INDEX_CHANGE_PASSWORD . '</button>
+                                    <button class="xerte_button">Placeholder</button>
+                                    <button class="xerte_button">Placeholder</button>
+                                    <button class="xerte_button">Placeholder</button>
+                                </div> -->
+                            </div>
+                        ';
+                    }
+                    */?>
             <div style="display: inline-block"><?php /*display_language_selectionform("general", false); */?></div>
             <?PHP /*if($xerte_toolkits_site->authentication_method != "Guest") {
                 */?><button title="<?PHP /*echo INDEX_BUTTON_LOGOUT; */?>" type="button" class="xerte_button_c_no_width"
@@ -434,11 +383,11 @@ Folder popup is the div that appears when creating a new folder
                     <div class="card-body settingsCollapseBody">
                         <h5>Manage your account</h5>
                         <hr>
-                        <div class="settingsItem"><button class="btn settingsButton text-left green-border" type="button" data-toggle="modal" data-target="#changeLanguage" aria-expanded="false" aria-controls="changeLanguage">Change language</button></div>
-                        <div class="settingsItem"><button class="btn settingsButton text-left green-border" type="button" data-toggle="modal" data-target="#changeImage" aria-expanded="false" aria-controls="changeImage">Change profile</button></div>
-                        <div class="settingsItem"><button class="btn settingsButton text-left green-border" type="button" data-toggle="modal" data-target="#changePassword" aria-expanded="false" aria-controls="changePassword">Change password</button></div>
-                        <div class="settingsItem"><button class="btn settingsButton text-left green-border" type="button" data-toggle="modal" data-target="#changeTheme" aria-expanded="false" aria-controls="changePassword">Change theme</button></div>
-                        <div class="settingsItem"><button class="btn settingsButton text-left green-border" type="button" onclick="logout(<?php /*echo($xerte_toolkits_site->authentication_method == "Saml2" ? "true" : "false"); */?>)">Log out</button></div>
+                        <div class="settingsItem"><button class="btn settingsButton text-left green-border green-opacity-50" type="button" data-toggle="modal" data-target="#changeLanguage" aria-expanded="false" aria-controls="changeLanguage">Change language</button></div>
+                        <div class="settingsItem"><button class="btn settingsButton text-left green-border green-opacity-50" type="button" data-toggle="modal" data-target="#changeImage" aria-expanded="false" aria-controls="changeImage">Change profile</button></div>
+                        <div class="settingsItem"><button class="btn settingsButton text-left green-border green-opacity-50" type="button" data-toggle="modal" data-target="#changePassword" aria-expanded="false" aria-controls="changePassword">Change password</button></div>
+                        <div class="settingsItem"><button class="btn settingsButton text-left green-border green-opacity-50" type="button" data-toggle="modal" data-target="#changeTheme" aria-expanded="false" aria-controls="changePassword">Change theme</button></div>
+                        <div class="settingsItem"><button class="btn settingsButton text-left green-border green-opacity-50" type="button" onclick="logout(<?php /*echo($xerte_toolkits_site->authentication_method == "Saml2" ? "true" : "false"); */?>)">Log out</button></div>
                     </div>
                 </div>
 
@@ -482,25 +431,84 @@ Folder popup is the div that appears when creating a new folder
             <div class="ui-container-templates">
                 <?php
                 $templates = get_blank_templates();
+                $prefix = $xerte_toolkits_site->database_table_prefix;
+
+                $query_for_blank_templates = "select * from {$prefix}originaltemplatesdetails where "
+                    . "active= ? order by parent_template, date_uploaded DESC";
+
+                $rows = db_query($query_for_blank_templates, array(1));
+
                 foreach ($templates as $template) {
-                    echo "<div class=\"card ui-container-templates-item " . strtolower($template['parent_template']) . "\">"
-                        . "<div class=\"template-info\">"
-                        . "<h1 class=\"template-title\" style='position: relative; float: left;'><strong>".$template['display_name']."</strong></h1>"
-                        ."<div class=\"template-button-container\" style='position: relative; float: right;'>"
-                        ."<button id=\" ".$template['template_name']."_button\" type=\"button\" class=\"xerte_button_c_no_width template-plus-icon\""
-                        ."onclick=\"javascript:template_toggle('" . $template['template_name']."')\">"
-                        ."<i class=\"fa fa-plus\"></i><span class=\"sr-only\"> " . $template['display_name'] ."</span>"
-                        ."</button>"
-                        ."</div>"
-                        ."<div class='template-desc-container'>"
-                        . "<p class=\"template-desc\" style='width: 100%; position: relative; float: bottom'>".$template['description']."</p>"
-                        ."</div>"
-                        . "</div>"
-                        ."</div>";
+                    if(access_check($template['access_rights'])){
+                        $derived = array($template);
+                        foreach ($rows as $row) {
+                            if ($row['template_name'] != $row['parent_template'] && $template['parent_template'] == $row['parent_template'] && access_check($row['access_rights'])) {
+                                array_push($derived, $row);
+                            }
+                        }
+
+                        ?>
+                        <div class="card ui-container-templates-item <?php echo strtolower($template['parent_template'])?>">
+                            <div class="template-info">
+                                <h1 class="template-title" style="position: relative; float: left;"><strong> <?php echo $template['display_name']?></strong></h1>
+                                <div class="toggle-button template-button-container flex" id="<?php echo $template['parent_template']?>_toggle" style="position: relative; float: right;">
+                                    <button onclick="javascript:show_template('<?php echo $template['parent_template']?>')" class="xerte_button_c_no_width template-plus-icon">
+                                        <i class="fa fa-plus"></i><span class="sr-only"><?php echo $template['display_name']?></span>
+                                    </button>
+                                </div>
+                                <p class="template-desc" style="width: 100%; position: relative; float: left;"><?php echo$template['description']?></p>
+                            </div>
+                            <div class="template-button-container hide" id="<?php echo $template['parent_template']?>">
+                                <form class="template_form" action="javascript:create_tutorial('<?php echo $template['parent_template'] ?>')" method='post' enctype='text/plain'>
+                                    <?php
+                                    if (count($derived) == 1) {
+                                        ?>
+                                        <input type="hidden" id="<?php echo $template['template_name']; ?>_templatename"
+                                               name="templatename" value="<?php echo $template['template_name']; ?>"/>
+                                        <?php
+                                    } else {
+                                        ?>
+                                        <label for="<?php echo $template['template_name']; ?>_templatename" class="sr-only"><?php echo DISPLAY_TEMPLATE; ?></label>
+                                        <select id="<?php echo $template['template_name']; ?>_templatename" name="templatename"
+                                                class="select_template form-select" onchange="javascript:setup_example('<?php echo $template["template_name"]; ?>_templatename')">
+
+                                            <?php
+                                            foreach ($derived as $row) {
+                                                ?>
+                                                <option value="<?php echo $row['template_name']; ?>" <?php ($row['template_name'] == $row['parent_template'] ? "\"selected\"" : ""); ?> ><?php echo($row['template_name'] == $row['parent_template'] ? DISPLAY_DEFAULT_TEMPLATE : $row['display_name']); ?></option>
+                                                <?php
+                                            }
+                                            ?>
+                                        </select>
+                                        <?php
+                                    }
+                                    ?>
+                                    <div class="d-flex flex-row">
+                                        <input type="hidden" id="<?php echo $template['template_name']; ?>_templatename"
+                                               name="templatename" value="<?php echo $template['template_name']; ?>"/>
+                                        <label for="<?php echo $template['template_name']; ?>_filename" class="sr-only"><?php echo DISPLAY_PROJECT_NAME; ?></label>
+                                        <input  type='text' class='form-control w-100 form-input' id='<?php echo $template['template_name']?>_filename' name='templatename'>
+                                        <button id="<?php echo $template['template_name']?> _button" type="submit" class="xerte_button_c_no_width template-plus-icon">
+                                            <i class="fa fa-plus"></i><span class="sr-only"><?php echo $template['display_name']?></span>
+                                        </button>
+                                    </div>
+
+                                </form>
+
+                            </div>
+                        </div>
+
+                        <?php
+                    }
                 }
                 ?>
             </div>
-
+            <script>
+                function myFunction() {
+                    var element = document.getElementsByClassName("ui-container-templates");
+                    element.style.Height = "600px";
+                }
+            </script>
 
             <div class="card green-opacity-50 green-border" id="ui-container-buttons">
                 <div class="file_mgt_area_left">
@@ -513,8 +521,8 @@ Folder popup is the div that appears when creating a new folder
                 </div>
 
                 <div class="file_mgt_area_left">
-                    <button title="<?php echo INDEX_BUTTON_NEWFOLDER; ?>" type="button" class="xerte_workspace_button" id="newfolder" onClick="javascript:make_new_folder()">
-                        <i class="fa fa-folder xerte-icon" style="color: #FFFFFF;"></i>New folder
+                    <button title="<?php echo INDEX_BUTTON_NEWFOLDER; ?>" type="button" class="xerte_workspace_button" id="newfolder" data-toggle="modal" data-target="#MakeFolder" aria-expanded="false">
+                        <i class="fa fa-folder xerte-icon"></i>New folder
                     </button>
                 </div>
 
