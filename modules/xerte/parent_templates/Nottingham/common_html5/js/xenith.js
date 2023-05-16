@@ -2634,14 +2634,14 @@ function x_navigateToPage(force, pageInfo, addHistory) { // pageInfo = {type, ID
 }
 
 // ---- Block code ----
-//INTERN CODE
+// blockid (string) is 1-based!
 function x_createBlock(container, module, modulePosition){
 	//Create the area for the block to be populated in. Then call the init of the block.
 	var blockid = "block" + modulePosition;
 	var jsName = module.tagName; //.replace("Block", "")
 	container.append('<div id="block' + modulePosition+'" class="iblock x-card"></div>');
 	$("#"+blockid).load(x_templateLocation + "blocks_html5/" + module.tagName+ ".html", function() {
-		window[jsName].init(module, blockid);
+		window[jsName].init(blockid);
 	});
 
 	//Insert block CSS files. These are different from the not block interactive modules
@@ -2691,7 +2691,7 @@ function x_getBlockXML(blockid){
 	if (x_blocksXML[x_currentPage].length >= blocknr){
 		return x_blocksXML[x_currentPage][blocknr];
 	}
-	return null;
+	return null
 }
 
 function x_getBlockNr(blockid){
@@ -2957,7 +2957,6 @@ function x_endPageTracking(pagechange, x_gotoPage) {
     if (x_currentPage != -1 && !x_isMenu() && (!pagechange || x_currentPage != x_gotoPage) && x_pageInfo[x_currentPage].passwordPass != false)
     {
         var pageObj;
-
         if (x_pageInfo[x_currentPage].type == "text") {
             pageObj = simpleText;
         } else {
@@ -3029,17 +3028,22 @@ function x_changePageStep5a(x_gotoPage) {
 
     x_currentPage = x_gotoPage;
     x_currentPageXML = x_pages[x_currentPage];
-
+    let nodes = [];
+    let standalone_block = false;
     // if there are blocks on this page: set x_blocksXML etc
-	let nodes = Array.from(x_currentPageXML.querySelectorAll("*")).filter(n=>n.nodeName.includes('Block'));
+    if (x_currentPageXML.nodeName == "annotatedDiagram"){ //Add all modules/pages that have been replaced by blocks
+        nodes = [x_currentPageXML];
+        standalone_block = true;
+    }else{
+        nodes = Array.from(x_currentPageXML.querySelectorAll("*")).filter(n=>n.nodeName.includes('Block'));
+    } //Add all pages that can be blocks
 	if (x_blocksXML[x_currentPage].length == 0) {
 		for (let i = 0; i < nodes.length; i++) {
 			x_blocksXML[x_currentPage].push(nodes[i]);
-			let page = {type: nodes[i].nodeName};
+			let page = {type: standalone_block ? nodes[i].nodeName + "Block" : nodes[i].nodeName};
 			x_blocksInfo[x_currentPage].push(page);
 		}
 	}
-
 
     if ($x_pageDiv.children().length > 0) {
         // remove everything specific to previous page that's outside $x_pageDiv
@@ -3303,7 +3307,10 @@ function x_changePageStep6() {
 				customHTML.pageChanged();
 			}
         }
-		
+
+        // calls function in any block on this page
+		x_allBlocksPageChanged();
+
 		// updates variables as their values might have changed
 		if (x_currentPageXML != "menu" && x_currentPageXML.getAttribute('varUpdate') != 'false') {
 			// variables on screen
@@ -3318,7 +3325,10 @@ function x_changePageStep6() {
         // checks if size has changed since last load - if it has, call function in current page model which does anything needed to adjust for the change
         var prevSize = builtPage.data("size");
         if (prevSize[0] != $x_mainHolder.width() || prevSize[1] != $x_mainHolder.height()) {
-			if (typeof window[pt].sizeChanged === "function") window[pt].sizeChanged();
+			if (typeof window[pt].sizeChanged === "function") {
+				window[pt].sizeChanged();
+				x_allBlocksSizeChanged();
+			}
 
             // calls function in any customHTML that's been loaded into page
             if ($(".customHTMLHolder").length > 0) {
@@ -3410,6 +3420,21 @@ function x_changePageStep6() {
 		x_doDeepLink();
 	}
 }
+
+// call sizeChanged for all blocks on the currentPage
+function x_allBlocksPageChanged(){
+	for (let i = 0, len=x_blocksXML[x_currentPage].length; i<len; i++){
+		let blockid = "block" + (i + 1);
+		x_blockPageChanged(blockid);
+	}
+}
+
+//Used to call pageChanged on a specific block on the current page
+function x_blockPageChanged(blockid){
+	let type = x_blocksInfo[x_currentPage][x_getBlockNr(blockid)].type;
+	eval(x_blocksInfo[x_currentPage][x_getBlockNr(blockid)].type).pageChanged(blockid);
+}
+
 
 function x_focusPageContents(firstLoad) {
 	if (self == top || !firstLoad) {
@@ -4011,10 +4036,7 @@ function x_updateCss2(updatePage) {
                 simpleText.sizeChanged(); // errors if you just call text.sizeChanged()
             } else {
                 eval(x_pageInfo[x_currentPage].type).sizeChanged();
-                for (let i = 0, len=x_blocksXML[x_currentPage].length; i<len; i++){
-                    let blockid = "block" + (i + 1);
-                    eval(x_blocksInfo[x_currentPage][i].type).sizeChanged(blockid);
-                }
+                x_allBlocksSizeChanged();
             }
         }
         catch(e) {} // Catch error thrown when you call sizeChanged() on an unloaded model
@@ -4026,6 +4048,19 @@ function x_updateCss2(updatePage) {
     }
 
     $(".x_popupDialog").parent().detach();
+}
+
+// call sizeChanged for all blocks on the currentPage
+function x_allBlocksSizeChanged(){
+	for (let i = 0, len=x_blocksXML[x_currentPage].length; i<len; i++){
+		let blockid = "block" + (i + 1);
+		x_blockSizeChanged(blockid);
+	}
+}
+
+//Used to call sizeChanged on a specific block on the current page
+function x_blockSizeChanged(blockid){
+    eval(x_blocksInfo[x_currentPage][x_getBlockNr(blockid)].type).sizeChanged(blockid);
 }
 
 // functions open dialogs e.g. glossary, table of contents - just reattach if it's already loaded previously

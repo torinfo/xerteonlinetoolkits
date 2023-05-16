@@ -17,18 +17,56 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-if(false) {
+if(true) {
     alert("block");
-	//Create the area for the block to be populated in. Then call the init of the block. (basically same code as INTERN CODE in xenith.js)
-	var blockid = "block1";
-	var jsName = "annotatedDiagram";
-	$("#" + blockid).load(x_templateLocation + "blocks_html5/annotatedDiagramBlock.html", function () {
 
-		window[jsName].init(x_currentPageXML, blockid);
-	});
+    var annotatedDiagram = new function () {
 
-	//Insert block CSS files. These are different from the not block interactive modules
-	x_insertCSS(x_templateLocation + "blocks_html5/annotatedDiagramBlock.css", null, false, "page_model_css_annotatedDiagramBlock");
+        this.init = function (){
+            var blockid = "block1";
+            var jsName = "annotatedDiagramBlock";
+            debugger;
+            //$x_pageDiv.append('<div id="block1" class="iblock x-card"></div>');
+            $("#"+blockid).load(x_templateLocation + "blocks_html5/annotatedDiagramBlock.html", function() {
+                window[jsName].init(blockid);
+            });
+
+            //Insert block CSS files. These are different from the not block interactive modules
+            x_insertCSS(x_templateLocation + "blocks_html5/annotatedDiagramBlock.css", null, false, "page_model_css_annotatedDiagramBlock");
+        }
+
+        this.sizeChanged = function(){
+            window["annotatedDiagramBlock"].sizeChanged("block1");
+        }
+        this.pageChanged = function(){
+            window["annotatedDiagramBlock"].pageChanged("block1");
+        }
+    }
+
+    annotatedDiagram.init();
+
+    // var annotatedDiagram = new function () {
+    //
+    //     $("#pageDiv").append('<div id="block1" class="iblock x-card"></div>');
+    //     this.init = function(pageXML){
+    //         window["annotatedDiagramBlock"].init(pageXML, "block1");
+	// 	}
+	// 	this.sizeChanged = function(){
+    //         window["annotatedDiagramBlock"].
+    //     }
+    // }
+
+    //x_createBlock($("#block1"), "annotatedDiagramBlock", 0);
+	// //Create the area for the block to be populated in. Then call the init of the block. (basically same code as INTERN CODE in xenith.js)
+	// var blockid = "block1";
+	// var jsName = "annotatedDiagramBlock";
+	// $("#" + blockid).load(x_templateLocation + "blocks_html5/annotatedDiagramBlock.html", function () {
+    //
+	// 	window[jsName].init(x_currentPageXML, blockid);
+	// });
+    //
+	// //Insert block CSS files. These are different from the not block interactive modules
+	// x_insertCSS(x_templateLocation + "blocks_html5/annotatedDiagramBlock.css", null, false, "page_model_css_annotatedDiagramBlock");
 
 }else {
 
@@ -195,7 +233,6 @@ if(false) {
 							}
 						});
 			});
-			debugger;
 			let url = x_currentPageXML.getAttribute("url").split(".");
 			if (url.length > 1) {
 				if (url[1].slice(0, -1) != "swf") {
@@ -636,7 +673,7 @@ if(false) {
 	
 </script>
 
-<!--<div id="block1" ></div>-->
+<div id="block1" >
 
 
 <div id="pageContents">
@@ -653,4 +690,5 @@ if(false) {
 		<div id="listHolder"></div>
 		<div id="infoHolder" aria-live="polite"></div>
 	</div>
+</div>
 </div>

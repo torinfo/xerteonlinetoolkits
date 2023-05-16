@@ -35,7 +35,6 @@ var annotatedDiagramBlock = new function () {
 
     // function called every time the size of the LO is changed
     this.sizeChanged = function (blockid) {
-        debugger;
         this.deselect(blockid);
         let img = x_getPageDict("img", blockid);
         img.css({
@@ -46,9 +45,9 @@ var annotatedDiagramBlock = new function () {
         this.setUp(blockid);
     }
 
-    this.init = function (pageXML, blockid) {
+    this.init = function (blockid) {
         var blockXML = x_getBlockXML(blockid);
-
+        debugger;
         //Set "global variables" for this block
         let pageContents = x_pushToPageDict(jGetElement(blockid, ".pageContents"), "pageContents", blockid);
         let img = x_pushToPageDict(jGetElement(blockid, ".imageHolder img"), "img", blockid);
@@ -216,7 +215,6 @@ var annotatedDiagramBlock = new function () {
         // if old style hotspots are used, resize the canvas first
         if (pageContents.data("hsType") == "flex") {
             img.mapster('unbind');
-
         } else {
             hsHolder.empty();
 
@@ -232,17 +230,20 @@ var annotatedDiagramBlock = new function () {
 
         var align = x_browserInfo.mobile == true ? "Top" : blockXML.getAttribute("align");
         var imgMaxW = Math.round($("#"+blockid).parent().width() * (align == "Top" ? 1 : maxPanel) - panelOuterW - (align == "Top" ? parseInt($("#"+blockid).css("padding-left")) * 2 : 0)),
-            imgMaxH = $("#"+blockid).parent().height() * (align == "Top" ? maxPanel : 1) - (parseInt($("#"+blockid).css("padding-left")) * 2) - panelOuterH;
+            imgMaxH = $("#"+blockid).parent().width() * (align == "Top" ? maxPanel : 1) - (parseInt($("#"+blockid).css("padding-left")) * 2) - panelOuterH;
 
         x_scaleImg(img, imgMaxW, imgMaxH, true, img.data('firstLoad'), false);
 
-        //debugger
-        jGetElement(blockid, ".mainText").html( "blockid: "+ blockid +
-                                                ",<br>imgMaxW: " + imgMaxW +
-                                                ",<br> imgMaxH:" + imgMaxH +
-                                                ",<br> maxPanel:" + maxPanel +
-                                                ",<br> panelOuter:" + panelOuterW + ", " + panelOuterH);
-        // position imageHolder correctly
+        //debugger;
+        // jGetElement(blockid, ".mainText").html( "blockid: "+ blockid +
+        //                                         ",<br>imgMaxW: " + imgMaxW +
+        //                                         ",<br>imgMaxH: " + imgMaxH +
+        //                                         ",<br>parent width: " + $("#"+blockid).parent().width() +
+        //                                         ",<br>maxPanel: " + maxPanel +
+        //                                         ",<br>realwidth: " + $(img)[0].width +
+        //                                         ",<br>realheight: " + $(img)[0].height +
+        //                                         "<br>" + jGetElement("imageholder", "block3" ).children().length);
+        // // position imageHolder correctly
         if (align == "Top") {
             panel.css("margin-left", ($("#"+blockid).width() - panel.outerWidth()) / 2);
         }
@@ -613,7 +614,7 @@ var annotatedDiagramBlock = new function () {
         let canvas = x_getPageDict("canvas", blockid);
         canvas.attr({
             width: $("#"+ blockid).width(),
-            height: $("#"+blockid).parent().height() - parseInt($("#" + blockid).css("padding-top")) * 2
+            height: $("#"+blockid).height() - parseInt($("#" + blockid).css("padding-top")) * 2
         });
 
         $("#" +blockid).parent()

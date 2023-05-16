@@ -302,6 +302,11 @@
 				for (var m of child.children){
 					childcount++;
 					x_createBlock($("#navChild" + i), m, childcount)
+					if ($("#navChild" + i).data("blocks") == null){
+						$("#navChild" + i).data("blocks", ["block" + childcount]);
+					}else{
+						$("#navChild" + i).data("blocks").push("block" + childcount);
+					}
 				}
 				/*
 				* 	End Interactive Blocks Code
@@ -424,7 +429,6 @@
 					activate: function(e, ui) {
 						ui.newPanel.find('.navMedia.audio .mejs-inner').show();
 						nav.resizeMedia();
-						
 						if ($("#pageContents").data("clickTxt") != "" && $("#pageContents").data("clickTxt") != null) {
 							ui.oldHeader.attr("aria-label", ui.oldHeader.data("name") + " " + $("#pageContents").data("clickTxt"));
 							ui.newHeader.attr("aria-label", ui.newHeader.data("name"));
@@ -435,6 +439,8 @@
 							.css({ display: "block", height: "0px;" }) // it won't do scrollTop when display is none
 							.scrollTop(0)
 							.css({ display: "none", height: ui.oldPanel.data("height") });
+
+						ui.newPanel.each(function(i, navChild){blockSizeChanged(navChild)});
 					},
 					beforeActivate: function(e, ui) {
 						ui.newPanel.scrollTop(0);
@@ -465,6 +471,7 @@
 							$('.navChild').hide();
 							$thisNavChild.show();
 							nav.resizeMedia();
+							blockSizeChanged($thisNavChild);
 							$("#infoHolder").scrollTop(0);
 						}
 					});
@@ -511,6 +518,7 @@
 					activate: function(e, ui) {
 						ui.newPanel.find('.navMedia.audio .mejs-inner').show();
 						nav.resizeMedia();
+						$(".navChild:visible").each(function(i, navChild){blockSizeChanged(navChild)});
 						ui.newPanel.scrollTop(0);
 					},
 					beforeActivate: function(e, ui) {
@@ -523,6 +531,16 @@
 			this.sizeChanged();
 			
 			x_pageLoaded();
+		}
+
+		function blockSizeChanged(navChild){
+			let $navChild = $(navChild);
+			if ($navChild.data("blocks") != null){
+				for	(let i=0; i<$navChild.data("blocks").length; i++){
+					//alert($navChild.data("blocks")[i])
+					x_blockSizeChanged($navChild.data("blocks")[i]);
+				}
+			}
 		}
 
 		this.loadMedia = function($holder, type, data) {
@@ -543,7 +561,8 @@
 			$("#slideTxt").html($pageContents.data("slideTxt").replace("{i}", newPage + 1).replace("{n}", $pageContents.data("totalPages")));
 			
 			nav.resizeMedia();
-			
+			$(".panelPage:visible .navChild").each(function(i, navChild){blockSizeChanged(navChild)});
+
 			if (newPage == 0) {
 				$prevBtn.button("disable").removeClass("ui-state-focus").removeClass("ui-state-hover");
 				$nextBtn.button("enable");
