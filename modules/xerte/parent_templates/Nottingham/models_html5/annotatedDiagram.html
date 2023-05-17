@@ -23,22 +23,26 @@ if(true) {
     var annotatedDiagram = new function () {
 
         this.init = function (){
-            var blockid = "block1";
-            var jsName = "annotatedDiagramBlock";
-            debugger;
-            //$x_pageDiv.append('<div id="block1" class="iblock x-card"></div>');
-            $("#"+blockid).load(x_templateLocation + "blocks_html5/annotatedDiagramBlock.html", function() {
-                window[jsName].init(blockid);
-            });
-
-            //Insert block CSS files. These are different from the not block interactive modules
-            x_insertCSS(x_templateLocation + "blocks_html5/annotatedDiagramBlock.css", null, false, "page_model_css_annotatedDiagramBlock");
+        	this.setUp();
         }
+
+        this.setUp = function(){
+			var blockid = "block1";
+			var jsName = "annotatedDiagramBlock";
+			$x_pageDiv.append('<div id=block1 class="iblock x-card"></div>');
+			$("#"+blockid).load(x_templateLocation + "blocks_html5/annotatedDiagramBlock.html", function() {
+				window[jsName].init(blockid);
+			});
+
+			//Insert block CSS files. These are different from the not block interactive modules
+			x_insertCSS(x_templateLocation + "blocks_html5/annotatedDiagramBlock.css", null, false, "page_model_css_annotatedDiagramBlock");
+		}
 
         this.sizeChanged = function(){
             window["annotatedDiagramBlock"].sizeChanged("block1");
         }
         this.pageChanged = function(){
+            this.setUp();
             window["annotatedDiagramBlock"].pageChanged("block1");
         }
     }
@@ -673,22 +677,22 @@ if(true) {
 	
 </script>
 
-<div id="block1" >
+<!--<div id="block1" >-->
 
 
-<div id="pageContents">
-	<div id="panel" class="panel inline">
-		<div id="imageHolder">
-			<img id="image" class="x_noLightBox" />
-			<div id="hsHolder"></div>
-		</div>
-	</div>
+<!--<div id="pageContents">-->
+<!--	<div id="panel" class="panel inline">-->
+<!--		<div id="imageHolder">-->
+<!--			<img id="image" class="x_noLightBox" />-->
+<!--			<div id="hsHolder"></div>-->
+<!--		</div>-->
+<!--	</div>-->
 
-	<canvas id="canvas"></canvas>
-	<div id="textContents">
-		<div id="mainText"></div>
-		<div id="listHolder"></div>
-		<div id="infoHolder" aria-live="polite"></div>
-	</div>
-</div>
-</div>
+<!--	<canvas id="canvas"></canvas>-->
+<!--	<div id="textContents">-->
+<!--		<div id="mainText"></div>-->
+<!--		<div id="listHolder"></div>-->
+<!--		<div id="infoHolder" aria-live="polite"></div>-->
+<!--	</div>-->
+<!--</div>-->
+<!--</div>-->
