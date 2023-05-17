@@ -47,7 +47,6 @@ var annotatedDiagramBlock = new function () {
 
     this.init = function (blockid) {
         var blockXML = x_getBlockXML(blockid);
-        debugger;
         //Set "global variables" for this block
         let pageContents = x_pushToPageDict(jGetElement(blockid, ".pageContents"), "pageContents", blockid);
         let img = x_pushToPageDict(jGetElement(blockid, ".imageHolder img"), "img", blockid);
@@ -229,10 +228,10 @@ var annotatedDiagramBlock = new function () {
             panelOuterH = panel.outerHeight() - panel.height();
 
         var align = x_browserInfo.mobile == true ? "Top" : blockXML.getAttribute("align");
-        var imgMaxW = Math.round($("#"+blockid).parent().width() * (align == "Top" ? 1 : maxPanel) - panelOuterW - (align == "Top" ? parseInt($("#"+blockid).css("padding-left")) * 2 : 0)),
-            imgMaxH = $("#"+blockid).parent().width() * (align == "Top" ? maxPanel : 1) - (parseInt($("#"+blockid).css("padding-left")) * 2) - panelOuterH;
+        var imgMaxW = Math.round($("#"+blockid).parent().parent().width() * (align == "Top" ? 1 : maxPanel) - panelOuterW - (align == "Top" ? parseInt($("#"+blockid).parent().css("padding-left")) * 2 : 0)),
+            imgMaxH = $("#"+blockid).parent().parent().height() * (align == "Top" ? maxPanel : 1) - (parseInt($("#"+blockid).parent().css("padding-left")) * 2) - panelOuterH;
 
-        x_scaleImg(img, imgMaxW, imgMaxH, true, img.data('firstLoad'), false);
+        x_scaleImg(img, imgMaxW, imgMaxH, true, img.data('firstLoad'), true);
 
         //debugger;
         // jGetElement(blockid, ".mainText").html( "blockid: "+ blockid +
@@ -353,6 +352,9 @@ var annotatedDiagramBlock = new function () {
         });
         if (pageContents.data("hsType") == "flex") {
             img.mapster(x_getPageDict("options", blockid));
+
+            //check for weird mapster bug where it repeats image:
+            let mapster_canvasses = jGetElement(blockid, "mapster_el");
         }
     }
 

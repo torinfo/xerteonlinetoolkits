@@ -29,7 +29,7 @@ if(true) {
         this.setUp = function(){
 			var blockid = "block1";
 			var jsName = "annotatedDiagramBlock";
-			$x_pageDiv.append('<div id=block1 class="iblock x-card"></div>');
+			$x_pageDiv.append('<div id=block1></div>');
 			$("#"+blockid).load(x_templateLocation + "blocks_html5/annotatedDiagramBlock.html", function() {
 				window[jsName].init(blockid);
 			});
