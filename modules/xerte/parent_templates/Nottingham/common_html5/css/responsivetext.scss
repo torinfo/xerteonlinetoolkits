@@ -73,18 +73,22 @@ h5 {
 #dragDropHolder .label {
     font-size: $pagecontentsmedium;
 }
+  .pageContents h3,
 #pageContents h3{
   font-size:$pagecontentslarge;
 }
+  .pageContents .question,
 #pageContents .question {
     font-size: $pagecontentslarge;
 }
+  .pageContents .question input,
 #pageContents .question input {
     font-size: $pagecontentslarge;
 }
 input#x_pagePswd {
 	font-size: $pagecontentslarge;
 }
+.pageContents .mainText,
 #pageContents #mainText {
     font-size: $pagecontentslarge;
 }
@@ -103,6 +107,7 @@ input#x_pagePswd {
 .panel #btnHolder {
 	font-size: $pagecontentslarge;
 }
+.infoHolder,
 #infoHolder {
     font-size: $pagecontentslarge;
 }
@@ -112,6 +117,7 @@ input#x_pagePswd {
 #answerTxt {
     font-size: $pagecontentslarge;
 }
+  .pageContents textarea,
 #pageContents textarea {
     font-size: $pagecontentslarge;
 }
