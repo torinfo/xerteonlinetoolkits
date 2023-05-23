@@ -188,3 +188,21 @@ ul {
 .menu > li.trash > a:hover {
     color: red;
 }
+.wizardlabel{
+    width: 96% !important;
+}
+/*
+.wizard{
+    display: flex;
+}
+
+.wizardattribute{
+    display: flex;
+    flex-direction: column;
+    padding-left: 30px;
+    width: 100%;
+}
+
+table.wizard td{
+    height: 25px !important;
+}*/

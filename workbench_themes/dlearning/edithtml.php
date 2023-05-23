@@ -193,6 +193,7 @@ function output_editor_code($row_edit, $xerte_toolkits_site, $read_status, $vers
         <link rel="stylesheet" type="text/css" href="editor/js/vendor/imgareaselect/imgareaselect-default.css?version=<?php echo $version;?>" />
         <link rel="stylesheet" type="text/css" href="editor/js/vendor/jqgrid/css/ui.jqgrid.css?version=<?php echo $version;?>" />
         <link rel="stylesheet" type="text/css" href="editor/js/vendor/ckeditor/plugins/codemirror/css/codemirror.min.css?version=<?php echo $version;?>" />
+        <script src="edithtml.js"></script>
         <!--link href='https://fonts.googleapis.com/css?family=Open+Sans' rel='stylesheet' type='text/css'-->
         <!--link href='https://fonts.googleapis.com/css?family=Open+Sans' rel='stylesheet' type='text/css'-->
         <?php
