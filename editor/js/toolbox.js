@@ -626,131 +626,142 @@ var EDITOR = (function ($, parent) {
         return (result == null ? false : result);
     },
 
+    isScriptLoaded = function (src)
+    {
+        return Boolean(document.querySelector('script[src="' + src + '"]'));
+    },
+
     displayParameter = function (id, all_options, name, value, key, nodelabel)
     {
-        var options = (nodelabel ? wizard_data[name].menu_options : getOptionValue(all_options, name));
-        var label = (nodelabel ? nodelabel : options.label);
-        var deprecated = false,
-			groupChild = $(id).parents('.wizardgroup').length > 0 ? true : false;
+        if(isScriptLoaded("edithtml.js")){
+            customDisplayParameter(id, all_options, name, value, key, nodelabel, currtheme)
+        }else{
+            var options = (nodelabel ? wizard_data[name].menu_options : getOptionValue(all_options, name));
+            var label = (nodelabel ? nodelabel : options.label);
+            var deprecated = false,
+                groupChild = $(id).parents('.wizardgroup').length > 0 ? true : false;
 
-        if (options != null)
-        {
-            var flashonly = $('<img>')
-                .attr('src', 'editor/img/flashonly.png')
-                .attr('title', 'Flash only attribute');
-
-            if (options.condition)
+            if (options != null)
             {
-                var visible = evaluateCondition(options.condition, key);
-                if (!visible)
-                {
-                    return;
-                }
-            }
-            var tr = $('<tr>');
-            if (options.deprecated) {
-                var td = $('<td>')
-                    .addClass("deprecated")
-					.append($('<i>')
-						.attr('id', 'deprbtn_' + name)
-                        .addClass('fa')
-                        .addClass('fa-exclamation-triangle')
-                        .addClass("xerte-icon")
-						.attr('title', options.deprecated)
-                        .height(14)
-                        .addClass("deprecated deprecatedIcon"));
+                var flashonly = $('<img>')
+                    .attr('src', 'editor/img/flashonly.png')
+                    .attr('title', 'Flash only attribute');
 
+                if (options.condition)
+                {
+                    var visible = evaluateCondition(options.condition, key);
+                    if (!visible)
+                    {
+                        return;
+                    }
+                }
+                var tr = $('<tr>');
+                if (options.deprecated) {
+                    var td = $('<td>')
+                        .addClass("deprecated")
+                        .append($('<i>')
+                            .attr('id', 'deprbtn_' + name)
+                            .addClass('fa')
+                            .addClass('fa-exclamation-triangle')
+                            .addClass("xerte-icon")
+                            .attr('title', options.deprecated)
+                            .height(14)
+                            .addClass("deprecated deprecatedIcon"));
+
+                    if (options.optional == 'true' && groupChild == false) {
+                        var opt = $('<i>').attr('id', 'optbtn_' + name)
+                            .addClass('fa')
+                            .addClass('fa-trash')
+                            .addClass("xerte-icon")
+                            .height(14)
+                            .addClass("optional");
+                        td.addClass("wizardoptional");
+                        td.prepend(opt);
+                    }
+                    if (options.flashonly)
+                    {
+                        td.addClass('flashonly');
+                        td.append(flashonly);
+                    }
+                    tr.attr('id', 'depr_' + name)
+                        .addClass("wizardattribute")
+                        .addClass("wizarddeprecated")
+                        .append(td);
+                    deprecated = true;
+                }
+                else if (options.optional == 'true' && groupChild == false) {
+                    var td = $('<td>')
+                        .addClass("wizardoptional")
+                        .append($('<i>')
+                            .attr('id', 'optbtn_' + name)
+                            .addClass('fa')
+                            .addClass('fa-trash')
+                            .addClass("xerte-icon")
+                            .height(14)
+                            .addClass("optional"));
+                    if (options.flashonly)
+                    {
+                        td.addClass('flashonly');
+                        td.append(flashonly);
+                    }
+                    tr.attr('id', 'opt_' + name)
+                        .addClass("wizardattribute")
+                        .append(td);
+                }
+
+                else
+                {
+                    var td = $('<td>')
+                        .addClass("wizardparameter");
+                    if (options.flashonly)
+                    {
+                        td.addClass('flashonly');
+                        td.append(flashonly);
+                    }
+                    tr.attr('id', 'param_'+ name)
+                        .addClass("wizardattribute")
+                        .append(td);
+                }
+                var tdlabel = $('<td>')
+                    .addClass("wizardlabel");
+                if (deprecated)
+                {
+                    tdlabel.addClass("wizarddeprecated")
+                }
+                tdlabel.append(label);
+
+                if (options.tooltip) {
+                    $('<i class="tooltipIcon iconEnabled fa fa-info-circle"></i>')
+                        .attr('title', options.tooltip)
+                        .appendTo(tdlabel);
+                }
+
+                if (options.type.toLowerCase() === "info") {
+                    tdlabel.attr("colspan", "2");
+                    tr.append(tdlabel)
+                }
+                else
+                {
+                    tr.append(tdlabel)
+                        .append($('<td>')
+                            .addClass("wizardvalue")
+                            .append($('<div>')
+                                .addClass("wizardvalue_inner")
+                                .append(displayDataType(value, options, name, key))));
+                }
+
+
+
+                $(id).append(tr);
                 if (options.optional == 'true' && groupChild == false) {
-                    var opt = $('<i>').attr('id', 'optbtn_' + name)
-                        .addClass('fa')
-                        .addClass('fa-trash')
-                        .addClass("xerte-icon")
-                        .height(14)
-                        .addClass("optional");
-                    td.addClass("wizardoptional");
-                    td.prepend(opt);
+                    $("#optbtn_"+ name).on("click", function () {
+                        var this_name = name;
+                        removeOptionalProperty(this_name);
+                    });
                 }
-                if (options.flashonly)
-                {
-                    td.addClass('flashonly');
-                    td.append(flashonly);
-                }
-                tr.attr('id', 'depr_' + name)
-                    .addClass("wizardattribute")
-                    .addClass("wizarddeprecated")
-                    .append(td);
-                deprecated = true;
-            }
-            else if (options.optional == 'true' && groupChild == false) {
-                var td = $('<td>')
-                    .addClass("wizardoptional")
-                    .append($('<i>')
-                        .attr('id', 'optbtn_' + name)
-                        .addClass('fa')
-                        .addClass('fa-trash')
-                        .addClass("xerte-icon")
-                        .height(14)
-                        .addClass("optional"));
-                if (options.flashonly)
-                {
-                    td.addClass('flashonly');
-                    td.append(flashonly);
-                }
-                tr.attr('id', 'opt_' + name)
-                    .addClass("wizardattribute")
-                    .append(td);
-            }
-
-            else
-            {
-                var td = $('<td>')
-                    .addClass("wizardparameter");
-                if (options.flashonly)
-                {
-                    td.addClass('flashonly');
-                    td.append(flashonly);
-                }
-                tr.attr('id', 'param_'+ name)
-                    .addClass("wizardattribute")
-                    .append(td);
-            }
-            var tdlabel = $('<td>')
-                .addClass("wizardlabel");
-            if (deprecated)
-            {
-                tdlabel.addClass("wizarddeprecated")
-            }
-            tdlabel.append(label);
-
-			if (options.tooltip) {
-				$('<i class="tooltipIcon iconEnabled fa fa-info-circle"></i>')
-					.attr('title', options.tooltip)
-					.appendTo(tdlabel);
-			}
-
-			if (options.type.toLowerCase() === "info") {
-                tdlabel.attr("colspan", "2");
-			    tr.append(tdlabel)
-            }
-			else
-            {
-                tr.append(tdlabel)
-                    .append($('<td>')
-                        .addClass("wizardvalue")
-                        .append($('<div>')
-                            .addClass("wizardvalue_inner")
-                            .append(displayDataType(value, options, name, key))));
-            }
-
-
-            $(id).append(tr);
-            if (options.optional == 'true' && groupChild == false) {
-                $("#optbtn_"+ name).on("click", function () {
-                    var this_name = name;
-                    removeOptionalProperty(this_name);
-                });
             }
         }
+
     },
 
 
