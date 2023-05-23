@@ -228,21 +228,32 @@ var annotatedDiagramBlock = new function () {
             panelOuterH = panel.outerHeight() - panel.height();
 
         var align = x_browserInfo.mobile == true ? "Top" : blockXML.getAttribute("align");
-        var imgMaxW = Math.round($("#"+blockid).parent().parent().width() * (align == "Top" ? 1 : maxPanel) - panelOuterW - (align == "Top" ? parseInt($("#"+blockid).parent().css("padding-left")) * 2 : 0)),
-            imgMaxH = $("#"+blockid).parent().parent().height() * (align == "Top" ? maxPanel : 1) - (parseInt($("#"+blockid).parent().css("padding-left")) * 2) - panelOuterH;
+
+        //The original annotatedDiagram used x_pageHolder
+        //But now the page is inside a block which may (probably) not span the entire height and width of the page
+        let pageHolder_standin = $("#"+blockid).parent().parent();
+
+        if (pageHolder_standin.height() <= 0 || pageHolder_standin.width() <= 0){
+            //Nav columns mode has a 0 height navHolder so we use navChild instead
+            pageHolder_standin = $("#"+blockid).parent()
+        }
+
+        var imgMaxW = Math.round(pageHolder_standin.width() * (align == "Top" ? 1 : maxPanel) - panelOuterW - (align == "Top" ? parseInt($("#"+blockid).parent().css("padding-left")) * 2 : 0)),
+            imgMaxH = pageHolder_standin.height() * (align == "Top" ? maxPanel : 1) - (parseInt($("#"+blockid).parent().css("padding-left")) * 2) - panelOuterH;
+
 
         x_scaleImg(img, imgMaxW, imgMaxH, true, img.data('firstLoad'), true);
 
         //debugger;
-        // jGetElement(blockid, ".mainText").html( "blockid: "+ blockid +
-        //                                         ",<br>imgMaxW: " + imgMaxW +
-        //                                         ",<br>imgMaxH: " + imgMaxH +
-        //                                         ",<br>parent width: " + $("#"+blockid).parent().width() +
-        //                                         ",<br>maxPanel: " + maxPanel +
-        //                                         ",<br>realwidth: " + $(img)[0].width +
-        //                                         ",<br>realheight: " + $(img)[0].height +
-        //                                         "<br>" + jGetElement("imageholder", "block3" ).children().length);
-        // // position imageHolder correctly
+        jGetElement(blockid, ".mainText").html( "blockid: "+ blockid +
+                                                ",<br>imgMaxW: " + imgMaxW +
+                                                ",<br>imgMaxH: " + imgMaxH +
+                                                ",<br>parent width: " + $("#"+blockid).parent().width() +
+                                                ",<br>maxPanel: " + maxPanel +
+                                                ",<br>realwidth: " + $(img)[0].width +
+                                                ",<br>realheight: " + $(img)[0].height +
+                                                "<br>" + jGetElement("imageholder", "block3" ).children().length);
+        // position imageHolder correctly
         if (align == "Top") {
             panel.css("margin-left", ($("#"+blockid).width() - panel.outerWidth()) / 2);
         }
@@ -353,8 +364,8 @@ var annotatedDiagramBlock = new function () {
         if (pageContents.data("hsType") == "flex") {
             img.mapster(x_getPageDict("options", blockid));
 
-            //check for weird mapster bug where it repeats image:
-            let mapster_canvasses = jGetElement(blockid, "mapster_el");
+            //TODO: check for weird mapster bug where it repeats image:
+            //let mapster_canvasses = jGetElement(blockid, ".mapster_el");
         }
     }
 
