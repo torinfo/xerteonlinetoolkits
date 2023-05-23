@@ -1,0 +1,36 @@
+<?PHP
+
+
+
+	/**
+
+	 * 
+
+	 * management site details english language file
+
+	 *
+
+	 * @author Patrick Lockley
+
+	 * @version 1.0
+
+	 * @copyright Pat Lockley
+
+	 * @package
+
+	 */
+
+	 
+
+
+
+	define("MANAGEMENT_SITE_CHANGES_SUCCESS", "Aanpassen site gelukt");
+
+
+
+	define("MANAGEMENT_SITE_CHANGES_OK_NOT_AV", "Site aanpassingen uitgevoerd - maar check de&nbsp;antivirus instellingen.");
+
+
+
+	define("MANAGEMENT_SITE_CHANGES_FAIL", "Aanpassen site mislukt");
+
