@@ -1491,6 +1491,8 @@ function show_template(template){
 function show_template_bio(template){
     debugger
     var templatetype = $('#' + template);
+    var animation = $('#' + template + "_animation");
+    animation.addClass("show_animation")
     templatetype.removeClass('hide')
     templatetype.addClass('flex')
 }

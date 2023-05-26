@@ -448,7 +448,7 @@ Folder popup is the div that appears when creating a new folder
                         }
 
                         ?>
-                        <div class="slide-in card ui-container-templates-item <?php echo strtolower($template['parent_template'])?>">
+                        <div id="<?php echo $template['parent_template']?>_animation" class="slide-in card height-transition ui-container-templates-item <?php echo strtolower($template['parent_template'])?>">
                             <div class="template-info">
                                 <h1 class="template-title" style="position: relative; float: left;"><strong> <?php echo $template['display_name']?></strong></h1>
                                 <div class="toggle-button template-button-container flex" id="<?php echo $template['parent_template']?>_toggle" style="position: relative; float: right;">

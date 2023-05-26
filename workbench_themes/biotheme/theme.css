@@ -565,6 +565,15 @@ a, div, input, h3, td{
     animation-name: slidein;
 }
 
+.height-transition{
+    height: 200px !important;
+    transition: height 1000ms;
+}
+
+.show_animation{
+    height: 250px !important;
+}
+
 @keyframes slidein {
     from {
         margin-left: 70%;
@@ -574,3 +583,4 @@ a, div, input, h3, td{
         margin-left: 0%;
     }
 }
+
