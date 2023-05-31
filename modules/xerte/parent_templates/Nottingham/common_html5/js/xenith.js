@@ -2638,16 +2638,25 @@ function x_navigateToPage(force, pageInfo, addHistory) { // pageInfo = {type, ID
 function x_createBlock(container, module, modulePosition){
 	//Create the area for the block to be populated in. Then call the init of the block.
 	var blockid = "block" + modulePosition;
-	var jsName = module.tagName; //.replace("Block", "")
+	// var jsName = module.tagName; //.replace("Block", "")
 	container.append('<div id="block' + modulePosition+'" class="iblock x-card"></div>');
-	$("#"+blockid).load(x_templateLocation + "blocks_html5/" + module.tagName+ ".html", function() {
-		window[jsName].init(blockid);
-	});
-
+	x_loadInBlock(blockid, module);
 	//Insert block CSS files. These are different from the not block interactive modules
 	x_insertCSS(x_templateLocation + "blocks_html5/" + module.tagName + ".css", null, false, "page_model_css_"+module.tagName);
+}
 
+function x_loadAllBlocks(){
+	let counter = 1;
+	for (let module of x_blocksXML[x_currentPage]){
+		x_loadInBlock("block"+counter, module);
+		counter++;
+	}
+}
 
+function x_loadInBlock(blockid, module){
+	$("#"+blockid).load(x_templateLocation + "blocks_html5/" + module.tagName+ ".html", function() {
+		window[ module.tagName].init(blockid);
+	});
 }
 
 // Function that does a jquery query but with blockid
@@ -2683,7 +2692,8 @@ function x_pushToPageDict(element, name, blockid = -1){
 // Gets a dom element from x_pageDicts with optional blockid
 function x_getPageDict(name, blockid = -1){
     let key = blockid == -1 ? name : name + "_" + blockid;
-    return x_pageDicts[x_currentPage][key];
+    let result = x_pageDicts[x_currentPage][key];
+	return result;
 }
 
 function x_getBlockXML(blockid){
@@ -3308,7 +3318,7 @@ function x_changePageStep6() {
 			}
         }
 
-        // calls function in any block on this page
+        // calls page changed function in any block on this page
 		x_allBlocksPageChanged();
 
 		// updates variables as their values might have changed
@@ -3411,7 +3421,7 @@ function x_changePageStep6() {
 		} else {
 			loadModel();
 		}
-    }
+	}
 
     // Queue reparsing of MathJax - fails if no network connection
     try { MathJax.Hub.Queue(["Typeset",MathJax.Hub]); } catch (e){};
