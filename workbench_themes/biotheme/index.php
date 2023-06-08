@@ -487,7 +487,7 @@ Folder popup is the div that appears when creating a new folder
                                         <input type="hidden" id="<?php echo $template['template_name']; ?>_templatename"
                                                name="templatename" value="<?php echo $template['template_name']; ?>"/>
                                         <label for="<?php echo $template['template_name']; ?>_filename" class="sr-only"><?php echo DISPLAY_PROJECT_NAME; ?></label>
-                                        <input  type='text' class='form-control w-100 form-input' id='<?php echo $template['template_name']?>_filename' name='templatename'>
+                                        <input  type='text' class='form-control w-75 form-input' id='<?php echo $template['template_name']?>_filename' name='templatename'>
                                         <button id="<?php echo $template['template_name']?> _button" type="submit" class="xerte_button_c_no_width template-plus-icon">
                                             <i class="fa fa-plus"></i><span class="sr-only"><?php echo $template['display_name']?></span>
                                         </button>
@@ -545,7 +545,10 @@ Folder popup is the div that appears when creating a new folder
                         <h5 class="information-title"><strong>Preview</strong></h5>
                     </div>
                     <div class="card-body green-opacity-50">
-                        <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
+                        <iframe id="preview_iframe" src="" style=" margin-left:10%;  width: 600px; height: 305px; top: 160px" title="test">
+
+                        </iframe>
+
                     </div>
                 </div>
                 <div class="d-flex ui-container-detailed-information flex-column">
@@ -573,7 +576,9 @@ Folder popup is the div that appears when creating a new folder
                         </div>
                     </div>
                     <div class="card card-body green-opacity-50 ui-container-general-information green-border" id="project_graph">
-
+                        <p>
+                            Test tekst voor in de graph container.
+                        </p>
                     </div>
                 </div>
             </div>
@@ -619,6 +624,13 @@ Folder popup is the div that appears when creating a new folder
         var selText = $(this).text();
         $(this).parents('.btn-group').find('.dropdown-toggle').html(selText+' <span class="caret"></span>');
     });
+
+    $("#preview_iframe").on("load", function() {
+        let head = $("#preview_iframe").contents().find("head");
+        let css = '<link rel="stylesheet" href="workbench_themes/dlearning/theme.css" type="text/css"/>';
+        $(head).append(css);
+    });
+    
 </script>
 <?php body_end(); ?></body>
 </html>
