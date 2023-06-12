@@ -17,6 +17,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
+//TODO: check if x_pageHollder/div width is actually corrret now (scrollbar when widening)
 if(true) {
     //alert("block");
 
@@ -29,7 +31,7 @@ if(true) {
         this.setUp = function(){
 			var blockid = "block1";
 			var jsName = "annotatedDiagramBlock";
-			$x_pageDiv.append('<div id=block1></div>');
+			$("#x_page" + x_currentPage).append('<div id=block1></div>');
 			$("#"+blockid).load(x_templateLocation + "blocks_html5/annotatedDiagramBlock.html", function() {
 				window[jsName].init(blockid);
 			});

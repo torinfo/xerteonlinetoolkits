@@ -2639,7 +2639,7 @@ function x_createBlock(container, module, modulePosition){
 	//Create the area for the block to be populated in. Then call the init of the block.
 	var blockid = "block" + modulePosition;
 	// var jsName = module.tagName; //.replace("Block", "")
-	container.append('<div id="block' + modulePosition+'" class="iblock x-card"></div>');
+	container.append('<div id="block' + modulePosition +'" class="iblock x-card"></div>');
 	x_loadInBlock(blockid, module);
 	//Insert block CSS files. These are different from the not block interactive modules
 	x_insertCSS(x_templateLocation + "blocks_html5/" + module.tagName + ".css", null, false, "page_model_css_"+module.tagName);
@@ -3046,11 +3046,13 @@ function x_changePageStep5a(x_gotoPage) {
         standalone_block = true;
     }else{
         nodes = Array.from(x_currentPageXML.querySelectorAll("*")).filter(n=>n.nodeName.includes('Block'));
-    } //Add all pages that can be blocks
+    }
+    //Add all pages that can be blocks
 	if (x_blocksXML[x_currentPage].length == 0) {
 		for (let i = 0; i < nodes.length; i++) {
 			x_blocksXML[x_currentPage].push(nodes[i]);
-			let page = {type: standalone_block ? nodes[i].nodeName + "Block" : nodes[i].nodeName};
+			let page = {type: standalone_block ? nodes[i].nodeName + "Block" : nodes[i].nodeName,
+						standalone: standalone_block};
 			x_blocksInfo[x_currentPage].push(page);
 		}
 	}
