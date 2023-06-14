@@ -4072,7 +4072,9 @@ function x_allBlocksSizeChanged(){
 
 //Used to call sizeChanged on a specific block on the current page
 function x_blockSizeChanged(blockid){
-    eval(x_blocksInfo[x_currentPage][x_getBlockNr(blockid)].type).sizeChanged(blockid);
+	if (!$('#'+blockid).is(':empty')) {
+		eval(x_blocksInfo[x_currentPage][x_getBlockNr(blockid)].type).sizeChanged(blockid);
+	};
 }
 
 // functions open dialogs e.g. glossary, table of contents - just reattach if it's already loaded previously

@@ -211,41 +211,41 @@ var annotatedDiagramBlock = new function () {
         let hsHolder = x_getPageDict( "hsHolder", blockid);
         let panel = x_getPageDict("panel", blockid);
 
-        // if old style hotspots are used, resize the canvas first
-        if (pageContents.data("hsType") == "flex") {
-            img.mapster('unbind');
-        } else {
-            hsHolder.empty();
-
-            if (pageContents.data("hsType") == "centre") {
-                this.resizeCanvas(blockid);
-            }
-        }
-
-        // if position is left or right then image size will constrain the image width - if position is top then image size will constrain the image height
-        var maxPanel = blockXML.getAttribute("panelWidth") == "Large" ? 0.8 : blockXML.getAttribute("panelWidth") == "Small" ? 0.3 : 0.55,
-            panelOuterW = panel.outerWidth() - panel.width(),
-            panelOuterH = panel.outerHeight() - panel.height();
-
-        var align = x_browserInfo.mobile == true ? "Top" : blockXML.getAttribute("align");
-
         //Necessary as if this is hidden, the image doesn't get the correct scale as xPageN is hidden
         //and everything in it has size 0x0
         if ($("#x_page" + x_currentPage).is(":hidden")){
             $("#x_page" + x_currentPage).show();
         }
 
-        //The original annotatedDiagram used x_pageHolder
-        //But now the page is inside a block which may (probably) not span the entire height and width of the page
-        let pageHolder_standin = $("#"+blockid).parent().parent().parent();
-        let pageDiv_standin = $("#"+blockid).parent().parent()
-
-        if (pageHolder_standin.height() <= 0 || pageHolder_standin.width() <= 0){
-            //Nav columns mode has a 0 height navHolder so we use navChild instead
-            pageHolder_standin = $("#"+blockid).parent()
+        // The original annotatedDiagram used x_pageHolder
+        // But now the page is inside a block which may (probably) not span the entire height and width of the page
+        // Use navChildN instead, this works for nav.html, if we want to use blocks on other pages it might not
+        let standalone = $("#"+blockid).parent().parent().attr('id') == "x_pageDiv"; //If this block is used as a standalone page
+        let pageHolder_standin = standalone ? $x_pageHolder :  $("#"+blockid).parent();
+        let pageDiv_standin = standalone ? $x_pageDiv :  $("#"+blockid).parent();
+        if ($("#"+blockid).parent().parent().attr("class") == "panelPage"){
+            pageHolder_standin = $("#"+blockid).parent().parent();
+            //this code is a bit of a mess, but nav.html has different ways of handling the size of the navChild,
+            //right now it seems to work reasonably well for every type of navigator
         }
+
+        // if old style hotspots are used, empty hsHolder (canvas is resized after image)
+        if (pageContents.data("hsType") == "flex") {
+            img.mapster('unbind');
+        } else {
+            hsHolder.empty();
+        }
+
+        // if position is left or right then image size will constrain the image width - if position is top then image size will constrain the image height
+        debugger;
+        var maxPanel = blockXML.getAttribute("panelWidth") == "Large" ? 0.8 : blockXML.getAttribute("panelWidth") == "Small" ? 0.3 : 0.55,
+            panelOuterW = panel.outerWidth() - panel.width(),
+            panelOuterH = panel.outerHeight() - panel.height();
+
+        var align = x_browserInfo.mobile == true ? "Top" : blockXML.getAttribute("align");
+
         var imgMaxW = Math.round(pageHolder_standin.width() * (align == "Top" ? 1 : maxPanel) - panelOuterW - (align == "Top" ? parseInt(pageDiv_standin.css("padding-left")) * 2 : 0)),
-            imgMaxH = pageHolder_standin.height() * (align == "Top" ? maxPanel : 1) - (parseInt(pageDiv_standin.parent().css("padding-left")) * 2) - panelOuterH;
+            imgMaxH = pageHolder_standin.height() * (align == "Top" ? maxPanel : 1) - (parseInt(pageDiv_standin.css("padding-left")) * 2) - panelOuterH;
 
 
         x_scaleImg(img, imgMaxW, imgMaxH, true, img.data('firstLoad'), true);
@@ -330,14 +330,17 @@ var annotatedDiagramBlock = new function () {
 
             if (pageContents.data("hsType") == "centre") {
                 // arrow or line
+                this.resizeCanvas(blockid, standalone);
                 let context = x_getPageDict("context", blockid);
                 context.strokeStyle = pageContents.data("highlightColour");
                 context.fillStyle = pageContents.data("highlightColour");
                 context.lineWidth = borderW;
 
+
             } else if (pageContents.data("hsType") == "oval") {
                 hsHolder.addClass("oval");
             }
+
         }
 
         $(blockXML).children().each(function (i) {
@@ -532,7 +535,7 @@ var annotatedDiagramBlock = new function () {
                 })
                 .click(function () {
                     $(this).data("listItem").trigger("click");
-                    $x_pageHolder.scrollTop(0);
+                    //$x_pageHolder.scrollTop(0);
                 })
                 .focusin(function () {
                     $(this)
@@ -629,17 +632,32 @@ var annotatedDiagramBlock = new function () {
         }
     }
 
-    this.resizeCanvas = function (blockid) {
-        $(blockid).parent().css('overflow', 'hidden');
-        let canvas = x_getPageDict("canvas", blockid);
-        canvas.attr({
-            width: $("#"+ blockid).width(),
-            height: $("#"+blockid).height() - parseInt($("#" + blockid).css("padding-top")) * 2
-        });
+    this.resizeCanvas = function (blockid, standalone) {
+        let canvas = x_getPageDict('canvas', blockid);
 
-        $("#" +blockid).parent()
-            .css('overflow', 'auto')
-            .scrollTop(0);
+        if (standalone){
+            $x_pageHolder.css('overflow', 'hidden');
+
+            canvas.attr({
+                width: $x_pageDiv.width(),
+                height: $x_pageHolder.height() - parseInt($x_pageDiv.css("padding-top")) * 2
+            });
+
+            $x_pageHolder
+                .css('overflow', 'auto')
+                .scrollTop(0);
+        }else{
+            $("#"+ blockid).css('overflow', 'hidden');
+
+            canvas.attr({
+                width:  $("#"+ blockid).width(),
+                height:  $("#"+ blockid).height() - parseInt( $("#"+ blockid).css("padding-top")) * 2
+            });
+
+            $("#"+ blockid)
+                .css('overflow', 'auto')
+                .scrollTop(0);
+        }
     }
 
 

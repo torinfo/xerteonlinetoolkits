@@ -267,6 +267,7 @@
 				$(x_currentPageXML).children().each(function(i) {
 					$navHolder.append('<div id="navChild' + i + '" class="navChild">' + (this.getAttribute("name") != "" ? '<h3 id="navChildTitle' + i + '" class="navChildTitle"></h3>' : '') + '</div>');
 				});
+				$navHolder.append('<div style="clear:both;"></div>');
 				
 				if (x_browserInfo.mobile == false) {
 					var numColumns = $(x_currentPageXML).children().length,
