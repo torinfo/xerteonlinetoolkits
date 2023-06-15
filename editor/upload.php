@@ -85,6 +85,7 @@ if (!isset($_SESSION['toolkits_logon_username']) && !is_user_admin())
 // Check for Preview/Publish
 $fileupdate = $_POST["fileupdate"];
 $filename = $_POST["filename"];
+$backup = $_POST['backup'];
 
 $mode = $fileupdate ? "publish" : "preview";
 if ($mode == 'publish')
@@ -121,25 +122,25 @@ $data = process($relreffedjson);
 
 //_debug("upload: converted to xml");
 
-// save round-robin queue of 10 xml's
-for ($i=10; $i>1; $i--)
-{
-    $j = $i-1;
-    if (file_exists($filename . "." . $j)) {
-        rename($filename . "." . $j, $filename . "." . $i);
+if ($backup == "true" || $backup == "1") {
+    // save round-robin queue of 10 xml's
+    for ($i = 10; $i > 1; $i--) {
+        $j = $i - 1;
+        if (file_exists($filename . "." . $j)) {
+            rename($filename . "." . $j, $filename . "." . $i);
+        }
     }
-}
-rename($filename, $filename . ".1");
+    rename($filename, $filename . ".1");
 
-// save round-robin queue of 10 json's
-for ($i=10; $i>1; $i--)
-{
-    $j = $i-1;
-    if (file_exists($filenamejson . "." . $j)) {
-        rename($filenamejson . "." . $j, $filenamejson . "." . $i);
+    // save round-robin queue of 10 json's
+    for ($i = 10; $i > 1; $i--) {
+        $j = $i - 1;
+        if (file_exists($filenamejson . "." . $j)) {
+            rename($filenamejson . "." . $j, $filenamejson . "." . $i);
+        }
     }
+    rename($filenamejson, $filenamejson . ".1");
 }
-rename($filenamejson, $filenamejson . ".1");
 
 file_put_contents($filename, $data->asXML());
 
