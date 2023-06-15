@@ -260,13 +260,33 @@ x_projectDataLoaded = function(xmlData) {
 		}
 	}
 
+	// sort any parameters in url - these will override those in xml
+	var tempUrlParams = window.location.href.slice(window.location.href.indexOf('?') + 1).split(/[#&]/),
+		hash;
+
+	for (var i=0; i<tempUrlParams.length; i++) {
+		var split = tempUrlParams[i].split("=");
+		if (split.length == 2) {
+			x_urlParams[split[0]] = split[1];
+		} else {
+			hash = tempUrlParams[i];
+		}
+	}
+
+	let ignorehidden = x_urlParams.ignorehidden === "1";
+	// ignorehidden should only work when previewed (not play link)
+	if (ignorehidden && window.location.pathname.substring(window.location.pathname.lastIndexOf("/") + 1, window.location.pathname.length).indexOf("preview") == -1)
+	{
+		ignorehidden = false;
+	}
+
     x_pages = xmlData.children();
 	var pageToHide = [],
 		currActPage = 0;
 	
     x_pages.each(function (i) {
 		// work out whether the page is hidden or not - can be simply hidden or hidden between specific dates/times
-		var hidePage = $(this)[0].getAttribute("hidePage") == "true" ? true : false;
+		var hidePage = $(this)[0].getAttribute("hidePage") == "true" && !ignorehidden ? true : false;
 		if (hidePage == true) {
 			// get current date/time according to browser
 			var nowTemp = new Date();
@@ -507,20 +527,7 @@ x_projectDataLoaded = function(xmlData) {
             x_fillWindow = false; // overrides fill window for touchscreen devices
         }
     }
-	
-    // sort any parameters in url - these will override those in xml
-    var tempUrlParams = window.location.href.slice(window.location.href.indexOf('?') + 1).split(/[#&]/),
-		hash;
-	
-	for (var i=0; i<tempUrlParams.length; i++) {
-		var split = tempUrlParams[i].split("=");
-		if (split.length == 2) {
-			x_urlParams[split[0]] = split[1];
-		} else {
-			hash = tempUrlParams[i];
-		}
-    }
-	
+
 	// there are several URL params that can determine the 1st page viewed - check if they are valid pages before setting start page
 	var customStartPage = false;
 	
