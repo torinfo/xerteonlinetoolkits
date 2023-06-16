@@ -56,7 +56,7 @@ var EDITOR = (function ($, parent) {
 
     unloadFunction = function() {
         //save my data
-        savepreviewasync(false);
+        savepreviewasync();
         bunload();
 
     },
@@ -344,7 +344,8 @@ var EDITOR = (function ($, parent) {
                     filename: previewxmlurl,
                     lo_data: encodeURIComponent(JSON.stringify(json)),
                     absmedia: rlourlvariable,
-                    template_id: template_id
+                    template_id: template_id,
+                    backup: true
                 },
                 //success: function(data){
                 //    alert("success");
@@ -388,7 +389,8 @@ var EDITOR = (function ($, parent) {
                     preview: previewxmlurl,
                     lo_data: encodeURIComponent(JSON.stringify(json)),
                     absmedia: rlourlvariable,
-                    template_id: template_id
+                    template_id: template_id,
+                    backup: true
                 },
 
                 dataType: "json",
@@ -406,13 +408,52 @@ var EDITOR = (function ($, parent) {
 
     savepreview = function()
     {
-        savepreviewasync(true);
+        savepreviewasync();
     },
 
-    savepreviewasync = function (async) {
+    updatepage = function() {
+
+        if (typeof merged !== 'undefined' && merged == true) {
+            return;
+        }
+        if (backup == undefined) {
+            backup = true;
+        }
+        var json = build_json("treeroot");
+        var ajax_call = $.ajax({
+            url: "editor/upload.php",
+            data: {
+                fileupdate: 0, // 1=publish -> data.xml
+                filename: previewxmlurl,
+                lo_data: encodeURIComponent(JSON.stringify(json)),
+                absmedia: rlourlvariable,
+                template_id: template_id,
+                backup: false // when false, no backup is created
+            },
+
+            dataType: "json",
+            type: "POST",
+            cache: false,
+            async: true
+        })
+        .done(function () {
+            $('#loader').hide();
+            //update pageframe
+        })
+        .fail(function () {
+            $('#loader').hide();
+            alert("error");
+        });
+    },
+
+    savepreviewasync = function () {
     	if(typeof merged !== 'undefined' && merged == true){
     		return;
     	}
+        if (backup == undefined)
+        {
+            backup = true;
+        }
         var json = build_json("treeroot");
         var ajax_call = $.ajax({
                 url: "editor/upload.php",
@@ -421,7 +462,8 @@ var EDITOR = (function ($, parent) {
                     filename: previewxmlurl,
                     lo_data: encodeURIComponent(JSON.stringify(json)),
                     absmedia: rlourlvariable,
-                    template_id: template_id
+                    template_id: template_id,
+                    backup: true // when false, no backup is created
                 },
 
                 dataType: "json",
