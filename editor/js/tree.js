@@ -20,7 +20,7 @@
 // Tree : Add the tree object to the editor
 
 var EDITOR = (function ($, parent) {
-
+    debugger
     // Create the tree object and refer locally to it as 'my'
     var my = parent.tree = {},
         toolbox = parent.toolbox,
@@ -1330,6 +1330,7 @@ var EDITOR = (function ($, parent) {
 
     addNodeToTree = function(key, pos, nodeName, xmlData, tree, select)
     {
+        debugger
         var lkey = parent.tree.generate_lo_key();
         var attributes = {nodeName: nodeName, linkID : 'PG' + new Date().getTime()};
         var extranodes = false;
@@ -1558,8 +1559,8 @@ var EDITOR = (function ($, parent) {
         $.each(wizard_data, function (key, value) {
                 node_types[key] = create_node_type(key, value.new_nodes);
         });
-
         var treeview = $('<div />').attr('id', 'treeview');
+        //$(".ui-layout-west .content").append(treeview);
         $(".content").append(treeview);
         $("#treeview").jstree({
             "plugins": ( /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) ) ? ["types"] : ["types", "dnd"],

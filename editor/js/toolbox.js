@@ -33,142 +33,78 @@ var EDITOR = (function ($, parent) {
 		jqGridSetUp = false,
 		workspace,
 		currtheme,
+        page = 0
 
     // Build the "insert page" menu
     create_insert_page_menu = function (advanced_toggle) {
-        var getMenuItem = function (itemData) {
-            var data = {
-                href: '#',
-                html: itemData.name,
-                class: itemData.name
+        if(theme === "xerte" || theme === null || theme === undefined){
+            var getMenuItem = function (itemData) {
+                var data = {
+                    href: '#',
+                    html: itemData.name,
+                    class: itemData.name
+                };
+
+                if (itemData.icon != undefined) {
+                    data.icon = itemData.icon;
+                    data.html = '<img class="icon" src="' + moduleurlvariable + 'icons/' + itemData.icon + '.png"/>' + data.html;
+                }
+
+                var item = $("<li>")
+                    .append($("<a>", data))
+                    .attr("item", itemData.item);
+
+                // it's a category
+                if (itemData.submenu != undefined) {
+                    var subList = $("<ul>");
+                    $.each(itemData.submenu, function () {
+                        if (!this.deprecated && (this.simple_enabled || advanced_toggle)) {
+                            subList.append(getMenuItem(this));
+                        }
+                    });
+                    item.append(subList);
+
+                    // it's a page type
+                } else if (itemData.item != undefined) {
+                    var hint = itemData.hint != undefined ? '<p>' + itemData.hint + '</p>' : "";
+                    hint = itemData.thumb != undefined ? hint + (itemData.example != undefined ? '<a href="' + itemData.example + '" data-featherlight="iframe" class="pageExample">' : '') + '<img class="preview_thumb" alt="' + itemData.name + ' ' + language.insertDialog.$preview + '" src="modules/xerte/parent_templates/Nottingham/' + itemData.thumb + '" />' + (itemData.example != undefined ? '</a>' : '') : hint;
+                    hint = itemData.example != undefined ? hint + '<p><a href="' + itemData.example + '" data-featherlight="iframe" class="pageExample exampleButton"><i class="fa fa-play-circle"></i>' + language.insertDialog.$example + '</a></p>' : hint;
+                    hint = hint != "" ? '<hr/>' + hint : hint;
+
+                    var $insertInfo = $('<ul class="details"><li><a href="#"><div class="insert_buttons"/>' + hint + '</a></li></ul>'),
+                        label = language.insertDialog.$label + ":",
+                        pos = label.indexOf('{i}');
+
+                    label = pos >= 0 ? label.substr(0, pos) + itemData.name + label.substr(pos + 3) : label;
+
+                    $insertInfo.find(".insert_buttons").append('<div>' + label + '</div>');
+
+                    $insertInfo.appendTo(item);
+                }
+
+                return item;
             };
 
-            if (itemData.icon != undefined) {
-                data.icon = itemData.icon;
-				data.html = '<img class="icon" src="' + moduleurlvariable + 'icons/' + itemData.icon + '.png"/>' + data.html;
-            }
 
-            var item = $("<li>")
-				.append($("<a>", data))
-				.attr("item", itemData.item);
+            // create 1st level of menu and call getMenuItem to add every item and submenu to it
+            var $menu = $("<ul>", {
+                id: 'menu'
+            });
 
-			// it's a category
-			if (itemData.submenu != undefined) {
-                var subList = $("<ul>");
-                $.each(itemData.submenu, function () {
-                    if (!this.deprecated && (this.simple_enabled || advanced_toggle)) {
-                        subList.append(getMenuItem(this));
-                    }
-                });
-                item.append(subList);
-
-			// it's a page type
-            } else if (itemData.item != undefined) {
-				var hint = itemData.hint != undefined ? '<p>' + itemData.hint + '</p>' : "";
-				hint = itemData.thumb != undefined ? hint + (itemData.example != undefined ? '<a href="' + itemData.example + '" data-featherlight="iframe" class="pageExample">' : '') + '<img class="preview_thumb" alt="' + itemData.name + ' ' + language.insertDialog.$preview + '" src="modules/xerte/parent_templates/Nottingham/' + itemData.thumb + '" />' + (itemData.example != undefined ? '</a>' : '') : hint;
-				hint = itemData.example != undefined ? hint + '<p><a href="' + itemData.example + '" data-featherlight="iframe" class="pageExample exampleButton"><i class="fa fa-play-circle"></i>' + language.insertDialog.$example + '</a></p>' : hint;
-				hint = hint != "" ? '<hr/>' + hint : hint;
-
-				var $insertInfo = $('<ul class="details"><li><a href="#"><div class="insert_buttons"/>' + hint + '</a></li></ul>'),
-					label = language.insertDialog.$label + ":",
-					pos = label.indexOf('{i}');
-				
-				label = pos >= 0 ? label.substr(0, pos) + itemData.name + label.substr(pos + 3) : label;
-
-				$insertInfo.find(".insert_buttons").append('<div>' + label + '</div>');
-
-				$insertInfo.appendTo(item);
-			}
-
-            return item;
-        };
+            $.each(menu_data.menu, function () {
+                if (!this.deprecated && (this.simple_enabled || advanced_toggle)) {
+                    $menu.append(
+                        getMenuItem(this)
+                    )
+                };
+            });
 
 
-		// create 1st level of menu and call getMenuItem to add every item and submenu to it
-        var $menu = $("<ul>", {
-            id: 'menu'
-        });
-
-        $.each(menu_data.menu, function () {
-            if (!this.deprecated && (this.simple_enabled || advanced_toggle)) {
-                $menu.append(
-                    getMenuItem(this)
-                )
-            };
-        });
-
-
-        var $accordion = $(".accordion");
-        $.each(menu_data.menu, function () {
-            if (!this.deprecated && (this.simple_enabled || advanced_toggle)) {
-
-                var text = document.createTextNode(this.name);
-
-                var button = document.createElement("button");
-                button.setAttribute('id', this.name.replace(/ +/g, "").replace("/","")+'-heading');
-                button.setAttribute('class', 'accordion-button collapsed');
-                button.setAttribute('type', 'button');
-                button.setAttribute('data-bs-toggle', 'collapse');
-                button.setAttribute('data-bs-target', '#'+this.name.replace(/ +/g, "").replace("/","")+'-collapse');
-                button.setAttribute('aria-expanded', 'false');
-                button.setAttribute('aria-controls', 'flush'+this.name.replace(/ +/g, "").replace("/","")+'-collapse');
-                button.appendChild(text);
-
-
-                var header  = document.createElement("h2");
-                header.setAttribute('class', 'accordion-header');
-                header.setAttribute('id', 'flush-headingOne');
-                header.appendChild(button);
-
-
-                var collapsebody = document.createElement("div");
-                collapsebody.setAttribute('class', 'accordion-body');
-
-                $.each(this.submenu, function(){
-                    var item = this.item
-                    var name = document.createTextNode(this.name);
-                    var p = document.createElement("p");
-                    p.appendChild(name)
-
-                    var image = document.createElement("img");
-                    image.src = moduleurlvariable + 'icons/' + this.icon + '.png';
-
-                    var module = document.createElement("div");
-                    module.setAttribute('class', 'd-flex align-items-center item');
-                    module.appendChild(p)
-                    module.appendChild(image)
-                    module.ondblclick = function (){
-                        add_page_ondbclick(item, "after")
-                    }
-
-                    collapsebody.appendChild(module);
-                })
-
-
-
-
-                var collapse = document.createElement("div");
-                collapse.setAttribute('id', this.name.replace(/ +/g, "").replace("/","")+'-collapse');
-                collapse.setAttribute('class', 'accordion-collapse collapse');
-                collapse.setAttribute('aria-labelledby', this.name.replace(/ +/g, "").replace("/","")+'-heading');
-                collapse.setAttribute('data-bs-parent', '#accordion');
-                collapse.appendChild(collapsebody);
-
-
-                var item = document.createElement("div");
-                item.setAttribute('class', 'accordion-item');
-                item.appendChild(header);
-                item.appendChild(collapse);
-
-
-
-
-                $accordion.append(item);
-
-            };
-        });
-
-		// create insert buttons above the page hints / thumbs
+        }else{
+            createMenu()
+        }
+        if(theme === "xerte" || theme === null || theme === undefined) {
+            // create insert buttons above the page hints / thumbs
             $([
 
                 {
@@ -204,52 +140,52 @@ var EDITOR = (function ($, parent) {
                     .append($('<img>').attr('src', value.icon).height(14))
                     .append(value.name);
 
-                    $menu.find(".insert_buttons").append(button);
+                $menu.find(".insert_buttons").append(button);
             });
-            
-		if (typeof insert_menu_object !== 'undefined')
-        {
-            // menu is aleready set once
-            insert_menu_object.menu("destroy");
-            /*
-            $.widget("ui.menu", $.ui.menu, {
-                collapseAll: function(e) {},
-                _open: function(submenu) {}
-            });
-            */
 
-        }
-        else {
-            // Set default once
-            $.widget("ui.menu", $.ui.menu, {
-                collapseAll: function (e) {
-                    if (e.type == "click" && e.target.id != "insert_button") {
-                        $("#insert_menu").hide();
-                        $("#shadow").hide();
-                    } else if (e.type == "keydown" && $(e.target).parent().hasClass("insert_buttons")) {
-                        $("#insert_menu").hide();
-                        $("#shadow").hide();
-                        parent.tree.addNode($(e.target).closest("[item]").attr("item"), $(e.target).attr("value"));
-                    }
-                    return this._super();
-                },
-                _open: function (submenu) {
-                    // make sure the menus fit on screen and scroll when needed
-                    this._super(submenu);
-                    if (submenu.hasClass("details")) {
-                        if ($("body").height() < (submenu.height() + submenu.offset().top + 20)) {
-                            submenu.offset({"top": $("body").height() - submenu.height() - 20});
+
+            if (typeof insert_menu_object !== 'undefined') {
+                // menu is aleready set once
+                insert_menu_object.menu("destroy");
+                /*
+                $.widget("ui.menu", $.ui.menu, {
+                    collapseAll: function(e) {},
+                    _open: function(submenu) {}
+                });
+                */
+
+            } else {
+                // Set default once
+                $.widget("ui.menu", $.ui.menu, {
+                    collapseAll: function (e) {
+                        if (e.type == "click" && e.target.id != "insert_button") {
+                            $("#insert_menu").hide();
+                            $("#shadow").hide();
+                        } else if (e.type == "keydown" && $(e.target).parent().hasClass("insert_buttons")) {
+                            $("#insert_menu").hide();
+                            $("#shadow").hide();
+                            parent.tree.addNode($(e.target).closest("[item]").attr("item"), $(e.target).attr("value"));
                         }
-                    } else {
-                        submenu.css("max-height", $("body").height() - submenu.offset().top - 30);
+                        return this._super();
+                    },
+                    _open: function (submenu) {
+                        // make sure the menus fit on screen and scroll when needed
+                        this._super(submenu);
+                        if (submenu.hasClass("details")) {
+                            if ($("body").height() < (submenu.height() + submenu.offset().top + 20)) {
+                                submenu.offset({"top": $("body").height() - submenu.height() - 20});
+                            }
+                        } else {
+                            submenu.css("max-height", $("body").height() - submenu.offset().top - 30);
+                        }
                     }
-                }
-            });
-        }
+                });
+            }
 
-        insert_menu_object = $menu.menu();
-        $("#insert_menu").html(insert_menu_object);
-		$menu.find(".ui-menu-item a").first().attr("tabindex", 2);
+            insert_menu_object = $menu.menu();
+            $("#insert_menu").html(insert_menu_object);
+            $menu.find(".ui-menu-item a").first().attr("tabindex", 2);
+        }
     },
 
     //Loads the data into the import screen
@@ -287,7 +223,7 @@ var EDITOR = (function ($, parent) {
 				// if deprecatedLevel is low the appearance is slightly different
 				var isDeprecated = enabled[0],
 					deprecatedLevel = enabled[1];
-				
+
                 if (isDeprecated) {
                     return '<i class="deprecatedIcon iconEnabled fa ' + (deprecatedLevel == 'low' ? 'fa-info-circle' : 'fa-exclamation-triangle') + ' ' + (deprecatedLevel == 'low' ? 'deprecatedLevel_low' : '') + '" id="' + key + '_deprecated" title ="' + tooltip + '"></i>';
                 }
@@ -404,7 +340,7 @@ var EDITOR = (function ($, parent) {
 
     // Recursive function to traverse the xml and build
     build_lo_data = function (xmlData, parent_id) {
-
+        //debugger
         // First lets generate a unique key
         var key = parent.tree.generate_lo_key();
         if (parent_id == null)
@@ -483,8 +419,15 @@ var EDITOR = (function ($, parent) {
         var standaloneIcon = getExtraTreeIcon(key, "standalone", xmlData[0].getAttribute("linkPage") == "true");
         var unmarkIcon = getExtraTreeIcon(key, "unmark", xmlData[0].getAttribute("unmarkForCompletion") == "true" && parent_id == 'treeroot');
 		var advancedIcon = getExtraTreeIcon(key, "advanced", simple_mode && parent_id == 'treeroot' && template_sub_pages.indexOf(lo_data[key].attributes.nodeName) == -1);
+        debugger
+        if(parent_id == "treeroot"){
+            page++
+            treeLabel = '<span id="' + key + '_container">' + unmarkIcon + hiddenIcon + passwordIcon + standaloneIcon + deprecatedIcon + advancedIcon + '</span><div class="thumbnail-container"><div class="thumbnail"><iframe src="http://localhost/xot/preview.php?template_id=64#page' + page +'" onload="var that=this;setTimeout(function() { that.style.opacity = 1 }, 500)">"</iframe></div></div>';
 
-        treeLabel = '<span id="' + key + '_container">' + unmarkIcon + hiddenIcon + passwordIcon + standaloneIcon + deprecatedIcon + advancedIcon + '</span><span id="' + key + '_text">' + treeLabel + '</span>';
+        }else{
+            treeLabel = '<span id="' + key + '_container">' + unmarkIcon + hiddenIcon + passwordIcon + standaloneIcon + deprecatedIcon + advancedIcon + '</span><span id="' + key + '_text">' + treeLabel + '</span>';
+
+        }
 
         var this_json = {
             id : key,
@@ -802,9 +745,9 @@ var EDITOR = (function ($, parent) {
 				.addClass("wizarddeprecated")
 
 		} else if (options.optional == 'true') {
-			
+
 			group.addClass("wizardoptional")
-			
+
 			if (options.group == undefined) { // nested groups don't have delete btn
 				legend
 					.addClass('noindent')
@@ -841,7 +784,7 @@ var EDITOR = (function ($, parent) {
 
 		if (options.group == undefined) { // nested groups aren't collapsible
 			$('<i class="minMaxIcon fa fa-caret-up"></i>').appendTo(legend.find('.legend_label'));
-			
+
 			legend.find('.legend_label').click(function() {
 				var $icon = $(this).find('i.minMaxIcon');
 				var $fieldset = $(this).parents('fieldset');
@@ -886,7 +829,7 @@ var EDITOR = (function ($, parent) {
 					.append(group_table)
 			);
 		}
-		
+
 		if (options.group == undefined) {
 			$(id).append(tr);
 		} else {
@@ -919,7 +862,7 @@ var EDITOR = (function ($, parent) {
     },
 
     removeOptionalProperty = function (name, children) {
-		
+
         if (!confirm('Are you sure?')) {
             return;
         }
@@ -929,24 +872,24 @@ var EDITOR = (function ($, parent) {
 		// if it's a group being deleted then remove all of its children
 		// including children of nested groups
 		if (children) {
-			
+
 			function getChildren(groupChildren) {
 				for (var i=0; i<groupChildren.length; i++) {
-					
+
 					if (groupChildren[i].value.type == "group") {
-						
+
 						getChildren(groupChildren[i].value.children);
-						
+
 					} else {
-						
+
 						toDelete.push(groupChildren[i].name);
-						
+
 					}
 				}
 			}
-			
+
 			getChildren(children);
-			
+
 		} else {
 			toDelete.push(name);
 		}
@@ -1663,7 +1606,7 @@ var EDITOR = (function ($, parent) {
 			}
         });
     },
-	
+
 	convertIconPickers = function ()
     {
         $.each(iconpickers, function (i, options){
@@ -1675,7 +1618,7 @@ var EDITOR = (function ($, parent) {
 				noResultsFound: language.fontawesome.noResult,
 				borderRadius: '0px'
 			});
-			
+
 			IconPicker.Run('#' + options.id, function(e){
 				// manually trigger input change after new icon selected - even though input changes it doesn't get triggered without this as element is hidden & not in focus
 				$('#' + options.id).data('input').change();
@@ -2015,7 +1958,7 @@ var EDITOR = (function ($, parent) {
 					$("#mainPanel .ui-jqgrid").show();
 					$("#mainPanel .ui-jqgrid table").jqGrid("setGridWidth", newWidth, true);
 				});
-				
+
 				// make sure datagrid is correct width when first loaded
 				$("#mainPanel .ui-jqgrid").hide();
 				var newWidth = $("#mainPanel .ui-jqgrid").parent().width();
@@ -2067,7 +2010,7 @@ var EDITOR = (function ($, parent) {
 		if (names[0] == "password") {
             changeNodeStatus(key, "password", values[0] != "");
         }
-		
+
 		if (names[0] == "linkPage") {
             changeNodeStatus(key, "standalone", values[0] == "true");
         }
@@ -2326,7 +2269,7 @@ var EDITOR = (function ($, parent) {
 	{
 		var origSrc = src;
 		src = src.indexOf("FileLocation + '") == 0 ? rlourlvariable + src.substring(("FileLocation + '").length, src.length - 1) : src;
-		
+
 		var previewType,
 			$preview,
 			fileFormats = [
@@ -2335,7 +2278,7 @@ var EDITOR = (function ($, parent) {
 				{ type: 'audio', fileExt: ['mp3'] },
 				{ type: 'pdf', fileExt: ['pdf'] }
 			];
-		
+
 		$(fileFormats).each(function() {
 			for (var i=0; i<this.fileExt.length; i++) {
 				var ext = this.fileExt[i],
@@ -2346,7 +2289,7 @@ var EDITOR = (function ($, parent) {
 				}
 			}
 		});
-		
+
 		if (previewType == 'image') {
 			$preview = $('<div/>');
 			$('<img class="previewFile"/>')
@@ -2360,18 +2303,18 @@ var EDITOR = (function ($, parent) {
 					"alt": alt
 				})
 				.appendTo($preview);
-			
+
 		} else if (previewType == 'video') {
 			$preview = $('<div/>');
 			$('<video class="previewVideo" controls><source src="' + src + '"></video>').appendTo($preview);
-			
+
 		} else if (previewType == 'audio') {
 			$preview = $('<div/>');
 			$('<audio controls><source src="' + src + '"></video>').appendTo($preview);
-			
+
 		} else if (previewType == 'pdf') {
 			$preview = {iframe: src };
-			
+
 		} else {
 			var srcLowerC = origSrc.toLowerCase();
 			if (srcLowerC.indexOf('<iframe') === 0) {
@@ -2483,7 +2426,7 @@ var EDITOR = (function ($, parent) {
 
 		// list of everything at same level or everything at parent's level
 		if (thisTarget != undefined) {
-			
+
 			// 0 finds nodes at this level, 1 finds nodes at parent level, 2 finds nodes at parent's parent level....
 			// * makes it include all the children too
 			var children = false;
@@ -2491,22 +2434,22 @@ var EDITOR = (function ($, parent) {
 				children = true;
 				thisTarget = thisTarget.replace('*','');
 			}
-			
+
 			var level = Number(thisTarget);
 			var lo_node = tree.get_node(tree.get_node(thisKey, false).parents[level], false);
-			
+
 			$.each(lo_node.children, function(i, key){
 				var name = getAttributeValue(lo_data[key]['attributes'], 'name', [], key);
 				var linkID = getAttributeValue(lo_data[key]['attributes'], 'linkID', [], key);
 				var hidden = lo_data[key]['attributes'].hidePage;
-				
+
 				if (linkID.found && linkID.value != "") {
 					var page = [];
 					// Also make sure we only take the text from the name, and not the full HTML
 					page.push((hidden == 'true' ? '-- ' + language.hidePage.$title + ' -- ' : '') + getTextFromHTML(name.value));
 					page.push(linkID.value);
 					pages.push(page);
-					
+
 					// Now we do the children
 					if (children == true) {
 						var childNode = tree.get_node(key, false);
@@ -2514,7 +2457,7 @@ var EDITOR = (function ($, parent) {
 							var name = getAttributeValue(lo_data[key]['attributes'], 'name', [], key);
 							var linkID = getAttributeValue(lo_data[key]['attributes'], 'linkID', [], key);
 							var hidden = lo_data[key]['attributes'].hidePage;
-							
+
 							if (linkID.found && linkID.value != "") {
 								var page = [];
 								// Also make sure we only take the text from the name, and not the full HTML
@@ -2526,7 +2469,7 @@ var EDITOR = (function ($, parent) {
 					}
 				}
 			});
-			
+
 		// list of all pages & their children (if deep linking allowed)
 		} else if (moduleurlvariable == "modules/xerte/" || moduleurlvariable == "modules/site/") {
 			pages = [
@@ -2535,17 +2478,17 @@ var EDITOR = (function ($, parent) {
 						[language.XotLinkRelativePages.prevpage,'[previous]'],
 						[language.XotLinkRelativePages.nextpage,'[next]']
 					];
-			
+
 			var lo_node = tree.get_node("treeroot", false);
-			
+
 			$.each(lo_node.children, function(i, key){
 					var name = getAttributeValue(lo_data[key]['attributes'], 'name', [], key);
 					var linkID = getAttributeValue(lo_data[key]['attributes'], 'linkID', [], key);
 					var hidden = lo_data[key]['attributes'].hidePage;
-					
+
 					if (linkID.found && linkID.value != "")
 					{
-						
+
 						var page = [];
 						// Also make sure we only take the text from the name, and not the full HTML
 						page.push((hidden == 'true' ? '-- ' + language.hidePage.$title + ' -- ' : '') + getTextFromHTML(name.value));
@@ -2572,7 +2515,7 @@ var EDITOR = (function ($, parent) {
 					}
 			});
 		}
-		
+
 		return pages;
 	},
 
@@ -2748,7 +2691,7 @@ var EDITOR = (function ($, parent) {
 
         edit_img.append('<div class="overlayWrapper" id="overlayWrapper_' + id + '"><canvas id="hscanvas_' + id + '" class="overlayCanvas"></canvas></div>');
         edit_img.append('<div class="hsinstructions" id="instructions_' + id + '"></div>');
-        
+
         if (!forceRectangle && hsattrs.mode != undefined)
         {
             shape = hsattrs.mode;
@@ -2994,7 +2937,7 @@ var EDITOR = (function ($, parent) {
                             rect.left = hs.left * scale;
                             rect.width = hs.getScaledWidth() * scale;
                             rect.height = hs.getScaledHeight() * scale;
-                            rect.angle = hs.angle; 
+                            rect.angle = hs.angle;
                             var stringPoints = JSON.stringify(npoints);
                             var stringShape = JSON.stringify(rect);
 
@@ -3378,28 +3321,28 @@ var EDITOR = (function ($, parent) {
         }
 
     };
-	
+
 	draw360Hotspot = function(html, url, hsattrs, id, hspgattrs, hspattrs) {
         // Add Hotspot on the wizard page as preview on the thumbnail image
-		
+
         // find image, set scale and wrap with overlayWrapper
         var img =  html.find('img'),
 			width = img.width(),
 			height = img.height();
-		
+
         img.wrap('<div class="overlayWrapper" id="overlayWrapper_' + id + '"></div>');
         img.hide();
 
         // create canvas over img
         var canvasObj = $('<canvas>')
             .attr('id', 'wizard_hscanvas_' + id);
-		
+
         $('#overlayWrapper_' + id).append(canvasObj);
-		
+
         var canvas = new fabric.Canvas('wizard_hscanvas_' + id, { selection: false, interaction: false });
         canvas.setWidth(width);
         canvas.setHeight(height);
-		
+
         fabric.Image.fromURL(url, function (bgimg) {
             bgimg.scaleToWidth(width);
             bgimg.scaleToHeight(height);
@@ -3408,31 +3351,31 @@ var EDITOR = (function ($, parent) {
 
         // open editor when thumbnail is clicked
 		canvas.on('mouse:down', function() { edit360Hotspot(url, hsattrs, id, hspgattrs, hspattrs) });
-		
+
         // draw target
 		var xy = {};
         if (hsattrs.p != '' && hsattrs.y != '') {
 			// convert from pitch & yaw to image coordinates
 			xy.x = Math.floor((hsattrs.y / 360 + 0.5) * width);
 			xy.y = Math.floor((0.5 - hsattrs.p / 180) * height);
-			
+
 			canvas.add(new fabric.Circle({radius: 5,
 				fill: 'rgba(255,0,0,0.5)',
 				left: xy.x,
 				top: xy.y,
-				originX: 'center', 
+				originX: 'center',
 				originY: 'center',
 				selectable: false,
 				objectCaching: false,
 				evented:false
 			}));
-			
+
 			for (var j=0; j<2; j++) {
 				var x0 = j == 0 ? xy.x - 0.5 : xy.x - 3.5,
 					y0 = j == 0 ? xy.y - 3.5 : xy.y - 0.5,
 					x1 = j == 0 ? xy.x - 0.5 : xy.x + 3.5,
 					y1 = j == 0 ? xy.y + 3.5 : xy.y - 0.5;
-				
+
 				canvas.add(new fabric.Line([x0, y0, x1, y1], {
 					stroke: 'white',
 					strokeWidth: 1,
@@ -3448,23 +3391,23 @@ var EDITOR = (function ($, parent) {
 	    var $editImg = $("<div></div>")
 			.attr('id', 'outer_img_' + id)
 			.addClass('hotspotEditor');
-		
+
 		var btns = ['reset', 'ok', 'cancel'],
 			btnLang = [language.edit360Hotspot.Buttons.Reset, language.Alert.oklabel, language.Alert.cancellabel],
 			btnIcon = ['fa-undo-alt', 'fa-check-square', 'fa-window-close'];
-		
+
         $editImg
 			.data("id", id)
 			.append('<div class="hsbutton_holder" id="hsbutton_holder_' + id + '" style="float: right;">');
-		
+
 		var $hsBtnHolder = $editImg.find('.hsbutton_holder');
-		
+
 		for (var i=0; i<btns.length; i++) {
 			$('<button id="' + btns[i] + '_' + id + '" class="hseditModeButton" title="' + btnLang[i] + '"><i class="fas fa-2x ' + btnIcon[i] + '"></i></button>').appendTo($hsBtnHolder);
 		}
-		
+
 		$editImg.append('<div id="panoramaHolder"><div id="panorama_' + id + '"></div><div class="hsinstructions" id="instructions_' + id + '"></div></div>');
-		
+
 		var instructions = language.edit360Hotspot.Instructions.header +
 				'<ul id="defaultInstructions">' +
 				'<li>' + language.edit360Hotspot.Instructions.line1 + '</li>' +
@@ -3472,15 +3415,15 @@ var EDITOR = (function ($, parent) {
 				'<li>' + language.edit360Hotspot.Instructions.reset + '</li>' +
 				'<li>' + language.edit360Hotspot.Instructions.save + '</li>' +
 				'</ul>';
-		
+
 		$editImg.find('#instructions_' + id).html(instructions);
-		
+
 		var currentHsDetails = {};
-		
+
 		// get the info about the icon appearance
 		if (hsattrs.icon == '' || hsattrs.icon == undefined) { currentHsDetails.icon = 'fas fa-info'; } else { currentHsDetails.icon = hsattrs.icon; }
 		if (hsattrs.orientation == '' || hsattrs.orientation == undefined) { currentHsDetails.orientation = '0'; } else { currentHsDetails.orientation = hsattrs.orientation; }
-		
+
 		// colours & size can be set at page or hs level
 		if (hsattrs.colour1 == '' || hsattrs.colour1 == undefined || hsattrs.colour1 == '0x') {
 			if (hspgattrs.colour1 == '' || hspgattrs.colour1 == undefined || hspgattrs.colour1 == '0x') {
@@ -3491,7 +3434,7 @@ var EDITOR = (function ($, parent) {
 		} else {
 			currentHsDetails.colour1 = hsattrs.colour1;
 		}
-		
+
 		if (hsattrs.colour2 == '' || hsattrs.colour2 == undefined || hsattrs.colour2 == '0x') {
 			if (hspgattrs.colour2 == '' || hspgattrs.colour2 == undefined || hspgattrs.colour2 == '0x') {
 				currentHsDetails.colour2 = 'white';
@@ -3501,7 +3444,7 @@ var EDITOR = (function ($, parent) {
 		} else {
 			currentHsDetails.colour2 = hsattrs.colour2;
 		}
-		
+
 		if (hsattrs.size == '' || hsattrs.size == undefined) {
 			if (hspgattrs.hsSize == '' || hspgattrs.hsSize == undefined) {
 				currentHsDetails.size = '14';
@@ -3511,27 +3454,27 @@ var EDITOR = (function ($, parent) {
 		} else {
 			currentHsDetails.size = hsattrs.size;
 		}
-		
+
 		// correct the format of the colour codes (start with # rather than 0x)
 		currentHsDetails.colour1 = currentHsDetails.colour1.indexOf('0x') === 0 ? currentHsDetails.colour1.replace("0x", "#") : currentHsDetails.colour1;
 		currentHsDetails.colour2 = currentHsDetails.colour2.indexOf('0x') === 0 ? currentHsDetails.colour2.replace("0x", "#") : currentHsDetails.colour2;
-		
+
 		var panorama;
-		
+
 		// open lightbox
 		$.featherlight($editImg, {
 			closeOnClick: 'false',
 			closeOnEsc: true,
 			closeIcon: '',
 			afterOpen: function () {
-				
+
 				// scale panorama
 				var dimensions = [0.7 * $('body').width(), 0.7 * $('body').height() - $('#hsbutton_holder').height() - $('.hsinstructions').height()];
-				
+
 				$('#panorama_' + id).add('.hover')
 					.width(dimensions[0])
 					.height(dimensions[1]);
-				
+
 				$('#outer_img_' + id).width(dimensions[0]);
                 //check if cubemap
                 if (hspattrs.cubemapcb=="true") {
@@ -3556,44 +3499,44 @@ var EDITOR = (function ($, parent) {
 					'pitch': Number(hsattrs.p), // turn to look at existing hotspot (if there is one)
 					'yaw': Number(hsattrs.y)
 				})};
-				
+
 				// add hotspot (if there is one!)
 				if (hsattrs.p != '' && hsattrs.y != '') {
 					panorama.on('load', function(event) {
 						create360Hotspot(Number(hsattrs.p), Number(hsattrs.y),hspattrs);
 					});
 				}
-				
+
 				// move hotspot on mouse up (attempt to disregard dragging by looking at position of mouse down & making sure it was quite close)
 				var downPos = [];
-				
+
 				panorama.on('mousedown', function(event) {
 					downPos = panorama.mouseEventToCoords(event);
 				});
-				
+
 				panorama.on('mouseup', function(event) {
 					var coords = panorama.mouseEventToCoords(event);
-					
+
 					if (Math.abs(downPos[0]-coords[0]) < 0.01 && Math.abs(downPos[1]-coords[1]) < 0.01) {
 						create360Hotspot(coords[0], coords[1]);
 					}
 				});
-				
+
 				// remove existing hotspot & draw a new one
 				function create360Hotspot(pitch, yaw) {
 					panorama.removeHotSpot('currentHs');
-					
+
 					currentHsDetails.pitch = pitch;
 					currentHsDetails.yaw = yaw;
 					var borderWidth = Number(currentHsDetails.size)/4;
-					
+
 					panorama.addHotSpot({
 						'id': 'currentHs',
 						'pitch': pitch,
 						'yaw': yaw,
 						'cssClass': 'hotspot360Icon'
 					});
-					
+
 					// hotspot styles
 					$('.hotspot360Icon')
 						.append('<span class="icon360Holder"><span class="icon360"></span></span>')
@@ -3621,17 +3564,17 @@ var EDITOR = (function ($, parent) {
 				}
 			}
 		});
-		
+
 		// set up buttons
 		var key = $('#inner_img_' + id).data('key');
-		
+
 		// reset button - clear hotspot & all the customised icon info
 		$('.featherlight-content button#reset_' + id).click(function(event) {
 			panorama.removeHotSpot('currentHs');
 			currentHsDetails.pitch = '';
 			currentHsDetails.yaw = '';
 		});
-		
+
 		// OK button - save hotspot info & close lightbox
 		$('.featherlight-content button#ok_' + id).click(function(event) {
 			var current = $.featherlight.current();
@@ -3639,7 +3582,7 @@ var EDITOR = (function ($, parent) {
 			current.close();
 			parent.tree.showNodeData(key);
 		});
-		
+
 		// cancel button - close lightbox without saving hotspot info
 		$('.featherlight-content button#cancel_' + id).click(function(event) {
 			var current = $.featherlight.current();
@@ -3647,56 +3590,56 @@ var EDITOR = (function ($, parent) {
 			parent.tree.showNodeData(key);
 		});
     };
-	
+
 	edit360View = function (url, hsattrs, id, name, hspattrs) {
 		// set up contents of lightbox (buttons, panorama & instructions)
 	    var $editImg = $("<div></div>")
 			.attr('id', 'outer_img_' + id)
 			.addClass('hotspotEditor');
-		
+
 		var btns = ['reset', 'ok', 'cancel'],
 			btnLang = [language.edit360View.Buttons.Reset, language.Alert.oklabel, language.Alert.cancellabel],
 			btnIcon = ['fa-undo-alt', 'fa-check-square', 'fa-window-close'];
-		
+
         $editImg
 			.data("id", id)
 			.append('<div class="hsbutton_holder" id="hsbutton_holder_' + id + '" style="float: right;">');
-		
+
 		var $hsBtnHolder = $editImg.find('.hsbutton_holder');
-		
+
 		for (var i=0; i<btns.length; i++) {
 			$('<button id="' + btns[i] + '_' + id + '" class="hseditModeButton" title="' + btnLang[i] + '"><i class="fas fa-2x ' + btnIcon[i] + '"></i></button>').appendTo($hsBtnHolder);
 		}
-		
+
 		$editImg.append('<div id="panoramaHolder"><div id="panorama_' + id + '"></div><div class="hsinstructions" id="instructions_' + id + '"></div></div>');
-		
+
 		var instructions = language.edit360View.Instructions.header +
 				'<ul id="defaultInstructions">' +
 				'<li>' + language.edit360View.Instructions.line1 + '</li>' +
 				'<li>' + language.edit360View.Instructions.reset + '</li>' +
 				'<li>' + language.edit360View.Instructions.save + '</li>' +
 				'</ul>';
-		
+
 		$editImg.find('#instructions_' + id).html(instructions);
-		
+
 		var panorama;
-		
+
 		// open lightbox
 		$.featherlight($editImg, {
 			closeOnClick: 'false',
 			closeOnEsc: true,
 			closeIcon: '',
 			afterOpen: function () {
-				
+
 				// scale panorama
 				var dimensions = [0.7 * $('body').width(), 0.7 * $('body').height() - $('#hsbutton_holder').height() - $('.hsinstructions').height()];
-				
+
 				$('#panorama_' + id)
 					.width(dimensions[0])
 					.height(dimensions[1]);
-				
+
 				$('#outer_img_' + id).width(dimensions[0]);
-				
+
 				// get the info about the current position
 				var initPitch = 0,
 					initYaw = 0;
@@ -3728,34 +3671,34 @@ var EDITOR = (function ($, parent) {
 					'pitch': initPitch,
 					'yaw': initYaw
 				})};
-				
+
 				// focus point on mouse up (attempt to disregard dragging by looking at position of mouse down & making sure it was quite close)
 				var downPos = [];
-				
+
 				panorama.on('mousedown', function(event) {
 					downPos = panorama.mouseEventToCoords(event);
 				});
-				
+
 				panorama.on('mouseup', function(event) {
 					var coords = panorama.mouseEventToCoords(event);
-					
+
 					if (Math.abs(downPos[0]-coords[0]) < 0.01 && Math.abs(downPos[1]-coords[1]) < 0.01) {
 						panorama.setPitch(coords[0]).setYaw(coords[1]);
 					}
 				});
 			}
 		});
-		
+
 		// set up buttons
 		var key = $('#' + id + '_btn').data('key');
-		
+
 		// reset button - return to default view
 		$('.featherlight-content button#reset_' + id).click(function(event) {
 			panorama
 				.setPitch(0)
 				.setYaw(0);
 		});
-		
+
 		// OK button - save view info & close lightbox
 		$('.featherlight-content button#ok_' + id).click(function(event) {
 			var current = $.featherlight.current();
@@ -3763,7 +3706,7 @@ var EDITOR = (function ($, parent) {
 			current.close();
 			parent.tree.showNodeData(key);
 		});
-		
+
 		// cancel button - close lightbox without saving view info
 		$('.featherlight-content button#cancel_' + id).click(function(event) {
 			var current = $.featherlight.current();
@@ -3978,7 +3921,7 @@ var EDITOR = (function ($, parent) {
 				} else {
 					pages = getPageList();
 				}
-				
+
 				$.each(pages, function(page)
 				{
 					option = $('<option>')
@@ -4498,7 +4441,7 @@ var EDITOR = (function ($, parent) {
                 }
                 // Create a div with the image in there (if there is an image) and overlayed on the image is the hotspot box
                 if (url.substring(0,4) == "http" || lp === true)
-                {                    
+                {
                     var shape = "square";
                     html.addClass('clickableHotspot');
                     html.append("<img>");
@@ -4520,7 +4463,7 @@ var EDITOR = (function ($, parent) {
                 }
 
 				break;
-				
+
 			case 'hotspot360':
 				var id = 'hotspot360_' + form_id_offset;
 				form_id_offset++;
@@ -4567,15 +4510,15 @@ var EDITOR = (function ($, parent) {
 				}
 
 				break;
-			
+
 			case 'view360':
 				var id = 'view360_' + form_id_offset;
 				form_id_offset++;
-				
+
 				var hsattrs = lo_data[key].attributes;
                 var hsparent = parent.tree.getParent(key);
                 var hspattrs = lo_data[hsparent].attributes;
-				
+
 				// what image are we going to set view for? defaults to <file> unless file attr is set
 				// e.g. file='parent' looks at this parent's <file>, file='scene' looks at <scene>, file='parent.scene' looks at this parent's <scene>
 				var url = options.file == undefined ? hsattrs.file : (options.file == 'parent' ? hspattrs.file : false);
@@ -4587,7 +4530,7 @@ var EDITOR = (function ($, parent) {
 						url = hsattrs[info[0]];
 					}
 				}
-				
+
 				// we might only have the linkID of the file we need - try to find the real file
 				if (url.substring(0,12) != "FileLocation") {
 					$.each(lo_data, function(key, value) {
@@ -4595,14 +4538,14 @@ var EDITOR = (function ($, parent) {
 							url = this.attributes.file;
 							return false;
 						}
-						
+
 					});
-					
+
 				}
-				
+
 				// Replace FileLocation + ' with full url
 				url = makeAbsolute(url);
-				
+
 				// Create the container
 				html = $('<div>').attr('id', id);
 
@@ -4622,7 +4565,7 @@ var EDITOR = (function ($, parent) {
 				}
 
 				break;
-				
+
 			case 'media':
 				var id = 'media_' + form_id_offset;
 				form_id_offset++;
@@ -4759,12 +4702,12 @@ var EDITOR = (function ($, parent) {
 				)
 					.append(language.edit.$label);
 				break;
-			
+
 			case 'fontawesome':
 				var id = 'icon_' + form_id_offset;
 				form_id_offset++;
 				html = $('<div>').attr('id', id);
-				
+
 				var $input = $('<input id="' + id + '_hiddenInput" class="icon_hiddenInput" type="text" value="' + value + '">')
 					.appendTo(html)
 					.data({
@@ -4774,17 +4717,17 @@ var EDITOR = (function ($, parent) {
 					})
 					.change(function() {
 						var $this = $(this);
-						
+
 						// if an icon hasn't already been chosen swap the 'select icon' button for the icon preview
 						if ($('#' + $this.data('id') + '_btn').find('i').length == 0) {
 							$('#' + $this.data('id') + '_btn').html('<i id="' + id + '_preview" class="fas fa-fw fa-lg ' + this.value + '" title="' + language.fontawesome.preview + ': ' + this.value + '"></i>');
 						} else {
 							$('#' + $this.data('id') + '_btn').find('i').attr('title', language.fontawesome.preview + ': ' + this.value);
 						}
-						
+
 						inputChanged($this.data('id'), $this.data('key'), $this.data('name'), this.value);
 					});
-				
+
 				$('<button id="' + id + '_btn" class="xerte_button icon_browse" data-iconpicker-input="input#' + id + '_hiddenInput" data-iconpicker-preview="i#' + id + '_preview"></button>')
 					.data('input', $input)
 					.html(value != undefined && value != '' ? '<i id="' + id + '_preview" class="fa-fw ' + value + '" title="' + language.fontawesome.preview + ': ' + value + '"></i>' : language.fontawesome.preview)
@@ -4794,15 +4737,15 @@ var EDITOR = (function ($, parent) {
 						function() {setTimeout(function() {
 							var totalH = $('body').height() * 0.9;
 							var availH = totalH - (parseInt($('.ip-icons-content').css('padding-top')) * 2) - $('.ip-icons-search').outerHeight(true) - $('.ip-icons-footer').outerHeight(true);
-							
+
 							$('.ip-icons-area').css('max-height', availH + 'px');
 							$('#IconPickerModal')
 								.css('top', $('body').height() * 0.05);
 						}, 10);
 					});
-				
+
 				iconpickers.push({id: id + '_btn', iconList: options.iconList});
-				
+
 				break;
             case 'info':
                 break;
@@ -4892,6 +4835,7 @@ var EDITOR = (function ($, parent) {
     my.insertOptionalProperty = insertOptionalProperty;
     my.getPageList = getPageList;
     my.hideInlineEditor = hideInlineEditor;
+    my.add_page_ondbclick = add_page_ondbclick;
 
     return parent;
 

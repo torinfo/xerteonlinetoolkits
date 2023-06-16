@@ -88,12 +88,26 @@ body{
     background-color: #FFF !important;
 }
 
-.m-w-20{
-    max-width: 20%;
+
+.modules{
+    width: 200px;
+    transition: all 1s ease;
+}
+
+.modules-icon{
+    width: 85px !important;
+    flex-grow: 0;
+    border-radius: 0;
+    margin: 0;
+
 }
 
 .m-w-40{
     max-width: 40%;
+}
+
+.m-w-20{
+    min-width: 20%;
 }
 
 .item{
@@ -101,6 +115,8 @@ body{
     border-radius: 10px;
     margin: 10px 5px;
     justify-content: space-between;
+    flex-direction: column;
+    width: 46%;
 }
 
 .item:hover{
@@ -113,14 +129,16 @@ body{
 }
 
 .item p {
-    color: #1FA9FB !important;
+    color: #5B5B5B !important;
     padding: .5rem .75rem;
     font-weight: bold;
+    font-size: 11px;
 }
 
 .item img{
-    padding: .5rem .75rem;
-    height: 40px;
+    height: 100%;
+    padding-top: 0.5rem;
+    max-height: 80px;
 }
 
 .jstree-default .jstree-anchor{
@@ -191,18 +209,101 @@ ul {
 .wizardlabel{
     width: 96% !important;
 }
-/*
-.wizard{
-    display: flex;
+
+.collapse-menu{
+    padding: 10px;
 }
 
-.wizardattribute{
-    display: flex;
-    flex-direction: column;
-    padding-left: 30px;
-    width: 100%;
+.collapse-menu img{
+    height: 20px;
 }
 
-table.wizard td{
-    height: 25px !important;
-}*/
+.cursor-pointer{
+    cursor: pointer;
+}
+
+.menu-icon{
+    width: 40px;
+    padding-bottom: 5px;
+}
+
+.sub-menu-icon{
+    width: 300px;
+    position: fixed;
+    left: 90px;
+    z-index: 10;
+    display: flex;
+    flex-wrap: wrap;
+    background: #FFFFFF;
+    box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+    border-radius: 10px;
+}
+
+.sub-menu-icon-link{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.sub-icon{
+    width: 60%;
+}
+
+.hide{
+    display: none !important;
+}
+
+.thumbnail iframe {
+    width: 800px;
+    height: 600px;
+}
+
+.thumbnail {
+    position: relative;
+    -ms-zoom: 0.25;
+    -moz-transform: scale(0.25);
+    -moz-transform-origin: 0 0;
+    -o-transform: scale(0.25);
+    -o-transform-origin: 0 0;
+    -webkit-transform: scale(0.25);
+    -webkit-transform-origin: 0 0;
+}
+
+.thumbnail:after {
+    content: "";
+    display: block;
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+}
+
+.thumbnail-container {
+    width: calc(800px * 0.25);
+    height: calc(600px * 0.25);
+    display: inline-block;
+    overflow: hidden;
+    position: relative;
+}
+
+.thumbnail iframe {
+    opacity: 0;
+    transition: all 300ms ease-in-out;
+}
+
+
+.animate {
+    animation-duration: 0.5s;
+    animation-name: animate-fade;
+    animation-fill-mode: backwards;
+}
+
+@keyframes animate-fade {
+    0% {
+        opacity: 0;
+    }
+    100% {
+        opacity: 1;
+    }
+}

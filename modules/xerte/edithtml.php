@@ -409,6 +409,7 @@ function output_editor_code($row_edit, $xerte_toolkits_site, $read_status, $vers
     echo "educationlevel_list=" . json_encode($educationlevels) . ";\n";
     echo "grouping_list=" . json_encode($grouping) . ";\n";
     echo "course_list=" . json_encode($course) . ";\n";
+    echo "theme=\"" . $_SESSION['theme'] . "\";\n";
     // Some upgrade.php in teh past prevented the course_freetext_enabled column to be set correctly in the sitedetails table
     // If not present, set to true
     if (!isset($xerte_toolkits_site->course_freetext_enabled))

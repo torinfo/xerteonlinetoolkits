@@ -232,22 +232,13 @@ function output_editor_code($row_edit, $xerte_toolkits_site, $read_status, $vers
             <img src="http://localhost/xot/website_code/images/logo.png" id="xerte-logo" alt="" style="padding: 10px">
         </div>
         <div class="d-flex workspace w-100">
-            <div class="modules m-w-20">
+            <div class="modules">
+                <div class="d-flex justify-content-end collapse-menu">
+                    <a id="arrow-left" class="cursor-pointer" onclick="hideMenu()"><img src="http://localhost/xot/website_code/images/arrow-left.png" alt=""></a>
+                    <a id="arrow-right" class="cursor-pointer hide" onclick="collapseMenu()"><img src="http://localhost/xot/website_code/images/arrow-right.png" alt=""></a>
+                </div>
                 <div class="accordion accordion-flush" id="accordion">
-                    <div class="accordion-item">
-                        <!--<h2 class="accordion-header" id="flush-headingOne">
-                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#flush-collapseOne" aria-expanded="false" aria-controls="flush-collapseOne">
-                                Text
-                            </button>
-                        </h2>
-                        <div id="flush-collapseOne" class="accordion-collapse collapse" aria-labelledby="flush-headingOne" data-bs-parent="#accordionFlushExample">
-                            <div class="accordion-body">
-                                <div class="d-flex align-items-center item">
-                                    <p>Text > Bullets / Timed Content</p>
-                                </div>
-                            </div>
-                        </div>-->
-                    </div>
+
                 </div>
             </div>
 
@@ -336,6 +327,7 @@ function output_editor_code($row_edit, $xerte_toolkits_site, $read_status, $vers
         echo "site_url=\"" . $xerte_toolkits_site->site_url . "\";\n";
         echo "theme_list=" . json_encode($ThemeList) . ";\n";
         echo "templateframework=\"" . $row_edit['template_framework'] . "\";\n";
+        echo "theme=\"" . $_SESSION['theme'] . "\";\n";
         ?>
 
         function bunload(){
@@ -356,7 +348,7 @@ function output_editor_code($row_edit, $xerte_toolkits_site, $read_status, $vers
 
         }
     </script>
-    <script>
+ <!--   <script>
         document.onclick = hideMenu;
         document.oncontextmenu = rightClick;
 
@@ -377,7 +369,7 @@ function output_editor_code($row_edit, $xerte_toolkits_site, $read_status, $vers
         //         menu.style.top = e.pageY + "px";
         //     }
         // }
-    </script>
+    </script>-->
     <script type="text/javascript" src="editor/js/data.js?version=<?php echo $version;?>"></script>
     <script type="text/javascript" src="editor/js/application.js?version=<?php echo $version;?>"></script>
     <script type="text/javascript" src="editor/js/toolbox.js?version=<?php echo $version;?>"></script>

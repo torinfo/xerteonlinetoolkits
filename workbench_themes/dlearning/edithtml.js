@@ -1,3 +1,75 @@
+createMenu = function (){
+    var $accordion = $(".accordion");
+    $.each(menu_data.menu, function () {
+        if (!this.deprecated && (this.simple_enabled || advanced_toggle)) {
+
+            var text = document.createTextNode(this.name);
+
+            var button = document.createElement("button");
+            button.setAttribute('id', this.name.replace(/ +/g, "").replace("/","")+'-heading');
+            button.setAttribute('class', 'accordion-button collapsed');
+            button.setAttribute('type', 'button');
+            button.setAttribute('data-bs-toggle', 'collapse');
+            button.setAttribute('data-bs-target', '#'+this.name.replace(/ +/g, "").replace("/","")+'-collapse');
+            button.setAttribute('aria-expanded', 'false');
+            button.setAttribute('aria-controls', 'flush'+this.name.replace(/ +/g, "").replace("/","")+'-collapse');
+            button.appendChild(text);
+
+
+            var header  = document.createElement("h2");
+            header.setAttribute('class', 'accordion-header');
+            header.setAttribute('id', 'flush-headingOne');
+            header.appendChild(button);
+
+
+            var collapsebody = document.createElement("div");
+            collapsebody.setAttribute('class', 'accordion-body d-flex flex-wrap ');
+
+            $.each(this.submenu, function(){
+                var item = this.item
+                var name = document.createTextNode(this.name);
+                var p = document.createElement("p");
+                p.appendChild(name)
+                var image = document.createElement("img");
+                image.src = moduleurlvariable + 'icons/' + this.icon + '-dlearning.png';
+
+                var module = document.createElement("div");
+                module.setAttribute('class', 'd-flex align-items-center item');
+                module.appendChild(image)
+                module.appendChild(p)
+                module.ondblclick = function (){
+                    toolbox.add_page_ondbclick(item, "after")
+                }
+
+                collapsebody.appendChild(module);
+            })
+
+
+
+
+            var collapse = document.createElement("div");
+            collapse.setAttribute('id', this.name.replace(/ +/g, "").replace("/","")+'-collapse');
+            collapse.setAttribute('class', 'accordion-collapse collapse');
+            collapse.setAttribute('aria-labelledby', this.name.replace(/ +/g, "").replace("/","")+'-heading');
+            collapse.setAttribute('data-bs-parent', '#accordion');
+            collapse.appendChild(collapsebody);
+
+
+            var item = document.createElement("div");
+            item.setAttribute('class', 'accordion-item');
+            item.appendChild(header);
+            item.appendChild(collapse);
+
+
+
+
+            $accordion.append(item);
+
+        };
+    });
+}
+
+
 evaluateConditionExpression = function(ctree, key, currtheme) {
     switch (ctree.type) {
         case "Literal":
@@ -204,3 +276,108 @@ customDisplayParameter = function (id, all_options, name, value, key, nodelabel,
         }
     }
 }
+
+hideMenu = function (){
+    $(".accordion").empty();
+    $(".modules").addClass("modules-icon")
+    $("#arrow-left").addClass("hide")
+    $("#arrow-right").removeClass("hide")
+    createIconMenu();
+}
+
+collapseMenu = function (){
+    $(".accordion").empty();
+    $(".modules").removeClass("modules-icon")
+    $("#arrow-left").removeClass("hide")
+    $("#arrow-right").addClass("hide")
+    createMenu();
+}
+
+toggleSubMenu = function (id){
+    $(".sub-menu-icon").each(function (){
+        debugger
+        if(!$(this).hasClass("hide") && !$(this).hasClass(id)){
+            $(this).addClass("hide")
+        }
+    })
+    var submenu = $("."+id);
+    if(submenu.hasClass("hide")){
+        submenu.removeClass("hide")
+    }else{
+        submenu.addClass("hide")
+    }
+}
+
+createIconMenu = function (){
+    var $accordion = $(".accordion");
+    var iconList = document.createElement("div");
+    iconList.setAttribute('class', 'd-flex flex-column align-items-center');
+    let icons = {
+        text:{name: 'text', img:'icPageWhiteInfo'},
+        media:{name: 'media', img:'icPageWhiteFilm'},
+        navigators:{name: 'navigators', img:'icPages'},
+        connectors:{name: 'connectors', img:'icConHotSpotImage'},
+        charts:{name: 'charts', img:'icChart'},
+        interactivity:{name: 'interactivity', img:'icPageWhiteGear'},
+        games:{name: 'games', img:'game'},
+        links:{name: 'links', img:'icWorld'},
+        tracking:{name: 'tracking', img:'icResults'},
+    }
+    for (var icon in icons){
+        var atag = document.createElement("a");
+        atag.setAttribute('id', icons[icon].name);
+        //var id = icons[icon].name.toLowerCase();
+        atag.onclick = function (){
+            toggleSubMenu(this.id);
+        }
+        var img = document.createElement("img");
+        img.setAttribute('class', 'menu-icon');
+        img.src = moduleurlvariable + 'icons/' + icons[icon].img + '-dlearning.png';
+
+        atag.append(img);
+        iconList.append(atag);
+    }
+
+    $accordion.append(iconList);
+    var counter = 0;
+    $.each(menu_data.menu, function () {
+        if (!this.deprecated && (this.simple_enabled || advanced_toggle)) {
+
+            var menu = document.createElement("div");
+
+            if(this.name === "Links / Feeds"){
+                menu.setAttribute('class', 'sub-menu-icon animate hide links');
+            }
+            if(this.name === "Tracking / xAPI"){
+                menu.setAttribute('class', 'sub-menu-icon animate hide tracking');
+            }else{
+                menu.setAttribute('class', 'sub-menu-icon animate hide ' + this.name.toLowerCase());
+            }
+            menu.style.top = 144 + (counter * 45) + "px";
+
+            $.each(this.submenu, function(){
+                var item = this.item
+                var name = document.createTextNode(this.name);
+                var p = document.createElement("p");
+                p.appendChild(name)
+                var image = document.createElement("img");
+                image.src = moduleurlvariable + 'icons/' + this.icon + '-dlearning.png';
+
+                var module = document.createElement("div");
+                module.setAttribute('class', 'd-flex align-items-center item');
+                module.appendChild(image)
+                module.appendChild(p)
+                module.ondblclick = function (){
+                    add_page_ondbclick(item, "after")
+                }
+
+                menu.appendChild(module);
+            })
+
+            $accordion.append(menu)
+            counter++;
+
+        };
+    });
+}
+

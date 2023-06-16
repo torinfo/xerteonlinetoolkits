@@ -28,7 +28,6 @@ var EDITOR = (function ($, parent) {
         fallback_language = {},
 
     parse_wizard_xml = function (wizard_xml) {
-
         var compare = function(a,b) {
             if (a.name < b.name)
                 return -1;
@@ -272,7 +271,6 @@ var EDITOR = (function ($, parent) {
 
     process_data_xwd = function (xml) {
         //console.log("data.xwd is loaded...");
-
         var wizard_xml = $($.parseXML(xml)).find("wizard");
 
         parse_wizard_xml(wizard_xml);
