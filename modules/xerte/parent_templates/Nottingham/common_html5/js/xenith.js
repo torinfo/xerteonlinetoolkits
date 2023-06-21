@@ -2681,15 +2681,19 @@ function jGetElement(blockid, element) {
 // cannot use global variables anymore as multiple blocks would use the same
 // global variables:
 
-// Pushes a dom element to x_pageDicts with optional blockid
-// returns the given element for convenience (stored by reference not copy)
-function x_pushToPageDict(element, name, blockid = -1){
+
+
+// Pushes a dom element or object to x_pageDicts with optional blockid.
+// returns the given object for convenience.
+// When dealing with primitives and immutables, push new values to the dictionary,
+// or wrap them in an object if you plan on changing the values later.
+function x_pushToPageDict(object, name, blockid = -1){
     let key = blockid == -1 ? name : name + "_" + blockid;
-    x_pageDicts[x_currentPage][key] = element;
-    return element;
+    x_pageDicts[x_currentPage][key] = object;
+    return object;
 }
 
-// Gets a dom element from x_pageDicts with optional blockid
+// Gets an object from x_pageDicts with optional blockid
 function x_getPageDict(name, blockid = -1){
     let key = blockid == -1 ? name : name + "_" + blockid;
     let result = x_pageDicts[x_currentPage][key];
@@ -3041,7 +3045,8 @@ function x_changePageStep5a(x_gotoPage) {
     let nodes = [];
     let standalone_block = false;
     // if there are blocks on this page: set x_blocksXML etc
-    if (x_currentPageXML.nodeName == "annotatedDiagram"){ //Add all modules/pages that have been replaced by blocks
+    if (x_currentPageXML.nodeName == "annotatedDiagram" ||
+		x_currentPageXML.nodeName == "categories"){ //Add all modules/pages that have been replaced by blocks
         nodes = [x_currentPageXML];
         standalone_block = true;
     }else{

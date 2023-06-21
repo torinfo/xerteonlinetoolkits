@@ -1,11 +1,11 @@
-var categories = new function() {
-    var labelTxt1,
-        labelTxt2,
-        labelTxt3,
-        targetTxt1,
-        targetTxt2,
-        checked,
-        total_options;
+var categoriesBlock = new function() {
+    // var labelTxt1,
+    //     labelTxt2,
+    //     labelTxt3,
+    //     targetTxt1,
+    //     targetTxt2,
+    //     checked,
+    //     total_options;
 
     // function called every time the page is viewed after it has initially loaded
     this.pageChanged = function(blockid) {
@@ -33,7 +33,7 @@ var categories = new function() {
 
     this.leavePage = function(blockid)
     {
-        if (!this.checked)
+        if ( x_getPageDict('variables', blockid).checked)
         {
             this.showFeedBackandTrackScore(blockid);
         }
@@ -41,6 +41,7 @@ var categories = new function() {
 
     this.showFeedBackandTrackScore = function(blockid)
     {
+        let variables = x_getPageDict('variables', blockid);
         var l_options = [],
             l_answers = [],
             l_feedback = [],
@@ -74,60 +75,62 @@ var categories = new function() {
         });
 
         jGetElement(blockid,"#scoreTxt").html(l_correct);
-        jGetElement(blockid,"#totalTxt").html(this.totaloptions);
+        jGetElement(blockid,"#totalTxt").html(variables.totaloptions);
         jGetElement(blockid,".feedback").show();
         var result = {
-            success: (l_correct == this.totaloptions),
-            score: (l_correct * 100.0)/this.totaloptions
+            success: (l_correct == variables.totaloptions),
+            score: (l_correct * 100.0)/variables.totaloptions
         }
         XTExitInteraction(x_currentPage, 0, result, l_options, l_answers, l_feedback);
-        XTSetPageScore(x_currentPage, (l_correct * 100.0)/this.totaloptions);
-        this.checked = true;
+        XTSetPageScore(x_currentPage, (l_correct * 100.0)/variables.totaloptions);
+        variables.checked = true;
     }
 
-    this.init = function(pageXML, blockid) {
-        x_currentPageXML = pageXML;
-        this.checked = false;
-        this.totaloptions = 0;
+    this.init = function(blockid) {
+        var blockXML = x_getBlockXML(blockid);
+        let variables = {checked: false,
+                         totaloptions: 0,
+                         weighting: 1.0};
+        x_pushToPageDict(variables, 'variables', blockid);
+
         var correctOptions = [],
             correctAnswer = [],
             correctFeedback = [];
 
-        this.checked = false;
         // Track the quiz page
-        this.weighting = 1.0;
-        if (x_currentPageXML.getAttribute("trackingWeight") != undefined)
+        if (blockXML.getAttribute("trackingWeight") != undefined)
         {
-            this.weighting = x_currentPageXML.getAttribute("trackingWeight");
+            variables.weighting = blockXML.getAttribute("trackingWeight");
         }
-        XTSetPageType(x_currentPage, 'numeric', 1, this.weighting);
+        XTSetPageType(x_currentPage, 'numeric', 1, variables.weighting);
 
 
 
         // store strings used to give titles to labels and categories when keyboard is being used (for screen readers)
-        labelTxt1 = x_getLangInfo(x_languageData.find("interactions").find("draggableItem")[0], "name", "Draggable Item");
-        labelTxt2 = x_getLangInfo(x_languageData.find("interactions").find("draggableItem")[0], "selected", "Item Selected");
-        labelTxt3 = x_getLangInfo(x_languageData.find("interactions").find("draggableItem")[0], "toSelect", "Press space to select");
-        targetTxt1 = x_getLangInfo(x_languageData.find("interactions").find("targetArea")[0], "description", "Drop zone for");
-        targetTxt2 = x_getLangInfo(x_languageData.find("interactions").find("targetArea")[0], "toSelect", "Press space to drop the selected item.");
+        // These string values are never changed so we can push them to the pagedict as is. (not in an object like checked, totaloptions and weighting)
+        let labelTxt1 = x_pushToPageDict(x_getLangInfo(x_languageData.find("interactions").find("draggableItem")[0], "name", "Draggable Item"),'labelTxt1', blockid);
+        let labelTxt2 = x_pushToPageDict(x_getLangInfo(x_languageData.find("interactions").find("draggableItem")[0], "selected", "Item Selected"),  'labelTxt2', blockid);
+        let labelTxt3 = x_pushToPageDict(x_getLangInfo(x_languageData.find("interactions").find("draggableItem")[0], "toSelect", "Press space to select"), 'labelTxt3', blockid);
+        let targetTxt1 = x_pushToPageDict(x_getLangInfo(x_languageData.find("interactions").find("targetArea")[0], "description", "Drop zone for"), 'targetTxt1', blockid);
+        let targetTxt2 = x_pushToPageDict(x_getLangInfo(x_languageData.find("interactions").find("targetArea")[0], "toSelect", "Press space to drop the selected item."), 'targetTxt2', blockid);
 
         jGetElement(blockid,".textHolder")
-            .html(x_addLineBreaks(x_currentPageXML.getAttribute("text")))
+            .html(x_addLineBreaks(blockXML.getAttribute("text")))
             .addClass("transparent"); /* without the text having a bg the labels strangely aren't selectable in IE */
 
         var $feedback = jGetElement(blockid,".feedback");
-        if (x_currentPageXML.getAttribute("feedback") != undefined && x_currentPageXML.getAttribute("feedback") != "") {
-            $feedback.html(x_addLineBreaks(x_currentPageXML.getAttribute("feedback")));
+        if (blockXML.getAttribute("feedback") != undefined && blockXML.getAttribute("feedback") != "") {
+            $feedback.html(x_addLineBreaks(blockXML.getAttribute("feedback")));
         }
-        if (x_currentPageXML.getAttribute("feedbackScore") != undefined && x_currentPageXML.getAttribute("feedbackScore") != "") {
-            $feedback.append('<p>' + x_addLineBreaks(x_currentPageXML.getAttribute("feedbackScore").replace("{i}", '<span id="scoreTxt"></span>').replace("{n}", '<span id="totalTxt"></span>')) + '</p>');
+        if (blockXML.getAttribute("feedbackScore") != undefined && blockXML.getAttribute("feedbackScore") != "") {
+            $feedback.append('<p>' + x_addLineBreaks(blockXML.getAttribute("feedbackScore").replace("{i}", '<span id="scoreTxt"></span>').replace("{n}", '<span id="totalTxt"></span>')) + '</p>');
         } else if ($feedback.html().length == 0) {
             $feedback.remove();
         }
         $feedback.hide();
 
         // buttonWidth attribute not used as button will be sized automatically
-        var buttonLabel = x_currentPageXML.getAttribute("buttonLabel");
+        var buttonLabel = blockXML.getAttribute("buttonLabel");
         if (buttonLabel == undefined) {
             buttonLabel = "Check Answers";
         }
@@ -137,15 +140,15 @@ var categories = new function() {
                 label:	buttonLabel
             })
             .click(function() { // mark labels and show feedback
-                categories.showFeedBackandTrackScore(blockid);
-                categories.checked = true;
+                categoriesBlock.showFeedBackandTrackScore(blockid);
+                x_getPageDict('variables', blockid).checked = true;
             });
 
         // create categories
         var $categoryHolder = jGetElement(blockid,".categoryHolder"),
             $firstCategory = $categoryHolder.find(".category"),
             labels = [];
-        $(x_currentPageXML).children()
+        $(blockXML).children()
             .each(function(i) {
                 var $thisCategory,
                     catName,
@@ -168,21 +171,21 @@ var categories = new function() {
                     correctOptions.push(correctOption);
                     correctAnswer.push(itemName + "-->" + catName);
                     correctFeedback.push("Correct");
-                    categories.totaloptions++;
+                    x_getPageDict('variables', blockid).totaloptions++;
                 });
             });
 
-        var label = $('<div>').html(x_currentPageXML.getAttribute("name")).text();
-        if (x_currentPageXML.getAttribute("trackinglabel") != null && x_currentPageXML.getAttribute("trackinglabel") != "")
+        var label = $('<div>').html(blockXML.getAttribute("name")).text();
+        if (blockXML.getAttribute("trackinglabel") != null && blockXML.getAttribute("trackinglabel") != "")
         {
-            label = x_currentPageXML.getAttribute("trackinglabel");
+            label = blockXML.getAttribute("trackinglabel");
         }
-        XTEnterInteraction(x_currentPage, 0, 'match', label, correctOptions, correctAnswer, correctFeedback, x_currentPageXML.getAttribute("grouping"), null);
+        XTEnterInteraction(x_currentPage, 0, 'match', label, correctOptions, correctAnswer, correctFeedback, blockXML.getAttribute("grouping"), null);
         var $pageContents = jGetElement(blockid,".pageContents");
         $pageContents.data("labels", labels);
 
         // style categories
-        var numColumns = $(x_currentPageXML).children().length,
+        var numColumns = $(blockXML).children().length,
             spacerWidth = ((numColumns - 1) * 2) + (numColumns * 2), // 2% gap between categories & 1% left & 1% right padding inside categories
             columnWidth = Math.floor((100 - spacerWidth) / numColumns),
             edgeWidth = Math.floor((100 - spacerWidth - (columnWidth * numColumns)) / 2);
@@ -247,7 +250,7 @@ var categories = new function() {
 
         // set tab index for targets - leaving space between them for any labels that are put on them
         var tabIndex = 0;
-        for (i=0; i<$categoryHolder.find(".category").length; i++) {
+        for (let i=0; i<$categoryHolder.find(".category").length; i++) {
             tabIndex = (i + 1) * ($pageContents.data("labels").length + 1) + 1;
             var $category = $categoryHolder.find(".category:eq(" + i + ")");
             var categoryTitle = $("<div>").html($category.find("h3").html()).text();
@@ -268,6 +271,10 @@ var categories = new function() {
     };
 
     this.createLabels = function(blockid) {
+        let labelTxt1 = x_getPageDict('labelTxt1', blockid);
+        let labelTxt2 = x_getPageDict('labelTxt2', blockid);
+        let labelTxt3 = x_getPageDict('labelTxt3', blockid);
+        let targetTxt1 = x_getPageDict('targetTxt1', blockid);
         // randomise order and create labels
         var $pageContents = jGetElement(blockid,".pageContents"),
             labels = [],

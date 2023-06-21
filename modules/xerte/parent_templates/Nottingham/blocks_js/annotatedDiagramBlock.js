@@ -237,7 +237,6 @@ var annotatedDiagramBlock = new function () {
         }
 
         // if position is left or right then image size will constrain the image width - if position is top then image size will constrain the image height
-        debugger;
         var maxPanel = blockXML.getAttribute("panelWidth") == "Large" ? 0.8 : blockXML.getAttribute("panelWidth") == "Small" ? 0.3 : 0.55,
             panelOuterW = panel.outerWidth() - panel.width(),
             panelOuterH = panel.outerHeight() - panel.height();
