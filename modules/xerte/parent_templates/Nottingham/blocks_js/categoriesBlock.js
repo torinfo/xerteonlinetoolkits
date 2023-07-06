@@ -7,6 +7,59 @@ var categoriesBlock = new function() {
     //     checked,
     //     total_options;
 
+    updateContainment = function(){
+        $.widget("ui.sortable", $.ui.sortable, {
+            _setContainment: function () {
+                var ce, co, over, maxHeight,
+                    o = this.options;
+                if (o.containment === "parent") {
+                    o.containment = this.helper[0].parentNode;
+                }
+                if (o.containment === "document" || o.containment === "window") {
+                    this.containment = [
+                        0 - this.offset.relative.left - this.offset.parent.left,
+                        0 - this.offset.relative.top - this.offset.parent.top,
+                        $(o.containment === "document" ? document : window).width() - this.helperProportions.width - this.margins.left,
+                        ($(o.containment === "document" ? document : window).height() || document.body.parentNode.scrollHeight) - this.helperProportions.height - this.margins.top
+                    ];
+                }
+
+                if (!(/^(document|window|parent)$/).test(o.containment)) {
+                    ce = $(o.containment)[0];
+                    co = $(o.containment).offset();
+                    over = ($(ce).css("overflow") !== "hidden");
+                    maxHeight = (parseInt($(ce).css("max-height"), 10) || 0);
+
+                    this.containment = [
+                        co.left +
+                        (parseInt($(ce).css("borderLeftWidth"), 10) || 0) +
+                        (parseInt($(ce).css("paddingLeft"), 10) || 0) -
+                        this.margins.left,
+                        co.top +
+                        (parseInt($(ce).css("borderTopWidth"), 10) || 0) +
+                        (parseInt($(ce).css("paddingTop"), 10) || 0) -
+                        this.margins.top,
+                        co.left +
+                        (over ? Math.max(ce.scrollWidth, ce.offsetWidth) : ce.offsetWidth) -
+                        (parseInt($(ce).css("borderLeftWidth"), 10) || 0) -
+                        (parseInt($(ce).css("paddingRight"), 10) || 0) -
+                        this.helperProportions.width -
+                        this.margins.left,
+                        co.top +
+                        (over ?
+                            ((maxHeight && ce.scrollHeight > maxHeight) ?
+                                    maxHeight : Math.max(ce.scrollHeight, ce.offsetHeight)
+                            ) : ce.offsetHeight) -
+                        (parseInt($(ce).css("borderTopWidth"), 10) || 0) -
+                        (parseInt($(ce).css("paddingBottom"), 10) || 0) -
+                        this.helperProportions.height -
+                        this.margins.top
+                    ];
+                }
+            }
+        });
+    }
+
     // function called every time the page is viewed after it has initially loaded
     this.pageChanged = function(blockid) {
         jGetElement(blockid,".dragDropHolder .label").remove();
@@ -28,7 +81,20 @@ var categoriesBlock = new function() {
 
         var $categoryHolder = jGetElement(blockid,".categoryHolder"),
             $category = $categoryHolder.find(".category");
-        $category.css("min-height", $x_pageHolder.height() - parseInt($x_pageDiv.css("padding-top")) * 2 - parseInt($categoryHolder.position().top) - parseInt($category.css("padding-top")) * 2 - jGetElement(blockid,".button").height() - 25);
+
+
+        if ($("#x_page" + x_currentPage).is(":hidden")){
+            $("#x_page" + x_currentPage).show();
+        }
+        let standalone = $("#"+blockid).parent().parent().attr('id') == "x_pageDiv";
+        let pageHolder_standin = standalone ? $x_pageHolder :  $("#"+blockid).parent().parent();
+        let pageDiv_standin = standalone ? $x_pageDiv :  $("#"+blockid).parent().parent();
+        if ($("#"+blockid).parent().parent().attr("class") == "panelPage"){
+            pageHolder_standin = $("#"+blockid).parent().parent();
+        }
+        let min_height = pageHolder_standin.height() - parseInt(pageDiv_standin.css("padding-top")) * 2 - (parseInt(pageHolder_standin.offset().top) - (parseInt($categoryHolder.offset().top) - parseInt(jGetElement(blockid,".pageContents").offset().top))) - parseInt($category.css("padding-top")) * 2 - jGetElement(blockid,".button").height() - 25;
+
+        $category.css("min-height", min_height);
     }
 
     this.leavePage = function(blockid)
@@ -87,6 +153,7 @@ var categoriesBlock = new function() {
     }
 
     this.init = function(blockid) {
+        //updateContainment();
         var blockXML = x_getBlockXML(blockid);
         let variables = {checked: false,
                          totaloptions: 0,
@@ -296,7 +363,6 @@ var categoriesBlock = new function() {
                 $thisLabel.hide();
             }
         }
-
         jGetElement(blockid,".initHolder, .categoryHolder .category").sortable({
             connectWith:	".categoryHolder .category",
             items:			".label",
@@ -313,6 +379,13 @@ var categoriesBlock = new function() {
                     ui.item.parent().children(".label").each(function(i) {
                         $(this).attr("tabindex", categoryIndex + i + 1);
                     });
+                }
+                if ($("#infoHolder").length != 0){
+                    $("#infoHolder").css("overflow", "auto");
+                    $("#infoHolder").css("padding-right", "");
+                }else{
+                    $("#"+blockid).parent().css("overflow", "auto");
+                    $("#"+blockid).parent().css("padding-right", '');
                 }
             },
             start:	function() {
@@ -335,6 +408,17 @@ var categoriesBlock = new function() {
 
                 jGetElement(blockid,".feedback").hide();
                 jGetElement(blockid,".dragDropHolder .tick").remove();
+
+                //TODO: this is kind of a hack because the containment doesnt work when infoholder can scroll
+                if ($("#infoHolder").length != 0) {
+                    $("#infoHolder").css("overflow", "hidden");
+                    //TODO: this works for firefox but might not be the correct scrollbarwidth for other browsers:
+                    $("#infoHolder").css("padding-right", "8px");
+                }else{
+                    $("#"+blockid).parent().css("overflow", "hidden");
+                    let pad = $("#"+blockid).parent().css('padding-right');
+                    $("#"+blockid).parent().css("padding-right", parseFloat(pad) + 8.0);
+                }
             }
         }).disableSelection();
 

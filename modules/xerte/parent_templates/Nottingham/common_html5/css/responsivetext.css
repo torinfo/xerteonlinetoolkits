@@ -27,6 +27,7 @@
   #mainTxt h3 {
     font-size: 2.5vmin;
   }
+  .infoHolder,
   #infoHolder {
     font-size: 2.5vmin;
   }
@@ -51,12 +52,15 @@
   .listItem {
     font-size: 2.5vmin;
   }
+  .categoryHolder,
   #categoryHolder {
     font-size: 2.5vmin;
   }
+  .dragDropHolder,
   #dragDropHolder {
     font-size: 2vmin;
   }
+  .dragDropHolder .label,
   #dragDropHolder .label {
     font-size: 2vmin;
   }
@@ -101,6 +105,7 @@
   #targetHolder h3 {
     font-size: 2.5vmin;
   }
+  .answerTxt,
   #answerTxt {
     font-size: 2.5vmin;
   }

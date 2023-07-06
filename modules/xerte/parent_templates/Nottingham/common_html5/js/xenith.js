@@ -2987,7 +2987,7 @@ function x_endPageTracking(pagechange, x_gotoPage) {
             {
                 customHTML.leavePage();
             }
-        }
+        } 
         XTExitPage(x_currentPage);
     }
 }

@@ -40,6 +40,7 @@ h5 {
 #mainTxt h3 {
     font-size: $pagecontentslarge;
 }
+  .infoHolder,
 #infoHolder {
     font-size: $pagecontentslarge;
 }
@@ -64,12 +65,15 @@ h5 {
 .listItem {
     font-size: $pagecontentslarge;
 }
+  .categoryHolder,
 #categoryHolder {
     font-size: $pagecontentslarge;
 }
+  .dragDropHolder,
 #dragDropHolder {
     font-size: $pagecontentsmedium;
 }
+  .dragDropHolder .label,
 #dragDropHolder .label {
     font-size: $pagecontentsmedium;
 }
@@ -114,6 +118,7 @@ input#x_pagePswd {
 #targetHolder h3 {
     font-size: $pagecontentslarge;
 }
+  .answerTxt,
 #answerTxt {
     font-size: $pagecontentslarge;
 }
