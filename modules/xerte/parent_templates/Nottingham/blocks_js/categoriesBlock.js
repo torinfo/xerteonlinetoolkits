@@ -90,9 +90,12 @@ var categoriesBlock = new function() {
         let pageHolder_standin = standalone ? $x_pageHolder :  $("#"+blockid).parent().parent();
         let pageDiv_standin = standalone ? $x_pageDiv :  $("#"+blockid).parent().parent();
         if ($("#"+blockid).parent().parent().attr("class") == "panelPage"){
-            pageHolder_standin = $("#"+blockid).parent().parent();
+            pageHolder_standin = $("#"+blockid).parent().parent().parent();
         }
-        let min_height = pageHolder_standin.height() - parseInt(pageDiv_standin.css("padding-top")) * 2 - (parseInt(pageHolder_standin.offset().top) - (parseInt($categoryHolder.offset().top) - parseInt(jGetElement(blockid,".pageContents").offset().top))) - parseInt($category.css("padding-top")) * 2 - jGetElement(blockid,".button").height() - 25;
+        let categoryHolderOffset = parseInt($categoryHolder.offset().top) - parseInt($("#"+blockid).offset().top);
+        let blockOffset =  parseInt($("#"+blockid).parent().children().first().offset().top) - parseInt(pageHolder_standin.offset().top) + parseInt($("#"+blockid).css("padding-top")) * 2 + parseInt($("#"+blockid).css("margin-bottom"));
+        debugger;
+        let min_height = pageHolder_standin.height() - parseInt(pageDiv_standin.css("padding-top")) * 2 - blockOffset - categoryHolderOffset - parseInt($category.css("padding-top")) * 2 - jGetElement(blockid,".button").height() - 25;
 
         $category.css("min-height", min_height);
     }

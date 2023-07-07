@@ -278,7 +278,7 @@ if (false){
 									$(this).attr("title", targetTxt1 + " " + categoryTitle);
 
 									// change tab index of label so it's now after the target it's on
-									var categoryIndex = $(this).attr("tabindex");
+									var categoryIndex = parseInt($(this).attr("tabindex"));
 									$(this).children(".label").each(function (i) {
 										$(this).attr("tabindex", categoryIndex + i + 1);
 									});
@@ -344,13 +344,13 @@ if (false){
 						}
 
 						// change tab index of label so it's now after the target it's on
-						var categoryIndex = ui.item.parent().attr("tabindex");
+						var categoryIndex = parseInt(ui.item.parent().attr("tabindex"));
 						ui.item.parent().children(".label").each(function (i) {
 							$(this).attr("tabindex", categoryIndex + i + 1);
 						});
 					}
 				},
-				start: function () {
+				start: function (){
 					// remove any focus/selection highlights made by tabbing to labels/targets
 					var $pageContents = $("#pageContents");
 					if ($("#dragDropHolder .label.focus").length > 0) {
