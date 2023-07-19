@@ -356,7 +356,6 @@ function TrackingManager(){
 
     function setPageType(page_nr, page_type, nrinteractions, weighting)
     {
-          
         var sit = this.findPage(page_nr);
         if (sit != null)
         {
