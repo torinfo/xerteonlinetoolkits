@@ -426,7 +426,7 @@ function XTResults(fullcompletion) {
                                 matchSub.correct = (learnerAnswer === correctAnswer);
                                 matchSub.learnerAnswer = learnerAnswer;
                                 matchSub.correctAnswer = correctAnswer;
-                                results.interactions[i].subinteractions.push(matchSub);
+                                results.interactions[nrofquestions - 1].subinteractions.push(matchSub);
                             }
 
                             break;
@@ -462,7 +462,7 @@ function XTResults(fullcompletion) {
                         subinteraction.correct = trackingManager.pageStates[i].interactions[x].result.success;
                         subinteraction.learnerAnswer = learnerAnswer;
                         subinteraction.correctAnswer = correctAnswer;
-                        results.interactions[i].subinteractions.push(subinteraction);
+                        results.interactions[nrofquestions - 1].subinteractions.push(subinteraction);
                     }
                 }
 
