@@ -294,7 +294,7 @@ function TrackingManager(){
 
     function exitInteraction(page_nr, ia_nr, result, learneroptions, learneranswer, feedback, ia_sub_nr = 0)
     {
-
+        debugger;
         var sit = this.findInteraction(page_nr, ia_nr, ia_sub_nr);
         if (sit != null) {
             if (ia_nr !== -1) {
@@ -385,7 +385,7 @@ function TrackingManager(){
 
     function setPageScore(page_nr, score)
     {
-
+        debugger;
         var page = this.findPage(page_nr);
         var tempscore = 0;
         for(i=0;i<page.interactions.length;i++){

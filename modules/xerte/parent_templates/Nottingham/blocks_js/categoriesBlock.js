@@ -149,7 +149,8 @@ var categoriesBlock = new function() {
             success: (l_correct == variables.totaloptions),
             score: (l_correct * 100.0)/variables.totaloptions
         }
-        XTExitInteraction(x_currentPage, 0, result, l_options, l_answers, l_feedback);
+        debugger;
+        XTExitInteraction(x_currentPage, x_getBlockNr(blockid), result, l_options, l_answers, l_feedback);
         XTSetPageScore(x_currentPage, (l_correct * 100.0)/variables.totaloptions);
         variables.checked = true;
     }
@@ -249,7 +250,8 @@ var categoriesBlock = new function() {
         {
             label = blockXML.getAttribute("trackinglabel");
         }
-        XTEnterInteraction(x_currentPage, 0, 'match', label, correctOptions, correctAnswer, correctFeedback, blockXML.getAttribute("grouping"), null);
+        debugger;
+        XTEnterInteraction(x_currentPage, x_getBlockNr(blockid), 'match', label, correctOptions, correctAnswer, correctFeedback, blockXML.getAttribute("grouping"), null);
         var $pageContents = jGetElement(blockid,".pageContents");
         $pageContents.data("labels", labels);
 
