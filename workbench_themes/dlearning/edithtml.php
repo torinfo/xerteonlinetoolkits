@@ -328,6 +328,7 @@ function output_editor_code($row_edit, $xerte_toolkits_site, $read_status, $vers
         echo "theme_list=" . json_encode($ThemeList) . ";\n";
         echo "templateframework=\"" . $row_edit['template_framework'] . "\";\n";
         echo "theme=\"" . $_SESSION['theme'] . "\";\n";
+        echo "updatePageLevelTree=false;\n";
         ?>
 
         function bunload(){
@@ -373,10 +374,11 @@ function output_editor_code($row_edit, $xerte_toolkits_site, $read_status, $vers
     <script type="text/javascript" src="editor/js/data.js?version=<?php echo $version;?>"></script>
     <script type="text/javascript" src="editor/js/application.js?version=<?php echo $version;?>"></script>
     <script type="text/javascript" src="editor/js/toolbox.js?version=<?php echo $version;?>"></script>
-    <script type="text/javascript" src="workbench_themes/dlearning/edithtml.js"></script>
     <script type="text/javascript" src="editor/js/language.js?version=<?php echo $version;?>"></script>
-<!--    <script type="text/javascript" src="editor/js/layout.js?version=--><?php //echo $version;?><!--"></script>-->
+    <!--    <script type="text/javascript" src="editor/js/layout.js?version=--><?php //echo $version;?><!--"></script>-->
     <script type="text/javascript" src="editor/js/tree.js?version=<?php echo $version;?>"></script>
+    <script type="text/javascript" src="workbench_themes/dlearning/edithtml.js"></script>
+
     </body>
     </html>
 

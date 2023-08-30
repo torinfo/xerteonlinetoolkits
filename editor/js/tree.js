@@ -20,7 +20,6 @@
 // Tree : Add the tree object to the editor
 
 var EDITOR = (function ($, parent) {
-    debugger
     // Create the tree object and refer locally to it as 'my'
     var my = parent.tree = {},
         toolbox = parent.toolbox,
@@ -1406,14 +1405,15 @@ var EDITOR = (function ($, parent) {
                 treeLabel = wizard_data[treeLabel].menu_options.menuItem;
         }
         // Add icons to the node, all should be switched off
-        // Create node text based on xml, do not use text of original node, as this is not correct
+        // Create node text based on xml, do not use text  of original node, as this is not correct
         var hiddenIcon = toolbox.getExtraTreeIcon(lkey, "hidden", false);
         var passwordIcon = toolbox.getExtraTreeIcon(lkey, "password", false);
         var standaloneIcon = toolbox.getExtraTreeIcon(lkey, "standalone", false);
         var unmarkIcon = toolbox.getExtraTreeIcon(lkey, "unmark", false);
 		var advancedIcon = toolbox.getExtraTreeIcon(lkey, "advanced", simple_mode && template_sub_pages.indexOf(nodeName) == -1);
+        debugger
 
-        var treeLabel = '<span id="' + lkey + '_container">' + unmarkIcon + hiddenIcon + passwordIcon + standaloneIcon + advancedIcon + '</span><span id="' + lkey + '_text">' + treeLabel + '</span>';
+        var treeLabel = '<span id="' + lkey + '_container">' + unmarkIcon + hiddenIcon + passwordIcon + standaloneIcon + advancedIcon + '</span><div class="thumbnail-container"><div class="thumbnail"><iframe id="' + lkey + '_iframe" src="'+site_url+'preview.php?template_id='+template_id+'&linkID=' + attributes.linkID +'&ingnorehidden=1" onload="var that=this;setTimeout(function() { that.style.opacity = 1 }, 500)">"</iframe></div></div>';
         var this_json = {
             id : lkey,
             text : treeLabel,

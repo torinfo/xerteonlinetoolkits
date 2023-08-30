@@ -38,7 +38,7 @@ createMenu = function (){
                 module.appendChild(image)
                 module.appendChild(p)
                 module.ondblclick = function (){
-                    toolbox.add_page_ondbclick(item, "after")
+                    EDITOR.toolbox.add_page_ondbclick(item, "after")
                 }
 
                 collapsebody.appendChild(module);
@@ -379,5 +379,50 @@ createIconMenu = function (){
 
         };
     });
+}
+
+setAttributeValueTheme=function (key, names, value){
+    updatepage(key, names, value)
+}
+
+updatepage = function(key, names, value) {
+    debugger
+    if (typeof merged !== 'undefined' && merged == true) {
+        return;
+    }
+
+    var json = EDITOR.tree.build_json("treeroot");
+    var ajax_call = $.ajax({
+        url: "editor/upload.php",
+        data: {
+            fileupdate: 0, // 1=publish -> data.xml
+            filename: previewxmlurl,
+            lo_data: encodeURIComponent(JSON.stringify(json)),
+            absmedia: rlourlvariable,
+            template_id: template_id,
+            backup: false // when false, no backup is created
+        },
+
+        dataType: "json",
+        type: "POST",
+        cache: false,
+        async: true
+    })
+        .done(function () {
+            $('#loader').hide();
+            var id = key + "_iframe"
+            if(key == "treeroot"){
+                $("#treeview").find("iframe").each(function (){
+                    $(this)[0].contentWindow.location.reload();
+                })
+            }else{
+                document.getElementById(id).contentWindow.location.reload();
+
+            }
+        })
+        .fail(function () {
+            $('#loader').hide();
+            alert("error");
+        });
 }
 

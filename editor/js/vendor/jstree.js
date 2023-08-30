@@ -2576,10 +2576,19 @@
 					node.childNodes[1].childNodes[0].className += ' ' + obj.icon + ' jstree-themeicon-custom';
 				}
 				else {
-					node.childNodes[1].childNodes[0].style.backgroundImage = 'url("'+obj.icon+'")';
-					node.childNodes[1].childNodes[0].style.backgroundPosition = 'center center';
-					node.childNodes[1].childNodes[0].style.backgroundSize = 'auto';
-					node.childNodes[1].childNodes[0].className += ' jstree-themeicon-custom';
+					debugger
+					if(!obj.text.includes("iframe")){
+						node.childNodes[1].childNodes[0].style.backgroundImage = 'url("'+obj.icon+'")';
+						node.childNodes[1].childNodes[0].style.backgroundPosition = 'center center';
+						node.childNodes[1].childNodes[0].style.backgroundSize = 'auto';
+						node.childNodes[1].childNodes[0].className += ' jstree-themeicon-custom';
+					}else{
+						node.childNodes[1].childNodes[0].style.backgroundPosition = 'center center';
+						node.childNodes[1].childNodes[0].style.backgroundSize = 'auto';
+						node.childNodes[1].childNodes[0].className += ' jstree-themeicon-custom';
+					}
+
+
 				}
 			}
 

@@ -311,6 +311,11 @@ var EDITOR = (function ($, parent) {
         {
             var tree = $.jstree.reference("#treeview");
             var node = tree.get_node(key, false);
+            debugger
+            // this is a page level node and the them does not want to change the label, skip update
+            if (node.parent === 'treeroot' && typeof updatePageLevelTree !== 'undefined' && updatePageLevelTree === false) {
+                return;
+            }
 
             if (deprecatedState) {
                 tooltip = $("#" + key + '_deprecated')[0].attributes['title'];
@@ -419,10 +424,10 @@ var EDITOR = (function ($, parent) {
         var standaloneIcon = getExtraTreeIcon(key, "standalone", xmlData[0].getAttribute("linkPage") == "true");
         var unmarkIcon = getExtraTreeIcon(key, "unmark", xmlData[0].getAttribute("unmarkForCompletion") == "true" && parent_id == 'treeroot');
 		var advancedIcon = getExtraTreeIcon(key, "advanced", simple_mode && parent_id == 'treeroot' && template_sub_pages.indexOf(lo_data[key].attributes.nodeName) == -1);
-        debugger
+
         if(parent_id == "treeroot"){
             page++
-            treeLabel = '<span id="' + key + '_container">' + unmarkIcon + hiddenIcon + passwordIcon + standaloneIcon + deprecatedIcon + advancedIcon + '</span><div class="thumbnail-container"><div class="thumbnail"><iframe src="http://localhost/xot/preview.php?template_id=64#page' + page +'" onload="var that=this;setTimeout(function() { that.style.opacity = 1 }, 500)">"</iframe></div></div>';
+            treeLabel = '<span id="' + key + '_container">' + unmarkIcon + hiddenIcon + passwordIcon + standaloneIcon + deprecatedIcon + advancedIcon + '</span><div class="thumbnail-container"><div class="thumbnail"><iframe id="' + key + '_iframe" src="'+site_url+'preview.php?template_id='+template_id+'&linkID=' + xmlData[0].attributes[0].value +'&ingnorehidden=1" onload="var that=this;setTimeout(function() { that.style.opacity = 1 }, 500)">"</iframe></div></div>';
 
         }else{
             treeLabel = '<span id="' + key + '_container">' + unmarkIcon + hiddenIcon + passwordIcon + standaloneIcon + deprecatedIcon + advancedIcon + '</span><span id="' + key + '_text">' + treeLabel + '</span>';
@@ -2047,6 +2052,10 @@ var EDITOR = (function ($, parent) {
             }
 
         });
+
+        if(typeof setAttributeValueTheme === "function"){
+            setAttributeValueTheme(key, names, values)
+        }
     },
 
 
@@ -2143,6 +2152,9 @@ var EDITOR = (function ($, parent) {
         var description = $("<div>" + theme.description + "</div><div class='theme_url_param'>" + language.ThemeUrlParam + " " + theme.name + "</div>");
         $('div.theme_description:first').html(description);
         setAttributeValue(key, [name], [theme.name]);
+        if(typeof setAttributeValueTheme === "function"){
+            setAttributeValueTheme(key, name, value)
+        }
     },
 
     selectChanged = function (id, key, name, value, obj)
@@ -4355,6 +4367,7 @@ var EDITOR = (function ($, parent) {
 							.attr('id', id)
 							.keyup({name: name, key: key, options: options}, function()
 							{
+                                debugger
 								if (name == 'name') {
 									// Rename the node
 									var tree = $.jstree.reference("#treeview");
