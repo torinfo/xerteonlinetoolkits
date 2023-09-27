@@ -717,6 +717,7 @@ x_projectDataLoaded = function(xmlData) {
     }
 
 	// Setup nr of pages for tracking
+	debugger;
     XTSetOption('nrpages', x_pageInfo.length);
 	XTSetOption('toComplete', markedPages);
 	XTSetOption('templateId', x_TemplateId);

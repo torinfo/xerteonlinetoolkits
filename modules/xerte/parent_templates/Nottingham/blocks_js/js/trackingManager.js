@@ -93,7 +93,7 @@ function TrackingManager(){
                 this.lo_passed = 55;
             }
         }
-          
+
         this.pageStates.push(sit);
         return sit;
     }
@@ -260,7 +260,6 @@ function TrackingManager(){
 
     function pageCompleted(sit)
     {
-
         var sits = this.findAllInteractions(sit.page_nr);
         if (sits.length !== sit.nrinteractions)
         {
@@ -294,7 +293,6 @@ function TrackingManager(){
 
     function exitInteraction(page_nr, ia_nr, result, learneroptions, learneranswer, feedback, ia_sub_nr = 0)
     {
-        debugger;
         var sit = this.findInteraction(page_nr, ia_nr, ia_sub_nr);
         if (sit != null) {
             if (ia_nr !== -1) {
@@ -365,21 +363,24 @@ function TrackingManager(){
             sit.weighting = parseFloat(weighting);
         }
     }
-
-    function setInteractionType(page_nr, ia_nr, page_type, weighting, sub_ia_nr)
+    // TODO: gebruik beide: setpagetype en interaction? het gaat nu mis omdat ia_type van de page niet t zelfde is als interaction ia_type.
+    // wsl moet op multinav altijd een numeric type
+    function setInteractionType(page_nr, ia_nr, page_type, weighting, sub_ia_nr = 0)
     {
-
+        debugger;
         var sit = this.findPage(page_nr);
         if (sit != null)
         {
             sit.ia_type = page_type;
 
             sit.nrinteractions = sit.nrinteractions + 1;
+            sit.weighting += parseFloat(weighting);
         }
 
         var int = this.findInteraction(page_nr, ia_nr, sub_ia_nr);
         if(int != null){
-            int.weighting = weighting;
+            int.weighting = parseFloat(weighting);
+            int.ia_type = parseFloat(weighting);
         }
     }
 
@@ -388,13 +389,15 @@ function TrackingManager(){
         debugger;
         var page = this.findPage(page_nr);
         var tempscore = 0;
+        var maxweight = 0;
         for(i=0;i<page.interactions.length;i++){
             if(page.interactions[i].result != null || page.interactions[i].result != undefined){
-                tempscore+= page.interactions[i].result.score;
+                tempscore+= page.interactions[i].result.score * page.interactions[i].weighting;
             }
+            maxweight += page.interactions[i].weighting;
         }
 
-        tempscore/=page.interactions.length;
+        tempscore/=maxweight;
 
         if (page != null && (this.scoremode !== 'first' || page.count < 1))
         {
@@ -431,6 +434,7 @@ function TrackingManager(){
 
     function findInteraction(page_nr, ia_nr, ia_sub_nr = 0, ignoreSubId = false)
     {
+        debugger;
         var page = this.findPage(page_nr)
         if (page == null){
             return null;

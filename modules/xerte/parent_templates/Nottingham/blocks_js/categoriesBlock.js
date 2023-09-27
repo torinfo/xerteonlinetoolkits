@@ -167,15 +167,6 @@ var categoriesBlock = new function() {
             correctAnswer = [],
             correctFeedback = [];
 
-        // Track the quiz page
-        if (blockXML.getAttribute("trackingWeight") != undefined)
-        {
-            variables.weighting = blockXML.getAttribute("trackingWeight");
-        }
-        XTSetPageType(x_currentPage, 'numeric', 1, variables.weighting);
-
-
-
         // store strings used to give titles to labels and categories when keyboard is being used (for screen readers)
         // These string values are never changed so we can push them to the pagedict as is. (not in an object like checked, totaloptions and weighting)
         let labelTxt1 = x_pushToPageDict(x_getLangInfo(x_languageData.find("interactions").find("draggableItem")[0], "name", "Draggable Item"),'labelTxt1', blockid);
@@ -250,8 +241,16 @@ var categoriesBlock = new function() {
         {
             label = blockXML.getAttribute("trackinglabel");
         }
+
+        // Track the quiz page
         debugger;
         XTEnterInteraction(x_currentPage, x_getBlockNr(blockid), 'match', label, correctOptions, correctAnswer, correctFeedback, blockXML.getAttribute("grouping"), null);
+        if (blockXML.getAttribute("trackingWeight") != undefined)
+        {
+            variables.weighting = blockXML.getAttribute("trackingWeight");
+        }
+        XTSetInteractionType(x_currentPage, x_getBlockNr(blockid), 'numeric', variables.weighting, 1);
+
         var $pageContents = jGetElement(blockid,".pageContents");
         $pageContents.data("labels", labels);
 

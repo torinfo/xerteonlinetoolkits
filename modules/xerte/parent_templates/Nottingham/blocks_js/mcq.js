@@ -57,7 +57,8 @@ var mcq = new function() {
         {
             this.weighting = x_currentPageXML.getAttribute("trackingWeight");
         }
-        XTSetInteractionType(x_currentPage, blocknr, 'numeric', 1, this.weighting);
+        //TODO: fix this mess:
+        XTSetInteractionType(x_currentPage, blocknr, 'numeric', this.weighting);
         for (var i = 0; i < this.optionElements.length; i++) {
             var answerTxt;
             if (this.optionElements[i].label != undefined)

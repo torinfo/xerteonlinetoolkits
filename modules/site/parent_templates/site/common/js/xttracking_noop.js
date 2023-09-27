@@ -1399,6 +1399,7 @@ function XTResults(fullcompletion) {
             }
         }
     }
+    debugger;
     results.completion = completion;
     results.score = score;
     results.nrofquestions = nrofquestions;
