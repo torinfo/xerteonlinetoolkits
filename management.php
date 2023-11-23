@@ -116,6 +116,8 @@ function mgt_page($xerte_toolkits_site, $extra)
             </header>
 
 
+
+
 			<main class="mainbody">
 				<div class="title_holder">
 					<h1 class="title_welcome">
@@ -282,36 +284,221 @@ if (empty($_POST["login"]) && empty($_POST["password"])) {
                 Folder popup is the div that appears when creating a new folder
 
                 -->
-                <div class="topbar">
-                    <?php
-                    if (file_exists($xerte_toolkits_site->root_file_path . "branding/logo_right.png"))
-                    {
-                        ?>
-                        <div
-                            style="width:50%; height:100%; float:right; position:relative; background-image:url(<?php echo "branding/logo_right.png";?>); background-repeat:no-repeat; background-position:right; margin-right:10px; float:right">
+                <div class="white_topbar">
+                    <div class="topbar-section">
+
+                        <div class="dropdown">
+                            <form action="#">
+                                <label for="lang"></label>
+                                <select name="languages" id="lang">
+                                    <option value="javascript">JavaScript</option>
+                                    <option value="python">Python</option>
+                                </select>
+                            </form>
                         </div>
-                        <?php
-                    }
-                    else {
-                        ?>
-                        <div
-                            style="width:50%; height:100%; float:right; position:relative; background-image:url(website_code/images/apereoLogo.png); background-repeat:no-repeat; background-position:right; margin-right:10px; float:right">
+
+                        <script>
+                            $(document).ready(function() {
+                                $('#lang').change(function() {
+                                    document.title = $(this).val();
+                                });
+                            });
+
+                        </script>
+
+                        <div class="toggle-switch">
+                        <label class="switch">
+                            <input type="checkbox">
+                            <span class="slider round"></span>
+                        </label>
+
                         </div>
-                        <?php
-                    }
-                    if (file_exists($xerte_toolkits_site->root_file_path . "branding/logo_left.png"))
-                    {
-                        ?>
-                        <img src="<?php echo "branding/logo_left.png";?>" style="margin-left:10px; float:left"/>
-                        <?php
-                    }
-                    else {
-                        ?>
-                        <img src="website_code/images/logo.png" style="margin-left:10px; float:left"/>
-                        <?php
-                    }
-                    ?>
+
+
+                    </div>
                 </div>
+
+                <div class="block">
+                    <div class="block-header">
+                        <h3> site</h3>
+
+                    </div>
+                    <div id="admin_area">
+                    </div>
+
+                </div>
+
+                <div class="sidebar">
+                    <div class="background_logo" id="logoContainer">
+                        <img id="logo_top_left" src="media/xerte-logo.png" width="100px" height="50px">
+                    </div>
+                    <div class="xerte-buttons-container">
+                        <button type="button" id="button-site" class="xerte-button" onclick="javascript:site_list();"><i class="fa fa-sitemap"></i> <?PHP echo MANAGEMENT_MENUBAR_SITE; ?>	</button>
+                        <button type="button" id="button-template" class="xerte-button" onclick="javascript:templates_list();"><i class="fa fa-file-code-o"></i> <?PHP echo MANAGEMENT_MENUBAR_CENTRAL; ?>	</button>
+                        <button type="button" id="button-gebruikers" class="xerte-button" onclick="javascript:users_list();"><i class="fa fa-users-cog"></i> <?PHP echo MANAGEMENT_MENUBAR_USERS; ?>	</button>
+                        <button type="button" id="button-groepen" class="xerte-button" onclick="javascript:user_groups_list();"><i class="fa fa-users"></i> <?PHP echo MANAGEMENT_MENUBAR_USER_GROUPS; ?>	</button>
+                        <button type="button" id="button-gebruikerslo" class="xerte-button" onclick="javascript:user_templates_list();"><i class="far fa-file-alt"></i> <?PHP echo MANAGEMENT_MENUBAR_TEMPLATES; ?>	</button>
+                        <button type="button" id="button-logs" class="xerte-button" onclick="javascript:errors_list();"><i class="fa fa-exclamation-triangle"></i> <?PHP echo MANAGEMENT_MENUBAR_LOGS; ?>	</button>
+                        <button type="button" id="button-toegang" class="xerte-button" onclick="javascript:play_security_list();"><i class="fa fa-key"></i> <?PHP echo MANAGEMENT_MENUBAR_PLAY; ?>	</button>
+                        <button type="button" id="button-categorie" class="xerte-button" onclick="javascript:categories_list();"><i class="fa fa-list-ul"></i> <?PHP echo MANAGEMENT_MENUBAR_CATEGORIES; ?>	</button>
+                        <button type="button" id="button-educations" class="xerte-button" onclick="javascript:educationlevel_list();"><i class="fa fa-list-ul"></i> <?PHP echo MANAGEMENT_MENUBAR_EDUCATION; ?>	</button>
+                        <button type="button" id="button-groeperingen" class="xerte-button" onclick="javascript:grouping_list();"><i class="fa fa-list-ul"></i> <?PHP echo MANAGEMENT_MENUBAR_GROUPINGS; ?>	</button>
+                        <button type="button" id="button-cursussen" class="xerte-button" onclick="javascript:course_list();"><i class="fa fa-list-ul"></i> <?PHP echo MANAGEMENT_MENUBAR_COURSES; ?>	</button>
+                        <button type="button" id="button-licentie" class="xerte-button" onclick="javascript:licenses_list();"><i class="fa fa-cc"></i> <?PHP echo MANAGEMENT_MENUBAR_LICENCES; ?>	</button>
+                        <button type="button" id="button-feed"  class="xerte-button" onclick="javascript:feeds_list();"><i class="fa fa-rss"></i> <?PHP echo MANAGEMENT_MENUBAR_FEEDS; ?>	</button>
+                    </div>
+
+                </div>
+
+                <div id="button-site-menu" class="menu">
+                    <div class="space-top">
+                        <a href="#">Site settings (HTML/Images)</a>
+                        <a href="#">Server Settings</a>
+                        <a href="#"RSS settings</a>
+                        <a href="#">Path settings</a>
+                        <a href="#">SQL query settings</a>
+                        <a href="#">Error handling settings</a>
+                        <a href="#">Authentication settings</a>
+                        <a href="#">LDAP settings </a>
+                        <a href="#">Xerte settings</a>
+                        <a href="#">Email</a>
+                        <a href="#">Language settings</a>
+                        <a href="#">xAPI settings</a>
+                        <a href="#">Social Icon settings</a>
+                        <a href="#">LT/Moodle settings</a>
+                    </div>
+                </div>
+
+                <div id="button-template-menu" class="menu">
+                    <div class="space-top">
+                        <a href="#">Sub-Templates</a>
+                        <a href="#">Decision</a>
+                        <a href="#">MediaInteractions</a>
+                        <a href="#">Multipersp</a>
+                        <a href="#">Nottingham</a>
+                        <a href="#">Rss</a>
+                    </div>
+                </div>
+
+                <div id="button-gebruikers-menu" class="menu">
+                    <div class="space-top">
+                        <a href="#">Guest User</a>
+                    </div>
+                </div>
+
+                <div id="button-groepen-menu" class="menu">
+                    <div class="space-top">
+                        <a href="#">Manage Groups</a>
+                    </div>
+                </div>
+
+                <div id="button-gebruikerslo-menu" class="menu">
+                    <div class="space-top">3
+                        <a href="#">Projects</a>
+                    </div>
+                </div>
+
+                <div id="button-logs-menu" class="menu">
+                    <div class="space-top">
+                        <a href="#">Link 1 site</a>
+                        <a href="#">Link 2</a>
+                        <a href="#">Link 3</a>
+                    </div>
+                </div>
+
+                <div id="button-toegang-menu" class="menu">
+                    <div class="space-top">
+                        <a href="#">Link 1 site</a>
+                        <a href="#">Link 2</a>
+                        <a href="#">Link 3</a>
+                    </div>
+                </div>
+
+                <div id="button-categorie-menu" class="menu">
+                    <div class="space-top">
+                        <a href="#">Link 1 site</a>
+                        <a href="#">Link 2</a>
+                        <a href="#">Link 3</a>
+                    </div>
+                </div>
+
+                <div id="button-educations-menu" class="menu">
+                    <div class="space-top">
+                        <a href="#">Link 1 site</a>
+                        <a href="#">Link 2</a>
+                        <a href="#">Link 3</a>
+                    </div>
+                </div>
+
+                <div id="button-groeperingen-menu" class="menu">
+                    <div class="space-top">
+                        <a href="#">Link 1 site</a>
+                        <a href="#">Link 2</a>
+                        <a href="#">Link 3</a>
+                    </div>
+                </div>
+
+                <div id="button-cursussen-menu" class="menu">
+                    <div class="space-top">
+                        <a href="#">Link 1 site</a>
+                        <a href="#">Link 2</a>
+                        <a href="#">Link 3</a>
+                    </div>
+                </div>
+
+                <div id="button-licentie-menu" class="menu">
+                    <div class="space-top">
+                        <a href="#">Link 1 site</a>
+                        <a href="#">Link 2</a>
+                        <a href="#">Link 3</a>
+                    </div>
+                </div>
+
+                <div id="button-feed-menu" class="menu">
+                    <div class="space-top">
+                        <a href="#">Link 1 site</a>
+                        <a href="#">Link 2</a>
+                        <a href="#">Link 3</a>
+                    </div>
+                </div>
+
+
+
+                <script>
+
+                    $(".xerte-button").each(function (index, element){
+                        $("#"+$(this).attr('id')+"-menu").addClass('hide');
+                        $(this).on("click", function(){
+                            var doubleClickElement;
+                            $(".xerte-button").each(function (index, element){
+                                if($("#"+$(this).attr('id')+"-menu").hasClass("show")){
+                                    $("#"+$(this).attr('id')+"-menu").removeClass('show');
+                                    $("#"+$(this).attr('id')+"-menu").addClass('hide');
+                                    doubleClickElement =  "#"+$(this).attr('id')+"-menu";
+                                }
+
+                            })
+
+                            if($("#"+$(this).attr('id')+"-menu").hasClass("show")){
+                                $("#"+$(this).attr('id')+"-menu").removeClass('show');
+                                $("#"+$(this).attr('id')+"-menu").addClass('hide');
+                            }else{
+                                if("#"+$(this).attr('id')+"-menu" != doubleClickElement){
+                                    $("#"+$(this).attr('id')+"-menu").removeClass('hide');
+                                    $("#"+$(this).attr('id')+"-menu").addClass('show');
+                                }
+                            }
+
+                        });
+                    })
+                    // $('.xerte-button').click(function(){
+                    //     $('.navbar-collapse').toggleClass('show');
+                    //     $('.navbar-toggle').toggleClass('hide');
+                    // });
+                    // $( "#menuButton" ).each(function(index) {
+                    //
+                    // });
+                </script>
 
                 <!--
 
@@ -374,13 +561,11 @@ if (empty($_POST["login"]) && empty($_POST["password"])) {
                                 <div class="admin_mgt_area_middle_button_right">
                                     <button type="button" class="xerte_button" onclick="javascript:save_changes()"><i class="fa fa-floppy-o"></i> <?PHP echo MANAGEMENT_MENUBAR_SAVE; ?></button>
                                 </div>
-                                <div id="admin_area">
-                                </div>
+
                             </div>
                         </div>
                     </div>
                 </div>
-
 
         <?PHP
     } else {

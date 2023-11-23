@@ -17,12 +17,18 @@
  * limitations under the License.
  */
 
+
+
 html{
 
 	margin:0px;
 	padding:0px;
 	font-family:Verdana, Arial, Helvetica, sans-serif;
 	font-size:80%;
+	overflow-z:hidden;
+
+
+
 
 }
 
@@ -30,11 +36,15 @@ body{
 
 	margin:0px;
 	padding:0px;
+	background-color: #F0F0F3 !important;
+	display: flex;
+	overflow-z:hidden;
+	overflow-x:hidden;
 	
 }
 
 .buttonbar, .pagecontainer {
-	background-color: white;
+	background-color: #F0F0F3;
 }
 
 .topbar{
@@ -53,6 +63,8 @@ body{
 }
 
 .admin_mgt_area{
+	top: -900px;
+	right: -200px;
 	width:100%; 
 	position:relative; 
 	padding: 10px;
@@ -64,6 +76,7 @@ body{
 	position:relative; 
 	border: 1px #b6b3a8 solid;
 	background: #ededed;
+
 }
 
 h1.heading{
@@ -88,6 +101,7 @@ h1.heading{
 	position:relative; 
 	width:100%;
 	background-color:#e8edf3;
+;
 }
 
 .admin_mgt_area_middle_button img{
@@ -126,6 +140,7 @@ div#admin_area{
 	padding-left: 20px;
 	padding-right: 20px;
 	box-sizing: border-box;
+
 }
 
 div#admin_area p{
@@ -317,4 +332,287 @@ form[name='user_templates'] {
 	border-bottom:#f3eee2 1px dotted;
 	padding-bottom: 5px;
 }
+
+.sidebar
+{
+	display: flex;
+	flex-direction: column;
+	height: 100vh;
+	width: 200px;
+	background-color: #333F65;
+	z-index: 10;
+
+
+
+}
+
+.white_topbar
+{
+
+
+}
+
+#bar
+{
+
+
+
+}
+
+#logo_top_left
+{
+	margin-top: 15px;
+}
+
+.background_logo
+{
+	background-color: #3D4A74;
+	height: 30px;
+	width: 200px;
+	padding-bottom: 20px;
+	padding-top: 10px;
+}
+
+#logoContainer{
+	display: flex;
+	justify-content: center;
+	align-items: center;
+
+	}
+
+.xerte-buttons-container{
+	display: flex;
+	flex-direction: column;
+	margin-left:10px;
+	margin-top: 30px;
+}
+
+.xerte-button{
+	text-align: left;
+	background-color: #333F65;
+	color: white;
+	border: none;
+	padding: 7px;
+	font-weight: bold;
+
+}
+
+.xerte-button:hover
+{
+	color: #FBA61F;
+}
+
+.menu
+{
+	width: 200px;
+	background-color: #3D4A74;
+	animation-duration: 1s;
+	animation-name: slidein;
+	z-index: 3;
+
+}
+
+.menu a
+{
+	color: white;
+	text-decoration: none;
+	display: flex;
+	flex-direction: row;
+	padding: 7px;
+	margin-left: 30px;
+	font-weight: bold;
+	animation-duration: 2s;
+	animation-name: slidein-a;
+	transition: 0.15s padding ease-out, 0.15s margin ease-out, 0.15s border ease-out;
+
+}
+
+.space-top a:hover
+{
+	color: #FBA61F;
+}
+
+.hide{
+	display: none !important;
+}
+
+.flex{
+	display: flex !important;
+}
+
+@keyframes slidein {
+	from{
+		width: 0px;
+	}
+
+	to{
+		width: 200px;
+	}
+}
+
+@keyframes slidein-a {
+
+	from{
+		margin-left: -200px;
+	}
+
+	to{
+		margin-left: 30px;
+	}
+}
+
+.space-top
+{
+	margin-top: 80px;
+}
+
+.white_topbar
+{
+	background-color: white;
+	width: 100%;
+	height: 30px;
+	position: absolute;
+	right: 0px;
+	padding-top: 30px;
+}
+
+.topbar-section
+{
+	border: red solid 1px;
+	height: 60px;
+	width: 350px;
+	position: absolute;
+	right: 0px;
+	top: 0px;
+}
+
+.block
+{
+	background-color: white;
+	width: 70%;
+	height: 200px;
+	position: absolute;
+	left: 50%;
+	-ms-transform: translate(-50%, -50%);
+	transform: translate(-50%, -50%);
+	margin-top: 10%;
+}
+
+.block-header
+{
+	background-color: white;
+	width: 100%;
+	border: 1px solid black;
+	height: 20%;
+	border-top-left-radius: 8px;
+	border-top-right-radius: 8px;
+	box-shadow: 0px 15px 15px -15px #111;
+}
+
+.block-header h3
+{
+	position: relative;
+	top: 14%;
+	left:1%;
+	-ms-transform: translateY(-50%);
+	-webkit-transform: translateY(-50%);
+	transform: translateY(-50%);
+}
+
+
+.topbar-section
+{
+	display: flex;
+	flex-direction: row;
+}
+
+
+
+
+
+/* The switch - the box around the slider */
+.switch {
+	position: relative;
+	display: inline-block;
+	width: 60px;
+	height: 34px;
+	border-radius: 10px;
+}
+
+/* Hide default HTML checkbox */
+.switch input {
+	opacity: 0;
+	width: 0;
+	height: 0;
+}
+
+/* The slider */
+.slider {
+	position: absolute;
+	cursor: pointer;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	background-color: #ccc;
+	transition: .4s;
+	border-radius: 20px;
+}
+
+.slider:before {
+	position: absolute;
+	content: "";
+	height: 26px;
+	width: 26px;
+	left: 4px;
+	bottom: 4px;
+	background-color: white;
+	transition: .4s;
+	border-radius: 50%;
+}
+
+input:checked + .slider {
+	background-color: #2196F3;
+}
+
+input:checked + .slider:before {
+	transform: translateX(26px);
+}
+
+
+
+
+
+
+
+
+
+input {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	margin: 0 auto;
+}
+
+label {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	margin: 0 auto;
+}
+
+select#lang
+{
+	margin-bottom: 10px;
+	margin-top: 10px;
+	border: solid 1px red;
+}
+
+
+
+
+
+
+
+
 
