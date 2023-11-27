@@ -579,6 +579,14 @@ input:checked + .slider:before {
 	transform: translateX(26px);
 }
 
+.toggle-switch
+{
+	position: absolute;
+	right: 10px;
+	top: 10px;
+
+}
+
 
 
 
@@ -601,15 +609,37 @@ label {
 	margin: 0 auto;
 }
 
-select#lang
+.dropdown
 {
-	margin-bottom: 10px;
-	margin-top: 10px;
-	border: solid 1px red;
+	position: absolute;
+	right: 100px;
+	top: 20px;
+	border: transparent;
+
+}
+
+select#lang .drop:hover
+{
+	background-color: red !important;
 }
 
 
 
+select#lang {
+	border:0px;
+	outline:0px;
+}
+
+
+.Profile img {
+	height: 50px;
+	width: 50px;
+	border-radius: 50px;
+	position: absolute;
+	right: 210px;
+	top: 3px;
+	border: solid 2px #FBA61F;
+}
 
 
 

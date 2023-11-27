@@ -287,12 +287,16 @@ if (empty($_POST["login"]) && empty($_POST["password"])) {
                 <div class="white_topbar">
                     <div class="topbar-section">
 
+                        <div class="Profile">
+                            <img src="media/Stefan.jpg">
+                        </div>
+
                         <div class="dropdown">
                             <form action="#">
                                 <label for="lang"></label>
                                 <select name="languages" id="lang">
-                                    <option value="javascript">JavaScript</option>
-                                    <option value="python">Python</option>
+                                    <option class="drop"  value="javascript">JavaScript</option>
+                                    <option class="drop" value="python">Python</option>
                                 </select>
                             </form>
                         </div>
@@ -305,6 +309,8 @@ if (empty($_POST["login"]) && empty($_POST["password"])) {
                             });
 
                         </script>
+
+
 
                         <div class="toggle-switch">
                         <label class="switch">
