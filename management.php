@@ -19,6 +19,7 @@
  */
 require_once(dirname(__FILE__) . "/config.php");
 
+
 _load_language_file("/management.inc");
 
 /**
@@ -30,6 +31,8 @@ _load_language_file("/management.inc");
  * @package
  */
 function mgt_page($xerte_toolkits_site, $extra)
+
+
 {
     ?>
     <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
@@ -50,10 +53,13 @@ function mgt_page($xerte_toolkits_site, $extra)
 
 
 
+
+
+
             <link href="website_code/styles/frontpage.css" media="screen" type="text/css" rel="stylesheet" />
             <link href="website_code/styles/xerte_buttons.css" media="screen" type="text/css" rel="stylesheet" />
 			<link rel="stylesheet" type="text/css" href="modules/xerte/parent_templates/Nottingham/common_html5/font-awesome-4.3.0/css/font-awesome.min.css">
-
+            <link href='website_code/styles/management.css' rel='stylesheet' type='text/css'>
             <!--
 
             HTML to use to set up the login page
@@ -288,15 +294,15 @@ if (empty($_POST["login"]) && empty($_POST["password"])) {
                     <div class="topbar-section">
 
                         <div class="Profile">
-                            <img src="media/Stefan.jpg">
+                            <img src="media/download.jpg">
                         </div>
 
                         <div class="dropdown">
                             <form action="#">
                                 <label for="lang"></label>
                                 <select name="languages" id="lang">
-                                    <option class="drop"  value="javascript">JavaScript</option>
-                                    <option class="drop" value="python">Python</option>
+                                    <option class="drop"  value="Nederlands">Nederlands</option>
+                                    <option class="drop" value="Engels">Engels</option>
                                 </select>
                             </form>
                         </div>
@@ -312,13 +318,30 @@ if (empty($_POST["login"]) && empty($_POST["password"])) {
 
 
 
-                        <div class="toggle-switch">
+                        <div id="toggle-switch">
                         <label class="switch">
-                            <input type="checkbox">
+                            <input id="themeSwitch" type="checkbox">
                             <span class="slider round"></span>
                         </label>
 
                         </div>
+
+                        <script>
+                            const toggleSwitch = document.getElementById('themeSwitch');
+
+                            function switchTheme(e) {
+                                if (e.target.checked) {
+                                    document.documentElement.setAttribute('data-theme', 'dark');
+                                    localStorage.setItem('theme', 'dark');
+                                } else {
+                                    document.documentElement.setAttribute('data-theme', 'light');
+                                    localStorage.setItem('theme', 'light');
+                                }
+                            }
+
+                            toggleSwitch.addEventListener('change', switchTheme, false);
+
+                        </script>
 
 
                     </div>
@@ -326,7 +349,7 @@ if (empty($_POST["login"]) && empty($_POST["password"])) {
 
                 <div class="block">
                     <div class="block-header">
-                        <h3> site</h3>
+                        <h3> Site</h3>
 
                     </div>
                     <div id="admin_area">
@@ -356,22 +379,34 @@ if (empty($_POST["login"]) && empty($_POST["password"])) {
 
                 </div>
 
+                <script>
+                    var deleteButton = document.getElementById('deleteButton');
+                    deleteButton.addEventListener('click', function() {
+                        deleteButton.addEventListener('click', function() {
+                            var authDetails = document.getElementById('sitedetails');
+                            authDetails.remove();
+                        });
+
+                    });
+
+                </script>
+
                 <div id="button-site-menu" class="menu">
                     <div class="space-top">
-                        <a href="#">Site settings (HTML/Images)</a>
-                        <a href="#">Server Settings</a>
-                        <a href="#"RSS settings</a>
-                        <a href="#">Path settings</a>
-                        <a href="#">SQL query settings</a>
-                        <a href="#">Error handling settings</a>
-                        <a href="#">Authentication settings</a>
-                        <a href="#">LDAP settings </a>
-                        <a href="#">Xerte settings</a>
-                        <a href="#">Email</a>
-                        <a href="#">Language settings</a>
-                        <a href="#">xAPI settings</a>
-                        <a href="#">Social Icon settings</a>
-                        <a href="#">LT/Moodle settings</a>
+                        <a href="#" onclick="javascript:templates_display('sitedetails')" >Site settings (HTML/Images)</a>
+                        <a href="#" onclick="javascript:templates_display('serverdetails')" id="deleteButton"> Server Settings</a>
+                        <a href="#" onclick="javascript:templates_display('rssdetails')"RSS settings</a>
+                        <a href="#" onclick="javascript:templates_display('pathdetails')">Path settings</a>
+                        <a href="#" onclick="javascript:templates_display('sqldetails')">SQL query settings</a>
+                        <a href="#" onclick="javascript:templates_display('errordetails')">Error handling settings</a>
+                        <a href="#" onclick="javascript:templates_display('authdetails')">Authentication settings</a>
+                        <a href="#" onclick="javascript:templates_display('ldapdetails')">LDAP settings </a>
+                        <a href="#" onclick="javascript:templates_display('xertedetails')">Xerte settings</a>
+                        <a href="#" onclick="javascript:templates_display('emaildetails')">Email</a>
+                        <a href="#" onclick="javascript:templates_display('languagedetails')">Language settings</a>
+                        <a href="#" onclick="javascript:templates_display('xapidetails')">xAPI settings</a>
+                        <a href="#" onclick="javascript:templates_display('socialicondetails')">Social Icon settings</a>
+                        <a href="#" onclick="javascript:templates_display('ltidetails')">LT/Moodle settings</a>
                     </div>
                 </div>
 
