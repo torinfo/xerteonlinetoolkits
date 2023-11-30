@@ -379,23 +379,12 @@ if (empty($_POST["login"]) && empty($_POST["password"])) {
 
                 </div>
 
-                <script>
-                    var deleteButton = document.getElementById('deleteButton');
-                    deleteButton.addEventListener('click', function() {
-                        deleteButton.addEventListener('click', function() {
-                            var authDetails = document.getElementById('sitedetails');
-                            authDetails.remove();
-                        });
-
-                    });
-
-                </script>
 
                 <div id="button-site-menu" class="menu">
                     <div class="space-top">
-                        <a href="#" onclick="javascript:templates_display('sitedetails')" >Site settings (HTML/Images)</a>
-                        <a href="#" onclick="javascript:templates_display('serverdetails')" id="deleteButton"> Server Settings</a>
-                        <a href="#" onclick="javascript:templates_display('rssdetails')"RSS settings</a>
+                        <a href="#" onclick="javascript:site_display('siteSettings')" >Site settings (HTML/Images)</a>
+                        <a href="#" onclick="javascript:templates_display('serverdetails')"> Server Settings</a>
+                        <a href="#" onclick="javascript:templates_display('rssdetails')"> RSS settings</a>
                         <a href="#" onclick="javascript:templates_display('pathdetails')">Path settings</a>
                         <a href="#" onclick="javascript:templates_display('sqldetails')">SQL query settings</a>
                         <a href="#" onclick="javascript:templates_display('errordetails')">Error handling settings</a>
@@ -505,6 +494,8 @@ if (empty($_POST["login"]) && empty($_POST["password"])) {
 
 
 
+
+
                 <script>
 
                     $(".xerte-button").each(function (index, element){
@@ -607,6 +598,7 @@ if (empty($_POST["login"]) && empty($_POST["password"])) {
                         </div>
                     </div>
                 </div>
+
 
         <?PHP
     } else {

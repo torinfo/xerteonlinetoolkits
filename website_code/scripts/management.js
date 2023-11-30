@@ -375,6 +375,17 @@ function site_list(){
 	});
 }
 
+function site_display(row){
+	function_to_use="site";
+	$.ajax({
+		type: "POST",
+		url: "website_code/php/management/site.php",
+		data: {no_id: 1, row:row},
+	})
+		.done(function(response){
+			management_stateChanged(response);
+		});
+}
 // Function delete sharing template
 //
 // remove a share, and check who did it
