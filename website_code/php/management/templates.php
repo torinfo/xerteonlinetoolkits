@@ -27,7 +27,7 @@ require("../xwdInspector.php");
 
 
 if (is_user_admin()) {
-
+    $specificDisplay = $_REQUEST["row"];
     $database_id = database_connect("templates list connected", "template list failed");
 
     $xwdData = new XerteXWDInspector();
@@ -43,22 +43,28 @@ if (is_user_admin()) {
     }
     $xwdData->loadTemplateXML($xwd_path);
 
-	echo "<h2>" . MANAGEMENT_MENUBAR_CENTRAL . "</h2>";
+    if($specificDisplay === 'sub-templates'){
+        echo "<h2>" . MANAGEMENT_MENUBAR_CENTRAL . "</h2>";
 
-    echo "<div class=\"admin_block\">" . TEMPLATE_UPDATE_EXPLANATION . "
+        echo "<div class=\"admin_block\">" . TEMPLATE_UPDATE_EXPLANATION . "
     <p><button type=\"button\" class=\"xerte_button\" onclick='javascript:template_sync()'><i class=\"fa fa-refresh\"></i> " . TEMPLATE_UPDATE . "</button></p></div>";
 
-    echo "<div class=\"admin_block\"><p>" . TEMPLATE_ADD_EXPLANATION .
-    "</p>" .
-    "<form action='javascript:template_submit()' method='post' enctype='multipart/form-data' id='form-template-upload'>" .
-        "<input type='file' value='Search File' name='fileToUpload' id='file-select'>" .
-        "<p>
+        echo "<div class=\"admin_block\"><p>" . TEMPLATE_ADD_EXPLANATION .
+            "</p>" .
+            "<form action='javascript:template_submit()' method='post' enctype='multipart/form-data' id='form-template-upload'>" .
+            "<input type='file' value='Search File' name='fileToUpload' id='file-select'>" .
+            "<p>
             <input class='management_input' type='text' name='templateName'>&NonBreakingSpace;" . TEMPLATE_UPLOAD_TEMPLATENAME . "<br>
             <input class='management_input' type='text' name='templateDisplayname'>&NonBreakingSpace;" . TEMPLATE_UPLOAD_TEMPLATEDISPLAYNAME . "<br>
             <input class='management_input' type='text' name='templateDescription'>&NonBreakingSpace;" . TEMPLATE_UPLOAD_TEMPLATEDESCRIPTION . "<br>
         </p>
         <button type='submit' id='upload-button' class='xerte_button'><i class=\"fa fa-upload\"></i> " . TEMPLATE_UPLOAD_BUTTON . "</button>" .
-    "</form></div>";
+            "</form></div>";
+
+    }else if($specificDisplay === 'decision'){
+
+    }
+
 
     echo "<div class=\"admin_block\"><p>" . TEMPLATE_MANAGE . "</p>";
     $last_template_type = "";

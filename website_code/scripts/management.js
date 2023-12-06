@@ -386,6 +386,7 @@ function site_display(row){
 			management_stateChanged(response);
 		});
 }
+
 // Function delete sharing template
 //
 // remove a share, and check who did it
@@ -402,9 +403,23 @@ function templates_list(){
 	});
 }
 
+
+function template_display(row){
+	function_to_use="templates";
+	$.ajax({
+		type: "POST",
+		url: "website_code/php/management/templates.php",
+		data: {no_id: 1, row:row},
+	})
+		.done(function(response){
+			management_stateChanged(response);
+		});
+}
 // Function delete sharing template
 //
 // remove a share, and check who did it
+
+//
 
 function update_template(){
 	//bababoeie

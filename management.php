@@ -383,30 +383,31 @@ if (empty($_POST["login"]) && empty($_POST["password"])) {
                 <div id="button-site-menu" class="menu">
                     <div class="space-top">
                         <a href="#" onclick="javascript:site_display('siteSettings')" >Site settings (HTML/Images)</a>
-                        <a href="#" onclick="javascript:templates_display('serverdetails')"> Server Settings</a>
-                        <a href="#" onclick="javascript:templates_display('rssdetails')"> RSS settings</a>
-                        <a href="#" onclick="javascript:templates_display('pathdetails')">Path settings</a>
-                        <a href="#" onclick="javascript:templates_display('sqldetails')">SQL query settings</a>
-                        <a href="#" onclick="javascript:templates_display('errordetails')">Error handling settings</a>
-                        <a href="#" onclick="javascript:templates_display('authdetails')">Authentication settings</a>
-                        <a href="#" onclick="javascript:templates_display('ldapdetails')">LDAP settings </a>
-                        <a href="#" onclick="javascript:templates_display('xertedetails')">Xerte settings</a>
-                        <a href="#" onclick="javascript:templates_display('emaildetails')">Email</a>
-                        <a href="#" onclick="javascript:templates_display('languagedetails')">Language settings</a>
-                        <a href="#" onclick="javascript:templates_display('xapidetails')">xAPI settings</a>
-                        <a href="#" onclick="javascript:templates_display('socialicondetails')">Social Icon settings</a>
-                        <a href="#" onclick="javascript:templates_display('ltidetails')">LT/Moodle settings</a>
+                        <a href="#" onclick="javascript:site_display('serverdetails')"> Server Settings</a>
+                        <a href="#" onclick="javascript:site_display('rssdetails')"> RSS settings</a>
+                        <a href="#" onclick="javascript:site_display('pathdetails')">Path settings</a>
+                        <a href="#" onclick="javascript:site_display('sqldetails')">SQL query settings</a>
+                        <a href="#" onclick="javascript:site_display('errordetails')">Error handling settings</a>
+                        <a href="#" onclick="javascript:site_display('authdetails')">Authentication settings</a>
+                        <a href="#" onclick="javascript:site_display('ldapdetails')">LDAP settings </a>
+                        <a href="#" onclick="javascript:site_display('xertedetails')">Xerte settings</a>
+                        <a href="#" onclick="javascript:site_display('emaildetails')">Email</a>
+                        <a href="#" onclick="javascript:site_display('languagedetails')">Language settings</a>
+                        <a href="#" onclick="javascript:site_display('xapidetails')">xAPI settings</a>
+                        <a href="#" onclick="javascript:site_display('socialicondetails')">Social Icon settings</a>
+                        <a href="#" onclick="javascript:site_display('ltidetails')">LT/Moodle settings</a>
                     </div>
                 </div>
 
                 <div id="button-template-menu" class="menu">
                     <div class="space-top">
-                        <a href="#">Sub-Templates</a>
-                        <a href="#">Decision</a>
-                        <a href="#">MediaInteractions</a>
-                        <a href="#">Multipersp</a>
-                        <a href="#">Nottingham</a>
-                        <a href="#">Rss</a>
+                        <a href="#" onclick="javascript:template_display('sub-templates')">Sub-Templates</a>
+                        <a href="#" onclick="javascript:template_display('decision')">Decision</a>
+                        <a href="#" onclick="javascript:template_display('site')">Site</a>
+                        <a href="#" onclick="javascript:template_display('mediaInteractions')" >MediaInteractions</a>
+                        <a href="#" onclick="javascript:template_display('multipersp')" >Multipersp</a>
+                        <a href="#" onclick="javascript:template_display('Nottingham')" >Nottingham</a>
+                        <a href="#" onclick="javascript:template_display('Rss')">Rss</a>
                     </div>
                 </div>
 
