@@ -18,7 +18,7 @@
  * limitations under the License.
  */
 require_once(dirname(__FILE__) . "/config.php");
-
+require_once(dirname(__FILE__) . "/website_code/php/language_library.php");
 
 _load_language_file("/management.inc");
 
@@ -283,13 +283,9 @@ if (empty($_POST["login"]) && empty($_POST["password"])) {
 
             <body onload="javascript:site_list()">
 
+            <div id="managementContainer">
                 <iframe id="upload_iframe" name="upload_iframe" src="" style="width:0px;height:0px; display:none;"></iframe>
 
-                <!--
-
-                Folder popup is the div that appears when creating a new folder
-
-                -->
                 <div class="white_topbar">
                     <div class="topbar-section">
 
@@ -297,32 +293,34 @@ if (empty($_POST["login"]) && empty($_POST["password"])) {
                             <img src="media/download.jpg">
                         </div>
 
-                        <div class="dropdown">
-                            <form action="#">
-                                <label for="lang"></label>
-                                <select name="languages" id="lang">
-                                    <option class="drop"  value="Nederlands">Nederlands</option>
-                                    <option class="drop" value="Engels">Engels</option>
-                                </select>
-                            </form>
-                        </div>
+<!--                        <div class="dropdown">-->
+<!--                            <form action="#">-->
+<!--                                <label for="lang"></label>-->
+<!--                                <select name="languages" id="lang">-->
+<!--                                    <option class="drop"  value="Nederlands">Nederlands</option>-->
+<!--                                    <option class="drop" value="Engels">Engels</option>-->
+<!--                                </select>-->
+<!--                            </form>-->
+<!--                        </div>-->
+<!---->
+<!--                        <script>-->
+<!--                            $(document).ready(function() {-->
+<!--                                $('#lang').change(function() {-->
+<!--                                    document.title = $(this).val();-->
+<!--                                });-->
+<!--                            });-->
+<!---->
+<!--                        </script>-->
 
-                        <script>
-                            $(document).ready(function() {
-                                $('#lang').change(function() {
-                                    document.title = $(this).val();
-                                });
-                            });
-
-                        </script>
+<!--                        <?php //display_language_selectionform_extra("", false) ?>-->
 
 
 
                         <div id="toggle-switch">
-                        <label class="switch">
-                            <input id="themeSwitch" type="checkbox">
-                            <span class="slider round"></span>
-                        </label>
+                            <label class="switch">
+                                <input id="themeSwitch" type="checkbox">
+                                <span class="slider round"></span>
+                            </label>
 
                         </div>
 
@@ -349,7 +347,7 @@ if (empty($_POST["login"]) && empty($_POST["password"])) {
 
                 <div class="block">
                     <div class="block-header">
-                        <h3> Site</h3>
+                        <h3 id="content-header" > </h3>
 
                     </div>
                     <div id="admin_area">
@@ -363,7 +361,7 @@ if (empty($_POST["login"]) && empty($_POST["password"])) {
                     </div>
                     <div class="xerte-buttons-container">
                         <button type="button" id="button-site" class="xerte-button" onclick="javascript:site_list();"><i class="fa fa-sitemap"></i> <?PHP echo MANAGEMENT_MENUBAR_SITE; ?>	</button>
-                        <button type="button" id="button-template" class="xerte-button" onclick="javascript:templates_list();"><i class="fa fa-file-code-o"></i> <?PHP echo MANAGEMENT_MENUBAR_CENTRAL; ?>	</button>
+                        <button type="button" id="button-template" class="xerte-button"><i class="fa fa-file-code-o"></i> <?PHP echo MANAGEMENT_MENUBAR_CENTRAL; ?>	</button>
                         <button type="button" id="button-gebruikers" class="xerte-button" onclick="javascript:users_list();"><i class="fa fa-users-cog"></i> <?PHP echo MANAGEMENT_MENUBAR_USERS; ?>	</button>
                         <button type="button" id="button-groepen" class="xerte-button" onclick="javascript:user_groups_list();"><i class="fa fa-users"></i> <?PHP echo MANAGEMENT_MENUBAR_USER_GROUPS; ?>	</button>
                         <button type="button" id="button-gebruikerslo" class="xerte-button" onclick="javascript:user_templates_list();"><i class="far fa-file-alt"></i> <?PHP echo MANAGEMENT_MENUBAR_TEMPLATES; ?>	</button>
@@ -378,6 +376,146 @@ if (empty($_POST["login"]) && empty($_POST["password"])) {
                     </div>
 
                 </div>
+
+
+                <script>
+
+
+                    document.addEventListener('click', function(event) {
+                        if(event.target.classList.contains('xerte-button')) {
+                            var id = event.target.id;
+                            var newContent;
+                            switch(id) {
+                                case 'button-site':
+                                    newContent = "Site";
+                                    break
+
+                                case 'button-template':
+                                    newContent = "Template";
+                                    break;
+
+                                case 'button-gebruikers':
+                                    newContent = "Gebruikers";
+                                    break;
+
+                                case 'button-groepen':
+                                    newContent = "Groepen";
+                                    break;
+
+                                case 'button-gebruikerslo':
+                                    newContent = "Gebruikers LO";
+                                    break;
+
+                                case 'button-logs':
+                                    newContent = "Logs";
+                                    break;
+
+                                case 'button-toegang':
+                                    newContent = "Toegang";
+                                    break;
+
+                                case 'button-categorie':
+                                    newContent = "Categorie";
+                                    break;
+
+                                case 'button-educations':
+                                    newContent = "Educations";
+                                    break;
+
+                                case 'button-groeperingen':
+                                    newContent = "Groepering";
+                                    break;
+
+                                case 'button-cursussen':
+                                    newContent = "Cursussen";
+                                    break;
+
+                                case 'button-licentie':
+                                    newContent = "Licentie";
+                                    break;
+
+                                case 'button-feed':
+                                    newContent = "Feed";
+                                    break;
+                                // Add cases for all other buttons
+                            }
+                            document.getElementById("content-header").innerHTML = newContent;
+                        }
+                    });
+
+
+                    // document.getElementById('button-site').onclick = function()
+                    // {
+                    //     document.getElementById("content-header").innerHTML = "Site";
+                    // };
+                    //
+                    // document.getElementById('button-template').onclick = function()
+                    // {
+                    //     document.getElementById("content-header").innerHTML = "Template";
+                    // };
+                    //
+                    // document.getElementById('button-gebruikers').onclick = function()
+                    // {
+                    //     document.getElementById("content-header").innerHTML = "Gebruikers";
+                    // };
+                    //
+                    // document.getElementById('button-groepen').onclick = function()
+                    // {
+                    //     document.getElementById("content-header").innerHTML = "Groepen";
+                    // };
+                    //
+                    // document.getElementById('button-gebruikerslo').onclick = function()
+                    // {
+                    //     document.getElementById("content-header").innerHTML = "Gebruikers LO";
+                    // };
+                    //
+                    // document.getElementById('button-logs').onclick = function()
+                    // {
+                    //     document.getElementById("content-header").innerHTML = "Logs";
+                    // };
+                    //
+                    // document.getElementById('button-toegang').onclick = function()
+                    // {
+                    //     document.getElementById("content-header").innerHTML = "Toegang";
+                    // };
+                    //
+                    // document.getElementById('button-categorie').onclick = function()
+                    // {
+                    //     document.getElementById("content-header").innerHTML = "Categorie";
+                    // };
+                    //
+                    // document.getElementById('button-educations').onclick = function()
+                    // {
+                    //     document.getElementById("content-header").innerHTML = "Educations";
+                    // };
+                    //
+                    // document.getElementById('button-groeperingen').onclick = function()
+                    // {
+                    //     document.getElementById("content-header").innerHTML = "Groeperingen";
+                    // };
+                    //
+                    //
+                    // document.getElementById('button-cursussen').onclick = function()
+                    // {
+                    //     document.getElementById("content-header").innerHTML = "Cursussen";
+                    // };
+                    //
+                    //
+                    // document.getElementById('button-licentie').onclick = function()
+                    // {
+                    //     document.getElementById("content-header").innerHTML = "Licentie";
+                    // };
+                    //
+                    //
+                    // document.getElementById('button-feed').onclick = function()
+                    // {
+                    //     document.getElementById("content-header").innerHTML = "Feed";
+                    // };
+
+
+
+
+                </script>
 
 
                 <div id="button-site-menu" class="menu">
@@ -402,12 +540,6 @@ if (empty($_POST["login"]) && empty($_POST["password"])) {
                 <div id="button-template-menu" class="menu">
                     <div class="space-top">
                         <a href="#" onclick="javascript:template_display('sub-templates')">Sub-Templates</a>
-                        <a href="#" onclick="javascript:template_display('decision')">Decision</a>
-                        <a href="#" onclick="javascript:template_display('site')">Site</a>
-                        <a href="#" onclick="javascript:template_display('mediaInteractions')" >MediaInteractions</a>
-                        <a href="#" onclick="javascript:template_display('multipersp')" >Multipersp</a>
-                        <a href="#" onclick="javascript:template_display('Nottingham')" >Nottingham</a>
-                        <a href="#" onclick="javascript:template_display('Rss')">Rss</a>
                     </div>
                 </div>
 
@@ -424,75 +556,63 @@ if (empty($_POST["login"]) && empty($_POST["password"])) {
                 </div>
 
                 <div id="button-gebruikerslo-menu" class="menu">
-                    <div class="space-top">3
+                    <div class="space-top">
                         <a href="#">Projects</a>
                     </div>
                 </div>
 
                 <div id="button-logs-menu" class="menu">
                     <div class="space-top">
-                        <a href="#">Link 1 site</a>
-                        <a href="#">Link 2</a>
-                        <a href="#">Link 3</a>
+                        <a href="#">Log files</a>
+
                     </div>
                 </div>
 
                 <div id="button-toegang-menu" class="menu">
                     <div class="space-top">
-                        <a href="#">Link 1 site</a>
-                        <a href="#">Link 2</a>
-                        <a href="#">Link 3</a>
+                        <a href="#">Add new settings</a>
+                        <a href="#">Manage existing settings</a>
                     </div>
                 </div>
 
                 <div id="button-categorie-menu" class="menu">
                     <div class="space-top">
-                        <a href="#">Link 1 site</a>
-                        <a href="#">Link 2</a>
-                        <a href="#">Link 3</a>
+                        <a href="#">Add new categorie</a>
+                        <a href="#">Manage existing categorie</a>
                     </div>
                 </div>
 
                 <div id="button-educations-menu" class="menu">
                     <div class="space-top">
-                        <a href="#">Link 1 site</a>
-                        <a href="#">Link 2</a>
-                        <a href="#">Link 3</a>
+                        <a href="#">Add new education level</a>
+                        <a href="#">Manage existing education levels</a>
                     </div>
                 </div>
 
                 <div id="button-groeperingen-menu" class="menu">
                     <div class="space-top">
-                        <a href="#">Link 1 site</a>
-                        <a href="#">Link 2</a>
-                        <a href="#">Link 3</a>
+                        <a href="#">Manage groups</a>
                     </div>
                 </div>
 
                 <div id="button-cursussen-menu" class="menu">
                     <div class="space-top">
-                        <a href="#">Link 1 site</a>
-                        <a href="#">Link 2</a>
-                        <a href="#">Link 3</a>
+                        <a href="#">Add new education level</a>
+                        <a href="#">Manage existing education levels</a>
                     </div>
                 </div>
 
                 <div id="button-licentie-menu" class="menu">
                     <div class="space-top">
-                        <a href="#">Link 1 site</a>
-                        <a href="#">Link 2</a>
-                        <a href="#">Link 3</a>
+                        <a href="#">Licenses</a>
                     </div>
                 </div>
 
                 <div id="button-feed-menu" class="menu">
                     <div class="space-top">
-                        <a href="#">Link 1 site</a>
-                        <a href="#">Link 2</a>
-                        <a href="#">Link 3</a>
+                        <a href="#">Feed</a>
                     </div>
                 </div>
-
 
 
 
@@ -533,35 +653,29 @@ if (empty($_POST["login"]) && empty($_POST["password"])) {
                     // });
                 </script>
 
-                <!--
-
-                    Main part of the page
-
-                -->
-
                 <div class="pagecontainer">
 
-                <div class="buttonbar">
+                    <div class="buttonbar">
 
-                   <div class="userbar">
-                        <?php // echo "&nbsp;&nbsp;&nbsp;" . INDEX_LOGGED_IN_AS . " ";
-                        echo "Admin"; ?>
-                        <button title="<?php echo MANAGEMENT_LOGOUT; ?>"
-                            type="button" class="xerte_button_c_no_width"
-                            onclick="javascript:logout()" style="margin-bottom: 8px;">
-                            <i class="fas fa-sign-out-alt"></i><?php echo MANAGEMENT_LOGOUT; ?>
-                        </button>
+                        <div class="userbar">
+                            <?php // echo "&nbsp;&nbsp;&nbsp;" . INDEX_LOGGED_IN_AS . " ";
+                            echo "Admin"; ?>
+                            <button title="<?php echo MANAGEMENT_LOGOUT; ?>"
+                                    type="button" class="xerte_button_c_no_width"
+                                    onclick="javascript:logout()" style="margin-bottom: 8px;">
+                                <i class="fas fa-sign-out-alt"></i><?php echo MANAGEMENT_LOGOUT; ?>
+                            </button>
+                        </div>
+                        <div style="clear:both;"></div>
+                        <div class="separator"></div>
                     </div>
-                    <div style="clear:both;"></div>
-                    <div class="separator"></div>
-                </div>
 
                     <div class="admin_mgt_area">
                         <div class="admin_mgt_area_top">
                             <div class="sign_in_TL m_b_d_2_child">
                                 <div class="sign_in_TR m_b_d_2_child">
                                     <h1 class="heading">
-        <?PHP echo MANAGEMENT_TITLE; ?>
+                                        <?PHP echo MANAGEMENT_TITLE; ?>
                                     </h1>
                                 </div>
                             </div>
@@ -599,6 +713,20 @@ if (empty($_POST["login"]) && empty($_POST["password"])) {
                         </div>
                     </div>
                 </div>
+
+            </div>
+
+                <!--
+
+                Folder popup is the div that appears when creating a new folder
+
+                -->
+
+                <!--
+
+                    Main part of the page
+
+                -->
 
 
         <?PHP

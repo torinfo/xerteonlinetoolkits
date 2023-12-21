@@ -84,7 +84,13 @@ h1.title_welcome {
 	width:910px;
 	height:525px;
 	margin:0 auto;
-	background-image:url(../images/10046dtp.jpg); 
+	background-image:url(../images/10046dtp.jpg);
+	/* display: flex; */
+	/* flex-direction: row; */
+	/* align-content: space-between; */
+	/* justify-content: center; */
+	/* flex-wrap: wrap; */
+	/* align-items: baseline; */
 }
 
 .mainbody_left{

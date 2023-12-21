@@ -419,7 +419,7 @@ function template_display(row){
 //
 // remove a share, and check who did it
 
-//
+//n
 
 function update_template(){
 	//bababoeie
