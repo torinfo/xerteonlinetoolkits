@@ -18,9 +18,9 @@
  */
 :root {
 
-	--topbar: #3D4A74;
-	--background: #FFFFF;
-	--background-admin: #FFFF;
+--topbar: #3D4A74;
+	--background:  #F7F7F7;
+	--background-admin: #F7F7F7;
 	--text-admin: rgb(85, 85, 85);
 }
 /*#333F65*/
@@ -210,6 +210,8 @@ div#admin_area form textarea{
 margin:5px 0 5px 5px;
 
 padding: 5;
+
+width: 95% !important;
 }
 
 div#admin_area form select, div#admin_area form input, div#admin_area form .xerte_button{
@@ -401,6 +403,7 @@ form[name='user_templates'] {
 #logo_top_left
 {
 	margin-top: 15px;
+	margin-right: 60px;
 }
 
 .background_logo
@@ -502,7 +505,7 @@ form[name='user_templates'] {
 
 .space-top
 {
-	margin-top: 80px;
+	margin-top: 88px;
 }
 
 .white_topbar
@@ -556,7 +559,7 @@ form[name='user_templates'] {
 {
 	position: relative;
 	left:1%;
-	top: 20px;
+	top: -8px;
 	-ms-transform: translateY(-50%);
 	-webkit-transform: translateY(-50%);
 	transform: translateY(-50%);
@@ -669,12 +672,12 @@ label {
 #lang
 {
 	background-color: transparent;
-	color: var(--text-admin);
+	color: white;
 	transition-duration: 2s;
 }
 .drop
 {
-	background-color: var(--background-admin);
+	background-color: white;
 	transition-duration: 2s;
 }
 
@@ -692,12 +695,12 @@ select#lang {
 
 
 .Profile img {
-	height: 50px;
-	width: 50px;
+	height: 40px;
+	width: 40px;
 	border-radius: 50px;
 	position: absolute;
 	right: 210px;
-	top: 3px;
+	top: 7px;
 	border: solid 2px #FBA61F;
 	z-index: 3;
 }
@@ -719,7 +722,7 @@ textarea
 	background-color: #ffffff;
 	border-radius: 4px;
 	width: 60%;
-	border: solid 3px #e5e5e5;
+	border: solid 3px transparent;
 	resize: none;
 }
 
@@ -727,4 +730,71 @@ textarea
 {
 	border: solid 4px #c7c7c7;
 }
+
+
+.icon-1
+{
+
+}
+
+.icon-2
+{
+
+}
+
+.icon-3
+{
+
+}
+
+.icon-4
+{
+
+}
+
+.icon-5
+{
+
+}
+
+.icon-6
+{
+
+}
+
+.icon-7
+{
+
+}
+
+.icon-8
+{
+
+}
+
+.icon-9
+{
+
+}
+
+.icon-10
+{
+
+}
+
+.icon-11
+{
+
+}
+
+.icon-12
+{
+
+}
+
+.icon-13
+{
+
+}
+
 

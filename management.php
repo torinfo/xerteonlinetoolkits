@@ -293,26 +293,26 @@ if (empty($_POST["login"]) && empty($_POST["password"])) {
                             <img src="media/download.jpg">
                         </div>
 
-<!--                        <div class="dropdown">-->
-<!--                            <form action="#">-->
-<!--                                <label for="lang"></label>-->
-<!--                                <select name="languages" id="lang">-->
-<!--                                    <option class="drop"  value="Nederlands">Nederlands</option>-->
-<!--                                    <option class="drop" value="Engels">Engels</option>-->
-<!--                                </select>-->
-<!--                            </form>-->
-<!--                        </div>-->
-<!---->
-<!--                        <script>-->
-<!--                            $(document).ready(function() {-->
-<!--                                $('#lang').change(function() {-->
-<!--                                    document.title = $(this).val();-->
-<!--                                });-->
-<!--                            });-->
-<!---->
-<!--                        </script>-->
+                        <div class="dropdown">
+                            <form action="#">
+                                <label for="lang"></label>
+                                <select name="languages" id="lang">
+                                    <option class="drop"  value="Nederlands">Nederlands</option>
+                                    <option class="drop" value="Engels">Engels</option>
+                                </select>
+                            </form>
+                        </div>
 
-<!--                        <?php //display_language_selectionform_extra("", false) ?>-->
+                        <script>
+                            $(document).ready(function() {
+                                $('#lang').change(function() {
+                                    document.title = $(this).val();
+                                });
+                            });
+
+                        </script>
+
+                        <?php display_language_selectionform_extra("", false) ?>
 
 
 
@@ -360,19 +360,19 @@ if (empty($_POST["login"]) && empty($_POST["password"])) {
                         <img id="logo_top_left" src="media/xerte-logo.png" width="100px" height="50px">
                     </div>
                     <div class="xerte-buttons-container">
-                        <button type="button" id="button-site" class="xerte-button" onclick="javascript:site_list();"><i class="fa fa-sitemap"></i> <?PHP echo MANAGEMENT_MENUBAR_SITE; ?>	</button>
-                        <button type="button" id="button-template" class="xerte-button"><i class="fa fa-file-code-o"></i> <?PHP echo MANAGEMENT_MENUBAR_CENTRAL; ?>	</button>
-                        <button type="button" id="button-gebruikers" class="xerte-button" onclick="javascript:users_list();"><i class="fa fa-users-cog"></i> <?PHP echo MANAGEMENT_MENUBAR_USERS; ?>	</button>
-                        <button type="button" id="button-groepen" class="xerte-button" onclick="javascript:user_groups_list();"><i class="fa fa-users"></i> <?PHP echo MANAGEMENT_MENUBAR_USER_GROUPS; ?>	</button>
-                        <button type="button" id="button-gebruikerslo" class="xerte-button" onclick="javascript:user_templates_list();"><i class="far fa-file-alt"></i> <?PHP echo MANAGEMENT_MENUBAR_TEMPLATES; ?>	</button>
-                        <button type="button" id="button-logs" class="xerte-button" onclick="javascript:errors_list();"><i class="fa fa-exclamation-triangle"></i> <?PHP echo MANAGEMENT_MENUBAR_LOGS; ?>	</button>
-                        <button type="button" id="button-toegang" class="xerte-button" onclick="javascript:play_security_list();"><i class="fa fa-key"></i> <?PHP echo MANAGEMENT_MENUBAR_PLAY; ?>	</button>
-                        <button type="button" id="button-categorie" class="xerte-button" onclick="javascript:categories_list();"><i class="fa fa-list-ul"></i> <?PHP echo MANAGEMENT_MENUBAR_CATEGORIES; ?>	</button>
-                        <button type="button" id="button-educations" class="xerte-button" onclick="javascript:educationlevel_list();"><i class="fa fa-list-ul"></i> <?PHP echo MANAGEMENT_MENUBAR_EDUCATION; ?>	</button>
-                        <button type="button" id="button-groeperingen" class="xerte-button" onclick="javascript:grouping_list();"><i class="fa fa-list-ul"></i> <?PHP echo MANAGEMENT_MENUBAR_GROUPINGS; ?>	</button>
-                        <button type="button" id="button-cursussen" class="xerte-button" onclick="javascript:course_list();"><i class="fa fa-list-ul"></i> <?PHP echo MANAGEMENT_MENUBAR_COURSES; ?>	</button>
-                        <button type="button" id="button-licentie" class="xerte-button" onclick="javascript:licenses_list();"><i class="fa fa-cc"></i> <?PHP echo MANAGEMENT_MENUBAR_LICENCES; ?>	</button>
-                        <button type="button" id="button-feed"  class="xerte-button" onclick="javascript:feeds_list();"><i class="fa fa-rss"></i> <?PHP echo MANAGEMENT_MENUBAR_FEEDS; ?>	</button>
+                        <button type="button" id="button-site" class="xerte-button" onclick="javascript:site_list();"><div class="icon-1"><i class="fa fa-sitemap"></i></div> <?PHP echo MANAGEMENT_MENUBAR_SITE; ?>	</button>
+                        <button type="button" id="button-template" class="xerte-button"><div class="icon-2"><i class="fa fa-file-code-o"></i></div><?PHP echo MANAGEMENT_MENUBAR_CENTRAL; ?>	</button>
+                        <button type="button" id="button-gebruikers" class="xerte-button" onclick="javascript:users_list();"><div class="icon-3"><i class="fa fa-users-cog"></i></div> <?PHP echo MANAGEMENT_MENUBAR_USERS; ?>	</button>
+                        <button type="button" id="button-groepen" class="xerte-button" onclick="javascript:user_groups_list();"><div class="icon-4"><i class="fa fa-users"></i></div> <?PHP echo MANAGEMENT_MENUBAR_USER_GROUPS; ?>	</button>
+                        <button type="button" id="button-gebruikerslo" class="xerte-button" onclick="javascript:user_templates_list();"><div class="icon-5"><i class="far fa-file-alt"></i></div> <?PHP echo MANAGEMENT_MENUBAR_TEMPLATES; ?>	</button>
+                        <button type="button" id="button-logs" class="xerte-button" onclick="javascript:errors_list();"><div class="icon-6"> <i class="fa fa-exclamation-triangle"></i></div> <?PHP echo MANAGEMENT_MENUBAR_LOGS; ?>	</button>
+                        <button type="button" id="button-toegang" class="xerte-button" onclick="javascript:play_security_list();"><div class="icon-7"><i class="fa fa-key"></i></div> <?PHP echo MANAGEMENT_MENUBAR_PLAY; ?>	</button>
+                        <button type="button" id="button-categorie" class="xerte-button" onclick="javascript:categories_list();"><div class="icon-8"><i class="fa fa-list-ul"></i></div> <?PHP echo MANAGEMENT_MENUBAR_CATEGORIES; ?>	</button>
+                        <button type="button" id="button-educations" class="xerte-button" onclick="javascript:educationlevel_list();"><div class="icon-9"><i class="fa fa-list-ul"></i></div> <?PHP echo MANAGEMENT_MENUBAR_EDUCATION; ?>	</button>
+                        <button type="button" id="button-groeperingen" class="xerte-button" onclick="javascript:grouping_list();"><div class="icon-10"><i class="fa fa-list-ul"></i></div> <?PHP echo MANAGEMENT_MENUBAR_GROUPINGS; ?>	</button>
+                        <button type="button" id="button-cursussen" class="xerte-button" onclick="javascript:course_list();"><div class="icon-11"><i class="fa fa-list-ul"></i><div> <?PHP echo MANAGEMENT_MENUBAR_COURSES; ?>	</button>
+                        <button type="button" id="button-licentie" class="xerte-button" onclick="javascript:licenses_list();"><div class="icon-12"><i class="fa fa-cc"></i></div> <?PHP echo MANAGEMENT_MENUBAR_LICENCES; ?>	</button>
+                        <button type="button" id="button-feed"  class="xerte-button" onclick="javascript:feeds_list();"><div class="icon-13"><i class="fa fa-rss"></i></div> <?PHP echo MANAGEMENT_MENUBAR_FEEDS; ?>	</button>
                     </div>
 
                 </div>
