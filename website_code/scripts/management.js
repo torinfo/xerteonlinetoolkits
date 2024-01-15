@@ -47,6 +47,7 @@ function management_stateChanged(response) {
 	if (response != "") {
 
 		document.getElementById('admin_area').innerHTML = response;
+		update_forms();
 		loadModal();
 	}
 }
@@ -387,6 +388,118 @@ function site_display(row){
 		});
 }
 
+function update_forms()
+{
+	var codemirroroptions = {
+
+		// Set this to the theme you wish to use (codemirror themes)
+		theme: 'default',
+
+		// Whether or not you want to show line numbers
+		lineNumbers: true,
+
+		// Whether or not you want to use line wrapping
+		lineWrapping: true,
+
+		// Whether or not you want to highlight matching braces
+		matchBrackets: true,
+
+		// Whether or not you want tags to automatically close themselves
+		autoCloseTags: true,
+
+		// Whether or not you want Brackets to automatically close themselves
+		autoCloseBrackets: true,
+
+		// Whether or not to enable search tools, CTRL+F (Find), CTRL+SHIFT+F (Replace), CTRL+SHIFT+R (Replace All), CTRL+G (Find Next), CTRL+SHIFT+G (Find Previous)
+		enableSearchTools: true,
+
+		// Whether or not you wish to enable code folding (requires 'lineNumbers' to be set to 'true')
+		enableCodeFolding: true,
+
+		// Whether or not to enable code formatting
+		enableCodeFormatting: true,
+
+		// Whether or not to automatically format code should be done when the editor is loaded
+		autoFormatOnStart: true,
+
+		// Whether or not to automatically format code should be done every time the source view is opened
+		autoFormatOnModeChange: true,
+
+		// Whether or not to automatically format code which has just been uncommented
+		autoFormatOnUncomment: true,
+
+		// Whether or not to highlight the currently active line
+		highlightActiveLine: true,
+
+		// Define the language specific mode 'htmlmixed' for html including (css, xml, javascript), 'application/x-httpd-php' for php mode including html, or 'text/javascript' for using java script only
+		mode: 'htmlmixed',
+
+		// Whether or not to show the search Code button on the toolbar
+		showSearchButton: true,
+
+		// Whether or not to show Trailing Spaces
+		showTrailingSpace: true,
+
+		// Whether or not to highlight all matches of current word/selection
+		highlightMatches: true,
+
+		// Whether or not to show the format button on the toolbar
+		showFormatButton: true,
+
+		// Whether or not to show the comment button on the toolbar
+		showCommentButton: true,
+
+		// Whether or not to show the uncomment button on the toolbar
+		showUncommentButton: true,
+
+		// Whether or not to show the showAutoCompleteButton button on the toolbar
+		showAutoCompleteButton: true
+
+	};
+	var ckoptions = {
+		//filebrowserBrowseUrl : 'editor/elfinder/browse.php?mode=cke&type=media&uploadDir='+rlopathvariable+'&uploadURL='+rlourlvariable.substr(0, rlourlvariable.length-1),
+		//filebrowserImageBrowseUrl : 'editor/elfinder/browse.php?mode=cke&type=image&uploadDir='+rlopathvariable+'&uploadURL='+rlourlvariable.substr(0, rlourlvariable.length-1),
+		//filebrowserFlashBrowseUrl : 'editor/elfinder/browse.php?mode=cke&type=flash&uploadDir='+rlopathvariable+'&uploadURL='+rlourlvariable.substr(0, rlourlvariable.length-1),
+		//uploadUrl : 'editor/uploadImage.php?mode=dragdrop&uploadPath='+rlopathvariable+'&uploadURL='+rlourlvariable.substr(0, rlourlvariable.length-1),
+		//uploadAudioUrl : 'editor/uploadAudio.php?mode=record&uploadPath='+rlopathvariable+'&uploadURL='+rlourlvariable.substr(0, rlourlvariable.length-1),
+		mathJaxClass :  'mathjax',
+		mathJaxLib :    'https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_HTMLorMML-full',
+		toolbarStartupExpanded : false,
+		codemirror : codemirroroptions,
+		extraAllowedContent: 'style',
+		//language : language.$code.substr(0,2)
+	};
+
+
+
+// Get all textareas that need to be changed to CodeMirror
+	// 1. First get non-selected boxes
+	var cms = $(".codemirror");
+	cms.each(function(index, cm) {
+		// Start a codemirror window (without WYSIWYG)
+		codemirroroptions['mode'] = "javascript";
+		var codemirror = CodeMirror.fromTextArea(cm, codemirroroptions);
+		/*
+		$('.CodeMirror').resizable({
+			resize: function() {
+				codemirror.setSize($(this).width(), $(this).height());
+				codemirror.refresh();
+			}
+		});
+		 */
+	});
+	// Do the same for CKEditor
+	var cks = $(".wysiwyg");
+	cks.each(function(index, ck) {
+		let ckid = '#' + ck.id;
+		var ckeditorcontents = $(ckid).data('afterckeditor');
+		$(ckid).ckeditor(function(){
+			var self = this;
+
+			if (ckeditorcontents) this.setData(ckeditorcontents);
+		}, ckoptions);
+	});
+}
 // Function delete sharing template
 //
 // remove a share, and check who did it

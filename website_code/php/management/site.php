@@ -30,27 +30,7 @@ require_once("management_library.php");
 
 
 ?>
-<script type="text/javascript" src="editor/js/vendor/ckeditor/plugins/codemirror/js/codemirror.min.js"></script>
-<script type="text/javascript" src="editor/js/vendor/ckeditor/plugins/codemirror/js/codemirror.addons.min.js"></script>
-<script type="text/javascript" src="editor/js/vendor/ckeditor/plugins/codemirror/js/codemirror.mode.htmlmixed.min.js"></script>
-<script type="text/javascript" src="editor/js/vendor/ckeditor/plugins/codemirror/js/codemirror.mode.javascript.min.js"></script>
-<script type="text/javascript" src="editor/js/vendor/ckeditor/plugins/codemirror/js/beautify.min.js"></script>
-<script type="text/javascript" src="editor/js/vendor/ckeditor/plugins/codemirror/js/codemirror.addons.search.min.js"></script>
-<link rel="stylesheet" type="text/css" href="editor/js/vendor/ckeditor/plugins/codemirror/css/codemirror.min.css">
-<script>
-    $(document).ready(function(){
 
-        let cm = new CodeMirror.fromTextArea($("#news_text")[0],
-            {
-                lineNumbers: true,
-                mode: "javascript",
-                theme: "dracula",
-                lineWrapping: false
-            });
-    });
-
-
-</script>
 
 <?php
 if(is_user_admin()) {
@@ -72,52 +52,52 @@ if(is_user_admin()) {
 
     if ($specificDisplay === "siteSettings") {
        // echo "<p>" . MANAGEMENT_SITE_URL . "<form><textarea class='text-area-block' id=\"site_url\">" . $row['site_url'] . "</textarea></form></p>";
-        echo "<div style='display: flex; flex-direction: column'><div style='height: 20px; background-color: #3D4A74; color: white; border-top-left-radius: 10px 10px; border-top-right-radius: 10px 10px; padding: 10px;'>". MANAGEMENT_SITE_URL ."</div><div style='height: 80px; margin-bottom: 20px; border-radius: 10px; background-color: white'><form><textarea class='text-area-block' id=\"site_title\">" . $row['site_url'] . "</textarea></form></div></div>";
+        echo "<div class='mgmnt-form-header-container'><div class='mgmnt-form-header'>". MANAGEMENT_SITE_URL ."</div><div class='mgmnt-form-container'><form><textarea class='text-area-block' id=\"site_url\">" . $row['site_url'] . "</textarea></form></div></div>";
 //
 //        echo "<p>" . MANAGEMENT_SITE_TITLE_HTML . "<form><textarea class='text-area-block' id=\"site_title\">" . $row['site_title'] . "</textarea></form></p>";
-        echo "<div style='display: flex; flex-direction: column'><div style='height: 20px; background-color: #3D4A74; color: white; border-top-left-radius: 10px 10px; border-top-right-radius: 10px 10px; padding: 10px;'>". MANAGEMENT_SITE_TITLE_HTML ."</div><div style='height: 80px; margin-bottom: 20px; border-radius: 10px; background-color: white'><form><textarea class='text-area-block' id=\"site_title\">" . $row['site_title'] . "</textarea></form></div></div>";
+        echo "<div class='mgmnt-form-header-container'><div class='mgmnt-form-header'>". MANAGEMENT_SITE_TITLE_HTML ."</div><div class='mgmnt-form-container'><form><textarea class='text-area-block' id=\"site_title\">" . $row['site_title'] . "</textarea></form></div></div>";
 
 //        echo "<p>" . MANAGEMENT_SITE_NAME . "<form><textarea class='text-area-block' id=\"site_name\">" . $row['site_name'] . "</textarea></form></p>";
-        echo "<div style='display: flex; flex-direction: column'><div style='height: 20px; background-color: #3D4A74; color: white; border-top-left-radius: 10px 10px; border-top-right-radius: 10px 10px; padding: 10px;'>". MANAGEMENT_SITE_NAME ."</div><div style='height: 80px; margin-bottom: 20px; border-radius: 10px; background-color: white'><form><textarea class='text-area-block' id=\"site_title\">" . $row['site_name'] . "</textarea></form></div></div>";
+        echo "<div class='mgmnt-form-header-container'><div class='mgmnt-form-header'>". MANAGEMENT_SITE_NAME ."</div><div class='mgmnt-form-container'><form><textarea class='text-area-block wysiwyg' id=\"site_name\">" . $row['site_name'] . "</textarea></form></div></div>";
 
 //        echo "<p>" . MANAGEMENT_SITE_LOGO . "<form><textarea class='text-area-block' id=\"site_logo\">" . $row['site_logo'] . "</textarea></form></p>";
-        echo "<div style='display: flex; flex-direction: column'><div style='height: 20px; background-color: #3D4A74; color: white; border-top-left-radius: 10px 10px; border-top-right-radius: 10px 10px; padding: 10px;'>". MANAGEMENT_SITE_LOGO ."</div><div style='height: 80px; margin-bottom: 20px; border-radius: 10px; background-color: white'><form><textarea class='text-area-block' id=\"site_title\">" . $row['site_logo'] . "</textarea></form></div></div>";
+        echo "<div class='mgmnt-form-header-container'><div class='mgmnt-form-header'>". MANAGEMENT_SITE_LOGO ."</div><div class='mgmnt-form-container'><form><textarea class='text-area-block' id=\"site_logo\">" . $row['site_logo'] . "</textarea></form></div></div>";
 
 //        echo "<p>" . MANAGEMENT_SITE_LOGO_ORG . "<form><textarea class='text-area-block' id=\"organisational_logo\">" . $row['organisational_logo'] . "</textarea></form></p>";
-        echo "<div style='display: flex; flex-direction: column'><div style='height: 20px; background-color: #3D4A74; color: white; border-top-left-radius: 10px 10px; border-top-right-radius: 10px 10px; padding: 10px;'>". MANAGEMENT_SITE_LOGO_ORG ."</div><div style='height: 80px; margin-bottom: 20px; border-radius: 10px; background-color: white'><form><textarea class='text-area-block' id=\"site_title\">" . $row['organisational_logo'] . "</textarea></form></div></div>";
+        echo "<div class='mgmnt-form-header-container'><div class='mgmnt-form-header'>". MANAGEMENT_SITE_LOGO_ORG ."</div><div class='mgmnt-form-container'><form><textarea class='text-area-block' id=\"organisational_logo\">" . $row['organisational_logo'] . "</textarea></form></div></div>";
 
 //        echo "<p>" . MANAGEMENT_SITE_WELCOME . "<form><textarea class='text-area-block' id=\"welcome_message\">" . $row['welcome_message'] . "</textarea></form></p>";
-        echo "<div style='display: flex; flex-direction: column'><div style='height: 20px; background-color: #3D4A74; color: white; border-top-left-radius: 10px 10px; border-top-right-radius: 10px 10px; padding: 10px;'>". MANAGEMENT_SITE_WELCOME ."</div><div style='height: 80px; margin-bottom: 20px; border-radius: 10px; background-color: white'><form><textarea class='text-area-block' id=\"site_title\">" . $row['welcome_message'] . "</textarea></form></div></div>";
+        echo "<div class='mgmnt-form-header-container'><div class='mgmnt-form-header'>". MANAGEMENT_SITE_WELCOME ."</div><div class='mgmnt-form-container'><form><textarea class='text-area-block wysiwyg' id=\"welcome_message\">" . $row['welcome_message'] . "</textarea></form></div></div>";
 
 //        echo "<p>" . MANAGEMENT_SITE_TEXT . "<form><textarea class='text-area-block' id=\"site_text\">" . $site_text . "</textarea></form></p>";
-        echo "<div style='display: flex; flex-direction: column'><div style='height: 20px; background-color: #3D4A74; color: white; border-top-left-radius: 10px 10px; border-top-right-radius: 10px 10px; padding: 10px;'>". MANAGEMENT_SITE_TEXT ."</div><div style='height: 80px; margin-bottom: 20px; border-radius: 10px; background-color: white'><form><textarea class='text-area-block' id=\"site_title\">" . $row['$site_text'] . "</textarea></form></div></div>";
+        echo "<div class='mgmnt-form-header-container'><div class='mgmnt-form-header'>". MANAGEMENT_SITE_TEXT ."</div><div class='mgmnt-form-container'><form><textarea class='text-area-block wysiwyg' id=\"site_text\">" . $site_text . "</textarea></form></div></div>";
 
 //        echo "<p>" . MANAGEMENT_TUTORIAL_TEXT . "<form><textarea class='text-area-block' id=\"tutorial_text\">" . $tutorial_text . "</textarea></form></p>";
-        echo "<div style='display: flex; flex-direction: column'><div style='height: 20px; background-color: #3D4A74; color: white; border-top-left-radius: 10px 10px; border-top-right-radius: 10px 10px; padding: 10px;'>". MANAGEMENT_TUTORIAL_TEXT ."</div><div style='height: 80px; margin-bottom: 20px; border-radius: 10px; background-color: white'><form><textarea class='text-area-block' id=\"site_title\">" . $row['$tutorial_text'] . "</textarea></form></div></div>";
+        echo "<div class='mgmnt-form-header-container'><div class='mgmnt-form-header'>". MANAGEMENT_TUTORIAL_TEXT ."</div><div class='mgmnt-form-container'><form><textarea class='text-area-block wysiwyg' id=\"tutorial_text\">" . $tutorial_text . "</textarea></form></div></div>";
 
 //        echo "<p>" . MANAGEMENT_SITE_NEWS . "<form><textarea class='text-area-block' id=\"news_text\" rows='10' cols='50'>" . base64_decode($row['news_text']) . "</textarea></form></p>";
-        echo "<div style='display: flex; flex-direction: column'><div style='height: 20px; background-color: #3D4A74; color: white; border-top-left-radius: 10px 10px; border-top-right-radius: 10px 10px; padding: 10px;'>". MANAGEMENT_SITE_NEWS ."</div><div style='height: 80px; margin-bottom: 20px; border-radius: 10px; background-color: white'><form><textarea class='text-area-block' id=\"site_title\">" . $row['news_text'] . "</textarea></form></div></div>";
+        echo "<div class='mgmnt-form-header-container'><div class='mgmnt-form-header'>". MANAGEMENT_SITE_NEWS ."</div><div class='mgmnt-form-container'><form><textarea class='text-area-block wysiwyg' rows='10' id=\"news_text\">" . base64_decode($row['news_text']) . "</textarea></form></div></div>";
 
 //        echo "<p>" . MANAGEMENT_SITE_POD_ONE . "<form><textarea class='text-area-block' id=\"pod_one\">" . base64_decode($row['pod_one']) . "</textarea></form></p>";
-        echo "<div style='display: flex; flex-direction: column'><div style='height: 20px; background-color: #3D4A74; color: white; border-top-left-radius: 10px 10px; border-top-right-radius: 10px 10px; padding: 10px;'>". MANAGEMENT_SITE_POD_ONE ."</div><div style='height: 80px; margin-bottom: 20px; border-radius: 10px; background-color: white'><form><textarea class='text-area-block' id=\"site_title\">" . $row['pod_one'] . "</textarea></form></div></div>";
+        echo "<div class='mgmnt-form-header-container'><div class='mgmnt-form-header'>". MANAGEMENT_SITE_POD_ONE ."</div><div class='mgmnt-form-container'><form><textarea class='text-area-block wysiwyg' id=\"pod_one\">" . base64_decode($row['pod_one']) . "</textarea></form></div></div>";
 
 //        echo "<p>" . MANAGEMENT_SITE_POD_TWO . "<form><textarea class='text-area-block' id=\"pod_two\">" . base64_decode($row['pod_two']) . "</textarea></form></p>";
-        echo "<div style='display: flex; flex-direction: column'><div style='height: 20px; background-color: #3D4A74; color: white; border-top-left-radius: 10px 10px; border-top-right-radius: 10px 10px; padding: 10px;'>". MANAGEMENT_SITE_POD_TWO ."</div><div style='height: 80px; margin-bottom: 20px; border-radius: 10px; background-color: white'><form><textarea class='text-area-block' id=\"site_title\">" . $row['pod_two'] . "</textarea></form></div></div>";
+        echo "<div class='mgmnt-form-header-container'><div class='mgmnt-form-header'>". MANAGEMENT_SITE_POD_TWO ."</div><div class='mgmnt-form-container'><form><textarea class='text-area-block wysiwyg' id=\"pod_two\">" . base64_decode($row['pod_two']) . "</textarea></form></div></div>";
 
 //        echo "<p>" . MANAGEMENT_SITE_COPYRIGHT . "<form><textarea class='text-area-block' id=\"copyright\">" . htmlspecialchars($row['copyright']) . "</textarea></form></p>";
-        echo "<div style='display: flex; flex-direction: column'><div style='height: 20px; background-color: #3D4A74; color: white; border-top-left-radius: 10px 10px; border-top-right-radius: 10px 10px; padding: 10px;'>". MANAGEMENT_SITE_COPYRIGHT ."</div><div style='height: 80px; margin-bottom: 20px; border-radius: 10px; background-color: white'><form><textarea class='text-area-block' id=\"site_title\">" . $row['copyright'] . "</textarea></form></div></div>";
+        echo "<div class='mgmnt-form-header-container'><div class='mgmnt-form-header'>". MANAGEMENT_SITE_COPYRIGHT ."</div><div class='mgmnt-form-container'><form><textarea class='text-area-block' id=\"copyright\">" . htmlspecialchars($row['copyright']) . "</textarea></form></div></div>";
 
 //        echo "<p>" . MANAGEMENT_SITE_DEMONSTRATION . "<form><textarea class='text-area-block' id=\"demonstration_page\">" . $row['demonstration_page'] . "</textarea></form></p>";
-        echo "<div style='display: flex; flex-direction: column'><div style='height: 20px; background-color: #3D4A74; color: white; border-top-left-radius: 10px 10px; border-top-right-radius: 10px 10px; padding: 10px;'>". MANAGEMENT_SITE_DEMONSTRATION ."</div><div style='height: 80px; margin-bottom: 20px; border-radius: 10px; background-color: white'><form><textarea class='text-area-block' id=\"site_title\">" . $row['demonstration_page'] . "</textarea></form></div></div>";
+        echo "<div class='mgmnt-form-header-container'><div class='mgmnt-form-header'>". MANAGEMENT_SITE_DEMONSTRATION ."</div><div class='mgmnt-form-container'><form><textarea class='text-area-block' id=\"demonstration_page\">" . $row['demonstration_page'] . "</textarea></form></div></div>";
 
 //        echo "<p>" . MANAGEMENT_SITE_LOGIN_FORM . "<form><textarea class='text-area-block' id=\"form_string\">" . base64_decode($row['form_string']) . "</textarea></form></p>";
-        echo "<div style='display: flex; flex-direction: column'><div style='height: 20px; background-color: #3D4A74; color: white; border-top-left-radius: 10px 10px; border-top-right-radius: 10px 10px; padding: 10px;'>". MANAGEMENT_SITE_LOGIN_FORM ."</div><div style='height: 80px; margin-bottom: 20px; border-radius: 10px; background-color: white'><form><textarea class='text-area-block' id=\"site_title\">" . $row['form_string'] . "</textarea></form></div></div>";
+        echo "<div class='mgmnt-form-header-container'><div class='mgmnt-form-header'>". MANAGEMENT_SITE_LOGIN_FORM ."</div><div class='mgmnt-form-container'><form><textarea class='text-area-block codemirror' id=\"form_string\">" . base64_decode($row['form_string']) . "</textarea></form></div></div>";
 
 //        echo "<p>" . MANAGEMENT_SITE_PEER_FORM . "<form><textarea class='text-area-block' id=\"peer_form_string\">" . base64_decode($row['peer_form_string']) . "</textarea></form></p>";
-        echo "<div style='display: flex; flex-direction: column'><div style='height: 20px; background-color: #3D4A74; color: white; border-top-left-radius: 10px 10px; border-top-right-radius: 10px 10px; padding: 10px;'>". MANAGEMENT_SITE_PEER_FORM ."</div><div style='height: 80px; margin-bottom: 20px; border-radius: 10px; background-color: white'><form><textarea class='text-area-block' id=\"site_title\">" . $row['peer_form_string'] . "</textarea></form></div></div>";
+        echo "<div class='mgmnt-form-header-container'><div class='mgmnt-form-header'>". MANAGEMENT_SITE_PEER_FORM ."</div><div class='mgmnt-form-container'><form><textarea class='text-area-block codemirror' id=\"peer_form_string\">" . base64_decode($row['peer_form_string']) . "</textarea></form></div></div>";
 
 //        echo "<p>" . MANAGEMENT_SITE_FEEDBACK . "<form><textarea class='text-area-block' id=\"feedback_list\">" . $row['feedback_list'] . "</textarea></form></p>";
-        echo "<div style='display: flex; flex-direction: column'><div style='height: 20px; background-color: #3D4A74; color: white; border-top-left-radius: 10px 10px; border-top-right-radius: 10px 10px; padding: 10px;'>". MANAGEMENT_SITE_FEEDBACK ."</div><div style='height: 80px; margin-bottom: 20px; border-radius: 10px; background-color: white'><form><textarea class='text-area-block' id=\"site_title\">" . $row['feedback_list'] . "</textarea></form></div></div>";
+        echo "<div class='mgmnt-form-header-container'><div class='mgmnt-form-header'>". MANAGEMENT_SITE_FEEDBACK ."</div><div class='mgmnt-form-container'><form><textarea class='text-area-block' id=\"feedback_list\">" . $row['feedback_list'] . "</textarea></form></div></div>";
 
 
     } elseif ($specificDisplay === "serverdetails") {

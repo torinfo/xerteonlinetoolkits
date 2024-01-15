@@ -171,13 +171,13 @@ function display_language_selectionform_extra($formclass, $showLabel)
     else
     {
         ?>
-        <form action='' method='POST' id="languageForm>
+        <form action='' method='POST' id="languageForm">
         <label for="language-selector" class="<?php echo $cssClass; ?>"><?PHP echo LANGUAGE_PROMPT; ?> </label>
         <?php
     }
     ?>
 
-    <select name='language' style="width:145px;margin:0 -2px 0 0;" id="language-selector">
+    <select name='language' style="width:145px;margin:0 -2px 0 0;" id="language-selector" onchange="this.form.submit();">
         <?php
         /* I've just specified a random list of possible languages; "Nonsense" is minimal and just there so you can see the login page switch around */
         $languages = getLanguages();

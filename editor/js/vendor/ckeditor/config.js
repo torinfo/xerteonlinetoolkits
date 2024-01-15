@@ -77,7 +77,7 @@ CKEDITOR.editorConfig = function( config ) {
 	// custom fonts can be added here that have been included in fonts.css:
 	//config.font_names = 'fontnametodisplay/yourfontname;' + config.font_names;
 
-    if (typeof lo_data['treeroot']["attributes"]["theme"] != 'undefined' && lo_data['treeroot']["attributes"]["theme"] != 'default')
+    if (typeof lo_data != 'undefined' && typeof lo_data['treeroot']["attributes"]["theme"] != 'undefined' && lo_data['treeroot']["attributes"]["theme"] != 'default')
     {
         var themecss;
         var xerteeditorcss = "editor/js/vendor/ckeditor/xerteeditor.css";

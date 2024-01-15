@@ -221,6 +221,8 @@ if (empty($_POST["login"]) && empty($_POST["password"])) {
                 <link rel="stylesheet" type="text/css" href="modules/xerte/parent_templates/Nottingham/common_html5/font-awesome-4.3.0/css/font-awesome.min.css">
                 <link rel="stylesheet" type="text/css" href="modules/xerte/parent_templates/Nottingham/common_html5/fontawesome-5.6.3/css/all.min.css">
                 <link rel="stylesheet" type="text/css" href="website_code/styles/selectize.css">
+                <link rel="stylesheet" type="text/css" href="editor/js/vendor/ckeditor/plugins/codemirror/css/codemirror.min.css">
+
                 <?php
                 if (file_exists($xerte_toolkits_site->root_file_path . "branding/branding.css"))
                 {
@@ -293,6 +295,7 @@ if (empty($_POST["login"]) && empty($_POST["password"])) {
                             <img src="media/download.jpg">
                         </div>
 
+                        <!--
                         <div class="dropdown">
                             <form action="#">
                                 <label for="lang"></label>
@@ -302,6 +305,8 @@ if (empty($_POST["login"]) && empty($_POST["password"])) {
                                 </select>
                             </form>
                         </div>
+                        *-->
+                        <?php display_language_selectionform_extra("dropdown", false) ?>
 
                         <script>
                             $(document).ready(function() {
@@ -312,7 +317,6 @@ if (empty($_POST["login"]) && empty($_POST["password"])) {
 
                         </script>
 
-                        <?php display_language_selectionform_extra("", false) ?>
 
 
 
@@ -653,6 +657,10 @@ if (empty($_POST["login"]) && empty($_POST["password"])) {
                     // });
                 </script>
 
+                <script type="application/javascript">
+                    var loLanguage = '<?php (isset($_SESSION['toolkits_language'])) ? $_SESSION['toolkits_language'] : "";?>';
+                </script>
+
                 <div class="pagecontainer">
 
                     <div class="buttonbar">
@@ -715,6 +723,16 @@ if (empty($_POST["login"]) && empty($_POST["password"])) {
                 </div>
 
             </div>
+            <script type="text/javascript" src="editor/js/vendor/ckeditor/ckeditor.js"></script>
+            <script type="text/javascript" src="editor/js/vendor/ckeditor/adapters/jquery.js"></script>
+            <script type="text/javascript" src="editor/js/vendor/ckeditor/plugins/codemirror/js/codemirror.min.js"></script>
+            <script type="text/javascript" src="editor/js/vendor/ckeditor/plugins/codemirror/js/codemirror.addons.min.js"></script>
+            <script type="text/javascript" src="editor/js/vendor/ckeditor/plugins/codemirror/js/codemirror.mode.htmlmixed.min.js"></script>
+            <script type="text/javascript" src="editor/js/vendor/ckeditor/plugins/codemirror/js/codemirror.mode.javascript.min.js"></script>
+            <script type="text/javascript" src="editor/js/vendor/ckeditor/plugins/codemirror/js/beautify.min.js"></script>
+            <script type="text/javascript" src="editor/js/vendor/ckeditor/plugins/codemirror/js/codemirror.addons.search.min.js"></script>
+            </body>
+        </html>
 
                 <!--
 
