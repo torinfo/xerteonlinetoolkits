@@ -363,6 +363,30 @@ function template_sync(){
 //
 // remove a share, and check who did it
 
+function add_border(id)
+{
+	$(".xerte-buttons-container button").each(function(){
+		var button = $(this);
+		if(button.hasClass('xerte-button-border')) {
+			button.removeClass('xerte-button-border');
+		}
+	});
+	$("#"+id).addClass('xerte-button-border')
+}
+
+function add_second_border(id)
+{
+	$("#button-site-menu .space-top a").each(function(){
+		var button = $(this);
+		if(button.hasClass('xerte-button-border')) {
+			button.removeClass('xerte-button-border');
+		}
+	});
+	$("#"+id).addClass('xerte-button-border')
+}
+
+
+
 function site_list(){
 	function_to_use="site";
 	$.ajax({

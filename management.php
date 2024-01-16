@@ -310,6 +310,9 @@ if (empty($_POST["login"]) && empty($_POST["password"])) {
                                 });
                             });
 
+
+
+
                         </script>
 
                         <?php display_language_selectionform_extra("", false) ?>
@@ -339,6 +342,9 @@ if (empty($_POST["login"]) && empty($_POST["password"])) {
 
                             toggleSwitch.addEventListener('change', switchTheme, false);
 
+
+
+
                         </script>
 
 
@@ -360,20 +366,22 @@ if (empty($_POST["login"]) && empty($_POST["password"])) {
                         <img id="logo_top_left" src="media/xerte-logo.png" width="100px" height="50px">
                     </div>
                     <div class="xerte-buttons-container">
-                        <button type="button" id="button-site" class="xerte-button" onclick="javascript:site_list();"><div class="icon-1"><i class="fa fa-sitemap"></i></div> <?PHP echo MANAGEMENT_MENUBAR_SITE; ?>	</button>
+                        <button type="button" id="button-site" class="xerte-button" onclick="javascript:site_list(); javascript:add_border('button-site');"><div class="icon-1"><i class="fa fa-sitemap"></i></div> <?PHP echo MANAGEMENT_MENUBAR_SITE; ?>	</button>
                         <button type="button" id="button-template" class="xerte-button"><div class="icon-2"><i class="fa fa-file-code-o"></i></div><?PHP echo MANAGEMENT_MENUBAR_CENTRAL; ?>	</button>
-                        <button type="button" id="button-gebruikers" class="xerte-button" onclick="javascript:users_list();"><div class="icon-3"><i class="fa fa-users-cog"></i></div> <?PHP echo MANAGEMENT_MENUBAR_USERS; ?>	</button>
-                        <button type="button" id="button-groepen" class="xerte-button" onclick="javascript:user_groups_list();"><div class="icon-4"><i class="fa fa-users"></i></div> <?PHP echo MANAGEMENT_MENUBAR_USER_GROUPS; ?>	</button>
-                        <button type="button" id="button-gebruikerslo" class="xerte-button" onclick="javascript:user_templates_list();"><div class="icon-5"><i class="far fa-file-alt"></i></div> <?PHP echo MANAGEMENT_MENUBAR_TEMPLATES; ?>	</button>
-                        <button type="button" id="button-logs" class="xerte-button" onclick="javascript:errors_list();"><div class="icon-6"> <i class="fa fa-exclamation-triangle"></i></div> <?PHP echo MANAGEMENT_MENUBAR_LOGS; ?>	</button>
-                        <button type="button" id="button-toegang" class="xerte-button" onclick="javascript:play_security_list();"><div class="icon-7"><i class="fa fa-key"></i></div> <?PHP echo MANAGEMENT_MENUBAR_PLAY; ?>	</button>
-                        <button type="button" id="button-categorie" class="xerte-button" onclick="javascript:categories_list();"><div class="icon-8"><i class="fa fa-list-ul"></i></div> <?PHP echo MANAGEMENT_MENUBAR_CATEGORIES; ?>	</button>
-                        <button type="button" id="button-educations" class="xerte-button" onclick="javascript:educationlevel_list();"><div class="icon-9"><i class="fa fa-list-ul"></i></div> <?PHP echo MANAGEMENT_MENUBAR_EDUCATION; ?>	</button>
-                        <button type="button" id="button-groeperingen" class="xerte-button" onclick="javascript:grouping_list();"><div class="icon-10"><i class="fa fa-list-ul"></i></div> <?PHP echo MANAGEMENT_MENUBAR_GROUPINGS; ?>	</button>
-                        <button type="button" id="button-cursussen" class="xerte-button" onclick="javascript:course_list();"><div class="icon-11"><i class="fa fa-list-ul"></i><div> <?PHP echo MANAGEMENT_MENUBAR_COURSES; ?>	</button>
-                        <button type="button" id="button-licentie" class="xerte-button" onclick="javascript:licenses_list();"><div class="icon-12"><i class="fa fa-cc"></i></div> <?PHP echo MANAGEMENT_MENUBAR_LICENCES; ?>	</button>
-                        <button type="button" id="button-feed"  class="xerte-button" onclick="javascript:feeds_list();"><div class="icon-13"><i class="fa fa-rss"></i></div> <?PHP echo MANAGEMENT_MENUBAR_FEEDS; ?>	</button>
+                        <button type="button" id="button-gebruikers" class="xerte-button" onclick="javascript:users_list(); javascript:add_border('button-gebruikers');"><div class="icon-3"><i class="fa fa-users-cog"></i></div> <?PHP echo MANAGEMENT_MENUBAR_USERS; ?>	</button>
+                        <button type="button" id="button-groepen" class="xerte-button" onclick="javascript:user_groups_list(); javascript:add_border('button-groepen'); "><div class="icon-4"><i class="fa fa-users"></i></div> <?PHP echo MANAGEMENT_MENUBAR_USER_GROUPS; ?>	</button>
+                        <button type="button" id="button-gebruikerslo" class="xerte-button" onclick="javascript:user_templates_list(); javascript:add_border('button-gebruikerslo');"><div class="icon-5"><i class="far fa-file-alt"></i></div> <?PHP echo MANAGEMENT_MENUBAR_TEMPLATES; ?>	</button>
+                        <button type="button" id="button-logs" class="xerte-button" onclick="javascript:errors_list(); javascript:add_border('button-logs');"><div class="icon-6"> <i class="fa fa-exclamation-triangle"></i></div> <?PHP echo MANAGEMENT_MENUBAR_LOGS; ?>	</button>
+                        <button type="button" id="button-toegang" class="xerte-button" onclick="javascript:play_security_list(); javascript:add_border('button-toegang');"><div class="icon-7"><i class="fa fa-key"></i></div> <?PHP echo MANAGEMENT_MENUBAR_PLAY; ?></button>
+                        <button type="button" id="button-categorie" class="xerte-button" onclick="javascript:categories_list(); javascript:add_border('button-categorie');"><div class="icon-8"><i class="fa fa-list-ul"></i></div> <?PHP echo MANAGEMENT_MENUBAR_CATEGORIES; ?>	</button>
+                        <button type="button" id="button-educations" class="xerte-button" onclick="javascript:educationlevel_list(); javascript:add_border('button-educations');"><div class="icon-9"><i class="fa fa-list-ul"></i></div> <?PHP echo MANAGEMENT_MENUBAR_EDUCATION; ?>	</button>
+                        <button type="button" id="button-groeperingen" class="xerte-button" onclick="javascript:grouping_list(); javascript:add_border('button-groeperingen');"><div class="icon-10"><i class="fa fa-list-ul"></i></div> <?PHP echo MANAGEMENT_MENUBAR_GROUPINGS; ?>	</button>
+                        <button type="button" id="button-cursussen" class="xerte-button" onclick="javascript:course_list(); javascript:add_border('button-cursussen');"><div class="icon-11"><i class="fa fa-list-ul"></i></div> <?PHP echo MANAGEMENT_MENUBAR_COURSES; ?>	</button>
+                        <button type="button" id="button-licentie" class="xerte-button" onclick="javascript:licenses_list(); javascript:add_border('button-licentie');"><div class="icon-12"><i class="fa fa-cc"></i></div> <?PHP echo MANAGEMENT_MENUBAR_LICENCES; ?>	 </button>
+                        <button type="button" id="button-feed"  class="xerte-button" onclick="javascript:feeds_list(); javascript:add_border('button-feed');"><div class="icon-13"><i class="fa fa-rss"></i></div> <?PHP echo MANAGEMENT_MENUBAR_FEEDS; ?></button>
                     </div>
+
+
 
                 </div>
 
@@ -520,20 +528,20 @@ if (empty($_POST["login"]) && empty($_POST["password"])) {
 
                 <div id="button-site-menu" class="menu">
                     <div class="space-top">
-                        <a href="#" onclick="javascript:site_display('siteSettings')" >Site settings (HTML/Images)</a>
-                        <a href="#" onclick="javascript:site_display('serverdetails')"> Server Settings</a>
-                        <a href="#" onclick="javascript:site_display('rssdetails')"> RSS settings</a>
-                        <a href="#" onclick="javascript:site_display('pathdetails')">Path settings</a>
-                        <a href="#" onclick="javascript:site_display('sqldetails')">SQL query settings</a>
-                        <a href="#" onclick="javascript:site_display('errordetails')">Error handling settings</a>
-                        <a href="#" onclick="javascript:site_display('authdetails')">Authentication settings</a>
-                        <a href="#" onclick="javascript:site_display('ldapdetails')">LDAP settings </a>
-                        <a href="#" onclick="javascript:site_display('xertedetails')">Xerte settings</a>
-                        <a href="#" onclick="javascript:site_display('emaildetails')">Email</a>
-                        <a href="#" onclick="javascript:site_display('languagedetails')">Language settings</a>
-                        <a href="#" onclick="javascript:site_display('xapidetails')">xAPI settings</a>
-                        <a href="#" onclick="javascript:site_display('socialicondetails')">Social Icon settings</a>
-                        <a href="#" onclick="javascript:site_display('ltidetails')">LT/Moodle settings</a>
+                        <a href="#" id="site-settings" onclick="javascript:site_display('siteSettings'); javascript:add_second_border('site-settings');" >Site settings (HTML/Images)</a>
+                        <a href="#" id="server-details" onclick="javascript:site_display('serverdetails'); javascript:add_second_border('server-details');"> Server Settings</a>
+                        <a href="#" id="rss-details" onclick="javascript:site_display('rssdetails'); javascript:add_second_border('rss-details');"> RSS settings</a>
+                        <a href="#" id="path-details" onclick="javascript:site_display('pathdetails'); javascript:add_second_border('path-details');">Path settings</a>
+                        <a href="#" id="sql-details" onclick="javascript:site_display('sqldetails'); javascript:add_second_border('sql-details');">SQL query settings</a>
+                        <a href="#" id="error-details" onclick="javascript:site_display('errordetails'); javascript:add_second_border('error-details');">Error handling settings</a>
+                        <a href="#" id="auth-details" onclick="javascript:site_display('authdetails'); javascript:add_second_border('auth-details');">Authentication settings</a>
+                        <a href="#" id="ldap-details" onclick="javascript:site_display('ldapdetails'); javascript:add_second_border('ldap-details');">LDAP settings </a>
+                        <a href="#" id="xerte-details" onclick="javascript:site_display('xertedetails'); javascript:add_second_border('xerte-details');">Xerte settings</a>
+                        <a href="#" id="email-details" onclick="javascript:site_display('emaildetails'); javascript:add_second_border('email-details');">Email</a>
+                        <a href="#" id="language-details" onclick="javascript:site_display('languagedetails'); javascript:add_second_border('language-details');">Language settings</a>
+                        <a href="#" id="xapi-details" onclick="javascript:site_display('xapidetails'); javascript:add_second_border('xapi-details');">xAPI settings</a>
+                        <a href="#" id="socialicon-details" onclick="javascript:site_display('socialicondetails'); javascript:add_second_border('socialicon-details');">Social Icon settings</a>
+                        <a href="#" id="lti-details" onclick="javascript:site_display('ltidetails'); javascript:add_second_border('lti-details');">LT/Moodle settings</a>
                     </div>
                 </div>
 

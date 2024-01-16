@@ -141,7 +141,7 @@ class Xerte_Authentication_Db extends Xerte_Authentication_Abstract
         //_include_javascript_file("library/Xerte/Authentication/Db.js");
 
         echo "<div style=\"margin-left:20px\" >";
-        echo "<form name=\"user_authDb_list\" margin-left=\"20px\">";
+        echo "<form id='form-gebruiker' name=\"user_authDb_list\" margin-left=\"20px\">";
 
 	$username = '';
 	$firstname = '';

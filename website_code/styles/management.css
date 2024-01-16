@@ -71,9 +71,8 @@ height: 100%;
 }
 
 .buttonbar, .pagecontainer {
-	background-color: var(--background);
+	background-color: var(--background-admin);
 	transition-duration: 2s;
-
 }
 
 .topbar{
@@ -146,6 +145,7 @@ h1.heading{
 .admin_mgt_area_middle_button_left .xerte_button {
 	margin-top: 3px;
 	margin-bottom: 3px;
+
 }
 
 .admin_mgt_area_middle_button_right{
@@ -381,9 +381,15 @@ form[name='user_templates'] {
 	width: 200px;
 	background-color: #333F65;
 	z-index: 10;
-	height: 100%;
+	height: 100vh;
+}
 
-
+#geselecteerd-1, #geselecteerd-2, #geselecteerd-3, #geselecteerd-4, #geselecteerd-5, #geselecteerd-6,  #geselecteerd-7, #geselecteerd-8, #geselecteerd-9, #geselecteerd-10, #geselecteerd-11, #geselecteerd-12, #geselecteerd-13
+{
+	height: 15px;
+	width: 3px;
+	background-color: white;
+	float: right;
 
 }
 
@@ -436,7 +442,9 @@ form[name='user_templates'] {
 	border: none;
 	padding: 7px;
 	font-weight: bold;
-
+	display: flex;
+	flex-direction: row;
+	align-items: center;
 }
 
 .xerte-button:hover
@@ -584,8 +592,8 @@ form[name='user_templates'] {
 .switch {
 	position: relative;
 	display: inline-block;
-	width: 60px;
-	height: 34px;
+	width: 53px;
+	height: 23px;
 	border-radius: 10px;
 }
 
@@ -612,8 +620,8 @@ form[name='user_templates'] {
 .slider:before {
 	position: absolute;
 	content: "";
-	height: 26px;
-	width: 26px;
+	height: 16px;
+	width: 16px;
 	left: 4px;
 	bottom: 4px;
 	background-color: white;
@@ -632,9 +640,8 @@ input:checked + .slider:before {
 #toggle-switch
 {
 	position: absolute;
-	right: 10px;
-	top: 10px;
-
+	right: 24px;
+	top: 17px;
 }
 
 
@@ -734,67 +741,98 @@ textarea
 
 .icon-1
 {
-
+	margin-right: 2px;
 }
 
 .icon-2
 {
-
+	margin-left: 4px;
+	margin-right: 4px;
 }
 
 .icon-3
 {
-
+	margin-right: 2px;
 }
 
 .icon-4
 {
-
+	margin-right: 2px;
 }
 
 .icon-5
 {
-
+	margin-left: 3px;
+	margin-right: 5px;
 }
 
 .icon-6
 {
-
+	margin-right: 5px;
 }
 
 .icon-7
 {
+	margin-right: 5px;
 
 }
 
 .icon-8
 {
+	margin-right: 5px;
 
 }
 
 .icon-9
 {
+	margin-right: 5px;
 
 }
 
 .icon-10
 {
+	margin-right: 5px;
 
 }
 
 .icon-11
 {
-
+	margin-right: 5px;
 }
 
 .icon-12
 {
+	margin-right: 5px;
 
 }
 
 .icon-13
 {
+	margin-right: 5px;
 
 }
+
+.xerte-button-border
+{
+	border-right: white solid 3px;
+}
+#form-gebruiker input
+{
+	background-color: red;
+	height: 35px;
+	width: 200px;
+	border-radius: 10px;
+}
+
+
+.info-box
+{
+	display: flex;
+	flex-direction: column;
+	margin-bottom: 20px;
+
+}
+
+
 
 
