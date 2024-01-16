@@ -706,7 +706,7 @@ select#lang {
 	width: 40px;
 	border-radius: 50px;
 	position: absolute;
-	right: 210px;
+	right: 260px;
 	top: 7px;
 	border: solid 2px #FBA61F;
 	z-index: 3;
@@ -833,6 +833,27 @@ textarea
 
 }
 
+.mgmnt-form-header-container
+{
+	display: flex;
+	flex-direction: column;
+}
+
+.mgmnt-form-header
+{
+	height: 20px;
+	background-color: #3D4A74;
+	color: white;
+	border-top-left-radius: 10px 10px;
+	border-top-right-radius: 10px 10px;
+	padding: 10px;
+}
+
+.mgmnt-form-container{
+	margin-bottom: 20px;
+	border-radius: 10px;
+	background-color: white
+}
 
 
 
