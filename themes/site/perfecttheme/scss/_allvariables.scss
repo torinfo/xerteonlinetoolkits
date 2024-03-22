@@ -1,0 +1,44 @@
+//*define color pallette*/
+$darkestcolor: black;/*ncoi donkerblauw*/
+$hovercolorrocmn: gray;
+$lightestcolor:#ededed;/*lichtgrijs*/
+$brightcolor:gray; /*OBM oranje*/
+$contrastcolor:gray;/*Make blauw*/
+$whiteorlightest:#ffffff;
+$blackordarkest:#111234;/*zwart-blauw*/
+$mainhovercolor:white;
+$hintcolor:red;
+$alertcolor:$brightcolor;
+$linkcolor: $darkestcolor;
+$panelcolor:#dae3ea;
+$accent1:#6e2585;/*paars*/
+$accent2: #50aa05;/*groen*/
+$accent3:#faaa00;/*geel*/
+
+//*set background colors*/
+$bodybackgroundcolor:$whiteorlightest;
+$defaultpagebackground:$whiteorlightest;
+
+//*set font family*/
+$mainfonts: 'Brandon Text', sans-serif;
+$secondaryfonts: 'Brandon Text', sans-serif;
+
+//*define font colors to match the background colors*/
+$mainfontcolour: $darkestcolor;
+$fontcolorfordarkestcolor:$whiteorlightest;
+$fontcolorforlightestcolor:$darkestcolor;
+$fontcolorfobrightcolor:$whiteorlightest;
+$fontcolorforcontrastcolor:$whiteorlightest;
+$fontcolorformainhovercolor:$whiteorlightest;
+$linkcolor: #2e3192;
+$linkvisited: #63b3;
+$linkhover: #007Ac9;
+
+//*define rounded corner and other sizes*/
+$largeroundedcorners: 6vmin;
+$mediumroundedcorners: 2vmin;
+$smallroundedcorners: 1vmin;
+$imageroundedcorners: 2vmin;
+$contentmargin: 2%;
+$interfaceboxshadow:3px 3px 5px grey;;
+$defaultpagepadding:2%;

@@ -1,0 +1,76 @@
+
+
+//*---colours to use - rgbo:  Red Green Blue Orange---*/
+//*define color pallette*/
+$darkestcolor: black; /*donkerblauw*/
+$wijzrblauw:gray;
+$lightestcolor:#ffffff;
+$brightcolor:#717193; /*lichtblauw*/
+$contrastcolor:white; /*oranje*/
+$whiteorlightest:#ffffff;
+$blackordarkest:black;
+$curiobodycolor:black;
+$blue2: gray;
+
+
+
+$tablegrey:#E7E7E7;
+
+
+$accent1:#000000;
+$accent2:white;	/* oranje*/
+$accent3:#717193;	/*lichtblauw*/
+$accent4:red;	/*rood*/
+$accent5:green;	/*groen*/
+$accent6:#FFFFFF;	/*wit*/
+
+
+// //*define color pallette*/
+// $darkestcolor: black;/*ncoi donkerblauw*/
+// $hovercolorrocmn: gray;
+// $lightestcolor:#ededed;/*lichtgrijs*/
+// $brightcolor:gray; /*OBM oranje*/
+// $contrastcolor:gray;/*Make blauw*/
+// $whiteorlightest:#ffffff;
+// $blackordarkest:#111234;/*zwart-blauw*/
+// $mainhovercolor:white;
+// $hintcolor:red;
+// $alertcolor:$brightcolor;
+// $linkcolor: $darkestcolor;
+// $panelcolor:#dae3ea;
+// $accent1:#6e2585;/*paars*/
+// $accent2: #50aa05;/*groen*/
+// $accent3:#faaa00;/*geel*/
+
+
+
+/*set background colors*/
+$curioyellow:white;
+$bodybackgroundcolor:#EAEAF0;
+$defaultpagebackground:#EAEAF0;
+$progressBarColor: #ffcb05  ; /* default #2196F3;*/
+$panelbackground: #EAEAF0; 
+
+/*set font family*/
+$mainfonts: 'roboto', sans-serif;
+$secondaryfonts: 'Libre Franklin', sans-serif;
+
+/*define font colors to match the background colors*/
+$mainfontcolour: #222222;
+$fontcolorfordarkestcolor:#ffffff;
+$fontcolorforlightestcolor:#000000;
+$fontcolorfobrightcolor:#ffffff;
+$fontcolorforcontrastcolor:#ffffff;
+$linkcolor:black;
+$linkvisited: #717193;
+$linkhover:gray;
+
+/*define rounded corner and other sizes*/
+$largeroundedcorners: 3vmin;/*6vmin;*/
+$mediumroundedcorners: 2vmin;/*2vmin;*/
+$smallroundedcorners: 1vmin;/*1vmin;*/
+$imageroundedcorners: none;/*2vmin;*/
+$noroundedcorners: none;/*none;*/
+$contentmargin: 2%;
+$interfaceboxshadow:none; /*3px 3px 5px grey*/
+$defaultpagepadding:2%;

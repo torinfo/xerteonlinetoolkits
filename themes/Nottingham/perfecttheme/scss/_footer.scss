@@ -1,0 +1,259 @@
+#x_footerBlock {
+  font-size:		1em;
+  color:			$whiteorlightest;
+  background-image:	none;
+  width: 100%;
+  //border-top-left-radius: $largeroundedcorners;
+  //border-bottom-left-radius: $largeroundedcorners;
+  //*margin-left: 2%;*/
+  //margin-bottom:1%;
+  background: $blackordarkest;
+  // border-top: 1px solid;
+  border-color: $blackordarkest;
+}
+body:not(.sb_right):not(.sb_left) #x_footerBlock {
+  width: 100%;
+}
+
+
+//*****SIDE BAR****/
+#x_sideBar {
+  background-color: $blackordarkest;
+}
+
+#x_sideBarToggleBtn {
+	background-color: $blackordarkest;
+	color: $curioyellow;
+}
+
+#x_sideBarToggleBtn:hover {
+  color: $whiteorlightest;
+  background-color: $blue2;
+}
+
+#x_sideBarToggleBtn:focus
+{
+  background-color: $blackordarkest;
+	color: $curioyellow;
+}
+
+#x_sideBarToggleBtn:active
+{
+  background-color: $blackordarkest;
+	color: $whiteorlightest
+}
+
+#x_sideBarToggleBtn:focus:hover
+{
+  color: $whiteorlightest;
+  background-color: $blackordarkest;
+}
+
+#x_sideBarToggleBtn:active:hover
+{
+  color: $whiteorlightest;
+  background-color: $blackordarkest;
+}
+
+
+#x_sideBarBtnHolder button {
+  color: $curioyellow;
+}
+
+#x_sideBar.sideBarSmall #x_sideBarBtnHolder button:not(:last-child) {
+  border-color: $curioyellow;
+}
+
+#x_sideBar.sideBarLarge #x_sideBarBtnHolder button span.ui-icon {
+  background-color: $contrastcolor;
+  border-color: $contrastcolor;
+}
+
+#x_sideBar.sideBarSmall #x_sideBarBtnHolder button:hover, #x_sideBar.sideBarSmall #x_sideBarBtnHolder button:focus, #x_sideBar.sideBarSmall #x_sideBarBtnHolder button:active {
+  background-color: $blue2;
+  color: $whiteorlightest;
+}
+
+#x_sideBar.sideBarLarge #x_sideBarBtnHolder button:hover span.ui-icon, #x_sideBar.sideBarLarge #x_sideBarBtnHolder button:focus span.ui-icon, #x_sideBar.sideBarLarge #x_sideBarBtnHolder button:active span.ui-icon {
+  background-color: $lightestcolor;
+  border-color: $blackordarkest;
+  color: $whiteorlightest;
+}
+
+
+#x_footerBg {
+  background-image:none;
+}
+#x_pageNo {
+  background:	none;
+}
+.pbBar {
+  background-color: gray;
+}
+/* these buttons will use font awesome icons instead of pngs */
+.ui-button .ui-icon.x_help { background-image: none; }
+.ui-button .ui-icon.x_info { background-image: none; }
+.ui-button .ui-icon.x_home { background-image: none; }
+.ui-button .ui-icon.x_glossary { background-image: none; }
+.ui-button .ui-icon.x_maximise { background-image: none; }
+.ui-button .ui-icon.x_minimise {  background-image: none; }
+.ui-button .ui-icon.x_media { background-image: none; }
+.ui-button .ui-icon.x_next { background-image: none; }
+.ui-button .ui-icon.x_prev {  background-image: none; }
+.ui-button .ui-icon.x_prev_hist { background-image: none; }
+.ui-button .ui-icon.x_colourChanger { background-image: none; }
+.ui-button .ui-icon.x_projectIntro { background-image: none; }
+.ui-button .ui-icon.x_saveSession { background-image: none; }
+
+
+#x_nextBtn:not(.customIconBtn) .ui-icon:before { content: "\f054"; }
+#x_prevBtn:not(.customIconBtn) .ui-icon:before { content: "\f053"; }
+#x_cssBtn:not(.customIconBtn) .ui-icon:before { content: "\f066"; }
+#x_colourChangerBtn:not(.customIconBtn) .ui-icon:before { content: "\f042"; }
+#x_mediaBtn:not(.customIconBtn) .ui-icon:before { content: "\f16a"; }
+#x_glossaryBtn:not(.customIconBtn) .ui-icon:before { content: "\f02d"; }
+#x_helpBtn:not(.customIconBtn) .ui-icon:before { content: "\f128"; }
+#x_introBtn:not(.customIconBtn) .ui-icon:before { content: "\f129"; }
+#x_menuBtn:not(.customIconBtn) .ui-icon:before { content: "\f0c9"; }
+#x_saveSessionBtn:not(.customIconBtn) .ui-icon:before {content: "\f0c7"; }
+
+
+#x_footerBlock button { color: $whiteorlightest; }
+#x_footerBlock button.ui-state-hover { color: $whiteorlightest; }
+#x_footerBlock button.ui-state-focus { color: $whiteorlightest; }
+#x_footerBlock button.ui-state-active { color: $whiteorlightest; }
+
+#x_footerBlock button {
+  font-family: FontAwesome, sans-serif;
+  font-size: 1.9em;
+  width: 1.5em;
+  padding-right: 0;
+  margin-left: 5px;
+  color: $whiteorlightest;
+}
+
+#x_footerBlock button:hover {
+  font-family: FontAwesome, sans-serif;
+  font-size: 1.9em;
+  width: 1.5em;
+  padding-right: 0;
+  margin-left: 5px;
+  color: $whiteorlightest;
+}
+// #x_footerBlock button span {
+//   display: none;
+// }
+#x_footerBlock .x_floatLeft button, #x_footerBlock .x_floatRight button {
+  padding: 0;
+}
+/*****footer tools chevron*****/
+#x_footerChevron {
+  color: $whiteorlightest;
+}
+#x_footerChevron:hover {
+  color: $brightcolor;
+}
+
+/*****TOC****/
+.ui-dialog .ui-widget-header {
+  border: 0px solid $contrastcolor;
+  background: $blackordarkest;
+  color: $curioyellow;
+  font-weight: bold;
+  border-radius: 0px;
+}
+#menuItems .menuItem {
+  background: black !important;
+  color: $darkestcolor !important;
+}
+#menuItems .menuItem:hover {
+  background: $blackordarkest !important;
+  color: $whiteorlightest !important;
+}
+
+#menuItems .menuItem.current {
+  border: 2px solid $blackordarkest;
+}
+
+//******** Smartphones 600px (portrait) change progress bar display-----------/
+@media only screen
+and (max-width:600px) {
+  //show progress bar in mobile portrait mode with this theme
+  //but also reduce font/button sizes to fit//
+  #x_footerProgress {
+    display: block;
+  }
+  #x_pageNo {
+    vertical-align: top;
+    text-align: center;
+    display: inline-block;
+    padding-top: 12px;
+    padding-right: 5px;
+    padding-bottom: 0px;
+    padding-left: 5px;
+    margin-right: -5px;
+    height: 30px;
+    width: auto;
+    z-index: 100;
+    font-size: 12px;
+  }
+  #x_footerBlock button {
+    font-size: 1.6em;
+    width: 1.2em;
+    margin-left: 5px;
+  }
+  .pbContainer {
+    margin-top: 1.2em;
+    color: $accent1;
+  }
+  .pbTxt {
+    font-size: 6px;
+    text-align: center;
+    color: $accent1;
+  }
+}
+//----------------end of smartphones portrait---------------------------------
+
+
+//******** Smartphones 320px (portrait) change progress bar display-----------/
+@media only screen
+and (max-width:320px) {
+  //show progress bar in mobile portrait mode with this theme
+  //but also reduce font/button sizes to fit//
+  #x_footerProgress {
+    display: block;
+  }
+  #x_pageNo {
+    vertical-align: top;
+    text-align: center;
+    display: inline-block;
+    padding-top: 12px;
+    padding-right: 5px;
+    padding-bottom: 0px;
+    padding-left: 5px;
+    margin-right: -5px;
+    height: 30px;
+    width: auto;
+    z-index: 100;
+    font-size: 12px;
+  }
+  #x_footerBlock button {
+    font-size: 1.3em;
+    width: 1.1em;
+    margin-left: 5px;
+  }
+  .pbContainer {
+    margin-top: 1.2em;
+  }
+  .pbTxt {
+    font-size: 6px;
+    text-align: center;
+    ;
+  }
+}
+
+span.x_glossary
+{
+  border-bottom: 0px !important;
+}
+//----------------end of smartphones portrait---------------------------------
