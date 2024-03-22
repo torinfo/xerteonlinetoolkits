@@ -46,6 +46,7 @@ if (is_user_admin()) {
 
 
   $lti->update_lti_key($_REQUEST['lti_keys_id'],$_REQUEST['lti_keys_name'],$_REQUEST['lti_keys_key'],$_REQUEST['lti_keys_secret'],$_REQUEST['lti_keys_context_id']);
+  $_REQUEST['row'] = 'ltidetails';
   include('site.php');
 } else {
 

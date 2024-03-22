@@ -45,7 +45,7 @@ if (is_user_admin()) {
   }
 
   $lti->delete_lti_key($_REQUEST['lti_keys_id']);
-
+  $_REQUEST['row'] = 'ltidetails';
   include('site.php');
 } else {
 
