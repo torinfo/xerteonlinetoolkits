@@ -207,6 +207,7 @@ div#admin_area p form{
 
 div#admin_area form textarea{
 
+
 margin:5px 0 5px 5px;
 
 padding: 5;
@@ -218,10 +219,12 @@ div#admin_area form select, div#admin_area form input, div#admin_area form .xert
 	margin: 5px;
 }
 
-.admin_block {
-	border-top: 1px #758389 dotted;
-	margin-top: 10px;
+div#admin_area form select
+{
+	width: 200px;
+	height: 40px;
 }
+
 
 .admin_block .xerte_button {
 	margin-top: 5px;
@@ -237,9 +240,7 @@ div#admin_area form select, div#admin_area form input, div#admin_area form .xert
 	border-bottom: none;
 }
 
-.template:not(:first-of-type){
-	border-top: 1px #758389 dotted;
-}
+
 
 .template_list {
 	clear: both;
@@ -381,7 +382,8 @@ form[name='user_templates'] {
 	width: 200px;
 	background-color: #333F65;
 	z-index: 10;
-	height: 100vh;
+	height: 100%;
+	position: fixed;
 }
 
 #geselecteerd-1, #geselecteerd-2, #geselecteerd-3, #geselecteerd-4, #geselecteerd-5, #geselecteerd-6,  #geselecteerd-7, #geselecteerd-8, #geselecteerd-9, #geselecteerd-10, #geselecteerd-11, #geselecteerd-12, #geselecteerd-13
@@ -458,8 +460,9 @@ form[name='user_templates'] {
 	background-color: #4e5677;
 	animation-duration: 1s;
 	animation-name: slidein;
-	z-index: 2;
-
+	/* z-index: 15; */
+	position: fixed;
+	height: 100%;
 }
 
 .menu a
@@ -522,7 +525,7 @@ form[name='user_templates'] {
 	transition-duration: 2s;
 	width: 100%;
 	height: 30px;
-	position: absolute;
+	position: fixed;
 	right: 0px;
 	padding-top: 30px;
 	z-index: 3;
@@ -818,10 +821,10 @@ textarea
 }
 #form-gebruiker input
 {
-	background-color: red;
+	background-color: ;
 	height: 35px;
 	width: 200px;
-	border-radius: 10px;
+	border-radius: 7px;
 }
 
 
@@ -854,6 +857,8 @@ textarea
 	border-radius: 10px;
 	background-color: white
 }
+
+
 
 
 

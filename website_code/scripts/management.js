@@ -377,7 +377,7 @@ function add_border(id)
 
 function add_second_border(id)
 {
-	$("#button-site-menu .space-top a").each(function(){
+	$(".menu .space-top a").each(function(){
 		var button = $(this);
 		if(button.hasClass('xerte-button-border')) {
 			button.removeClass('xerte-button-border');
@@ -385,6 +385,38 @@ function add_second_border(id)
 	});
 	$("#"+id).addClass('xerte-button-border')
 }
+
+setTimeout(function() {
+	var sidebarWidth = $(".sidebar").width();
+
+	$(".menu").css('left', sidebarWidth);
+
+	$(window).resize(function(){
+		var sidebarWidth = $(".sidebar").width();
+
+		$(".menu").css('left', sidebarWidth);
+	});
+
+	$(".xerte-buttons-container .xerte-button").click(function(){
+		var sidebarWidth = $(".sidebar").width();
+
+
+		$(".menu").css('left', sidebarWidth);
+
+		if($(".xerte-button").hasClass('xerte-button-border'))
+		{
+
+			$("#button-site-menu")._removeClass('hide').addClass('show')
+		}
+		else
+		{
+			$("#button-site-menu")._removeClass('show').addClass('hide')
+		}
+	});
+
+
+}, 50);
+
 
 
 
