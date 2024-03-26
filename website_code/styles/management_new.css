@@ -36,9 +36,8 @@ body {
 }
 
 .buttonbar, .pagecontainer {
-	background-color: var(--background);
+	background-color: var(--background-admin);
 	transition-duration: 2s;
-
 }
 
 .admin_mgt_area {
@@ -57,7 +56,7 @@ div#admin_area p {
 	transition-duration: 2s;
 }
 
-div#admin_area h2 {
+div#admin_area h2{
 	color: var(--text-admin);
 	transition-duration: 2s;
 }
@@ -71,27 +70,47 @@ div#admin_area form textarea {
 	fontsize: 16px;
 }
 
-.sidebar {
+.sidebar
+{
 	display: flex;
 	flex-direction: column;
 	width: 200px;
 	background-color: #333F65;
 	z-index: 10;
 	height: 100%;
+	position: fixed;
 }
 
-.white_topbar {
+#geselecteerd-1, #geselecteerd-2, #geselecteerd-3, #geselecteerd-4, #geselecteerd-5, #geselecteerd-6,  #geselecteerd-7, #geselecteerd-8, #geselecteerd-9, #geselecteerd-10, #geselecteerd-11, #geselecteerd-12, #geselecteerd-13
+{
+	height: 15px;
+	width: 3px;
+	background-color: white;
+	float: right;
+
 }
 
-#bar {
+.white_topbar
+{
+
+
 }
 
-#logo_top_left {
+#bar
+{
+
+
+
+}
+
+#logo_top_left
+{
 	margin-top: 15px;
 	margin-right: 60px;
 }
 
-.background_logo {
+.background_logo
+{
 	background-color: #3D4A74;
 	height: 30px;
 	width: 200px;
@@ -99,44 +118,50 @@ div#admin_area form textarea {
 	padding-top: 10px;
 }
 
-#logoContainer {
+#logoContainer{
 	display: flex;
 	justify-content: center;
 	align-items: center;
 
 	}
 
-.xerte-buttons-container {
+.xerte-buttons-container{
 	display: flex;
 	flex-direction: column;
 	margin-left:10px;
 	margin-top: 30px;
 }
 
-.xerte-button {
+.xerte-button{
 	text-align: left;
 	background-color: #333F65;
 	color: white;
 	border: none;
 	padding: 7px;
 	font-weight: bold;
-
+	display: flex;
+	flex-direction: row;
+	align-items: center;
 }
 
-.xerte-button:hover {
+.xerte-button:hover
+{
 	color: #FBA61F;
 }
 
-.menu {
+.menu
+{
 	width: 250px;
 	background-color: #4e5677;
 	animation-duration: 1s;
 	animation-name: slidein;
-	z-index: 2;
-
+	/* z-index: 15; */
+	position: fixed;
+	height: 100%;
 }
 
-.menu a {
+.menu a
+{
 	color: white;
 	text-decoration: none;
 	display: flex;
@@ -150,55 +175,59 @@ div#admin_area form textarea {
 
 }
 
-.space-top a:hover {
+.space-top a:hover
+{
 	color: #FBA61F;
 }
 
-.hide {
+.hide{
 	display: none !important;
 }
 
-.flex {
+.flex{
 	display: flex !important;
 }
 
 @keyframes slidein {
-	from {
+	from{
 		width: 0px;
 	}
 
-	to {
+	to{
 		width: 200px;
 	}
 }
 
 @keyframes slidein-a {
 
-	from {
+	from{
 		margin-left: -200px;
 	}
 
-	to {
+	to{
 		margin-left: 30px;
 	}
 }
 
-.space-top {
+.space-top
+{
 	margin-top: 88px;
 }
 
-.white_topbar {
+.white_topbar
+{
 	background-color: var(--topbar);
 	transition-duration: 2s;
 	width: 100%;
 	height: 30px;
-	position: absolute;
+	position: fixed;
 	right: 0px;
 	padding-top: 30px;
 	z-index: 3;
 }
 
-.topbar-section {
+.topbar-section
+{
 
 	height: 60px;
 	width: 370px;
@@ -207,12 +236,8 @@ div#admin_area form textarea {
 	top: 0px;
 }
 
-.layout-dropdown{
-	display: flex;
-	align-items: center;
-}
-
-.block {
+.block
+{
 	background-color: transparent;
 	width: 50%;
 	height: 200px;
@@ -223,7 +248,8 @@ div#admin_area form textarea {
 	margin-top: 10%;
 }
 
-.block-header {
+.block-header
+{
 
 	margin-left: 40px;
 	background-color: var(--background-admin);
@@ -235,7 +261,8 @@ div#admin_area form textarea {
 	z-index: 40;
 }
 
-.block-header h3 {
+.block-header h3
+{
 	position: relative;
 	left:1%;
 	top: -8px;
@@ -247,7 +274,8 @@ div#admin_area form textarea {
 }
 
 
-.topbar-section {
+.topbar-section
+{
 
 	display: flex;
 	flex-direction: row;
@@ -262,8 +290,8 @@ div#admin_area form textarea {
 .switch {
 	position: relative;
 	display: inline-block;
-	width: 60px;
-	height: 34px;
+	width: 53px;
+	height: 23px;
 	border-radius: 10px;
 }
 
@@ -290,8 +318,8 @@ div#admin_area form textarea {
 .slider:before {
 	position: absolute;
 	content: "";
-	height: 26px;
-	width: 26px;
+	height: 16px;
+	width: 16px;
 	left: 4px;
 	bottom: 4px;
 	background-color: white;
@@ -307,12 +335,20 @@ input:checked + .slider:before {
 	transform: translateX(26px);
 }
 
-#toggle-switch {
+#toggle-switch
+{
 	position: absolute;
-	right: 10px;
-	top: 10px;
-
+	right: 24px;
+	top: 17px;
 }
+
+
+
+
+
+
+
+
 
 input {
 	display: flex;
@@ -328,7 +364,8 @@ label {
 	margin: 0 auto;
 }
 
-.dropdown {
+.dropdown
+{
 	position: absolute;
 	right: 100px;
 	top: 20px;
@@ -337,20 +374,24 @@ label {
 
 }
 
-#lang {
+#lang
+{
 	background-color: transparent;
 	color: white;
 	transition-duration: 2s;
 }
-
-.drop {
+.drop
+{
 	background-color: white;
 	transition-duration: 2s;
 }
 
-select#lang .drop:hover {
+select#lang .drop:hover
+{
 	background-color: red !important;
 }
+
+
 
 select#lang {
 	border:0px;
@@ -369,16 +410,20 @@ select#lang {
 	z-index: 3;
 }
 
-#admin_area {
+#admin_area
+{
 
 	margin-left: 40px	;
 }
 
-textarea {
+
+
+textarea
+{
 	padding: 7px 10px;
 }
-
-.text-area-block {
+.text-area-block
+{
 	background-color: #ffffff;
 	border-radius: 4px;
 	width: 60%;
@@ -386,68 +431,114 @@ textarea {
 	resize: none;
 }
 
-.text-area-block:hover {
+.text-area-block:hover
+{
 	border: solid 4px #c7c7c7;
 }
 
-.icon-1 {
+
+.icon-1
+{
+	margin-right: 2px;
+}
+
+.icon-2
+{
+	margin-left: 4px;
+	margin-right: 4px;
+}
+
+.icon-3
+{
+	margin-right: 2px;
+}
+
+.icon-4
+{
+	margin-right: 2px;
+}
+
+.icon-5
+{
+	margin-left: 3px;
+	margin-right: 5px;
+}
+
+.icon-6
+{
+	margin-right: 5px;
+}
+
+.icon-7
+{
+	margin-right: 5px;
 
 }
 
-.icon-2 {
+.icon-8
+{
+	margin-right: 5px;
 
 }
 
-.icon-3 {
+.icon-9
+{
+	margin-right: 5px;
 
 }
 
-.icon-4 {
+.icon-10
+{
+	margin-right: 5px;
 
 }
 
-.icon-5 {
+.icon-11
+{
+	margin-right: 5px;
+}
+
+.icon-12
+{
+	margin-right: 5px;
 
 }
 
-.icon-6 {
+.icon-13
+{
+	margin-right: 5px;
 
 }
 
-.icon-7 {
+.xerte-button-border
+{
+	border-right: white solid 3px;
+}
+
+#form-gebruiker input
+{
+	background-color: white;
+	height: 35px;
+	width: 200px;
+	border-radius: 7px;
+}
+
+.info-box
+{
+	display: flex;
+	flex-direction: column;
+	margin-bottom: 20px;
 
 }
 
-.icon-8 {
-
-}
-
-.icon-9 {
-
-}
-
-.icon-10 {
-
-}
-
-.icon-11 {
-
-}
-
-.icon-12 {
-
-}
-
-.icon-13 {
-
-}
-
-.mgmnt-form-header-container {
+.mgmnt-form-header-container
+{
 	display: flex;
 	flex-direction: column;
 }
 
-.mgmnt-form-header {
+.mgmnt-form-header
+{
 	height: 20px;
 	background-color: #3D4A74;
 	color: white;
@@ -456,8 +547,19 @@ textarea {
 	padding: 10px;
 }
 
-.mgmnt-form-container {
+.mgmnt-form-container{
 	margin-bottom: 20px;
 	border-radius: 10px;
-	background-color: white
+	background-color: white;
+}
+
+div#admin_area form select
+{
+	width: 200px;
+	height: 40px;
+}
+
+.layout-dropdown{
+	display: flex;
+	align-items: center;
 }

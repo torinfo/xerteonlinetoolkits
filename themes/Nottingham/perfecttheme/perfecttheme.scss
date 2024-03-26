@@ -1,0 +1,727 @@
+@import url('https://fonts.googleapis.com/css?family=Roboto');
+@import "scss/_allvariables"; /*start here and set the default values for all the variables*/
+@import "scss/_header";
+@import "scss/_pagetypes";
+@import "scss/_footer";
+@import "scss/_animations";
+@import "scss/editorstyles";
+@import "scss/_webkitCustoms";
+@import "scss/_sliders";
+/* Important note: unlike some other Xerte themes this theme has been developed using sass and scss files */
+/*You should not edit the .css files directly or change values directly unless you wish to override something*/
+/*Use SASS and the file in the scss folder name _allvariables.scss to start any customisation*/
+
+//* Important note: unlike some other Xerte themes this theme has been developed using sass and scss files */
+//*You should not edit the .css files directly or change values directly unless you wish to override something*/
+//*Use SASS and the file in the scss folder name _allvariables.scss to start any customisation*/
+
+#x_introStartBtn
+{
+	color: white;
+}
+
+span.ui-button-text
+{
+	color: white;
+}
+
+.fa-x-btn-show:before
+{
+	color: white !important;
+}
+
+.fa-x-btn-hide:before
+{
+	color: white !important;
+}
+
+#pageContents.button button.selected
+{
+	background-color: gray !important;
+
+}
+
+#pageContents.button .navChildTitle
+{
+	background-color: black;
+}
+
+.fa-x-zoom-in:before
+{
+	color: white !important;
+} /* AANPASSINGEN VOOR CSS TABELLEN */
+
+/* Minimale breedte kolommen, mogelijk wordt dit nog een keer aangepast */
+
+#x_pageDiv table td, #x_pageDiv table th {
+	padding: 10px;
+	vertical-align: top;
+	min-width: 100px;
+}
+
+/* Tabelnaam / titel niet centreren */
+
+div#tableName p
+{
+	text-align: left !important;
+	font-weight: bold !important;
+	margin-bottom: 10px !important;
+}
+
+
+/* Grijs in achtergrond moet hetzelfde zijn */
+
+.panel {
+    /* background: #EAEAF0; */
+	background-color: #EDEDED !important;
+    box-shadow: none !important;
+    border-color: #ffffff !important;
+}
+.x_table_page tr {
+    /* background: #E7E7E7; */
+	background-color: #EDEDED !important;
+
+}
+
+
+
+
+ #x_pageHolder
+ {
+	background: none !important;
+ }
+ 
+
+ //zorgt voor de werking van de memory cards
+ .x_memory_page #cardBottomHolder
+{
+  z-index: 0 !important;
+}
+
+.x_memory_page #cardTopHolder
+{
+  z-index: 1;
+}
+
+
+ #x_footerChevron:focus
+ {
+	color: $curioyellow !important;
+ }
+
+ #x_footerChevron:hover
+ {
+	color: $lightestcolor !important;
+ }
+ 
+ //aanpassingen cards
+ #cardTopHolder .card.focus
+ {
+	border: 1px solid $blue2;
+ }
+ //hightlight aanpassingen
+
+ span.selected
+ {
+	background-color: $blue2 !important;
+ }
+
+//aanpassingen navigatoren arrow's
+.fa-x-prev-circle:before
+{
+	content: "\f053";
+}
+
+.fa-x-next-circle:before
+{
+	content: "\f054";
+}
+
+ //aanpassing result page
+ .fas.fa-check-circle
+ {
+	color:#C1ED0C !important;
+ }
+
+ .fas.fa-times-circle
+ {
+	color:#E9473E;
+ }
+
+ li.bullet
+ {
+	list-style-type: square !important;
+	list-style: square !important;
+ }
+
+ .fa-chevron-circle-right:before{
+   content: "\f054" !important;
+ }
+
+ .fa-chevron-circle-left:before
+{
+	content: "\f053" !important;
+}
+
+ #thumbHolder .thumbBox.selected
+ {
+	border-color: $blackordarkest !important;
+ }
+
+ #thumbHolder
+ {
+	background-color: $whiteorlightest;
+ }
+
+ #thumbBar button .ui-icon
+ {
+	background-color: $whiteorlightest;
+	color: $brightcolor;
+ }
+
+ span.ui-button-icon-primary.ui-icon.prev
+ {
+	content: "\f053" !important;
+ }
+ #puzzle .solved
+ {
+	background-color: $blackordarkest !important;
+ }
+
+ //aanpassingen navigations
+ .ui-accordion-header-active > .fa-x-acc-show:before
+ {
+	color: $whiteorlightest !important;
+	
+ }
+
+
+ .ui-dialog .ui-dialog-buttonpane button
+{
+	background: black !important;
+	color:white !important;
+}
+
+
+.ui-dialog .ui-dialog-buttonpane button:hover
+{
+	background: gray !important;
+	color:white !important;
+}
+
+// button.ui-button:disabled
+// {
+// 	background: gray !important;
+// }
+
+#pageContents textarea
+{
+	color: black;
+}
+
+
+.circleBtn.ui-button.ui-state-hover, .circleBtn.ui-button.ui-state-focus, .circleBtn.ui-button.ui-state-active {
+    background: $fontcolorforlightestcolor !important;
+    border-color: $fontcolorforlightestcolor !important;
+}
+
+ .ui-dialog .ui-dialog-titlebar-close
+ {
+ background: black !important;
+ color:white !important;
+ }
+
+ .ui-dialog .ui-dialog-titlebar-close .fa-x-close:before
+ {
+	color:white !important;
+ }
+
+ .ui-dialog .ui-dialog-titlebar-close:hover
+ {
+	background: #c21dac !important;
+ }
+
+
+
+.topic
+{
+	color: $blackordarkest !important;
+}
+//aanpassingen templatescd
+a.listItem
+{
+	color: $blackordarkest !important;
+}
+
+a.listItem:hover
+{
+	color: #c21dac !important;
+}
+
+.fa-x-download:before
+{
+	color: white;
+}
+
+#pageContents.titlePageTxt, #pageContents.titlePageTxt p
+{
+	color: $blackordarkest !important;
+	font-family: 'roboto';
+}
+
+#pageContents.col .navChildTitle
+{
+	font-family: 'roboto';
+}
+#thumbBar button .ui-icon
+{
+	color: $blackordarkest !important;
+}
+
+#thumbBar button .ui-icon:hover
+{
+	color: $blue2 !important;
+}
+
+
+button.flipBtn.ui-button-icon-only .ui-icon[class*=" fa-"]
+{
+	color: $lightestcolor;
+	margin-left: -0.46em !important;
+}
+
+.bq2 p
+{
+color: $accent1;
+}
+
+#x_pageIntroTxtInner
+{
+	color: $blackordarkest;
+}
+
+#infoHolder .accContent .closeTxt
+{
+	color: $blackordarkest !important;
+}
+
+.ui-accordion-content a {
+    color: black;
+}
+
+.ui-widget-content
+{
+	color: black;
+}
+
+#pageContents .tl-text, #pageContents .tl-text p, #pageContents .tl-timemarker-text h2, #pageContents .tl-text .tl-headline-date, #pageContents .tl-text h3.tl-headline-date #pageContents .tl-timemarker .tl-timemarker-content-container .tl-timemarker-content .tl-timemarker-media-container [class^="tl-icon-"], #pageContents .tl-timemarker .tl-timemarker-content-container .tl-timemarker-content .tl-timemarker-media-container [class*=" tl-icon-"], #pageContents .tl-timeaxis .tl-timeaxis-content-container .tl-timeaxis-major .tl-timeaxis-tick, #pageContents .tl-timeaxis .tl-timeaxis-content-container .tl-timeaxis-minor .tl-timeaxis-tick
+{
+	color: black !important;
+}
+
+.tl-timeline h1, .tl-timeline h2, .tl-timeline h3, .tl-timeline h4, .tl-timeline h5, .tl-timeline h6
+{
+	color: black !important;
+}
+
+
+.tl-slidenav-previous .tl-slidenav-content-container .tl-slidenav-icon, .tl-slidenav-next .tl-slidenav-content-container .tl-slidenav-icon, .tl-slidenav-previous .tl-slidenav-content-container .tl-slidenav-title, .tl-slidenav-next .tl-slidenav-content-container .tl-slidenav-title, .tl-slidenav-previous .tl-slidenav-content-container .tl-slidenav-description, .tl-slidenav-next .tl-slidenav-content-container .tl-slidenav-description
+{
+	color: black !important;
+}
+
+.focusBorder
+{
+	border-color: black !important;
+}
+
+.back.panel
+{
+	color: black !important;
+}
+
+.fa-x-prev:before
+{
+  color: white !important;
+}
+
+.fa-x-next:before
+{
+	color: white !important;
+}
+.fa-book:before
+{
+	color: white !important;
+}
+
+.fa-play:before
+{
+	color: white !important;
+}
+
+.fa.fa-refresh:before
+{
+	color: white !important;
+}
+table.footer tr:last-child
+{
+	color: black !important;
+}
+
+.x_results_page td, th
+{
+	color: black !important;
+}
+
+.x_table_page table tr.shaded
+{
+	color: black !important;
+}
+
+.x_table_page tr
+{
+	color: black;
+}
+
+div#tableName p
+{
+	color: black !important;
+}
+
+#x_pageDiv span.x_glossary:link, #x_pageDiv span.x_glossary:visited, #x_pageDiv span.x_glossary:hover, #x_pageDiv span.x_glossary:active, #x_pageDiv span.x_glossary
+{
+	color: black;
+}
+
+button.ui-button-icon-only .ui-icon[class*=" fa-"]
+{
+	color: black !important;
+}
+
+.MathJax_Display
+{
+	color: black !important;
+}
+
+/////////////////////
+body {
+	background:$bodybackgroundcolor;
+	color:$curiobodycolor;
+	font-family: $mainfonts;
+}
+.cke_editable {
+	background: $defaultpagebackground;
+}
+//******Fonts******/
+.ui-button .ui-button-text {
+	font-family: $mainfonts;
+
+}
+/*Note: these font-sizes will be ignored when responsive text is on*/
+p{
+	font-size:1.1em;
+	
+}
+h1 {
+	font-size:	1em;
+	margin:		0;
+	color: $whiteorlightest !important;
+}
+h2 {
+	font-size:	1.2em;
+	margin:		5px 0 0 0;
+	color: $blackordarkest;
+}
+#seriesHolder .thumbs.selected
+{
+	background-color: $blackordarkest;
+}
+
+
+.ui-accordion-content a:visited:hover
+{
+ color:#c21dac !important;
+}
+
+h3 {
+	font-size:	1.2em;
+	margin:		0;
+	color: $blackordarkest !important;
+}
+a{
+	color:$blackordarkest !important;
+}
+a:visited{
+	color:$linkvisited;
+}
+a:hover{
+	color:#c21dac !important;
+}
+
+//pagina 34, 36 pijlen en buttons
+#cardCtrls .btnHolder button {
+    color: $blackordarkest !important;
+	
+}
+
+#cardCtrls .btnHolder button:hover {
+    color: $blue2 !important;
+}
+
+.circleBtn.ui-button {
+    background: $blackordarkest;
+    border-color: $accent1;
+	color: $curioyellow !important;
+	border-radius: 0px !important;
+
+}
+
+.circleBtn.ui-button:hover {
+    background: $blue2;
+    border-color: $blue2;
+
+}
+// .circleBtn.ui-button:hover .fa-x-refresh:before{
+//     background: $blue2;
+//     border-color: $blue2;
+//     color: $whiteorlightest;
+// }
+
+.fa-x-refresh:before
+{
+	color: $curioyellow;
+}
+
+#thumbBar button, #gridBack {
+    color: $accent1 !important;
+	
+}
+
+
+//pagina 71 
+.x_grid_page #grid ul li {
+    background: $blackordarkest;
+}
+
+
+//pagina 80
+#puzzle .found {
+    background-color: $wijzrblauw !important;
+    color: #FFFFFF;
+}
+
+#puzzle .selected
+{
+	background-color: $curioyellow !important;
+}
+
+
+
+#x_mainHolder{
+	background:white;
+	border-top-right-radius:$largeroundedcorners;
+	border-bottom-left-radius:$largeroundedcorners;
+	border: none !important;/*remove this to restore the default border*/
+}
+//for this theme display at least a small inset at all sizes even mobiles
+#x_mainHolder{
+	max-width:100%;
+	max-height:100%;
+	margin:auto;
+	position: absolute;
+	top: 0;
+	left: 0;
+	bottom: 0;
+	right: 0;
+}
+
+///////////////////////////////
+#x_pageDiv {
+	padding-top: $defaultpagepadding;
+	padding-left: $defaultpagepadding;
+	padding-right:$defaultpagepadding;
+	padding-bottom:10px;
+}
+#infoHolder{
+	/* border-radius:$mediumroundedcorners"*/
+	background: $panelbackground;
+}
+
+
+
+#x_headerBlock img
+{
+    position: absolute;
+    right: 14px;
+    top: 16%;
+    max-height: 35px;
+
+}
+
+#x_headerBlock h2
+{
+	color: $whiteorlightest !important;
+}
+
+#x_mainHolder {
+	border-radius: 0px;
+}
+#x_footerBlock {
+	border-bottom-left-radius: 0px;
+	border-bottom-right-radius: 0px;
+	// box-shadow: 0px -5px 5px #6624823d;
+}
+//*****panel all pages with a panel*****/
+.panel {
+	/* border-radius: $mediumroundedcorners;*/
+	background: $panelbackground;
+	box-shadow: none;
+	border-color: $lightestcolor;
+}
+.panelPage{
+	padding:1%;
+}
+//*****all images*****/
+img {
+	border-radius: $imageroundedcorners;
+}
+
+#x_background
+{
+	background-color:$lightestcolor !important;
+}
+
+#img
+{
+	background-image: url("./images/hangman.png") !important;
+}
+
+h1#x_introH1
+{
+	color: $blackordarkest !important;
+}
+
+
+
+//******@media changes******/
+
+//******@media changes******/
+@media (min-width: 1366px) {
+	/*tablet and above css below here*/
+	body:not(.sb_right):not(.sb_left) #x_mainHolder{
+		max-width:100%;
+		max-height:100%;
+		margin:auto;
+		position: absolute;
+		top: 0;
+		left: 0;
+		bottom: 0;
+		right: 0;
+	}
+
+
+	.x_annotatedDiagram_page #x_pageDiv
+	{
+		max-width: 80% !important;
+	}
+}
+
+//* iPads (portrait) ----------- */
+@media only screen
+and (min-device-width : 768px)
+and (max-device-width : 1024px)
+and (orientation : portrait) {
+	body:not(.sb_right):not(.sb_left) #x_mainHolder{
+		max-width:98%;
+		max-height:98%;
+		margin:auto;
+		position: absolute;
+		top: 0;
+		left: 0;
+		bottom: 0;
+		right: 0;
+        }
+
+
+}
+
+
+/* responsive logo*/
+
+@media (max-width: 450px)
+{
+    img.x_icon.x_floatRight {
+        width: 75px;
+    }
+    #x_footerBlock .x_floatLeft button, #x_footerBlock .x_floatRight button {
+        font-size: 2.0em;
+    }
+    #x_footerBlock button:not(.customIconBtn):not(.imgIconBtn) .ui-icon {
+        margin-top: 0;
+    }
+	
+}
+
+@media (min-width:450px) and (max-width: 600px)
+{
+    img.x_icon.x_floatRight {
+        width: 75px;
+    }
+    #x_footerBlock .x_floatLeft button, #x_footerBlock .x_floatRight button {
+        font-size: 2.0em;
+    }
+    #x_footerBlock button:not(.customIconBtn):not(.imgIconBtn) .ui-icon {
+        margin-top: 0;
+    }
+
+}
+
+@media (min-width: 600px) and (max-width: 979px)
+{
+img.x_icon.x_floatRight {
+    width: 100px;
+}
+
+
+}
+
+
+//* iPads (portrait) ----------- */
+
+
+
+@media only screen
+//iphone xr px size
+and (min-device-width : 414px)
+and (max-device-width : 896px){
+	img.x_icon.x_floatRight{ 
+		margin-top: 12px;
+		margin-right: 8px; 
+		float: right !important;
+		max-height: 25px !important;
+	}
+	
+	#x_footerBlock {
+		font-size: 1.3em;
+		color: #ffffff;
+		background-image: none;
+		width: 100%;
+		background: #000000;
+		box-shadow: none;
+		border-top: 1px solid;
+		border-color: #EAEAF0;
+	}
+
+}
+
+@media only screen
+//iphone xr px size
+and (min-device-width : 799px)
+and (max-device-height : 601px){
+	img.x_icon.x_floatRight{ 
+		margin-top: 12px;
+		margin-right: 8px; 
+		float: right !important;
+		max-height: 25px !important;
+	}
+};

@@ -42,7 +42,7 @@ if(is_user_admin()){
 
     if ($authmech->check() && $authmech->canManageUser($jsscript))
     {
-        echo "<h2>" . USERS_MANAGE_AUTH . "</h2>";
+
         echo "<div id=\"manage_auth_users\">";
         $authmech->getUserList(false, "");
         echo "</div>";

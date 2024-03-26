@@ -1,0 +1,1133 @@
+@charset "UTF-8";
+/*ncoi donkerblauw*/
+/*lichtgrijs*/
+/*OBM oranje*/
+/*Make blauw*/
+/*zwart-blauw*/
+/*paars*/
+/*groen*/
+/*geel*/
+/*start here and set the default values for all the variables*/
+@import url("https://fonts.googleapis.com/css?family=Roboto:300,400,700|Roboto+Condensed:300,400,700");
+.panel1 {
+  border-radius: 1vmin;
+  display: table;
+  padding: 10px;
+  font-style: normal;
+  background-color: black;
+  color: #ffffff;
+}
+
+.panel2 {
+  border-radius: 1vmin;
+  display: table;
+  padding: 10px;
+  font-style: normal;
+  background-color: gray;
+  color: #ffffff;
+}
+
+.panel3 {
+  border-radius: 1vmin;
+  display: table;
+  padding: 10px;
+  font-style: normal;
+  background-color: #111234;
+  color: #ffffff;
+}
+
+.panel4 {
+  border-radius: 1vmin;
+  display: table;
+  padding: 10px;
+  font-style: normal;
+  background-color: #6e2585;
+  color: #ffffff;
+}
+
+.panel5 {
+  border-radius: 1vmin;
+  display: table;
+  padding: 10px;
+  font-style: normal;
+  background-color: gray;
+  color: #ffffff;
+  display: table;
+}
+
+.panel6 {
+  border-radius: 1vmin;
+  display: table;
+  padding: 10px;
+  font-style: normal;
+  background-color: #c21dac;
+  color: #ffffff;
+}
+
+.highlight1 {
+  font-family: "Brandon Text", sans-serif;
+  background: #fff;
+  display: table;
+  font-weight: normal;
+  margin-bottom: 7px;
+  margin-top: 5px;
+  padding: 10px;
+  border-left: 5px solid;
+  -webkit-box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
+  border-color: black;
+}
+
+.highlight2 {
+  font-family: "Brandon Text", sans-serif;
+  background: #fff;
+  display: table;
+  font-weight: normal;
+  margin-bottom: 7px;
+  margin-top: 5px;
+  padding: 10px;
+  border-left: 5px solid;
+  -webkit-box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
+  border-color: gray;
+}
+
+.highlight3 {
+  font-family: "Brandon Text", sans-serif;
+  background: #fff;
+  display: table;
+  font-weight: normal;
+  margin-bottom: 7px;
+  margin-top: 5px;
+  padding: 10px;
+  border-left: 5px solid;
+  -webkit-box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
+  border-color: #111234;
+}
+
+.highlight4 {
+  font-family: "Brandon Text", sans-serif;
+  background: #fff;
+  display: table;
+  font-weight: normal;
+  margin-bottom: 7px;
+  margin-top: 5px;
+  padding: 10px;
+  border-left: 5px solid;
+  -webkit-box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
+  border-color: #6e2585;
+}
+
+.highlight5 {
+  font-family: "Brandon Text", sans-serif;
+  background: #fff;
+  display: table;
+  font-weight: normal;
+  margin-bottom: 7px;
+  margin-top: 5px;
+  padding: 10px;
+  border-left: 5px solid;
+  -webkit-box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
+  border-color: gray;
+}
+
+.highlight6 {
+  font-family: "Brandon Text", sans-serif;
+  background: #fff;
+  display: table;
+  font-weight: normal;
+  margin-bottom: 7px;
+  margin-top: 5px;
+  padding: 10px;
+  border-left: 5px solid;
+  -webkit-box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
+  border-color: #c21dac;
+}
+
+blockquote {
+  font: 400 14px/24px "Brandon Text", sans-serif;
+  border-left: 10px solid;
+  margin: 1.5em 10px;
+  padding: 0.5em 10px;
+  quotes: "“" "”";
+  background: #f9f9f9;
+  border-color: #ccc;
+}
+
+blockquote:before {
+  content: open-quote;
+  font-size: 4em;
+  line-height: 0.1em;
+  margin-right: 0.25em;
+  vertical-align: -0.4em;
+  color: #ccc;
+}
+
+blockquote p {
+  display: inline;
+}
+
+blockquote:after {
+  content: close-quote;
+  font-size: 4em;
+  line-height: 0.1em;
+  margin-left: 0.1em;
+  vertical-align: -0.6em;
+  color: #ccc;
+}
+
+.bq1 {
+  border-color: black;
+}
+
+.bq1:after {
+  content: close-quote;
+  font-size: 4em;
+  line-height: 0.1em;
+  margin-left: 0.1em;
+  vertical-align: -0.6em;
+  color: black;
+}
+
+.bq1:before {
+  content: open-quote;
+  font-size: 4em;
+  line-height: 0.1em;
+  margin-right: 0.25em;
+  vertical-align: -0.4em;
+  color: black;
+}
+
+.bq2 {
+  border-color: gray;
+}
+
+.bq2:after {
+  content: close-quote;
+  font-size: 4em;
+  line-height: 0.1em;
+  margin-left: 0.1em;
+  vertical-align: -0.6em;
+  color: gray;
+}
+
+.bq2:before {
+  content: open-quote;
+  font-size: 4em;
+  line-height: 0.1em;
+  margin-right: 0.25em;
+  vertical-align: -0.4em;
+  color: gray;
+}
+
+.bq3 {
+  border-color: #111234;
+}
+
+.bq3:after {
+  content: close-quote;
+  font-size: 4em;
+  line-height: 0.1em;
+  margin-left: 0.1em;
+  vertical-align: -0.6em;
+  color: #111234;
+}
+
+.bq3:before {
+  content: open-quote;
+  font-size: 4em;
+  line-height: 0.1em;
+  margin-right: 0.25em;
+  vertical-align: -0.4em;
+  color: #111234;
+}
+
+.bq4 {
+  border-color: #6e2585;
+}
+
+.bq4:after {
+  content: close-quote;
+  font-size: 4em;
+  line-height: 0.1em;
+  margin-left: 0.1em;
+  vertical-align: -0.6em;
+  color: #6e2585;
+}
+
+.bq4:before {
+  content: open-quote;
+  font-size: 4em;
+  line-height: 0.1em;
+  margin-right: 0.25em;
+  vertical-align: -0.4em;
+  color: #6e2585;
+}
+
+.bq5 {
+  border-color: gray;
+}
+
+.bq5:after {
+  content: close-quote;
+  font-size: 4em;
+  line-height: 0.1em;
+  margin-left: 0.1em;
+  vertical-align: -0.6em;
+  color: gray;
+}
+
+.bq5:before {
+  content: open-quote;
+  font-size: 4em;
+  line-height: 0.1em;
+  margin-right: 0.25em;
+  vertical-align: -0.4em;
+  color: gray;
+}
+
+.bq6 {
+  border-color: #c21dac;
+}
+
+.bq6:after {
+  content: close-quote;
+  font-size: 4em;
+  line-height: 0.1em;
+  margin-left: 0.1em;
+  vertical-align: -0.6em;
+  color: #c21dac;
+}
+
+.bq6:before {
+  content: open-quote;
+  font-size: 4em;
+  line-height: 0.1em;
+  margin-right: 0.25em;
+  vertical-align: -0.4em;
+  color: #c21dac;
+}
+
+.speech-bubble1 {
+  background: black;
+  color: white;
+}
+
+.speech-bubble1:after {
+  border-right-color: black;
+}
+
+.speech-bubble2 {
+  background: gray;
+  color: white;
+}
+
+.speech-bubble2:after {
+  border-left-color: gray;
+}
+
+.speech-bubble3 {
+  background: #111234;
+  color: white;
+}
+
+.speech-bubble3:after {
+  border-right-color: #111234;
+}
+
+.speech-bubble4 {
+  background: #6e2585;
+  color: white;
+}
+
+.speech-bubble4:after {
+  border-left-color: #6e2585;
+}
+
+.speech-bubble5 {
+  background: gray;
+  color: white;
+}
+
+.speech-bubble5:after {
+  border-top-color: gray;
+}
+
+.speech-bubble6 {
+  background: #c21dac;
+  color: white;
+}
+
+.speech-bubble6:after {
+  font-family: "Brandon Text", sans-serif;
+  border-top-color: #c21dac;
+}
+
+q {
+  border-bottom: 1px solid #ccc;
+  border-top: 1px solid #ccc;
+  color: #333;
+  display: block;
+  padding: 10px;
+}
+
+cite {
+  font-family: "Brandon Text", sans-serif;
+  font-size: 14px;
+  font-style: normal;
+  /*font-weight:400;
+  margin-left:20px;*/
+  padding: 10px;
+}
+
+/***** scrollbars *****/
+::-webkit-scrollbar {
+  width: 12px;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.8);
+  -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
+  -webkit-border-radius: 10px;
+  border-radius: 10px;
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+  -webkit-border-radius: 10px;
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.8);
+  -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.5);
+}
+
+::-webkit-scrollbar-thumb:window-inactive {
+  background: rgba(255, 255, 255, 0.4);
+}
+
+/**
+* Licensed to The Apereo Foundation under one or more contributor license
+* agreements. See the NOTICE file distributed with this work for
+* additional information regarding copyright ownership.
+
+* The Apereo Foundation licenses this file to you under the Apache License,
+* Version 2.0 (the "License"); you may not use this file except in
+* compliance with the License. You may obtain a copy of the License at:
+*
+* http://www.apache.org/licenses/LICENSE-2.0
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+
+* See the License for the specific language governing permissions and
+* limitations under the License.
+*/
+img[align=left], img[style*="float: left"], img[style*="float:left"] {
+  float: none !important;
+}
+
+body {
+  font-family: "Brandon Text", sans-serif;
+  color: black;
+  background-color: #ededed;
+}
+
+/*--Heading and other text changes---------------------------------------*/
+h1 {
+  color: black;
+}
+
+h2, h3, h4, h5, h6 {
+  color: black;
+}
+
+a {
+  color: black;
+}
+
+a:hover {
+  color: #c21dac;
+}
+
+/* --JUMBOTRON-------------------------------------------------------------------- */
+.jumbotron {
+  color: #ffffff;
+  background: gray; /* Old browsers */
+  background-color: gray;
+  background-image: linear-gradient(3deg, gray 0%, gray 100%);
+}
+
+.jumbotron h1 {
+  color: #ffffff;
+}
+
+.navbar-inverse .navbar-inner {
+  background-color: gray;
+  background-image: -moz-linear-gradient(top, gray, gray);
+  background-image: -webkit-gradient(linear, 0 0, 0 100%, from(gray), to(gray));
+  background-image: -webkit-linear-gradient(top, gray, gray);
+  background-image: -o-linear-gradient(top, gray, gray);
+  background-image: linear-gradient(to bottom, gray, gray);
+  background-repeat: repeat-x;
+  border-color: gray;
+  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr="$brightcolor", endColorstr="$brightcolor", GradientType=0);
+}
+
+.navbar-inverse .brand, .navbar-inverse .nav > li > a {
+  color: #ffffff;
+  text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.25);
+}
+
+.navbar-inverse .nav-collapse .nav > li > a, .navbar-inverse .nav-collapse .dropdown-menu a {
+  color: #ffffff;
+}
+
+.navbar-inverse .brand, .navbar-inverse .nav > li > a:hover {
+  color: #ffffff;
+  background-color: gray;
+}
+
+.navbar-inverse .nav-collapse .nav > li > a:hover, .navbar-inverse .nav-collapse .dropdown-menu a:hover {
+  color: #ffffff;
+  background-color: gray;
+  /*border-bottom: solid white;*/
+}
+
+.nav-list > .active > a, .nav-list > .active > a:hover, .nav-list > .active > a:focus {
+  background-color: gray;
+}
+
+/* --TABLE OF CONTENTS-------------------------------------------------------------- */
+.bs-docs-sidenav {
+  background-color: #ededed;
+  -webkit-border-radius: 6px;
+  -moz-border-radius: 6px;
+  border-radius: 6px;
+}
+
+.nav-list > li > a, .nav-list .nav-header {
+  text-shadow: none;
+}
+
+.bs-docs-sidenav > li > a {
+  border: 1px solid gray;
+}
+
+.bs-docs-sidenav > li:first-child > a {
+  -webkit-border-radius: 6px 6px 0 0;
+  -moz-border-radius: 6px 6px 0 0;
+  border-radius: 6px 6px 0 0;
+}
+
+.bs-docs-sidenav > li:last-child > a {
+  -webkit-border-radius: 0 0 6px 6px;
+  -moz-border-radius: 0 0 6px 6px;
+  border-radius: 0 0 6px 6px;
+}
+
+.bs-docs-sidenav > .active > a {
+  text-shadow: 0 1px 0 rgba(0, 0, 0, 0.15);
+  -webkit-box-shadow: inset 1px 0 0 rgba(0, 0, 0, 0.1), inset -1px 0 0 rgba(0, 0, 0, 0.1);
+  -moz-box-shadow: inset 1px 0 0 rgba(0, 0, 0, 0.1), inset -1px 0 0 rgba(0, 0, 0, 0.1);
+  box-shadow: inset 1px 0 0 rgba(0, 0, 0, 0.1), inset -1px 0 0 rgba(0, 0, 0, 0.1);
+}
+
+.bs-docs-sidenav > li > a:hover {
+  background-color: gray !important;
+  color: #ffffff;
+}
+
+.bs-docs-sidenav a:hover .icon-chevron-right {
+  opacity: 0.5;
+}
+
+.bs-docs-sidenav .active .icon-chevron-right,
+.bs-docs-sidenav .active a:hover .icon-chevron-right {
+  opacity: 1;
+}
+
+.bs-docs-sidenav a:hover .icon-chevron-right {
+  opacity: 0.5;
+}
+
+.bs-docs-sidenav .active .icon-chevron-right,
+.bs-docs-sidenav .active a:hover .icon-chevron-right {
+  opacity: 1;
+}
+
+.accordion-heading a {
+  border-bottom: 0;
+  background: black;
+  color: #ffffff;
+}
+
+.accordion-group {
+  margin-bottom: 2px;
+  border: none;
+}
+
+.table-striped tbody > tr:nth-child(odd) > td, .table-striped tbody > tr:nth-child(odd) > th {
+  background-color: gray;
+  color: #ffffff;
+}
+
+.nav-tabs > .active > a, .nav-tabs > .active > a:hover, .nav-tabs > .active > a:focus {
+  color: #ffffff;
+  cursor: default;
+  background-color: black;
+  border: 1px solid black;
+  border-bottom-color: transparent;
+}
+
+/* --PANELS-------------------------------------------------------------- */
+.panel {
+  background-color: gray;
+  border: 1px solid gray;
+  -webkit-border-radius: 4px;
+  -moz-border-radius: 4px;
+  border-radius: 4px;
+  color: #ffffff;
+}
+
+/* Echo out a label for the example */
+.panel:after {
+  font-size: 12px;
+  font-weight: bold;
+  background-color: gray;
+  border: 1px solid gray;
+  color: #ffffff;
+  -webkit-border-radius: 4px 0 4px 0;
+  -moz-border-radius: 4px 0 4px 0;
+  border-radius: 4px 0 4px 0;
+}
+
+#customFooter p {
+  overflow: hidden !important;
+}
+
+.bs-docs-sidenav.affix {
+  z-index: 10;
+}
+
+.well {
+  background-color: gray;
+  border: 1px solid gray;
+  color: #ffffff;
+}
+
+/* --FOOTER-------------------------------------------------------------- */
+.footer {
+  border-top: 1px solid #ffffff;
+  background-color: black;
+}
+
+.footer p {
+  position: absolute;
+}
+
+#BackgroundFooterIMG {
+  background-size: contain;
+  background-repeat: no-repeat;
+}
+
+.footer p {
+  color: #ffffff;
+}
+
+.alertMsg {
+  color: black;
+}
+
+/* --GLOSSARY-------------------------------------------------------------- */
+a.glossary:link, a.glossary:visited, a.glossary:hover, a.glossary:active {
+  color: black;
+}
+
+.glossaryTip {
+  background-color: gray;
+  color: #ffffff;
+}
+
+.nav-pills > .active > a, .nav-pills > .active > a:focus {
+  color: #ffffff;
+  background-color: black;
+}
+
+.nav-pills > .active > a:hover {
+  background-color: gray;
+}
+
+/* --IMPORT FONTS----------------------------------------------------- */
+/* --MAIN BODY STYLE------------------------------------------------ */
+body {
+  font: 400 16px/20px "Roboto", sans-serif;
+  color: black;
+  background: #fafafa;
+}
+
+/* --- TOP NAVBAR -------------------------------------------------------------- */
+/*fix navbar to top of page*/
+.navbar {
+  position: fixed;
+  box-shadow: 0 6px 20px 0 rgba(0, 0, 0, 0.19), 0 8px 17px 0 rgba(0, 0, 0, 0.2);
+}
+
+/*nav bar*/
+.navbar-inverse .navbar-inner {
+  background: black;
+  font: 400 15px "Libre Franklin", sans-serif;
+  color: #ffffff;
+  border: none;
+  display: flex;
+  align-items: center;
+}
+
+.navbar .container {
+  flex: 1;
+}
+
+/*hamburger button*/
+.navbar .btn-navbar {
+  background: #2b354c;
+  transition: 0.25s ease-in-out;
+}
+
+/*navbar items on hover*/
+.navbar-inverse .nav-collapse .nav > li > a,
+.navbar-inverse .nav-collapse .dropdown-menu a {
+  text-shadow: none;
+  transition: 0.25s ease-in-out;
+}
+
+.navbar-inverse .nav-collapse .nav > li > a:hover,
+.navbar-inverse .nav-collapse .dropdown-menu a:hover {
+  color: white;
+}
+
+/*float navbar items items to right*/
+.navbar .nav {
+  float: left;
+}
+
+/* --JUMBOTRON----------------------------------------------------------- */
+/*sets size, makes into flexbox, adds animation */
+.jumbotron {
+  display: flex;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+  padding: 0;
+  margin-top: 16px;
+  text-align: left;
+  transition: all 0.7s ease;
+}
+
+/*class for when page is scrolled - makes jumbotron smaller*/
+.shrink {
+  height: 175px !important;
+  margin-top: 160px;
+}
+
+/*fades out logo when page is scrolled*/
+.jumbotron.shrink::after {
+  opacity: 0;
+}
+
+/*centre container within jumbotron*/
+.jumbotron .container {
+  align-self: center;
+}
+
+/*pseudo element for full screen title images - actual images are added on each individual page*/
+.jumbotron::before {
+  content: " ";
+  display: block;
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 1;
+  opacity: 0.5;
+  transition: all 0.8s ease-in-out;
+}
+
+/*sets position, padding and animation for main page headers*/
+.titles {
+  position: relative;
+  padding: 26px;
+  z-index: 1;
+  transition: all 0.7s ease-in-out;
+}
+
+.titles h1,
+.titles p {
+  transition: all 0.7s ease-in-out;
+}
+
+/*main header*/
+.titles h1 {
+  font: 400 52px/54px "Roboto", sans-serif;
+  color: #fff;
+  z-index: 2;
+  position: relative;
+  letter-spacing: -1px;
+  margin-top: 0;
+}
+
+/*subheading*/
+.titles p {
+  font: 300 22px/24px "Roboto", sans-serif;
+  color: #fff;
+  z-index: 2;
+  position: relative;
+  margin-bottom: 0;
+}
+
+/*resizes heading and subheading when page is scrolled, and adds left margin for logo*/
+.titles.shrinkMenu h1 {
+  font: 400 38px/40px "Roboto", sans-serif;
+  margin-bottom: 6px;
+}
+
+.titles.shrinkMenu p {
+  font: 300 18px/22px "Roboto", sans-serif;
+  padding-bottom: 16px;
+}
+
+.titles.shrinkMenu {
+  margin-left: 140px;
+}
+
+/*pseudo element for logo - ::before displays when full screen, ::after when page is scrolled*/
+.titles::before,
+.titles::after {
+  content: "";
+  width: 100%;
+  height: 110px;
+  z-index: 1;
+  background-image: url("images/logo_rocmn.png");
+  background-size: contain;
+  background-repeat: no-repeat;
+  -webkit-transition: all 0.5s cubic-bezier(0.65, 0.05, 0.36, 1);
+  transition: all 0.8s cubic-bezier(0.65, 0.05, 0.36, 1);
+}
+
+@media (min-width: 450px) and (max-width: 600px) {
+  .titles::before {
+    position: fixed;
+    top: 60px;
+    right: 20px;
+    opacity: 1;
+    width: 125px;
+  }
+}
+@media (min-width: 600px) and (max-width: 979px) {
+  .titles::before {
+    position: fixed;
+    top: 60px;
+    right: 20px;
+    opacity: 1;
+    width: 150px;
+  }
+}
+.btn-mini:hover, .btn-mini:focus {
+  background: gray !important;
+}
+
+@media (min-width: 979px) {
+  .titles::before {
+    position: fixed;
+    top: 60px;
+    right: 20px;
+    opacity: 1;
+  }
+}
+.titles.shrinkMenu::before {
+  top: -130px;
+  opacity: 0;
+}
+
+.titles::after {
+  display: none;
+  top: 50%;
+  transform: translateY(-50%);
+  margin-top: 0;
+  left: -150px;
+  opacity: 0;
+  left: 0% !important;
+}
+
+.titles.shrinkMenu::after {
+  left: -160px;
+  opacity: 1;
+}
+
+/* --SCROLL DOWN PROMPT STYLE AND ANIMATION-------------------------------------- */
+/*navigation promt arrow and text*/
+@keyframes bounce {
+  0%, 20%, 50%, 80%, 100% {
+    -moz-transform: translateY(0);
+    -ms-transform: translateY(0);
+    -webkit-transform: translateY(0);
+    transform: translateY(0);
+  }
+  40% {
+    -moz-transform: translateY(-30px);
+    -ms-transform: translateY(-30px);
+    -webkit-transform: translateY(-30px);
+    transform: translateY(-30px);
+  }
+  60% {
+    -moz-transform: translateY(-15px);
+    -ms-transform: translateY(-15px);
+    -webkit-transform: translateY(-15px);
+    transform: translateY(-15px);
+  }
+}
+#clickableWrapper {
+  position: fixed;
+  width: 100vw;
+  left: calc(-50vw + 50%);
+  bottom: 0;
+  padding-bottom: 16px;
+  text-align: center;
+  color: #eaeaea;
+  cursor: pointer;
+  z-index: 1;
+}
+
+.arrow {
+  margin-bottom: 10px;
+}
+
+.arrow i {
+  text-shadow: 4px 6px 12px rgba(0, 0, 0, 0.7);
+}
+
+.promptText {
+  font: 400 15px "Roboto Condensed", sans-serif;
+}
+
+.bounce {
+  -moz-animation: bounce 2s infinite;
+  -webkit-animation: bounce 2s infinite;
+  animation: bounce 2s infinite;
+}
+
+/* --PAGE CONTENT-------------------------------------------------------- */
+/*section header holder*/
+.page-header {
+  color: black;
+  padding-bottom: 0;
+  margin: 0;
+  border: 0;
+}
+
+/*section header*/
+.page-header h1 {
+  font: 300 34px/36px "Roboto", sans-serif;
+  letter-spacing: -0.02em;
+}
+
+/*section background, shadow, etc.*/
+section {
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
+  padding: 16px;
+  margin-bottom: 32px;
+  background: #fff;
+  border-radius: 4px;
+}
+
+/*add margin to first section of page*/
+section:first-of-type {
+  margin-top: 16px;
+}
+
+/*section h2 sub-headings and links*/
+section h2 {
+  font: 400 18px "Roboto Condensed", sans-serif;
+  color: black;
+  margin: 0 0 16px 0;
+  padding-bottom: 16px;
+  border-bottom: 1px solid;
+  opacity: 0.8;
+}
+
+section h2:not(:first-of-type) {
+  padding-top: 32px;
+}
+
+/*change "top" button to circle and add box shadow and animations*/
+.btn-mini {
+  position: relative;
+  font-size: 10.5px;
+  color: #fff;
+  background: black;
+  text-shadow: none;
+  width: 40px;
+  height: 40px;
+  cursor: pointer;
+  border: none;
+  border-radius: 50%;
+  margin-bottom: 0;
+  padding: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
+  transition: all 0.3s cubic-bezier(0.4, -1.5, 0.27, 1.55) !important;
+  transform: scale(0.9);
+  z-index: 2;
+}
+
+.btn-mini:hover,
+.btn-mini:focus {
+  background: gray;
+  color: #fff;
+  transform: scale(1.1);
+}
+
+.btn-mini:active {
+  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.16), 0 3px 6px rgba(0, 0, 0, 0.23);
+  transform: scale(0.9);
+}
+
+.btn-mini::after {
+  content: "";
+  border-radius: 50%;
+  position: absolute;
+  z-index: -1;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+  opacity: 0;
+  transition: all 0.3s cubic-bezier(0.4, -1.5, 0.27, 1.55);
+}
+
+.btn-mini:hover::after {
+  opacity: 1;
+}
+
+/* --NAVIGATION-------------------------------------------------------- */
+/*left-hand menu - remove rounded corners*/
+.bs-docs-sidenav > li:first-child > a,
+.bs-docs-sidenav > li:last-child > a {
+  border-radius: 6px;
+}
+
+/*make background transparent, remove box shadow and set font sixe*/
+.bs-docs-sidenav {
+  background-color: transparent;
+  border-radius: 0;
+  box-shadow: none;
+  font-size: 15px;
+}
+
+.bs-docs-sidenav > li > a {
+  border-width: 0 0 0 2px;
+  border-left: 2px solid transparent;
+  border-radius: 6px;
+}
+
+.bs-docs-sidenav > .active > a,
+.bs-docs-sidenav > .active > a:hover,
+.bs-docs-sidenav > .active > a:focus {
+  font-weight: 700;
+  text-shadow: none;
+  box-shadow: none;
+  transition: 0.25s ease-in-out;
+}
+
+.bs-docs-sidenav > .active > a {
+  color: #ffffff;
+  background: black;
+}
+
+.bs-docs-sidenav > .active > a:hover,
+.bs-docs-sidenav > .active > a:focus {
+  color: #ffffff;
+  background: #eee;
+}
+
+.bs-docs-sidenav > li > a:hover {
+  background-color: #e9e9e9;
+}
+
+.nav a {
+  color: black;
+}
+
+.nav-list li {
+  line-height: 26px;
+  border-bottom: 1px solid #e9e9e9;
+}
+
+.nav-list li:last-of-type {
+  border-bottom: none;
+}
+
+.nav-list > li > a,
+.nav-list .nav-header {
+  text-shadow: none;
+}
+
+/* --HORIZONTAL RULE-------------------------------------- */
+hr {
+  margin: 20px 0;
+  border: 0;
+  border-bottom: 1px solid black;
+}
+
+/* --- RESPONSIVE STYLES ----------------------------------------------- */
+@media screen and (min-width: 1200px) {
+  .container,
+  .navbar-static-top .container,
+  .navbar-fixed-top .container,
+  .navbar-fixed-bottom .container {
+    width: 1100px;
+  }
+}
+@media (max-width: 980px) and (min-width: 768px) {
+  .bs-docs-sidenav.affix {
+    top: 40px;
+  }
+}
+@media (max-width: 979px) {
+  .nav-collapse .nav {
+    float: none !important;
+  }
+  .nav-collapse .nav > li > a,
+  .nav-collapse .dropdown-menu a {
+    font-weight: 400;
+  }
+  .navbar-inverse .nav-collapse .nav > li > a:hover,
+  .navbar-inverse .nav-collapse .nav > li > a:focus,
+  .navbar-inverse .nav-collapse .dropdown-menu a:hover,
+  .navbar-inverse .nav-collapse .dropdown-menu a:focus {
+    background-color: rgba(17, 17, 17, 0.4);
+  }
+}
+@media (max-width: 767px) {
+  .titles {
+    margin-left: 16px;
+  }
+  .navbar-fixed-top,
+  .navbar-fixed-bottom,
+  .navbar-static-top {
+    margin-right: 0px;
+    margin-left: 0px;
+  }
+  .footer {
+    margin-right: -20px;
+    margin-left: -20px;
+  }
+}/*# sourceMappingURL=perfecttheme.css.map */

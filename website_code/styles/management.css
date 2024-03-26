@@ -95,6 +95,7 @@ h1.heading{
 .admin_mgt_area_middle_button_left .xerte_button {
 	margin-top: 3px;
 	margin-bottom: 3px;
+
 }
 
 .admin_mgt_area_middle_button_right{
@@ -150,11 +151,6 @@ div#admin_area form select, div#admin_area form input, div#admin_area form .xert
 	margin: 5px;
 }
 
-.admin_block {
-	border-top: 1px #758389 dotted;
-	margin-top: 10px;
-}
-
 .admin_block .xerte_button {
 	margin-top: 5px;
 }
@@ -168,9 +164,7 @@ div#admin_area form select, div#admin_area form input, div#admin_area form .xert
 	border-bottom: none;
 }
 
-.template:not(:first-of-type){
-	border-top: 1px #758389 dotted;
-}
+
 
 .template_list {
 	clear: both;

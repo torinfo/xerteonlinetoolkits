@@ -1,0 +1,45 @@
+//*---colours to use - rgbo:  Red Green Blue Orange---*/
+//*define color pallette*/
+$darkestcolor: #343469; /*donkerblauw*/
+$lightestcolor:#ffffff;
+$brightcolor:#717193; /*lichtblauw*/
+$contrastcolor:#e18538; /*oranje*/
+$whiteorlightest:#ffffff;
+$blackordarkest:#000000;
+$accent1:#F58220;	/*Deltion blauw*/
+$accent2:#E18538;	/*Deltion oranje*/
+$accent3:#717193;	/*lichtblauw*/
+$accent4:red;	/*rood*/
+$accent5:green;	/*groen*/
+$accent6:#FFFFFF;	/*wit*/
+
+
+/*set background colors*/
+$bodybackgroundcolor:#EAEAF0;
+$defaultpagebackground:$whiteorlightest;
+$progressBarColor: #e18538; /* default #2196F3;*/
+$panelbackground: #EAEAF0; 
+
+/*set font family*/
+$mainfonts: Roboto, sans-serif;
+$secondaryfonts:Roboto, sans-serif;;
+
+/*define font colors to match the background colors*/
+$mainfontcolour: #222222;
+$fontcolorfordarkestcolor:#ffffff;
+$fontcolorforlightestcolor:#000000;
+$fontcolorfobrightcolor:#ffffff;
+$fontcolorforcontrastcolor:#ffffff;
+$linkcolor:#343469;
+$linkvisited: #717193;
+$linkhover:#e18538;
+
+/*define rounded corner and other sizes*/
+$largeroundedcorners: 3vmin;/*6vmin;*/
+$mediumroundedcorners: 2vmin;/*2vmin;*/
+$smallroundedcorners: 1vmin;/*1vmin;*/
+$imageroundedcorners: none;/*2vmin;*/
+$noroundedcorners: none;/*none;*/
+$contentmargin: 2%;
+$interfaceboxshadow:none; /*3px 3px 5px grey*/
+$defaultpagepadding:2%;

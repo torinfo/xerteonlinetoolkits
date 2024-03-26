@@ -1,0 +1,46 @@
+
+
+/******Header******/
+#x_headerBlock {
+  color: $whiteorlightest;
+  background-repeat:no-repeat;
+  background-position:right;
+  background-image:	none;
+
+  //margin-top: 5px;
+  background: $blackordarkest;
+  display: flex;
+  height: 84px;
+}
+#x_headerBlock {
+
+	border-top-right-radius: 0px;
+	border-top-left-radius: 0px;
+	color: $whiteorlightest;
+	background-color: $blackordarkest;
+  border-top-right-radius: $largeroundedcorners;
+  border-top-left-radius: $largeroundedcorners;
+  
+}
+
+
+body:not(.sb_right):not(.sb_left) #x_headerBlock {
+  // width: 80%;
+
+ 
+}
+
+
+/*Roboto Font importeren*/
+@import url('https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,300;0,400;0,500;1,400;1,500;1,700&display=swap');
+
+#x_headerBlock	h1{
+  font: 300 1.1em 'roboto', sans-serif;
+  padding-left: 0.3rem;
+}
+
+#x_headerBlock h2 {
+    color: white;
+	font: 500 1.5em 'roboto', sans-serif;
+	padding-left: 0.3rem;
+}
