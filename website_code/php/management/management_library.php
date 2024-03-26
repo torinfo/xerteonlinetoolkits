@@ -22,6 +22,18 @@
 	_load_language_file("/management.inc");
 	
 	require_once("../language_library.php");
+
+    function inputField($dbname, $title, $default, $options = "cols=\"100\" rows=\"2\""){
+		$inputField = "";
+		if($_SESSION['layout'] === "new"){
+			$inputField .= "<div class='mgmnt-form-header-container'><div class='mgmnt-form-header'>". $title ."</div><div class='mgmnt-form-container'><form><textarea " . $options . " class='text-area-block' id='" . $dbname . "'>" . $default . "</textarea></form></div></div>";
+		}else {
+			$inputField .= "<p>" . $title . "<form><textarea " . $options . " id=\"$dbname\">" . $default . "</textarea></form></p>";
+		}
+		return $inputField;
+	}
+
+
 	function category_list(){
 	
 		global $xerte_toolkits_site;
@@ -33,8 +45,8 @@
 		echo "<div class=\"admin_block\">";
 		echo "<h3>" . MANAGEMENT_LIBRARY_ADD_CATEGORY . "</h3>";
 		
-		echo "<p>" . MANAGEMENT_LIBRARY_NEW_CATEGORY . "<form><textarea cols=\"100\" rows=\"2\" id=\"newcategory\">" . MANAGEMENT_LIBRARY_NEW_CATEGORY_NAME . "</textarea></form></p>";
- 	    echo "<p><form action=\"javascript:new_category();\"><button class=\"xerte_button\" type=\"submit\"><i class=\"fa fa-plus-circle\"></i> " . MANAGEMENT_LIBRARY_NEW_LABEL . "</button></form></p>";
+		echo inputField("newcategory", MANAGEMENT_LIBRARY_NEW_CATEGORY, MANAGEMENT_LIBRARY_NEW_CATEGORY_NAME);
+ 		echo "<p><form action=\"javascript:new_category();\"><button class=\"xerte_button\" type=\"submit\"><i class=\"fa fa-plus-circle\"></i> " . MANAGEMENT_LIBRARY_NEW_LABEL . "</button></form></p>";
 		echo "</div>";
 		
 		echo "<div class=\"admin_block\">";
@@ -63,8 +75,8 @@
 		echo "<div class=\"admin_block\">";
         echo "<h3>" . MANAGEMENT_LIBRARY_ADD_EDUCATION . "</h3>";
 
-        echo "<p>" . MANAGEMENT_LIBRARY_NEW_EDUCATION . "<form><textarea cols=\"100\" rows=\"2\" id=\"neweducationlevel\">" . MANAGEMENT_LIBRARY_NEW_EDUCATION_NAME . "</textarea></form></p>";
-        echo "<p><form action=\"javascript:new_educationlevel();\"><button class=\"xerte_button\" type=\"submit\"><i class=\"fa fa-plus-circle\"></i> " . MANAGEMENT_LIBRARY_NEW_LABEL . "</button></form></p>";
+		echo inputField("neweducationlevel", MANAGEMENT_LIBRARY_NEW_EDUCATION, MANAGEMENT_LIBRARY_NEW_EDUCATION_NAME);
+ 		echo "<p><form action=\"javascript:new_educationlevel();\"><button class=\"xerte_button\" type=\"submit\"><i class=\"fa fa-plus-circle\"></i> " . MANAGEMENT_LIBRARY_NEW_LABEL . "</button></form></p>";
 		echo "</div>";
 
 		echo "<div class=\"admin_block\">";
@@ -93,8 +105,8 @@
 		echo "<div class=\"admin_block\">";
         echo "<h3>" . MANAGEMENT_LIBRARY_ADD_GROUPING . "</h3>";
 
-        echo "<p>" . MANAGEMENT_LIBRARY_NEW_GROUPING . "<form><textarea cols=\"100\" rows=\"2\" id=\"newgrouping\">" . MANAGEMENT_LIBRARY_NEW_GROUPING_NAME . "</textarea></form></p>";
-        echo "<p><form action=\"javascript:new_grouping();\"><button class=\"xerte_button\" type=\"submit\"><i class=\"fa fa-plus-circle\"></i> " . MANAGEMENT_LIBRARY_NEW_LABEL . "</button></form></p>";
+		echo inputField("newgrouping", MANAGEMENT_LIBRARY_NEW_GROUPING, MANAGEMENT_LIBRARY_NEW_GROUPING_NAME);
+ 		echo "<p><form action=\"javascript:new_grouping();\"><button class=\"xerte_button\" type=\"submit\"><i class=\"fa fa-plus-circle\"></i> " . MANAGEMENT_LIBRARY_NEW_LABEL . "</button></form></p>";
 		echo "</div>";
 
 		echo "<div class=\"admin_block\">";
@@ -122,7 +134,7 @@
 		echo "<div class=\"admin_block\">";
 		
         $row = db_query_one($query);
-        echo "<p>" . MANAGEMENT_COURSE_FREE_TEXT_ENABLE . "<form><textarea id=\"course_freetext_enabled\">" . $row['course_freetext_enabled'] . "</textarea></form></p>";
+		echo inputField("course_freetext_enable", MANAGEMENT_COURSE_FREE_TEXT_ENABLE, $row['course_freetext_enabled'], "");
 
         $query = "select * from " . $xerte_toolkits_site->database_table_prefix . "course order by course_name ASC";
 		echo "</div>";
@@ -130,8 +142,8 @@
 		echo "<div class=\"admin_block\">";
         echo "<h3>" . MANAGEMENT_LIBRARY_ADD_COURSE . "</h3>";
 
-        echo "<p>" . MANAGEMENT_LIBRARY_NEW_COURSE . "<form><textarea cols=\"100\" rows=\"2\" id=\"newcourse\">" . MANAGEMENT_LIBRARY_NEW_COURSE_NAME . "</textarea></form></p>";
-        echo "<p><form action=\"javascript:new_course();\"><button class=\"xerte_button\" type=\"submit\"><i class=\"fa fa-plus-circle\"></i> " . MANAGEMENT_LIBRARY_NEW_LABEL . "</button></form></p>";
+		echo inputField("newcourse", MANAGEMENT_LIBRARY_NEW_COURSE, MANAGEMENT_LIBRARY_NEW_COURSE_NAME);
+ 		echo "<p><form action=\"javascript:new_course();\"><button class=\"xerte_button\" type=\"submit\"><i class=\"fa fa-plus-circle\"></i> " . MANAGEMENT_LIBRARY_NEW_LABEL . "</button></form></p>";
 		echo "</div>";
 		
 		echo "<div class=\"admin_block\">";
@@ -255,8 +267,8 @@
 		echo "<div class=\"admin_block\">";
 		echo "<h3>" . MANAGEMENT_LIBRARY_NEW_LICENCE . "</h3>";
 
-		echo "<p>" . MANAGEMENT_LIBRARY_NEW_LICENCE_DETAILS . "<form><textarea cols=\"100\" rows=\"2\" id=\"newlicense\">" . MANAGEMENT_LIBRARY_NEW_LICENCE_NAME . "</textarea></form></p>";
-		echo "<p><form action=\"javascript:new_license();\"><button type=\"submit\" class=\"xerte_button\" ><i class=\"fa fa-plus-circle\"></i> " . MANAGEMENT_LIBRARY_NEW_LABEL . "</button></form></p>";
+		echo inputField("newlicense", MANAGEMENT_LIBRARY_NEW_LICENCE_DETAILS, MANAGEMENT_LIBRARY_NEW_LICENCE_NAME);
+ 		echo "<p><form action=\"javascript:new_license();\"><button class=\"xerte_button\" type=\"submit\"><i class=\"fa fa-plus-circle\"></i> " . MANAGEMENT_LIBRARY_NEW_LABEL . "</button></form></p>";
 		echo "</div>";
 		
 		echo "<div class=\"admin_block\">";

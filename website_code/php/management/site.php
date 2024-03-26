@@ -28,6 +28,64 @@ _load_language_file( "/website_code/php/properties/sharing_status_template.inc")
 require_once("../user_library.php");
 require_once("management_library.php");
 
+function old_fields($title, $data, $specificDisplay){
+	echo "<div class=\"template\" id=\"$specificDisplay\"><p>" . $title . " <button type=\"button\" class=\"xerte_button\" id=\"" . $specificDisplay . "_btn\" onclick=\"javascript:templates_display('$specificDisplay')\">" . MANAGEMENT_VIEW . "</button></p></div><div class=\"template_details\" id=\"" . $specificDisplay . "_child\">";
+
+	foreach($data[$specificDisplay] as $key => $field){
+		$options = "";
+			if(isset($field->size)) 
+				$options .= "rows=\"" . strval($field->size) . "\"";
+
+		if(gettype($field) == "string"){
+			echo "<p>$field</p>";
+		}else if(isset($field->html)){
+			echo $field->html;
+		}else if($key == "keys") {
+			echo "<div class=\"template\" id=\"ltikeys\"><p>" . MANAGEMENT_SITE_LTI_KEYS . " <button type=\"button\" class=\"xerte_button\" id=\"ltikeys_btn\"onclick=\"javascript:templates_display('ltikeys')\">" . MANAGEMENT_VIEW . "</button></p></div><div class=\"template_details\" id=\"ltikeys_child\">";
+			echo "<div id=\"ltikeys\">";
+
+            foreach($field as $LTI_key){
+
+                $buttonDelete = $LTI_key['buttonDelete']? "&nbsp;&nbsp;<a href=\"javascript:delete_LTI_key('" . $LTI_key['id'] . "')\">" . LTI_KEYS_DELETE . "</a>" : "";
+                
+                echo "<div class=\"template\" id=\"" . $LTI_key['id'] . "\" savevalue=\"" . $LTI_key['id'] . "\"><p>" . $LTI_key['name'] . " <a href=\"javascript:templates_display('" . $LTI_key['id'] . "')\">" . $LTI_key['button1'] . "</a>". $buttonDelete . "</p></div><div class=\"template_details\" id=\"" . $LTI_key['id'] . "_child\">";
+
+				
+				echo "<p>" . LTI_KEYS_NAME . "<form><textarea id=\"lti_keys_name" . $LTI_Key['id'] . "\">" . $LTI_key['name'] . "</textarea></form></p>";
+				echo "<p>" . LTI_KEYS_KEY . "<form><textarea id=\"lti_keys_key" . $LTI_Key['id'] . "\">" . $LTI_key['key'] . "</textarea></form></p>";
+				echo "<p>" . LTI_KEYS_SECRET . "<form><textarea id=\"lti_keys_secret" . $LTI_Key['id'] . "\">" . $LTI_key['secret'] . "</textarea></form></p>";
+				echo "<p>" . LTI_KEYS_CONTEXT_ID . "<form><textarea id=\"lti_keys_context_id" . $LTI_Key['id'] . "\">" . $LTI_key['context_id'] . "</textarea></form></p>";
+
+                if ($LTI_key['id'] == 'NEW') {
+                    echo "<div><p><form action=\"javascript:new_LTI_key();\"><input class=\"xerte_button\" type=\"submit\" name=\"new-lti\" value=\"" . LTI_KEYS_ADD_SUBMIT . "\"></form></p></div>";
+                } else {
+                    echo "<div style=\"width:300px;\">";
+                    echo "<div style=\"float:left;width:100px;\"><p><form action=\"javascript:edit_LTI_key(" . $LTI_key['id'] . ");\"><input class=\"xerte_button\" type=\"submit\" name=\"edit-lti\" value=\"" . LTI_KEYS_EDIT_SUBMIT . "\"></form></p></div>";
+                    echo "<div style=\"float:right;width:100px;\"><p><form><input type=\"submit\" name=\"delete-lti\" value=\"" . LTI_KEYS_DELETE_SUBMIT . "\"></form></p></div>";
+                    echo "</div>";		
+                }
+                echo "</div>";
+            }
+			echo "</div></div>";
+        }else if($field->editor === "normal" || $field->editor === "wysiwyg" || $field->editor === "code"){
+			echo "<p>" . $field->title . "<form><textarea $options id=\"" . $field->dbname . "\">" . $field->value . "</textarea></form></p>";
+		}else if($field->editor === "multiValue") {
+			echo "<p>" . $field->title . "<form>";
+			echo "<select name=\"" . $field->dbname . "\" id=\"" . $field->dbname . "\" style=\"padding: 0.4em 0.15em\">";
+			foreach($field->validValues as $value=>$disabled){
+				$selected = $value == $field->value? "selected" : "";
+				$disabled = $disabled? "disabled" : "";
+				echo "<option value='". $value ."' ". $selected ." ". $disabled .">". $value ."</option>";
+			}
+			echo "</select></form></p>";
+		}else {
+			echo "unhandled \"" . $field->editor . "\"<br>";
+		}
+	}
+
+    echo "</div>";
+}
+
 
 ?>
 
@@ -35,7 +93,7 @@ require_once("management_library.php");
 <?php
 if(is_user_admin()) {
     $specificDisplay = $_REQUEST["row"];
-    $database_id = database_connect("templates list connected", "template list failed");
+    $datadddbase_id = database_connect("templates list connected", "template list failed");
 
     $query = "select * from " . $xerte_toolkits_site->database_table_prefix . "sitedetails";
 
@@ -49,8 +107,88 @@ if(is_user_admin()) {
         $site_text = $site_texts[0];
         $tutorial_text = "";
     }
+	include("./site_details.php");
+	$data = get();
 
-    if ($specificDisplay === "siteSettings") {
+	
+	if($_SESSION['layout'] !== "old") {
+		foreach($data[$specificDisplay] as $key => $field){
+			$options = "";
+			if(isset($field->size)) 
+				$options .= "rows=\"" . strval($field->size) . "\"";
+
+			if(gettype($field) == "string"){
+				echo "<p>$field</p>";
+			}else if(isset($field->html)) {
+				echo $field->html;
+			}else if($key == "keys") {
+				foreach($field as $LTI_key){
+
+					$buttonDelete = $LTI_key['buttonDelete']? "&nbsp;&nbsp;<a href=\"javascript:delete_LTI_key('" . $LTI_key['id'] . "')\">" . LTI_KEYS_DELETE . "</a>" : "";
+					
+					echo "<div class=\"template\" id=\"" . $LTI_key['id'] . "\" savevalue=\"" . $LTI_key['id'] . "\"><p>" . $LTI_key['name'] . " <a href=\"javascript:templates_display('" . $LTI_key['id'] . "')\">" . $LTI_key['button1'] . "</a>". $buttonDelete . "</p></div><div class=\"template_details\" id=\"" . $LTI_key['id'] . "_child\">";
+
+					echo "<div class='mgmnt-form-header-container'><div class='mgmnt-form-header'>". LTI_KEYS_NAME ."</div><div class='mgmnt-form-container'><form><textarea class='text-area-block' id='lti_keys_name" . $LTI_key['id'] . "'>" . $LTI_key['name'] . "</textarea></form></div></div>";
+					echo "<div class='mgmnt-form-header-container'><div class='mgmnt-form-header'>". LTI_KEYS_KEY ."</div><div class='mgmnt-form-container'><form><textarea class='text-area-block' id='lti_keys_key" . $LTI_key['id'] . "'>" . $LTI_key['key'] . "</textarea></form></div></div>";
+					echo "<div class='mgmnt-form-header-container'><div class='mgmnt-form-header'>". LTI_KEYS_SECRET ."</div><div class='mgmnt-form-container'><form><textarea class='text-area-block' id='lti_keys_secret" . $LTI_key['id'] . "'>" . $LTI_key['secret'] . "</textarea></form></div></div>";
+					echo "<div class='mgmnt-form-header-container'><div class='mgmnt-form-header'>". LTI_KEYS_CONTEXT_ID ."</div><div class='mgmnt-form-container'><form><textarea class='text-area-block' id='lti_keys_context_id" . $LTI_key['id'] . "'>" . $LTI_key['context_id'] . "</textarea></form></div></div>";
+
+					if ($LTI_key['id'] == 'NEW') {
+						echo "<div><p><form action=\"javascript:new_LTI_key();\"><input class=\"xerte_button\" type=\"submit\" name=\"new-lti\" value=\"" . LTI_KEYS_ADD_SUBMIT . "\"></form></p></div>";
+					} else {
+						echo "<div style=\"width:300px;\">";
+						echo "<div style=\"float:left;width:100px;\"><p><form action=\"javascript:edit_LTI_key(" . $LTI_key['id'] . ");\"><input class=\"xerte_button\" type=\"submit\" name=\"edit-lti\" value=\"" . LTI_KEYS_EDIT_SUBMIT . "\"></form></p></div>";
+						echo "<div style=\"float:right;width:100px;\"><p><form><input type=\"submit\" name=\"delete-lti\" value=\"" . LTI_KEYS_DELETE_SUBMIT . "\"></form></p></div>";
+						echo "</div>";		
+					}
+					echo "</div>";
+				}
+			}else if($field->editor == "normal"){
+				echo "<div class='mgmnt-form-header-container'><div class='mgmnt-form-header'>". $field->title ."</div><div class='mgmnt-form-container'><form><textarea " . $options . " class='text-area-block' id='" . $field->dbname . "'>" . $field->value . "</textarea></form></div></div>";
+			}else if($field->editor == "wysiwyg"){
+				echo "<div class='mgmnt-form-header-container'><div class='mgmnt-form-header'>". $field->title ."</div><div class='mgmnt-form-container'><form><textarea " . $options . " class='text-area-block wysiwyg' id='" . $field->dbname . "'>" . $field->value . "</textarea></form></div></div>";
+			}else if($field->editor == "code"){
+				echo "<div class='mgmnt-form-header-container'><div class='mgmnt-form-header'>". $field->title ."</div><div class='mgmnt-form-container'><form><textarea " . $options . " class='text-area-block codemirror' id='" . $field->dbname . "'>" . $field->value . "</textarea></form></div></div>";
+			}else if($field->editor == "multiValue"){
+				echo "<div class='mgmnt-form-header-container'><div class='mgmnt-form-header'>". $field->title ."</div><div class='mgmnt-form-container'><form><select " . $options . "class='text-area-block' id='". $field->dbname ."' name='". $field->dbname ."'>";
+				foreach($field->validValues as $value=>$disabled){
+					$selected = $value == $field->value? "selected" : "";
+					$disabled = $disabled? "disabled" : "";
+					echo "<option value='". $value ."' ". $selected ." ". $disabled .">". $value ."</option>";
+				}
+				echo "</select></form></div></div>";
+			}
+		}
+	}else {
+		old_fields(MANAGEMENT_SITE_TITLE, $data, "siteSettings");
+		old_fields(MANAGEMENT_SITE_SERVER, $data, "serverdetails");
+		old_fields(MANAGEMENT_SITE_RSS, $data, "rssdetails");
+		old_fields(MANAGEMENT_SITE_PATH, $data, "pathdetails");
+		old_fields(MANAGEMENT_SITE_SQL, $data, "sqldetails");
+		old_fields(MANAGEMENT_SITE_ERROR_HANDLING, $data, "errordetails");
+		old_fields(MANAGEMENT_SITE_AUTH_DETAILS, $data, "authdetails");
+		old_fields(MANAGEMENT_SITE_LDAP, $data, "ldapdetails");
+		old_fields(MANAGEMENT_SITE_XERTE, $data, "xertedetails");
+		old_fields(MANAGEMENT_SITE_EMAIL, $data, "emaildetails");
+		old_fields(MANAGEMENT_LIBRARY_LANGUAGES, $data, "languagedetails");
+		old_fields(MANAGEMENT_SITE_XAPI, $data, "xapidetails");
+		old_fields(MANAGEMENT_SITE_SOCIALICONS, $data, "socialicondetails");
+		old_fields(MANAGEMENT_SITE_LTI, $data, "ltidetails");
+	}
+    /*
+	if ($specificDisplay === "siteSettings") {
+		include("./site_details.php");
+		$data = get();
+		
+		foreach($data as $field){
+			if($field->editor == "normal"){
+				echo "<div class='mgmnt-form-header-container'><div class='mgmnt-form-header'>". $field->title ."</div><div class='mgmnt-form-container'><form><textarea class='text-area-block' id=\"" . $field->name . "\">" . $field->value . "</textarea></form></div></div>";
+			}else if($field->editor == "wysiwyg"){
+				echo "<div class='mgmnt-form-header-container'><div class='mgmnt-form-header'>". $field->title ."</div><div class='mgmnt-form-container'><form><textarea class='text-area-block wysiwyg' id=\"" . $field->name . "\">" . $field->value . "</textarea></form></div></div>";
+			}else if($field->editor == "code"){
+				echo "<div class='mgmnt-form-header-container'><div class='mgmnt-form-header'>". $field->title ."</div><div class='mgmnt-form-container'><form><textarea class='text-area-block codemirror' id=\"" . $field->name . "\">" . $field->value . "</textarea></form></div></div>";
+			}
+		}
        // echo "<p>" . MANAGEMENT_SITE_URL . "<form><textarea class='text-area-block' id=\"site_url\">" . $row['site_url'] . "</textarea></form></p>";
         echo "<div class='mgmnt-form-header-container'><div class='mgmnt-form-header'>". MANAGEMENT_SITE_URL ."</div><div class='mgmnt-form-container'><form><textarea class='text-area-block' id=\"site_url\">" . $row['site_url'] . "</textarea></form></div></div>";
 //
@@ -341,7 +479,7 @@ if(is_user_admin()) {
 
 
     }
-
+ */
 }
 
 

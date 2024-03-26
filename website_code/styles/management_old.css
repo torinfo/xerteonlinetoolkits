@@ -1,0 +1,19 @@
+.buttonbar, .pagecontainer {
+	background-color: white;
+}
+
+div#admin_area{
+	background-color: white;
+}
+
+div#admin_area p{
+	margin: 5px 0 0 5px
+}
+
+div#admin_area form textarea {
+	padding: 0;
+}
+
+.template {
+	font-size: normal;
+}
