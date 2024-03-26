@@ -465,4 +465,35 @@ _load_language_file("/website_code/php/management/management_library.inc");
 <script type="text/javascript" src="editor/js/vendor/ckeditor/plugins/codemirror/js/codemirror.mode.javascript.min.js"></script>
 <script type="text/javascript" src="editor/js/vendor/ckeditor/plugins/codemirror/js/beautify.min.js"></script>
 <script type="text/javascript" src="editor/js/vendor/ckeditor/plugins/codemirror/js/codemirror.addons.search.min.js"></script>
+<script>
+ setTimeout(function() {
+	 var sidebarWidth = $(".sidebar").width();
 
+	 $(".menu").css('left', sidebarWidth);
+
+	 $(window).resize(function(){
+		 var sidebarWidth = $(".sidebar").width();
+
+		 $(".menu").css('left', sidebarWidth);
+	 });
+
+	 $(".xerte-buttons-container .xerte-button").click(function(){
+		 var sidebarWidth = $(".sidebar").width();
+
+
+		 $(".menu").css('left', sidebarWidth);
+
+		 if($(".xerte-button").hasClass('xerte-button-border'))
+		 {
+
+			 $("#button-site-menu")._removeClass('hide').addClass('show')
+		 }
+		 else
+		 {
+			 $("#button-site-menu")._removeClass('show').addClass('hide')
+		 }
+	 });
+
+
+ }, 50);
+</script>
