@@ -23,12 +23,22 @@
 	
 	require_once("../language_library.php");
 
-    function inputField($dbname, $title, $default, $options = "cols=\"100\" rows=\"2\""){
+
+	/**
+	 * generates a textarea with title for the current theme/layout
+	 * @param string $dbname the name to put in the id of the textarea
+	 * @param string $title the text above the input
+	 * @param string $value the text inside the textarea on creation
+	 * @param string $options the html parameters of the textarea
+	 *
+	 * @return string marup of an textbox with the theme/layout applied
+	 */
+	function inputField($dbname, $title, $value, $options = ""){
 		$inputField = "";
 		if($_SESSION['layout'] === "new"){
-			$inputField .= "<div class='mgmnt-form-header-container'><div class='mgmnt-form-header'>". $title ."</div><div class='mgmnt-form-container'><form><textarea " . $options . " class='text-area-block' id='" . $dbname . "'>" . $default . "</textarea></form></div></div>";
+			$inputField .= "<div class='mgmnt-form-header-container'><div class='mgmnt-form-header'>". $title ."</div><div class='mgmnt-form-container'><form><textarea " . $options . " class='text-area-block' id='" . $dbname . "'>" . $value . "</textarea></form></div></div>";
 		}else {
-			$inputField .= "<p>" . $title . "<form><textarea " . $options . " id=\"$dbname\">" . $default . "</textarea></form></p>";
+			$inputField .= "<p>" . $title . "<form><textarea " . $options . " id=\"$dbname\">" . $value . "</textarea></form></p>";
 		}
 		return $inputField;
 	}
@@ -45,7 +55,7 @@
 		echo "<div class=\"admin_block\">";
 		echo "<h3>" . MANAGEMENT_LIBRARY_ADD_CATEGORY . "</h3>";
 		
-		echo inputField("newcategory", MANAGEMENT_LIBRARY_NEW_CATEGORY, MANAGEMENT_LIBRARY_NEW_CATEGORY_NAME);
+		echo inputField("newcategory", MANAGEMENT_LIBRARY_NEW_CATEGORY, MANAGEMENT_LIBRARY_NEW_CATEGORY_NAME, "cols=\"100\" rows=\"2\"");
  		echo "<p><form action=\"javascript:new_category();\"><button class=\"xerte_button\" type=\"submit\"><i class=\"fa fa-plus-circle\"></i> " . MANAGEMENT_LIBRARY_NEW_LABEL . "</button></form></p>";
 		echo "</div>";
 		
@@ -75,7 +85,7 @@
 		echo "<div class=\"admin_block\">";
         echo "<h3>" . MANAGEMENT_LIBRARY_ADD_EDUCATION . "</h3>";
 
-		echo inputField("neweducationlevel", MANAGEMENT_LIBRARY_NEW_EDUCATION, MANAGEMENT_LIBRARY_NEW_EDUCATION_NAME);
+		echo inputField("neweducationlevel", MANAGEMENT_LIBRARY_NEW_EDUCATION, MANAGEMENT_LIBRARY_NEW_EDUCATION_NAME, "cols=\"100\" rows=\"2\"");
  		echo "<p><form action=\"javascript:new_educationlevel();\"><button class=\"xerte_button\" type=\"submit\"><i class=\"fa fa-plus-circle\"></i> " . MANAGEMENT_LIBRARY_NEW_LABEL . "</button></form></p>";
 		echo "</div>";
 
@@ -105,7 +115,7 @@
 		echo "<div class=\"admin_block\">";
         echo "<h3>" . MANAGEMENT_LIBRARY_ADD_GROUPING . "</h3>";
 
-		echo inputField("newgrouping", MANAGEMENT_LIBRARY_NEW_GROUPING, MANAGEMENT_LIBRARY_NEW_GROUPING_NAME);
+		echo inputField("newgrouping", MANAGEMENT_LIBRARY_NEW_GROUPING, MANAGEMENT_LIBRARY_NEW_GROUPING_NAME, "cols=\"100\" rows=\"2\"");
  		echo "<p><form action=\"javascript:new_grouping();\"><button class=\"xerte_button\" type=\"submit\"><i class=\"fa fa-plus-circle\"></i> " . MANAGEMENT_LIBRARY_NEW_LABEL . "</button></form></p>";
 		echo "</div>";
 
@@ -142,7 +152,7 @@
 		echo "<div class=\"admin_block\">";
         echo "<h3>" . MANAGEMENT_LIBRARY_ADD_COURSE . "</h3>";
 
-		echo inputField("newcourse", MANAGEMENT_LIBRARY_NEW_COURSE, MANAGEMENT_LIBRARY_NEW_COURSE_NAME);
+		echo inputField("newcourse", MANAGEMENT_LIBRARY_NEW_COURSE, MANAGEMENT_LIBRARY_NEW_COURSE_NAME, "cols=\"100\" rows=\"2\"");
  		echo "<p><form action=\"javascript:new_course();\"><button class=\"xerte_button\" type=\"submit\"><i class=\"fa fa-plus-circle\"></i> " . MANAGEMENT_LIBRARY_NEW_LABEL . "</button></form></p>";
 		echo "</div>";
 		
@@ -222,9 +232,10 @@
 		echo "<div class=\"admin_block\">";
 		echo "<h3>" . MANAGEMENT_LIBRARY_ADD_SECURITY . "</h3>";
 
-		echo "<p>" . MANAGEMENT_LIBRARY_NEW_SECURITY  . "<form><textarea cols=\"100\" rows=\"2\" id=\"newsecurity\">" . MANAGEMENT_LIBRARY_NEW_SECURITY_NAME . "</textarea></form></p>";
-		echo "<p>" . MANAGEMENT_LIBRARY_NEW_SECURITY_DATA . "<form><textarea cols=\"100\" rows=\"2\" id=\"newdata\">" . MANAGEMENT_LIBRARY_NEW_SECURITY_DETAILS . "</textarea></form></p>";
-		echo "<p>" . MANAGEMENT_LIBRARY_NEW_SECURITY_INFO . "<form><textarea cols=\"100\" rows=\"2\" id=\"newdesc\">" . MANAGEMENT_LIBRARY_NEW_SECURITY_DESCRIPTION . "</textarea></form></p>"; 
+		echo inputField("newsecurity", MANAGEMENT_LIBRARY_NEW_SECURITY, MANAGEMENT_LIBRARY_NEW_SECURITY_NAME, "cols=\"100\" rows=\"2\"");
+		echo inputField("newdata", MANAGEMENT_LIBRARY_NEW_SECURITY_DATA, MANAGEMENT_LIBRARY_NEW_SECURITY_DETAILS, "cols=\"100\" rows=\"2\"");
+		echo inputField("newdesc", MANAGEMENT_LIBRARY_NEW_SECURITY_INFO, MANAGEMENT_LIBRARY_NEW_SECURITY_DESCRIPTION, "cols=\"100\" rows=\"2\"");
+
 		echo "<p><form action=\"javascript:new_security();\"><button type=\"submit\" class=\"xerte_button\"><i class=\"fa fa-plus-circle\"></i> " . MANAGEMENT_LIBRARY_ADD_SECURITY . " </button></form></p>";
 		
 		echo "</div>";
@@ -242,9 +253,9 @@
 		
 			echo "<div class=\"template\" id=\"play" . $row_security['security_id'] . "\" savevalue=\"" . $row_security['security_id'] .  "\"><p>" . $row_security['security_setting'] . " <button type=\"button\" class=\"xerte_button\" id=\"play" . $row_security['security_id'] . "_btn\" onclick=\"javascript:templates_display('play" . $row_security['security_id'] . "')\"> " . MANAGEMENT_LIBRARY_VIEW . "</button></p></div><div class=\"template_details\" id=\"play" . $row_security['security_id']  . "_child\">";
 		
-			echo "<p>" . MANAGEMENT_LIBRARY_EXISTING_SECURITY_IS . "<form><textarea id=\"" . $row_security['security_id'] . "security\">" . $row_security['security_setting']  . "</textarea></form></p>";
-			echo "<p>" . MANAGEMENT_LIBRARY_EXISTING_SECURITY_DATA . "<form><textarea id=\"" . $row_security['security_id'] .  "data\">" .  $row_security['security_data']  . "</textarea></form></p>";
-			echo "<p>" . MANAGEMENT_LIBRARY_EXISTING_SECURITY_INFO . "<form><textarea id=\"" . $row_security['security_id'] .  "info\">" .  $row_security['security_info']  . "</textarea></form></p>"; 
+			echo inputField($row_security['security_id'] . "security", MANAGEMENT_LIBRARY_EXISTING_SECURITY_IS, $row_security['security_setting'], "cols=\"100\" rows=\"2\"");
+			echo inputField($row_security['security_id'] . "data", MANAGEMENT_LIBRARY_EXISTING_SECURITY_DATA, $row_security['security_data'], "cols=\"100\" rows=\"2\"");
+			echo inputField($row_security['security_id'] . "info", MANAGEMENT_LIBRARY_EXISTING_SECURITY_INFO, $row_security['security_info'], "cols=\"100\" rows=\"2\"");
 		
 			echo "<p><button type=\"button\" class=\"xerte_button\" onclick=\"javascript:remove_security()\"><i class=\"fa fa-minus-circle\"></i> " . MANAGEMENT_LIBRARY_EXISTING_SECURITY_REMOVE . "</button> " . MANAGEMENT_LIBRARY_EXISTING_SECURITY_WARNING . "</p></div>";
 
@@ -267,7 +278,7 @@
 		echo "<div class=\"admin_block\">";
 		echo "<h3>" . MANAGEMENT_LIBRARY_NEW_LICENCE . "</h3>";
 
-		echo inputField("newlicense", MANAGEMENT_LIBRARY_NEW_LICENCE_DETAILS, MANAGEMENT_LIBRARY_NEW_LICENCE_NAME);
+		echo inputField("newlicense", MANAGEMENT_LIBRARY_NEW_LICENCE_DETAILS, MANAGEMENT_LIBRARY_NEW_LICENCE_NAME, "cols=\"100\" rows=\"2\"");
  		echo "<p><form action=\"javascript:new_license();\"><button class=\"xerte_button\" type=\"submit\"><i class=\"fa fa-plus-circle\"></i> " . MANAGEMENT_LIBRARY_NEW_LABEL . "</button></form></p>";
 		echo "</div>";
 		

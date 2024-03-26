@@ -59,10 +59,10 @@ if(is_user_admin()){
 
         echo "<div class=\"template\" id=\"" . $row['username'] . "\" savevalue=\"" . $row['login_id'] .  "\"><p>" . $row['firstname'] . " " . $row['surname'] . " <button type=\"button\" class=\"xerte_button\" id=\"" . $row['username'] . "_btn\" onclick=\"javascript:templates_display('" . $row['username'] . "')\">" . USERS_TOGGLE . "</button></p></div><div class=\"template_details\" id=\"" . $row['username']  . "_child\">";
 
-        echo "<p>" . USERS_ID . "<form><textarea id=\"user_id" . $row['login_id'] .  "\">" . $row['login_id'] . "</textarea></form></p>";
-        echo "<p>" . USERS_FIRST . "<form><textarea id=\"firstname" . $row['login_id'] .  "\">" . $row['firstname'] . "</textarea></form></p>";
-        echo "<p>" . USERS_KNOWN . "<form><textarea id=\"surname" . $row['login_id'] .  "\">" . $row['surname'] . "</textarea></form></p>";
-        echo "<p>" . USERS_USERNAME . "<form><textarea id=\"username" . $row['login_id'] .  "\">" . $row['username'] . "</textarea></form></p>";
+		echo inputField("user_id" . $row['login_id'], USERS_ID, $row['login_id'], "");
+		echo inputField("firstname" . $row['login_id'], USERS_FIRST, $row['firstname'], "");
+		echo inputField("surname" . $row['login_id'], USERS_KNOWN, $row['surname'], "");
+		echo inputField("username" . $row['login_id'], USERS_USERNAME, $row['username'], "");
         echo "</div>";
 
     }

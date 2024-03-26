@@ -73,8 +73,12 @@ _load_language_file("/website_code/php/management/management_library.inc");
              toggleSwitch.addEventListener('change', switchTheme, false);
 
 
-
-
+			 if(localStorage.getItem('theme') == 'dark'){
+				 document.documentElement.setAttribute('data-theme', 'dark');
+				 toggleSwitch.checked = true;
+			 }else{
+                 document.documentElement.setAttribute('data-theme', 'light');
+			 }
             </script>
 
 

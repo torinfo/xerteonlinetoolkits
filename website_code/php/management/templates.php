@@ -27,7 +27,7 @@ require("../xwdInspector.php");
 
 
 if (is_user_admin()) {
-    $specificDisplay = $_REQUEST["row"];
+    $specificDisplay = $_REQUEST["row"] ?? "sub-templates";
     $database_id = database_connect("templates list connected", "template list failed");
 
     $xwdData = new XerteXWDInspector();
@@ -61,7 +61,7 @@ if (is_user_admin()) {
         <button type='submit' id='upload-button' class='xerte_button'><i class=\"fa fa-upload\"></i> " . TEMPLATE_UPLOAD_BUTTON . "</button>" .
             "</form></div>";
 
-    }else if($specificDisplay === 'decision'){
+    }else if($specificDisplay === 'existing-template'){
 
     }
 
@@ -101,16 +101,21 @@ if (is_user_admin()) {
 
             $version = explode('"', substr($template_check, $start_point, strpos($template_check, " ", $start_point) - $start_point));
 
-            //echo "<p>" . TEMPLATE_VERSION . " " . $version[1] . "</p>";
+            echo "<p>" . TEMPLATE_VERSION . " " . $version[1] . "</p>";
 
         }
 
-        echo "<p>" . TEMPLATE_DESCRIPTION . " <form><textarea id=\"" . $row['template_type_id'] . "desc\">" . $row['description'] . "</textarea></form></p>";
+        /* echo "<p>" . TEMPLATE_DESCRIPTION . " <form><textarea id=\"" . $row['template_type_id'] . "desc\">" . $row['description'] . "</textarea></form></p>"; */
+		echo inputField($row['template_type_id'] . "desc", TEMPLATE_DESCRIPTION, $row['description']);
         echo "<p>" . TEMPLATE_UPLOAD_DATE . " " . $row['date_uploaded'] . "</p>";
-        echo "<p>" . TEMPLATE_NAME . "<form><textarea id=\"" . $row['template_type_id'] . "display\">" . $row['display_name'] . "</textarea></form></p>";
-        echo "<p>" . TEMPLATE_EXAMPLE . "<form><textarea id=\"" . $row['template_type_id'] . "example\">" . $row['display_id'] . "</textarea></form></p>";
-        echo "<p>" . TEMPLATE_ACCESS . "<form><textarea id=\"" . $row['template_type_id'] . "access\">" . $row['access_rights'] . "</textarea></form></p>";
-        echo "<p>" . TEMPLATE_DATE_UPLOAD . " <form><textarea id=\"" . $row['template_type_id'] . "_date_uploaded\">" . $row['date_uploaded'] . "</textarea></form></p>";
+		echo inputField($row['template_type_id'] . "display", TEMPLATE_NAME, $row['display_name']);
+		echo inputField($row['template_type_id'] . "example", TEMPLATE_EXAMPLE, $row['display_id']);
+		echo inputField($row['template_type_id'] . "access", TEMPLATE_ACCESS, $row['access_rights']);
+		echo inputField($row['template_type_id'] . "_date_uploaded", TEMPLATE_DATE_UPLOAD, $row['date_uploaded']);
+        /* echo "<p>" . TEMPLATE_NAME . "<form><textarea id=\"" . $row['template_type_id'] . "display\">" . $row['display_name'] . "</textarea></form></p>";
+		 * echo "<p>" . TEMPLATE_EXAMPLE . "<form><textarea id=\"" . $row['template_type_id'] . "example\">" . $row['display_id'] . "</textarea></form></p>";
+		 * echo "<p>" . TEMPLATE_ACCESS . "<form><textarea id=\"" . $row['template_type_id'] . "access\">" . $row['access_rights'] . "</textarea></form></p>";
+		 * echo "<p>" . TEMPLATE_DATE_UPLOAD . " <form><textarea id=\"" . $row['template_type_id'] . "_date_uploaded\">" . $row['date_uploaded'] . "</textarea></form></p>"; */
         echo "<p>" . TEMPLATE_STATUS . " ";
 
         echo "<select ";
