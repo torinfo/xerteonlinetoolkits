@@ -43,6 +43,25 @@
 		return $inputField;
 	}
 
+	function wysiwygField($dbname, $title, $value, $options = ""){
+		$inputField = "";
+		if($_SESSION['layout'] === "new"){
+			$inputField .= "<div class='mgmnt-form-header-container'><div class='mgmnt-form-header'>". $title ."</div><div class='mgmnt-form-container'><form><textarea " . $options . " class='text-area-block wysiwyg' id='" . $dbname . "'>" . $value . "</textarea></form></div></div>";
+		}else {
+			$inputField .= "<p>" . $title . "<form><textarea " . $options . " id=\"$dbname\">" . $value . "</textarea></form></p>";
+		}
+		return $inputField;
+	}
+
+	function codeField($dbname, $title, $value, $options = ""){
+		$inputField = "";
+		if($_SESSION['layout'] === "new"){
+			$inputField .= "<div class='mgmnt-form-header-container'><div class='mgmnt-form-header'>". $title ."</div><div class='mgmnt-form-container'><form><textarea " . $options . " class='text-area-block codemirror' id='" . $dbname . "'>" . $value . "</textarea></form></div></div>";
+		}else {
+			$inputField .= "<p>" . $title . "<form><textarea " . $options . " id=\"$dbname\">" . $value . "</textarea></form></p>";
+		}
+		return $inputField;
+	}
 
 	function category_list(){
 	

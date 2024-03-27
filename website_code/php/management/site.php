@@ -112,53 +112,53 @@ if(is_user_admin()) {
 
 	
 	if($_SESSION['layout'] !== "old") {
-		foreach($data[$specificDisplay] as $key => $field){
-			$options = "";
-			if(isset($field->size)) 
-				$options .= "rows=\"" . strval($field->size) . "\"";
+		/* foreach($data[$specificDisplay] as $key => $field){
+		   $options = "";
+		   if(isset($field->size)) 
+		   $options .= "rows=\"" . strval($field->size) . "\"";
 
-			if(gettype($field) == "string"){
-				echo "<p>$field</p>";
-			}else if(isset($field->html)) {
-				echo $field->html;
-			}else if($key == "keys") {
-				foreach($field as $LTI_key){
+		   if(gettype($field) == "string"){
+		   echo "<p>$field</p>";
+		   }else if(isset($field->html)) {
+		   echo $field->html;
+		   }else if($key == "keys") {
+		   foreach($field as $LTI_key){
 
-					$buttonDelete = $LTI_key['buttonDelete']? "&nbsp;&nbsp;<a href=\"javascript:delete_LTI_key('" . $LTI_key['id'] . "')\">" . LTI_KEYS_DELETE . "</a>" : "";
-					
-					echo "<div class=\"template\" id=\"" . $LTI_key['id'] . "\" savevalue=\"" . $LTI_key['id'] . "\"><p>" . $LTI_key['name'] . " <a href=\"javascript:templates_display('" . $LTI_key['id'] . "')\">" . $LTI_key['button1'] . "</a>". $buttonDelete . "</p></div><div class=\"template_details\" id=\"" . $LTI_key['id'] . "_child\">";
+		   $buttonDelete = $LTI_key['buttonDelete']? "&nbsp;&nbsp;<a href=\"javascript:delete_LTI_key('" . $LTI_key['id'] . "')\">" . LTI_KEYS_DELETE . "</a>" : "";
+		   
+		   echo "<div class=\"template\" id=\"" . $LTI_key['id'] . "\" savevalue=\"" . $LTI_key['id'] . "\"><p>" . $LTI_key['name'] . " <a href=\"javascript:templates_display('" . $LTI_key['id'] . "')\">" . $LTI_key['button1'] . "</a>". $buttonDelete . "</p></div><div class=\"template_details\" id=\"" . $LTI_key['id'] . "_child\">";
 
-					echo "<div class='mgmnt-form-header-container'><div class='mgmnt-form-header'>". LTI_KEYS_NAME ."</div><div class='mgmnt-form-container'><form><textarea class='text-area-block' id='lti_keys_name" . $LTI_key['id'] . "'>" . $LTI_key['name'] . "</textarea></form></div></div>";
-					echo "<div class='mgmnt-form-header-container'><div class='mgmnt-form-header'>". LTI_KEYS_KEY ."</div><div class='mgmnt-form-container'><form><textarea class='text-area-block' id='lti_keys_key" . $LTI_key['id'] . "'>" . $LTI_key['key'] . "</textarea></form></div></div>";
-					echo "<div class='mgmnt-form-header-container'><div class='mgmnt-form-header'>". LTI_KEYS_SECRET ."</div><div class='mgmnt-form-container'><form><textarea class='text-area-block' id='lti_keys_secret" . $LTI_key['id'] . "'>" . $LTI_key['secret'] . "</textarea></form></div></div>";
-					echo "<div class='mgmnt-form-header-container'><div class='mgmnt-form-header'>". LTI_KEYS_CONTEXT_ID ."</div><div class='mgmnt-form-container'><form><textarea class='text-area-block' id='lti_keys_context_id" . $LTI_key['id'] . "'>" . $LTI_key['context_id'] . "</textarea></form></div></div>";
+		   echo "<div class='mgmnt-form-header-container'><div class='mgmnt-form-header'>". LTI_KEYS_NAME ."</div><div class='mgmnt-form-container'><form><textarea class='text-area-block' id='lti_keys_name" . $LTI_key['id'] . "'>" . $LTI_key['name'] . "</textarea></form></div></div>";
+		   echo "<div class='mgmnt-form-header-container'><div class='mgmnt-form-header'>". LTI_KEYS_KEY ."</div><div class='mgmnt-form-container'><form><textarea class='text-area-block' id='lti_keys_key" . $LTI_key['id'] . "'>" . $LTI_key['key'] . "</textarea></form></div></div>";
+		   echo "<div class='mgmnt-form-header-container'><div class='mgmnt-form-header'>". LTI_KEYS_SECRET ."</div><div class='mgmnt-form-container'><form><textarea class='text-area-block' id='lti_keys_secret" . $LTI_key['id'] . "'>" . $LTI_key['secret'] . "</textarea></form></div></div>";
+		   echo "<div class='mgmnt-form-header-container'><div class='mgmnt-form-header'>". LTI_KEYS_CONTEXT_ID ."</div><div class='mgmnt-form-container'><form><textarea class='text-area-block' id='lti_keys_context_id" . $LTI_key['id'] . "'>" . $LTI_key['context_id'] . "</textarea></form></div></div>";
 
-					if ($LTI_key['id'] == 'NEW') {
-						echo "<div><p><form action=\"javascript:new_LTI_key();\"><input class=\"xerte_button\" type=\"submit\" name=\"new-lti\" value=\"" . LTI_KEYS_ADD_SUBMIT . "\"></form></p></div>";
-					} else {
-						echo "<div style=\"width:300px;\">";
-						echo "<div style=\"float:left;width:100px;\"><p><form action=\"javascript:edit_LTI_key(" . $LTI_key['id'] . ");\"><input class=\"xerte_button\" type=\"submit\" name=\"edit-lti\" value=\"" . LTI_KEYS_EDIT_SUBMIT . "\"></form></p></div>";
-						echo "<div style=\"float:right;width:100px;\"><p><form><input type=\"submit\" name=\"delete-lti\" value=\"" . LTI_KEYS_DELETE_SUBMIT . "\"></form></p></div>";
-						echo "</div>";		
-					}
-					echo "</div>";
-				}
-			}else if($field->editor == "normal"){
-				echo "<div class='mgmnt-form-header-container'><div class='mgmnt-form-header'>". $field->title ."</div><div class='mgmnt-form-container'><form><textarea " . $options . " class='text-area-block' id='" . $field->dbname . "'>" . $field->value . "</textarea></form></div></div>";
-			}else if($field->editor == "wysiwyg"){
-				echo "<div class='mgmnt-form-header-container'><div class='mgmnt-form-header'>". $field->title ."</div><div class='mgmnt-form-container'><form><textarea " . $options . " class='text-area-block wysiwyg' id='" . $field->dbname . "'>" . $field->value . "</textarea></form></div></div>";
-			}else if($field->editor == "code"){
-				echo "<div class='mgmnt-form-header-container'><div class='mgmnt-form-header'>". $field->title ."</div><div class='mgmnt-form-container'><form><textarea " . $options . " class='text-area-block codemirror' id='" . $field->dbname . "'>" . $field->value . "</textarea></form></div></div>";
-			}else if($field->editor == "multiValue"){
-				echo "<div class='mgmnt-form-header-container'><div class='mgmnt-form-header'>". $field->title ."</div><div class='mgmnt-form-container'><form><select " . $options . "class='text-area-block' id='". $field->dbname ."' name='". $field->dbname ."'>";
-				foreach($field->validValues as $value=>$disabled){
-					$selected = $value == $field->value? "selected" : "";
-					$disabled = $disabled? "disabled" : "";
-					echo "<option value='". $value ."' ". $selected ." ". $disabled .">". $value ."</option>";
-				}
-				echo "</select></form></div></div>";
-			}
-		}
+		   if ($LTI_key['id'] == 'NEW') {
+		   echo "<div><p><form action=\"javascript:new_LTI_key();\"><input class=\"xerte_button\" type=\"submit\" name=\"new-lti\" value=\"" . LTI_KEYS_ADD_SUBMIT . "\"></form></p></div>";
+		   } else {
+		   echo "<div style=\"width:300px;\">";
+		   echo "<div style=\"float:left;width:100px;\"><p><form action=\"javascript:edit_LTI_key(" . $LTI_key['id'] . ");\"><input class=\"xerte_button\" type=\"submit\" name=\"edit-lti\" value=\"" . LTI_KEYS_EDIT_SUBMIT . "\"></form></p></div>";
+		   echo "<div style=\"float:right;width:100px;\"><p><form><input type=\"submit\" name=\"delete-lti\" value=\"" . LTI_KEYS_DELETE_SUBMIT . "\"></form></p></div>";
+		   echo "</div>";		
+		   }
+		   echo "</div>";
+		   }
+		   }else if($field->editor == "normal"){
+		   echo "<div class='mgmnt-form-header-container'><div class='mgmnt-form-header'>". $field->title ."</div><div class='mgmnt-form-container'><form><textarea " . $options . " class='text-area-block' id='" . $field->dbname . "'>" . $field->value . "</textarea></form></div></div>";
+		   }else if($field->editor == "wysiwyg"){
+		   echo "<div class='mgmnt-form-header-container'><div class='mgmnt-form-header'>". $field->title ."</div><div class='mgmnt-form-container'><form><textarea " . $options . " class='text-area-block wysiwyg' id='" . $field->dbname . "'>" . $field->value . "</textarea></form></div></div>";
+		   }else if($field->editor == "code"){
+		   echo "<div class='mgmnt-form-header-container'><div class='mgmnt-form-header'>". $field->title ."</div><div class='mgmnt-form-container'><form><textarea " . $options . " class='text-area-block codemirror' id='" . $field->dbname . "'>" . $field->value . "</textarea></form></div></div>";
+		   }else if($field->editor == "multiValue"){
+		   echo "<div class='mgmnt-form-header-container'><div class='mgmnt-form-header'>". $field->title ."</div><div class='mgmnt-form-container'><form><select " . $options . "class='text-area-block' id='". $field->dbname ."' name='". $field->dbname ."'>";
+		   foreach($field->validValues as $value=>$disabled){
+		   $selected = $value == $field->value? "selected" : "";
+		   $disabled = $disabled? "disabled" : "";
+		   echo "<option value='". $value ."' ". $selected ." ". $disabled .">". $value ."</option>";
+		   }
+		   echo "</select></form></div></div>";
+		   }
+		   } */
 	}else {
 		old_fields(MANAGEMENT_SITE_TITLE, $data, "siteSettings");
 		old_fields(MANAGEMENT_SITE_SERVER, $data, "serverdetails");
@@ -175,204 +175,121 @@ if(is_user_admin()) {
 		old_fields(MANAGEMENT_SITE_SOCIALICONS, $data, "socialicondetails");
 		old_fields(MANAGEMENT_SITE_LTI, $data, "ltidetails");
 	}
-    /*
+    
 	if ($specificDisplay === "siteSettings") {
-		include("./site_details.php");
-		$data = get();
 		
-		foreach($data as $field){
-			if($field->editor == "normal"){
-				echo "<div class='mgmnt-form-header-container'><div class='mgmnt-form-header'>". $field->title ."</div><div class='mgmnt-form-container'><form><textarea class='text-area-block' id=\"" . $field->name . "\">" . $field->value . "</textarea></form></div></div>";
-			}else if($field->editor == "wysiwyg"){
-				echo "<div class='mgmnt-form-header-container'><div class='mgmnt-form-header'>". $field->title ."</div><div class='mgmnt-form-container'><form><textarea class='text-area-block wysiwyg' id=\"" . $field->name . "\">" . $field->value . "</textarea></form></div></div>";
-			}else if($field->editor == "code"){
-				echo "<div class='mgmnt-form-header-container'><div class='mgmnt-form-header'>". $field->title ."</div><div class='mgmnt-form-container'><form><textarea class='text-area-block codemirror' id=\"" . $field->name . "\">" . $field->value . "</textarea></form></div></div>";
-			}
-		}
-       // echo "<p>" . MANAGEMENT_SITE_URL . "<form><textarea class='text-area-block' id=\"site_url\">" . $row['site_url'] . "</textarea></form></p>";
-        echo "<div class='mgmnt-form-header-container'><div class='mgmnt-form-header'>". MANAGEMENT_SITE_URL ."</div><div class='mgmnt-form-container'><form><textarea class='text-area-block' id=\"site_url\">" . $row['site_url'] . "</textarea></form></div></div>";
-//
-//        echo "<p>" . MANAGEMENT_SITE_TITLE_HTML . "<form><textarea class='text-area-block' id=\"site_title\">" . $row['site_title'] . "</textarea></form></p>";
-        echo "<div class='mgmnt-form-header-container'><div class='mgmnt-form-header'>". MANAGEMENT_SITE_TITLE_HTML ."</div><div class='mgmnt-form-container'><form><textarea class='text-area-block' id=\"site_title\">" . $row['site_title'] . "</textarea></form></div></div>";
+		echo inputField("site_url", MANAGEMENT_SITE_URL, $row['site_url'], "");
+		
+		echo inputField("site_url", MANAGEMENT_SITE_TITLE_HTML, $row['site_url'], "");
 
-//        echo "<p>" . MANAGEMENT_SITE_NAME . "<form><textarea class='text-area-block' id=\"site_name\">" . $row['site_name'] . "</textarea></form></p>";
-        echo "<div class='mgmnt-form-header-container'><div class='mgmnt-form-header'>". MANAGEMENT_SITE_NAME ."</div><div class='mgmnt-form-container'><form><textarea class='text-area-block wysiwyg' id=\"site_name\">" . $row['site_name'] . "</textarea></form></div></div>";
+		echo wysiwygField("site_name", MANAGEMENT_SITE_NAME, $row['site_name'], "");
 
-//        echo "<p>" . MANAGEMENT_SITE_LOGO . "<form><textarea class='text-area-block' id=\"site_logo\">" . $row['site_logo'] . "</textarea></form></p>";
-        echo "<div class='mgmnt-form-header-container'><div class='mgmnt-form-header'>". MANAGEMENT_SITE_LOGO ."</div><div class='mgmnt-form-container'><form><textarea class='text-area-block' id=\"site_logo\">" . $row['site_logo'] . "</textarea></form></div></div>";
+		echo inputField("site_logo", MANAGEMENT_SITE_LOGO, $row['site_logo'], "");
 
-//        echo "<p>" . MANAGEMENT_SITE_LOGO_ORG . "<form><textarea class='text-area-block' id=\"organisational_logo\">" . $row['organisational_logo'] . "</textarea></form></p>";
-        echo "<div class='mgmnt-form-header-container'><div class='mgmnt-form-header'>". MANAGEMENT_SITE_LOGO_ORG ."</div><div class='mgmnt-form-container'><form><textarea class='text-area-block' id=\"organisational_logo\">" . $row['organisational_logo'] . "</textarea></form></div></div>";
+		echo inputField("organisational_logo", MANAGEMENT_SITE_LOGO_ORG, $row['organisational_logo'], "");
 
-//        echo "<p>" . MANAGEMENT_SITE_WELCOME . "<form><textarea class='text-area-block' id=\"welcome_message\">" . $row['welcome_message'] . "</textarea></form></p>";
-        echo "<div class='mgmnt-form-header-container'><div class='mgmnt-form-header'>". MANAGEMENT_SITE_WELCOME ."</div><div class='mgmnt-form-container'><form><textarea class='text-area-block wysiwyg' id=\"welcome_message\">" . $row['welcome_message'] . "</textarea></form></div></div>";
+		echo wysiwygField("welcome_message", MANAGEMENT_SITE_WELCOME, $row['welcome_message'], "");
 
-//        echo "<p>" . MANAGEMENT_SITE_TEXT . "<form><textarea class='text-area-block' id=\"site_text\">" . $site_text . "</textarea></form></p>";
-        echo "<div class='mgmnt-form-header-container'><div class='mgmnt-form-header'>". MANAGEMENT_SITE_TEXT ."</div><div class='mgmnt-form-container'><form><textarea class='text-area-block wysiwyg' id=\"site_text\">" . $site_text . "</textarea></form></div></div>";
+		echo wysiwygField("site_text", MANAGEMENT_SITE_TEXT, $site_text, "");
 
-//        echo "<p>" . MANAGEMENT_TUTORIAL_TEXT . "<form><textarea class='text-area-block' id=\"tutorial_text\">" . $tutorial_text . "</textarea></form></p>";
-        echo "<div class='mgmnt-form-header-container'><div class='mgmnt-form-header'>". MANAGEMENT_TUTORIAL_TEXT ."</div><div class='mgmnt-form-container'><form><textarea class='text-area-block wysiwyg' id=\"tutorial_text\">" . $tutorial_text . "</textarea></form></div></div>";
+		echo wysiwygField("tutorial_text", MANAGEMENT_TUTORIAL_TEXT, $tutorial_text, "");
 
-//        echo "<p>" . MANAGEMENT_SITE_NEWS . "<form><textarea class='text-area-block' id=\"news_text\" rows='10' cols='50'>" . base64_decode($row['news_text']) . "</textarea></form></p>";
-        echo "<div class='mgmnt-form-header-container'><div class='mgmnt-form-header'>". MANAGEMENT_SITE_NEWS ."</div><div class='mgmnt-form-container'><form><textarea class='text-area-block wysiwyg' rows='10' id=\"news_text\">" . base64_decode($row['news_text']) . "</textarea></form></div></div>";
+		echo wysiwygField("news_text", MANAGEMENT_SITE_NEWS, base64_decode($row['news_text']), "rows='10'");
 
-//        echo "<p>" . MANAGEMENT_SITE_POD_ONE . "<form><textarea class='text-area-block' id=\"pod_one\">" . base64_decode($row['pod_one']) . "</textarea></form></p>";
-        echo "<div class='mgmnt-form-header-container'><div class='mgmnt-form-header'>". MANAGEMENT_SITE_POD_ONE ."</div><div class='mgmnt-form-container'><form><textarea class='text-area-block wysiwyg' id=\"pod_one\">" . base64_decode($row['pod_one']) . "</textarea></form></div></div>";
+		echo wysiwygField("pod_one", MANAGEMENT_SITE_POD_ONE, base64_decode($row['pod_one']), "");
 
-//        echo "<p>" . MANAGEMENT_SITE_POD_TWO . "<form><textarea class='text-area-block' id=\"pod_two\">" . base64_decode($row['pod_two']) . "</textarea></form></p>";
-        echo "<div class='mgmnt-form-header-container'><div class='mgmnt-form-header'>". MANAGEMENT_SITE_POD_TWO ."</div><div class='mgmnt-form-container'><form><textarea class='text-area-block wysiwyg' id=\"pod_two\">" . base64_decode($row['pod_two']) . "</textarea></form></div></div>";
+		echo wysiwygField("pod_two", MANAGEMENT_SITE_POD_TWO, base64_decode($row['pod_two']), "");
 
-//        echo "<p>" . MANAGEMENT_SITE_COPYRIGHT . "<form><textarea class='text-area-block' id=\"copyright\">" . htmlspecialchars($row['copyright']) . "</textarea></form></p>";
-        echo "<div class='mgmnt-form-header-container'><div class='mgmnt-form-header'>". MANAGEMENT_SITE_COPYRIGHT ."</div><div class='mgmnt-form-container'><form><textarea class='text-area-block' id=\"copyright\">" . htmlspecialchars($row['copyright']) . "</textarea></form></div></div>";
+		echo inputField("copyright", MANAGEMENT_SITE_COPYRIGHT, htmlspecialchars($row['copyright']), "");
 
-//        echo "<p>" . MANAGEMENT_SITE_DEMONSTRATION . "<form><textarea class='text-area-block' id=\"demonstration_page\">" . $row['demonstration_page'] . "</textarea></form></p>";
-        echo "<div class='mgmnt-form-header-container'><div class='mgmnt-form-header'>". MANAGEMENT_SITE_DEMONSTRATION ."</div><div class='mgmnt-form-container'><form><textarea class='text-area-block' id=\"demonstration_page\">" . $row['demonstration_page'] . "</textarea></form></div></div>";
+		echo inputField("demonstration_page", MANAGEMENT_SITE_DEMONSTRATION, $row['demonstration_page'], "");
 
-//        echo "<p>" . MANAGEMENT_SITE_LOGIN_FORM . "<form><textarea class='text-area-block' id=\"form_string\">" . base64_decode($row['form_string']) . "</textarea></form></p>";
-        echo "<div class='mgmnt-form-header-container'><div class='mgmnt-form-header'>". MANAGEMENT_SITE_LOGIN_FORM ."</div><div class='mgmnt-form-container'><form><textarea class='text-area-block codemirror' id=\"form_string\">" . base64_decode($row['form_string']) . "</textarea></form></div></div>";
+		echo codeField("form_string", MANAGEMENT_SITE_LOGIN_FORM, base64_decode($row['form_string']), "");
 
-//        echo "<p>" . MANAGEMENT_SITE_PEER_FORM . "<form><textarea class='text-area-block' id=\"peer_form_string\">" . base64_decode($row['peer_form_string']) . "</textarea></form></p>";
-        echo "<div class='mgmnt-form-header-container'><div class='mgmnt-form-header'>". MANAGEMENT_SITE_PEER_FORM ."</div><div class='mgmnt-form-container'><form><textarea class='text-area-block codemirror' id=\"peer_form_string\">" . base64_decode($row['peer_form_string']) . "</textarea></form></div></div>";
+		echo codeField("peer_form_string", MANAGEMENT_SITE_PEER_FORM, base64_decode($row['peer_form_string']), "");
 
-//        echo "<p>" . MANAGEMENT_SITE_FEEDBACK . "<form><textarea class='text-area-block' id=\"feedback_list\">" . $row['feedback_list'] . "</textarea></form></p>";
-        echo "<div class='mgmnt-form-header-container'><div class='mgmnt-form-header'>". MANAGEMENT_SITE_FEEDBACK ."</div><div class='mgmnt-form-container'><form><textarea class='text-area-block' id=\"feedback_list\">" . $row['feedback_list'] . "</textarea></form></div></div>";
+		echo inputField("feedback_list", MANAGEMENT_SITE_FEEDBACK, $row['feedback_list'], "");
 
 
     } elseif ($specificDisplay === "serverdetails") {
 
-//        echo "<p>" . MANAGEMENT_SITE_HTACCESS . "<form><textarea id=\"apache\">" . $row['apache'] . "</textarea></form></p>";
-        echo "<div class='mgmnt-form-header-container'><div class='mgmnt-form-header'>". MANAGEMENT_SITE_HTACCESS ."</div><div class='mgmnt-form-container'><form><textarea class='text-area-block' id=\"apache\">" . $row['apache'] . "</textarea></form></div></div>";
-
-
-//        echo "<p>" . MANAGEMENT_SITE_SESSION_NAME . "<form><textarea id=\"site_session_name\">" . $row['site_session_name'] . "</textarea></form></p>";
-        echo "<div class='mgmnt-form-header-container'><div class='mgmnt-form-header'>". MANAGEMENT_SITE_SESSION_NAME ."</div><div class='mgmnt-form-container'><form><textarea class='text-area-block' id=\"site_session_name\">" . $row['site_session_name'] . "</textarea></form></div></div>";
-
+		echo inputField("apache", MANAGEMENT_SITE_HTACCESS, $row['apache'], "");
+		
+		echo inputField("site_session_name", MANAGEMENT_SITE_SESSION_NAME, $row['site_session_name'], "");
 
         if (Xerte_Validate_FileMimeType::canRun()) {
-//            echo "<p>" . MANAGEMENT_SITE_ENABLE_MIME . "<form><textarea id=\"enable_mime_check\">" . $row['enable_mime_check'] . "</textarea></form></p>";
-            echo "<div class='mgmnt-form-header-container'><div class='mgmnt-form-header'>". MANAGEMENT_SITE_ENABLE_MIME ."</div><div class='mgmnt-form-container'><form><textarea class='text-area-block' id=\"enable_mime_check\">" . $row['enable_mime_check'] . "</textarea></form></div></div>";
-
+			echo inputField("enable_mime_check", MANAGEMENT_SITE_ENABLE_MIME, $row['enable_mime_check'], "");
 
         } else {
-            echo "<p>" . MANAGEMENT_SITE_ENABLE_MIME . "<form><textarea id=\"enable_mime_check\" disabled=\"true\">False. The MIME check requires the PHP 'mime_content_type' function.</textarea></form></p>";
+			echo inputField("enable_mime_check", MANAGEMENT_SITE_ENABLE_MIME, "False. The MIME check requires the PHP 'mine_content_type' function.", "disabled=\"disabled\"");
         }
-//        echo "<p>" . MANAGEMENT_SITE_MIME . "<form><textarea id=\"mimetypes\">" . $row['mimetypes'] . "</textarea></form></p>";
-        echo "<div class='mgmnt-form-header-container'><div class='mgmnt-form-header'>". MANAGEMENT_SITE_MIME ."</div><div class='mgmnt-form-container'><form><textarea class='text-area-block' id=\"mimetypes\">" . $row['mimetypes'] . "</textarea></form></div></div>";
 
-
+		echo inputField("mimetypes", MANAGEMENT_SITE_MIME, $row['mimetypes'], "");
 
         if (Xerte_Validate_FileExtension::canRun()) {
-//            echo "<p>" . MANAGEMENT_SITE_ENABLE_FILE_EXT . "<form><textarea id=\"enable_file_ext_check\">" . $row['enable_file_ext_check'] . "</textarea></form></p>";
-            echo "<div class='mgmnt-form-header-container'><div class='mgmnt-form-header'>". MANAGEMENT_SITE_ENABLE_FILE_EXT ."</div><div class='mgmnt-form-container'><form><textarea class='text-area-block' id=\"enable_file_ext_check\">" . $row['enable_file_ext_check'] . "</textarea></form></div></div>";
-
+			echo inputField("enable_file_ext_check", MANAGEMENT_SITE_ENABLE_FILE_EXT, $row['enable_file_ext_check'], "");
         } else {
-            echo "<p>" . MANAGEMENT_SITE_ENABLE_FILE_EXT . "<form><textarea id=\"enable_file_ext_check\" disabled=\"true\">False. The file extension check requires the PHP 'pathinfo' function.</textarea></form>
-            </p>";
+			echo inputField("enable_file_ext_check", MANAGEMENT_SITE_ENABLE_FILE_EXT, "False. The file extension check requires the PHP 'pathinfo' function.", "disabled=\"disabled\"");
         }
-//        echo "<p>" . MANAGEMENT_SITE_FILE_EXTENSIONS . "<form><textarea id=\"file_extensions\">" . $row['file_extensions'] . "</textarea></form></p>";
-        echo "<div class='mgmnt-form-header-container'><div class='mgmnt-form-header'>". MANAGEMENT_SITE_FILE_EXTENSIONS ."</div><div class='mgmnt-form-container'><form><textarea class='text-area-block' id=\"file_extensions\">" . $row['file_extensions'] . "</textarea></form></div></div>";
+		
+		echo inputField("file_extensions", MANAGEMENT_SITE_FILE_EXTENSIONS, $row['file_extensions'], "");
 
         // Clear the file cache because of the file check below.
         clearstatcache();
 
         if ($xerte_toolkits_site->enable_clamav_check && (!is_file($xerte_toolkits_site->clamav_cmd) || !is_executable($xerte_toolkits_site->clamav_cmd))) {
-//            echo "<p>" . MANAGEMENT_SITE_ENABLE_CLAMAV_CHK . "<form><textarea id=\"enable_clamav_check\" disabled=\"true\">False. The ClamAV antivirus check requires a valid command pathname.</textarea></form></p>";
-            echo "<div class='mgmnt-form-header-container'><div class='mgmnt-form-header'>". MANAGEMENT_SITE_ENABLE_CLAMAV_CHK ."</div><div class='mgmnt-form-container'><form><textarea class='text-area-block' id=\"enable_clamav_check\">" . $row['enable_clamav_check'] . "</textarea></form></div></div>";
-
+			echo inputField("enable_clamav_check", MANAGEMENT_SITE_ENABLE_CLAMAV_CHK, "False. The ClamAV antivirus check requires a valid command pathname.", "disabled=\"disabled\"");
         } else {
-//            echo "<p>" . MANAGEMENT_SITE_ENABLE_CLAMAV_CHK . "<form><textarea id=\"enable_clamav_check\">" . $row['enable_clamav_check'] . "</textarea></form></p>";
-            echo "<div class='mgmnt-form-header-container'><div class='mgmnt-form-header'>". MANAGEMENT_SITE_ENABLE_CLAMAV_CHK ."</div><div class='mgmnt-form-container'><form><textarea class='text-area-block' id=\"enable_clamav_check\">" . $row['enable_clamav_check'] . "</textarea></form></div></div>";
-
+			echo inputField("enable_clamav_check", MANAGEMENT_SITE_ENABLE_CLAMAV_CHK, $row['enable_clamav_check'], "");
         }
-//        echo "<p>" . MANAGEMENT_SITE_CLAMAV_CMD . "<form><textarea id=\"clamav_cmd\">" . str_replace('\\', '/', $row['clamav_cmd']) . "</textarea></form></p>";
-        echo "<div class='mgmnt-form-header-container'><div class='mgmnt-form-header'>". MANAGEMENT_SITE_CLAMAV_CMD ."</div><div class='mgmnt-form-container'><form><textarea class='text-area-block' id=\"clamav_cmd\">" . $row['clamav_cmd'] . "</textarea></form></div></div>";
+		echo inputField("clamav_cmd", MANAGEMENT_SITE_CLAMAV_CMD, $row['clamav_cmd'], "");
 
-//        echo "<p>" . MANAGEMENT_SITE_CLAMAV_OPTS . "<form><textarea id=\"clamav_opts\">" . $row['clamav_opts'] . "</textarea></form></p>";
-        echo "<div class='mgmnt-form-header-container'><div class='mgmnt-form-header'>". MANAGEMENT_SITE_CLAMAV_OPTS ."</div><div class='mgmnt-form-container'><form><textarea class='text-area-block' id=\"clamav_opts\">" . $row['clamav_opts'] . "</textarea></form></div></div>";
+		echo inputField("clamav_opts", MANAGEMENT_SITE_CLAMAV_OPTS, $row['clamav_opts'], "");
 
-
-//        echo "<p>" . MANAGEMENT_SITE_INTEGRATION . "<form><textarea id=\"integration_config_path\">" . $row['integration_config_path'] . "</textarea></form></p>";
-        echo "<div class='mgmnt-form-header-container'><div class='mgmnt-form-header'>". MANAGEMENT_SITE_INTEGRATION ."</div><div class='mgmnt-form-container'><form><textarea class='text-area-block' id=\"integration_config_path\">" . $row['integration_config_path'] . "</textarea></form></div></div>";
-
-
-//        echo "<p>" . MANAGEMENT_SITE_ADMIN_USER . "<form><textarea id=\"admin_username\">" . $row['admin_username'] . "</textarea></form></p>";
-        echo "<div class='mgmnt-form-header-container'><div class='mgmnt-form-header'>". MANAGEMENT_SITE_ADMIN_USER ."</div><div class='mgmnt-form-container'><form><textarea class='text-area-block' id=\"admin_username\">" . $row['admin_username'] . "</textarea></form></div></div>";
-
-
-//        echo "<p>" . MANAGEMENT_SITE_ADMIN_PASSWORD . "<form><textarea id=\"admin_password\">" . htmlspecialchars($row['admin_password']) . "</textarea></form></p>";
-        echo "<div class='mgmnt-form-header-container'><div class='mgmnt-form-header'>". MANAGEMENT_SITE_ADMIN_PASSWORD ."</div><div class='mgmnt-form-container'><form><textarea class='text-area-block' id=\"admin_password\">" . $row['admin_password'] . "</textarea></form></div></div>";
-
-
+		echo inputField("integration_config_path", MANAGEMENT_SITE_INTEGRATION, $row['integration_config_path'], "");
+			
+		echo inputField("admin_username", MANAGEMENT_SITE_ADMIN_USER, $row['admin_username'], "");
+		
+		echo inputField("admin_password", MANAGEMENT_SITE_ADMIN_PASSWORD, $row['admin_password'], "");
 
     } elseif ($specificDisplay === "rssdetails") {
 
-//        echo "<p>" . MANAGEMENT_SITE_RSS_TITLE . "<form><textarea id=\"rss_title\">" . $row['rss_title'] . "</textarea></form></p>";
-        echo "<div class='mgmnt-form-header-container'><div class='mgmnt-form-header'>". MANAGEMENT_SITE_RSS_TITLE ."</div><div class='mgmnt-form-container'><form><textarea class='text-area-block' id=\"rss_title\">" . $row['rss_title'] . "</textarea></form></div></div>";
+		echo inputField("rss_title", MANAGEMENT_SITE_RSS_TITLE, $row['rss_title'], "");
 
+		echo inputField("synd_publisher", MANAGEMENT_SITE_RSS_PUBLISHER, $row['synd_publisher'], "");
 
-//        echo "<p>" . MANAGEMENT_SITE_RSS_PUBLISHER . "<form><textarea id=\"synd_publisher\">" . $row['synd_publisher'] . "</textarea></form></p>";
-        echo "<div class='mgmnt-form-header-container'><div class='mgmnt-form-header'>". MANAGEMENT_SITE_RSS_PUBLISHER ."</div><div class='mgmnt-form-container'><form><textarea class='text-area-block' id=\"synd_publisher\">" . $row['synd_publisher'] . "</textarea></form></div></div>";
+		echo inputField("synd_rights", MANAGEMENT_SITE_RSS_RIGHTS, $row['synd_rights'], "");
 
-
-//        echo "<p>" . MANAGEMENT_SITE_RSS_RIGHTS . "<form><textarea id=\"synd_rights\">" . $row['synd_rights'] . "</textarea></form></p>";
-        echo "<div class='mgmnt-form-header-container'><div class='mgmnt-form-header'>". MANAGEMENT_SITE_RSS_RIGHTS ."</div><div class='mgmnt-form-container'><form><textarea class='text-area-block' id=\"synd_rights\">" . $row['synd_rights'] . "</textarea></form></div></div>";
-
-
-//        echo "<p>" . MANAGEMENT_SITE_RSS_LICENCE . "<form><textarea id=\"synd_license\">" . $row['synd_license'] . "</textarea></form></p>";
-        echo "<div class='mgmnt-form-header-container'><div class='mgmnt-form-header'>". MANAGEMENT_SITE_RSS_LICENCE ."</div><div class='mgmnt-form-container'><form><textarea class='text-area-block' id=\"synd_license\">" . $row['synd_license'] . "</textarea></form></div></div>";
-
+		echo inputField("synd_license", MANAGEMENT_SITE_RSS_LICENCE, $row['synd_license'], "");
 
     } elseif ($specificDisplay === "pathdetails") {
 
+		echo inputField("module_path", MANAGEMENT_SITE_PATH_MODULE, $row['module_path'], "");
 
-//        echo "<p>" . MANAGEMENT_SITE_PATH_MODULE . "<form><textarea id=\"module_path\">" . $row['module_path'] . "</textarea></form></p>";
-        echo "<div class='mgmnt-form-header-container'><div class='mgmnt-form-header'>". MANAGEMENT_SITE_PATH_MODULE ."</div><div class='mgmnt-form-container'><form><textarea class='text-area-block' id=\"module_path\">" . $row['module_path'] . "</textarea></form></div></div>";
+		echo inputField("website_code_path", MANAGEMENT_SITE_PATH_WEBSITE, $row['website_code_path'], "");
 
+		echo inputField("users_file_area_short", MANAGEMENT_SITE_PATH_SHORT, $row['users_file_area_short'], "");
 
+		echo inputField("php_library_path", MANAGEMENT_SITE_PATH_LIBRARY, $row['php_library_path'], "");
 
-//        echo "<p>" . MANAGEMENT_SITE_PATH_WEBSITE . "<form><textarea id=\"website_code_path\">" . $row['website_code_path'] . "</textarea></form></p>";
-        echo "<div class='mgmnt-form-header-container'><div class='mgmnt-form-header'>". MANAGEMENT_SITE_PATH_WEBSITE ."</div><div class='mgmnt-form-container'><form><textarea class='text-area-block' id=\"website_code_path\">" . $row['website_code_path'] . "</textarea></form></div></div>";
-
-
-//        echo "<p>" . MANAGEMENT_SITE_PATH_SHORT . "<form><textarea id=\"users_file_area_short\">" . $row['users_file_area_short'] . "</textarea></form></p>";
-        echo "<div class='mgmnt-form-header-container'><div class='mgmnt-form-header'>". MANAGEMENT_SITE_PATH_SHORT ."</div><div class='mgmnt-form-container'><form><textarea class='text-area-block' id=\"users_file_area_short\">" . $row['users_file_area_short'] . "</textarea></form></div></div>";
-
-
-//        echo "<p>" . MANAGEMENT_SITE_PATH_LIBRARY . "<form><textarea id=\"php_library_path\">" . $row['php_library_path'] . "</textarea></form></p>";
-        echo "<div class='mgmnt-form-header-container'><div class='mgmnt-form-header'>". MANAGEMENT_SITE_PATH_LIBRARY ."</div><div class='mgmnt-form-container'><form><textarea class='text-area-block' id=\"php_library_path\">" . $row['php_library_path'] . "</textarea></form></div></div>";
-
-
-//        echo "<p>" . MANAGEMENT_SITE_PATH_ROOT . "<form><textarea id=\"root_file_path\">" . str_replace("\\", "/", $row['root_file_path']) . "</textarea></form></p>";
-        echo "<div class='mgmnt-form-header-container'><div class='mgmnt-form-header'>". MANAGEMENT_SITE_PATH_ROOT ."</div><div class='mgmnt-form-container'><form><textarea class='text-area-block' id=\"root_file_path\">" . $row['root_file_path'] . "</textarea></form></div></div>";
-
-
-//        echo "<p>" . MANAGEMENT_SITE_PATH_IMPORT . "<form><textarea id=\"import_path\">" . str_replace("\\", "/", $row['import_path']) . "</textarea></form></p>";
-        echo "<div class='mgmnt-form-header-container'><div class='mgmnt-form-header'>". MANAGEMENT_SITE_RSS_LICENCE ."</div><div class='mgmnt-form-container'><form><textarea class='text-area-block' id=\"synd_license\">" . $row['synd_license'] . "</textarea></form></div></div>";
-
-
+		echo inputField("root_file_path", MANAGEMENT_SITE_PATH_ROOT, $row['root_file_path'], "");
 
     } elseif ($specificDisplay === "sqldetails") {
 
+		echo inputField("play_edit_preview_query", MANAGEMENT_SITE_QUERY, str_replace("$", "\$", str_replace("\\", "", base64_decode($row['play_edit_preview_query']))), "rows=\"20\"");
 
-        echo "<p>" . MANAGEMENT_SITE_QUERY . "<form><textarea rows=\"20\" id=\"play_edit_preview_query\">" . str_replace("$", "\$", str_replace("\\", "", base64_decode($row['play_edit_preview_query']))) . "</textarea></form></p>";
     } elseif ($specificDisplay === "errordetails") {
 
-//        echo "<p>" . MANAGEMENT_SITE_ERROR_EMAIL_ACCOUNT . "<form><textarea id=\"error_log_message\">" . $row['error_log_message'] . "</textarea></form></p>";
-        echo "<div class='mgmnt-form-header-container'><div class='mgmnt-form-header'>". MANAGEMENT_SITE_ERROR_EMAIL_ACCOUNT ."</div><div class='mgmnt-form-container'><form><textarea class='text-area-block' id=\"error_log_message\">" . $row['error_log_message'] . "</textarea></form></div></div>";
+		echo inputField("error_email_message", MANAGEMENT_SITE_ERROR_EMAIL_ACCOUNT, $row['error_log_message'], "");
 
+		echo inputField("error_email_list", MANAGEMENT_SITE_ERROR_EMAIL, $row['error_log_list'], "");
 
-//        echo "<p>" . MANAGEMENT_SITE_ERROR_EMAIL . "<form><textarea id=\"error_email_list\">" . $row['email_error_list'] . "</textarea></form></p>";
-        echo "<div class='mgmnt-form-header-container'><div class='mgmnt-form-header'>". MANAGEMENT_SITE_ERROR_EMAIL ."</div><div class='mgmnt-form-container'><form><textarea class='text-area-block' id=\"error_email_list\">" . $row['error_email_list'] . "</textarea></form></div></div>";
-
-
-//        echo "<p>" . MANAGEMENT_SITE_ERROR_MAX . "<form><textarea id=\"max_error_size\">" . $row['max_error_size'] . "</textarea></form></p>";
-        echo "<div class='mgmnt-form-header-container'><div class='mgmnt-form-header'>". MANAGEMENT_SITE_ERROR_MAX ."</div><div class='mgmnt-form-container'><form><textarea class='text-area-block' id=\"max_error_size\">" . $row['max_error_size'] . "</textarea></form></div></div>";
-
+		echo inputField("max_error_size", MANAGEMENT_SITE_ERROR_MAX, $row['max_error_size'], "");
 
     } elseif ($specificDisplay === "authdetails") {
-        echo "<p>" . MANAGEMENT_SITE_AUTH_METHOD . "<form>";
+        echo "<p>" . MANAGEMENT_SITE_AUTH_METHOD . "</p>";
 
-        echo "<select name=\"authentication_method\" id=\"authentication_method\" style=\"padding: 0.4em 0.15em; \">";
+        echo "<form><select name=\"authentication_method\" id=\"authentication_method\" style=\"padding: 0.4em 0.15em; \">";
 
         echo "<option value=\"Guest\"" . ((isset($row['authentication_method']) && $row['authentication_method'] == 'Guest') ? " selected" : "") . ">Guest</option>";
         echo "<option value=\"Ldap\"" . ((isset($row['authentication_method']) && $row['authentication_method'] == 'Ldap') ? " selected" : "") . ">Ldap</option>";
@@ -383,96 +300,64 @@ if(is_user_admin()) {
         echo "<option value=\"OAuth2\"" . ((isset($row['authentication_method']) && $row['authentication_method'] == 'OAuth2') ? " selected" : "") . ">OAuth2</option>";
         echo "</select>";
 
-        echo "</form></p>";
+        echo "</form>";
     } elseif ($specificDisplay === "ldapdetails") {
-
 
         echo "<p>" . MANAGEMENT_SITE_LDAP_DELIMIT . "</p>";
 
+		echo inputField("ldap_host", MANAGEMENT_SITE_LDAP_HOST, $row['ldap_host'], "");
 
-//        echo "<p>" . MANAGEMENT_SITE_LDAP_HOST . "<form><textarea id=\"ldap_host\">" . $row['ldap_host'] . "</textarea></form></p>";
-        echo "<div class='mgmnt-form-header-container'><div class='mgmnt-form-header'>". MANAGEMENT_SITE_LDAP_HOST ."</div><div class='mgmnt-form-container'><form><textarea class='text-area-block' id=\"ldap_host\">" . $row['ldap_host'] . "</textarea></form></div></div>";
+		echo inputField("ldap_port", MANAGEMENT_SITE_LDAP_PORT, $row['ldap_port'], "");
 
+		echo inputField("bind_pwd", MANAGEMENT_SITE_LDAP_PASSWORD, $row['bind_pwd'], "");
 
-//        echo "<p>" . MANAGEMENT_SITE_LDAP_PORT . "<form><textarea id=\"ldap_port\">" . $row['ldap_port'] . "</textarea></form></p>";
-        echo "<div class='mgmnt-form-header-container'><div class='mgmnt-form-header'>". MANAGEMENT_SITE_LDAP_PORT ."</div><div class='mgmnt-form-container'><form><textarea class='text-area-block' id=\"ldap_port\">" . $row['ldap_port'] . "</textarea></form></div></div>";
+		echo inputField("basedn", MANAGEMENT_SITE_LDAP_BASE, $row['basedn'], "");
 
+		echo inputField("bind_dn", MANAGEMENT_SITE_LDAP_BIND, $row['bind_dn'], "");
 
-//        echo "<p>" . MANAGEMENT_SITE_LDAP_PASSWORD . "<form><textarea id=\"bind_pwd\">" . htmlspecialchars($row['bind_pwd']) . "</textarea></form></p>";
-        echo "<div class='mgmnt-form-header-container'><div class='mgmnt-form-header'>". MANAGEMENT_SITE_LDAP_PASSWORD ."</div><div class='mgmnt-form-container'><form><textarea class='text-area-block' id=\"bind_pwd\">" . $row['bind_pwd'] . "</textarea></form></div></div>";
+		echo inputField("LDAP_preference", MANAGEMENT_SITE_LDAP_FILTER_ONE, $row['LDAP_prefrence'], "");
 
-
-//        echo "<p>" . MANAGEMENT_SITE_LDAP_BASE . "<form><textarea id=\"base_dn\">" . $row['basedn'] . "</textarea></form></p>";
-        echo "<div class='mgmnt-form-header-container'><div class='mgmnt-form-header'>". MANAGEMENT_SITE_LDAP_BASE ."</div><div class='mgmnt-form-container'><form><textarea class='text-area-block' id=\"basedn\">" . $row['basedn'] . "</textarea></form></div></div>";
-
-
-//        echo "<p>" . MANAGEMENT_SITE_LDAP_BIND . "<form><textarea id=\"bind_dn\">" . $row['bind_dn'] . "</textarea></form></p>";
-        echo "<div class='mgmnt-form-header-container'><div class='mgmnt-form-header'>". MANAGEMENT_SITE_ERROR_MAX ."</div><div class='mgmnt-form-container'><form><textarea class='text-area-block' id=\"bind_dn\">" . $row['bind_dn'] . "</textarea></form></div></div>";
-
-
-//        echo "<p>" . MANAGEMENT_SITE_LDAP_FILTER_ONE . "<form><textarea id=\"LDAP_preference\">" . $row['LDAP_preference'] . "</textarea></form></p>";
-
-        echo "<div class='mgmnt-form-header-container'><div class='mgmnt-form-header'>". MANAGEMENT_SITE_LDAP_FILTER_ONE ."</div><div class='mgmnt-form-container'><form><textarea class='text-area-block' id=\"LDAP_preference\">" . $row['LDAP_preference'] . "</textarea></form></div></div>";
-
-
-//        echo "<p>" . MANAGEMENT_SITE_LDAP_FILTER_TWO . "<form><textarea id=\"LDAP_filter\">" . $row['LDAP_filter'] . "</textarea></form></p>";
-
-        echo "<div class='mgmnt-form-header-container'><div class='mgmnt-form-header'>". MANAGEMENT_SITE_LDAP_FILTER_TWO ."</div><div class='mgmnt-form-container'><form><textarea class='text-area-block' id=\"LDAP_filter\">" . $row['LDAP_filter'] . "</textarea></form></div></div>";
+		echo inputField("LDAP_filter", MANAGEMENT_SITE_LDAP_FILTER_TWO, $row['LDAP_filter'], "");
 
     } elseif ($specificDisplay === "xertedetails") {
 
-//        echo "<p>" . MANAGEMENT_SITE_XERTE_SAVE . "<form><textarea id=\"flash_save_path\">" . $row['flash_save_path'] . "</textarea></form></p>";
-        echo "<div class='mgmnt-form-header-container'><div class='mgmnt-form-header'>". MANAGEMENT_SITE_XERTE_SAVE ."</div><div class='mgmnt-form-container'><form><textarea class='text-area-block' id=\"flash_save_path\">" . $row['flash_save_path'] . "</textarea></form></div></div>";
+		echo inputField("flash_save_path", MANAGEMENT_SITE_XERTE_SAVE, $row['flash_save_apth'], "");
 
-//        echo "<p>" . MANAGEMENT_SITE_XERTE_UPLOAD . "<form><textarea id=\"flash_upload_path\">" . $row['flash_upload_path'] . "</textarea></form></p>";
-        echo "<div class='mgmnt-form-header-container'><div class='mgmnt-form-header'>". MANAGEMENT_SITE_XERTE_UPLOAD ."</div><div class='mgmnt-form-container'><form><textarea class='text-area-block' id=\"flash_upload_path\">" . $row['flash_upload_path'] . "</textarea></form></div></div>";
+		echo inputField("flash_upload_path", MANAGEMENT_SITE_XERTE_UPLOAD, $row['flash_upload_path'], "");
 
-//        echo "<p>" . MANAGEMENT_SITE_XERTE_PREVIEW . "<form><textarea id=\"flash_preview_check_path\">" . $row['flash_preview_check_path'] . "</textarea></form></p>";
-        echo "<div class='mgmnt-form-header-container'><div class='mgmnt-form-header'>". MANAGEMENT_SITE_XERTE_PREVIEW ."</div><div class='mgmnt-form-container'><form><textarea class='text-area-block' id=\"flash_preview_check_path\">" . $row['flash_preview_check_path'] . "</textarea></form></div></div>";
+		echo inputField("flash_preview_check_path", MANAGEMENT_SITE_XERTE_PREVIEW, $row['flash_preview_check_path'], "");
 
-//        echo "<p>" . MANAGEMENT_SITE_XERTE_SKIN . "<form><textarea id=\"flash_flv_skin\">" . $row['flash_flv_skin'] . "</textarea></form></p>";
-        echo "<div class='mgmnt-form-header-container'><div class='mgmnt-form-header'>". MANAGEMENT_SITE_XERTE_SKIN ."</div><div class='mgmnt-form-container'><form><textarea class='text-area-block' id=\"flash_flv_skin\">" . $row['flash_flv_skin'] . "</textarea></form></div></div>";
-
+		echo inputField("flash_flv_skin", MANAGEMENT_SITE_XERTE_SKIN, $row['flash_flv_skin'], "");
 
     } elseif ($specificDisplay === "emaildetails") {
 
-//        echo "<p>" . MANAGEMENT_SITE_EMAIL_ACCOUNT . "<form><textarea id=\"site_email_account\">" . $row['site_email_account'] . "</textarea></form></p>";
-        echo "<div class='mgmnt-form-header-container'><div class='mgmnt-form-header'>". MANAGEMENT_SITE_EMAIL_ACCOUNT ."</div><div class='mgmnt-form-container'><form><textarea class='text-area-block' id=\"site_email_account\">" . $row['site_email_account'] . "</textarea></form></div></div>";
+		echo inputField("site_email_account", MANAGEMENT_SITE_EMAIL_ACCOUNT, $row['site_email_account'], "");
 
-//        echo "<p>" . MANAGEMENT_SITE_EMAIL_HEADERS . "<form><textarea id=\"headers\">" . $row['headers'] . "</textarea></form></p>";
-        echo "<div class='mgmnt-form-header-container'><div class='mgmnt-form-header'>". MANAGEMENT_SITE_EMAIL_HEADERS ."</div><div class='mgmnt-form-container'><form><textarea class='text-area-block' id=\"headers\">" . $row['headers'] . "</textarea></form></div></div>";
+		echo inputField("headers", MANAGEMENT_SITE_EMAIL_HEADERS, $row['headers'], "");
 
-//        echo "<p>" . MANAGEMENT_SITE_EMAIL_SUFFIX . "<form><textarea id=\"email_to_add_to_username\">" . $row['email_to_add_to_username'] . "</textarea></form></p>";
-        echo "<div class='mgmnt-form-header-container'><div class='mgmnt-form-header'>". MANAGEMENT_SITE_EMAIL_SUFFIX ."</div><div class='mgmnt-form-container'><form><textarea class='text-area-block' id=\"flash_flv_semail_to_add_to_usernamekin\">" . $row['email_to_add_to_username'] . "</textarea></form></div></div>";
+		echo inputField("email_to_add_to_username", MANAGEMENT_SITE_EMAIL_SUFFIX, $row['email_to_add_to_username'], "");
 
-//        echo "<p>" . MANAGEMENT_SITE_PROXY . "<form><textarea id=\"proxy1\">" . $row['proxy1'] . "</textarea></form></p>";
-        echo "<div class='mgmnt-form-header-container'><div class='mgmnt-form-header'>". MANAGEMENT_SITE_PROXY ."</div><div class='mgmnt-form-container'><form><textarea class='text-area-block' id=\"proxy1\">" . $row['proxy1'] . "</textarea></form></div></div>";
+		echo inputField("proxy1", MANAGEMENT_SITE_PROXY, $row['proxy1'], "");
 
-//        echo "<p>" . MANAGEMENT_SITE_PROXY_PORT . "<form><textarea id=\"port1\">" . $row['port1'] . "</textarea></form></p>";
-        echo "<div class='mgmnt-form-header-container'><div class='mgmnt-form-header'>". MANAGEMENT_SITE_PROXY_PORT ."</div><div class='mgmnt-form-container'><form><textarea class='text-area-block' id=\"port1\">" . $row['port1'] . "</textarea></form></div></div>";
+		echo inputField("port1", MANAGEMENT_SITE_PROXY_PORT, $row['port1'], "");
 
-//        echo "<p>" . MANAGEMENT_SITE_PROXY_EXPLAINED . "</p>";
-        echo "<div class='mgmnt-form-header-container'><div class='mgmnt-form-header'>". MANAGEMENT_SITE_PROXY_EXPLAINED ."</div><div class='mgmnt-form-container'><form><textarea class='text-area-block' id=\"flash_flv_skin\">" . $row['flash_flv_skin'] . "</textarea></form></div></div>";
+		echo MANAGEMENT_SITE_PROXY_EXPLAINED;
+
     } elseif ($specificDisplay === "languagedetails") {
         language_details(false);
 
     } elseif ($specificDisplay === "xapidetails") {
-//        echo "<p>" . MANAGEMENT_SITE_XAPI_ENDPOINT . "<form><textarea id=\"site_xapi_endpoint\">" . $row['LRS_Endpoint'] . "</textarea></form></p>";
-        echo "<div class='mgmnt-form-header-container'><div class='mgmnt-form-header'>". MANAGEMENT_SITE_XAPI_ENDPOINT ."</div><div class='mgmnt-form-container'><form><textarea class='text-area-block' id=\"site_xapi_endpoint\">" . $row['LRS_Endpoint'] . "</textarea></form></div></div>";
+		echo inputField("LRS_Endpoint", MANAGEMENT_SITE_XAPI_ENDPOINT, $row['LRS_Endpoint']);
+		
+		echo inputField("LRS_Key", MANAGEMENT_SITE_XAPI_KEY, $row['LRS_Key']);
+		
+		echo inputField("LRS_Secret", MANAGEMENT_SITE_XAPI_SECRET, $row['LRS_Secret']);
+		
+		echo inputField("dashboard_enabled", MANAGEMENT_SITE_XAPI_DASHBOARD_ENABLE, $row['dashboard_enabled']);
+		
+		echo inputField("dashboard_nonanonymous", MANAGEMENT_SITE_XAPI_DASHBOARD_NONANONYMOUS_VIEW, $row['dashboard_nonanonymous']);
 
-//        echo "<p>" . MANAGEMENT_SITE_XAPI_KEY . "<form><textarea id=\"site_xapi_key\">" . $row['LRS_Key'] . "</textarea></form></p>";
-        echo "<div class='mgmnt-form-header-container'><div class='mgmnt-form-header'>". MANAGEMENT_SITE_XAPI_KEY ."</div><div class='mgmnt-form-container'><form><textarea class='text-area-block' id=\"site_xapi_key\">" . $row['LRS_Key'] . "</textarea></form></div></div>";
-
-//        echo "<p>" . MANAGEMENT_SITE_XAPI_SECRET . "<form><textarea id=\"site_xapi_secret\">" . $row['LRS_Secret'] . "</textarea></form></p>";
-        echo "<div class='mgmnt-form-header-container'><div class='mgmnt-form-header'>". MANAGEMENT_SITE_XAPI_SECRET ."</div><div class='mgmnt-form-container'><form><textarea class='text-area-block' id=\"site_xapi_secret\">" . $row['LRS_Secret'] . "</textarea></form></div></div>";
-
-//        echo "<p>" . MANAGEMENT_SITE_XAPI_DASHBOARD_ENABLE . "<form><textarea id=\"site_xapi_dashboard_enable\">" . $row['dashboard_enabled'] . "</textarea></form></p>";
-        echo "<div class='mgmnt-form-header-container'><div class='mgmnt-form-header'>". MANAGEMENT_SITE_XAPI_DASHBOARD_ENABLE ."</div><div class='mgmnt-form-container'><form><textarea class='text-area-block' id=\"site_xapi_dashboard_enable\">" . $row['dashboard_enabled'] . "</textarea></form></div></div>";
-
-//        echo "<p>" . MANAGEMENT_SITE_XAPI_DASHBOARD_NONANONYMOUS_VIEW . "<form><textarea id=\"site_xapi_dashboard_nonanonymous\">" . $row['dashboard_nonanonymous'] . "</textarea></form></p>";
-        echo "<div class='mgmnt-form-header-container'><div class='mgmnt-form-header'>". MANAGEMENT_SITE_XAPI_DASHBOARD_NONANONYMOUS_VIEW ."</div><div class='mgmnt-form-container'><form><textarea class='text-area-block' id=\"site_xapi_dashboard_nonanonymous\">" . $row['dashboard_nonanonymous'] . "</textarea></form></div></div>";
-
-//        echo "<p>" . MANAGEMENT_SITE_XAPI_DASHBOARD_MINIMUM_ROLE . "<form>";
+		//        echo "<p>" . MANAGEMENT_SITE_XAPI_DASHBOARD_MINIMUM_ROLE . "<form>";
         echo "<div class='mgmnt-form-header-container'><div class='mgmnt-form-header'>". MANAGEMENT_SITE_XAPI_DASHBOARD_MINIMUM_ROLE ."</div><div class='mgmnt-form-container'><form><textarea class='text-area-block' id=\"flash_flv_skin\">" . $row['flash_flv_skin'] . "</textarea></form></div></div>";
 
         echo "<select name=\"xapi_dashboard_minrole\" id=\"xapi_dashboard_minrole\" style=\"padding: 0.4em 0.15em; \">";
@@ -484,21 +369,17 @@ if(is_user_admin()) {
 
         echo "</select>";
 
-        echo "</form></p>";
+        echo "</form>";
 
-//        echo "<p>" . MANAGEMENT_SITE_XAPI_DASHBOARD_DEFAULT_PERIOD . "<form><textarea id=\"site_xapi_dashboard_period\">" . $row['dashboard_period'] . "</textarea></form></p>";
-        echo "<div class='mgmnt-form-header-container'><div class='mgmnt-form-header'>". MANAGEMENT_SITE_XAPI_DASHBOARD_DEFAULT_PERIOD ."</div><div class='mgmnt-form-container'><form><textarea class='text-area-block' id=\"site_xapi_dashboard_period\">" . $row['dashboard_period'] . "</textarea></form></div></div>";
+		echo inputField("site_xapi_dashboard_period", MANAGEMENT_SITE_XAPI_DASHBOARD_DEFAULT_PERIOD, $row['dashboard_period'], "");
 
-//        echo "<p>" . MANAGEMENT_SITE_XAPI_DASHBOARD_ALLOWED_URLS . "<form><textarea id=\"xapi_dashboard_urls\">" . $row['dashboard_allowed_links'] . "</textarea></form></p>";
-        echo "<div class='mgmnt-form-header-container'><div class='mgmnt-form-header'>". MANAGEMENT_SITE_XAPI_DASHBOARD_ALLOWED_URLS ."</div><div class='mgmnt-form-container'><form><textarea class='text-area-block' id=\"xapi_dashboard_urls\">" . $row['dashboard_allowed_links'] . "</textarea></form></div></div>";
-
+		echo inputField("xapi_dashboard_urls", MANAGEMENT_SITE_XAPI_DASHBOARD_ALLOWED_URLS, $row['dashboard_allowed_links'], "");
 
     } elseif ($specificDisplay === "socialicondetails") {
-//        echo "<p>" . MANAGEMENT_SITE_SOCIALICONS_GLOBALDISABLE . "<form><textarea id=\"site_socialicon_globaldisable\">" . $row['globalhidesocial'] . "</textarea></form></p>";
-        echo "<div class='mgmnt-form-header-container'><div class='mgmnt-form-header'>". MANAGEMENT_SITE_SOCIALICONS_GLOBALDISABLE ."</div><div class='mgmnt-form-container'><form><textarea class='text-area-block' id=\"site_socialicon_globaldisable\">" . $row['globalhidesocial'] . "</textarea></form></div></div>";
 
-//        echo "<p>" . MANAGEMENT_SITE_SOCIALICONS_ALLOWOVERRIDE . "<form><textarea id=\"site_socialicon_globalauthorauth\">" . $row['globalsocialauth'] . "</textarea></form></p>";
-        echo "<div class='mgmnt-form-header-container'><div class='mgmnt-form-header'>". MANAGEMENT_SITE_SOCIALICONS_ALLOWOVERRIDE ."</div><div class='mgmnt-form-container'><form><textarea class='text-area-block' id=\"site_socialicon_globalauthorauth\">" . $row['globalsocialauth'] . "</textarea></form></div></div>";
+		echo inputField("site_socialicon_globaldisable", MANAGEMENT_SITE_SOCIALICONS_GLOBALDISABLE, $row['site_socialicon_globaldisable'], "");
+
+		echo inputField("site_socialicon_globalauthorauth", MANAGEMENT_SITE_SOCIALICONS_ALLOWOVERRIDE, $row['site_socialicon_globalauthorauth'], "");
 
     } elseif ($specificDisplay === "ltidetails") {
         if (!isset($mysqli)) {
@@ -515,16 +396,15 @@ if(is_user_admin()) {
         }
         if (!isset($lti)) {
             require_once('../../../LTI/ims-lti/UoN_LTI.php');
-            $lti = new UoN_LTI($mysqli, $xerte_toolkits_site->database_table_prefix);
+            $lti = new UoN_LTI($mysqli);
         }
-
 
         $dataret = $lti->get_lti_keys();
 
         $dataret['NEW'] = array('lti_keys_id' => 'NEW', 'lti_keys_key' => '', 'lti_keys_secret' => '', 'lti_keys_name' => LTI_KEYS_NEW, 'lti_keys_context_id' => '', 'lti_keys_deleted' => '', 'lti_keys_updated_on' => '');
 
         foreach ($dataret as $lti_key_id => $row) {
-//array('lti_keys_id'=>$lti_keys_id, 'lti_keys_key'=>$lti_keys_key, 'lti_keys_secret'=>$lti_keys_secret, 'lti_keys_name'=>$lti_keys_name, 'lti_keys_context_id'=>$lti_keys_context_id, 'lti_keys_deleted'=>$lti_keys_deleted, 'lti_keys_updated_on'=>$lti_keys_updated_on);
+			//array('lti_keys_id'=>$lti_keys_id, 'lti_keys_key'=>$lti_keys_key, 'lti_keys_secret'=>$lti_keys_secret, 'lti_keys_name'=>$lti_keys_name, 'lti_keys_context_id'=>$lti_keys_context_id, 'lti_keys_deleted'=>$lti_keys_deleted, 'lti_keys_updated_on'=>$lti_keys_updated_on);
 
             $click = LTI_TOGGLE;
             $click2 = "&nbsp;&nbsp;<a href=\"javascript:delete_LTI_key('" . $row['lti_keys_id'] . "')\">" . LTI_KEYS_DELETE . "</a>";
@@ -549,13 +429,13 @@ if(is_user_admin()) {
                 echo "</div>";
 
             }
-
+			echo "</div>";
 
         }
 
 
     }
- */
+
 }
 
 
