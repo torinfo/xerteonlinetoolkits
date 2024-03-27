@@ -25,7 +25,7 @@ require("management_library.php");
 if(is_user_admin()){
 
     $query = "INSERT INTO {$xerte_toolkits_site->database_table_prefix}educationlevel (educationlevel_name) values (?)";
-    $res = db_query($query, array($_POST['neweducationlevel']));
+    $res = db_query($query, array($_POST['educationlevel']));
 
     if($res) {
 

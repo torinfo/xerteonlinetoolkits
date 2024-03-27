@@ -105,17 +105,12 @@ if (is_user_admin()) {
 
         }
 
-        /* echo "<p>" . TEMPLATE_DESCRIPTION . " <form><textarea id=\"" . $row['template_type_id'] . "desc\">" . $row['description'] . "</textarea></form></p>"; */
 		echo inputField($row['template_type_id'] . "desc", TEMPLATE_DESCRIPTION, $row['description']);
         echo "<p>" . TEMPLATE_UPLOAD_DATE . " " . $row['date_uploaded'] . "</p>";
 		echo inputField($row['template_type_id'] . "display", TEMPLATE_NAME, $row['display_name']);
 		echo inputField($row['template_type_id'] . "example", TEMPLATE_EXAMPLE, $row['display_id']);
 		echo inputField($row['template_type_id'] . "access", TEMPLATE_ACCESS, $row['access_rights']);
 		echo inputField($row['template_type_id'] . "_date_uploaded", TEMPLATE_DATE_UPLOAD, $row['date_uploaded']);
-        /* echo "<p>" . TEMPLATE_NAME . "<form><textarea id=\"" . $row['template_type_id'] . "display\">" . $row['display_name'] . "</textarea></form></p>";
-		 * echo "<p>" . TEMPLATE_EXAMPLE . "<form><textarea id=\"" . $row['template_type_id'] . "example\">" . $row['display_id'] . "</textarea></form></p>";
-		 * echo "<p>" . TEMPLATE_ACCESS . "<form><textarea id=\"" . $row['template_type_id'] . "access\">" . $row['access_rights'] . "</textarea></form></p>";
-		 * echo "<p>" . TEMPLATE_DATE_UPLOAD . " <form><textarea id=\"" . $row['template_type_id'] . "_date_uploaded\">" . $row['date_uploaded'] . "</textarea></form></p>"; */
         echo "<p>" . TEMPLATE_STATUS . " ";
 
         echo "<select ";
