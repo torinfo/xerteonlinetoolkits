@@ -107,76 +107,25 @@ if(is_user_admin()) {
         $site_text = $site_texts[0];
         $tutorial_text = "";
     }
-	include("./site_details.php");
-	$data = get();
-
 	
-	if($_SESSION['layout'] !== "old") {
-		/* foreach($data[$specificDisplay] as $key => $field){
-		   $options = "";
-		   if(isset($field->size)) 
-		   $options .= "rows=\"" . strval($field->size) . "\"";
-
-		   if(gettype($field) == "string"){
-		   echo "<p>$field</p>";
-		   }else if(isset($field->html)) {
-		   echo $field->html;
-		   }else if($key == "keys") {
-		   foreach($field as $LTI_key){
-
-		   $buttonDelete = $LTI_key['buttonDelete']? "&nbsp;&nbsp;<a href=\"javascript:delete_LTI_key('" . $LTI_key['id'] . "')\">" . LTI_KEYS_DELETE . "</a>" : "";
-		   
-		   echo "<div class=\"template\" id=\"" . $LTI_key['id'] . "\" savevalue=\"" . $LTI_key['id'] . "\"><p>" . $LTI_key['name'] . " <a href=\"javascript:templates_display('" . $LTI_key['id'] . "')\">" . $LTI_key['button1'] . "</a>". $buttonDelete . "</p></div><div class=\"template_details\" id=\"" . $LTI_key['id'] . "_child\">";
-
-		   echo "<div class='mgmnt-form-header-container'><div class='mgmnt-form-header'>". LTI_KEYS_NAME ."</div><div class='mgmnt-form-container'><form><textarea class='text-area-block' id='lti_keys_name" . $LTI_key['id'] . "'>" . $LTI_key['name'] . "</textarea></form></div></div>";
-		   echo "<div class='mgmnt-form-header-container'><div class='mgmnt-form-header'>". LTI_KEYS_KEY ."</div><div class='mgmnt-form-container'><form><textarea class='text-area-block' id='lti_keys_key" . $LTI_key['id'] . "'>" . $LTI_key['key'] . "</textarea></form></div></div>";
-		   echo "<div class='mgmnt-form-header-container'><div class='mgmnt-form-header'>". LTI_KEYS_SECRET ."</div><div class='mgmnt-form-container'><form><textarea class='text-area-block' id='lti_keys_secret" . $LTI_key['id'] . "'>" . $LTI_key['secret'] . "</textarea></form></div></div>";
-		   echo "<div class='mgmnt-form-header-container'><div class='mgmnt-form-header'>". LTI_KEYS_CONTEXT_ID ."</div><div class='mgmnt-form-container'><form><textarea class='text-area-block' id='lti_keys_context_id" . $LTI_key['id'] . "'>" . $LTI_key['context_id'] . "</textarea></form></div></div>";
-
-		   if ($LTI_key['id'] == 'NEW') {
-		   echo "<div><p><form action=\"javascript:new_LTI_key();\"><input class=\"xerte_button\" type=\"submit\" name=\"new-lti\" value=\"" . LTI_KEYS_ADD_SUBMIT . "\"></form></p></div>";
-		   } else {
-		   echo "<div style=\"width:300px;\">";
-		   echo "<div style=\"float:left;width:100px;\"><p><form action=\"javascript:edit_LTI_key(" . $LTI_key['id'] . ");\"><input class=\"xerte_button\" type=\"submit\" name=\"edit-lti\" value=\"" . LTI_KEYS_EDIT_SUBMIT . "\"></form></p></div>";
-		   echo "<div style=\"float:right;width:100px;\"><p><form><input type=\"submit\" name=\"delete-lti\" value=\"" . LTI_KEYS_DELETE_SUBMIT . "\"></form></p></div>";
-		   echo "</div>";		
-		   }
-		   echo "</div>";
-		   }
-		   }else if($field->editor == "normal"){
-		   echo "<div class='mgmnt-form-header-container'><div class='mgmnt-form-header'>". $field->title ."</div><div class='mgmnt-form-container'><form><textarea " . $options . " class='text-area-block' id='" . $field->dbname . "'>" . $field->value . "</textarea></form></div></div>";
-		   }else if($field->editor == "wysiwyg"){
-		   echo "<div class='mgmnt-form-header-container'><div class='mgmnt-form-header'>". $field->title ."</div><div class='mgmnt-form-container'><form><textarea " . $options . " class='text-area-block wysiwyg' id='" . $field->dbname . "'>" . $field->value . "</textarea></form></div></div>";
-		   }else if($field->editor == "code"){
-		   echo "<div class='mgmnt-form-header-container'><div class='mgmnt-form-header'>". $field->title ."</div><div class='mgmnt-form-container'><form><textarea " . $options . " class='text-area-block codemirror' id='" . $field->dbname . "'>" . $field->value . "</textarea></form></div></div>";
-		   }else if($field->editor == "multiValue"){
-		   echo "<div class='mgmnt-form-header-container'><div class='mgmnt-form-header'>". $field->title ."</div><div class='mgmnt-form-container'><form><select " . $options . "class='text-area-block' id='". $field->dbname ."' name='". $field->dbname ."'>";
-		   foreach($field->validValues as $value=>$disabled){
-		   $selected = $value == $field->value? "selected" : "";
-		   $disabled = $disabled? "disabled" : "";
-		   echo "<option value='". $value ."' ". $selected ." ". $disabled .">". $value ."</option>";
-		   }
-		   echo "</select></form></div></div>";
-		   }
-		   } */
-	}else {
-		old_fields(MANAGEMENT_SITE_TITLE, $data, "siteSettings");
-		old_fields(MANAGEMENT_SITE_SERVER, $data, "serverdetails");
-		old_fields(MANAGEMENT_SITE_RSS, $data, "rssdetails");
-		old_fields(MANAGEMENT_SITE_PATH, $data, "pathdetails");
-		old_fields(MANAGEMENT_SITE_SQL, $data, "sqldetails");
-		old_fields(MANAGEMENT_SITE_ERROR_HANDLING, $data, "errordetails");
-		old_fields(MANAGEMENT_SITE_AUTH_DETAILS, $data, "authdetails");
-		old_fields(MANAGEMENT_SITE_LDAP, $data, "ldapdetails");
-		old_fields(MANAGEMENT_SITE_XERTE, $data, "xertedetails");
-		old_fields(MANAGEMENT_SITE_EMAIL, $data, "emaildetails");
-		old_fields(MANAGEMENT_LIBRARY_LANGUAGES, $data, "languagedetails");
-		old_fields(MANAGEMENT_SITE_XAPI, $data, "xapidetails");
-		old_fields(MANAGEMENT_SITE_SOCIALICONS, $data, "socialicondetails");
-		old_fields(MANAGEMENT_SITE_LTI, $data, "ltidetails");
+	function beginSection($title, $id){
+		if($_SESSION['layout'] === "old"){
+			echo "<div class=\"template\" id=\"$id\"><p>" . $title . " <button type=\"button\" class=\"xerte_button\" id=\"" . $id . "_btn\" onclick=\"javascript:templates_display('$id')\">" . MANAGEMENT_VIEW . "</button></p></div><div class=\"template_details\" id=\"" . $id . "_child\">";
+		}
 	}
-    
-	if ($specificDisplay === "siteSettings") {
+	
+	function endSection(){
+		if($_SESSION['layout'] === "old"){
+			echo "</div>";
+		}else{
+		//	die();
+		}
+	}
+
+    $isOldTheme = $_SESSION['layout'] === "old";
+	if ($specificDisplay === "siteSettings" | $isOldTheme) {
+
+	    beginSection(MANAGEMENT_SITE_TITLE, "siteSettings");
 		
 		echo inputField("site_url", MANAGEMENT_SITE_URL, $row['site_url'], "");
 		
@@ -210,8 +159,12 @@ if(is_user_admin()) {
 
 		echo inputField("feedback_list", MANAGEMENT_SITE_FEEDBACK, $row['feedback_list'], "");
 
+		endSection();
 
-    } elseif ($specificDisplay === "serverdetails") {
+    }
+
+	if ($specificDisplay === "serverdetails" | $isOldTheme) {
+		beginSection(MANAGEMENT_SITE_SERVER, "serverdetails");
 
 		echo inputField("apache", MANAGEMENT_SITE_HTACCESS, $row['apache'], "");
 		
@@ -247,13 +200,17 @@ if(is_user_admin()) {
 		echo inputField("clamav_opts", MANAGEMENT_SITE_CLAMAV_OPTS, $row['clamav_opts'], "");
 
 		echo inputField("integration_config_path", MANAGEMENT_SITE_INTEGRATION, $row['integration_config_path'], "");
-			
+		
 		echo inputField("admin_username", MANAGEMENT_SITE_ADMIN_USER, $row['admin_username'], "");
 		
 		echo inputField("admin_password", MANAGEMENT_SITE_ADMIN_PASSWORD, $row['admin_password'], "");
+		
+		endSection();
 
-    } elseif ($specificDisplay === "rssdetails") {
+    } 
 
+	if ($specificDisplay === "rssdetails" | $isOldTheme) {
+		beginSection(MANAGEMENT_SITE_RSS, "rssdetails");
 		echo inputField("rss_title", MANAGEMENT_SITE_RSS_TITLE, $row['rss_title'], "");
 
 		echo inputField("synd_publisher", MANAGEMENT_SITE_RSS_PUBLISHER, $row['synd_publisher'], "");
@@ -262,7 +219,12 @@ if(is_user_admin()) {
 
 		echo inputField("synd_license", MANAGEMENT_SITE_RSS_LICENCE, $row['synd_license'], "");
 
-    } elseif ($specificDisplay === "pathdetails") {
+		endSection();
+
+    } 
+
+	if ($specificDisplay === "pathdetails" | $isOldTheme) {
+		beginSection(MANAGEMENT_SITE_PATH, "pathdetails");
 
 		echo inputField("module_path", MANAGEMENT_SITE_PATH_MODULE, $row['module_path'], "");
 
@@ -274,11 +236,23 @@ if(is_user_admin()) {
 
 		echo inputField("root_file_path", MANAGEMENT_SITE_PATH_ROOT, $row['root_file_path'], "");
 
-    } elseif ($specificDisplay === "sqldetails") {
+		endSection();
+
+    } 
+
+	if ($specificDisplay === "sqldetails" | $isOldTheme) {
+		
+		beginSection(MANAGEMENT_SITE_SQL, "sqldetails");
 
 		echo inputField("play_edit_preview_query", MANAGEMENT_SITE_QUERY, str_replace("$", "\$", str_replace("\\", "", base64_decode($row['play_edit_preview_query']))), "rows=\"20\"");
 
-    } elseif ($specificDisplay === "errordetails") {
+		endSection();
+		
+    }
+	
+	if ($specificDisplay === "errordetails" | $isOldTheme) {
+
+		beginSection(MANAGEMENT_SITE_ERROR_HANDLING, "errordetails");
 
 		echo inputField("error_email_message", MANAGEMENT_SITE_ERROR_EMAIL_ACCOUNT, $row['error_log_message'], "");
 
@@ -286,22 +260,23 @@ if(is_user_admin()) {
 
 		echo inputField("max_error_size", MANAGEMENT_SITE_ERROR_MAX, $row['max_error_size'], "");
 
-    } elseif ($specificDisplay === "authdetails") {
-        echo "<p>" . MANAGEMENT_SITE_AUTH_METHOD . "</p>";
+		endSection();
 
-        echo "<form><select name=\"authentication_method\" id=\"authentication_method\" style=\"padding: 0.4em 0.15em; \">";
+    } 
 
-        echo "<option value=\"Guest\"" . ((isset($row['authentication_method']) && $row['authentication_method'] == 'Guest') ? " selected" : "") . ">Guest</option>";
-        echo "<option value=\"Ldap\"" . ((isset($row['authentication_method']) && $row['authentication_method'] == 'Ldap') ? " selected" : "") . ">Ldap</option>";
-        echo "<option value=\"Db\"" . ((isset($row['authentication_method']) && $row['authentication_method'] == 'Db') ? " selected" : "") . ">Db</option>";
-        echo "<option value=\"Static\"" . ((isset($row['authentication_method']) && $row['authentication_method'] == 'Static') ? " selected" : "") . ">Static</option>";
-        echo "<option value=\"Moodle\"" . ((isset($row['authentication_method']) && $row['authentication_method'] == 'Moodle') ? " selected" : "") . ">Moodle</option>";
-        echo "<option value=\"Saml2\"" . ((isset($row['authentication_method']) && $row['authentication_method'] == 'Saml2') ? " selected" : "") . ">Saml2</option>";
-        echo "<option value=\"OAuth2\"" . ((isset($row['authentication_method']) && $row['authentication_method'] == 'OAuth2') ? " selected" : "") . ">OAuth2</option>";
-        echo "</select>";
+	if ($specificDisplay === "authdetails" | $isOldTheme) {
 
-        echo "</form>";
-    } elseif ($specificDisplay === "ldapdetails") {
+		beginSection(MANAGEMENT_SITE_AUTH_DETAILS, "authdetails");
+
+		echo dropDowm("authentication_method", MANAGEMENT_SITE_AUTH_METHOD, $row['authentication_method'], ["Guest", "Ldap", "Db", "Static", "Moodle", "Saml2", "OAuth2"]);
+
+		endSection();
+		
+    } 
+	
+	if ($specificDisplay === "ldapdetails" | $isOldTheme) {
+
+		beginSection(MANAGEMENT_SITE_LDAP, "ldapdetails");
 
         echo "<p>" . MANAGEMENT_SITE_LDAP_DELIMIT . "</p>";
 
@@ -319,7 +294,12 @@ if(is_user_admin()) {
 
 		echo inputField("LDAP_filter", MANAGEMENT_SITE_LDAP_FILTER_TWO, $row['LDAP_filter'], "");
 
-    } elseif ($specificDisplay === "xertedetails") {
+		endSection();
+
+    } 
+	if ($specificDisplay === "xertedetails" | $isOldTheme) {
+
+		beginSection(MANAGEMENT_SITE_XERTE, "xertedetails");
 
 		echo inputField("flash_save_path", MANAGEMENT_SITE_XERTE_SAVE, $row['flash_save_apth'], "");
 
@@ -329,7 +309,12 @@ if(is_user_admin()) {
 
 		echo inputField("flash_flv_skin", MANAGEMENT_SITE_XERTE_SKIN, $row['flash_flv_skin'], "");
 
-    } elseif ($specificDisplay === "emaildetails") {
+		endSection();
+
+    } 
+	if ($specificDisplay === "emaildetails" | $isOldTheme) {
+
+		beginSection(MANAGEMENT_SITE_EMAIL, "emaildetails");
 
 		echo inputField("site_email_account", MANAGEMENT_SITE_EMAIL_ACCOUNT, $row['site_email_account'], "");
 
@@ -343,10 +328,24 @@ if(is_user_admin()) {
 
 		echo MANAGEMENT_SITE_PROXY_EXPLAINED;
 
-    } elseif ($specificDisplay === "languagedetails") {
+		endSection();
+
+    } 
+
+	if ($specificDisplay === "languagedetails" | $isOldTheme) {
+
+		beginSection(MANAGEMENT_LIBRARY_LANGUAGES, "languagedetails");
+
         language_details(false);
 
-    } elseif ($specificDisplay === "xapidetails") {
+		endSection();
+
+    } 
+
+	if ($specificDisplay === "xapidetails" | $isOldTheme) {
+
+		beginSection(MANAGEMENT_SITE_XAPI, "xapidetails");
+
 		echo inputField("LRS_Endpoint", MANAGEMENT_SITE_XAPI_ENDPOINT, $row['LRS_Endpoint']);
 		
 		echo inputField("LRS_Key", MANAGEMENT_SITE_XAPI_KEY, $row['LRS_Key']);
@@ -357,31 +356,33 @@ if(is_user_admin()) {
 		
 		echo inputField("dashboard_nonanonymous", MANAGEMENT_SITE_XAPI_DASHBOARD_NONANONYMOUS_VIEW, $row['dashboard_nonanonymous']);
 
-		//        echo "<p>" . MANAGEMENT_SITE_XAPI_DASHBOARD_MINIMUM_ROLE . "<form>";
-        echo "<div class='mgmnt-form-header-container'><div class='mgmnt-form-header'>". MANAGEMENT_SITE_XAPI_DASHBOARD_MINIMUM_ROLE ."</div><div class='mgmnt-form-container'><form><textarea class='text-area-block' id=\"flash_flv_skin\">" . $row['flash_flv_skin'] . "</textarea></form></div></div>";
-
-        echo "<select name=\"xapi_dashboard_minrole\" id=\"xapi_dashboard_minrole\" style=\"padding: 0.4em 0.15em; \">";
-
-        echo "<option value=\"creator\"" . ((isset($row['xapi_dashboard_minrole']) && $row['xapi_dashboard_minrole'] == 'creator') ? " selected" : "") . ">" . SHARING_CREATOR . "</option>";
-        echo "<option value=\"co-author\"" . ((isset($row['xapi_dashboard_minrole']) && $row['xapi_dashboard_minrole'] == 'co-author') ? " selected" : "") . ">" . SHARING_COAUTHOR . "</option>";
-        echo "<option value=\"editor\"" . ((isset($row['xapi_dashboard_minrole']) && $row['xapi_dashboard_minrole'] == 'editor') ? " selected" : "") . ">" . SHARING_EDITOR . "</option>";
-        echo "<option value=\"read-only\"" . ((isset($row['xapi_dashboard_minrole']) && $row['xapi_dashboard_minrole'] == 'read-only') ? " selected" : "") . ">" . SHARING_READONLY . "</option>";
-
-        echo "</select>";
-
-        echo "</form>";
+		echo dropDowm("xapi_dashboard_minrole", MANAGEMENT_SITE_XAPI_DASHBOARD_MINIMUM_ROLE, $row['xapi_dashboard_minrole'], ["creator"=>SHARING_CREATOR, "co-autor"=>SHARING_COAUTHOR, "editor"=>SHARING_EDITOR, "read-only"=>SHARING_READONLY]);
+        
 
 		echo inputField("site_xapi_dashboard_period", MANAGEMENT_SITE_XAPI_DASHBOARD_DEFAULT_PERIOD, $row['dashboard_period'], "");
 
 		echo inputField("xapi_dashboard_urls", MANAGEMENT_SITE_XAPI_DASHBOARD_ALLOWED_URLS, $row['dashboard_allowed_links'], "");
 
-    } elseif ($specificDisplay === "socialicondetails") {
+		endSection();
+
+    } 
+
+	if ($specificDisplay === "socialicondetails" | $isOldTheme) {
+		
+		beginSection(MANAGEMENT_SITE_SOCIALICONS, "socialicondetails");
 
 		echo inputField("site_socialicon_globaldisable", MANAGEMENT_SITE_SOCIALICONS_GLOBALDISABLE, $row['site_socialicon_globaldisable'], "");
 
 		echo inputField("site_socialicon_globalauthorauth", MANAGEMENT_SITE_SOCIALICONS_ALLOWOVERRIDE, $row['site_socialicon_globalauthorauth'], "");
 
-    } elseif ($specificDisplay === "ltidetails") {
+		endSection();
+
+    } 
+	
+	if ($specificDisplay === "ltidetails" | $isOldTheme) {
+
+		beginSection(MANAGEMENT_SITE_LTI, "ltidetails");
+
         if (!isset($mysqli)) {
 
             $mysqli = new mysqli($xerte_toolkits_site->database_host, $xerte_toolkits_site->database_username, $xerte_toolkits_site->database_password, $xerte_toolkits_site->database_name);
@@ -415,10 +416,15 @@ if(is_user_admin()) {
 
             echo "<div class=\"template\" id=\"" . $row['lti_keys_id'] . "\" savevalue=\"" . $row['lti_keys_id'] . "\"><p>" . $row['lti_keys_name'] . " <a href=\"javascript:templates_display('" . $row['lti_keys_id'] . "')\">" . $click . "</a>$click2</p></div><div class=\"template_details\" id=\"" . $row['lti_keys_id'] . "_child\">";
 
-            echo "<p>" . LTI_KEYS_NAME . "<form><textarea id=\"lti_keys_name" . $row['lti_keys_id'] . "\">" . $row['lti_keys_name'] . "</textarea></form></p>";
-            echo "<p>" . LTI_KEYS_KEY . "<form><textarea id=\"lti_keys_key" . $row['lti_keys_id'] . "\">" . $row['lti_keys_key'] . "</textarea></form></p>";
-            echo "<p>" . LTI_KEYS_SECRET . "<form><textarea id=\"lti_keys_secret" . $row['lti_keys_id'] . "\">" . $row['lti_keys_secret'] . "</textarea></form></p>";
-            echo "<p>" . LTI_KEYS_CONTEXT_ID . "<form><textarea id=\"lti_keys_context_id" . $row['lti_keys_id'] . "\">" . $row['lti_keys_context_id'] . "</textarea></form></p>";
+            /* echo "<p>" . LTI_KEYS_NAME . "<form><textarea id=\"lti_keys_name" . $row['lti_keys_id'] . "\">" . $row['lti_keys_name'] . "</textarea></form></p>";
+			 * echo "<p>" . LTI_KEYS_KEY . "<form><textarea id=\"lti_keys_key" . $row['lti_keys_id'] . "\">" . $row['lti_keys_key'] . "</textarea></form></p>";
+			 * echo "<p>" . LTI_KEYS_SECRET . "<form><textarea id=\"lti_keys_secret" . $row['lti_keys_id'] . "\">" . $row['lti_keys_secret'] . "</textarea></form></p>";
+			 * echo "<p>" . LTI_KEYS_CONTEXT_ID . "<form><textarea id=\"lti_keys_context_id" . $row['lti_keys_id'] . "\">" . $row['lti_keys_context_id'] . "</textarea></form></p>"; */
+
+			echo inputField("lti_keys_name" . $row['lti_keys_id'], LTI_KEYS_NAME, $row['lti_keys_name'], "");
+			echo inputField("lti_keys_key" . $row['lti_keys_id'], LTI_KEYS_KEY, $row['lti_keys_key'], "");
+			echo inputField("lti_keys_secret" . $row['lti_keys_id'], LTI_KEYS_SECRET, $row['lti_keys_secret'], "");
+			echo inputField("lti_keys_context_id" . $row['lti_keys_id'], LTI_KEYS_CONTEXT_ID, $row['lti_keys_context_id'], "");
 
             if ($row['lti_keys_id'] == 'NEW') {
                 echo "<div><p><form action=\"javascript:new_LTI_key();\"><input class=\"xerte_button\" type=\"submit\" name=\"new-lti\" value=\"" . LTI_KEYS_ADD_SUBMIT . "\"></form></p></div>";
@@ -430,10 +436,10 @@ if(is_user_admin()) {
 
             }
 			echo "</div>";
-
+			
         }
 
-
+		endSection();
     }
 
 }

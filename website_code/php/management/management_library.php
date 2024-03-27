@@ -63,6 +63,27 @@
 		return $inputField;
 	}
 
+	function dropDowm($dbname, $title, $currentValue, $possibleValues){
+		echo "<div class='mgmnt-form-header-container'><div class='mgmnt-form-header'>" . $title . "</div><div class='mgmnt-form-container'><form>";
+
+        echo "<select name=\"$dbname\" id=\"$dbname\" style=\"padding: 0.4em 0.15em; \">";
+		
+		if($possibleValues == array_values($possibleValues)){
+			foreach($possibleValues as $value){
+				$selected = $currentValue == $value? "selected": "";
+				echo "<option value=\"$value\" $selected>$value</option>";
+			}
+		}else {
+			foreach($possibleValues as $value => $translatedValue){
+				$selected = $currentValue == $value? "selected": "";
+				echo "<option value=\"$value\" $selected>$translatedValue</option>";
+			}
+		}
+
+        echo "</select>";
+
+        echo "</form></div></div>";
+	}
 	function category_list(){
 	
 		global $xerte_toolkits_site;
