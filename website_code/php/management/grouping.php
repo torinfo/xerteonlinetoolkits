@@ -24,7 +24,21 @@ require("management_library.php");
 
 if(is_user_admin()){
 	
-	grouping_list();
+	echo "<h2>" . MANAGEMENT_MENUBAR_GROUPINGS . "</h2>";
+	$isOldTheme = $_SESSION['layout'] == "old";
+    
+	echo "<div id=\"content\">";
+
+	if($_POST['row'] == "add" || $isOldTheme){
+		grouping_add();
+	}
+
+	if($_POST['row'] == "list" || $isOldTheme){
+		grouping_list();
+	}
+
+	echo "</div>";
+
 }else{
 	management_fail();
 }

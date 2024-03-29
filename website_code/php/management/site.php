@@ -123,13 +123,13 @@ if(is_user_admin()) {
 	}
 
     $isOldTheme = $_SESSION['layout'] === "old";
-	if ($specificDisplay === "siteSettings" | $isOldTheme) {
+	if ($specificDisplay === "siteSettings" || $isOldTheme) {
 
 	    beginSection(MANAGEMENT_SITE_TITLE, "siteSettings");
 		
 		echo inputField("site_url", MANAGEMENT_SITE_URL, $row['site_url'], "");
 		
-		echo inputField("site_url", MANAGEMENT_SITE_TITLE_HTML, $row['site_url'], "");
+		echo inputField("site_title", MANAGEMENT_SITE_TITLE_HTML, $row['site_title'], "");
 
 		echo wysiwygField("site_name", MANAGEMENT_SITE_NAME, $row['site_name'], "");
 
@@ -163,7 +163,7 @@ if(is_user_admin()) {
 
     }
 
-	if ($specificDisplay === "serverdetails" | $isOldTheme) {
+	if ($specificDisplay === "serverdetails" || $isOldTheme) {
 		beginSection(MANAGEMENT_SITE_SERVER, "serverdetails");
 
 		echo inputField("apache", MANAGEMENT_SITE_HTACCESS, $row['apache'], "");
@@ -209,7 +209,7 @@ if(is_user_admin()) {
 
     } 
 
-	if ($specificDisplay === "rssdetails" | $isOldTheme) {
+	if ($specificDisplay === "rssdetails" || $isOldTheme) {
 		beginSection(MANAGEMENT_SITE_RSS, "rssdetails");
 		echo inputField("rss_title", MANAGEMENT_SITE_RSS_TITLE, $row['rss_title'], "");
 
@@ -223,7 +223,7 @@ if(is_user_admin()) {
 
     } 
 
-	if ($specificDisplay === "pathdetails" | $isOldTheme) {
+	if ($specificDisplay === "pathdetails" || $isOldTheme) {
 		beginSection(MANAGEMENT_SITE_PATH, "pathdetails");
 
 		echo inputField("module_path", MANAGEMENT_SITE_PATH_MODULE, $row['module_path'], "");
@@ -234,13 +234,15 @@ if(is_user_admin()) {
 
 		echo inputField("php_library_path", MANAGEMENT_SITE_PATH_LIBRARY, $row['php_library_path'], "");
 
-		echo inputField("root_file_path", MANAGEMENT_SITE_PATH_ROOT, $row['root_file_path'], "");
+		echo inputField("root_file_path", MANAGEMENT_SITE_PATH_ROOT, str_replace("\\", "/", $row['root_file_path']), "");
+
+		echo inputField("import_path", MANAGEMENT_SITE_PATH_IMPORT, str_replace("\\", "/", $row['import_path']), "");
 
 		endSection();
 
     } 
 
-	if ($specificDisplay === "sqldetails" | $isOldTheme) {
+	if ($specificDisplay === "sqldetails" || $isOldTheme) {
 		
 		beginSection(MANAGEMENT_SITE_SQL, "sqldetails");
 
@@ -250,11 +252,11 @@ if(is_user_admin()) {
 		
     }
 	
-	if ($specificDisplay === "errordetails" | $isOldTheme) {
+	if ($specificDisplay === "errordetails" || $isOldTheme) {
 
 		beginSection(MANAGEMENT_SITE_ERROR_HANDLING, "errordetails");
 
-		echo inputField("error_email_message", MANAGEMENT_SITE_ERROR_EMAIL_ACCOUNT, $row['error_log_message'], "");
+		echo inputField("error_log_message", MANAGEMENT_SITE_ERROR_EMAIL_ACCOUNT, $row['error_log_message'], "");
 
 		echo inputField("error_email_list", MANAGEMENT_SITE_ERROR_EMAIL, $row['error_log_list'], "");
 
@@ -264,17 +266,17 @@ if(is_user_admin()) {
 
     } 
 
-	if ($specificDisplay === "authdetails" | $isOldTheme) {
+	if ($specificDisplay === "authdetails" || $isOldTheme) {
 
 		beginSection(MANAGEMENT_SITE_AUTH_DETAILS, "authdetails");
 
-		echo dropDowm("authentication_method", MANAGEMENT_SITE_AUTH_METHOD, $row['authentication_method'], ["Guest", "Ldap", "Db", "Static", "Moodle", "Saml2", "OAuth2"]);
+		echo dropDown("authentication_method", MANAGEMENT_SITE_AUTH_METHOD, $row['authentication_method'], ["Guest", "Ldap", "Db", "Static", "Moodle", "Saml2", "OAuth2"]);
 
 		endSection();
 		
     } 
 	
-	if ($specificDisplay === "ldapdetails" | $isOldTheme) {
+	if ($specificDisplay === "ldapdetails" || $isOldTheme) {
 
 		beginSection(MANAGEMENT_SITE_LDAP, "ldapdetails");
 
@@ -286,22 +288,22 @@ if(is_user_admin()) {
 
 		echo inputField("bind_pwd", MANAGEMENT_SITE_LDAP_PASSWORD, $row['bind_pwd'], "");
 
-		echo inputField("basedn", MANAGEMENT_SITE_LDAP_BASE, $row['basedn'], "");
+		echo inputField("base_dn", MANAGEMENT_SITE_LDAP_BASE, $row['base_dn'], "");
 
 		echo inputField("bind_dn", MANAGEMENT_SITE_LDAP_BIND, $row['bind_dn'], "");
 
-		echo inputField("LDAP_preference", MANAGEMENT_SITE_LDAP_FILTER_ONE, $row['LDAP_prefrence'], "");
+		echo inputField("LDAP_preference", MANAGEMENT_SITE_LDAP_FILTER_ONE, $row['LDAP_preference'], "");
 
 		echo inputField("LDAP_filter", MANAGEMENT_SITE_LDAP_FILTER_TWO, $row['LDAP_filter'], "");
 
 		endSection();
 
     } 
-	if ($specificDisplay === "xertedetails" | $isOldTheme) {
+	if ($specificDisplay === "xertedetails" || $isOldTheme) {
 
 		beginSection(MANAGEMENT_SITE_XERTE, "xertedetails");
 
-		echo inputField("flash_save_path", MANAGEMENT_SITE_XERTE_SAVE, $row['flash_save_apth'], "");
+		echo inputField("flash_save_path", MANAGEMENT_SITE_XERTE_SAVE, $row['flash_save_path'], "");
 
 		echo inputField("flash_upload_path", MANAGEMENT_SITE_XERTE_UPLOAD, $row['flash_upload_path'], "");
 
@@ -312,7 +314,7 @@ if(is_user_admin()) {
 		endSection();
 
     } 
-	if ($specificDisplay === "emaildetails" | $isOldTheme) {
+	if ($specificDisplay === "emaildetails" || $isOldTheme) {
 
 		beginSection(MANAGEMENT_SITE_EMAIL, "emaildetails");
 
@@ -332,7 +334,7 @@ if(is_user_admin()) {
 
     } 
 
-	if ($specificDisplay === "languagedetails" | $isOldTheme) {
+	if ($specificDisplay === "languagedetails" || $isOldTheme) {
 
 		beginSection(MANAGEMENT_LIBRARY_LANGUAGES, "languagedetails");
 
@@ -342,22 +344,21 @@ if(is_user_admin()) {
 
     } 
 
-	if ($specificDisplay === "xapidetails" | $isOldTheme) {
+	if ($specificDisplay === "xapidetails" || $isOldTheme) {
 
 		beginSection(MANAGEMENT_SITE_XAPI, "xapidetails");
 
-		echo inputField("LRS_Endpoint", MANAGEMENT_SITE_XAPI_ENDPOINT, $row['LRS_Endpoint']);
+		echo inputField("site_xapi_endpoint", MANAGEMENT_SITE_XAPI_ENDPOINT, $row['LRS_Endpoint']);
 		
-		echo inputField("LRS_Key", MANAGEMENT_SITE_XAPI_KEY, $row['LRS_Key']);
+		echo inputField("site_xapi_key", MANAGEMENT_SITE_XAPI_KEY, $row['LRS_Key']);
 		
-		echo inputField("LRS_Secret", MANAGEMENT_SITE_XAPI_SECRET, $row['LRS_Secret']);
+		echo inputField("site_xapi_secret", MANAGEMENT_SITE_XAPI_SECRET, $row['LRS_Secret']);
 		
-		echo inputField("dashboard_enabled", MANAGEMENT_SITE_XAPI_DASHBOARD_ENABLE, $row['dashboard_enabled']);
+		echo inputField("site_xapi_dashboard_enable", MANAGEMENT_SITE_XAPI_DASHBOARD_ENABLE, $row['dashboard_enabled']);
 		
-		echo inputField("dashboard_nonanonymous", MANAGEMENT_SITE_XAPI_DASHBOARD_NONANONYMOUS_VIEW, $row['dashboard_nonanonymous']);
+		echo inputField("site_xapi_dashboard_nonanonymous", MANAGEMENT_SITE_XAPI_DASHBOARD_NONANONYMOUS_VIEW, $row['dashboard_nonanonymous']);
 
-		echo dropDowm("xapi_dashboard_minrole", MANAGEMENT_SITE_XAPI_DASHBOARD_MINIMUM_ROLE, $row['xapi_dashboard_minrole'], ["creator"=>SHARING_CREATOR, "co-autor"=>SHARING_COAUTHOR, "editor"=>SHARING_EDITOR, "read-only"=>SHARING_READONLY]);
-        
+		echo dropDown("xapi_dashboard_minrole", MANAGEMENT_SITE_XAPI_DASHBOARD_MINIMUM_ROLE, $row['xapi_dashboard_minrole'], ["creator"=>SHARING_CREATOR, "co-autor"=>SHARING_COAUTHOR, "editor"=>SHARING_EDITOR, "read-only"=>SHARING_READONLY]);
 
 		echo inputField("site_xapi_dashboard_period", MANAGEMENT_SITE_XAPI_DASHBOARD_DEFAULT_PERIOD, $row['dashboard_period'], "");
 
@@ -367,7 +368,7 @@ if(is_user_admin()) {
 
     } 
 
-	if ($specificDisplay === "socialicondetails" | $isOldTheme) {
+	if ($specificDisplay === "socialicondetails" || $isOldTheme) {
 		
 		beginSection(MANAGEMENT_SITE_SOCIALICONS, "socialicondetails");
 
@@ -379,7 +380,7 @@ if(is_user_admin()) {
 
     } 
 	
-	if ($specificDisplay === "ltidetails" | $isOldTheme) {
+	if ($specificDisplay === "ltidetails" || $isOldTheme) {
 
 		beginSection(MANAGEMENT_SITE_LTI, "ltidetails");
 

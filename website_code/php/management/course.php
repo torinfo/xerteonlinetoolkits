@@ -24,8 +24,21 @@ require("management_library.php");
 
 if(is_user_admin())
 {
+	echo "<h2>" . MANAGEMENT_MENUBAR_COURSES . "</h2>";
+	$isOldTheme = $_SESSION['layout'] == "old";
+    
+	echo "<div id=\"content\">";
 
-	course_list();
+	if($_POST['row'] == "add" || $isOldTheme){
+		course_add();
+	}
+
+	if($_POST['row'] == "list" || $isOldTheme){
+		course_list();
+	}
+
+	echo "</div>";
+
 }
 else
 {

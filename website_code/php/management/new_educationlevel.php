@@ -33,16 +33,25 @@ if(is_user_admin()){
 
         //receive_message($_SESSION['toolkits_logon_username'], "USER", "SUCCESS", "Folder creation succeeded for " . $_SESSION['toolkits_logon_username'], "Folder creation succeeded for " . $_SESSION['toolkits_logon_username']);
 
+		$result = "<p class=\"success\">educationlevel creation succeeded</p>";
+
     }else{
 
         // change these
 
         //receive_message($_SESSION['toolkits_logon_username'], "USER", "CRITICAL", "Folder creation failed for " . $_SESSION['toolkits_logon_username'], "Folder creation failed for " . $_SESSION['toolkits_logon_username']);
 
-
+		$result = "<p class=\"fail\">educationlevel creation failed</p>";
     }
 
-    educationlevel_list();
+    if($_SESSION['layout'] == "new"){
+		educationlevel_add();
+		echo $result;
+	}else{
+		educationlevel_add();
+		echo $result;
+		educationlevel_list();
+	}
 
 }else{
 

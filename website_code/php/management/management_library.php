@@ -23,50 +23,94 @@
 	
 	require_once("../language_library.php");
 
-
 	/**
 	 * generates a textarea with title for the current theme/layout
-	 * @param string $dbname the name to put in the id of the textarea
+	 * @param string $dbname the text to put in the id of the textarea
 	 * @param string $title the text above the input
 	 * @param string $value the text inside the textarea on creation
 	 * @param string $options the html parameters of the textarea
 	 *
-	 * @return string marup of an textbox with the theme/layout applied
+	 * @return string markup of an textbox with the theme/layout applied
+	 */
+	function oldInputField($dbname, $title, $value, $options = ""){
+		return "<p>" . $title . "</p><form><textarea " . $options . " id=\"$dbname\">" . $value . "</textarea></form>";
+	}
+
+	/**
+	 * generates a textarea with title for the current theme/layout
+	 * @param string $dbname the text to put in the id of the textarea
+	 * @param string $title the text above the input
+	 * @param string $value the text inside the textarea on creation
+	 * @param string $options the html parameters of the textarea
+	 *
+	 * @return string markup of an textbox with the theme/layout applied
 	 */
 	function inputField($dbname, $title, $value, $options = ""){
 		$inputField = "";
 		if($_SESSION['layout'] === "new"){
 			$inputField .= "<div class='mgmnt-form-header-container'><div class='mgmnt-form-header'>". $title ."</div><div class='mgmnt-form-container'><form><textarea " . $options . " class='text-area-block' id='" . $dbname . "'>" . $value . "</textarea></form></div></div>";
 		}else {
-			$inputField .= "<p>" . $title . "<form><textarea " . $options . " id=\"$dbname\">" . $value . "</textarea></form></p>";
+			$inputField .= "<p>" . $title . "</p><form><textarea " . $options . " id=\"$dbname\">" . $value . "</textarea></form>";
 		}
 		return $inputField;
 	}
 
+	/**
+	 * generates a wysiwyg textarea with title for the current theme/layout
+	 * @param string $dbname the text to put in the id of the textarea
+	 * @param string $title the text above the input
+	 * @param string $value the text inside the textarea on creation
+	 * @param string $options the html parameters of the textarea
+	 *
+	 * @return string markup of an textbox with the theme/layout applied
+	 */
 	function wysiwygField($dbname, $title, $value, $options = ""){
 		$inputField = "";
 		if($_SESSION['layout'] === "new"){
 			$inputField .= "<div class='mgmnt-form-header-container'><div class='mgmnt-form-header'>". $title ."</div><div class='mgmnt-form-container'><form><textarea " . $options . " class='text-area-block wysiwyg' id='" . $dbname . "'>" . $value . "</textarea></form></div></div>";
 		}else {
-			$inputField .= "<p>" . $title . "<form><textarea " . $options . " id=\"$dbname\">" . $value . "</textarea></form></p>";
+			$inputField .= "<p>" . $title . "</p><form><textarea " . $options . " id=\"$dbname\">" . $value . "</textarea></form></p>";
 		}
 		return $inputField;
 	}
 
+	/**
+	 * generates a code textarea with title for the current theme/layout
+	 * @param string $dbname the text to put in the id of the textarea
+	 * @param string $title the text above the input
+	 * @param string $value the text inside the textarea on creation
+	 * @param string $options the html parameters of the textarea
+	 *
+	 * @return string markup of an textbox with the theme/layout applied
+	 */
 	function codeField($dbname, $title, $value, $options = ""){
 		$inputField = "";
 		if($_SESSION['layout'] === "new"){
 			$inputField .= "<div class='mgmnt-form-header-container'><div class='mgmnt-form-header'>". $title ."</div><div class='mgmnt-form-container'><form><textarea " . $options . " class='text-area-block codemirror' id='" . $dbname . "'>" . $value . "</textarea></form></div></div>";
 		}else {
-			$inputField .= "<p>" . $title . "<form><textarea " . $options . " id=\"$dbname\">" . $value . "</textarea></form></p>";
+			$inputField .= "<p>" . $title . "</p><form><textarea " . $options . " id=\"$dbname\">" . $value . "</textarea></form></p>";
 		}
 		return $inputField;
 	}
 
-	function dropDowm($dbname, $title, $currentValue, $possibleValues){
-		echo "<div class='mgmnt-form-header-container'><div class='mgmnt-form-header'>" . $title . "</div><div class='mgmnt-form-container'><form>";
-
-        echo "<select name=\"$dbname\" id=\"$dbname\" style=\"padding: 0.4em 0.15em; \">";
+	/**
+	 * generates a dropdown with title for the current theme/layout
+	 * @param string $dbname the text to put in the id of the textarea
+	 * @param string $title the text above the input
+	 * @param string $currentValue the selected value on creation
+	 * @param mixed  $possibleValues all the possible values of the dropdown if standerd array the value is the same as the value atribute of the option tag otherwise the key of the array is the
+	 *
+	 * @return string markup of an dropdown with the theme/layout applied
+	 */
+	function dropDown($dbname, $title, $currentValue, $possibleValues){
+		if($_SESSION['layout'] == "new"){
+			echo "<div class='mgmnt-form-header-container'><div class='mgmnt-form-header'>$title</div><div class='mgmnt-form-container'>";
+			$endTags = "</div></div>";
+		}else{
+			echo "<p>$title</p>";
+			$endTags = "";
+		}
+        echo "<form><select name=\"$dbname\" id=\"$dbname\" style=\"padding: 0.4em 0.15em; \">";
 		
 		if($possibleValues == array_values($possibleValues)){
 			foreach($possibleValues as $value){
@@ -80,25 +124,52 @@
 			}
 		}
 
-        echo "</select>";
+        echo "</select></form>";
 
-        echo "</form></div></div>";
+        echo $endTags;
 	}
-	function category_list(){
-	
-		global $xerte_toolkits_site;
-	
-		$query="select * from " . $xerte_toolkits_site->database_table_prefix . "syndicationcategories order by category_name ASC";
-	
-		echo "<h2>" . MANAGEMENT_MENUBAR_CATEGORIES . "</h2>";
-		
+
+	class AdminUIBuilder{
+		private $DBRow;
+		private $Markup;
+
+		function __construct($DBRow)
+		{
+			$this->DBRow = $DBRow;
+		}
+
+		function Build() {
+			return $this->Markup;
+		}
+
+		function inputField($dbname, $title, $defaultValue = NULL, $options = ""){
+
+			$value = $defaultValue?? $this->DBRow[$dbname];
+
+			if($_SESSION['layout'] === "new"){
+				$this->Markup .= "<div class='mgmnt-form-header-container'><div class='mgmnt-form-header'>". $title ."</div><div class='mgmnt-form-container'><form><textarea " . $options . " class='text-area-block' id='" . $dbname . "'>" . $value . "</textarea></form></div></div>";
+			}else {
+				$this->Markup .= "<p>" . $title . "<form><textarea " . $options . " id=\"$dbname\">" . $value . "</textarea></form></p>";
+			}
+		}
+
+	}
+
+	function category_add(){
 		echo "<div class=\"admin_block\">";
 		echo "<h3>" . MANAGEMENT_LIBRARY_ADD_CATEGORY . "</h3>";
 		
 		echo inputField("newcategory", MANAGEMENT_LIBRARY_NEW_CATEGORY, MANAGEMENT_LIBRARY_NEW_CATEGORY_NAME, "cols=\"100\" rows=\"2\"");
  		echo "<p><form action=\"javascript:new_category();\"><button class=\"xerte_button\" type=\"submit\"><i class=\"fa fa-plus-circle\"></i> " . MANAGEMENT_LIBRARY_NEW_LABEL . "</button></form></p>";
 		echo "</div>";
-		
+	}
+
+	function category_list(){
+	
+		global $xerte_toolkits_site;
+	
+		$query="select * from " . $xerte_toolkits_site->database_table_prefix . "syndicationcategories order by category_name ASC";
+	
 		echo "<div class=\"admin_block\">";
 		echo "<h3>" . MANAGEMENT_LIBRARY_EXISTING_CATEGORIES . "</h3>";
 
@@ -114,20 +185,20 @@
 	
 	}
 
-    function educationlevel_list(){
-
-        global $xerte_toolkits_site;
-
-        $query="select * from " . $xerte_toolkits_site->database_table_prefix . "educationlevel order by educationlevel_name ASC";
-
-		echo "<h2>" . MANAGEMENT_MENUBAR_EDUCATION . "</h2>";
-		
+	function educationlevel_add(){
 		echo "<div class=\"admin_block\">";
         echo "<h3>" . MANAGEMENT_LIBRARY_ADD_EDUCATION . "</h3>";
 
 		echo inputField("neweducationlevel", MANAGEMENT_LIBRARY_NEW_EDUCATION, MANAGEMENT_LIBRARY_NEW_EDUCATION_NAME, "cols=\"100\" rows=\"2\"");
  		echo "<p><form action=\"javascript:new_educationlevel();\"><button class=\"xerte_button\" type=\"submit\"><i class=\"fa fa-plus-circle\"></i> " . MANAGEMENT_LIBRARY_NEW_LABEL . "</button></form></p>";
 		echo "</div>";
+	}
+
+    function educationlevel_list(){
+
+        global $xerte_toolkits_site;
+
+        $query="select * from " . $xerte_toolkits_site->database_table_prefix . "educationlevel order by educationlevel_name ASC";
 
 		echo "<div class=\"admin_block\">";
         echo "<h3>" . MANAGEMENT_LIBRARY_EXISTING_EDUCATION . "</h3>";
@@ -143,6 +214,15 @@
 
     }
 
+	function grouping_add(){
+		echo "<div class=\"admin_block\">";
+        echo "<h3>" . MANAGEMENT_LIBRARY_ADD_GROUPING . "</h3>";
+
+		echo inputField("newgrouping", MANAGEMENT_LIBRARY_NEW_GROUPING, MANAGEMENT_LIBRARY_NEW_GROUPING_NAME, "cols=\"100\" rows=\"2\"");
+ 		echo "<p><form action=\"javascript:new_grouping();\"><button class=\"xerte_button\" type=\"submit\"><i class=\"fa fa-plus-circle\"></i> " . MANAGEMENT_LIBRARY_NEW_LABEL . "</button></form></p>";
+		echo "</div>";
+	}
+
 
     function grouping_list(){
 
@@ -150,15 +230,6 @@
 
         $query="select * from `" . $xerte_toolkits_site->database_table_prefix . "grouping` order by grouping_name ASC";
 		
-		echo "<h2>" . MANAGEMENT_MENUBAR_GROUPINGS . "</h2>";
-		
-		echo "<div class=\"admin_block\">";
-        echo "<h3>" . MANAGEMENT_LIBRARY_ADD_GROUPING . "</h3>";
-
-		echo inputField("newgrouping", MANAGEMENT_LIBRARY_NEW_GROUPING, MANAGEMENT_LIBRARY_NEW_GROUPING_NAME, "cols=\"100\" rows=\"2\"");
- 		echo "<p><form action=\"javascript:new_grouping();\"><button class=\"xerte_button\" type=\"submit\"><i class=\"fa fa-plus-circle\"></i> " . MANAGEMENT_LIBRARY_NEW_LABEL . "</button></form></p>";
-		echo "</div>";
-
 		echo "<div class=\"admin_block\">";
         echo "<h3>" . MANAGEMENT_LIBRARY_EXISTING_GROUPINGS . "</h3>";
 
@@ -173,28 +244,28 @@
 
     }
 
-    function course_list()
-    {
-
-        global $xerte_toolkits_site;
-
-        $query = "select course_freetext_enabled from " . $xerte_toolkits_site->database_table_prefix . "sitedetails";
-		
-		echo "<h2>" . MANAGEMENT_MENUBAR_COURSES . "</h2>";
+	function course_add(){
 		echo "<div class=\"admin_block\">";
 		
+        $query = "select course_freetext_enabled from " . $xerte_toolkits_site->database_table_prefix . "sitedetails";
         $row = db_query_one($query);
 		echo inputField("course_freetext_enable", MANAGEMENT_COURSE_FREE_TEXT_ENABLE, $row['course_freetext_enabled'], "");
 
-        $query = "select * from " . $xerte_toolkits_site->database_table_prefix . "course order by course_name ASC";
 		echo "</div>";
-		
 		echo "<div class=\"admin_block\">";
         echo "<h3>" . MANAGEMENT_LIBRARY_ADD_COURSE . "</h3>";
 
 		echo inputField("newcourse", MANAGEMENT_LIBRARY_NEW_COURSE, MANAGEMENT_LIBRARY_NEW_COURSE_NAME, "cols=\"100\" rows=\"2\"");
  		echo "<p><form action=\"javascript:new_course();\"><button class=\"xerte_button\" type=\"submit\"><i class=\"fa fa-plus-circle\"></i> " . MANAGEMENT_LIBRARY_NEW_LABEL . "</button></form></p>";
 		echo "</div>";
+	}
+
+    function course_list()
+    {
+
+        global $xerte_toolkits_site;
+
+        $query = "select * from " . $xerte_toolkits_site->database_table_prefix . "course order by course_name ASC";
 		
 		echo "<div class=\"admin_block\">";
         echo "<h3>" . MANAGEMENT_LIBRARY_EXISTING_COURSES . "</h3>";
@@ -262,13 +333,8 @@
 			echo "</div>";
 		}
 	}
-	
-	function security_list(){
-	
-		global $xerte_toolkits_site;
-		
-		echo "<h2>" . MANAGEMENT_MENUBAR_PLAY . "</h2>";
-	
+
+	function security_add(){
 		echo "<div class=\"admin_block\">";
 		echo "<h3>" . MANAGEMENT_LIBRARY_ADD_SECURITY . "</h3>";
 
@@ -279,11 +345,16 @@
 		echo "<p><form action=\"javascript:new_security();\"><button type=\"submit\" class=\"xerte_button\"><i class=\"fa fa-plus-circle\"></i> " . MANAGEMENT_LIBRARY_ADD_SECURITY . " </button></form></p>";
 		
 		echo "</div>";
+	}
+	
+	function security_list(){
+	
+		global $xerte_toolkits_site;
 		
 		echo "<div class=\"admin_block\">";
 		echo "<h3>" . MANAGEMENT_LIBRARY_EXISTING_SECURITY . "</h3>";
                 
-                $query_for_play_security = "select * from " . $xerte_toolkits_site->database_table_prefix . "play_security_details";
+        $query_for_play_security = "select * from " . $xerte_toolkits_site->database_table_prefix . "play_security_details";
 
 		$query_for_play_security_response = db_query($query_for_play_security);
 		
@@ -305,22 +376,20 @@
 	
 	}
 
-
-
-	function licence_list(){
-	
-		global $xerte_toolkits_site;
-	
-		$database_id = database_connect("licence list connected","licence list failed");
-		
-		echo "<h2>" . MANAGEMENT_MENUBAR_LICENCES . "</h2>";
-		
+	function licence_add(){
 		echo "<div class=\"admin_block\">";
 		echo "<h3>" . MANAGEMENT_LIBRARY_NEW_LICENCE . "</h3>";
 
 		echo inputField("newlicense", MANAGEMENT_LIBRARY_NEW_LICENCE_DETAILS, MANAGEMENT_LIBRARY_NEW_LICENCE_NAME, "cols=\"100\" rows=\"2\"");
  		echo "<p><form action=\"javascript:new_license();\"><button class=\"xerte_button\" type=\"submit\"><i class=\"fa fa-plus-circle\"></i> " . MANAGEMENT_LIBRARY_NEW_LABEL . "</button></form></p>";
 		echo "</div>";
+	}
+
+	function licence_list(){
+	
+		global $xerte_toolkits_site;
+	
+		$database_id = database_connect("licence list connected","licence list failed");
 		
 		echo "<div class=\"admin_block\">";
 		echo "<h3>" . MANAGEMENT_LIBRARY_MANAGE_LICENCES . "</h3>";

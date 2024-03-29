@@ -24,7 +24,21 @@ require("management_library.php");
 
 if(is_user_admin()){
 	
-	educationlevel_list();
+	echo "<h2>" . MANAGEMENT_MENUBAR_EDUCATION . "</h2>";
+	$isOldTheme = $_SESSION['layout'] == "old";
+    
+	echo "<div id=\"content\">";
+
+	if($_POST['row'] == "add" || $isOldTheme){
+		educationlevel_add();
+	}
+
+	if($_POST['row'] == "list" || $isOldTheme){
+		educationlevel_list();
+	}
+
+	echo "</div>";
+
 }else{
 	management_fail();
 }

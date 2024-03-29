@@ -28,8 +28,12 @@ if(is_user_admin()){
     $query="delete from {$xerte_toolkits_site->database_table_prefix}course where course_id=?";
     $res = db_query($query, array($_POST['remove'] ));
 
-	course_list();
-			
+	if($_SESSION['layout'] == "new"){
+		course_list();
+	}else{
+		course_add();
+		course_list();
+	}			
 }else{
 	management_fail();
 

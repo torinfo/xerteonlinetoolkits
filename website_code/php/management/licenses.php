@@ -24,7 +24,21 @@ require("management_library.php");
 
 if(is_user_admin()){
 
-    licence_list();
+	echo "<h2>" . MANAGEMENT_MENUBAR_LICENCES . "</h2>";
+
+	$isOldTheme = $_SESSION['layout'] == "old";
+
+	echo "<div id=\"content\">";
+    
+	if($_POST['row'] == "add" || $isOldTheme){
+		licence_add();
+	}
+
+	if($_POST['row'] == "list" || $isOldTheme){
+		licence_list();
+	}
+	
+	echo "</div>";
 
 }else{
 

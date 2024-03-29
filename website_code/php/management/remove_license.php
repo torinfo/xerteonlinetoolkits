@@ -29,7 +29,12 @@ if(is_user_admin()){
     $query="delete from " . $xerte_toolkits_site->database_table_prefix . "syndicationlicenses where license_id=?";
     db_query($query, array($_POST['remove']));
 
-    licence_list();
+	if($_SESSION['layout'] == "new"){
+		licence_add();
+	}else{
+		licence_add();
+		licence_list();
+	}
 
 }else{
     management_fail();

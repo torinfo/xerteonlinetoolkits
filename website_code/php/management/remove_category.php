@@ -28,8 +28,12 @@ if(is_user_admin()){
     $query="delete from {$xerte_toolkits_site->database_table_prefix}syndicationcategories where category_id=?";
     $res = db_query($query, array($_POST['remove'] ));
 
-	category_list();
-			
+	if($_SESSION['layout'] == "new"){
+		category_list();
+	}else{
+		category_add();
+		category_list();
+	}		
 }else{
 	management_fail();
 

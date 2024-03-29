@@ -42,7 +42,12 @@ if(is_user_admin()){
 
     }
 
-    grouping_list();
+	if($_SESSION['layout'] == "new"){
+		grouping_add();
+	}else{
+		grouping_add();
+		grouping_list();
+	}
 
 }else{
 

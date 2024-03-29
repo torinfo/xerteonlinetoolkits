@@ -29,17 +29,27 @@ if(is_user_admin()){
     $query = "INSERT INTO " . $xerte_toolkits_site->database_table_prefix . "syndicationlicenses (license_name) values  (?)"; 
     $res = db_query($query, array($_POST['newlicense']));
 
+	$result = "";
+	
 	if($res) {
 		// change these
 		//receive_message($_SESSION['toolkits_logon_username'], "USER", "SUCCESS", "Folder creation succeeded for " . $_SESSION['toolkits_logon_username'], "Folder creation succeeded for " . $_SESSION['toolkits_logon_username']);
+		$result = "<p class=\"success\">license creation succeded</p>";
 
 	}else{
 		// change these
 		//receive_message($_SESSION['toolkits_logon_username'], "USER", "CRITICAL", "Folder creation failed for " . $_SESSION['toolkits_logon_username'], "Folder creation failed for " . $_SESSION['toolkits_logon_username']);
+		$result = "<p class=\"fail\">license creation failed</p>";
 	}
 
-	licence_list();
-
+	if($_SESSION['layout'] == "new"){
+		licence_add();
+		echo $result;
+	}else{
+		licence_add();
+		echo $result;
+		licence_list();
+	}
 			
 }else{
 

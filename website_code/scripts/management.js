@@ -43,10 +43,10 @@ function management_ajax_send_prepare(url){
 
 }
 
-function management_stateChanged(response) {
+function management_stateChanged(response, targetID = 'admin_area') {
 	if (response != "") {
 
-		document.getElementById('admin_area').innerHTML = response;
+		document.getElementById(targetID).innerHTML = response;
 		update_forms();
 		loadModal();
 	}
@@ -137,12 +137,12 @@ function remove_feed(id,type){
 //
 // remove a share, and check who did it
 
-function licenses_list(){
+function licenses_list(row = ""){
 	function_to_use="licenses";
 	$.ajax({
 		type: "POST",
 		url: "website_code/php/management/licenses.php",
-		data: {no_id: 1},
+		data: {no_id: 1, row:row},
 	})
 	.done(function(response){
 		management_stateChanged(response);
@@ -162,7 +162,7 @@ function remove_licenses(id){
 			data: {remove: id},
 		})
 		.done(function(response){
-			management_stateChanged(response);
+			management_stateChanged(response, "content");
 		});
 	}
 }
@@ -171,12 +171,12 @@ function remove_licenses(id){
 //
 // remove a share, and check who did it
 
-function categories_list(){
+function categories_list(row = ""){
 	function_to_use="categories";
 	$.ajax({
 		type: "POST",
 		url: "website_code/php/management/categories.php",
-		data: {no_id: 1},
+		data: {no_id: 1, row:row},
 	})
 	.done(function(response){
 		management_stateChanged(response);
@@ -187,12 +187,12 @@ function categories_list(){
 //
 // remove a share, and check who did it
 
-function educationlevel_list(){
+function educationlevel_list(row = ""){
 	function_to_use="educationlevel";
 	$.ajax({
 		type: "POST",
 		url: "website_code/php/management/educationlevel.php",
-		data: {no_id: 1},
+		data: {no_id: 1, row:row},
 	})
 		.done(function(response){
 			management_stateChanged(response);
@@ -203,12 +203,12 @@ function educationlevel_list(){
 //
 // remove a share, and check who did it
 
-function grouping_list(){
+function grouping_list(row = ""){
 	function_to_use="grouping";
     $.ajax({
 		type: "POST",
 		url: "website_code/php/management/grouping.php",
-		data: {no_id: 1},
+		data: {no_id: 1, row:row},
 	})
 	.done(function(response){
 		management_stateChanged(response);
@@ -219,12 +219,12 @@ function grouping_list(){
 //
 // remove a share, and check who did it
 
-function course_list(){
+function course_list(row = ""){
 	function_to_use="course";
     $.ajax({
 		type: "POST",
 		url: "website_code/php/management/course.php",
-		data: {no_id: 1},
+		data: {no_id: 1, row:row},
 	})
 	.done(function(response){
 		management_stateChanged(response);
@@ -245,7 +245,7 @@ function remove_category(id){
 			data: {remove: id},
 		})
 		.done(function(response){
-			management_stateChanged(response);
+			management_stateChanged(response, "content");
 		});
     }
 }
@@ -263,7 +263,7 @@ function remove_educationlevel(id){
 			data: {remove: id},
 		})
 			.done(function(response){
-				management_stateChanged(response);
+				management_stateChanged(response, "content");
 			});
 	}
 }
@@ -281,7 +281,7 @@ function remove_grouping(id){
 			data: {remove: id},
 		})
 		.done(function(response){
-			management_stateChanged(response);
+			management_stateChanged(response, "content");
 		});
     }
 }
@@ -299,7 +299,7 @@ function remove_course(id){
 			data: {remove: id},
 		})
 		.done(function(response){
-			management_stateChanged(response);
+			management_stateChanged(response, "content");
 		});
     }
 }
@@ -386,12 +386,12 @@ function add_second_border(id)
 	$("#"+id).addClass('xerte-button-border')
 }
 
-function site_list(){
+function site_list(row = ""){
 	function_to_use="site";
 	$.ajax({
 		type: "POST",
 		url: "website_code/php/management/site.php",
-		data: {no_id: 1},
+		data: {no_id: 1, row:row},
 	})
 	.done(function(response){
 		management_stateChanged(response);
@@ -634,7 +634,7 @@ function remove_security(){
 				data: {play_id: active_section},
 			})
 			.done(function (response) {
-				management_stateChanged(response);
+				management_stateChanged(response, "content");
 			});
 		}
 	}
@@ -742,7 +742,7 @@ function update_course(){
 		},
 	})
 	.done(function (response) {
-		management_alert_stateChanged(response);
+		management_alert_stateChanged(response, "content");
 	});
 }
 
@@ -771,12 +771,12 @@ function user_template(){
 //
 // remove a share, and check who did it
 
-function play_security_list(template){
+function play_security_list(row){
 	function_to_use="playsecurity";
 	$.ajax({
 		type: "POST",
 		url: "website_code/php/management/play_security_list.php",
-		data: {logon_id: 1},
+		data: {logon_id: 1, row},
 	})
 	.done(function (response) {
 		management_stateChanged(response);
@@ -858,7 +858,7 @@ function new_security(){
 		},
 	})
 	.done(function (response) {
-		management_stateChanged(response);
+		management_stateChanged(response, "content");
 	});
 }
 
@@ -875,7 +875,7 @@ function new_category(){
 		},
 	})
 	.done(function (response) {
-		management_stateChanged(response);
+		management_stateChanged(response, "content");
 	});
 }
 
@@ -892,7 +892,7 @@ function new_educationlevel(){
 		},
 	})
 		.done(function (response) {
-			management_stateChanged(response);
+			management_stateChanged(response, "content");
 		});
 }
 
@@ -909,7 +909,7 @@ function new_grouping(){
 		},
 	})
 	.done(function (response) {
-		management_stateChanged(response);
+		management_stateChanged(response, "content");
 	});
 }
 
@@ -926,7 +926,7 @@ function new_course(){
 		},
 	})
 	.done(function (response) {
-		management_stateChanged(response);
+		management_stateChanged(response, "content");
 	});
 }
 
@@ -943,7 +943,7 @@ function new_license(){
 		},
 	})
 	.done(function (response) {
-		management_stateChanged(response);
+		management_stateChanged(response, "content");
 	});
 }
 

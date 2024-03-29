@@ -42,7 +42,12 @@ if(is_user_admin()){
 
     }
 
-    course_list();
+	if($_SESSION['layout'] == "new"){
+		course_add();
+	}else{
+		course_add();
+		course_list();
+	}
 
 }else{
 

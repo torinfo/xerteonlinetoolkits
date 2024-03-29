@@ -24,7 +24,20 @@ require("management_library.php");
 
 if(is_user_admin()){
 
-    security_list();
+	echo "<h2>" . MANAGEMENT_MENUBAR_PLAY . "</h2>";
+    $isOldTheme = $_SESSION['layout'] == "old";
+
+	echo "<div id=\"content\">";
+
+	if($_POST['row'] == "add" || $isOldTheme){
+		security_add();
+	}
+
+	if($_POST['row'] == "list" || $isOldTheme){
+		security_list();
+	}
+
+	echo "</div>";
 
 }else{
 

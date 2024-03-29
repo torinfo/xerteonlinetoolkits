@@ -29,6 +29,13 @@ if(is_user_admin()){
     $res = db_query($query, array($_POST['remove'] ));
 
 	educationlevel_list();
+
+	if($_SESSION['layout'] == "new"){
+		educationlevel_list();
+	}else{
+		educationlevel_add();
+		educationlevel_list();
+	}
 			
 }else{
 	management_fail();

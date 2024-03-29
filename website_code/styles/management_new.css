@@ -48,6 +48,7 @@ body {
 div#admin_area {
 	background-color: var(--background-admin);
 	transition-duration: 2s;
+	color: var(--text-admin);
 }
 
 div#admin_area p {

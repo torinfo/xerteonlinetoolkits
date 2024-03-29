@@ -27,8 +27,12 @@ if(is_user_admin()){
     $query="delete from " . $xerte_toolkits_site->database_table_prefix . "play_security_details where security_id=?";
     db_query($query, array($_POST['play_id'] ));
 
-    security_list();
-
+	if($_SESSION['layout'] == "new"){
+		security_list();
+	}else{
+		security_add();
+		security_list();
+	}
 }else{
     management_fail();
 }

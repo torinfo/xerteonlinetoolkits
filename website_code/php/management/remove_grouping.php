@@ -28,8 +28,12 @@ if(is_user_admin()){
     $query="delete from `{$xerte_toolkits_site->database_table_prefix}grouping` where grouping_id=?";
     $res = db_query($query, array($_POST['remove'] ));
 
-	grouping_list();
-			
+	if($_SESSION['layout'] == "new"){
+		grouping_list();
+	}else{
+		grouping_add();
+		grouping_list();
+	}
 }else{
 	management_fail();
 

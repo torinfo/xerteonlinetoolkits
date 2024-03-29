@@ -100,18 +100,18 @@ _load_language_file("/website_code/php/management/management_library.inc");
             <img id="logo_top_left" src="media/xerte-logo.png" width="100px" height="50px">
         </div>
         <div class="xerte-buttons-container">
-            <button type="button" id="button-site" class="xerte-button" onclick="javascript:site_list(); javascript:add_border('button-site');"><div class="icon-1"><i class="fa fa-sitemap"></i></div> <?PHP echo MANAGEMENT_MENUBAR_SITE; ?>	</button>
+            <button type="button" id="button-site" class="xerte-button" onclick="javascript:add_border('button-site');"><div class="icon-1"><i class="fa fa-sitemap"></i></div> <?PHP echo MANAGEMENT_MENUBAR_SITE; ?>	</button>
             <button type="button" id="button-template" class="xerte-button" onclick=" javascript:templates_list(); javascript:add_border('button-template');"><div class="icon-2"><i class="fa fa-file-code-o"></i></div><?PHP echo MANAGEMENT_MENUBAR_CENTRAL; ?>	</button>
             <button type="button" id="button-gebruikers" class="xerte-button" onclick="javascript:users_list(); javascript:add_border('button-gebruikers');"><div class="icon-3"><i class="fa fa-users-cog"></i></div> <?PHP echo MANAGEMENT_MENUBAR_USERS; ?>	</button>
             <button type="button" id="button-groepen" class="xerte-button" onclick="javascript:user_groups_list(); javascript:add_border('button-groepen'); "><div class="icon-4"><i class="fa fa-users"></i></div> <?PHP echo MANAGEMENT_MENUBAR_USER_GROUPS; ?>	</button>
             <button type="button" id="button-gebruikerslo" class="xerte-button" onclick="javascript:user_templates_list(); javascript:add_border('button-gebruikerslo');"><div class="icon-5"><i class="far fa-file-alt"></i></div> <?PHP echo MANAGEMENT_MENUBAR_TEMPLATES; ?>	</button>
             <button type="button" id="button-logs" class="xerte-button" onclick="javascript:errors_list(); javascript:add_border('button-logs');"><div class="icon-6"> <i class="fa fa-exclamation-triangle"></i></div> <?PHP echo MANAGEMENT_MENUBAR_LOGS; ?>	</button>
-            <button type="button" id="button-toegang" class="xerte-button" onclick="javascript:play_security_list(); javascript:add_border('button-toegang');"><div class="icon-7"><i class="fa fa-key"></i></div> <?PHP echo MANAGEMENT_MENUBAR_PLAY; ?></button>
-            <button type="button" id="button-categorie" class="xerte-button" onclick="javascript:categories_list(); javascript:add_border('button-categorie');"><div class="icon-8"><i class="fa fa-list-ul"></i></div> <?PHP echo MANAGEMENT_MENUBAR_CATEGORIES; ?>	</button>
-            <button type="button" id="button-educations" class="xerte-button" onclick="javascript:educationlevel_list(); javascript:add_border('button-educations');"><div class="icon-9"><i class="fa fa-list-ul"></i></div> <?PHP echo MANAGEMENT_MENUBAR_EDUCATION; ?>	</button>
-            <button type="button" id="button-groeperingen" class="xerte-button" onclick="javascript:grouping_list(); javascript:add_border('button-groeperingen');"><div class="icon-10"><i class="fa fa-list-ul"></i></div> <?PHP echo MANAGEMENT_MENUBAR_GROUPINGS; ?>	</button>
-            <button type="button" id="button-cursussen" class="xerte-button" onclick="javascript:course_list(); javascript:add_border('button-cursussen');"><div class="icon-11"><i class="fa fa-list-ul"></i></div> <?PHP echo MANAGEMENT_MENUBAR_COURSES; ?>	</button>
-            <button type="button" id="button-licentie" class="xerte-button" onclick="javascript:licenses_list(); javascript:add_border('button-licentie');"><div class="icon-12"><i class="fa fa-cc"></i></div> <?PHP echo MANAGEMENT_MENUBAR_LICENCES; ?>	 </button>
+            <button type="button" id="button-toegang" class="xerte-button" onclick="javascript:add_border('button-toegang');"><div class="icon-7"><i class="fa fa-key"></i></div> <?PHP echo MANAGEMENT_MENUBAR_PLAY; ?></button>
+            <button type="button" id="button-categorie" class="xerte-button" onclick="javascript:add_border('button-categorie');"><div class="icon-8"><i class="fa fa-list-ul"></i></div> <?PHP echo MANAGEMENT_MENUBAR_CATEGORIES; ?>	</button>
+            <button type="button" id="button-educations" class="xerte-button" onclick="javascript:add_border('button-educations');"><div class="icon-9"><i class="fa fa-list-ul"></i></div> <?PHP echo MANAGEMENT_MENUBAR_EDUCATION; ?>	</button>
+            <button type="button" id="button-groeperingen" class="xerte-button" onclick="javascript:add_border('button-groeperingen');"><div class="icon-10"><i class="fa fa-list-ul"></i></div> <?PHP echo MANAGEMENT_MENUBAR_GROUPINGS; ?>	</button>
+            <button type="button" id="button-cursussen" class="xerte-button" onclick="javascript:add_border('button-cursussen');"><div class="icon-11"><i class="fa fa-list-ul"></i></div> <?PHP echo MANAGEMENT_MENUBAR_COURSES; ?>	</button>
+            <button type="button" id="button-licentie" class="xerte-button" onclick="javascript:add_border('button-licentie');"><div class="icon-12"><i class="fa fa-cc"></i></div> <?PHP echo MANAGEMENT_MENUBAR_LICENCES; ?>	 </button>
             <button type="button" id="button-feed"  class="xerte-button" onclick="javascript:feeds_list(); javascript:add_border('button-feed');"><div class="icon-13"><i class="fa fa-rss"></i></div> <?PHP echo MANAGEMENT_MENUBAR_FEEDS; ?></button>
         </div>
 
@@ -262,20 +262,20 @@ _load_language_file("/website_code/php/management/management_library.inc");
 
     <div id="button-site-menu" class="menu">
         <div class="space-top">
-            <a href="#" id="site-settings" onclick="javascript:site_display('siteSettings'); javascript:add_second_border('site-settings');" >Site settings (HTML/Images)</a>
-            <a href="#" id="server-details" onclick="javascript:site_display('serverdetails'); javascript:add_second_border('server-details');"> Server Settings</a>
-            <a href="#" id="rss-details" onclick="javascript:site_display('rssdetails'); javascript:add_second_border('rss-details');"> RSS settings</a>
-            <a href="#" id="path-details" onclick="javascript:site_display('pathdetails'); javascript:add_second_border('path-details');">Path settings</a>
-            <a href="#" id="sql-details" onclick="javascript:site_display('sqldetails'); javascript:add_second_border('sql-details');">SQL query settings</a>
-            <a href="#" id="error-details" onclick="javascript:site_display('errordetails'); javascript:add_second_border('error-details');">Error handling settings</a>
-            <a href="#" id="auth-details" onclick="javascript:site_display('authdetails'); javascript:add_second_border('auth-details');">Authentication settings</a>
-            <a href="#" id="ldap-details" onclick="javascript:site_display('ldapdetails'); javascript:add_second_border('ldap-details');">LDAP settings </a>
-            <a href="#" id="xerte-details" onclick="javascript:site_display('xertedetails'); javascript:add_second_border('xerte-details');">Xerte settings</a>
-            <a href="#" id="email-details" onclick="javascript:site_display('emaildetails'); javascript:add_second_border('email-details');">Email</a>
-            <a href="#" id="language-details" onclick="javascript:site_display('languagedetails'); javascript:add_second_border('language-details');">Language settings</a>
-            <a href="#" id="xapi-details" onclick="javascript:site_display('xapidetails'); javascript:add_second_border('xapi-details');">xAPI settings</a>
-            <a href="#" id="socialicon-details" onclick="javascript:site_display('socialicondetails'); javascript:add_second_border('socialicon-details');">Social Icon settings</a>
-            <a href="#" id="lti-details" onclick="javascript:site_display('ltidetails'); javascript:add_second_border('lti-details');">LT/Moodle settings</a>
+            <a href="#" id="site-settings" onclick="javascript:site_list('siteSettings'); javascript:add_second_border('site-settings');" ><?php echo MANAGEMENT_SITE_TITLE ?></a>
+            <a href="#" id="server-details" onclick="javascript:site_list('serverdetails'); javascript:add_second_border('server-details');"><?php echo MANAGEMENT_SITE_SERVER ?></a>
+            <a href="#" id="rss-details" onclick="javascript:site_list('rssdetails'); javascript:add_second_border('rss-details');"> <?php echo MANAGEMENT_SITE_RSS ?></a>
+            <a href="#" id="path-details" onclick="javascript:site_list('pathdetails'); javascript:add_second_border('path-details');"><?php echo MANAGEMENT_SITE_PATH ?><a>
+			<a href="#" id="sql-details" onclick="javascript:site_list('sqldetails'); javascript:add_second_border('sql-details');"><?php echo MANAGEMENT_SITE_SQL ?></a>
+            <a href="#" id="error-details" onclick="javascript:site_list('errordetails'); javascript:add_second_border('error-details');"><?php echo MANAGEMENT_SITE_ERROR_HANDLING ?></a>
+            <a href="#" id="auth-details" onclick="javascript:site_list('authdetails'); javascript:add_second_border('auth-details');"><?php echo MANAGEMENT_SITE_AUTH_DETAILS ?></a>
+            <a href="#" id="ldap-details" onclick="javascript:site_list('ldapdetails'); javascript:add_second_border('ldap-details');"><?php echo MANAGEMENT_SITE_LDAP ?></a>
+            <a href="#" id="xerte-details" onclick="javascript:site_list('xertedetails'); javascript:add_second_border('xerte-details');"><?php echo MANAGEMENT_SITE_XERTE ?></a>
+            <a href="#" id="email-details" onclick="javascript:site_list('emaildetails'); javascript:add_second_border('email-details');"><?php echo MANAGEMENT_SITE_EMAIL ?></a>
+            <a href="#" id="language-details" onclick="javascript:site_list('languagedetails'); javascript:add_second_border('language-details');"><?php echo MANAGEMENT_LIBRARY_LANGUAGES ?></a>
+            <a href="#" id="xapi-details" onclick="javascript:site_list('xapidetails'); javascript:add_second_border('xapi-details');"><?php echo MANAGEMENT_SITE_XAPI ?></a>
+            <a href="#" id="socialicon-details" onclick="javascript:site_list('socialicondetails'); javascript:add_second_border('socialicon-details');"><?php echo MANAGEMENT_SITE_SOCIALICONS ?></a>
+            <a href="#" id="lti-details" onclick="javascript:site_list('ltidetails'); javascript:add_second_border('lti-details');"><?php echo MANAGEMENT_SITE_LTI ?></a>
         </div>
     </div>
 
@@ -312,41 +312,43 @@ _load_language_file("/website_code/php/management/management_library.inc");
 
     <div id="button-toegang-menu" class="menu">
         <div class="space-top">
-            <a href="#" id="new-settings" onclick="javascript:add_second_border('new-settings');">Add new settings</a>
-            <a href="#" id="manage-settings" onclick="javascript:add_second_border('manage-settings');">Manage existing settings</a>
+            <a href="#" id="add-settings" onclick="javascript: play_security_list('add'); javascript:add_second_border('add-settings');"><?php echo MANAGEMENT_LIBRARY_ADD_SECURITY ?></a>
+            <a href="#" id="manage-settings" onclick="javascript: play_security_list('list'); javascript:add_second_border('manage-settings');"><?php echo MANAGEMENT_LIBRARY_EXISTING_SECURITY ?></a>
         </div>
     </div>
 
     <div id="button-categorie-menu" class="menu">
         <div class="space-top">
-            <a href="#" id="categorie" onclick="javascript:add_second_border('categorie');">Add new categorie</a>
-            <a href="#" id="manage-categorie" onclick="javascript:add_second_border('manage-categorie');">Manage existing categorie</a>
+            <a href="#" id="add-categorie" onclick="javascript:categories_list('add'); javascript:add_second_border('add-categorie');"><?php echo MANAGEMENT_LIBRARY_ADD_CATEGORY ?></a>
+            <a href="#" id="manage-categorie" onclick="javascript:categories_list('list'); javascript:add_second_border('manage-categorie');"><?php echo MANAGEMENT_LIBRARY_EXISTING_CATEGORIES ?></a>
         </div>
     </div>
 
     <div id="button-educations-menu" class="menu">
         <div class="space-top">
-            <a href="#" id="level" onclick="javascript:add_second_border('level');">Add new education level</a>
-            <a href="#" id="manage-level" onclick="javascript:add_second_border('manage-level');">Manage existing education levels</a>
+            <a href="#" id="add-level" onclick="javascript:educationlevel_list('add') ; javascript:add_second_border('add-level');"><?php echo MANAGEMENT_LIBRARY_ADD_EDUCATION ?></a>
+            <a href="#" id="manage-level" onclick="javascript:educationlevel_list('list') ; javascript:add_second_border('manage-level');"><?php echo MANAGEMENT_LIBRARY_EXISTING_EDUCATION ?></a>
         </div>
     </div>
 
     <div id="button-groeperingen-menu" class="menu">
         <div class="space-top">
-            <a href="#" id="manage-groups" onclick="javascript:add_second_border('manage-groups');">Manage groups</a>
+            <a href="#" id="add-groups" onclick="javascript: grouping_list('add'); javascript:add_second_border('add-groups');"><?php echo MANAGEMENT_LIBRARY_ADD_GROUPING ?></a>
+            <a href="#" id="manage-groups" onclick="javascript: grouping_list('list'); javascript:add_second_border('manage-groups');"><?php echo MANAGEMENT_LIBRARY_EXISTING_GROUPINGS ?></a>
         </div>
     </div>
 
     <div id="button-cursussen-menu" class="menu">
         <div class="space-top">
-            <a href="#" id="add-level" onclick="javascript:add_second_border('add-level');">Add new education level</a>
-            <a href="#" id="manage-level" onclick="javascript:add_second_border('manage-level');">Manage existing education levels</a>
+            <a href="#" id="add-course" onclick="javascript: course_list('add'); javascript:add_second_border('add-course');"><?php echo MANAGEMENT_LIBRARY_ADD_COURSE ?></a>
+            <a href="#" id="manage-course" onclick="javascript: course_list('list'); javascript:add_second_border('manage-course');"><?php echo MANAGEMENT_LIBRARY_EXISTING_COURSES ?></a>
         </div>
     </div>
 
     <div id="button-licentie-menu" class="menu">
         <div class="space-top">
-            <a href="#" id="licentie" onclick="javascript:add_second_border('licentie');">Licenses</a>
+            <a href="#" id="add-licentie" onclick="javascript:licenses_list('add'); javascript:add_second_border('add-licentie');"><?php echo MANAGEMENT_LIBRARY_NEW_LICENCE ?></a>
+            <a href="#" id="manage-licentie" onclick="javascript:licenses_list('list'); javascript:add_second_border('manage-licentie');"><?php echo MANAGEMENT_LIBRARY_MANAGE_LICENCES ?></a>
         </div>
     </div>
 
@@ -470,7 +472,6 @@ _load_language_file("/website_code/php/management/management_library.inc");
 <script type="text/javascript" src="editor/js/vendor/ckeditor/plugins/codemirror/js/beautify.min.js"></script>
 <script type="text/javascript" src="editor/js/vendor/ckeditor/plugins/codemirror/js/codemirror.addons.search.min.js"></script>
 <script>
- setTimeout(function() {
 	 var sidebarWidth = $(".sidebar").width();
 
 	 $(".menu").css('left', sidebarWidth);
@@ -499,5 +500,4 @@ _load_language_file("/website_code/php/management/management_library.inc");
 	 });
 
 
- }, 50);
 </script>

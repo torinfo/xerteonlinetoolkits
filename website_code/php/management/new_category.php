@@ -42,7 +42,12 @@ if(is_user_admin()){
 
     }
 
-    category_list();
+	if($_SESSION['layout'] == "new"){
+		category_add();
+	}else{
+		category_add();
+		category_list();
+	}
 
 }else{
 
