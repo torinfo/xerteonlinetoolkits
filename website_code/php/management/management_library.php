@@ -249,7 +249,7 @@
 		
         $query = "select course_freetext_enabled from " . $xerte_toolkits_site->database_table_prefix . "sitedetails";
         $row = db_query_one($query);
-		echo inputField("course_freetext_enable", MANAGEMENT_COURSE_FREE_TEXT_ENABLE, $row['course_freetext_enabled'], "");
+		echo inputField("course_freetext_enabled", MANAGEMENT_COURSE_FREE_TEXT_ENABLE, $row['course_freetext_enabled'], "");
 
 		echo "</div>";
 		echo "<div class=\"admin_block\">";

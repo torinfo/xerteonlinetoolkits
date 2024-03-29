@@ -30,7 +30,7 @@ if(is_user_admin()){
     db_query($query, array($_POST['remove']));
 
 	if($_SESSION['layout'] == "new"){
-		licence_add();
+		licence_list();
 	}else{
 		licence_add();
 		licence_list();

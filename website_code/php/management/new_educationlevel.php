@@ -46,10 +46,10 @@ if(is_user_admin()){
 
     if($_SESSION['layout'] == "new"){
 		educationlevel_add();
-		echo $result;
+		/* echo $result; */
 	}else{
 		educationlevel_add();
-		echo $result;
+		/* echo $result; */
 		educationlevel_list();
 	}
 

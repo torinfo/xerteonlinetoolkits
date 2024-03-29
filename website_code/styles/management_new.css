@@ -231,7 +231,7 @@ div#admin_area form textarea {
 {
 
 	height: 60px;
-	width: 370px;
+	width: 440px;
 	position: absolute;
 	right: 0px;
 	top: 0px;
@@ -560,7 +560,11 @@ div#admin_area form select
 	height: 40px;
 }
 
-.layout-dropdown{
+.layout-dropdown, .savebutton-container{
 	display: flex;
 	align-items: center;
+}
+
+.savebutton-container button{
+	margin-right: 10px;
 }

@@ -44,10 +44,10 @@ if(is_user_admin()){
 
 	if($_SESSION['layout'] == "new"){
 		licence_add();
-		echo $result;
+		/* echo $result; */
 	}else{
 		licence_add();
-		echo $result;
+		/* echo $result; */
 		licence_list();
 	}
 			

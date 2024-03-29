@@ -28,8 +28,6 @@ if(is_user_admin()){
     $query="delete from {$xerte_toolkits_site->database_table_prefix}educationlevel where educationlevel_id=?";
     $res = db_query($query, array($_POST['remove'] ));
 
-	educationlevel_list();
-
 	if($_SESSION['layout'] == "new"){
 		educationlevel_list();
 	}else{

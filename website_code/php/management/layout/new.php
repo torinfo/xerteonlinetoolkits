@@ -8,7 +8,9 @@ _load_language_file("/website_code/php/management/management_library.inc");
 
     <div class="white_topbar">
         <div class="topbar-section">
-
+			<div class="savebutton-container">
+				<button type="button" class="xerte_button" onclick="javascript:save_changes()"><i class="fa fa-floppy-o"></i> <?PHP echo MANAGEMENT_MENUBAR_SAVE; ?></button>
+			</div>
 			<div class="layout-dropdown">
 				<form action="#">
 					<select name="layouts" id="layout">
@@ -181,7 +183,7 @@ _load_language_file("/website_code/php/management/management_library.inc");
                      break;
                      // Add cases for all other buttons
              }
-             document.getElementById("content-header").innerHTML = newContent;
+             //document.getElementById("content-header").innerHTML = newContent;
          }
      });
 
@@ -491,11 +493,11 @@ _load_language_file("/website_code/php/management/management_library.inc");
 		 if($(".xerte-button").hasClass('xerte-button-border'))
 		 {
 
-			 $("#button-site-menu")._removeClass('hide').addClass('show')
+			 $("#button-site-menu").removeClass('hide').addClass('show')
 		 }
 		 else
 		 {
-			 $("#button-site-menu")._removeClass('show').addClass('hide')
+			 $("#button-site-menu").removeClass('show').addClass('hide')
 		 }
 	 });
 

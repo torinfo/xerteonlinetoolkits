@@ -40,10 +40,13 @@ if(is_user_admin()){
         //receive_message($_SESSION['toolkits_logon_username'], "USER", "CRITICAL", "Folder creation failed for " . $_SESSION['toolkits_logon_username'], "Folder creation failed for " . $_SESSION['toolkits_logon_username']);
 
     }
-
-    security_list();
-
-
+	
+	if($_SESSION['layout'] == "new"){
+		security_add();
+	}else{
+		security_add();
+		security_list();
+	}
 }else{
 
     management_fail();
