@@ -356,7 +356,7 @@ _load_language_file("/website_code/php/management/management_library.inc");
 
     <div id="button-feed-menu" class="menu">
         <div class="space-top">
-            <a href="#" id="feed" onclick="javascript:add_second_border('feed');">Feed</a>
+            <a href="#" id="feed" onclick="javascript:add_second_border('feed');"><?PHP echo MANAGEMENT_MENUBAR_FEEDS; ?></a>
         </div>
     </div>
 

@@ -229,12 +229,15 @@ div#admin_area form textarea {
 
 .topbar-section
 {
-
 	height: 60px;
-	width: 440px;
 	position: absolute;
 	right: 0px;
 	top: 0px;
+	display: flex;
+	flex-direction: row;
+	z-index: 3;
+	gap: 10px;
+	margin-right: 10px;
 }
 
 .block
@@ -273,18 +276,6 @@ div#admin_area form textarea {
 	color: var(--text-admin);
 	transition-duration: 2s;
 }
-
-
-.topbar-section
-{
-
-	display: flex;
-	flex-direction: row;
-	z-index: 3;
-}
-
-
-
 
 
 /* The switch - the box around the slider */
@@ -336,21 +327,6 @@ input:checked + .slider:before {
 	transform: translateX(26px);
 }
 
-#toggle-switch
-{
-	position: absolute;
-	right: 24px;
-	top: 17px;
-}
-
-
-
-
-
-
-
-
-
 input {
 	display: flex;
 	align-items: center;
@@ -365,66 +341,51 @@ label {
 	margin: 0 auto;
 }
 
-.dropdown
-{
-	position: absolute;
-	right: 100px;
-	top: 20px;
+.dropdown {
 	border: transparent;
 	background-color: transparent;
-
 }
 
-#lang
-{
+#lang {
 	background-color: transparent;
 	color: white;
 	transition-duration: 2s;
 }
-.drop
-{
+.drop {
 	background-color: white;
 	transition-duration: 2s;
 }
 
-select#lang .drop:hover
-{
+select#lang .drop:hover {
 	background-color: red !important;
 }
-
-
 
 select#lang {
 	border:0px;
 	outline:0px;
 }
 
+.profile {
+	width: 44px;
+}
 
 .Profile img {
 	height: 40px;
 	width: 40px;
 	border-radius: 50px;
-	position: absolute;
-	right: 260px;
-	top: 7px;
 	border: solid 2px #FBA61F;
 	z-index: 3;
 }
 
-#admin_area
-{
+#admin_area {
 
 	margin-left: 40px	;
 }
 
-
-
-textarea
-{
+textarea {
 	padding: 7px 10px;
 }
-.text-area-block
-{
+.text-area-block {
 	background-color: #ffffff;
 	border-radius: 4px;
 	width: 60%;
@@ -432,114 +393,59 @@ textarea
 	resize: none;
 }
 
-.text-area-block:hover:not([disabled])
-{
+.text-area-block:not([disabled]):hover {
 	border: solid 4px #c7c7c7;
 }
 
-
-.icon-1
-{
+.icon-1 {
 	margin-right: 2px;
 }
 
-.icon-2
-{
+.icon-2 {
 	margin-left: 4px;
 	margin-right: 4px;
 }
 
-.icon-3
-{
+.icon-3 {
 	margin-right: 2px;
 }
 
-.icon-4
-{
+.icon-4 {
 	margin-right: 2px;
 }
 
-.icon-5
-{
+.icon-5, .icon-6, .icon-7, .icon-8, .icon-9, .icon-10, .icon-11, .icon-12, .icon-13{
+	margin-right: 5px;
+}
+
+.icon-5 {
 	margin-left: 3px;
-	margin-right: 5px;
 }
 
-.icon-6
-{
-	margin-right: 5px;
-}
-
-.icon-7
-{
-	margin-right: 5px;
-
-}
-
-.icon-8
-{
-	margin-right: 5px;
-
-}
-
-.icon-9
-{
-	margin-right: 5px;
-
-}
-
-.icon-10
-{
-	margin-right: 5px;
-
-}
-
-.icon-11
-{
-	margin-right: 5px;
-}
-
-.icon-12
-{
-	margin-right: 5px;
-
-}
-
-.icon-13
-{
-	margin-right: 5px;
-
-}
-
-.xerte-button-border
-{
+.xerte-button-border {
 	border-right: white solid 3px;
 }
 
-#form-gebruiker input
-{
+#form-gebruiker input {
 	background-color: white;
 	height: 35px;
 	width: 200px;
 	border-radius: 7px;
 }
 
-.info-box
-{
+.info-box {
 	display: flex;
 	flex-direction: column;
 	margin-bottom: 20px;
 
 }
 
-.mgmnt-form-header-container
-{
+.mgmnt-form-header-container {
 	display: flex;
 	flex-direction: column;
 }
 
-.mgmnt-form-header
-{
+.mgmnt-form-header {
 	height: 20px;
 	background-color: #3D4A74;
 	color: white;
@@ -554,17 +460,12 @@ textarea
 	background-color: white;
 }
 
-div#admin_area form select
-{
+div#admin_area form select{
 	width: 200px;
 	height: 40px;
 }
 
-.layout-dropdown, .savebutton-container{
+.layout-dropdown, .savebutton-container, #toggle-switch, .dropdown, .Profile{
 	display: flex;
 	align-items: center;
-}
-
-.savebutton-container button{
-	margin-right: 10px;
 }
