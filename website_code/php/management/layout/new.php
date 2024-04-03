@@ -8,10 +8,23 @@ _load_language_file("/website_code/php/management/management_library.inc");
 
     <div class="white_topbar">
         <div class="topbar-section">
-			<div class="savebutton-container">
+			
+			<div class="Profile flex-center">
+				<img src="media/download.jpg">
+			</div>
+
+			<div class="flex-center">
+				<button title="<?php echo MANAGEMENT_LOGOUT; ?>"
+						type="button" class="xerte_button_c_no_width"
+						onclick="javascript:logout()">
+					<i class="fas fa-sign-out-alt"></i><?php echo MANAGEMENT_LOGOUT; ?>
+				</button>
+			</div>
+
+			<div class="savebutton-container flex-center">
 				<button type="button" class="xerte_button" onclick="javascript:save_changes()"><i class="fa fa-floppy-o"></i> <?PHP echo MANAGEMENT_MENUBAR_SAVE; ?></button>
 			</div>
-			<div class="layout-dropdown">
+			<div class="layout-dropdown flex-center">
 				<form action="#">
 					<select name="layouts" id="layout">
 						<option class="drop" value="new" selected>New</option>
@@ -19,12 +32,8 @@ _load_language_file("/website_code/php/management/management_library.inc");
 					</select>
 				</form>
 			</div>
-			
-			<div class="Profile">
-				<img src="media/download.jpg">
-			</div>
 
-			<?php display_language_selectionform_extra("dropdown", false) ?>
+			<?php display_language_selectionform_extra("dropdown flex-center", false) ?>
 
 			<script>
 			 $(document).ready(function() {
@@ -51,7 +60,7 @@ _load_language_file("/website_code/php/management/management_library.inc");
 
 			</script>
 
-            <div id="toggle-switch">
+            <div id="toggle-switch", class="flex-center">
                 <label class="switch">
                     <input id="themeSwitch" type="checkbox">
                     <span class="slider round"></span>
@@ -107,7 +116,7 @@ _load_language_file("/website_code/php/management/management_library.inc");
             <button type="button" id="button-gebruikers" class="xerte-button" onclick="javascript:users_list(); javascript:add_border('button-gebruikers');"><div class="icon-3"><i class="fa fa-users-cog"></i></div> <?PHP echo MANAGEMENT_MENUBAR_USERS; ?>	</button>
             <button type="button" id="button-groepen" class="xerte-button" onclick="javascript:user_groups_list(); javascript:add_border('button-groepen'); "><div class="icon-4"><i class="fa fa-users"></i></div> <?PHP echo MANAGEMENT_MENUBAR_USER_GROUPS; ?>	</button>
             <button type="button" id="button-gebruikerslo" class="xerte-button" onclick="javascript:user_templates_list(); javascript:add_border('button-gebruikerslo');"><div class="icon-5"><i class="far fa-file-alt"></i></div> <?PHP echo MANAGEMENT_MENUBAR_TEMPLATES; ?>	</button>
-            <button type="button" id="button-logs" class="xerte-button" onclick="javascript:errors_list(); javascript:add_border('button-logs');"><div class="icon-6"> <i class="fa fa-exclamation-triangle"></i></div> <?PHP echo MANAGEMENT_MENUBAR_LOGS; ?>	</button>
+            <button type="button" id="button-logs" class="xerte-button" onclick="javascript:add_border('button-logs');"><div class="icon-6"> <i class="fa fa-exclamation-triangle"></i></div> <?PHP echo MANAGEMENT_MENUBAR_LOGS; ?>	</button>
             <button type="button" id="button-toegang" class="xerte-button" onclick="javascript:add_border('button-toegang');"><div class="icon-7"><i class="fa fa-key"></i></div> <?PHP echo MANAGEMENT_MENUBAR_PLAY; ?></button>
             <button type="button" id="button-categorie" class="xerte-button" onclick="javascript:add_border('button-categorie');"><div class="icon-8"><i class="fa fa-list-ul"></i></div> <?PHP echo MANAGEMENT_MENUBAR_CATEGORIES; ?>	</button>
             <button type="button" id="button-educations" class="xerte-button" onclick="javascript:add_border('button-educations');"><div class="icon-9"><i class="fa fa-list-ul"></i></div> <?PHP echo MANAGEMENT_MENUBAR_EDUCATION; ?>	</button>
@@ -267,7 +276,7 @@ _load_language_file("/website_code/php/management/management_library.inc");
             <a href="#" id="site-settings" onclick="javascript:site_list('siteSettings'); javascript:add_second_border('site-settings');" ><?php echo MANAGEMENT_SITE_TITLE ?></a>
             <a href="#" id="server-details" onclick="javascript:site_list('serverdetails'); javascript:add_second_border('server-details');"><?php echo MANAGEMENT_SITE_SERVER ?></a>
             <a href="#" id="rss-details" onclick="javascript:site_list('rssdetails'); javascript:add_second_border('rss-details');"> <?php echo MANAGEMENT_SITE_RSS ?></a>
-            <a href="#" id="path-details" onclick="javascript:site_list('pathdetails'); javascript:add_second_border('path-details');"><?php echo MANAGEMENT_SITE_PATH ?><a>
+            <a href="#" id="path-details" onclick="javascript:site_list('pathdetails'); javascript:add_second_border('path-details');"><?php echo MANAGEMENT_SITE_PATH ?></a>
 			<a href="#" id="sql-details" onclick="javascript:site_list('sqldetails'); javascript:add_second_border('sql-details');"><?php echo MANAGEMENT_SITE_SQL ?></a>
             <a href="#" id="error-details" onclick="javascript:site_list('errordetails'); javascript:add_second_border('error-details');"><?php echo MANAGEMENT_SITE_ERROR_HANDLING ?></a>
             <a href="#" id="auth-details" onclick="javascript:site_list('authdetails'); javascript:add_second_border('auth-details');"><?php echo MANAGEMENT_SITE_AUTH_DETAILS ?></a>
@@ -307,7 +316,7 @@ _load_language_file("/website_code/php/management/management_library.inc");
 
     <div id="button-logs-menu" class="menu">
         <div class="space-top">
-            <a href="#" id="logs" onclick="javascript:add_second_border('logs');">Log files</a>
+            <a href="#" id="logs" onclick="javascript:errors_list(); javascript:add_second_border('logs');">Log files</a>
 
         </div>
     </div>

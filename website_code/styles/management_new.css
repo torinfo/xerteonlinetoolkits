@@ -465,7 +465,7 @@ div#admin_area form select{
 	height: 40px;
 }
 
-.layout-dropdown, .savebutton-container, #toggle-switch, .dropdown, .Profile{
+.flex-center /*.layout-dropdown, .savebutton-container, #toggle-switch, .dropdown, .Profile*/{
 	display: flex;
 	align-items: center;
 }
