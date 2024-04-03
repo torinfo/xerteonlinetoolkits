@@ -22,8 +22,14 @@
       <category><![CDATA[<category name="Enter Category Name Here"/>]]></category>
     </newNodes>
 
+  	<AIGroup type="group" label="AI" optional="true">
+      	  <aiSelector label="AI model" options="OpenAI,Copilot" type="comboBox" data="openai,copilot" defaultValue="openai" width="120" optional="true"/>
+            <subject label="List the different categories separated by ," type="TextInput" wysiwyg="true" optional="true"/>
+            <wordsPerCategory label="Amount of words for each category" type="TextInput" wysiwyg="true" optional="true"/>
+            <ageRange label="Age Range" type="TextInput" wysiwyg="true" optional="true"/>
+            <aiButton type="aibutton" optional="true"/>
+      </AIGroup>
   </categories>
-
 
   <category menuItem="Category" icon="icGroup" remove="true">
 

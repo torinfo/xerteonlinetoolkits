@@ -1485,20 +1485,19 @@ var EDITOR = (function ($, parent) {
         addNodeToTree('treeroot',pos,nodeName,xmlData,tree,true);
     },
 
-    ai_content_generator = function(event, p, node_type) {
+    ai_content_generator = function(event, p, node_type, api_choice, fileUrl) {
         //call aiAPI.php
         var tree = $.jstree.reference("#treeview");
-
         //show wait icon
         $('body').css("cursor", "wait");
 
         console.log("start openai api request please wait");
-        //todo add api selector
         $.ajax({
             url: "editor/ai/aiAPI.php",
             type: "POST",
-            data: { type: node_type, prompt: p, api: "openai"},
+            data: { type: node_type, prompt: p, api: api_choice, url: fileUrl},
             success: function(data){
+                //TODO: Alek posisble option for enclosing
                 ai_to_xerte_content(data, event.data.key, 'last', tree)
             },
         });

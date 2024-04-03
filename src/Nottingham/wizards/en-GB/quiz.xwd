@@ -58,9 +58,12 @@
 	</videoInfo>
 
 	<AIGroup type="group" label="AI" optional="true">
+	  <aiSelector label="AI model" options="OpenAI,Copilot" type="comboBox" data="openai,copilot" defaultValue="openai" width="120" optional="true"/>
       <subject label="Subject" type="TextInput" wysiwyg="true" optional="true"/>
       <amountOfQuestions label="Amount Of Questions" type="TextInput" wysiwyg="true" optional="true"/>
       <amountOfAnswers label="Amount Of Answers" type="TextInput" wysiwyg="true" optional="true"/>
+      <uploadPrompt label="Upload file?" type="checkbox" defaultValue="false" optional ="true"/>
+      <img label="File" type="media" defaultValue="Upload a file" optional="true"/>
       <aiButton type="aibutton" optional="true"/>
     </AIGroup>
 
