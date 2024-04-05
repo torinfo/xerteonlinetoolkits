@@ -4917,6 +4917,15 @@ var EDITOR = (function ($, parent) {
                                     "ageRange": lo_data[key].attributes["ageRange"],
                                 };
                                 break;
+                            case 'mcq':
+                                constructorObject = {
+                                    //"subject": lo_data[key].attributes["subject"],
+                                    "subject": lo_data[key].attributes['prompt'],
+                                    "nrq": lo_data[key].attributes["amountOfQuestions"],
+                                    "aoa": lo_data[key].attributes["amountOfAnswers"],
+                                    "range": lo_data[key].attributes["ageRange"],
+                                }
+                                break;
                             // Add more cases as needed for different types
                             default:
                                 //TODO ALEK: Add Default constructor object or error handling
@@ -4928,8 +4937,10 @@ var EDITOR = (function ($, parent) {
                             var cleanFileUrl = fileUrl.replace("FileLocation + '", "").replace("'", "");
                             var fullUrl = baseUrl + cleanFileUrl;
                             ai_content_generator(event, constructorObject, lo_data[key].attributes.nodeName, lo_data[key].attributes["aiSelector"], fullUrl);
+                        }else{
+                            ai_content_generator(event, constructorObject, lo_data[key].attributes.nodeName, lo_data[key].attributes["aiSelector"], null);
                         }
-                        ai_content_generator(event, constructorObject, lo_data[key].attributes.nodeName, lo_data[key].attributes["aiSelector"], null);
+
                     });
                 break;
 			case 'xertelo':

@@ -5570,6 +5570,14 @@
 		<feedbackPos label="Feedback Order" options="General &gt; Answer &gt; Correct/Incorrect,General &gt; Correct/Incorrect &gt; Answer,Answer &gt; Correct/Incorrect &gt; General,Answer &gt; General &gt; Correct/Incorrect,Correct/Incorrect &gt; General &gt; Answer,Correct/Incorrect &gt; Answer &gt; General" type="ComboBox" data="GAC,GCA,ACG,AGC,CGA,CAG" defaultValue="GAC" width="120" optional="true" tooltip="The order the different types of feedback are shown within the feedback block. Default order is General feedback &gt; Answer feedback &gt; Correct/Incorrect feedback"/>
 	</feedbackGroup>
 
+	<AIGroup type="group" label="AI" optional="true">
+        <aiSelector label="AI model" options="OpenAI,Copilot" type="comboBox" data="openai,copilot" defaultValue="openai" width="120" optional="true"/>
+        <subject label="Subject" type="TextInput" wysiwyg="true" optional="true"/>
+        <amountOfAnswers label="Amount Of Answers" type="TextInput" wysiwyg="true" optional="true"/>
+        <ageRange label="Age Range" type="TextInput" wysiwyg="true" optional="true"/>
+        <aiButton type="aibutton" optional="true"/>
+    </AIGroup>
+
     <newNodes>
       <option><![CDATA[<option name="Answer" text="Here is an option" feedback="Feedback for this option" correct="false"/>]]></option>
     </newNodes>

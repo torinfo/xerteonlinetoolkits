@@ -232,15 +232,9 @@ class openaiApi
         // Define the POST fields, including the file in 'file' parameter
         // Use CURLFile for the file content, which effectively sends the file as a file object
         $curlFile = new CURLFile($finalPath, 'text/plain', $fileName);
-        $postFields = ['file' => $curlFile,
-        'purpose' => 'assistants'
-        ];
+        $postFields = ['file' => $curlFile, 'purpose' => 'assistants'];
         curl_setopt($ch, CURLOPT_POSTFIELDS, $postFields);
-
-        // Set options to receive the response back as string
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-
-        // Execute the request and close the session
         $response = curl_exec($ch);
         curl_close($ch);
 
@@ -267,14 +261,9 @@ class openaiApi
             "Content-Type: application/json",
             "OpenAI-Beta: assistants=v1"
         ]);
-
-        // Specify that this is a POST request
         curl_setopt($curl, CURLOPT_POST, true);
-
-        // Attach the data to be posted, including the file_id
         $postData = json_encode(['file_id' => $fileId]);
         curl_setopt($curl, CURLOPT_POSTFIELDS, $postData);
-
         $result = curl_exec($curl);
         if (curl_errno($curl)) {
             echo 'Error:' . curl_error($curl);
