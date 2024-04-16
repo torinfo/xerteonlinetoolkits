@@ -6,11 +6,9 @@ class openaiApi
 {
     //constructor must be like this when adding new api
     function __construct(string $api) {
-        $dir = __DIR__;
-        $dir = str_replace('\\', '/', $dir);
-        require_once ($dir. "/" . $api ."/load_preset_models.php");
+        require_once (str_replace('\\', '/', __DIR__) . "/" . $api ."/load_preset_models.php");
         $this->preset_models = $openAI_preset_models;
-        require_once ($dir . "/../../config.php");
+        require_once (str_replace('\\', '/', __DIR__) . "/../../config.php");
         $this->xerte_toolkits_site = $xerte_toolkits_site;
     }
     //check if answer conforms to model

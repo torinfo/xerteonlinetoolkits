@@ -14,8 +14,6 @@ if ($development) {
 
 //dynamically grows when more models are placed in /openai/ai_models/
 //workaround to prevent __FILE__ and __dir__ being xdebug in ide
-$dir = __DIR__;
-$dir = str_replace('\\', '/', $dir);
-foreach (glob($dir . "/ai_models/*.php") as $model) {
+foreach (glob(str_replace('\\', '/', __DIR__) . "/ai_models/*.php") as $model) {
     require_once($model);
 }
