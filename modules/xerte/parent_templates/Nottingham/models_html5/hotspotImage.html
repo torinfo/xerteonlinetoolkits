@@ -128,10 +128,11 @@
 		
 		this.createHS = function() {
 			// create hotspots - taking scale of image into account
+			//todo prob change to work with icon
 			var scale = $img.width() / $img.data("origSize")[0],
 				selected = $("#pageContents .hotspot.selected").length > 0 ? $("#pageContents .hotspot.selected").index() : undefined;
 			$("#hsHolder").html("");
-			
+
 			$(x_currentPageXML).children()
 				.each(function(i){
 					var _this = this;
@@ -146,14 +147,34 @@
 							top		:Math.round(this.getAttribute("y") * scale) + "px"
 							})
 						.click(function() {
-							$("#infoHolder").html("<hr/><h3>" + _this.getAttribute("name") + "</h3><br/>" + x_addLineBreaks(_this.getAttribute("text")));
+							//todo add option for near.
+
+							if (x_currentPageXML.getAttribute("align") == "Near") {
+								if (!$("#hotspot_bubble").length){
+									debugger
+									$("#panel").append('<div id="hotspot_bubble" class="hotspot_bubble">' + '</div>');
+									$hotspot_bubble = $("#hotspot_bubble");
+									//todo make pretty
+
+									$hotspot_bubble.html("<h3>" + _this.getAttribute("name") + "</h3><br/>" + x_addLineBreaks(_this.getAttribute("text")));
+								}
+
+								$hotspot_bubble.css({
+									"left"	:$(this).offset().left - $hotspot_bubble.width(),
+									"top"	:$(this).offset().top - $(this).height()/2.5,
+								});
+								$hotspot_bubble.fadeIn("slow");
+
+							} else {
+								$("#infoHolder").html("<hr/><h3>" + _this.getAttribute("name") + "</h3><br/>" + x_addLineBreaks(_this.getAttribute("text")));
+							}
 							$(".selected").removeClass("selected");
 							var $this = $(this);
 							$this.addClass("selected");
 							if (x_currentPageXML.getAttribute("interactivity") == "Show Me") {
 								var nextHS = $("#nextHS"),
-									prevHS = $("#prevHS");
-								
+										prevHS = $("#prevHS");
+
 								if ($this.index() + 1 == $("#pageContents .hotspot").length) {
 									nextHS.button("disable");
 									prevHS.button("enable");
@@ -175,6 +196,10 @@
 							$(this)
 								.removeClass("highlight")
 								.addClass("transparent");
+							if (x_currentPageXML.getAttribute("align") == "Near") {
+								$($hotspot_bubble).remove();
+							}
+							debugger
 							})
 						.keypress(function(e) {
 							var charCode = e.charCode || e.keyCode;
@@ -268,11 +293,20 @@
 		bottom:		10px;
 		right:		10px;
 	}
+
+	.hotspot_bubble {
+		position:			absolute;
+		border:				1px solid #333;
+		background-color:	#161616;
+		border-radius:		4px;
+		padding:			2px 5px;
+		color:				#fff;
+		margin:				-15px;
+	}
 	
 </style>
 
 <div id="pageContents">
-	
 	<div id="panel" class="panel inline">
 		<div id="imageHolder">
 			<img id="image" />
