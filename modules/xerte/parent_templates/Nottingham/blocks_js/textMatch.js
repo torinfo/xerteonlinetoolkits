@@ -5,7 +5,8 @@ var textMatchBlock = new function() {
         labelTxt3: null,
         targetTxt1: null,
         targetTxt2: null,
-        numAttempts: null
+        numAttempts: null,
+				finished: null
     }
 
     // function called every time the page is viewed after it has initially loaded
@@ -99,6 +100,7 @@ var textMatchBlock = new function() {
         //Reset modelState
         modelState = {};
         modelState.numAttempts = 0;
+				modelState.finished = false;
 
         // store strings used to give titles to labels and targets when keyboard is being used (for screen readers)
         modelState.labelTxt1 = x_getLangInfo(x_languageData.find("interactions").find("draggableItem")[0], "name", "Draggable Item");
@@ -348,6 +350,8 @@ var textMatchBlock = new function() {
 
     this.finishTracking = function(blockid)
     {
+				if(modelState.finished) 
+						return;
         let pageXML = x_getBlockXML(blockid);
         var l_options = [],
             l_answers = [],
@@ -389,6 +393,10 @@ var textMatchBlock = new function() {
         };
         var blocknr = parseFloat(blockid.split("block").pop()) - 1;
         XTExitInteraction(x_currentPage, blocknr, result, l_options, l_answers, l_feedbacks);
+
+				modelState.finished = result.success;
+
+        XTSetInteractionModelState(x_currentPage, blocknr, modelState);
 
         if(XTGetMode() == "normal" && pageXML.getAttribute('markEnd') !== 'false'){
             jGetElement(blockid, ".dragDropHolder .label")

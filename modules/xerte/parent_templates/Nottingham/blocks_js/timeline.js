@@ -342,7 +342,7 @@ var timelineBlock = new function () {
                 correctFeedbacks.push("Correct");
             }
         );
-        var label = $('<div>').html(pageTitle).text();
+				var label=pageXML.getAttribute("name");
         if (pageXML.getAttribute("trackinglabel") != null && pageXML.getAttribute("trackinglabel") != "") {
             label = pageXML.getAttribute("trackinglabel");
         }
@@ -388,7 +388,6 @@ var timelineBlock = new function () {
 												let pagePosition = $("#pageContents")[0].getBoundingClientRect();
 												let helperRect = ui.helper[0].getBoundingClientRect();
 												let scrollParent = ui.helper.scrollParent().scrollParent()[0];
-												console.log(pagePosition, helperRect);
 												ui.helper.data("originalPosition",{y: scrollParent.scrollTop + helperRect.top - pagePosition.y, x: scrollParent.scrollLeft + helperRect.left - pagePosition.x});
 										}
 
@@ -506,7 +505,6 @@ var timelineBlock = new function () {
 				let scrollParent = $thisTarget.scrollParent().scrollParent()[0];
 				;
 
-				console.log(offset.y, scrollParent.scrollTop, $thisTarget.find("h3").position().top, $thisTarget.find("h3").height(), parseInt($thisTarget.css("padding-top")));
         $thisLabel
             .attr("title", timelineModel.labelTxt1)
             .removeClass("selected")

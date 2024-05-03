@@ -70,7 +70,7 @@ var modelAnswerBlock = new function () {
             "noAnswerTxt": '<p>' + noAnswerTxt + '</p>'
         });
 
-        var label = $('<div>').html(pageTitle).text();
+				var label = pageXML.getAttribute("name");
         if (pageXML.getAttribute("trackinglabel") != null && pageXML.getAttribute("trackinglabel") != "") {
             label = pageXML.getAttribute("trackinglabel");
         }

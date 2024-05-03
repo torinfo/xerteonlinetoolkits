@@ -17,7 +17,7 @@ var mcqBlock = new function() {
         this.optionElements = jGetElement(blockid, ".pageContents").data("optionElements");
 
         if ($(pageXML).children().length > 0) {
-            this.startQ(blockid);
+            //this.startQ(blockid);
             $(".feedback").find('.feedbackBlock').html("");
             $(".optionHolder input:checked").prop("checked", false);
             $(".checkBtn")

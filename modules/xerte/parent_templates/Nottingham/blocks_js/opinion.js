@@ -404,6 +404,11 @@ var opinionBlock = new function()
     this.pageChanged = function(blockid)
     {
         $pageContents = jGetElement(blockid, ".pageContents");
+				if($pageContents.data('resultShown') == false){
+						this.checkButtonState(blockid);
+				}else {
+            jGetElement(blockid, ".checkBtn").hide();
+				}
     };
 
     this.trackQuestions = function(blockid)
