@@ -84,7 +84,7 @@ function TrackingManager(){
                 return this.pageStates[i];
         }
         // Not found
-        var sit =  new pageState(tmpid,page_nr, ia_type, ia_name);
+				let sit = new pageState(tmpid,page_nr, ia_type, ia_name);
         if (ia_type !== "page" && ia_type !== "result")
         {
             this.lo_type = "interactive";
@@ -304,6 +304,7 @@ function TrackingManager(){
     }
 
     function exitPage(page_nr, ia_sub_nr = 0){
+				;
         let temp = false;
         let i = 0;
 
@@ -359,7 +360,9 @@ function TrackingManager(){
         {
             sit.ia_type = page_type;
 
-            sit.nrinteractions = nrinteractions;
+						if(sit.nrinteractions == null) {
+								sit.nrinteractions = nrinteractions;
+						}
             sit.weighting = parseFloat(weighting);
         }
     }
@@ -367,7 +370,7 @@ function TrackingManager(){
     // wsl moet op multinav altijd een numeric type
     function setInteractionType(page_nr, ia_nr, page_type, weighting, sub_ia_nr = 0)
     {
-        debugger;
+        ;
         var sit = this.findPage(page_nr);
         if (sit != null)
         {
@@ -380,13 +383,13 @@ function TrackingManager(){
         var int = this.findInteraction(page_nr, ia_nr, sub_ia_nr);
         if(int != null){
             int.weighting = parseFloat(weighting);
-            int.ia_type = parseFloat(weighting);
+            int.ia_type = page_type;
         }
     }
 
     function setPageScore(page_nr, score)
     {
-        debugger;
+        ;
         var page = this.findPage(page_nr);
         var tempscore = 0;
         var maxweight = 0;
@@ -434,7 +437,7 @@ function TrackingManager(){
 
     function findInteraction(page_nr, ia_nr, ia_sub_nr = 0, ignoreSubId = false)
     {
-        debugger;
+        ;
         var page = this.findPage(page_nr)
         if (page == null){
             return null;
@@ -715,13 +718,13 @@ function TrackingManager(){
                             var item = correctoptions[i];
                             if (typeof item != 'string')
                             {
-                                console.log("Invalid structure for correctoptions for type multiplechoice: " + correctoptions);
+                                console.log("Invalid structure for correctoptions for type " + ia_type + ": " + correctoptions);
                             }
                         }
                     }
                     else
                     {
-                        console.log("Invalid structure for correctoptions for type multiplechoice: " + correctoptions);
+                        console.log("Invalid structure for correctoptions for type " + ia_type + ": " + correctoptions);
                     }
                     break;
                 case 'page':

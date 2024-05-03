@@ -1,4 +1,4 @@
-var opinion = new function()
+var opinionBlock = new function()
 {
     var $pageContents;
 
@@ -93,8 +93,9 @@ var opinion = new function()
     this.startQuestions = function(blockid)
     {
 
+        let pageXML = x_getBlockXML(blockid);
         // If the language attribute is not defined in the xml, fall back to English.
-        var questionNumberText = x_currentPageXML.getAttribute("quesCount");
+        var questionNumberText = pageXML.getAttribute("quesCount");
         if (questionNumberText == undefined)
         {
             questionNumberText = "Question {i} of {n}";
@@ -105,9 +106,9 @@ var opinion = new function()
         });
 
         var showfeedback = false;
-        if (x_currentPageXML.getAttribute("showfeedback") != undefined)
+        if (pageXML.getAttribute("showfeedback") != undefined)
         {
-            showfeedback = x_currentPageXML.getAttribute("showfeedback") == "true";
+            showfeedback = pageXML.getAttribute("showfeedback") == "true";
         }
         $pageContents.data('showfeedback', showfeedback);
 
@@ -120,14 +121,14 @@ var opinion = new function()
         $pageContents.data('currentQuestion', 0);
         var questions = []; // array of questions to use (index)
 
-        var numberOfQuestions = $(x_currentPageXML).children().children().length; // Can't be 0
+        var numberOfQuestions = $(pageXML).children().children().length; // Can't be 0
 
-        for(var i = 0; i < $(x_currentPageXML).children().length; i++)
+        for(var i = 0; i < $(pageXML).children().length; i++)
         {
-            $(x_currentPageXML).children()[i].classId = i;
+            $(pageXML).children()[i].classId = i;
         }
 
-        if (x_currentPageXML.getAttribute("order") == "random")
+        if (pageXML.getAttribute("order") == "random")
         {
             var questionNumbers = [];
 
@@ -153,7 +154,7 @@ var opinion = new function()
 
         $pageContents.data('questions', questions);
 
-        var weighting =  x_currentPageXML.getAttribute("trackingWeight") != undefined ? x_currentPageXML.getAttribute("trackingWeight") : 1.0;
+        var weighting =  pageXML.getAttribute("trackingWeight") != undefined ? pageXML.getAttribute("trackingWeight") : 1.0;
 
         XTSetPageType(x_currentPage, 'numeric', numberOfQuestions, weighting);
 
@@ -227,15 +228,16 @@ var opinion = new function()
 
     this.loadQuestion = function(currentQuestion, blockid)
     {
+        let pageXML = x_getBlockXML(blockid);
         var questions = $pageContents.data('questions');
 
-        if ($(x_currentPageXML).children().length == 0)
+        if ($(pageXML).children().length == 0)
         {
             jGetElement(blockid, ".optionHolder").html('<span class="alert">' + x_getLangInfo(x_languageData.find("errorQuestions")[0], "noQ", "No questions have been added") + '</span>');
         }
         else
         {
-            var $thisQ = $(x_currentPageXML).children().children()[questions[currentQuestion]];
+            var $thisQ = $(pageXML).children().children()[questions[currentQuestion]];
             var infoString = $thisQ.getAttribute("prompt");
 
             if ($thisQ.getAttribute("sound") != undefined && $thisQ.getAttribute("sound") != "") {
@@ -319,7 +321,7 @@ var opinion = new function()
                                 var radioButtonQuestions = $pageContents.data('radioButtonQuestions');
                                 radioButtonQuestions[currentQuestion] = true;
                                 $pageContents.data('radioButtonQuestions', radioButtonQuestions);
-                                opinion.checkButtonState(blockid);
+                                opinionBlock.checkButtonState(blockid);
                             });
                         $thisOption[0].score = index;
                         $thisOptionTxt
@@ -390,15 +392,16 @@ var opinion = new function()
                         name = $thisQ.getAttribute("name");
                     }
                 }
-                debugger 
-                XTEnterInteraction(x_currentPage, x_getBlockNr(blockid), 'numeric', name, correctOptions, correctAnswer, null, x_currentPageXML.getAttribute("grouping"), null, questions[currentQuestion]);
+                var weighting =  pageXML.getAttribute("trackingWeight") != undefined ? pageXML.getAttribute("trackingWeight") : 1.0;
+                XTEnterInteraction(x_currentPage, x_getBlockNr(blockid), 'numeric', name, correctOptions, correctAnswer, null, pageXML.getAttribute("grouping"), null, questions[currentQuestion]);
+                XTSetInteractionType(x_currentPage, x_getBlockNr(blockid), 'numeric', weighting, 1);
                 XTSetInteractionPageXML(x_currentPage, x_getBlockNr(blockid), questions[currentQuestion]);
                 $pageContents.data('checked', false);
             }
         }
     };
 
-    this.pageChanged = function()
+    this.pageChanged = function(blockid)
     {
         $pageContents = jGetElement(blockid, ".pageContents");
     };
@@ -440,9 +443,9 @@ var opinion = new function()
 
     this.trackQuestion = function(currentQuestion, blockid)
     {
-        x_currentPageXML = XTGetPageXML(x_currentPage, x_getBlockNr(blockid), currentQuestion);
+        let pageXML = x_getBlockXML(x_getBlockNr(blockid));
         var questions = $pageContents.data('questions'),
-            currentQ = $(x_currentPageXML).children().children()[questions[currentQuestion]],
+            currentQ = $(pageXML).children().children()[questions[currentQuestion]],
             selected = 0,
             options = $(currentQ).children();
         l_options = [],
@@ -499,7 +502,7 @@ var opinion = new function()
             score: Math.round(currentQuestionValue * 10.0) / 10.0
         };
 
-        XTExitInteraction(x_currentPage, questions[currentQuestion], result, l_options, l_answer, null, 0, x_currentPageXML.getAttribute("trackinglabel"));
+        XTExitInteraction(x_currentPage, x_getBlockNr(blockid), result, l_options, l_answer, null, 0, pageXML.getAttribute("trackinglabel"));
 
         // Continue to next question
         $pageContents.data('currentQuestion', $pageContents.data('currentQuestion')+1);
@@ -515,9 +518,10 @@ var opinion = new function()
     };
 
     this.trackOpinion = function(blockid) {
+        let pageXML = x_getBlockXML(blockid);
         // Last question answered - show results
-        var JSONGraph = this.createGraphObject();
-        if (x_currentPageXML.getAttribute("diagram") !== "true"){
+        var JSONGraph = this.createGraphObject(blockid);
+        if (pageXML.getAttribute("diagram") !== "true"){
             this.createDiagram(JSONGraph, blockid);
             this.sizeChanged(blockid);
         }
@@ -532,7 +536,7 @@ var opinion = new function()
         }
         myScore = Math.round(10 * myScore / Object.keys(answeredValues).length) / 10;
 
-        var feedbackText = x_currentPageXML.getAttribute("feedback") != '' ? "<p>" + x_addLineBreaks(x_currentPageXML.getAttribute("feedback")) + "</p>" : '';
+        var feedbackText = pageXML.getAttribute("feedback") != '' ? "<p>" + x_addLineBreaks(pageXML.getAttribute("feedback")) + "</p>" : '';
         if ($pageContents.data('showfeedback') && feedbackText != '') {
             jGetElement(blockid, ".feedback").html(feedbackText);
         } else {
@@ -540,7 +544,7 @@ var opinion = new function()
         }
         jGetElement(blockid, "#questionAudio").empty();
 
-        if (x_currentPageXML.getAttribute("diagram") !== "true"){
+        if (pageXML.getAttribute("diagram") !== "true"){
             jGetElement(blockid, ".diagram").show();
         } else {
             jGetElement(blockid, ".diagram").hide();
@@ -548,12 +552,13 @@ var opinion = new function()
         jGetElement(blockid, ".qHolder").hide();
         jGetElement(blockid, ".checkBtn").hide();
 
-        XTSetPageScoreJSON(x_currentPage, myScore, JSON.stringify(JSONGraph), x_currentPageXML.getAttribute("trackinglabel"));
+        //XTSetPageScoreJSON(x_currentPage, myScore, JSON.stringify(JSONGraph), pageXML.getAttribute("trackinglabel"));
         $pageContents.data('checked', true);
     };
 
-    this.createGraphObject = function()
+    this.createGraphObject = function(blockid)
     {
+        let pageXML = x_getBlockXML(blockid);
         var classNames = [],
             classTitles = [],
             classValues = [],
@@ -586,7 +591,7 @@ var opinion = new function()
         }
 
         return {
-            label: x_currentPageXML.getAttribute("name"),
+            label: pageXML.getAttribute("name"),
             classnames: classNames,
             classtitles: classTitles,
             classvalues: classValues
@@ -596,6 +601,7 @@ var opinion = new function()
 
     this.createDiagram = function(graphObject, blockid)
     {
+        let pageXML = x_getBlockXML(blockid);
         var htmlToChar = function(h){return $("<div>").html(h).text();},
             classTitles = graphObject.classtitles.map(function(a){return htmlToChar(a);}),
             classValues = graphObject.classvalues;
@@ -610,8 +616,8 @@ var opinion = new function()
         }
 
         var bgColourIn = "0x000000";
-        if (x_currentPageXML.getAttribute("colour") != null) {
-            bgColourIn = x_currentPageXML.getAttribute("colour");
+        if (pageXML.getAttribute("colour") != null) {
+            bgColourIn = pageXML.getAttribute("colour");
         }
         var bgColour = hexToRgb(bgColourIn.substr(bgColourIn.length - 6), 0.5);
         var lnColour = hexToRgb(bgColourIn.substr(bgColourIn.length - 6), 1);
@@ -622,7 +628,7 @@ var opinion = new function()
             data: {
                 labels: classTitles,
                 datasets: [{
-                    label: htmlToChar(x_currentPageXML.getAttribute("name")),
+                    label: htmlToChar(pageXML.getAttribute("name")),
                     data: classValues,
                     backgroundColor: bgColour,
                     borderColor: lnColour
@@ -643,7 +649,7 @@ var opinion = new function()
                     labels: {
                         fontSize: $pageContents.data('textSize')
                     },
-                    display: x_currentPageXML.getAttribute("key") == 'false' ? false : true,
+                    display: pageXML.getAttribute("key") == 'false' ? false : true,
                 },
                 responsive: true,
                 maintainAspectRatio: true
@@ -651,8 +657,8 @@ var opinion = new function()
         });
     };
 
-    this.init = function(pageXML, blockid) {
-        x_currentPageXML = pageXML;
+    this.init = function(blockid) {
+        let pageXML = x_getBlockXML(blockid);
 
         $pageContents = jGetElement(blockid, ".pageContents");
 
@@ -665,19 +671,19 @@ var opinion = new function()
             'diagramAnswers': []
         });
 
-        if (x_currentPageXML.getAttribute("list") != undefined) {
-            $pageContents.data('listMode', x_currentPageXML.getAttribute("list") === "true" ? true : x_currentPageXML.getAttribute("list") === "all" ? "all" : false);
+        if (pageXML.getAttribute("list") != undefined) {
+            $pageContents.data('listMode', pageXML.getAttribute("list") === "true" ? true : pageXML.getAttribute("list") === "all" ? "all" : false);
         }
 
-        if (x_currentPageXML.getAttribute("paging") != undefined) {
-            $pageContents.data('pageMode', x_currentPageXML.getAttribute("paging") === "true");
+        if (pageXML.getAttribute("paging") != undefined) {
+            $pageContents.data('pageMode', pageXML.getAttribute("paging") === "true");
         }
 
-        if (x_currentPageXML.getAttribute("pagesize") != undefined) {
-            $pageContents.data('pageSize', parseInt(x_currentPageXML.getAttribute("pagesize")));
+        if (pageXML.getAttribute("pagesize") != undefined) {
+            $pageContents.data('pageSize', parseInt(pageXML.getAttribute("pagesize")));
         }
 
-        var panelWidth = x_currentPageXML.getAttribute("panelWidth"),
+        var panelWidth = pageXML.getAttribute("panelWidth"),
             $splitScreen = jGetElement(blockid, ".pageContents .splitScreen"),
             $textHolder = jGetElement(blockid, ".textHolder");
 
@@ -688,8 +694,8 @@ var opinion = new function()
         }
         else
         {
-            $textHolder.html(x_addLineBreaks(x_currentPageXML.getAttribute("instructions")));
-            var textAlign = x_currentPageXML.getAttribute("align");
+            $textHolder.html(x_addLineBreaks(pageXML.getAttribute("instructions")));
+            var textAlign = pageXML.getAttribute("align");
 
             if (textAlign != "right")
             {
@@ -730,25 +736,25 @@ var opinion = new function()
             }
         }
 
-        if (panelWidth != "Full" && x_currentPageXML.getAttribute("img") != undefined && x_currentPageXML.getAttribute("img") != "")
+        if (panelWidth != "Full" && pageXML.getAttribute("img") != undefined && pageXML.getAttribute("img") != "")
         {
-            var tip = x_currentPageXML.getAttribute("tip") != undefined && x_currentPageXML.getAttribute("tip") != "" ?
-                'alt="' + x_currentPageXML.getAttribute("tip") + '"' : "";
-            $textHolder.append('<img class="opinionImg" src="' + x_evalURL(x_currentPageXML.getAttribute("img")) + '"' + tip +'>');
+            var tip = pageXML.getAttribute("tip") != undefined && pageXML.getAttribute("tip") != "" ?
+                'alt="' + pageXML.getAttribute("tip") + '"' : "";
+            $textHolder.append('<img class="opinionImg" src="' + x_evalURL(pageXML.getAttribute("img")) + '"' + tip +'>');
         }
 
-        var submitBtnText = x_currentPageXML.getAttribute("submitBtnText");
+        var submitBtnText = pageXML.getAttribute("submitBtnText");
         if (submitBtnText == undefined)
         {
             submitBtnText = "Submit";
         }
-        var resetBtnText = x_currentPageXML.getAttribute("resetBtnText");
+        var resetBtnText = pageXML.getAttribute("resetBtnText");
         if (resetBtnText == undefined)
         {
             resetBtnText = "Reset";
         }
 
-        var onCompletionText = x_currentPageXML.getAttribute("onCompletion");
+        var onCompletionText = pageXML.getAttribute("onCompletion");
         if (onCompletionText == undefined)
         {
             onCompletionText = "You have completed the questionaire";
@@ -764,7 +770,7 @@ var opinion = new function()
                 label: submitBtnText
             })
             .click(function() {
-                opinion.trackQuestions(blockid);
+                opinionBlock.trackQuestions(blockid);
             });
 
         // reset button
@@ -773,14 +779,14 @@ var opinion = new function()
                 label: resetBtnText
             })
             .click(function() {
-                if ($(x_currentPageXML).children().length > 0) {
+                if ($(pageXML).children().length > 0) {
                     $pageContents.data({
                         'answeredValues': {},
                         'diagramLabels': [],
                         'diagramAnswers': []
                     });
 
-                    opinion.startQuestions(blockid);
+                    opinionBlock.startQuestions(blockid);
                 }
             });
 

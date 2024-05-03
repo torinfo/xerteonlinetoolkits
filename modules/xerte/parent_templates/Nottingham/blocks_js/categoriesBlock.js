@@ -93,8 +93,9 @@ var categoriesBlock = new function() {
             pageHolder_standin = $("#"+blockid).parent().parent().parent();
         }
         let categoryHolderOffset = parseInt($categoryHolder.offset().top) - parseInt($("#"+blockid).offset().top);
-        let blockOffset =  parseInt($("#"+blockid).parent().children().first().offset().top) - parseInt(pageHolder_standin.offset().top) + parseInt($("#"+blockid).css("padding-top")) * 2 + parseInt($("#"+blockid).css("margin-bottom"));
-        let min_height = pageHolder_standin.height() - parseInt(pageDiv_standin.css("padding-top")) * 2 - blockOffset - categoryHolderOffset - parseInt($category.css("padding-top")) * 2 - jGetElement(blockid,".button").height() - 25;
+				let pageScroll = $("#"+blockid).scrollParent().scrollTop;  
+        let blockOffset = parseInt($("#"+blockid).parent().children().first().offset().top) - parseInt(pageHolder_standin.offset().top) + parseInt($("#"+blockid).css("padding-top")) * 2 + parseInt($("#"+blockid).css("margin-bottom"));
+        let min_height = pageHolder_standin.height() - parseInt(pageDiv_standin.css("padding-top")) * 2 - (-blockOffset) - categoryHolderOffset - parseInt($category.css("padding-top")) * 2 - jGetElement(blockid,".button").height() - 25;
 
         $category.css("min-height", min_height);
     }
@@ -149,9 +150,9 @@ var categoriesBlock = new function() {
             success: (l_correct == variables.totaloptions),
             score: (l_correct * 100.0)/variables.totaloptions
         }
-        debugger;
+        ;
         XTExitInteraction(x_currentPage, x_getBlockNr(blockid), result, l_options, l_answers, l_feedback);
-        XTSetPageScore(x_currentPage, (l_correct * 100.0)/variables.totaloptions);
+        //XTSetPageScore(x_currentPage, (l_correct * 100.0)/variables.totaloptions);
         variables.checked = true;
     }
 
@@ -243,7 +244,7 @@ var categoriesBlock = new function() {
         }
 
         // Track the quiz page
-        debugger;
+        ;
         XTEnterInteraction(x_currentPage, x_getBlockNr(blockid), 'match', label, correctOptions, correctAnswer, correctFeedback, blockXML.getAttribute("grouping"), null);
         if (blockXML.getAttribute("trackingWeight") != undefined)
         {

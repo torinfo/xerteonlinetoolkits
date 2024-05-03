@@ -1,4 +1,4 @@
-var timeline = new function () {
+var timelineBlock = new function () {
     var timelineModel = {
         labelTxt1: null,
         labelTxt2: null,
@@ -77,15 +77,15 @@ var timeline = new function () {
     };
 
     this.leavePage = function (blockid) {
-        x_currentPageXML = XTGetPageXML(x_currentPage, x_getBlockNr(blockid));
-        if ($(x_currentPageXML).children().length > 0 && timelineModel.tracked != true) {
-            debugger;
-            this.finishTracking(blockid);
+        let pageXML = x_getBlockXML(x_getBlockNr(blockid));
+        if ($(pageXML).children().length > 0 && timelineModel.tracked != true) {
+            ;
+            timelineBlock.finishTracking(blockid);
         }
     };
 
-    this.init = function (pageXML, blockid) {
-        x_currentPageXML = pageXML;
+    this.init = function (blockid) {
+        let pageXML = x_getBlockXML(blockid);
         this.resetModelState();
         // store strings used to give titles to labels and targets when keyboard is being used (for screen readers)
         timelineModel.labelTxt1 = x_getLangInfo(x_languageData.find("interactions").find("draggableItem")[0], "name", "Draggable Item");
@@ -95,13 +95,13 @@ var timeline = new function () {
         timelineModel.targetTxt2 = x_getLangInfo(x_languageData.find("interactions").find("targetArea")[0], "toSelect", "Press space to drop the selected item.");
 
         jGetElement(blockid, ".textHolder")
-            .html(x_addLineBreaks(x_currentPageXML.getAttribute("text")))
+            .html(x_addLineBreaks(pageXML.getAttribute("text")))
             .addClass("transparent"); /* without the text having a bg the labels strangely aren't selectable in IE */
 
         $feedback = jGetElement(blockid, ".feedback").hide();
 
         // checkBtnWidth attribute not used as button will be sized automatically
-        var buttonLabel = x_currentPageXML.getAttribute("checkBtnTxt");
+        var buttonLabel = pageXML.getAttribute("checkBtnTxt");
         if (buttonLabel == undefined) {
             buttonLabel = "Check Answers";
         }
@@ -128,23 +128,23 @@ var timeline = new function () {
                     });
                 }
                 if (empty) {
-                    $feedback.html(x_currentPageXML.getAttribute("incomplete") != undefined ? '<p>' + x_currentPageXML.getAttribute("incomplete") + '</p>' : x_addLineBreaks(x_currentPageXML.getAttribute("feedback")));
+                    $feedback.html(pageXML.getAttribute("incomplete") != undefined ? '<p>' + pageXML.getAttribute("incomplete") + '</p>' : x_addLineBreaks(pageXML.getAttribute("feedback")));
                 } else if (correct == jGetElement(blockid, ".labelHolder .label").length) {
-                    $feedback.html(x_addLineBreaks(x_currentPageXML.getAttribute("feedback")));
-                    timeline.finishTracking(blockid);
+                    $feedback.html(x_addLineBreaks(pageXML.getAttribute("feedback")));
+                    timelineBlock.finishTracking(blockid);
                 } else {
                     if (correct == 0) {
                         if (XTGetMode() == "normal")
-                            $feedback.html(x_currentPageXML.getAttribute("allWrongTracking") != undefined ? x_currentPageXML.getAttribute("allWrongTracking") : x_addLineBreaks(x_currentPageXML.getAttribute("feedback")));
+                            $feedback.html(pageXML.getAttribute("allWrongTracking") != undefined ? pageXML.getAttribute("allWrongTracking") : x_addLineBreaks(pageXML.getAttribute("feedback")));
                         else
-                            $feedback.html(x_currentPageXML.getAttribute("allWrong") != undefined ? x_currentPageXML.getAttribute("allWrong") : x_addLineBreaks(x_currentPageXML.getAttribute("feedback")));
+                            $feedback.html(pageXML.getAttribute("allWrong") != undefined ? pageXML.getAttribute("allWrong") : x_addLineBreaks(pageXML.getAttribute("feedback")));
                     } else {
                         if (XTGetMode() == "normal")
-                            $feedback.html(x_currentPageXML.getAttribute("scoreTracking") != undefined ? x_currentPageXML.getAttribute("scoreTracking").replace("{i}", correct).replace("{n}", jGetElement(blockid, ".labelHolder .label").length) : x_addLineBreaks(x_currentPageXML.getAttribute("feedback")));
+                            $feedback.html(pageXML.getAttribute("scoreTracking") != undefined ? pageXML.getAttribute("scoreTracking").replace("{i}", correct).replace("{n}", jGetElement(blockid, ".labelHolder .label").length) : x_addLineBreaks(pageXML.getAttribute("feedback")));
                         else
-                            $feedback.html(x_currentPageXML.getAttribute("score") != undefined ? x_currentPageXML.getAttribute("score").replace("{i}", correct).replace("{n}", jGetElement(blockid, ".labelHolder .label").length) : x_addLineBreaks(x_currentPageXML.getAttribute("feedback")));
+                            $feedback.html(pageXML.getAttribute("score") != undefined ? pageXML.getAttribute("score").replace("{i}", correct).replace("{n}", jGetElement(blockid, ".labelHolder .label").length) : x_addLineBreaks(pageXML.getAttribute("feedback")));
                     }
-                    timeline.finishTracking(blockid);
+                    timelineBlock.finishTracking(blockid);
                 }
                 if (!empty) {
                     jGetElement(blockid, ".labelHolder .label").each(function () {
@@ -172,7 +172,7 @@ var timeline = new function () {
             $firstTarget = $targetHolder.find(".target"),
             labels = [];
 
-        $(x_currentPageXML).children()
+        $(pageXML).children()
             .each(function (i) {
                 var $thisTarget;
                 if (i != 0) {
@@ -215,7 +215,7 @@ var timeline = new function () {
             .droppable({
                 accept: ".dragDropHolder .label",
                 drop: function (event, ui) {
-                    timeline.dropLabel($(this), ui.draggable, blockid); // target, label
+                    timelineBlock.dropLabel($(this), ui.draggable, blockid); // target, label
                 }
             })
             .focusin(function (e) {
@@ -239,7 +239,7 @@ var timeline = new function () {
                     if (charCode == 32) {
                         var $selectedLabel = jGetElement(blockid, ".pageContents").data("selectedLabel");
                         if ($selectedLabel != undefined && $selectedLabel != "") {
-                            timeline.dropLabel($(this), $selectedLabel, blockid); // target, label
+                            timelineBlock.dropLabel($(this), $selectedLabel, blockid); // target, label
                         }
                     }
                 }
@@ -263,7 +263,7 @@ var timeline = new function () {
 
         this.createLabels(blockid);
 
-        if (x_currentPageXML.getAttribute("interactivity") == "Timeline") {
+        if (pageXML.getAttribute("interactivity") == "Timeline") {
             $targetHolder.find(".target").css("background-image", "url('" + x_templateLocation + "common_html5/arrow.png')");
         }
 
@@ -316,21 +316,22 @@ var timeline = new function () {
                 score: (l_correct * 100.0) / l_total
             };
 
-        XTExitInteraction(x_currentPage, x_getBlockNr(0), result, l_options, l_answers, l_feedbacks);
+        XTExitInteraction(x_currentPage, x_getBlockNr(blockid), result, l_options, l_answers, l_feedbacks);
     }
 
     this.initTracking = function (blockid) {
 
+        let pageXML = x_getBlockXML(blockid);
         this.weighting = 1.0;
-        if (x_currentPageXML.getAttribute("trackingWeight") != undefined) {
-            this.weighting = x_currentPageXML.getAttribute("trackingWeight");
+        if (pageXML.getAttribute("trackingWeight") != undefined) {
+            this.weighting = pageXML.getAttribute("trackingWeight");
         }
 
         XTSetPageType(x_currentPage, 'numeric', 1, this.weighting);
         var correctOptions = [],
             correctAnswers = [],
             correctFeedbacks = [];
-        $(x_currentPageXML).children().each(
+        $(pageXML).children().each(
             function (i) {
                 var placeholder = $("<div/>").html(this.getAttribute("name")).text().trim();
                 var draglabel = $("<div/>").html(this.getAttribute("text")).text().trim();
@@ -342,12 +343,13 @@ var timeline = new function () {
             }
         );
         var label = $('<div>').html(pageTitle).text();
-        if (x_currentPageXML.getAttribute("trackinglabel") != null && x_currentPageXML.getAttribute("trackinglabel") != "") {
-            label = x_currentPageXML.getAttribute("trackinglabel");
+        if (pageXML.getAttribute("trackinglabel") != null && pageXML.getAttribute("trackinglabel") != "") {
+            label = pageXML.getAttribute("trackinglabel");
         }
-        XTEnterInteraction(x_currentPage, x_getBlockNr(blockid), 'match', label, correctOptions, correctAnswers, correctFeedbacks, x_currentPageXML.getAttribute("grouping"), null);
+        XTEnterInteraction(x_currentPage, x_getBlockNr(blockid), 'match', label, correctOptions, correctAnswers, correctFeedbacks, pageXML.getAttribute("grouping"), null);
         XTSetLeavePage(x_currentPage, x_getBlockNr(blockid), this.leavePage);
-        XTSetInteractionPageXML(x_currentPage, x_getBlockNr(blockid), x_currentPageXML);
+        XTSetInteractionType(x_currentPage, x_getBlockNr(blockid), 'match', this.weighting, 1);
+        XTSetInteractionPageXML(x_currentPage, x_getBlockNr(blockid), pageXML);
         XTSetInteractionModelState(x_currentPage, x_getBlockNr(blockid), timelineModel);
     }
 
@@ -379,7 +381,17 @@ var timeline = new function () {
                 containment: "." + blockid + " .dragDropHolder",
                 stack: "." + blockid + " .dragDropHolder .label", // item being dragged is always on top (z-index)
                 revert: "invalid", // snap back to original position if not dropped on target
-                start: function () {
+                start: function (event, ui) {
+
+										
+										if(ui.helper.data("originalPosition") == undefined){
+												let pagePosition = $("#pageContents")[0].getBoundingClientRect();
+												let helperRect = ui.helper[0].getBoundingClientRect();
+												let scrollParent = ui.helper.scrollParent().scrollParent()[0];
+												console.log(pagePosition, helperRect);
+												ui.helper.data("originalPosition",{y: scrollParent.scrollTop + helperRect.top - pagePosition.y, x: scrollParent.scrollLeft + helperRect.left - pagePosition.x});
+										}
+
                     // remove any focus/selection highlights made by tabbing to labels/targets
                     var $pageContents = jGetElement(blockid, ".pageContents");
                     if (jGetElement(blockid, ".labelHolder .label.focus").length > 0) {
@@ -436,14 +448,14 @@ var timeline = new function () {
                     jGetElement(blockid, ".dragDropHolder .tick").remove();
                 }
             })
-            .css("position", "absolute")
+            //.css("position", "absolute")
             .data("currentTarget", "")
             .disableSelection();
     }
 
     // function called when label dropped on target - by mouse or keyboard
     this.dropLabel = function ($thisTarget, $thisLabel, blockid) {
-        timelineModel = XTGetInteractionModelState(x_currentPage, x_getBlockNr(blockid))
+        timelineModel = XTGetInteractionModelState(x_currentPage, x_getBlockNr(blockid));
         var prevLabel = $thisTarget.data("currentLabel"),
             prevTarget = $thisLabel.data("currentTarget");
 
@@ -487,13 +499,20 @@ var timeline = new function () {
         }
 
         $thisTarget.attr("title", timelineModel.targetTxt1 + " " + $thisTarget.find("h3").html());
+				
+				let $lblHolder = jGetElement(blockid, ".labelHolder");
+				//let offset = $thisLabel.data("originalPosition");
+				let offset = $thisLabel.data("originalPosition");
+				let scrollParent = $thisTarget.scrollParent().scrollParent()[0];
+				;
 
+				console.log(offset.y, scrollParent.scrollTop, $thisTarget.find("h3").position().top, $thisTarget.find("h3").height(), parseInt($thisTarget.css("padding-top")));
         $thisLabel
             .attr("title", timelineModel.labelTxt1)
             .removeClass("selected")
             .css({
-                "top": $thisTarget.find("h3").position().top + $thisTarget.find("h3").height() + parseInt($thisTarget.css("padding-top")),
-                "left": $thisTarget.position().left + parseInt($thisTarget.css("margin-left")) + parseInt($thisTarget.css("padding-left"))
+                "top": scrollParent.scrollTop + $thisTarget.find("h3").position().top + $thisTarget.find("h3").height() + parseInt($thisTarget.css("padding-top")) - offset.y,
+                "left": scrollParent.scrollLeft + $thisTarget.position().left + parseInt($thisTarget.css("margin-left")) + parseInt($thisTarget.css("padding-left")) - offset.x
             });
     }
 }

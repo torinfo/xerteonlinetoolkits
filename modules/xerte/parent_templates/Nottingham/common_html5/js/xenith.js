@@ -2710,10 +2710,12 @@ function x_getBlockXML(blockid){
 }
 
 function x_getBlockNr(blockid){
-	if(blockid){
+	if(blockid && typeof blockid == "string"){
 		return parseInt(blockid.replace('block',"")) - 1;
+	}else if(typeof blockid == "number"){
+			return blockid;
 	} else{
-		return 0;
+		return NaN;
 	}
 }
 

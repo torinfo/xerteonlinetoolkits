@@ -1,6 +1,8 @@
-var topXQ = new function () {
+var topXQBlock = new function () {
 
-
+		this.pageChanged = function (blockid) {
+				$pageContents = jGetElement(blockid,'.pageContents');
+		};
 
     // function called every time the size of the LO is changed
     this.sizeChanged = function (blockid) {
@@ -13,11 +15,11 @@ var topXQ = new function () {
     this.leavePage = function (blockid) {
         let $pageContents = jGetElement(blockid, '.pageContents');
         if (!$pageContents.data('hasExited')) {
-            topXQ.fillInputs(blockid);
+            topXQBlock.fillInputs(blockid);
 
             var checkAnswers = $pageContents.data('checkAnswers');
             for (var i = 0; i < checkAnswers.length; i++) {
-                topXQ.checkSingleAnswer(i,blockid);
+                topXQBlock.checkSingleAnswer(i,blockid);
             }
 
             var answers = $pageContents.data('answers'),
@@ -38,6 +40,7 @@ var topXQ = new function () {
     };
 
     this.fillInputs = function (blockid) {
+        let pageXML = x_getBlockXML(blockid);
         let $pageContents = jGetElement(blockid, '.pageContents');
         var inputs = [];
         jGetElement(blockid, '.input-answer').each(function () {
@@ -65,6 +68,7 @@ var topXQ = new function () {
     }
 
     this.checkSingleAnswer = function (i, blockid) {
+        let pageXML = x_getBlockXML(blockid);
         let $pageContents = jGetElement(blockid, '.pageContents');
         var inputs = $pageContents.data('inputs'),
             answers = $pageContents.data('answers'),
@@ -73,8 +77,8 @@ var topXQ = new function () {
 
         for (j = 0; j < answers.length; j++) {
             for (x = 0; x < answers[j].options.length; x++) {
-                var givenAnswer = x_currentPageXML.getAttribute("caseSensitivity") == "true" || x_currentPageXML.getAttribute("caseSensitivity") == undefined ? inputs[i] : inputs[i].toLowerCase(),
-                    correctAnswer = x_currentPageXML.getAttribute("caseSensitivity") == "true" || x_currentPageXML.getAttribute("caseSensitivity") == undefined ? answers[j].options[x].trim() : answers[j].options[x].trim().toLowerCase();
+                var givenAnswer = pageXML.getAttribute("caseSensitivity") == "true" || pageXML.getAttribute("caseSensitivity") == undefined ? inputs[i] : inputs[i].toLowerCase(),
+                    correctAnswer = pageXML.getAttribute("caseSensitivity") == "true" || pageXML.getAttribute("caseSensitivity") == undefined ? answers[j].options[x].trim() : answers[j].options[x].trim().toLowerCase();
 
                 if (givenAnswer === correctAnswer) {
                     isCorrect = true;
@@ -101,6 +105,7 @@ var topXQ = new function () {
     };
 
     this.exitPage = function (blockid) {
+        let pageXML = x_getBlockXML(blockid);
         let $pageContents = jGetElement(blockid, '.pageContents');
         var amountOfCorrect = 0,
             checkAnswers = $pageContents.data('checkAnswers'),
@@ -113,7 +118,7 @@ var topXQ = new function () {
                 score: checkAnswers[i].correct ? 100.0 : 0.0
             };
 
-            XTExitInteraction(x_currentPage, x_getBlockNr(blockid), result, "", inputs[i], "", i, x_currentPageXML.getAttribute("trackinglabel"));
+            XTExitInteraction(x_currentPage, x_getBlockNr(blockid), result, "", inputs[i], "", i, pageXML.getAttribute("trackinglabel"));
 
 
             if (checkAnswers[i].correct) {
@@ -135,11 +140,11 @@ var topXQ = new function () {
             setScore = 100 / amountOfInputs * amountOfCorrect;
         }
 
-        XTSetPageScore(x_currentPage, setScore);
+        //XTSetPageScore(x_currentPage, setScore);
     };
 
-    this.init = function (pageXML, blockid) {
-        x_currentPageXML = pageXML;
+    this.init = function (blockid) {
+        let pageXML = x_getBlockXML(blockid);
         let $pageContents = jGetElement(blockid, '.pageContents');
 
         jGetElement(blockid, '.result, .mainFeedback, .correctAnswer').hide();
@@ -147,7 +152,7 @@ var topXQ = new function () {
         $pageContents.data('hasExited', false);
 
 
-        var panelWidth = x_currentPageXML.getAttribute("panelWidth"),
+        var panelWidth = pageXML.getAttribute("panelWidth"),
             $splitScreen = jGetElement(blockid, ".pageContents .splitScreen");
         var $textHolder = jGetElement(blockid, ".textHolder");
 
@@ -155,9 +160,9 @@ var topXQ = new function () {
             jGetElement(blockid, ".pageContents .panel").appendTo(jGetElement(blockid, ".pageContents"));
             $splitScreen.remove();
         } else {
-            $textHolder.html(x_addLineBreaks(x_currentPageXML.getAttribute("instruction")));
+            $textHolder.html(x_addLineBreaks(pageXML.getAttribute("instruction")));
 
-            var textAlign = x_currentPageXML.getAttribute("align");
+            var textAlign = pageXML.getAttribute("align");
             if (textAlign !== "Right") {
                 if (panelWidth === "Small") {
                     $splitScreen.addClass("large");
@@ -184,32 +189,32 @@ var topXQ = new function () {
             }
         }
 
-        var attemptLabel = x_currentPageXML.getAttribute("attemptLabel");
-        if (x_currentPageXML.getAttribute("attemptLabel") == null) {
+        var attemptLabel = pageXML.getAttribute("attemptLabel");
+        if (pageXML.getAttribute("attemptLabel") == null) {
             attemptLabel = "Attempt";
         }
 
-        var instruction = x_currentPageXML.getAttribute("instruction");
+        var instruction = pageXML.getAttribute("instruction");
         $textHolder.html(instruction);
 
         var $question = jGetElement(blockid, ".titleQuestion .question");
-        var prompt = x_currentPageXML.getAttribute("prompt");
+        var prompt = pageXML.getAttribute("prompt");
         $question.html(prompt);
 
-        var $panelWidth = x_currentPageXML.getAttribute("panelWidth");
+        var $panelWidth = pageXML.getAttribute("panelWidth");
         var $optionHolder = jGetElement(blockid, ".OptionHolder");
 
         var $attempts = jGetElement(blockid, ".attempts");
-        var amountofTries = parseInt(x_currentPageXML.getAttribute("amountOfTries"));
+        var amountofTries = parseInt(pageXML.getAttribute("amountOfTries"));
         if (amountofTries != undefined && $.isNumeric(amountofTries)) {
-            $attempts.html(x_currentPageXML.getAttribute("attemptLabel") + ": " + amountofTries).show();
+            $attempts.html(pageXML.getAttribute("attemptLabel") + ": " + amountofTries).show();
             $pageContents.data('amountofTries', amountofTries);
         } else {
             $attempts.remove();
         }
 
         var elements = [];
-        $(x_currentPageXML).children().each(function (i) {
+        $(pageXML).children().each(function (i) {
             elements.push(
                 {
                     label: this.getAttribute("name"),
@@ -222,14 +227,14 @@ var topXQ = new function () {
 
         this.optionElements = elements;
         var j = 0;
-        var amountOfAnswers = x_currentPageXML.getAttribute("numberAnswers");
+        var amountOfAnswers = pageXML.getAttribute("numberAnswers");
         if (amountOfAnswers === "*") {
             amountOfAnswers = elements.length;
         } else if (amountOfAnswers > elements.length) {
             amountOfAnswers = elements.length;
         }
 
-        var answerFieldLabel = x_currentPageXML.getAttribute("answerFieldLabel");
+        var answerFieldLabel = pageXML.getAttribute("answerFieldLabel");
         if (answerFieldLabel === undefined | answerFieldLabel === null) {
             answerFieldLabel = "Answer";
         }
@@ -257,7 +262,7 @@ var topXQ = new function () {
 
         $pageContents.data('correctOptionsFeedback', correctOptionsFeedback);
 
-        var checkBtnTxt = x_currentPageXML.getAttribute("checkBtnTxt");
+        var checkBtnTxt = pageXML.getAttribute("checkBtnTxt");
         if (checkBtnTxt === undefined) {
             checkBtnTxt = "Submit";
         }
@@ -267,12 +272,13 @@ var topXQ = new function () {
         var blankAnswers = [];
         var correctAnswers = $pageContents.data('answers');
         for (i = 0; i < correctAnswers.length; i++) {
-            blankAnswers.push(correctAnswers[i].options[0]);
+            blankAnswers.push(correctAnswers[i].options);
         }
+        let weighting =  pageXML.getAttribute("trackingWeight") != undefined ? pageXML.getAttribute("trackingWeight") : 1.0;
         for (i = 0; i < blankAnswers.length; i++) {
-            XTEnterInteraction(x_currentPage, x_getBlockNr(blockid), "fill-in", x_GetTrackingTextFromHTML(x_currentPageXML.getAttribute("prompt"), ""), "", blankAnswers[i], $pageContents.data('correctOptionsFeedback'), x_currentPageXML.getAttribute("grouping"), null, i);
-            XTSetInteractionPageXML(x_currentPage, x_getBlockNr(blockid), pageXML, i);
-            XTSetInteractionType(x_currentPage, x_getBlockNr(blockid), 'fill-in', this.weighting, i);
+            XTEnterInteraction(x_currentPage, x_getBlockNr(blockid), "fill-in", x_GetTrackingTextFromHTML(pageXML.getAttribute("prompt"), ""), blankAnswers[i], blankAnswers[i], $pageContents.data('correctOptionsFeedback'), pageXML.getAttribute("grouping"), null, i);
+            XTSetInteractionPageXML(x_currentPage, x_getBlockNr(blockid), x_getBlockXML(blockid), i);
+            XTSetInteractionType(x_currentPage, x_getBlockNr(blockid), 'fill-in', weighting, i);
         }
 
         jGetElement(blockid, ".checkButton")
@@ -281,12 +287,12 @@ var topXQ = new function () {
             })
             .click(function () {
                 var tries;
-                if (x_currentPageXML.getAttribute("amountOfTries") != undefined && $.isNumeric(x_currentPageXML.getAttribute("amountOfTries"))) {
-                    tries = parseInt(x_currentPageXML.getAttribute("amountOfTries"));
+                if (pageXML.getAttribute("amountOfTries") != undefined && $.isNumeric(pageXML.getAttribute("amountOfTries"))) {
+                    tries = parseInt(pageXML.getAttribute("amountOfTries"));
                     $pageContents.data('amountofTries', $pageContents.data('amountofTries') - 1);
 
                     if ($pageContents.data('amountofTries') > 0) {
-                        $attempts.html(x_currentPageXML.getAttribute("attemptLabel") + ": " + $pageContents.data('amountofTries'));
+                        $attempts.html(pageXML.getAttribute("attemptLabel") + ": " + $pageContents.data('amountofTries'));
                     } else {
                         $attempts.html("");
                     }
@@ -299,13 +305,13 @@ var topXQ = new function () {
                 }
 
                 showFeedback = function (blockid) {
-                    let x_currentPageXML = XTGetPageXML(x_currentPage, x_getBlockNr(blockid));
-                    var correctAnswersLabel = x_currentPageXML.getAttribute("correctAnswersLabel"),
+                    let pageXML = x_getBlockXML(x_getBlockNr(blockid));
+                    var correctAnswersLabel = pageXML.getAttribute("correctAnswersLabel"),
                         answers = $pageContents.data('answers');
 
                     jGetElement(blockid, ".correctAnswer").html('');
-                    debugger
-                    if (x_currentPageXML.getAttribute("showAnswers") === "true" || x_currentPageXML.getAttribute("showAnswers") === undefined) {
+                    
+                    if (pageXML.getAttribute("showAnswers") === "true" || pageXML.getAttribute("showAnswers") === undefined) {
                         jGetElement(blockid, ".correctAnswer").append('<h3>' + correctAnswersLabel + '</h3><ul>');
 
                         if (jGetElement(blockid, '.correctAnswer ul').has("li").length === 0) {
@@ -326,7 +332,7 @@ var topXQ = new function () {
                         }
 
                         var amountOfGood = 0;
-                        if (x_currentPageXML.getAttribute("caseSensitivity") == "true" || x_currentPageXML.getAttribute("caseSensitivity") == undefined) {
+                        if (pageXML.getAttribute("caseSensitivity") == "true" || pageXML.getAttribute("caseSensitivity") == undefined) {
 
                             for (i = 0; i < inputs.length; i++) {
                                 for (j = 0; j < answers.length; j++) {
@@ -374,12 +380,12 @@ var topXQ = new function () {
                         }
                     };
 
-                    var passedTxt = x_currentPageXML.getAttribute("passed");
+                    var passedTxt = pageXML.getAttribute("passed");
                     if (passedTxt === undefined) {
                         passedTxt = "Well done, you have completed the activity";
                     }
 
-                    var failedTxt = x_currentPageXML.getAttribute("failed");
+                    var failedTxt = pageXML.getAttribute("failed");
                     if (failedTxt === undefined) {
                         failedTxt = "Not all of the answers are correct";
                     }
@@ -412,21 +418,21 @@ var topXQ = new function () {
 
                     }
 
-                    var mainFeedback = x_currentPageXML.getAttribute("feedback");
+                    var mainFeedback = pageXML.getAttribute("feedback");
                     if (mainFeedback === null) {
                         mainFeedback = "";
                     }
 
                     if (mainFeedback != '') {
                         jGetElement(blockid, ".mainFeedback")
-                            .html((x_currentPageXML.getAttribute("feedbackLabel") != undefined && x_currentPageXML.getAttribute("feedbackLabel").trim() != '' ? '<h3>' + x_currentPageXML.getAttribute("feedbackLabel") + '</h3>' : '') + mainFeedback)
+                            .html((pageXML.getAttribute("feedbackLabel") != undefined && pageXML.getAttribute("feedbackLabel").trim() != '' ? '<h3>' + pageXML.getAttribute("feedbackLabel") + '</h3>' : '') + mainFeedback)
                             .show();
                     }
 
                     jGetElement(blockid, '.attempts').hide();
                 };
 
-                topXQ.fillInputs(blockid);
+                topXQBlock.fillInputs(blockid);
 
                 var checkAnswers = $pageContents.data('checkAnswers'),
                     wrong = checkAnswers.length;
@@ -434,7 +440,7 @@ var topXQ = new function () {
                 if ((attempt < tries && wrong > 0) || tries == undefined) {
                     for (var i = 0; i < checkAnswers.length; i++) {
                         if (checkAnswers[i].correct === false) {
-                            topXQ.checkSingleAnswer(i, blockid);
+                            topXQBlock.checkSingleAnswer(i, blockid);
                             if (checkAnswers[i].correct === false) {
                                 jGetElement(blockid, "#input-answer-" + i).val("");
                             }
@@ -458,7 +464,7 @@ var topXQ = new function () {
 
                     if (tries === undefined) {
                         showFeedback(blockid);
-                        topXQ.exitPage(blockid);
+                        topXQBlock.exitPage(blockid);
                     }
 
 
@@ -475,7 +481,7 @@ var topXQ = new function () {
                         }
 
                         if (checkAnswers[i].correct === false) {
-                            topXQ.checkSingleAnswer(i, blockid);
+                            topXQBlock.checkSingleAnswer(i, blockid);
                             if (checkAnswers[i].correct === false) {
                                 if (attempt === tries) {
                                     jGetElement(blockid, "#topXQ-result-" + i)
@@ -491,13 +497,13 @@ var topXQ = new function () {
                     }
 
                     showFeedback(blockid);
-                    topXQ.exitPage(blockid);
+                    topXQBlock.exitPage(blockid);
                 }
 
                 if (wrong === 0) {
                     jGetElement(blockid, '.checkButton').hide();
                     showFeedback(blockid);
-                    topXQ.exitPage(blockid);
+                    topXQBlock.exitPage(blockid);
                 }
             })
             .show();

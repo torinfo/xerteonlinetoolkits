@@ -1,4 +1,4 @@
-var textMatch = new function() {
+var textMatchBlock = new function() {
     var modelState = {
         labelTxt1: null,
         labelTxt2: null,
@@ -23,7 +23,7 @@ var textMatch = new function() {
 
         this.createLabels(blockid);
         this.sizeChanged(blockid);
-        XTSetInteractionModelState(x_currentPage, blocknr, modelState)
+        XTSetInteractionModelState(x_currentPage, blocknr, modelState);
     }
 
     // function called every time the size of the LO is changed
@@ -84,16 +84,16 @@ var textMatch = new function() {
     }
 
     this.leavePage = function(blockid) {
-        debugger;
+        ;
         var blocknr = x_getBlockNr(blockid);
-        x_currentPageXML = XTGetPageXML(x_currentPage, blocknr);
-        if ($(x_currentPageXML).children().length > 0 && this.tracked != true) {
-            this.finishTracking(blockid);
+        let pageXML = x_getBlockXML(blocknr);
+        if ($(pageXML).children().length > 0 && this.tracked != true) {
+            textMatchBlock.finishTracking(blockid);
         }
     }
 
-    this.init = function(pageXML,blockid) {
-        x_currentPageXML = pageXML;
+    this.init = function(blockid) {
+        let pageXML = x_getBlockXML(blockid);
         jGetElement(blockid, ".pageContents").data("audioW", 0);
 
         //Reset modelState
@@ -108,10 +108,10 @@ var textMatch = new function() {
         modelState.targetTxt2 = x_getLangInfo(x_languageData.find("interactions").find("targetArea")[0], "toSelect", "Press space to drop the selected item.");
 
         jGetElement(blockid, ".textHolder")
-            .html(x_addLineBreaks(x_currentPageXML.getAttribute("text")))
+            .html(x_addLineBreaks(pageXML.getAttribute("text")))
             .addClass("transparent"); /* without the text having a bg the labels strangely aren't selectable in IE */
 
-        var feedbackTxt = x_currentPageXML.getAttribute("correctMessage");
+        var feedbackTxt = pageXML.getAttribute("correctMessage");
         if (feedbackTxt == undefined) {
             feedbackTxt = "Correct answers are shown.";
         }
@@ -120,7 +120,7 @@ var textMatch = new function() {
             .hide();
 
         // submitBtnWidth attribute not used as button will be sized automatically
-        var buttonLabel = x_currentPageXML.getAttribute("submitBtnTxt");
+        var buttonLabel = pageXML.getAttribute("submitBtnTxt");
         if (buttonLabel == undefined) {
             buttonLabel = "Submit";
         }
@@ -130,7 +130,7 @@ var textMatch = new function() {
                 label:	buttonLabel
             })
             .click(function() { // mark labels and show feedback
-                var maxAttempts = x_currentPageXML.getAttribute("maxAttempts") ? x_currentPageXML.getAttribute("maxAttempts") : 3,
+                var maxAttempts = pageXML.getAttribute("maxAttempts") ? pageXML.getAttribute("maxAttempts") : 3,
                     allCorrect = true;
 
 
@@ -148,7 +148,7 @@ var textMatch = new function() {
                 {
                     modelState.numAttempts++;
                 }
-                if(XTGetMode() != "normal" && x_currentPageXML.getAttribute('markEnd') === 'false' ){
+                if(XTGetMode() != "normal" && pageXML.getAttribute('markEnd') === 'false' ){
                     jGetElement(blockid, ".labelHolder .label").each(function() {
                         var $this = $(this);
                         if ($this.data("target").is($this.data("currentTarget"))) {
@@ -193,7 +193,7 @@ var textMatch = new function() {
                 }
                 else{
                     if (!labelOffTarget){
-                        textMatch.finishTracking(blockid);
+                        textMatchBlock.finishTracking(blockid);
                         jGetElement(blockid, ".labelHolder .label").each(function() {
                             var $this = $(this);
                             if ($this.data("target").is($this.data("currentTarget"))) {
@@ -206,7 +206,7 @@ var textMatch = new function() {
                         });
                     }
                     else{
-                        $feedback.html(x_currentPageXML.getAttribute("incomplete") != undefined ? x_currentPageXML.getAttribute("incomplete") : x_addLineBreaks(x_currentPageXML.getAttribute("feedback")));
+                        $feedback.html(pageXML.getAttribute("incomplete") != undefined ? pageXML.getAttribute("incomplete") : x_addLineBreaks(pageXML.getAttribute("feedback")));
                     }
                     jGetElement(blockid, ".feedback").show();
                 }
@@ -222,30 +222,30 @@ var textMatch = new function() {
 
                 allCorrect = correct == jGetElement(blockid, ".labelHolder .label").length;
 
-                if(!labelOffTarget || (XTGetMode() != "normal" && x_currentPageXML.getAttribute('markEnd') === 'false')){
+                if(!labelOffTarget || (XTGetMode() != "normal" && pageXML.getAttribute('markEnd') === 'false')){
 
                     var wrongFeedback, scoreFeedback;
 
-                    if(XTGetMode() != "normal" && x_currentPageXML.getAttribute('markEnd') === 'false'){
-                        wrongFeedback = x_currentPageXML.getAttribute("allWrong");
-                        scoreFeedback = x_currentPageXML.getAttribute("score");
+                    if(XTGetMode() != "normal" && pageXML.getAttribute('markEnd') === 'false'){
+                        wrongFeedback = pageXML.getAttribute("allWrong");
+                        scoreFeedback = pageXML.getAttribute("score");
                     }
                     else{
-                        wrongFeedback = x_currentPageXML.getAttribute("allWrongTracking");
-                        scoreFeedback =	x_currentPageXML.getAttribute("scoreTracking");
+                        wrongFeedback = pageXML.getAttribute("allWrongTracking");
+                        scoreFeedback =	pageXML.getAttribute("scoreTracking");
                         $(this).hide();
                     }
 
 
                     if (allCorrect == false && modelState.numAttempts >= maxAttempts) {
-                        $feedback.html(x_addLineBreaks(x_currentPageXML.getAttribute("feedback")));
+                        $feedback.html(x_addLineBreaks(pageXML.getAttribute("feedback")));
                     } else if (allCorrect == true) {
-                        $feedback.html(x_addLineBreaks(x_currentPageXML.getAttribute("feedback")));
+                        $feedback.html(x_addLineBreaks(pageXML.getAttribute("feedback")));
                         $(this).hide();
                     } else if (correct == 0){
-                        $feedback.html(wrongFeedback != undefined ? wrongFeedback : x_addLineBreaks(x_currentPageXML.getAttribute("feedback")));
+                        $feedback.html(wrongFeedback != undefined ? wrongFeedback : x_addLineBreaks(pageXML.getAttribute("feedback")));
                     } else {
-                        $feedback.html(scoreFeedback != undefined ? scoreFeedback.replace("{i}", correct).replace("{n}", jGetElement(blockid, ".labelHolder .label").length) : x_addLineBreaks(x_currentPageXML.getAttribute("feedback")));
+                        $feedback.html(scoreFeedback != undefined ? scoreFeedback.replace("{i}", correct).replace("{n}", jGetElement(blockid, ".labelHolder .label").length) : x_addLineBreaks(pageXML.getAttribute("feedback")));
                     }
                     jGetElement(blockid, ".feedback").show();
                 }
@@ -260,7 +260,7 @@ var textMatch = new function() {
             $firstTarget = $targetHolder.find(".target"),
             labels = [];
 
-        $(x_currentPageXML).children()
+        $(pageXML).children()
             .each(function(i) {
 
                 var $thisTarget;
@@ -292,7 +292,7 @@ var textMatch = new function() {
             .droppable({
                 accept:	".dragDropHolder .label",
                 drop:	function(event, ui) {
-                    textMatch.dropLabel($(this), ui.draggable, blockid); // target, label
+                    textMatchBlock.dropLabel($(this), ui.draggable, blockid); // target, label
                 }
             })
             .focusin(function(e) {
@@ -316,7 +316,7 @@ var textMatch = new function() {
                     if (charCode == 32) {
                         var $selectedLabel = jGetElement(blockid, ".pageContents").data("selectedLabel");
                         if ($selectedLabel != undefined && $selectedLabel != "") {
-                            textMatch.dropLabel($(this), $selectedLabel); // target, label
+                            textMatchBlock.dropLabel($(this), $selectedLabel); // target, label
                         }
                     }
                 }
@@ -348,6 +348,7 @@ var textMatch = new function() {
 
     this.finishTracking = function(blockid)
     {
+        let pageXML = x_getBlockXML(blockid);
         var l_options = [],
             l_answers = [],
             l_feedbacks = [],
@@ -368,7 +369,11 @@ var textMatch = new function() {
             }else{
                 l_placeholder = "";
             }
-            var l_draglabel	= $this.find("div").text().trim();
+						
+            var l_draglabel	= $this.find("div").contents().filter(function(){ 
+								return this.nodeType == Node.TEXT_NODE; 
+						})[0].nodeValue; // removes Tick from the end of the answer if already checked
+
             l_option.source = l_draglabel;
             l_option.target = l_placeholder;
             l_options.push(l_option);
@@ -385,20 +390,21 @@ var textMatch = new function() {
         var blocknr = parseFloat(blockid.split("block").pop()) - 1;
         XTExitInteraction(x_currentPage, blocknr, result, l_options, l_answers, l_feedbacks);
 
-        if(XTGetMode() == "normal" && x_currentPageXML.getAttribute('markEnd') !== 'false'){
+        if(XTGetMode() == "normal" && pageXML.getAttribute('markEnd') !== 'false'){
             jGetElement(blockid, ".dragDropHolder .label")
                 .draggable("disable");
         }
-        //XTSetPageScore(x_currentPage, (l_correct * 100.0)/l_total, x_currentPageXML.getAttribute("trackinglabel"));
+        //XTSetPageScore(x_currentPage, (l_correct * 100.0)/l_total, pageXML.getAttribute("trackinglabel"));
     }
 
 
     this.initTracking = function(blockid){
 
+        let pageXML = x_getBlockXML(blockid);
         this.weighting = 1.0;
-        if (x_currentPageXML.getAttribute("trackingWeight") != undefined)
+        if (pageXML.getAttribute("trackingWeight") != undefined)
         {
-            this.weighting = x_currentPageXML.getAttribute("trackingWeight");
+            this.weighting = pageXML.getAttribute("trackingWeight");
         }
 
         XTSetPageType(x_currentPage, 'numeric', 1, this.weighting);
@@ -406,7 +412,7 @@ var textMatch = new function() {
         var correctAnswers 		= [];
         var correctFeedbacks 	= [];
 
-        $(x_currentPageXML).children().each(
+        $(pageXML).children().each(
             function(i)
             {
 
@@ -420,14 +426,15 @@ var textMatch = new function() {
                 correctOptions.push(correctOption);
             }
         );
-        var label=x_currentPageXML.getAttribute("name");
-        if (x_currentPageXML.getAttribute("trackinglabel") != null && x_currentPageXML.getAttribute("trackinglabel") != "")
+        var label=pageXML.getAttribute("name");
+        if (pageXML.getAttribute("trackinglabel") != null && pageXML.getAttribute("trackinglabel") != "")
         {
-            label = x_currentPageXML.getAttribute("trackinglabel");
+            label = pageXML.getAttribute("trackinglabel");
         }
         var blocknr = parseFloat(blockid.split("block").pop()) - 1;
 
-        XTEnterInteraction(x_currentPage, blocknr, 'match', label, correctOptions, correctAnswers, correctFeedbacks, x_currentPageXML.getAttribute("grouping"), null);
+        XTEnterInteraction(x_currentPage, blocknr, 'match', label, correctOptions, correctAnswers, correctFeedbacks, pageXML.getAttribute("grouping"), null);
+        XTSetInteractionType(x_currentPage, x_getBlockNr(blockid), 'match', this.weighting, 1);
         XTSetLeavePage(x_currentPage, blocknr, this.leavePage);
         XTSetInteractionModelState(x_currentPage, blocknr, modelState);
     }

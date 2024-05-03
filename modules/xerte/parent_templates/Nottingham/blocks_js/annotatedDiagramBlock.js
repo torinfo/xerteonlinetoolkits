@@ -675,7 +675,7 @@ var annotatedDiagramBlock = new function () {
             }
 
             // position text correctly
-            if (x_currentPageXML.getAttribute("align") == "Top") {
+            if (pageXML.getAttribute("align") == "Top") {
                 $textContents.css("margin-top", imgH + (padding * 4) + "px");
                 var imgIndent = ($x_pageDiv.width() - (imgW + (padding * 4))) / 2;
                 $imageHolder.css("margin-left", imgIndent);
@@ -695,11 +695,11 @@ var annotatedDiagramBlock = new function () {
 
 
             var highlightColour = "yellow";
-            if (x_currentPageXML.getAttribute("colour") != undefined && x_currentPageXML.getAttribute("colour") != "") {
-                highlightColour = x_getColour(x_currentPageXML.getAttribute("colour"));
+            if (pageXML.getAttribute("colour") != undefined && pageXML.getAttribute("colour") != "") {
+                highlightColour = x_getColour(pageXML.getAttribute("colour"));
             }
 
-            var shape = x_currentPageXML.getAttribute("shape");
+            var shape = pageXML.getAttribute("shape");
             if ((shape == "Arrow" || shape == "None") && $canvas[0].getContext) {
                 var context = $canvas[0].getContext("2d");
                 context.strokeStyle = highlightColour;
@@ -720,7 +720,7 @@ var annotatedDiagramBlock = new function () {
                 $listHolder.empty()
                 $listItem.appendTo($listHolder)
             }
-            $(x_currentPageXML).children()
+            $(pageXML).children()
                 .each(function (i) {
                     var $thisItem;
 

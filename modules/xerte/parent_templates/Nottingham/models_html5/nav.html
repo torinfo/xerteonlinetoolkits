@@ -287,6 +287,7 @@
 					
 				}
 			}
+
 			
 			// add content to each column/pane
 			$(x_currentPageXML).children().each(function(i) {
@@ -413,6 +414,12 @@
 				}
 				
 			});
+
+			// // Interactive Blocks
+			// if(childcount > 0){
+			// 	XTSetPageType(x_currentPage, "Nummeric", childcount, 1);
+			// }
+			// // End Interactive Blocks
 			
 			resizeEmbededMedia($(".popcornMedia.embed"), {width: "100%", height: "100%"});
 
@@ -590,6 +597,12 @@
 		}
 
 		this.leavePage = function () {
+			
+			// Interactive Blocks
+			if(childcount > 0){
+				XTSetPageScore(x_currentPage, 100);
+			}
+			// End Interactive Blocks
 			document.dispatchEvent(new Event('leavepage'));
 	};
 	}

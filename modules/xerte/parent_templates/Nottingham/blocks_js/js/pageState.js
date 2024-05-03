@@ -12,7 +12,7 @@ function pageState(id, page_nr, ia_type, ia_name){
     this.interactions = new Array();
     this.count = 0;
     this.duration = 0;
-    this.nrinteractions = 0;
+    this.nrinteractions = null;
     this.weighting = 0.0;
     this.score = 0.0;
     this.correctOptions = [];
@@ -41,7 +41,7 @@ function pageState(id, page_nr, ia_type, ia_name){
     }
 
     function enter(){
-        debugger
+        
         this.start = new Date();
     }
 }

@@ -1,4 +1,4 @@
-var mcq = new function() {
+var mcqBlock = new function() {
 
     var mcqModel= {
         optionElements: null
@@ -11,12 +11,13 @@ var mcq = new function() {
     }
 
     // function called every time the page is viewed after it has initially loaded
-    this.pageChanged = function() {
+    this.pageChanged = function(blockid) {
+        let pageXML = x_getBlockXML(blockid);
 
-        this.optionElements = $(".pageContents").data("optionElements");
+        this.optionElements = jGetElement(blockid, ".pageContents").data("optionElements");
 
-        if ($(x_currentPageXML).children().length > 0) {
-            this.startQ();
+        if ($(pageXML).children().length > 0) {
+            this.startQ(blockid);
             $(".feedback").find('.feedbackBlock').html("");
             $(".optionHolder input:checked").prop("checked", false);
             $(".checkBtn")
@@ -44,6 +45,7 @@ var mcq = new function() {
     }
 
     this.startQ = function(blockid) {
+        let pageXML = x_getBlockXML(blockid);
         var correctOptions = [],
             correctAnswer = [],
             correctFeedback = [],
@@ -53,9 +55,9 @@ var mcq = new function() {
         this.checked = false;
         // Track the quiz page
         this.weighting = 1.0;
-        if (x_currentPageXML.getAttribute("trackingWeight") != undefined)
+        if (pageXML.getAttribute("trackingWeight") != undefined)
         {
-            this.weighting = x_currentPageXML.getAttribute("trackingWeight");
+            this.weighting = pageXML.getAttribute("trackingWeight");
         }
         //TODO: fix this mess:
         XTSetInteractionType(x_currentPage, blocknr, 'numeric', this.weighting);
@@ -68,7 +70,7 @@ var mcq = new function() {
             else
             {
                 // Create fallback label
-                var answerTxt = (x_currentPageXML.getAttribute('answerTxt') != undefined ? x_currentPageXML.getAttribute('answerTxt') : "Option");
+                var answerTxt = (pageXML.getAttribute('answerTxt') != undefined ? pageXML.getAttribute('answerTxt') : "Option");
                 answerTxt += ' ' + (i+1);
                 answerTxt = x_GetTrackingTextFromHTML(this.optionElements[i].text, answerTxt);
             }
@@ -87,23 +89,24 @@ var mcq = new function() {
         $(".pageContents").data("judge", judge);
 
         // Create fallback label
-        var label = (x_currentPageXML.getAttribute('questionTxt') != undefined ? x_currentPageXML.getAttribute('questionTxt') : "Multiple choice question");
+        var label = (pageXML.getAttribute('questionTxt') != undefined ? pageXML.getAttribute('questionTxt') : "Multiple choice question");
         label += ' ' + (x_currentPage+1);
-        if (x_currentPageXML.getAttribute("trackinglabel") != null && x_currentPageXML.getAttribute("trackinglabel") != "")
+        if (pageXML.getAttribute("trackinglabel") != null && pageXML.getAttribute("trackinglabel") != "")
         {
-            label = x_currentPageXML.getAttribute("trackinglabel");
+            label = pageXML.getAttribute("trackinglabel");
         }
         else
         {
-            label = x_GetTrackingTextFromHTML(x_currentPageXML.getAttribute("prompt"), label);
+            label = x_GetTrackingTextFromHTML(pageXML.getAttribute("prompt"), label);
         }
-        XTEnterInteraction(x_currentPage, blocknr, 'multiplechoice', label, correctOptions, correctAnswer, correctFeedback, x_currentPageXML.getAttribute("grouping"), null);
-        XTSetInteractionPageXML(x_currentPage, blocknr, x_currentPageXML);
+        XTEnterInteraction(x_currentPage, blocknr, 'multiplechoice', label, correctOptions, correctAnswer, correctFeedback, pageXML.getAttribute("grouping"), null);
+        XTSetInteractionPageXML(x_currentPage, blocknr, pageXML);
         XTSetInteractionModelState(x_currentPage, blocknr, mcqModel);
     }
 
     this.leavePage = function() {
-        if ($(x_currentPageXML).children().length > 0) {
+        let pageXML = x_getBlockXML(blockid);
+        if ($(pageXML).children().length > 0) {
             if (!this.checked) {
                 this.showFeedBackandTrackScore();
             }
@@ -113,7 +116,7 @@ var mcq = new function() {
     this.showFeedBackandTrackScore = function(blockid)
     {
         var blocknr = parseFloat(blockid.split("block").pop()) - 1;
-        let currentPageXML = XTGetPageXML(x_currentPage, blocknr);
+        let currentPageXML = x_getBlockXML(blocknr);
         mcqModel = XTGetInteractionModelState(x_currentPage, blocknr);
         this.optionElements = mcqModel.optionElements;
         var answerFeedback = "",
@@ -132,7 +135,7 @@ var mcq = new function() {
         }
 
         for (var i=0; i<selected.length; i++) {
-            debugger
+            
             var optionIndex = $(selected[i]).parent().index(),
                 selectedOption = this.optionElements[optionIndex],
                 currCorrect;
@@ -275,7 +278,7 @@ var mcq = new function() {
         {
             // Disable all options
             var i=0;
-            for (i=0; i<mcq.currNrOptions; i++)
+            for (i=0; i<mcqBlock.currNrOptions; i++)
             {
                 jGetElement(blockid, "#option"+i).attr("disabled", "disabled");
             }
@@ -301,10 +304,10 @@ var mcq = new function() {
     }
 
 
-    this.init = function(pageXML, blockid) {
-        x_currentPageXML = pageXML;
+    this.init = function(blockid) {
+        let pageXML = x_getBlockXML(blockid);
         // correct attribute on option also not used as it doesn't mark correct/incorrect - only gives feedback for each answer
-        var panelWidth = x_currentPageXML.getAttribute("panelWidth"),
+        var panelWidth = pageXML.getAttribute("panelWidth"),
             $splitScreen = jGetElement(blockid, ".pageContents .splitScreen"),
             $textHolder = jGetElement(blockid, ".textHolder");
 
@@ -312,9 +315,9 @@ var mcq = new function() {
             jGetElement(blockid, ".pageContents .panel").appendTo(jGetElement(blockid, ".pageContents"));
             $splitScreen.remove();
         } else {
-            $textHolder.html(x_addLineBreaks(x_currentPageXML.getAttribute("instruction")));
+            $textHolder.html(x_addLineBreaks(pageXML.getAttribute("instruction")));
 
-            var textAlign = x_currentPageXML.getAttribute("align");
+            var textAlign = pageXML.getAttribute("align");
             if (textAlign != "Right") {
                 if (panelWidth == "Small") {
                     $splitScreen.addClass("large");
@@ -341,15 +344,15 @@ var mcq = new function() {
             }
         }
 
-        jGetElement(blockid, ".question").html(x_addLineBreaks(x_currentPageXML.getAttribute("prompt")));
+        jGetElement(blockid, ".question").html(x_addLineBreaks(pageXML.getAttribute("prompt")));
 
         var $optionHolder = jGetElement(blockid, ".optionHolder");
 
-        if ($(x_currentPageXML).children().length == 0) {
+        if ($(pageXML).children().length == 0) {
             jGetElement(blockid, ".optionHolder").html('<span class="alert">' + x_getLangInfo(x_languageData.find("errorQuestions")[0], "noA", "No answer options have been added") + '</span>');
             jGetElement(blockid, ".checkBtn").remove();
         } else {
-            if (x_currentPageXML.getAttribute("type") == "Multiple Answer") {
+            if (pageXML.getAttribute("type") == "Multiple Answer") {
                 $optionHolder.find("input[type='radio']").remove();
             } else {
                 $optionHolder.find("input[type='checkbox']").remove();
@@ -359,7 +362,7 @@ var mcq = new function() {
             $optionGroup.addClass(blockid)
             // Store the answers in a temporary array
             var elements = [];
-            $(x_currentPageXML).children().each(function(i) {
+            $(pageXML).children().each(function(i) {
                 elements.push(
                     {
                         label:		this.getAttribute("name"),
@@ -373,7 +376,7 @@ var mcq = new function() {
             this.optionElements = elements;
 
             // Randomise the answers, if required
-            if (x_currentPageXML.getAttribute("answerOrder") == 'random') {
+            if (pageXML.getAttribute("answerOrder") == 'random') {
                 for (var tmp, j, k, i = this.optionElements.length; i--;) {
                     j = Math.floor(Math.random() * this.optionElements.length);
                     k = Math.floor(Math.random() * this.optionElements.length);
@@ -395,7 +398,7 @@ var mcq = new function() {
                 $thisOption = $thisOptionGroup.find("input");
                 $thisOptionTxt = $thisOptionGroup.find(".optionTxt");
 
-                mcq.currNrOptions = i+1;
+                mcqBlock.currNrOptions = i+1;
 
                 $thisOption
                     .attr({
@@ -431,11 +434,11 @@ var mcq = new function() {
 
             // checkBtnWidth attribute not used as button will be sized automatically
             // if language attributes aren't in xml will have to use english fall back
-            var checkBtnTxt = x_currentPageXML.getAttribute("checkBtnTxt");
+            var checkBtnTxt = pageXML.getAttribute("checkBtnTxt");
             if (checkBtnTxt == undefined) {
                 checkBtnTxt = "Check";
             }
-            var checkBtnTip = x_currentPageXML.getAttribute("checkBtnTip");
+            var checkBtnTip = pageXML.getAttribute("checkBtnTip");
             if (checkBtnTip == undefined) {
                 checkBtnTip = "Check Answer";
             }
@@ -446,8 +449,8 @@ var mcq = new function() {
                 })
                 .click(function() {
                     $(this).hide();
-                    mcq.showFeedBackandTrackScore(blockid);
-                    mcq.checked = true;
+                    mcqBlock.showFeedBackandTrackScore(blockid);
+                    mcqBlock.checked = true;
                 })
 
             this.startQ(blockid);

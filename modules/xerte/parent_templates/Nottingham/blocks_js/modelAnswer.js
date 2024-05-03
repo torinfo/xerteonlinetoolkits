@@ -1,4 +1,4 @@
-var modelAnswer = new function () {
+var modelAnswerBlock = new function () {
     var modelAnswerModel = {
         tracked: false
     }
@@ -31,34 +31,34 @@ var modelAnswer = new function () {
 
 
 
-    this.init = function (pageXML, blockid) {
-        x_currentPageXML = pageXML;
+    this.init = function (blockid) {
+        let pageXML = x_getBlockXML(blockid);
         modelAnswerModel.tracked = false;
         // if language attributes aren't in xml will have to use english fall back
-        var instructA = x_currentPageXML.getAttribute("instructHeaderATxt");
+        var instructA = pageXML.getAttribute("instructHeaderATxt");
         if (instructA == undefined) {
             instructA = "The instruction and question on page"
         }
-        var instructB = x_currentPageXML.getAttribute("instructHeaderBTxt");
+        var instructB = pageXML.getAttribute("instructHeaderBTxt");
         if (instructB == undefined) {
             instructB = "was:"
         }
-        var responseTxt = x_currentPageXML.getAttribute("responseHeaderTxt");
+        var responseTxt = pageXML.getAttribute("responseHeaderTxt");
         if (responseTxt == undefined) {
             responseTxt = "Your response was:"
         }
-        var noAnswerTxt = x_currentPageXML.getAttribute("noAnswerHeaderTxt");
+        var noAnswerTxt = pageXML.getAttribute("noAnswerHeaderTxt");
         if (noAnswerTxt == undefined) {
             noAnswerTxt = "You didn't answer this question"
         }
-        var exampleTxt = x_currentPageXML.getAttribute("exampleHeaderTxt");
+        var exampleTxt = pageXML.getAttribute("exampleHeaderTxt");
         if (exampleTxt == undefined) {
             exampleTxt = "The example answer was:"
         }
         var pageNo = x_currentPage;
         if (x_pageInfo[x_currentPage].standalone == true) {
             // if the page is a standalone page then use the page name instead of page number
-            pageNo = "'" + x_currentPageXML.getAttribute("name") + "'";
+            pageNo = "'" + pageXML.getAttribute("name") + "'";
         } else {
             if (x_pageInfo[0].type != "menu") {
                 pageNo++;
@@ -66,30 +66,31 @@ var modelAnswer = new function () {
         }
 
         jGetElement(blockid, ".pageContents").data({
-            "dataString": '<p class="pageBlock">' + instructA + ' ' + pageNo + ' ' + instructB + '</p>' + x_addLineBreaks(x_currentPageXML.getAttribute("prompt")) + '<p><br/>' + x_addLineBreaks(responseTxt) + '</p><p>' + '{A}' + '</p><p><br/>' + x_addLineBreaks(exampleTxt) + '</p>' + x_addLineBreaks(x_currentPageXML.getAttribute("feedback")),
+            "dataString": '<p class="pageBlock">' + instructA + ' ' + pageNo + ' ' + instructB + '</p>' + x_addLineBreaks(pageXML.getAttribute("prompt")) + '<p><br/>' + x_addLineBreaks(responseTxt) + '</p><p>' + '{A}' + '</p><p><br/>' + x_addLineBreaks(exampleTxt) + '</p>' + x_addLineBreaks(pageXML.getAttribute("feedback")),
             "noAnswerTxt": '<p>' + noAnswerTxt + '</p>'
         });
 
         var label = $('<div>').html(pageTitle).text();
-        if (x_currentPageXML.getAttribute("trackinglabel") != null && x_currentPageXML.getAttribute("trackinglabel") != "") {
-            label = x_currentPageXML.getAttribute("trackinglabel");
+        if (pageXML.getAttribute("trackinglabel") != null && pageXML.getAttribute("trackinglabel") != "") {
+            label = pageXML.getAttribute("trackinglabel");
         }
 
         this.weighting = 1.0;
-        if (x_currentPageXML.getAttribute("trackingWeight") != undefined) {
-            this.weighting = x_currentPageXML.getAttribute("trackingWeight");
+        if (pageXML.getAttribute("trackingWeight") != undefined) {
+            this.weighting = pageXML.getAttribute("trackingWeight");
         }
 
         XTSetPageType(x_currentPage, 'numeric', 1, this.weighting);
 
-        var modelAnswerTxt = $('<div>').html(x_currentPageXML.getAttribute("feedback")).text();
-        XTEnterInteraction(x_currentPage, x_getBlockNr(blockid), 'text', label, [], modelAnswerTxt, [], x_currentPageXML.getAttribute("grouping"), null);
+        var modelAnswerTxt = $('<div>').html(pageXML.getAttribute("feedback")).text();
+        XTEnterInteraction(x_currentPage, x_getBlockNr(blockid), 'text', label, [], modelAnswerTxt, [], pageXML.getAttribute("grouping"), null);
+        XTSetInteractionType(x_currentPage, x_getBlockNr(blockid), 'text', this.weighting, 1);
         //XTSetLeavePage(x_currentPage, x_getBlockNr(blockid), this.leavePage);
-        XTSetInteractionPageXML(x_currentPage, x_getBlockNr(blockid), x_currentPageXML);
+        XTSetInteractionPageXML(x_currentPage, x_getBlockNr(blockid), pageXML);
         XTSetInteractionModelState(x_currentPage, x_getBlockNr(blockid), modelAnswerModel);
 
         // feedbackBtnWidth attribute not used as button will be sized automatically
-        var panelWidth = x_currentPageXML.getAttribute("panelWidth"),
+        var panelWidth = pageXML.getAttribute("panelWidth"),
             $splitScreen = jGetElement(blockid, ".pageContents .splitScreen"),
             $textHolder = jGetElement(blockid, ".textHolder"),
             $prompt = jGetElement(blockid, ".prompt");
@@ -98,8 +99,8 @@ var modelAnswer = new function () {
             jGetElement(blockid, ".pageContents .panel").appendTo(jGetElement(blockid, ".pageContents"));
             $splitScreen.remove();
         } else {
-            $textHolder.html(x_addLineBreaks(x_currentPageXML.getAttribute("text")));
-            var textAlign = x_currentPageXML.getAttribute("align");
+            $textHolder.html(x_addLineBreaks(pageXML.getAttribute("text")));
+            var textAlign = pageXML.getAttribute("align");
             if (textAlign != "Right") {
                 if (panelWidth == "Small") {
                     $splitScreen.addClass("large");
@@ -127,15 +128,15 @@ var modelAnswer = new function () {
         }
 
 
-        var promptString = x_addLineBreaks(x_currentPageXML.getAttribute("prompt")),
-            url = x_currentPageXML.getAttribute("image");
+        var promptString = x_addLineBreaks(pageXML.getAttribute("prompt")),
+            url = pageXML.getAttribute("image");
         if (url != undefined && url != "") {
             if (url.split('.').pop().slice(0, -1) == "swf") {
                 promptString += '<div class="centerAlign"><div id="pageSWF"><h3 class="alert">' + x_getLangInfo(x_languageData.find("errorFlash")[0], "label", "You need to install the Flash Player to view this content.") + '</h3><p><a href="http://www.adobe.com/go/getflashplayer"><img class="flashImg" src="http://www.adobe.com/images/shared/download_buttons/get_flash_player.gif" alt="' + x_getLangInfo(x_languageData.find("errorFlash")[0], "description", "Get the Flash Player") + '" /></a></p></div></div>';
             } else {
                 promptString += '<div class="panelImg"><img src="' + x_evalURL(url) + '"';
-                if (x_currentPageXML.getAttribute("tooltip") != undefined && x_currentPageXML.getAttribute("tooltip") != "") {
-                    promptString += 'alt="' + x_currentPageXML.getAttribute("tooltip") + '" ';
+                if (pageXML.getAttribute("tooltip") != undefined && pageXML.getAttribute("tooltip") != "") {
+                    promptString += 'alt="' + pageXML.getAttribute("tooltip") + '" ';
                 }
                 promptString += '/></div>';
             }
@@ -147,8 +148,8 @@ var modelAnswer = new function () {
         }
 
 
-        var copyTxt = x_currentPageXML.getAttribute("copypasteinfo2"),
-            copyTxtFlash = x_currentPageXML.getAttribute("copypasteinfo");
+        var copyTxt = pageXML.getAttribute("copypasteinfo2"),
+            copyTxtFlash = pageXML.getAttribute("copypasteinfo");
 
         // should instructions about copying & pasting answer be shown?
         if ((copyTxt != undefined && copyTxt != "") || (copyTxtFlash != undefined && copyTxtFlash != "")) {
@@ -157,7 +158,7 @@ var modelAnswer = new function () {
                 copyTxt = "<p>Note: Click the 'Select Text' button to highlight the instruction, question, your response and the example answer and then Ctrl + C to copy this text to the clipboard. You can then paste (Ctrl + V) into another application such as Open Office, Word or an email to save for future reference.</p>";
             }
 
-            var copyBtnLabel = x_currentPageXML.getAttribute("copyBtnLabel") != undefined ? x_currentPageXML.getAttribute("copyBtnLabel") : "Select Text",
+            var copyBtnLabel = pageXML.getAttribute("copyBtnLabel") != undefined ? pageXML.getAttribute("copyBtnLabel") : "Select Text",
                 copyBtnSRInfo = x_getLangInfo(x_languageData.find("screenReaderInfo")[0], "dialog", "") != "" && x_getLangInfo(x_languageData.find("screenReaderInfo")[0], "dialog", "") != null ? " " + x_getLangInfo(x_languageData.find("screenReaderInfo")[0], "dialog", "") : "";
 
             jGetElement(blockid, ".copyTxt")
@@ -194,9 +195,9 @@ var modelAnswer = new function () {
             jGetElement(blockid, ".copyBtn, .copyTxt").remove();
         }
 
-        jGetElement(blockid, ".pageContents").data("feedback", x_addLineBreaks(x_currentPageXML.getAttribute("feedback")));
+        jGetElement(blockid, ".pageContents").data("feedback", x_addLineBreaks(pageXML.getAttribute("feedback")));
 
-        var btnTxt = x_currentPageXML.getAttribute("feedbackBtnTxt");
+        var btnTxt = pageXML.getAttribute("feedbackBtnTxt");
         if (btnTxt == undefined || btnTxt == "") {
             btnTxt = "Feedback";
         }
@@ -217,38 +218,38 @@ var modelAnswer = new function () {
 
                 x_pageContentsUpdated();
 
-                modelAnswer.finishTracking(blockid);
-                if (x_currentPageXML.getAttribute("copypasteinfo") != undefined && x_currentPageXML.getAttribute("copypasteinfo") != "") {
+                modelAnswerBlock.finishTracking(blockid);
+                if (pageXML.getAttribute("copypasteinfo") != undefined && pageXML.getAttribute("copypasteinfo") != "") {
 
                 }
             });
 
-        if (x_currentPageXML.getAttribute("required") == 'true') {
+        if (pageXML.getAttribute("required") == 'true') {
             jGetElement(blockid, ".button").prop("disabled", true);
         }
 
         jGetElement(blockid, ".answerTxt").on('input', function () {
             // if answer is required, only show submit button when something has been typed in box
-            if (x_currentPageXML.getAttribute("required") == 'true' && jGetElement(blockid, ".answerTxt").val().trim() == '') {
+            if (pageXML.getAttribute("required") == 'true' && jGetElement(blockid, ".answerTxt").val().trim() == '') {
                 jGetElement(blockid, ".button").prop("disabled", true);
             } else {
                 jGetElement(blockid, ".button").prop("disabled", false);
             }
 
-            modelAnswer.saveData(blockid);
+            modelAnswerBlock.saveData(blockid);
         });
 
 
-        var copyShortcutTxt = x_currentPageXML.getAttribute("copyShortcutTxt");
+        var copyShortcutTxt = pageXML.getAttribute("copyShortcutTxt");
         if (copyShortcutTxt == undefined) {
             copyShortcutTxt = "Press Ctrl + C to copy"
         }
-        var closeBtnTxt = x_currentPageXML.getAttribute("closeBtnTxt");
+        var closeBtnTxt = pageXML.getAttribute("closeBtnTxt");
         if (closeBtnTxt == undefined) {
             closeBtnTxt = "close"
         }
 
-        var answerFieldLabel = x_currentPageXML.getAttribute("answerFieldLabel");
+        var answerFieldLabel = pageXML.getAttribute("answerFieldLabel");
         if (answerFieldLabel === undefined | answerFieldLabel === null) {
             answerFieldLabel = "Answer";
         }
