@@ -2642,8 +2642,9 @@ function x_createBlock(container, module, modulePosition){
 	// var jsName = module.tagName; //.replace("Block", "")
 	container.append('<div id="block' + modulePosition +'" class="iblock x-card"></div>');
 	x_loadInBlock(blockid, module);
+	let name = (module.tagName + "Block").replace("BlockBlock", "Block");
 	//Insert block CSS files. These are different from the not block interactive modules
-	x_insertCSS(x_templateLocation + "blocks_html5/" + module.tagName + ".css", null, false, "page_model_css_"+module.tagName);
+	x_insertCSS(x_templateLocation + "blocks_html5/" + name + ".css", null, false, "page_model_css_"+name);
 }
 
 function x_loadAllBlocks(){
@@ -2655,8 +2656,9 @@ function x_loadAllBlocks(){
 }
 
 function x_loadInBlock(blockid, module){
-	$("#"+blockid).load(x_templateLocation + "blocks_html5/" + module.tagName+ ".html", function() {
-		window[ module.tagName].init(blockid);
+	let name = (module.tagName + "Block").replace("BlockBlock", "Block");
+	$("#"+blockid).load(x_templateLocation + "blocks_html5/" + name + ".html", function() {
+		window[name].init(blockid);
 	});
 }
 
@@ -3047,9 +3049,21 @@ function x_changePageStep5a(x_gotoPage) {
     x_currentPageXML = x_pages[x_currentPage];
     let nodes = [];
     let standalone_block = false;
+		let standalone_blocks = [
+				//"annotatedDiagram",
+				//"categories",
+				//"dragBropLabel",
+				//"gapFill",
+				"mcq",
+				//"modelAnswer",
+				//"opinion",
+				"quiz",
+				//"textMatch",
+				//"timeline",
+				//"topXQ",
+		]; //Add all modules/pages that have been replaced by blocks
     // if there are blocks on this page: set x_blocksXML etc
-    if (x_currentPageXML.nodeName == "annotatedDiagram" ||
-		x_currentPageXML.nodeName == "categories"){ //Add all modules/pages that have been replaced by blocks
+    if (standalone_blocks.includes(x_currentPageXML.nodeName)){ 
         nodes = [x_currentPageXML];
         standalone_block = true;
     }else{

@@ -288,9 +288,9 @@
 				}
 			}
 
-			
 			// add content to each column/pane
 			$(x_currentPageXML).children().each(function(i) {
+			debugger;
 
 				// column/pane text
 				$("#navChildTitle" + i).html(this.getAttribute("name"));
@@ -415,11 +415,11 @@
 				
 			});
 
-			// // Interactive Blocks
-			// if(childcount > 0){
-			// 	XTSetPageType(x_currentPage, "Nummeric", childcount, 1);
-			// }
-			// // End Interactive Blocks
+			// Interactive Blocks
+			if(childcount > 0){
+				XTSetPageType(x_currentPage, "Numeric", 0, 0);
+			}
+			// End Interactive Blocks
 			
 			resizeEmbededMedia($(".popcornMedia.embed"), {width: "100%", height: "100%"});
 

@@ -145,7 +145,11 @@ var quizBlock = new function() {
             this.weighting = pageXML.getAttribute("trackingWeight");
         }
 				if(quizModel.initializedTracking == null) {
-						XTSetPageType(x_currentPage, 'numeric', numQs, this.weighting);
+						XTSetInteractionType(x_currentPage, x_getBlockNr(blockid), 'multiplechoice', this.weighting, 1);
+						for (var i = 0; i < $(pageXML).children().length-1; i++) {
+								XTSetInteractionType(x_currentPage, x_getBlockNr(blockid), 'multiplechoice', 0, 1);
+						}
+						// XTSetPageType(x_currentPage, 'numeric', numQs, this.weighting);
 						quizModel.initializedTracking = [];
 				}
 
@@ -321,7 +325,6 @@ var quizBlock = new function() {
 								if(quizModel.initializedTracking.find((tracked) => tracked == name) === undefined) {
 										quizModel.initializedTracking.push(name);
 										XTEnterInteraction(x_currentPage, blocknr , 'multiplechoice', name, correctOptions, correctAnswer, correctFeedback, pageXML.getAttribute("grouping"), null, quizModel.questions[quizModel.currentQ]);
-										XTSetInteractionType(x_currentPage, x_getBlockNr(blockid), 'multiplechoice', this.weighting, 1);
 								}
 								XTSetInteractionPageXML(x_currentPage, blocknr, pageXML, quizModel.questions[quizModel.currentQ]);
 								quizBlock.checked = false;
@@ -336,7 +339,7 @@ var quizBlock = new function() {
         let pageXML = x_getBlockXML(blockid);
         var blocknr = parseFloat(blockid.split("block").pop()) - 1;
         quizModel = XTGetInteractionModelState(x_currentPage, blocknr, 0, true);
-        let currentPageXML = XTGetPageXML(x_currentPage, blocknr, quizModel.questions[quizModel.currentQ]);
+        let currentPageXML = pageXML;
         quizModel.tracked = true;
 
 
@@ -563,10 +566,9 @@ var quizBlock = new function() {
         // last question answered - show results
         let blocknr = parseFloat(blockid.split("block").pop()) - 1;
         quizModel = XTGetInteractionModelState(x_currentPage, blocknr, 0, true);
-        let currentPageXML = XTGetPageXML(x_currentPage, blocknr, quizModel.questions[quizModel.currentQ]);
         var $pageContents = jGetElement(blockid, ".pageContents");
         jGetElement(blockid, ".qNo").html($pageContents.data("onCompletionText"));
-        var fbTxt = "<p>" + x_addLineBreaks(currentPageXML.getAttribute("feedback")) + "</p>";
+        var fbTxt = "<p>" + x_addLineBreaks(pageXML.getAttribute("feedback")) + "</p>";
 
         var myScore = 0;
         for (var i=0; i<quizModel.myProgress.length; i++) {

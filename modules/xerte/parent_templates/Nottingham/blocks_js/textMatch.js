@@ -415,7 +415,7 @@ var textMatchBlock = new function() {
             this.weighting = pageXML.getAttribute("trackingWeight");
         }
 
-        XTSetPageType(x_currentPage, 'numeric', 1, this.weighting);
+        // XTSetPageType(x_currentPage, 'numeric', 1, this.weighting);
         var correctOptions 		= [];
         var correctAnswers 		= [];
         var correctFeedbacks 	= [];

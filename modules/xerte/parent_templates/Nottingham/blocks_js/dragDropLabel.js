@@ -81,8 +81,8 @@ var dragDropLabelBlock = new function () {
         let pageXML = x_getBlockXML(blockid);
         pageXML = x_getBlockXML(x_getBlockNr(blockid));
         if ($(pageXML).children().length > 0) {
-            if (!this.checked) {
-                this.showFeedBackandTrackResults(blockid);
+            if (!dragDropLabelBlock.checked) {
+                dragDropLabelBlock.showFeedBackandTrackResults(blockid);
             }
         }
     };
@@ -152,7 +152,7 @@ var dragDropLabelBlock = new function () {
                         jGetElement(blockid, ".targetHolder .target").droppable("disable");
                     }
                 });
-            this.startTracking();
+            this.startTracking(blockid);
         } else {
             jGetElement(blockid, ".submitBtn").hide();
         }
@@ -176,17 +176,19 @@ var dragDropLabelBlock = new function () {
         let pageXML = x_getBlockXML(blockid);
         var numHotspots = $(pageXML).children().length,
             weighting = (pageXML.getAttribute("trackingWeight") != undefined) ? pageXML.getAttribute("trackingWeight") : 1.0;
-        XTSetPageType(x_currentPage, 'numeric', 1, weighting);
+        // XTSetPageType(x_currentPage, 'numeric', 1, weighting);
+        XTSetInteractionType(x_currentPage, x_getBlockNr(blockid), 'match', weighting, 1);
     };
 
     this.createLabels = function (blockid) {
         let pageXML = x_getBlockXML(blockid);
         var $labelHolder = jGetElement(blockid, ".labelHolder"),
-            tempData = [];
+            tempData = [],
+						firstLoad = jGetElement(blockid, ".pageContents").data("FirstLoad")?? true;
 
         $labelHolder.empty();
         jGetElement(blockid, ".infoHolder").html("");
-        jGetElement(blockid, ".pageContents").data("selectedLabel", "");
+        jGetElement(blockid, ".pageContents").data("selectedLabel", "").data("FirstLoad", false);
 
         $(pageXML).children()
             .each(function (i) {
@@ -216,9 +218,10 @@ var dragDropLabelBlock = new function () {
 
         // set up drag events (mouse and keyboard controlled)
         if (interactivity == "Match") {
-            XTEnterInteraction(x_currentPage, x_getBlockNr(blockid), 'match', pageXML.getAttribute("name"), correctOptions, correctAnswer, correctFeedback, pageXML.getAttribute("grouping"), null);
-            XTSetInteractionType(x_currentPage, x_getBlockNr(blockid), 'match', this.weighting, 1);
-            XTSetLeavePage(x_currentPage, x_getBlockNr(blockid), this.leavePage);
+						if(firstLoad){
+								XTEnterInteraction(x_currentPage, x_getBlockNr(blockid), 'match', pageXML.getAttribute("name"), correctOptions, correctAnswer, correctFeedback, pageXML.getAttribute("grouping"), null);
+								XTSetLeavePage(x_currentPage, x_getBlockNr(blockid), this.leavePage);
+						}
             XTSetInteractionPageXML(x_currentPage, x_getBlockNr(blockid), pageXML);
             jGetElement(blockid, ".labelHolder .label")
                 .draggable({
@@ -247,7 +250,7 @@ var dragDropLabelBlock = new function () {
                         jGetElement(blockid, ".infoHolder").html('<h3>' + $this.html() + '</h3>');
 												if(ui.helper.data("originalPosition") == undefined){
 														let helperRect = ui.helper[0].getBoundingClientRect();
-														let scrollParent = ui.helper.scrollParent()[0];
+														let scrollParent = $("#"+blockid).scrollParent()[0];
 														ui.helper.data("originalPosition",{y: scrollParent.scrollTop + helperRect.top, x: scrollParent.scrollLeft + helperRect.left});
 												}
 
@@ -326,7 +329,7 @@ var dragDropLabelBlock = new function () {
 
 												if(ui.helper.data("originalPosition") == undefined){
 														let helperRect = ui.helper[0].getBoundingClientRect();
-														let scrollParent = ui.helper.scrollParent()[0];
+														let scrollParent = $("#"+blockid).scrollParent()[0];
 														ui.helper.data("originalPosition",{y: scrollParent.scrollTop + helperRect.top, x: scrollParent.scrollLeft + helperRect.left});
 												}
 
@@ -600,7 +603,7 @@ var dragDropLabelBlock = new function () {
         }
 
 				let offset = $thisLabel.data("originalPosition");
-				let scrollParent = $thisLabel.scrollParent()[0];
+				let scrollParent = $("#"+blockid).scrollParent()[0];
 				let targetRect = {y: scrollParent.scrollTop + $thisTarget[0].getBoundingClientRect().top, x: scrollParent.scrollLeft + $thisTarget[0].getBoundingClientRect().left };
         if (interactivity == "Match") {
             var targetIndex = $thisTarget.index();
@@ -699,7 +702,7 @@ var dragDropLabelBlock = new function () {
 
         if (pageXML.getAttribute("judge") != "false" && interactivity == "Match") {
             var labelHolderSpec = XTGetMode() != "normal" ? ".labelHolder .label" : ".labelHolder .ui-draggable-disabled";
-            $(labelHolderSpec).each(function (i) {
+            jGetElement(blockid, labelHolderSpec).each(function (i) {
                 var $this = $(this)
                     .click(function () {
                         jGetElement(blockid, ".targetHolder .target")

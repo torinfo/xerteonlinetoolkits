@@ -48,7 +48,7 @@
 .dropDrogLabelBlock .buttonHolder {
     margin   : 10px;
     float    : right;
-    position : absolute;
+    position : relative;
     bottom   : 0;
     right    : 0;
 }

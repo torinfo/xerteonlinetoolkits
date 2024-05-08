@@ -80,7 +80,7 @@ var modelAnswerBlock = new function () {
             this.weighting = pageXML.getAttribute("trackingWeight");
         }
 
-        XTSetPageType(x_currentPage, 'numeric', 1, this.weighting);
+        // XTSetPageType(x_currentPage, 'numeric', 1, this.weighting);
 
         var modelAnswerTxt = $('<div>').html(pageXML.getAttribute("feedback")).text();
         XTEnterInteraction(x_currentPage, x_getBlockNr(blockid), 'text', label, [], modelAnswerTxt, [], pageXML.getAttribute("grouping"), null);

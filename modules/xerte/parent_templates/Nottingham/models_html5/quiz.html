@@ -21,6 +21,27 @@
 	// pageChanged & sizeChanged functions are needed in every model file
 	// other functions for model should also be in here to avoid conflicts
 	var quiz = new function() {
+		this.init = function () {
+			this.setUp();
+			XTSetPageType(x_currentPage, 'numeric', 0, 0);
+		}
+		
+		this.setUp = function() {
+			x_createBlock($("#pageContents"), x_currentPageXML, 1)
+		}
+		
+		this.sizeChanged = function() {
+			//window["categoriesBlock"].sizeChanged("block1");
+		}
+		this.pageChanged = function() {
+			//this.setUp();
+			//window["categoriesBlock"].pageChanged("block1");
+		}
+		this.leavePage = function () {
+			XTSetPageScore(x_currentPage, 100);
+			document.dispatchEvent(new Event('leavepage'));
+		};
+/*
 		var questions,
 			currentAnswers,
 			currentQ,
@@ -303,7 +324,9 @@
 
             var correctCounter = 0;
             var thisQ = $(x_currentPageXML).children()[this.questions[this.currentQ]];
+			var questionFeedbackText = thisQ.getAttribute('generalFeedback')
             var currentQuestionsChildren = $($(x_currentPageXML).children()[this.questions[this.currentQ]]).children();
+			var generalFeedback = "";
 
             for(i = 0; i < currentQuestionsChildren.length; i++)
            	{
@@ -452,7 +475,7 @@
             };
             XTExitInteraction(x_currentPage, quiz.questions[quiz.currentQ], result, l_options, l_answer, l_feedback);
             quiz.myProgress.splice(quiz.currentQ, 1, correct);
-
+			debugger;
             generalFeedback += rightWrongTxt;
             var answerFeedback = "<h3>" + $("#pageContents").data("feedbackLabel") + "</h3>" + generalFeedback;
             if (XTGetMode() == "normal")
@@ -764,7 +787,7 @@
 					x_addAudioTranscript($audio, transcript);
 				}
 			}
-		}		
+		}*/	
 	}
 
 	quiz.init();
@@ -773,7 +796,7 @@
 
 
 <div id="pageContents">
-
+	<!--
 	<div class="splitScreen">
 
 		<div id="textHolder" class="left"></div>
@@ -811,5 +834,6 @@
 		</div>
 
 	</div>
+	-->
 
 </div>

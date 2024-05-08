@@ -156,7 +156,7 @@ var opinionBlock = new function()
 
         var weighting =  pageXML.getAttribute("trackingWeight") != undefined ? pageXML.getAttribute("trackingWeight") : 1.0;
 
-        XTSetPageType(x_currentPage, 'numeric', numberOfQuestions, weighting);
+        // XTSetPageType(x_currentPage, 'numeric', numberOfQuestions, weighting);
 
         this.loadQuestions(blockid);
 

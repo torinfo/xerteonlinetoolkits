@@ -65,7 +65,8 @@ var gapFillBlock = new function() {
         if (XTGetMode() == "normal") { this.isTracked = true; };
 
         $pageContents.find("#hint").remove();
-        XTSetInteractionModelState(x_currentPage, x_getBlockNr(blockid), gapFillModelState)
+        XTSetInteractionModelState(x_currentPage, x_getBlockNr(blockid), gapFillModelState);
+				this.sizeChanged(blockid);
     }
 
     this.leavePage = function(blockid) {
@@ -703,7 +704,9 @@ var gapFillBlock = new function() {
         var	maxW = 0,
             i;
         for (i=0; i<$targetHolder.find(".target").length; i++) {
-            maxW = Math.max(maxW, $targetHolder.find(".target:eq(" + i + ")").width());
+						let elem = $targetHolder.find(".target:eq(" + i + ")").clone().appendTo($('body'));
+            maxW = Math.max(maxW, elem.width());
+						elem.remove();
         }
 
         $($targetHolder.find(".target")).each(function(i) {
@@ -712,13 +715,15 @@ var gapFillBlock = new function() {
                 .data("index", i); // stored here as using .index() won't return result needed as there are other elements (line breaks etc.) in $targetHolder
         });
         //reminder
-        let height = ($targetHolder.find(".target").height() + 10);
+				let elem = $targetHolder.find(".target").clone().appendTo($('body'));
+        let height = elem.height() + 10;
+				elem.remove();
 
         $targetHolder.find(".target")
             .css({
                 "width":maxW + 30,
-                "height": "" + ($targetHolder.find(".target").height() + 10) + "px",
-                "line-height":$targetHolder.find(".target").height() + 10 + "px"
+                "height": "" + height + "px",
+                "line-height": height + "px"
             })
             .html("")
             .droppable({
@@ -1320,10 +1325,10 @@ var gapFillBlock = new function() {
         gapFillModelState = XTGetInteractionModelState(x_currentPage, x_getBlockNr(blockid));
         if (pageXML.getAttribute("interactivity") == "Drop Down Menu" || pageXML.getAttribute("interactivity") == "Fill in Blank")
         {
-            XTSetPageType(x_currentPage, 'numeric', gapFillModelState.answerData.length, this.weighting);
+            // XTSetPageType(x_currentPage, 'numeric', gapFillModelState.answerData.length, this.weighting);
         }
         else { // text fill in blank or drag & drop
-            XTSetPageType(x_currentPage, 'numeric', 1, this.weighting);
+            // XTSetPageType(x_currentPage, 'numeric', 1, this.weighting);
         }
     }
 
@@ -1331,4 +1336,4 @@ var gapFillBlock = new function() {
     this.finishTracking = function(blockid) {
 
     }
-}
+};

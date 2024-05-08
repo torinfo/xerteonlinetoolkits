@@ -35,7 +35,16 @@ var timelineBlock = new function () {
 
     // function called every time the size of the LO is changed
     this.sizeChanged = function (blockid) {
+
+				if($("#x_page" + x_currentPage).is(":hidden")){
+						$("#x_page" + x_currentPage).show();
+				}
         // label width should fit in target and target height should fit largest label
+				let root = $("#"+blockid);
+				let prevIndex = root.index();
+				let prevParent = root.parent();
+				root.appendTo(root.parent().parent());
+				
         var $target = jGetElement(blockid, ".targetHolder .target");
         $target.css("height", "auto");
 
@@ -48,6 +57,7 @@ var timelineBlock = new function () {
             if ($this.outerHeight() > tallestLabel) {
                 tallestLabel = $this.outerHeight();
             }
+						console.log($target.width());
         });
 
         jGetElement(blockid, ".labelHolder").height(tallestLabel);
@@ -60,6 +70,9 @@ var timelineBlock = new function () {
                 tallestTarget = $this.outerHeight();
             }
         });
+
+				prevParent[0].insertBefore(root[0], prevParent.children()[prevIndex]);
+				console.log({block: blockid, tallestTarget, tallestLabel, targetdiff: 50 - tallestTarget, labelDiff: 44 - tallestLabel}); // 50 44
 
         $target.height(tallestTarget + tallestLabel - 5);
 
@@ -269,7 +282,7 @@ var timelineBlock = new function () {
 
         this.initTracking(blockid);
 
-        this.sizeChanged(blockid);
+				this.sizeChanged(blockid);
         x_pageLoaded();
     }
 
@@ -327,7 +340,7 @@ var timelineBlock = new function () {
             this.weighting = pageXML.getAttribute("trackingWeight");
         }
 
-        XTSetPageType(x_currentPage, 'numeric', 1, this.weighting);
+        // XTSetPageType(x_currentPage, 'numeric', 1, this.weighting);
         var correctOptions = [],
             correctAnswers = [],
             correctFeedbacks = [];
@@ -387,7 +400,7 @@ var timelineBlock = new function () {
 										if(ui.helper.data("originalPosition") == undefined){
 												let pagePosition = $("#pageContents")[0].getBoundingClientRect();
 												let helperRect = ui.helper[0].getBoundingClientRect();
-												let scrollParent = ui.helper.scrollParent().scrollParent()[0];
+												let scrollParent = $("#"+blockid).scrollParent()[0];
 												ui.helper.data("originalPosition",{y: scrollParent.scrollTop + helperRect.top - pagePosition.y, x: scrollParent.scrollLeft + helperRect.left - pagePosition.x});
 										}
 
@@ -502,7 +515,7 @@ var timelineBlock = new function () {
 				let $lblHolder = jGetElement(blockid, ".labelHolder");
 				//let offset = $thisLabel.data("originalPosition");
 				let offset = $thisLabel.data("originalPosition");
-				let scrollParent = $thisTarget.scrollParent().scrollParent()[0];
+				let scrollParent = $("#"+blockid).scrollParent()[0];
 				;
 
         $thisLabel
@@ -513,5 +526,5 @@ var timelineBlock = new function () {
                 "left": scrollParent.scrollLeft + $thisTarget.position().left + parseInt($thisTarget.css("margin-left")) + parseInt($thisTarget.css("padding-left")) - offset.x
             });
     }
-}
+};
 
