@@ -18,7 +18,7 @@
      * limitations under the License.
      */
         
-        // pageChanged & sizeChanged functions are needed in every model file
+/*        // pageChanged & sizeChanged functions are needed in every model file
         // other functions for model should also be in here to avoid conflicts
         var interactiveVideo = new function() {
             var	$panelHolder,
@@ -102,7 +102,6 @@
                 if (x_currentPageXML.getAttribute("intro") != "" && x_currentPageXML.getAttribute("intro") != undefined) {
                     var infoHolderHeight = $("#infoHolder .accTitle").height() + parseFloat($("#infoHolder .accTitle").css("padding-top")) * 2
                 }
-
                 $panelHolder.find(".panel.fullH")
                     .height($x_mainHolder.height() - $x_headerBlock.height() - $x_footerBlock.height() -
                         (parseFloat($x_pageDiv.css("padding-top")) * 2) - (parseFloat($panelHolder.find(".panel.fullH").css("padding-top")) * 2
@@ -361,14 +360,14 @@
                     interactiveVideo.begin();
                 });
             };
-            |*/
+            |* /
             this.init = function() {
                 this.panelbaseid = "panel_" + x_currentPage + '_';
                 if (!!document.createElement("canvas").getContext) {
                     // load popcorn library and plugins
                     var loadFiles = true;
                     if(xot_offline) {
-                        /* files are already loaded statically */
+                        /* files are already loaded statically *  /
                         loadFiles = false;
                     }
                     for (var i=0; i<x_pageInfo.length; i++) {
@@ -473,7 +472,7 @@
                     }
                     segstr += "]";
                     console.log("Current segments: " + segstr);
-                    */
+                    * /
                 }
             };
 
@@ -514,7 +513,6 @@
                         this.popcornInstance = this.loadAudioInFooter();
                         mediaPanelIndex = -1;
                     }
-
                 } else if (mediaFile.indexOf(".") == -1) {
                     // no media
                     mediaType = undefined;
@@ -1018,7 +1016,7 @@
                 });
             };
     
-            this.removeEvents = function() {
+            this.removeEvents = function() {*/
 /**
  * Licensed to The Apereo Foundation under one or more contributor license
  * agreements. See the NOTICE file distributed with this work for
@@ -1963,68 +1961,68 @@
                 this.popcornInstance.off("seeked");
                 this.popcornInstance.off("ended");
             };
+		}
     
-            this.getBlock = function(time) {
-                if (blocks.length == 0) {
-                    return null;
+        this.getBlock = function(time) {
+            if (blocks.length == 0) {
+                return null;
+            }
+            for(var i = 0; i < blocks.length; i++) {
+                if (parseFloat(blocks[i].synchStart) + parseFloat(blocks[i].duration) > time) {
+                    return blocks[i];
                 }
-                for(var i = 0; i < blocks.length; i++) {
-                    if (parseFloat(blocks[i].synchStart) + parseFloat(blocks[i].duration) > time) {
-                        return blocks[i];
-                    }
-                }
-                return blocks[i];
-            };
+            }
+            return blocks[i];
+        };
     
-            // helper function for lookupTable, called on time updates, checks what part of a video block is being watched (in %).
-            this.updateTable = function (block, current) {
-                 if (block != null) {
-                     if (block.duration < 30) {
-                         var i = Math.round((current - block.synchStart) / block.duration * 20) * 5;
-                     }
-                     else {
-                         var i = Math.round((current - block.synchStart) / block.duration * 100);
-                     }
-                     block.watched[i] = 1;
-                     if (i == 100) {
-                         this.sendXAPI(block, 100);
-                     }
-                 }
-            };
-    
-            this.sendXAPI = function(block, percentageWatched)
-            {
-                //if (block != null)
-                //TSetViewed(x_currentPage, block.synchName, percentageWatched)
-            };
-    
-            // function calculates the time watched within a video block based on an array (in %).
-            lookupTable = function (block) {
-                var playedTime = 0;
-                if (block == null || block.watched == undefined || block.duration == undefined) {
-                    return 0;
-                }
-                if (block.duration >= 30) {
-                    for (var i = 1; i < 100; i++) {
-                        if (block.watched[i] == 1) {
-                            playedTime++;
-                        }
-                    }
+        // helper function for lookupTable, called on time updates, checks what part of a video block is being watched (in %).
+        this.updateTable = function (block, current) {
+            if (block != null) {
+                if (block.duration < 30) {
+                    var i = Math.round((current - block.synchStart) / block.duration * 20) * 5;
                 }
                 else {
-                    for (var i = 1; i < 100; i++) {
-                        if (block.watched[i] == 1) {
-                            playedTime += 5;
-                        }
+                    var i = Math.round((current - block.synchStart) / block.duration * 100);
+                }
+                block.watched[i] = 1;
+                if (i == 100) {
+                    this.sendXAPI(block, 100);
+                }
+            }
+        };
+		
+        this.sendXAPI = function(block, percentageWatched)
+        {
+            //if (block != null)
+            //TSetViewed(x_currentPage, block.synchName, percentageWatched)
+        };
+    
+        // function calculates the time watched within a video block based on an array (in %).
+        this.lookupTable = function (block) {
+            var playedTime = 0;
+            if (block == null || block.watched == undefined || block.duration == undefined) {
+                return 0;
+            }
+            if (block.duration >= 30) {
+                for (var i = 1; i < 100; i++) {
+                    if (block.watched[i] == 1) {
+                        playedTime++;
                     }
                 }
-                return playedTime;
             }
-    
-            // function loads media - can be either main media in media panel or additional media to appear in another panel (called from media plugin)
-            this.loadMedia = function($holder, mediaType, mediaData, mainMedia) {
-                var $mediaHolder,
-                    popcornInstance,
+            else {
+                for (var i = 1; i < 100; i++) {
+                    if (block.watched[i] == 1) {
+                        playedTime += 5;
+                    }
+                }
+            }
+            return playedTime;
+        }
+        // function loads media - can be either main media in media panel or additional media to appear in another panel (called from media plugin)
+        this.loadMedia = function($holder, mediaType, mediaData, mainMedia) {
+            var $mediaHolder,
+                popcornInstance,
                     classes = "popcornMedia";
                 
                 if (mainMedia == true) {
@@ -2367,6 +2365,7 @@
                         interactiveVideo.setUpPopcornCue(popcornInstance, synchData[j]);
                     }
                 }
+				let amountOfInteractiveBlocks = 0;
                 // add all other synch events
                 for (var j=0; j<data.length; j++) {
                     // each synch event
@@ -2495,9 +2494,10 @@
                             pluginAttributes.blockData = data[j].childNodes[0];
                             pluginAttributes.amountOfInteractiveBlocks = amountOfInteractiveBlocks;
                             amountOfInteractiveBlocks++;
-                        }
-
-                        popcornInstance[pluginName](pluginAttributes);
+                        }else {
+							debugger;
+							popcornInstance[pluginName](pluginAttributes);
+						} 
 
                         // ^^ plugins called are either bespoke ones in popcorn/plugins folder or from popcorn-complete.min.js
                         // ^^ for those from popcorn-complete.min.js, the xwd node names & values must match the expected popcorn properties for the plugin
@@ -2524,6 +2524,7 @@
 
                         if (data[0].type == "ivSynchMCQ")
                         {
+							debugger;
                             $(data).each(function (e){
                                 var testSynch = this.allInfo.getAttribute("synchStart");
                                 if (this.allInfo.children.length !== 0) {

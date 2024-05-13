@@ -77,7 +77,7 @@
 	padding:	0 0 0 80%;
 }
 
-.splitScreen .left {
+.splitScreen > .left {
 	position:	absolute;
 	top:		0;
 	left:		0;

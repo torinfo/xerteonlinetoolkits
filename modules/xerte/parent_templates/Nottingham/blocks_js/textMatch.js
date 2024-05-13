@@ -373,10 +373,9 @@ var textMatchBlock = new function() {
             }else{
                 l_placeholder = "";
             }
-						
-            var l_draglabel	= $this.find("div").contents().filter(function(){ 
-								return this.nodeType == Node.TEXT_NODE; 
-						})[0].nodeValue; // removes Tick from the end of the answer if already checked
+						var l_draglabel = $this.find("div").contents()
+								.not($this.find("div > .tick").contents())
+								.not($this.find("div > .tick")).text().trim();
 
             l_option.source = l_draglabel;
             l_option.target = l_placeholder;

@@ -39,11 +39,10 @@ var timelineBlock = new function () {
 				if($("#x_page" + x_currentPage).is(":hidden")){
 						$("#x_page" + x_currentPage).show();
 				}
-        // label width should fit in target and target height should fit largest label
-				let root = $("#"+blockid);
-				let prevIndex = root.index();
-				let prevParent = root.parent();
-				root.appendTo(root.parent().parent());
+				// let root = $("#"+blockid);
+				// let prevIndex = root.index();
+				// let prevParent = root.parent();
+				// root.appendTo(root.parent().parent());
 				
         var $target = jGetElement(blockid, ".targetHolder .target");
         $target.css("height", "auto");
@@ -57,7 +56,6 @@ var timelineBlock = new function () {
             if ($this.outerHeight() > tallestLabel) {
                 tallestLabel = $this.outerHeight();
             }
-						console.log($target.width());
         });
 
         jGetElement(blockid, ".labelHolder").height(tallestLabel);
@@ -71,8 +69,7 @@ var timelineBlock = new function () {
             }
         });
 
-				prevParent[0].insertBefore(root[0], prevParent.children()[prevIndex]);
-				console.log({block: blockid, tallestTarget, tallestLabel, targetdiff: 50 - tallestTarget, labelDiff: 44 - tallestLabel}); // 50 44
+				// prevParent[0].insertBefore(root[0], prevParent.children()[prevIndex]);
 
         $target.height(tallestTarget + tallestLabel - 5);
 
@@ -399,9 +396,10 @@ var timelineBlock = new function () {
 										
 										if(ui.helper.data("originalPosition") == undefined){
 												let pagePosition = $("#pageContents")[0].getBoundingClientRect();
+												let blockPosition = $("#"+blockid).parent()[0].getBoundingClientRect(); 
 												let helperRect = ui.helper[0].getBoundingClientRect();
 												let scrollParent = $("#"+blockid).scrollParent()[0];
-												ui.helper.data("originalPosition",{y: scrollParent.scrollTop + helperRect.top - pagePosition.y, x: scrollParent.scrollLeft + helperRect.left - pagePosition.x});
+												ui.helper.data("originalPosition",{y: scrollParent.scrollTop + helperRect.top - pagePosition.y, x: scrollParent.scrollLeft + helperRect.left - pagePosition.x - blockPosition.x});
 										}
 
                     // remove any focus/selection highlights made by tabbing to labels/targets
@@ -516,14 +514,13 @@ var timelineBlock = new function () {
 				//let offset = $thisLabel.data("originalPosition");
 				let offset = $thisLabel.data("originalPosition");
 				let scrollParent = $("#"+blockid).scrollParent()[0];
-				;
 
         $thisLabel
             .attr("title", timelineModel.labelTxt1)
             .removeClass("selected")
             .css({
                 "top": scrollParent.scrollTop + $thisTarget.find("h3").position().top + $thisTarget.find("h3").height() + parseInt($thisTarget.css("padding-top")) - offset.y,
-                "left": scrollParent.scrollLeft + $thisTarget.position().left + parseInt($thisTarget.css("margin-left")) + parseInt($thisTarget.css("padding-left")) - offset.x
+                "left": scrollParent.scrollLeft + $thisTarget.position().left + parseInt($thisTarget.css("margin-left")) - parseInt($thisLabel.css("padding-left")) - offset.x
             });
     }
 };

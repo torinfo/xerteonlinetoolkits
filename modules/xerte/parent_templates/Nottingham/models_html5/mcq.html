@@ -23,11 +23,7 @@
 	var mcq = new function() {
 		this.init = function () {
 			this.setUp();
-			this.weighting = 1.0;
-			if (x_currentPageXML.getAttribute("trackingWeight") != undefined){
-				this.weighting = x_currentPageXML.getAttribute("trackingWeight");
-			}
-			XTSetPageType(x_currentPage, 'numeric', 1, this.weighting);
+			XTSetPageType(x_currentPage, 'numeric', 0, 0);
 		}
 		
 		this.setUp = function() {
@@ -38,7 +34,7 @@
 			//window["categoriesBlock"].sizeChanged("block1");
 		}
 		this.pageChanged = function() {
-			this.setUp();
+			/* this.setUp(); */
 			//window["categoriesBlock"].pageChanged("block1");
 		}
 		this.leavePage = function () {

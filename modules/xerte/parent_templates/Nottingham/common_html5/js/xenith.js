@@ -2642,7 +2642,10 @@ function x_createBlock(container, module, modulePosition){
 	// var jsName = module.tagName; //.replace("Block", "")
 	container.append('<div id="block' + modulePosition +'" class="iblock x-card"></div>');
 	x_loadInBlock(blockid, module);
-	let name = (module.tagName + "Block").replace("BlockBlock", "Block");
+	let name = module.tagName;
+	if (!module.tagName.includes("Block")){
+			name += "Block";
+	}
 	//Insert block CSS files. These are different from the not block interactive modules
 	x_insertCSS(x_templateLocation + "blocks_html5/" + name + ".css", null, false, "page_model_css_"+name);
 }
@@ -2653,12 +2656,25 @@ function x_loadAllBlocks(){
 		x_loadInBlock("block"+counter, module);
 		counter++;
 	}
+	if (document.readyState === "loading") {
+		document.addEventListener("DOMContentLoaded", loaded);
+	} else {
+			loaded();
+	}
 }
 
 function x_loadInBlock(blockid, module){
-	let name = (module.tagName + "Block").replace("BlockBlock", "Block");
-	$("#"+blockid).load(x_templateLocation + "blocks_html5/" + name + ".html", function() {
+	let name = module.tagName;
+	if (!module.tagName.includes("Block")){
+			name += "Block";
+	}
+	let container = $("#"+blockid);
+	if(container.length == 0){
+			console.log("Can't find container: #"+blockid);
+	}
+	container.load(x_templateLocation + "blocks_html5/" + name + ".html", function() {
 		window[name].init(blockid);
+		$(window).trigger('resize');
 	});
 }
 
@@ -3050,17 +3066,17 @@ function x_changePageStep5a(x_gotoPage) {
     let nodes = [];
     let standalone_block = false;
 		let standalone_blocks = [
-				//"annotatedDiagram",
-				//"categories",
-				//"dragBropLabel",
-				//"gapFill",
+				"annotatedDiagram",
+				"categories",
+				"dragDropLabel",
+				"gapFill",
 				"mcq",
-				//"modelAnswer",
-				//"opinion",
+				"modelAnswer",
+				"opinion",
 				"quiz",
-				//"textMatch",
-				//"timeline",
-				//"topXQ",
+				"textMatch",
+				"timeline",
+				"topXQ",
 		]; //Add all modules/pages that have been replaced by blocks
     // if there are blocks on this page: set x_blocksXML etc
     if (standalone_blocks.includes(x_currentPageXML.nodeName)){ 

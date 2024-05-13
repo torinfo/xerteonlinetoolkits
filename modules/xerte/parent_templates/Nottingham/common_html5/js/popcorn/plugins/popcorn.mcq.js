@@ -562,7 +562,7 @@ optional: feedback page synch play enable
 							"overflow-x": "hidden"
 						});
 						$optHolder.show();
-						$checkBtn.show();
+						//$checkBtn.show();
 					}
 					else {
 						var hh = $(".mainMedia").height();

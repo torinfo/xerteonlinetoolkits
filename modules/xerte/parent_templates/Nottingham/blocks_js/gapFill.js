@@ -104,10 +104,10 @@ var gapFillBlock = new function() {
         var $panel = jGetElement(blockid, ".mainPanel");
 
         if (x_browserInfo.mobile == false) {
-            $panel.height(Math.max(
+           /* $panel.height(Math.max(
                 jGetElement(blockid, ".targetHolder").height() + jGetElement(blockid, ".labelHolder").outerHeight(true) + jGetElement(blockid, ".btnHolder").height(),
                 $x_pageHolder.height() - parseInt($x_pageDiv.css("padding-top")) * 2 - parseInt($panel.css("padding-top")) * 2 - 5
-            ));
+            ));*/
         }
         $pageContents.find("#hint").remove();
 

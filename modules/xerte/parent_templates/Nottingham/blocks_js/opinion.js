@@ -5,13 +5,14 @@ var opinionBlock = new function()
     this.sizeChanged = function(blockid)
     {
 
+        //$pageContents = jGetElement(blockid, ".pageContents");
         var $panel = jGetElement(blockid, ".pageContents .qPanel"),
             resized = false;
 
         if (x_browserInfo.mobile == false)
         {
 
-            $panel.height($x_pageHolder.height() - parseInt($x_pageDiv.css("padding-top")) * 2 - parseInt($panel.css("padding-top")) * 2 - 5);
+            //$panel.height($x_pageHolder.height() - parseInt($x_pageDiv.css("padding-top")) * 2 - parseInt($panel.css("padding-top")) * 2 - 5);
         }
 
         $.each(jGetElement(blockid, ".questionAudio"), function(key, qA) {
@@ -56,16 +57,15 @@ var opinionBlock = new function()
             height = jGetElement(blockid, ".infoHolder").height(),
             textSize;
 
-        if(width > height) {
-            jGetElement(blockid, ".diagram")
-                .width(height*0.90)
-                .height(height*0.90);
+        jGetElement(blockid, ".diagram")
+            .width(width*0.90)
+            .height(height*2.50);
+				width *= 0.9;
+				height *= 2.5;
+        if(width < height) {
             textSize = (width - height) / 10;
         }
         else {
-            jGetElement(blockid, ".diagram")
-                .width(width*0.90)
-                .height(width*0.90);
             textSize = (height - width) / 10;
         }
         if (textSize > 20) {

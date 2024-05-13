@@ -534,10 +534,13 @@
 								debugger
 								let $open_div = $('<div class="panel"></div>')
 										.attr("id","interactiveBlock");
-
-								x_createBlock($open_div, _this.children[0], 0);
-
+								
 								$.featherlight($open_div);
+								
+								$open_div = $("#interactiveBlock");
+								for (let i = 0; i < _this.children.length; i++) {
+									x_createBlock($open_div, _this.children[i], i+1);
+								}
 							}
 							// Keep highlighted/selected
 							if (x_currentPageXML.getAttribute("highlight") == "true") {

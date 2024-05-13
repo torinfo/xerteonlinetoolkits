@@ -422,6 +422,7 @@
 			// End Interactive Blocks
 			
 			resizeEmbededMedia($(".popcornMedia.embed"), {width: "100%", height: "100%"});
+			
 
 			// set up interactions to change nested page
 			if (x_currentPageXML.getAttribute("type") == "Acc") {
@@ -537,6 +538,13 @@
 			}
 			
 			this.sizeChanged();
+
+			/* $(".navChild").each(function(i, navChild){ */
+			/* let prevDisplay = $(this).css("display"); */
+			/* $(this).css("display", "block"); */
+			/* blockSizeChanged(navChild) */
+			/* $(this).css("display", prevDisplay); */
+			/* }); */
 			x_pageLoaded();
 		}
 
