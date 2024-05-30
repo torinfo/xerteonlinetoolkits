@@ -1,31 +1,21 @@
 var timelineBlock = new function () {
-    var timelineModel = {
-        labelTxt1: null,
-        labelTxt2: null,
-        labelTxt3: null,
-        targetTxt1: null,
-        targetTxt2: null,
-        tracked: false
-    };
-
-    var $feedback;
-
-    this.resetModelState = function(){
-        timelineModel = {
+    this.generateModelState = function(){
+        return {
             labelTxt1: null,
             labelTxt2: null,
             labelTxt3: null,
             targetTxt1: null,
             targetTxt2: null,
-            tracked: false
+            tracked: false,
+						labels: null,
+						selectedLabel: null,
         };
     }
 
     // function called every time the page is viewed after it has initially loaded
     this.pageChanged = function (blockid) {
-        timelineModel = XTGetInteractionModelState(x_currentPage, x_getBlockNr(blockid));
+        const state = jGetElement(blockid, ".pageContents").data("state");
         jGetElement(blockid, ".labelHolder .label").remove();
-        $feedback = jGetElement(blockid, ".feedback").hide();
         jGetElement(blockid, ".targetHolder .target")
             .data("currentLabel", "")
             .css("height", "auto");
@@ -35,6 +25,7 @@ var timelineBlock = new function () {
 
     // function called every time the size of the LO is changed
     this.sizeChanged = function (blockid) {
+        const state = jGetElement(blockid, ".pageContents").data("state");
 
 				if($("#x_page" + x_currentPage).is(":hidden")){
 						$("#x_page" + x_currentPage).show();
@@ -73,22 +64,26 @@ var timelineBlock = new function () {
 
         $target.height(tallestTarget + tallestLabel - 5);
 
+				let scrollParent = $("#"+blockid).scrollParent()[0];
+
         $labels.each(function () {
             var $this = $(this);
             if ($this.data("currentTarget") != "") {
+								let offset = $this.data("originalPosition");
                 // adjust label absolute position on target
                 var $thisTarget = $this.data("currentTarget");
                 $this.css({
-                    "top": $thisTarget.find("h3").position().top + $thisTarget.find("h3").height() + parseInt($thisTarget.css("padding-top")),
-                    "left": $thisTarget.position().left + parseInt($thisTarget.css("margin-left")) + parseInt($thisTarget.css("padding-left"))
+                    "top": scrollParent.scrollTop + $thisTarget.find("h3").position().top + $thisTarget.find("h3").height() + parseInt($thisTarget.css("padding-top")) - offset.y,
+                    "left": scrollParent.scrollLeft + $thisTarget.position().left + parseInt($thisTarget.css("margin-left")) + parseInt($thisTarget.css("padding-left")) - offset.x
                 });
             }
         });
     };
 
     this.leavePage = function (blockid) {
+        const state = jGetElement(blockid, ".pageContents").data("state");
         let pageXML = x_getBlockXML(x_getBlockNr(blockid));
-        if ($(pageXML).children().length > 0 && timelineModel.tracked != true) {
+        if ($(pageXML).children().length > 0 && state.tracked != true) {
             ;
             timelineBlock.finishTracking(blockid);
         }
@@ -96,19 +91,20 @@ var timelineBlock = new function () {
 
     this.init = function (blockid) {
         let pageXML = x_getBlockXML(blockid);
-        this.resetModelState();
+        let state = this.generateModelState();
+        jGetElement(blockid, ".pageContents").data("state", state);
         // store strings used to give titles to labels and targets when keyboard is being used (for screen readers)
-        timelineModel.labelTxt1 = x_getLangInfo(x_languageData.find("interactions").find("draggableItem")[0], "name", "Draggable Item");
-        timelineModel.labelTxt2 = x_getLangInfo(x_languageData.find("interactions").find("draggableItem")[0], "selected", "Item Selected");
-        timelineModel.labelTxt3 = x_getLangInfo(x_languageData.find("interactions").find("draggableItem")[0], "toSelect", "Press space to select");
-        timelineModel.targetTxt1 = x_getLangInfo(x_languageData.find("interactions").find("targetArea")[0], "description", "Drop zone for");
-        timelineModel.targetTxt2 = x_getLangInfo(x_languageData.find("interactions").find("targetArea")[0], "toSelect", "Press space to drop the selected item.");
+        state.labelTxt1 = x_getLangInfo(x_languageData.find("interactions").find("draggableItem")[0], "name", "Draggable Item");
+        state.labelTxt2 = x_getLangInfo(x_languageData.find("interactions").find("draggableItem")[0], "selected", "Item Selected");
+        state.labelTxt3 = x_getLangInfo(x_languageData.find("interactions").find("draggableItem")[0], "toSelect", "Press space to select");
+        state.targetTxt1 = x_getLangInfo(x_languageData.find("interactions").find("targetArea")[0], "description", "Drop zone for");
+        state.targetTxt2 = x_getLangInfo(x_languageData.find("interactions").find("targetArea")[0], "toSelect", "Press space to drop the selected item.");
 
         jGetElement(blockid, ".textHolder")
             .html(x_addLineBreaks(pageXML.getAttribute("text")))
             .addClass("transparent"); /* without the text having a bg the labels strangely aren't selectable in IE */
 
-        $feedback = jGetElement(blockid, ".feedback").hide();
+        let $feedback = jGetElement(blockid, ".feedback").hide();
 
         // checkBtnWidth attribute not used as button will be sized automatically
         var buttonLabel = pageXML.getAttribute("checkBtnTxt");
@@ -191,17 +187,19 @@ var timelineBlock = new function () {
                     $thisTarget = $firstTarget;
                 }
                 $thisTarget
-                    .attr("title", timelineModel.targetTxt1 + " " + this.getAttribute("text"))
+                    .attr("title", state.targetTxt1 + " " + this.getAttribute("text"))
                     .find("h3").html(this.getAttribute("name"));
                 labels.push({text: this.getAttribute("text"), correct: $thisTarget});
                 $thisTarget.data("id", i);
             });
 
         var $pageContents = jGetElement(blockid, ".pageContents");
-        $pageContents.data({
-            "labels": labels,
-            "selectedLabel": ""
-        });
+				state.labels = labels;
+				state.selectedLabel = "";
+        // $pageContents.data({
+        //     "labels": labels,
+        //     "selectedLabel": ""
+        // });
 
         // style targets
         var numColumns = 4, // max targets on row
@@ -232,8 +230,8 @@ var timelineBlock = new function () {
                 if ($(e.target).hasClass("target")) {
                     $(this).addClass("focus");
                     var $pageContents = jGetElement(blockid, ".pageContents");
-                    if ($pageContents.data("selectedLabel") != undefined && $pageContents.data("selectedLabel") != "") {
-                        $(this).attr("title", timelineModel.targetTxt1 + " " + $(this).find("h3").html() + " - " + timelineModel.targetTxt2);
+                    if (state.selectedLabel != undefined && state.selectedLabel != "") {
+                        $(this).attr("title", state.targetTxt1 + " " + $(this).find("h3").html() + " - " + state.targetTxt2);
                     }
                 }
             })
@@ -241,13 +239,13 @@ var timelineBlock = new function () {
                 var $pageContents = jGetElement(blockid, ".pageContents");
                 $(this)
                     .removeClass("focus")
-                    .attr("title", timelineModel.targetTxt1 + " " + $(this).find("h3").html());
+                    .attr("title", state.targetTxt1 + " " + $(this).find("h3").html());
             })
             .keypress(function (e) {
                 if ($(e.target).hasClass("target")) {
                     var charCode = e.charCode || e.keyCode;
                     if (charCode == 32) {
-                        var $selectedLabel = jGetElement(blockid, ".pageContents").data("selectedLabel");
+                        var $selectedLabel = state.selectedLabel;
                         if ($selectedLabel != undefined && $selectedLabel != "") {
                             timelineBlock.dropLabel($(this), $selectedLabel, blockid); // target, label
                         }
@@ -258,26 +256,26 @@ var timelineBlock = new function () {
 
         // set tab index for targets - leaving space between them for a label to be put on it
         var tabIndex = 1;
-        tabIndex += $pageContents.data("labels").length;
+        tabIndex += state.labels.length;
         $targetHolder.find(".target").each(function (i) {
             tabIndex++;
             var $this = $(this);
             $this.attr({
                 "tabindex": tabIndex,
-                "title": timelineModel.targetTxt1 + " " + $this.find("h3").html()
+                "title": state.targetTxt1 + " " + $this.find("h3").html()
             });
             tabIndex++;
         });
         $button.attr("tabindex", tabIndex + 1);
         $feedback.attr("tabindex", tabIndex + 2);
 
-        this.createLabels(blockid);
+        this.initTracking(blockid);
 
         if (pageXML.getAttribute("interactivity") == "Timeline") {
             $targetHolder.find(".target").css("background-image", "url('" + x_templateLocation + "common_html5/arrow.png')");
         }
 
-        this.initTracking(blockid);
+        this.createLabels(blockid);
 
 				this.sizeChanged(blockid);
         x_pageLoaded();
@@ -285,7 +283,7 @@ var timelineBlock = new function () {
 
     this.finishTracking = function(blockid)
     {
-        timelineModel = XTGetInteractionModelState(x_currentPage, x_getBlockNr(blockid));
+        const state = jGetElement(blockid, ".pageContents").data("state");
 
         var l_options = [],
             l_answers = [],
@@ -293,8 +291,8 @@ var timelineBlock = new function () {
             l_correct = 0,
             l_total = 0;
 
-        timelineModel.tracked = true;
-        XTSetInteractionModelState(x_currentPage, x_getBlockNr(blockid), timelineModel);
+        state.tracked = true;
+        //XTSetInteractionModelState(x_currentPage, x_getBlockNr(blockid), state);
 
         jGetElement(blockid, ".labelHolder .label").each(function (i) {
 
@@ -332,9 +330,10 @@ var timelineBlock = new function () {
     this.initTracking = function (blockid) {
 
         let pageXML = x_getBlockXML(blockid);
-        this.weighting = 1.0;
+        const state = jGetElement(blockid, ".pageContents").data("state");
+        let weighting = 1.0;
         if (pageXML.getAttribute("trackingWeight") != undefined) {
-            this.weighting = pageXML.getAttribute("trackingWeight");
+            weighting = pageXML.getAttribute("trackingWeight");
         }
 
         // XTSetPageType(x_currentPage, 'numeric', 1, this.weighting);
@@ -358,26 +357,27 @@ var timelineBlock = new function () {
         }
         XTEnterInteraction(x_currentPage, x_getBlockNr(blockid), 'match', label, correctOptions, correctAnswers, correctFeedbacks, pageXML.getAttribute("grouping"), null);
         XTSetLeavePage(x_currentPage, x_getBlockNr(blockid), this.leavePage);
-        XTSetInteractionType(x_currentPage, x_getBlockNr(blockid), 'match', this.weighting, 1);
+        XTSetInteractionType(x_currentPage, x_getBlockNr(blockid), 'match', weighting, 1);
         XTSetInteractionPageXML(x_currentPage, x_getBlockNr(blockid), pageXML);
-        XTSetInteractionModelState(x_currentPage, x_getBlockNr(blockid), timelineModel);
     }
 
 
     this.createLabels = function (blockid) {
+        const state = jGetElement(blockid, ".pageContents").data("state");
+        let $feedback = jGetElement(blockid, ".feedback").hide();
         // randomise order and create labels
         var $pageContents = jGetElement(blockid, ".pageContents"),
             labels = [],
-            tempLabels = $pageContents.data("labels").slice(0),
+            tempLabels = state.labels.slice(0),
             i;
 
-        for (i = 0; i < $pageContents.data("labels").length; i++) {
+        for (i = 0; i < state.labels.length; i++) {
             var labelNum = Math.floor(Math.random() * tempLabels.length);
             labels.push(tempLabels[labelNum]);
             tempLabels.splice(labelNum, 1);
         }
         for (i = 0; i < labels.length; i++) {
-            jGetElement(blockid, ".labelHolder").append('<div class="label panel" id="label' + i + '" tabindex="' + (i + 2) + '" title="' + timelineModel.labelTxt1 + '">' + x_addLineBreaks(labels[i].text) + '</div>');
+            jGetElement(blockid, ".labelHolder").append('<div class="label panel" id="label' + i + '" tabindex="' + (i + 2) + '" title="' + state.labelTxt1 + '">' + x_addLineBreaks(labels[i].text) + '</div>');
             var $thisLabel = jGetElement(blockid, "#label" + i);
             $thisLabel.data("target", labels[i].correct);
 
@@ -399,20 +399,20 @@ var timelineBlock = new function () {
 												let blockPosition = $("#"+blockid).parent()[0].getBoundingClientRect(); 
 												let helperRect = ui.helper[0].getBoundingClientRect();
 												let scrollParent = $("#"+blockid).scrollParent()[0];
-												ui.helper.data("originalPosition",{y: scrollParent.scrollTop + helperRect.top - pagePosition.y, x: scrollParent.scrollLeft + helperRect.left - pagePosition.x - blockPosition.x});
+												ui.helper.data("originalPosition",{y: scrollParent.scrollTop + helperRect.top - blockPosition.y, x: scrollParent.scrollLeft + helperRect.left - blockPosition.x});
 										}
 
                     // remove any focus/selection highlights made by tabbing to labels/targets
                     var $pageContents = jGetElement(blockid, ".pageContents");
                     if (jGetElement(blockid, ".labelHolder .label.focus").length > 0) {
-                        jGetElement(blockid, ".labelHolder .label.focus").attr("title", timelineModel.labelTxt1);
-                    } else if ($pageContents.data("selectedLabel") != undefined && $pageContents.data("selectedLabel") != "") {
-                        $pageContents.data("selectedLabel").attr("title", timelineModel.labelTxt1);
-                        $pageContents.data("selectedLabel", "");
+                        jGetElement(blockid, ".labelHolder .label.focus").attr("title", state.labelTxt1);
+                    } else if (state.selectedLabel != undefined && state.selectedLabel != "") {
+                        state.selectedLabel.attr("title", state.labelTxt1);
+                        state.selectedLabel = "";
                     }
                     var targetInFocus = jGetElement(blockid, ".targetHolder .target.focus");
                     if (targetInFocus.length > 0) {
-                        targetInFocus.attr("title", timelineModel.targetTxt1 + " " + targetInFocus.find("h3").html());
+                        targetInFocus.attr("title", state.targetTxt1 + " " + targetInFocus.find("h3").html());
                     }
                     jGetElement(blockid, ".dragDropHolder .selected").removeClass("selected");
                     jGetElement(blockid, ".dragDropHolder .focus").removeClass("focus");
@@ -425,34 +425,34 @@ var timelineBlock = new function () {
             // these highlight selected labels / targets and set the title attr which the screen readers will use
             .focusin(function () {
                 var $this = $(this);
-                if ($this.is($pageContents.data("selectedLabel")) == false) {
+                if ($this.is(state.selectedLabel) == false) {
                     $this
                         .addClass("focus")
-                        .attr("title", timelineModel.labelTxt1 + " - " + timelineModel.labelTxt3);
+                        .attr("title", state.labelTxt1 + " - " + state.labelTxt3);
                 }
             })
             .focusout(function () {
                 var $this = $(this);
                 $this.removeClass("focus");
-                if ($this.is($pageContents.data("selectedLabel")) == false) {
-                    $this.attr("title", timelineModel.labelTxt1);
+                if ($this.is(state.selectedLabel) == false) {
+                    $this.attr("title", state.labelTxt1);
                 }
             })
             .keypress(function (e) {
                 var charCode = e.charCode || e.keyCode;
                 if (charCode == 32) {
                     var $pageContents = jGetElement(blockid, ".pageContents");
-                    if ($pageContents.data("selectedLabel") != undefined && $pageContents.data("selectedLabel") != "") {
-                        $pageContents.data("selectedLabel")
+                    if (state.selectedLabel != undefined && state.selectedLabel != "") {
+                        state.selectedLabel
                             .removeClass("selected")
-                            .attr("title", timelineModel.labelTxt1);
+                            .attr("title", state.labelTxt1);
                     }
                     var $this = $(this);
                     $this
                         .removeClass("focus")
                         .addClass("selected")
-                        .attr("title", timelineModel.labelTxt1 + ' - ' + timelineModel.labelTxt2);
-                    $pageContents.data("selectedLabel", $this);
+                        .attr("title", state.labelTxt1 + ' - ' + state.labelTxt2);
+                    state.selectedLabel = $this;
 
                     $feedback.hide();
                     jGetElement(blockid, ".dragDropHolder .tick").remove();
@@ -465,7 +465,7 @@ var timelineBlock = new function () {
 
     // function called when label dropped on target - by mouse or keyboard
     this.dropLabel = function ($thisTarget, $thisLabel, blockid) {
-        timelineModel = XTGetInteractionModelState(x_currentPage, x_getBlockNr(blockid));
+        const state = jGetElement(blockid, ".pageContents").data("state");
         var prevLabel = $thisTarget.data("currentLabel"),
             prevTarget = $thisLabel.data("currentTarget");
 
@@ -505,10 +505,10 @@ var timelineBlock = new function () {
                 prevTarget.data("currentLabel", "");
             }
 
-            jGetElement(blockid, ".pageContents").data("selectedLabel", "");
+            state.selectedLabel = "";
         }
 
-        $thisTarget.attr("title", timelineModel.targetTxt1 + " " + $thisTarget.find("h3").html());
+        $thisTarget.attr("title", state.targetTxt1 + " " + $thisTarget.find("h3").html());
 				
 				let $lblHolder = jGetElement(blockid, ".labelHolder");
 				//let offset = $thisLabel.data("originalPosition");
@@ -516,11 +516,11 @@ var timelineBlock = new function () {
 				let scrollParent = $("#"+blockid).scrollParent()[0];
 
         $thisLabel
-            .attr("title", timelineModel.labelTxt1)
+            .attr("title", state.labelTxt1)
             .removeClass("selected")
             .css({
-                "top": scrollParent.scrollTop + $thisTarget.find("h3").position().top + $thisTarget.find("h3").height() + parseInt($thisTarget.css("padding-top")) - offset.y,
-                "left": scrollParent.scrollLeft + $thisTarget.position().left + parseInt($thisTarget.css("margin-left")) - parseInt($thisLabel.css("padding-left")) - offset.x
+                "top": scrollParent.scrollTop + $thisTarget.find("h3").position().top + $thisTarget.find("h3").height() - $lblHolder.height() + parseInt($thisTarget.css("padding-top")) - offset.y,
+                "left": scrollParent.scrollLeft + $thisTarget.position().left + parseInt($thisTarget.css("margin-left")) + parseInt($thisTarget.css("padding-left")) - offset.x
             });
     }
 };

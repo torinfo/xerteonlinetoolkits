@@ -1,0 +1,47 @@
+/* hotspotImage.html */
+	
+	.hotspotImage .panel.right {
+		float:	right;
+		margin:	0 0 20px 20px;
+	}
+	
+	.hotspotImage .panel.left {
+		float:	left;
+		margin:	0 20px 20px 0;
+	}
+	
+	.hotspotImage .imageHolder {
+		position:	relative;
+	}
+	
+	.pageContents.hotspotImage .hotspot {
+		position:	absolute;
+		cursor:		pointer;
+	}
+	
+	.hotspotImage .infoHolder {
+		padding-top: 10px;
+	}
+	
+	.hotspotImage .infoHolder hr {
+		border: none;
+		background-color: #CCCCCC;
+		height: 1px;
+		margin-bottom: 20px;
+	}
+	
+	.pageContents.hotspotImage .highlightBorder {
+		border:		1px solid;
+		margin-top: -1px;
+		margin-left: -1px;
+	}
+	
+	.pageContents.hotspotImage .selected {
+		margin-top: -2px;
+		margin-left: -2px;
+	}
+	
+	.hotspotImage .btnHolder {
+		margin-top: 0.5em;
+		float: right;
+	}

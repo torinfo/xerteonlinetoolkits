@@ -172,7 +172,7 @@ var modelAnswerBlock = new function () {
                 .click(function () {
                     // unlike in Flash version we can't automatically copy text to clipboard - instead the text to copy is put together, shown highlighted in a dialog, and the user is prompted to Ctrl-C to copy
                     jGetElement(blockid, ".x_popupDialog").parent().detach(); // removes any dialogs already open
-                    var $thisDialog = $('<div id="modelAnswerDialog" class="x_popupDialog">' + x_pageInfo[x_currentPage].savedData + '</div>').appendTo($x_body);
+                    var $thisDialog = $('<div id="modelAnswerDialog" class="x_popupDialog">' + jGetElement(blockid, ".pageContents").data("savedData") + '</div>').appendTo($x_body);
 
                     $thisDialog.dialog({
                         closeOnEscape: true,
@@ -183,7 +183,7 @@ var modelAnswerBlock = new function () {
                         }
                     });
 
-                    $thisDialog.html(x_pageInfo[x_currentPage].savedData);
+                    $thisDialog.html(jGetElement(blockid, ".pageContents").data("savedData"));
                     x_setDialogSize($thisDialog);
 
                     x_selectText("modelAnswerDialog");
@@ -272,7 +272,7 @@ var modelAnswerBlock = new function () {
         }
 
         stringToSave = stringToSave.replace("{A}", x_addLineBreaks(answerTxt, true));
-        x_pageInfo[x_currentPage].savedData = stringToSave;
+        jGetElement(blockid, ".pageContents").data("savedData", stringToSave);
     };
 
     this.finishTracking = function (blockid) {

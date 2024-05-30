@@ -2647,7 +2647,7 @@ function x_createBlock(container, module, modulePosition){
 			name += "Block";
 	}
 	//Insert block CSS files. These are different from the not block interactive modules
-	x_insertCSS(x_templateLocation + "blocks_html5/" + name + ".css", null, false, "page_model_css_"+name);
+	x_insertCSS(x_templateLocation + "blocks_html5/" + name + ".css", ()=>{$(window).trigger("resize");}, false, "page_model_css_"+name);
 }
 
 function x_loadAllBlocks(){
@@ -2655,11 +2655,6 @@ function x_loadAllBlocks(){
 	for (let module of x_blocksXML[x_currentPage]){
 		x_loadInBlock("block"+counter, module);
 		counter++;
-	}
-	if (document.readyState === "loading") {
-		document.addEventListener("DOMContentLoaded", loaded);
-	} else {
-			loaded();
 	}
 }
 
@@ -2674,13 +2669,12 @@ function x_loadInBlock(blockid, module){
 	}
 	container.load(x_templateLocation + "blocks_html5/" + name + ".html", function() {
 		window[name].init(blockid);
-		$(window).trigger('resize');
 	});
 }
 
 // Function that does a jquery query but with blockid
 function jGetElement(blockid, element) {
-
+	let temp_element;
 	if(element.includes(",")){
 
 		var finalElement = "";
@@ -2692,9 +2686,15 @@ function jGetElement(blockid, element) {
 			}
 			finalElement += e;
 		}
-		return $(finalElement)
+		temp_element = $(finalElement);
+	} else{
+		temp_element = $("#" + blockid + ' ' + element);
 	}
-	return $("#" + blockid + ' ' + element)
+	if(temp_element.length == 0){
+			let noop = 0;
+			//console.trace("\"" + temp_element.selector + "\" not found");
+	}
+	return temp_element;
 }
 // The following functions are necessary as the pages javascript files
 // cannot use global variables anymore as multiple blocks would use the same
@@ -3077,13 +3077,28 @@ function x_changePageStep5a(x_gotoPage) {
 				"textMatch",
 				"timeline",
 				"topXQ",
+				"buttonQuestion",
+				"buttonSequence",
+				"decision",
+				"documentation",
+				"grid",
+				"hotspotImage",
+				"hotSpotQuestion",
+				"interactiveText",
+				"inventory",
+				"modelAnswerResults",
+				"modify",
+				"textCorrection",
+				"textHighlight",
+				// "",
 		]; //Add all modules/pages that have been replaced by blocks
+
     // if there are blocks on this page: set x_blocksXML etc
     if (standalone_blocks.includes(x_currentPageXML.nodeName)){ 
         nodes = [x_currentPageXML];
         standalone_block = true;
     }else{
-        nodes = Array.from(x_currentPageXML.querySelectorAll("*")).filter(n=>n.nodeName.includes('Block'));
+        nodes = Array.from(x_currentPageXML.querySelectorAll("*")).filter(n=>n.nodeName.endsWith("Block"));
     }
     //Add all pages that can be blocks
 	if (x_blocksXML[x_currentPage].length == 0) {
@@ -4410,73 +4425,68 @@ function x_setFillWindow(updatePage) {
 
 // function applies CSS file to page - can't do this using media attribute in link tag or the jQuery way as in IE the page won't update with new styles
 function x_insertCSS(href, func, disable, id, keep) {
-    var css = document.createElement("link");
-    var element = null;
-    var donotreplace = false;
-    css.rel = "stylesheet";
-    css.href = href;
-    css.type = "text/css";
-    if (id != undefined)
-	{
+	var css = document.createElement("link");
+	var element = null;
+	var donotreplace = false;
+	css.rel = "stylesheet";
+	css.href = href;
+	css.type = "text/css";
+	if (id != undefined) {
 		css.id = id;
 		element = document.getElementById(id);
-		if (keep != undefined)
-        {
-           donotreplace=keep;
-        }
+		if (keep != undefined) {
+			donotreplace = keep;
+		}
 	}
 
 	// in some cases code is stopped until css loaded as some heights are done with js and depend on css being loaded
 	if (func != undefined) {
-        var f = function() {
-            if (x_cssFiles.indexOf(this) == -1) {
-                x_cssFiles.push(this);
-                if (href.indexOf("responsivetext.css") >= 0) {
-                    x_responsive.push(this);
-                    if (disable == true) {
-                        $x_mainHolder.removeClass("x_responsive");
-                        $(this).prop("disabled", true);
-                    } else {
-                        $x_mainHolder.addClass("x_responsive");
-                    }
-                }
-				else
-				{
+		var f = function () {
+			if (x_cssFiles.indexOf(this) == -1) {
+				x_cssFiles.push(this);
+				if (href.indexOf("responsivetext.css") >= 0) {
+					x_responsive.push(this);
+					if (disable == true) {
+						$x_mainHolder.removeClass("x_responsive");
+						$(this).prop("disabled", true);
+					} else {
+						$x_mainHolder.addClass("x_responsive");
+					}
+				}
+				else {
 					if (disable == true) {
 						$(this).prop("disabled", true);
 					}
 				}
-            }
-            func();
-        };
+			}
+			func();
+		};
 		css.onload = f;
 
-		css.onerror = function(){
+		css.onerror = function () {
 			func();
 		};
 
 	} else if (disable == true) {
-		css.onload = function() {
+		css.onload = function () {
 			$(this).prop("disabled", true);
 		}
 	}
 
-	if (element != null)
-    {
-        // Update element
-        if (donotreplace != true) {
-            var parent = element.parentNode;
-            parent.replaceChild(css, element);
-        }
-        else
-        {
-            if (func != undefined) func();
-        }
-    }
-    else {
-        // Create element
-        document.getElementsByTagName("head")[0].appendChild(css);
-    }
+	if (element != null) {
+		// Update element
+		if (donotreplace != true) {
+			var parent = element.parentNode;
+			parent.replaceChild(css, element);
+		}
+		else {
+			if (func != undefined) func();
+		}
+	}
+	else {
+		// Create element
+		document.getElementsByTagName("head")[0].appendChild(css);
+	}
 }
 
 // handle case where comma decimal separator has been requested

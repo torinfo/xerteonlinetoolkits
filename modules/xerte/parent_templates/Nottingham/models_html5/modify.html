@@ -9,7 +9,7 @@
  * compliance with the License. You may obtain a copy of the License at:
  *
  * http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -20,95 +20,31 @@
 
 	// pageChanged & sizeChanged functions are needed in every model file
 	// other functions for model should also be in here to avoid conflicts
-	var modify = new function() {
-		// function called every time the page is viewed after it has initially loaded
-		this.pageChanged = function() {
-			$("#button").show();
-
-			$("#modelTxt")
-				.hide()
-				.html("");
+	var modify = new function () {
+		this.init = function () {
+			this.setUp();
+			XTSetPageType(x_currentPage, 'numeric', 0, 0);
 		}
-
-		// function called every time the size of the LO is changed
+		
+		this.setUp = function() {
+			x_createBlock($("#pageContents"), x_currentPageXML, 1)
+		}
+		
 		this.sizeChanged = function() {
-
+			//window["categoriesBlock"].sizeChanged("block1");
 		}
-
-		this.init = function() {
-			var answerHeaderTxt = x_currentPageXML.getAttribute("answerHeaderTxt");
-			if (answerHeaderTxt == undefined) {
-				answerHeaderTxt = "Write your answer here:"
-			};
-			var feedbackBtnTxt = x_currentPageXML.getAttribute("feedbackBtnTxt");
-			if (feedbackBtnTxt == undefined) {
-				feedbackBtnTxt = "Feedback"
-			};
-			var feedbackBtnTip = x_currentPageXML.getAttribute("feedbackBtnTip");
-			if (feedbackBtnTip == undefined) {
-				feedbackBtnTip = "Feedback"
-			};
-            this.weighting = 1.0;
-            if (x_currentPageXML.getAttribute("trackingWeight") != undefined)
-            {
-                this.weighting = x_currentPageXML.getAttribute("trackingWeight");
-            }
-			XTSetPageType(x_currentPage, 'numeric', 1, this.weighting);
-            var label = "";
-            var modelAnswerTxt = "";
-            if (x_currentPageXML.getAttribute("trackinglabel") != null && x_currentPageXML.getAttribute("trackinglabel") != "")
-            {
-                label = x_currentPageXML.getAttribute("trackinglabel");
-            }
-            if (x_currentPageXML.getAttribute("answer") != null && x_currentPageXML.getAttribute("answer") != "")
-            {
-                modelAnswerTxt = x_currentPageXML.getAttribute("answer");
-            }
-			var initText = $("<div>").html(x_currentPageXML.getAttribute("text")).text()
-			var ansText = $("<div>").html(x_currentPageXML.getAttribute("prompt")).text()
-			var feedbackText = $("<div>").html(x_currentPageXML.getAttribute("answer")).text()
-            XTEnterInteraction(x_currentPage, 0, 'text', label, [], modelAnswerTxt, [], x_currentPageXML.getAttribute("grouping"));
-			$("#instruction").html(x_addLineBreaks(x_currentPageXML.getAttribute("instruction")));
-			$("#initText").html(initText);
-			$("#answer").html(answerHeaderTxt);
-			$("#answerTxt").html(ansText);
-
-			$("#modelTxt").hide();
-
-			$("#button")
-				.button({ label: feedbackBtnTxt })
-				.click(function() {
-					$(this).hide();
-					$("#modelTxt")
-						.show()
-						.html(feedbackText);
-                        var answerTxt = $("#answerTxt").val();
-                        result =
-                            {
-                                success: (answerTxt.trim() == "" ? false : true),
-                                score: (answerTxt.trim() == "" ? 0.0 : 100.0)
-                            };
-
-                        XTExitInteraction(x_currentPage, 0, result, [], answerTxt, []);
-                        XTSetPageScore(x_currentPage, (answerTxt.trim() == "" ? 0.0 : 100.0));
-				});
-
-			x_pageLoaded();
+		this.pageChanged = function() {
+			//this.setUp();
+			//window["categoriesBlock"].pageChanged("block1");
+		}
+		this.leavePage = function () {
+			XTSetPageScore(x_currentPage, 100);
+			document.dispatchEvent(new Event('leavepage'));
 		}
 	}
 
 	modify.init();
-
 </script>
 
-
 <div id="pageContents">
-
-	<p id="instruction"></p>
-	<textarea id="initText" rows="5" aria-label="Start text" readonly></textarea>
-	<p id="answer"></p>
-	<textarea id="answerTxt" aria-label="Answer" rows="5"></textarea>
-	<button id="button"></button>
-	<textarea id="modelTxt" rows="5" readonly aria-label="Feedback" aria-live="polite"></textarea>
-
 </div>

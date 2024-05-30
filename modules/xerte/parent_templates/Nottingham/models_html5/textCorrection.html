@@ -1,277 +1,50 @@
 <script type="text/javascript">
-    /**
-     * Licensed to The Apereo Foundation under one or more contributor license
-     * agreements. See the NOTICE file distributed with this work for
-     * additional information regarding copyright ownership.
+/**
+ * Licensed to The Apereo Foundation under one or more contributor license
+ * agreements. See the NOTICE file distributed with this work for
+ * additional information regarding copyright ownership.
 
-     * The Apereo Foundation licenses this file to you under the Apache License,
-     * Version 2.0 (the "License"); you may not use this file except in
-     * compliance with the License. You may obtain a copy of the License at:
-     *
-     * http://www.apache.org/licenses/LICENSE-2.0
-     *
-     * Unless required by applicable law or agreed to in writing, software
-     * distributed under the License is distributed on an "AS IS" BASIS,
-     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * The Apereo Foundation licenses this file to you under the Apache License,
+ * Version 2.0 (the "License"); you may not use this file except in
+ * compliance with the License. You may obtain a copy of the License at:
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 
-     * See the License for the specific language governing permissions and
-     * limitations under the License.
-     */
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 
-    var textCorrection = new function() {
-			
-			var $pageContents,
-				$attempts,
-				$answer,
-				$textArea;
-			
-            this.pageChanged = function() {
-				$pageContents = $('#pageContents');
-				$attempts = $("#attempts");
-				$answer = $("#answer");
-				$textArea = $(".answer textarea");
-            };
+	// pageChanged & sizeChanged functions are needed in every model file
+	// other functions for model should also be in here to avoid conflicts
+	var textCorrection = new function () {
+		this.init = function () {
+			this.setUp();
+			XTSetPageType(x_currentPage, 'numeric', 0, 0);
+		}
+		
+		this.setUp = function() {
+			x_createBlock($("#pageContents"), x_currentPageXML, 1)
+		}
+		
+		this.sizeChanged = function() {
+			//window["categoriesBlock"].sizeChanged("block1");
+		}
+		this.pageChanged = function() {
+			//this.setUp();
+			//window["categoriesBlock"].pageChanged("block1");
+		}
+		this.leavePage = function () {
+			XTSetPageScore(x_currentPage, 100);
+			document.dispatchEvent(new Event('leavepage'));
+		}
+	}
 
-            this.sizeChanged = function() {
-                if (x_browserInfo.mobile === false) {
-                    var $panel = $("#pageContents .panel");
-                    $panel.height($x_pageHolder.height() - parseInt($x_pageDiv.css("padding-top")) * 2 - parseInt($panel.css("padding-top")) * 2 - 5);
-                }
-
-                var $mainPanel = $("#mainPanel");
-                var padding = $mainPanel.innerWidth() - $mainPanel.width();
-            };
-
-            this.leavePage = function () {
-                if(!$pageContents.data('hasExited')) {
-                    this.exitTrackTextCorrection();
-                }
-            };
-
-            this.exitTrackTextCorrection = function () {
-                var input = $textArea.val();
-
-                var checkAnswer = false;
-                if(input === $pageContents.data('answer')){
-                    checkAnswer = true;
-                }
-
-                var result = 0;
-
-                if(checkAnswer){
-                    result = 100;
-                }else{
-                    result = 0;
-                }
-				
-                XTExitInteraction(x_currentPage, 0, result,[], input, []);
-                XTSetPageScore(x_currentPage, result);
-            };
-
-            this.init = function() {
-				$pageContents = $("#pageContents");
-				$attempts = $("#attempts");
-				$answer = $("#answer");
-				$textArea = $(".answer textarea");
-				
-				$pageContents.data('hasExited', false)
-
-                var weighting = 1.0;
-                if(x_currentPageXML.getAttribute("trackingWeight") != null){
-                    weighting = x_currentPageXML.getAttribute("trackingWeight");
-                }
-                XTSetPageType(x_currentPage, "fill in", 1, weighting);
-
-				// page layout
-                var panelWidth = x_currentPageXML.getAttribute("panelWidth"),
-                    $splitScreen = $("#pageContents .splitScreen");
-                var $textHolder = $("#textHolder");
-
-                if (panelWidth == "Full") {
-                    $("#pageContents .panel").appendTo($pageContents);
-                    $splitScreen.remove();
-                } else {
-                    $textHolder.html(x_addLineBreaks(x_currentPageXML.getAttribute("introduction")));
-
-                    var textAlign = x_currentPageXML.getAttribute("align");
-                    if (textAlign != "Right") {
-                        if (panelWidth == "Small") {
-                            $splitScreen.addClass("large");
-                        } else if (panelWidth == "Large") {
-                            $splitScreen.addClass("small");
-                        } else {
-                            $splitScreen.addClass("medium");
-                        }
-                    } else {
-                        $textHolder
-                            .removeClass("left")
-                            .addClass("right")
-                            .appendTo($splitScreen);
-                        $("#infoHolder")
-                            .removeClass("right")
-                            .addClass("left");
-                        if (panelWidth == "Small") {
-                            $splitScreen.addClass("medium");
-                        } else if (panelWidth == "Large") {
-                            $splitScreen.addClass("xlarge");
-                        } else {
-                            $splitScreen.addClass("large");
-                        }
-                    }
-                }
-
-                var $question = $("#question");
-				var originalQuestion = $('<div>').html(x_currentPageXML.getAttribute("wrongText")).text().trim();
-                var convertedQuestion = '<p>' + originalQuestion.replace(/(?:\r\n|\r|\n)/g, '<br>') + '</p>';
-                $question.html(convertedQuestion);
-
-                var answer = $('<div>').html(x_currentPageXML.getAttribute("answer")).text().trim();
-				$pageContents.data('answer', answer);
-				if (x_currentPageXML.getAttribute("disableAnswers") !== "false") {
-					var correctLabel = x_currentPageXML.getAttribute("correctLabel") !== null ? x_currentPageXML.getAttribute("correctLabel") : 'Correct Answer',
-						convertedAnswer = '<p>' + answer.replace(/(?:\r\n|\r|\n)/g, '<br>') + '</p>';
-					
-					$answer
-						.append("<h3 class='fbLabel'>" + correctLabel + "</h3>")
-						.append(convertedAnswer)
-						.hide();
-				} else {
-					$answer.remove();
-				}
-				
-				//Add aria-label to answer box
-				var answerFieldLabel = x_currentPageXML.getAttribute("answerLabel");
-				if (answerFieldLabel === undefined | answerFieldLabel === null) {
-					answerFieldLabel = "Answer";
-				}
-				$textArea.attr({"aria-label" : answerFieldLabel});
-			
-                if(x_currentPageXML.getAttribute("copyText") === "true"){
-					var placeHolder = $('<div>').html(originalQuestion).text().trim();
-                    $textArea
-						.val(placeHolder)
-						.data('placeHolder', placeHolder);
-                }
-
-                $("#FurtherClarification")
-					.append("<h3 class='fbLabel'>" + x_currentPageXML.getAttribute("FurtherClarificationLabel") + "</h3>")
-                    .append(x_currentPageXML.getAttribute("FurtherClarification"))
-					.hide();
-
-				var correctIcon = '<span class="markIcon fa fa-fw fa-x-tick"></span>';
-                var incorrectIcon = '<span class="markIcon fa fa-fw fa-x-cross"></span>';
-                var incorrect = '<p>' + incorrectIcon + x_currentPageXML.getAttribute("textWrong") + '</p>';
-                var incompleet = '<p>' + x_currentPageXML.getAttribute("textIncomplete") + '</p>';
-                var correct = '<p>' + correctIcon + x_currentPageXML.getAttribute("textRight") + '</p>';
-                var checkButtonTxt = x_currentPageXML.getAttribute("checkBtn");
-                var attemptLabel = x_currentPageXML.getAttribute("attemptLabel");
-				
-                if( x_currentPageXML.getAttribute("attemptLabel") == null){
-                    attemptLabel = "Attempts remaining";
-                }
-				
-				// no. of tries allowed
-				var amountOfTries = x_currentPageXML.getAttribute("amountOfTries");
-				
-				if (amountOfTries !== null && amountOfTries !== undefined) {
-					$pageContents.data('triesLeft', parseInt(amountOfTries));
-					$attempts.html('<p>' + attemptLabel + ": " + amountOfTries + '</p>');
-				} else {
-					$pageContents.data('triesLeft', undefined);
-					$attempts.remove();
-				}
-				
-                $("#checkButton")
-                    .button({
-                        label: checkButtonTxt
-                    })
-                    .click(function () {
-						
-                        var input = $textArea.val(),
-							attemptMade = !(input === "" || ($textArea.data('placeHolder') != undefined && $textArea.data('placeHolder') == input));
-						
-						if (attemptMade && $pageContents.data('triesLeft') !== undefined) {
-							$pageContents.data('triesLeft', $pageContents.data('triesLeft') - 1);
-						}
-						
-						var triesLeft = $pageContents.data('triesLeft');
-
-						if ($attempts.length > 0) {
-							$attempts.html('<p>' + attemptLabel + ": " + $pageContents.data('triesLeft') + '</p>');
-						}
-                        var label=x_GetTrackingTextFromHTML(x_currentPageXML.getAttribute("introduction"), "");
-                        if (x_currentPageXML.getAttribute("trackinglabel") != null && x_currentPageXML.getAttribute("trackinglabel") != "")
-                        {
-                            label = x_currentPageXML.getAttribute("trackinglabel");
-                        }
-                        XTEnterInteraction(x_currentPage, 0, "text", label, "",$pageContents.data('answer'), FurtherClarification);
-						
-						var $correctOrNot = $("#correctOrNot");
-                        $correctOrNot.html("");
-						
-						if (!attemptMade) {
-							$correctOrNot.append(incompleet);
-							
-						} else {
-							if (input == $pageContents.data('answer')) {
-								$correctOrNot.append(correct);
-							}else{
-								$correctOrNot.append(incorrect);
-							}
-
-							textCorrection.exitTrackTextCorrection();
-							$pageContents.data('hasExited', true);
-						}
-
-                        if (attemptMade && (input === $pageContents.data('answer') || triesLeft == undefined || triesLeft <= 0)) {
-							// disable check btn & text area when correct answer entered or max tries reached
-							if ((triesLeft != undefined && triesLeft <= 0) || input == $pageContents.data('answer')) {
-								$(this).hide();
-								$attempts.hide();
-								$textArea.attr('readonly','true');
-							}
-							
-							// feedback
-                            if (x_currentPageXML.getAttribute("showFurtherClarification") !== "false" && x_currentPageXML.getAttribute("FurtherClarification") != undefined && x_currentPageXML.getAttribute("FurtherClarification").trim() != '') {
-                                $('#FurtherClarification').show();
-                            }
-
-							// show the correct answer unless answer entered is correct or show answer optional property is off
-                            if (input !== $pageContents.data('answer')) {
-                                $answer.show();
-							}
-                        }
-                    });
-					
-                this.sizeChanged();
-
-                x_pageLoaded();
-            }
-        };
-
-    textCorrection.init();
-
+	textCorrection.init();
 </script>
 
-
-
 <div id="pageContents">
-    <div class="splitScreen">
-        <div id="textHolder" class="left"></div>
-        <div id="infoHolder" class="right">
-            <div id="mainPanel" class="panel">
-                <div id="question">
-
-                </div>
-                <div id="optionHolder">
-                    <div class="answer"><textarea id="text" rows="5" cols="50" spellcheck="false"></textarea></div>
-                </div>
-                <button id="checkButton"></button>
-                <div id="attempts"></div>
-                <div id="correctOrNot"></div>
-				<div id="answer"></div>
-                <div id="FurtherClarification"></div>
-            </div>
-        </div>
-    </div>
 </div>

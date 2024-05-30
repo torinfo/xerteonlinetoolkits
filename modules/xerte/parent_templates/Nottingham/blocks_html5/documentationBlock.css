@@ -1,0 +1,111 @@
+/* documentation.html */
+	
+	.documentation .pages {
+		overflow: auto;
+	}
+	
+	.documentation .pages:not(:last-child) {
+		border-bottom: 1px solid #CCCCCC;
+	}
+	
+	.documentation .pages hr {
+		border: none;
+		height: 1px;
+		background-color: #ccc;
+	}
+	
+	.documentation .pages fieldset {
+		border: 1px solid #ccc;
+	}
+	
+	.documentation .btnHolder {
+		margin-top: 0.5em;
+		float: right;
+	}
+	
+	.documentation .downloadBtn .ui-icon {
+		width:	auto;
+		height:	auto;
+	}
+	
+	.documentation .downloadBtn {
+		margin-top: 0.5em;
+	}
+	
+	.documentation .slideTxt {
+		font-weight: bold;
+		margin: 0.7em 0.5em 0;
+	}
+	
+	.documentation .item, .documentation .intro, .documentation .section {
+		margin: 1.5em 0;
+		overflow: auto;
+	}
+	
+	.documentation .item .itemImg {
+		max-width: 100%;
+		display: block;
+		margin: auto;
+	}
+	
+	.documentation .section .item:last-child, .documentation .section .intro:last-child {
+		margin-bottom: 0;
+	}
+	
+	.documentation .item:first-of-type, .documentation .intro:first-of-type {
+		margin-top: 0;
+	}
+	
+	.documentation .section legend {
+		font-weight: bold;
+	}
+	
+	.documentation .hidepage {
+		display:none;
+	}
+	
+	.documentation .question {
+		margin-top: 1em;
+	}
+	
+	.documentation .optionGroup input {
+		float: left;
+		display: block;
+	}
+
+	.documentation.optionGroup {
+		padding-top: 5px;
+		padding-bottom: 5px;
+	}
+	
+	.documentation .optionTxt {
+		cursor: pointer;
+		position: relative;
+		margin-left: 2em;
+		display: block;
+	}
+	
+	.documentation .optionGroup.horizontal {
+		display: inline;
+		float: left;
+	}
+	
+	.documentation .optionGroup.horizontal:not(:first-of-type) input {
+		margin-left: 1.5em;
+	}
+
+	.documentation .optionGroup.horizontal:not(:first-of-type) .optionTxt {
+		margin-left: 3.5em;
+	}
+	
+	.documentation .table table {
+		width: 100%;
+	}
+	
+	.documentation .table table textarea {
+		width: 90%;
+	}
+	
+	.documentation .table table td.editable {
+		text-align: center;
+	}

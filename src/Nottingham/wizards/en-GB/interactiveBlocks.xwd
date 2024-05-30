@@ -21,4 +21,36 @@
     </modelAnswerBlock>
     <annotatedDiagramBlock name="Annotated Diagram">
     </annotatedDiagramBlock>
+	<dialogBlock name="Dialog">
+	</dialogBlock>
+    <documentationBlock name="Documentation">
+	</documentationBlock>
+	<buttonSequenceBlock name="Button Sequence">
+	</buttonSequenceBlock>
+	<decisionBlock name="Decision Tree">
+	</decisionBlock>
+	<hotspotImageBlock name="Hotspot Image">
+	</hotspotImageBlock>
+	<buttonQuestionBlock name="Stimulating Question">
+	</buttonQuestionBlock>
+	<inventoryBlock name="Inventory">
+	</inventoryBlock>
+	<dictationBlock name="Dictation">
+	</dictationBlock>
+	<textHighlightBlock name="Highlight Text">
+	</textHighlightBlock>
+	<hotSpotQuestionBlock name="Hotspot Question">
+	</hotSpotQuestionBlock>
+	<interactiveTextBlock name="Interactive Text">
+	</interactiveTextBlock>
+	<interactiveVideoBlock name="Interactive Video">
+	</interactiveVideoBlock>
+	<modelAnswerResultsBlock name="Model Answer Results">
+	</modelAnswerResultsBlock>
+	<modifyBlock name="Modify Exercise">
+	</modifyBlock>
+	<gridBlock name="Sortable Grid">
+	</gridBlock>
+    <textCorrectionBlock name="Text Correction">
+	</textCorrectionBlock>
 </interactiveBlocks>

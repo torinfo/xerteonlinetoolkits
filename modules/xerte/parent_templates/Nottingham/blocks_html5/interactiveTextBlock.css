@@ -1,0 +1,154 @@
+/* interactiveText.html */
+
+	.interactiveText h3 {
+		padding: 5px;
+	}
+
+	.interactiveText .passageHolder {
+		margin: 20px 10px;
+		overflow:	hidden;
+	}
+
+	.interactiveText .passageHolder.inline {
+		margin:	0px 0px 20px 20px;
+	}
+
+	.interactiveText .passageHolder.mobileInline {
+		margin:	20px 0px 20px -10px;
+	}
+
+	.interactiveText .passage {
+		margin:			0px;
+		display:		block;
+		line-height:	2;
+	}
+
+	.interactiveText .passage span {
+		padding-bottom:	2px;
+		-moz-transition: background-color 200ms linear;
+		-ms-transition: background-color 200ms linear;
+		-o-transition: background-color 200ms linear;
+		-webkit-transition: background-color 200ms linear;
+		transition: background-color 200ms linear;
+	}
+
+	.interactiveText .passage .highlight {
+		padding-top:	5px;
+		padding-bottom:	5px;
+	}
+
+	.pageContents.interactiveText.line .passage .highlight {
+		padding-bottom:	2px;
+	}
+
+	.interactiveText .passage .on {
+		padding-top:	5px;
+	}
+
+	.pageContents.interactiveText.line .passage .on {
+		padding-bottom:	3px;
+	}
+
+	.pageContents.interactiveText.explore .passage, .pageContents.interactiveText.find .passage, .pageContents.interactiveText.find2 .passage {
+		cursor: pointer;
+	}
+
+	.pageContents.interactiveText.find .feedback, .pageContents.interactiveText.find2 .feedback {
+		margin-top:	0.5em;
+		width: 100%;
+	}
+
+	.pageContents.interactiveText .feedbackTxt{
+		padding-top: 10px;
+		padding-left: 5px;
+		font-size: 2.5vmin;
+	}
+
+	.pageContents.interactiveText table {
+		margin-left: 5px;
+	}
+
+	.pageContents.interactiveText.find2 .feedback h3 {
+		border-top: 1px solid #ccc;
+		padding-top: 1em;
+	}
+
+	.interactiveText .groupInfo h3 {
+		border-top: 1px solid #ccc;
+		padding-top: 1em;
+	}
+
+	.interactiveText .groupInfo, .questionHolder {
+		margin-top:	1em;
+		padding-top: 1em;
+	}
+
+	.interactiveText .questionHolder {
+		border-top: 1px solid #ccc;
+	}
+
+	.interactiveText .btnHolder button {
+		margin:	10px;
+		float:	left;
+	}
+
+	.pageContents.interactiveText.show .btnHolder, .pageContents.interactiveText.find .btnHolder, .pageContents.interactiveText.find2 .btnHolder {
+		border-bottom:	1px solid #CCCCCC;
+		padding-bottom:	0.8em;
+		margin-bottom:	1em;
+	}
+
+	.pageContents.interactiveText.show2 .btnHolder {
+		border-top: 1px solid #CCCCCC;
+		padding-top: 0.5em;
+		margin-top: 0.5em;
+	}
+
+	.pageContents.interactiveText.show2 .btnHolder button {
+		margin:	0px;
+	}
+
+	.pageContents.interactiveText.show2 .btnHolder .prevBtn {
+		margin-right: 0.5em;
+	}
+
+	.pageContents.interactiveText .listItem {
+		cursor:			pointer;
+		font-weight:	bold;
+		display:		block;
+		padding:		5px;
+		text-decoration: none;
+	}
+
+	.pageContents.interactiveText.show .listItem, .pageContents.interactiveText.find .listItem, .pageContents.interactiveText.find2 .listItem {
+		display:	inline-block;
+		margin-right:	1em;
+	}
+
+	.pageContents.interactiveText.mcq .optionHolder {
+		margin-top:	15px;
+		margin-bottom:	15px;
+	}
+
+	.pageContents.interactiveText.mcq input {
+		float:		left;
+		display:	block;
+	}
+
+	.pageContents.interactiveText.mcq .optionGroup {
+		padding-top:	5px;
+		padding-bottom:	5px;
+	}
+
+	 .pageContents.interactiveText.mcq .optionTxt {
+		cursor:			pointer;
+		position:		relative;
+		margin-left:	2em;
+		display:		block;
+	}
+
+	.interactiveText .more {
+		text-decoration:none;
+		margin-left:	0.5em;
+	}
+

@@ -1,0 +1,376 @@
+/**
+ * Licensed to The Apereo Foundation under one or more contributor license
+ * agreements. See the NOTICE file distributed with this work for
+ * additional information regarding copyright ownership.
+
+ * The Apereo Foundation licenses this file to you under the Apache License,
+ * Version 2.0 (the "License"); you may not use this file except in
+ * compliance with the License. You may obtain a copy of the License at:
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+// pageChanged & sizeChanged functions are needed in every model file
+// other functions for model should also be in here to avoid conflicts
+var dictationBlock = new function () {
+	// function called every time the page is viewed after it has initially loaded
+	this.pageChanged = function (blockid) {
+		if (jGetElement(blockid, ".pageContents").data("mediaElement") != undefined) {
+			jGetElement(blockid, ".pageContents").data("mediaElement").setCurrentTime(jGetElement(blockid, ".pageContents").data("captionInfo")[jGetElement(blockid, ".pageContents").data("current")].start);
+		}
+
+		jGetElement(blockid, ".button").show();
+	}
+
+	// function called every time the size of the LO is changed
+	this.sizeChanged = function (blockid) {
+		if($("#x_page" + x_currentPage).is(":hidden")){		
+				$("#x_page" + x_currentPage).show();
+		}
+		var $panel = jGetElement(blockid, ".pageContents .panel");
+		$panel.height($x_pageHolder.height() - parseInt($x_pageDiv.css("padding-top")) * 2 - parseInt($panel.css("padding-top")) * 2 - 5);
+
+		var audioBarW = 0,
+			$pageAudio = jGetElement(blockid, ".pageAudio");
+
+		$pageAudio.find(".mejs-inner .mejs-controls").children().each(function () {
+			audioBarW += $(this).outerWidth();
+		});
+
+		// var diff = audioBarW - $pageAudio.closest(".audioHolder").width();
+		// if (diff > 1 || diff < -1) {
+		// 	$x_window.resize();
+		// }
+	}
+
+	this.init = function (blockid) {
+		let pageXML = x_getBlockXML(blockid);
+		jGetElement(blockid, ".pageContents").data({captionInfo: []});
+		//Add aria-label to answer box
+		var answerFieldLabel = pageXML.getAttribute("answerFieldLabel");
+		if (answerFieldLabel === undefined | answerFieldLabel === null) {
+			answerFieldLabel = "Answer";
+		}
+		jGetElement(blockid, ".answerTxt").attr({ "aria-label": answerFieldLabel });
+
+		// uses data from timedText file if there is one - otherwise use nested page info
+		if (pageXML.getAttribute("timedText") != "" && pageXML.getAttribute("timedText") != undefined && pageXML.getAttribute("sound") != "" && pageXML.getAttribute("sound") != undefined) {
+
+			x_checkMediaExists(x_evalURL(pageXML.getAttribute("timedText")), function (mediaExists) {
+				if (mediaExists) {
+					x_checkMediaExists(x_evalURL(pageXML.getAttribute("sound")), function (mediaExists) {
+						if (mediaExists) {
+							// both timedText & sound files exist
+							dictationBlock.ttCaptions(blockid);
+						} else {
+							dictationBlock.xmlCaptions(blockid);
+						}
+					});
+				} else {
+					dictationBlock.xmlCaptions(blockid);
+				}
+			});
+		} else {
+			dictationBlock.xmlCaptions(blockid);
+		}
+	}
+
+	this.ttCaptions = function (blockid) {
+		console.trace("init");
+		let pageXML = x_getBlockXML(blockid);
+		let captionInfo = jGetElement(blockid, ".pageContents").data("captionInfo");
+		$.ajax({
+			type: "GET",
+			url: x_evalURL(pageXML.getAttribute("timedText")),
+			dataType: "xml",
+			success: function (xml) {
+				$(xml).find("P, p").each(function () {
+					var $this = $(this);
+					captionInfo.push({
+						prompt: "",
+						answer: $this.text().replace(/(\n|\r|\r\n)/g, "<br />"),
+						start: $this.attr("begin"),
+						end: $this.attr("end")
+					});
+					// replace from x_addLineBreaks function done here directly as text from timed text file won't be changed correctly otherwise
+				});
+
+				jGetElement(blockid, ".pageContents").data({
+					"captionInfo": captionInfo,
+					"audioSrc": "timedTxt"
+				});
+				dictationBlock.setup(blockid);
+			},
+
+			error: function () {
+				dictationBlock.xmlCaptions(blockid);
+			}
+		});
+	}
+
+	this.xmlCaptions = function (blockid) {
+		console.trace("init");
+		let pageXML = x_getBlockXML(blockid);
+		let captionInfo = jGetElement(blockid, ".pageContents").data("captionInfo");
+		$(pageXML).children().each(function () {
+			var $this = $(this);
+			captionInfo.push({
+				prompt: $this.attr("prompt"),
+				name: $this.attr("name"),
+				answer: $this.attr("answer"),
+				audio: $this.attr("audio")
+			});
+		});
+
+		jGetElement(blockid, ".pageContents").data("captionInfo", captionInfo);
+		dictationBlock.setup(blockid);
+	}
+
+	this.setup = function (blockid) {
+		let pageXML = x_getBlockXML(blockid);
+
+		var panelWidth = pageXML.getAttribute("panelWidth");
+
+		this.initTracking(blockid);
+		jGetElement(blockid, ".pageContents").data("isRestarted", false);
+
+		let showBtnTxt = "";
+
+		if (XTGetMode() != "normal") {
+			showBtnTxt = pageXML.getAttribute("showText") != undefined && pageXML.getAttribute("showText") != "" ? pageXML.getAttribute("showText") : "Show Answer";
+		}
+		else {
+			showBtnTxt = pageXML.getAttribute("trackedShowText") != undefined && pageXML.getAttribute("trackedShowText") != "" ? pageXML.getAttribute("trackedShowText") : "Submit";
+		}
+
+		if (panelWidth == "Full") {
+			jGetElement(blockid, ".pageContents .panel").appendTo(jGetElement(blockid, ".pageContents"));
+			jGetElement(blockid, ".pageContents .splitScreen").remove();
+		} else {
+			jGetElement(blockid, ".textHolder").html(x_addLineBreaks(pageXML.getAttribute("text")));
+			if (panelWidth == "Small") {
+				jGetElement(blockid, ".pageContents .splitScreen").addClass("large"); // make text area on left large so panel on right is small
+			} else if (panelWidth == "Large") {
+				jGetElement(blockid, ".pageContents .splitScreen").addClass("small");
+			} else {
+				jGetElement(blockid, ".pageContents .splitScreen").addClass("medium");
+			}
+		}
+
+		jGetElement(blockid, ".showBtn")
+			.button({
+				label: showBtnTxt
+			})
+			.click(function () {
+				var feedback;
+				var $this = $(this);
+				jGetElement(blockid, ".showBtn").button("disable");
+				//Formats the answer to te correct format, so we can compare it with the input to check if it is correct
+
+				var text = $("<div/>").html(jGetElement(blockid, ".pageContents").data("captionInfo")[jGetElement(blockid, ".pageContents").data("current")].answer).text().replace(/(\r\n|\n|\r)/gm, "");
+				//Checks if the answer is correct, and if so it adds one to the total of correct answers
+				var answer = jGetElement(blockid, '.answerTxt').val();
+				var correct = false;
+				jGetElement(blockid, ".answer").slideDown(function () {
+					if (jGetElement(blockid, ".pageContents").data("current") + 1 < jGetElement(blockid, ".pageContents").data("captionInfo").length) {
+						jGetElement(blockid, ".showBtn").button("enable");
+					}
+					else {
+						if (XTGetMode() == "normal") {
+							jGetElement(blockid, ".showBtn").button("disable");
+						}
+						else {
+							jGetElement(blockid, ".showBtn").button("enable");
+						}
+					}
+				});
+				if (answer == text) {
+					correct = true;
+					feedback = "Correct";
+					if (pageXML.getAttribute("showCorrectness") != null && pageXML.getAttribute("showCorrectness") != "false") {
+						jGetElement(blockid, ".correct").show();
+					}
+				}
+				else {
+					feedback = "Incorrect";
+					if (pageXML.getAttribute("showCorrectness") != null && pageXML.getAttribute("showCorrectness") != "false") {
+						jGetElement(blockid, ".incorrect").show();
+					}
+				}
+				var result =
+				{
+					success: correct,
+					score: (correct ? 100.0 : 0.0)
+				};
+				XTExitInteraction(x_currentPage, x_getBlockNr(blockid), result, [], answer, feedback, jGetElement(blockid, ".pageContents").data("current"));
+
+				if (jGetElement(blockid, ".pageContents").data("current") + 1 < jGetElement(blockid, ".pageContents").data("captionInfo").length) {
+					jGetElement(blockid, ".nextBtn").button("enable");
+				} else {
+					//Where done, finish tracking
+					dictationBlock.finishTracking(blockid);
+					jGetElement(blockid, ".restartBtn").button("enable");
+				}
+
+			});
+
+		jGetElement(blockid, ".nextBtn")
+			.button({
+				label: pageXML.getAttribute("nextText") != undefined && pageXML.getAttribute("nextText") != "" ? pageXML.getAttribute("nextText") : "Next",
+				"disabled": true
+			})
+			.click(function () {
+				$(this).button("disable");
+				jGetElement(blockid, ".showBtn").button("enable");
+
+				jGetElement(blockid, ".pageContents").data("current", jGetElement(blockid, ".pageContents").data("current") + 1);
+				dictationBlock.loadQ(blockid);
+			});
+
+		jGetElement(blockid, ".restartBtn")
+			.button({
+				label: pageXML.getAttribute("restartText") != undefined && pageXML.getAttribute("restartText") != "" ? pageXML.getAttribute("restartText") : "Restart",
+				"disabled": true
+			})
+			.click(function () {
+				jGetElement(blockid, ".pageContents").data("isRestarted", true);
+				$(this).button("disable");
+				jGetElement(blockid, ".showBtn").button("enable");
+
+				dictationBlock.sortCaptions(blockid);
+			});
+
+		if (XTGetMode() == "normal") {
+			jGetElement(blockid, ".restartBtn").hide();
+		}
+
+		if (jGetElement(blockid, ".pageContents").data("captionInfo").length == 0) {
+			jGetElement(blockid, ".answerTxt, #btnHolder").remove();
+			x_pageLoaded();
+		} else {
+			this.sortCaptions(blockid);
+		}
+	}
+
+	this.sortCaptions = function (blockid) {
+		let pageXML = x_getBlockXML(blockid);
+		let isRestarted = jGetElement(blockid, ".pageContents").data("isRestarted")?? false;
+		jGetElement(blockid, ".pageContents").data({
+			"captionInfo": pageXML.getAttribute("randomise") == "true" && !isRestarted ? x_shuffleArray(jGetElement(blockid, ".pageContents").data("captionInfo")) : jGetElement(blockid, ".pageContents").data("captionInfo"),
+			"current": 0
+		});
+		this.loadQ(blockid);
+	}
+
+	this.loadQ = function (blockid) {
+		let pageXML = x_getBlockXML(blockid);
+		let correctText = pageXML.getAttribute("correctText") != undefined && pageXML.getAttribute("correctText") != "" ? pageXML.getAttribute("correctText") : "Correct";
+		let incorrectText = pageXML.getAttribute("incorrectText") != undefined && pageXML.getAttribute("incorrectText") != "" ? pageXML.getAttribute("incorrectText") : "Incorrect";
+		let count = null;
+		if (count != null && count != "") {
+			jGetElement(blockid, ".count").html(pageXML.getAttribute("countText").replace("{i}", jGetElement(blockid, ".pageContents").data("current") + 1).replace("{n}", jGetElement(blockid, ".pageContents").data("captionInfo").length));
+		} else {
+			jGetElement(blockid, ".count").hide();
+		}
+
+		if (x_addLineBreaks(jGetElement(blockid, ".pageContents").data("captionInfo")[jGetElement(blockid, ".pageContents").data("current")].prompt == "")) {
+			jGetElement(blockid, ".prompt").hide();
+		} else {
+			jGetElement(blockid, ".prompt")
+				.show()
+				.html(x_addLineBreaks(jGetElement(blockid, ".pageContents").data("captionInfo")[jGetElement(blockid, ".pageContents").data("current")].prompt));
+		}
+		jGetElement(blockid, ".answerTxt").val("");
+
+		//Correct answer
+		var answer = $("<div/>").html(jGetElement(blockid, ".pageContents").data("captionInfo")[jGetElement(blockid, ".pageContents").data("current")].answer);
+
+		// Answer to be shown
+		jGetElement(blockid, ".answer").hide()
+			.html(answer);
+
+		// Show incorrect if requested
+		jGetElement(blockid, ".incorrect")
+			.hide()
+			.html('<span class="tick fa fa-fw fa-x-cross"><span class="ui-helper-hidden-accessible">' + x_getLangInfo(x_languageData.find("cross")[0], "label", "Incorrect") + '</span></span>' + x_addLineBreaks(" " + incorrectText));
+		//Show correct if requested
+		jGetElement(blockid, ".correct")
+			.hide()
+			.html('<span class="tick fa fa-fw fa-x-tick"><span class="ui-helper-hidden-accessible">' + x_getLangInfo(x_languageData.find("tick")[0], "label", "Correct") + '</span></span>' + x_addLineBreaks(" " + correctText));
+
+		this.loadAudio(blockid, jGetElement(blockid, ".pageContents").data("captionInfo")[jGetElement(blockid, ".pageContents").data("current")]);
+		var name = $("<div/>").html(jGetElement(blockid, ".pageContents").data("captionInfo")[jGetElement(blockid, ".pageContents").data("current")].name).text().replace(/(\r\n|\n|\r)/gm, "");
+		if (name == "") {
+			name = pageXML.getAttribute("name");
+		}
+		var trackedAnswer = $("<div/>").html(jGetElement(blockid, ".pageContents").data("captionInfo")[jGetElement(blockid, ".pageContents").data("current")].answer).text().replace(/(\r\n|\n|\r)/gm, "");
+		let isRestarted = jGetElement(blockid, ".pageContents").data("isRestarted")?? false;
+		if(!isRestarted){
+				XTEnterInteraction(x_currentPage, x_getBlockNr(blockid), 'fill-in', name, [], trackedAnswer, "Correct", pageXML.getAttribute("grouping"), null, jGetElement(blockid, ".pageContents").data("current"));
+		}
+	}
+
+	this.loadAudio = function (blockid, caption) {
+		let pageXML = x_getBlockXML(blockid);
+		if (jGetElement(blockid, ".pageContents").data("audioSrc") == "timedTxt") {
+			jGetElement(blockid, ".pageAudio").mediaPlayer({
+				type: "audio",
+				source: pageXML.getAttribute("sound"),
+				width: "100%",
+				pageName: "dictation",
+				startEndFrame: [Number(caption.start), Number(caption.end)]
+			});
+		} else {
+			// load individual audio file
+			jGetElement(blockid, ".pageAudio").mediaPlayer({
+				type: "audio",
+				source: caption.audio,
+				width: "100%"
+			});
+		}
+
+		if (jGetElement(blockid, ".pageContents").data("loaded") != true) {
+			jGetElement(blockid, ".pageContents").data("loaded", true);
+			dictationBlock.sizeChanged(blockid);
+			x_pageLoaded(); // call this function in every model once everything's loaded
+		}
+	}
+
+	// function called from mediaPlayer.js when audio player has been set up
+	this.mediaFunct = function (blockid,mediaElement) {
+		if (jGetElement(blockid, ".pageContents").data("audioSrc") == "timedTxt") {
+			jGetElement(blockid, ".pageContents").data("mediaElement", mediaElement);
+
+			// force audio back to beginning of clip when end is reached
+			mediaElement.addEventListener("timeupdate", function (e) {
+				var currentTime = mediaElement.currentTime;
+				if (currentTime >= jGetElement(blockid, ".pageContents").data("captionInfo")[jGetElement(blockid, ".pageContents").data("current")].end || currentTime < jGetElement(blockid, ".pageContents").data("captionInfo")[jGetElement(blockid, ".pageContents").data("current")].start) {
+					mediaElement.setCurrentTime(jGetElement(blockid, ".pageContents").data("captionInfo")[jGetElement(blockid, ".pageContents").data("current")].start);
+				}
+			});
+		}
+	}
+	//Stopping the tracking
+	this.finishTracking = function (blockid) {
+	}
+	//Starting the tracking
+	this.initTracking = function (blockid) {
+		let pageXML = x_getBlockXML(blockid);
+		// Track the dictation page
+		this.weighting = 1.0;
+		if (pageXML.getAttribute("trackingWeight") != undefined) {
+			this.weighting = pageXML.getAttribute("trackingWeight");
+		}
+		for(let i = 0; i < pageXML.children.length; i++){
+				XTSetInteractionType(x_currentPage, x_getBlockNr(blockid), "fill-in", this.weighting, i);
+		}
+		// XTSetPageType(x_currentPage, 'numeric', jGetElement(blockid, ".pageContents").data("captionInfo").length, this.weighting);
+	}
+}

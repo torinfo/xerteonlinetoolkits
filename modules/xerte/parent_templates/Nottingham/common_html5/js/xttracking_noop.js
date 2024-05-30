@@ -458,6 +458,7 @@ function XTResults(fullcompletion) {
                             correctAnswer = trackingManager.pageStates[i].interactions[x].correctAnswers;
                             break;
                     }
+										
                     if (trackingManager.pageStates[i].interactions[x].ia_type != "match" && trackingManager.pageStates[i].interactions[x].result != undefined) {
                         subinteraction.question = trackingManager.pageStates[i].interactions[x].ia_name;
                         subinteraction.correct = trackingManager.pageStates[i].interactions[x].result.success;
@@ -501,10 +502,10 @@ function XTSetLeavePage(page_nr, ia_nr, leavePage, ia_sub_nr = 0){
     return trackingManager.setLeavePage(page_nr, ia_nr, ia_sub_nr,leavePage);
 }
 
-function XTSetInteractionModelState(page_nr, ia_nr, modelState, ia_sub_nr = 0, toAll = false){
+function XTSetInteractionModelState(page_nr, ia_nr, modelState, ia_sub_nr = 0, toAll = true){
     trackingManager.setInteractionModelState(page_nr, ia_nr, modelState, ia_sub_nr, toAll);
 }
 
-function XTGetInteractionModelState(page_nr, ia_nr, ia_sub_nr = 0, ignoreSubId = false){
+function XTGetInteractionModelState(page_nr, ia_nr, ia_sub_nr = 0, ignoreSubId = true){
     return trackingManager.getInteractionModelState(page_nr, ia_nr, ia_sub_nr, ignoreSubId);
 }

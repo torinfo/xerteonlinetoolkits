@@ -1,0 +1,24 @@
+/* buttonSequence.html */
+	
+	.buttonSequence .myPanel {
+		overflow:	auto;
+	}
+	
+	.pageContents.buttonSequence button {
+		margin:		10px;
+		float:		right;
+	}
+	
+	.buttonSequence .infoGroup > p {
+		padding-left:	4px;
+		padding-right:	4px;
+	}
+	
+	.buttonSequence .infoGroup {
+		clear: both;
+	}
+	
+	.buttonSequence .infoGroup:not(:first-child) {
+		padding-top: 1em;
+	}
+	

@@ -1,0 +1,23 @@
+/* modify.html */
+	
+	.pageContents.modifyPage .instruction {
+		margin-top: 0px;
+	}
+	
+	.pageContents.modifyPage textarea {
+		display: block;
+		width: 100%;
+		box-sizing: border-box;
+		resize: vertical;
+		margin: 0.5em auto;
+	}
+	
+	.modifyPage .answer, .modifyPage .modelTxt {
+		margin-top: 1em;
+	}
+	
+	.pageContents.modifyPage button {
+		margin: 10px;
+		float: right;
+	}
+	

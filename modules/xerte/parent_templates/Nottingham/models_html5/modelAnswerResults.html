@@ -20,94 +20,31 @@
 
 	// pageChanged & sizeChanged functions are needed in every model file
 	// other functions for model should also be in here to avoid conflicts
-	var modelAnswerResults = new function() {
-		// function called every time the page is viewed after it has initially loaded
-		this.pageChanged = function() {
-			$("#panelTxt").html(modelAnswerResults.getData());
+	var modelAnswerResults = new function () {
+		this.init = function () {
+			this.setUp();
+			XTSetPageType(x_currentPage, 'numeric', 0, 0);
 		}
 		
-		// function called every time the size of the LO is changed
+		this.setUp = function() {
+			x_createBlock($("#pageContents"), x_currentPageXML, 1)
+		}
+		
 		this.sizeChanged = function() {
-			if (x_browserInfo.mobile == false) {
-				var $panel = $("#pageContents .panel");
-				$panel.height($x_pageHolder.height() - parseInt($x_pageDiv.css("padding-top")) * 2 - parseInt($panel.css("padding-top")) * 2 - 5);
-			}
+			//window["categoriesBlock"].sizeChanged("block1");
 		}
-		
-		this.init = function() {
-			var panelWidth = x_currentPageXML.getAttribute("panelWidth");
-			if (panelWidth == "Small") {
-				$("#pageContents .splitScreen").addClass("large");
-			} else if (panelWidth == "Large") {
-				$("#pageContents .splitScreen").addClass("small");
-			} else {
-				$("#pageContents .splitScreen").addClass("medium");
-			}
-			
-			// if language attributes aren't in xml will have to use english fall back
-			var copyBtnLabel = x_currentPageXML.getAttribute("copyBtnLabel");
-			if (copyBtnLabel == undefined) {
-				copyBtnLabel = "Select Text";
-			}
-			var copyTxt = x_currentPageXML.getAttribute("copypasteinfo");
-			if (copyTxt == undefined) {
-				copyTxt = "Note: Click the 'Select Text' button to highlight the text on the right and then Ctrl + C to copy this text to the clipboard. You can then paste (Ctrl + V) into another application such as Open Office, Word or an email to save for future reference.";
-			}
-			
-			$("#textHolder").html(x_addLineBreaks(x_currentPageXML.childNodes[0].nodeValue) + '<hr/><div id="copyTxt"><p>' + copyTxt + '</p></div><button id="copyBtn">' + copyBtnLabel + '</button>');
-			
-			$("#copyBtn")
-				.button({
-					label:	copyBtnLabel
-				})
-				.click(function() {
-					x_selectText("panelTxt");
-					$("#screenReaderInfo").html(x_getLangInfo(x_languageData.find("screenReaderInfo").find("modelAnswerResults")[0], "selected", "") != null ? x_getLangInfo(x_languageData.find("screenReaderInfo").find("modelAnswerResults")[0], "selected", "") : "");
-				})
-				.focusout(function() {
-					$("#screenReaderInfo").html("");
-				});
-			
-			$("#panelTxt").html(modelAnswerResults.getData());
-			
-			this.sizeChanged();
-			x_pageLoaded();
+		this.pageChanged = function() {
+			//this.setUp();
+			//window["categoriesBlock"].pageChanged("block1");
 		}
-		
-		// function gets saved data about all modelAnswer pages in the project
-		this.getData = function() {
-			var dataString = "";
-			for (var i=0; i<x_pageInfo.length; i++) {
-				var thisObject = x_pageInfo[i];
-				if (thisObject.type == "modelAnswer") {
-					if (thisObject.savedData != undefined) { // ignores skipped pages
-						dataString += thisObject.savedData;
-					}
-				}
-			}
-			return dataString;
+		this.leavePage = function () {
+			XTSetPageScore(x_currentPage, 100);
+			document.dispatchEvent(new Event('leavepage'));
 		}
 	}
-	
+
 	modelAnswerResults.init();
-	
 </script>
 
-
 <div id="pageContents">
-	
-	<div class="splitScreen">
-		
-		<div id="textHolder" class="left"></div>
-		
-		<div id="infoHolder" class="right">
-			<div class="panel">
-				<div id="panelTxt"></div>
-			</div>
-		</div>
-		
-		<div id="screenReaderInfo" class="ui-helper-hidden-accessible" aria-live="polite"/>
-		
-	</div>
-	
 </div>

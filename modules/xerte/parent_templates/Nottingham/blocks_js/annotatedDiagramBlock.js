@@ -8,7 +8,7 @@ var annotatedDiagramBlock = new function () {
 
     // Called from xenith if tab level deeplinking is available
     this.deepLink = function (item) {
-        $('.listItem').each(function (i) {
+        jGetElement(blockid, '.listItem').each(function (i) {
             if (
                 ($.isNumeric(item) && i === parseInt(item))
                 || (item.toLowerCase() === $(this).text().toLowerCase())
@@ -437,7 +437,7 @@ var annotatedDiagramBlock = new function () {
                     var $this = $(this);
 
                     // not already selected - so select link, show text & highlight hotspots
-                    if (!$this.data("listItem").is($(".listItem.highlight"))) {
+                    if (!$this.data("listItem").is(jGetElement(blockid, ".listItem.highlight"))) {
                         annotatedDiagramBlock.deselect(blockid);
                         annotatedDiagramBlock.selectLink($(this).data("listItem"), blockid);
 

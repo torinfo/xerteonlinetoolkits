@@ -37,6 +37,8 @@ language: feedbackLabel singleRight singleWrong multiRight multiWrong checkBtnTx
 
         return {
             _setup: function(options) {
+								console.log(options);
+								debugger;
                 media = this;
                 judge = false;
                 autoEnable = true;
@@ -47,14 +49,16 @@ language: feedbackLabel singleRight singleWrong multiRight multiWrong checkBtnTx
 
 
                 $optHolder = $('<div class="optionHolder"/>').appendTo($target);
-
-                x_createBlock($('<div class="panel"></div>')
-                    .appendTo($optHolder)
-                    .attr("id","testBlock"), options.blockData, options.amountOfInteractiveBlocks);
+								$panel = $('<div class="panel"></div>').appendTo($optHolder); //.attr("id","testBlock")
+								let start = options.blockNrOffset?? 0;
+								
+								for(let i = 0; i < options.childNodes.length; i++){
+										x_createBlock($panel, options.childNodes[i], start + (i + 1));
+								}
             },
 
             start: function(event, options) {
-                debugger
+								console.log(event, options);
                 console.log("I am probably missing code here");
                 // fire on options.start
                 if (options.overlayPan) {
@@ -118,7 +122,13 @@ language: feedbackLabel singleRight singleWrong multiRight multiWrong checkBtnTx
                         "left": options._x + "%"
                     }).show();
                 }
+								$target.append($("<button>close</button>").button({label: "Close"}).click(()=>{
+										media.play();
+										$learningObjectParent.enableControls(media.media, true);
+										$target.parent().hide();
+								}));
                 $target.show();
+								$(window).trigger("resize");
             },
 
             end: function(event, options) {

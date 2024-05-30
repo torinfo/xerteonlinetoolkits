@@ -1040,7 +1040,7 @@
     // other functions for model should also be in here to avoid conflicts
     var interactiveVideo = new function() {
         var	$panelHolder,
-            plugins = ["mediaconstructor", "textplus", "subtitleplus", "xot", "mediaplus", "mcq", "slides", "sortholder"], // list of popcorn plugins to load
+            plugins = ["mediaconstructor", "textplus", "subtitleplus", "xot", "mediaplus", "mcq", "slides", "sortholder", "blockpanel"], // list of popcorn plugins to load
             css = ["subtitleplus", "mcq", "overlaygeneric", "slides"], // list of popcorn plugin css to load
             vidFullWatched,
             trackinglabel = "",
@@ -2366,6 +2366,7 @@
                     }
                 }
 				let amountOfInteractiveBlocks = 0;
+				let blockNrOffset = 0;
                 // add all other synch events
                 for (var j=0; j<data.length; j++) {
                     // each synch event
@@ -2491,13 +2492,12 @@
 
                         if(pluginName === "blockpanel"){
                             pluginAttributes.targetRef = targetRef;
-                            pluginAttributes.blockData = data[j].childNodes[0];
-                            pluginAttributes.amountOfInteractiveBlocks = amountOfInteractiveBlocks;
-                            amountOfInteractiveBlocks++;
-                        }else {
+							pluginAttributes.blockNrOffset = blockNrOffset;
+							blockNrOffset += thisContent.childNodes.length;
+                        }
 							debugger;
 							popcornInstance[pluginName](pluginAttributes);
-						} 
+						 
 
                         // ^^ plugins called are either bespoke ones in popcorn/plugins folder or from popcorn-complete.min.js
                         // ^^ for those from popcorn-complete.min.js, the xwd node names & values must match the expected popcorn properties for the plugin

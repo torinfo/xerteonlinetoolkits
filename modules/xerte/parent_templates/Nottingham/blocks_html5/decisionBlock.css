@@ -1,0 +1,119 @@
+/* decision.html */
+
+	.decision .stepHolder p:first-of-type {
+		margin-top:	0px;
+	}
+
+	.pageContents.decision .btnHolder {
+		text-align:		center;
+		margin-top:		0.5em;
+		margin-right:	0px; /* over-ride ui style */
+		padding-top:	2px;
+		padding-bottom:	2px;
+		overflow:		auto;
+	}
+	
+	.pageContents.decision .btnFloatR {
+		float:		right;
+	}
+	
+	.pageContents.decision .btnFloatL {
+		float:		left;
+	}
+	
+	.decision .contentHolder {
+		overflow:	auto;
+	}
+	
+	
+	.pageContents.decision .radioAnswers, .pageContents.decision .dropDownAnswer {
+		margin-top:	15px;
+	}
+	
+	.pageContents.decision .radioAnswers input {
+		float:		left;
+		display:	block;
+	}
+	
+	.pageContents.decision .radioAnswers .optionGroup {
+		padding-top:	5px;
+		padding-bottom:	5px;
+	}
+	
+	.pageContents.decision .radioAnswers .optionTxt {
+		cursor:			pointer;
+		position:		relative;
+		margin-left:	2em;
+		display:		block;
+	} 
+	
+	.pageContents.decision .labelHolder {
+		margin:	15px;
+	}
+	
+	.pageContents.decision .labelHolder input {
+		margin-left:	10px;
+		margin-right:	10px;
+	}
+	
+	.pageContents.decision .slider {
+		margin:	15px;
+	}
+	
+	.decision .slider .ui-slider-handle {
+		cursor: pointer;
+	}
+	
+	.pageContents.decision .submitBtn, .pageContents.decision .viewThisBtn, .pageContents.decision .helpBtn, .pageContents.decision .goBtn {
+		margin:	10px;
+	}
+	
+	.pageContents.decision .submitBtn, .pageContents.decision .viewThisBtn, .pageContents.decision .goBtn {
+		float:	right;
+	}
+	
+	.pageContents.decision .helpBtn {
+		float:	left;
+	}
+	
+	.decision .helpBtn .ui-icon {
+		width: auto;
+		height: auto;
+	}
+	
+	.decision .helpDialog {
+		padding:	10px;
+	}
+	
+	.decision .overviewHolder .ui-icon {
+		float:	left;
+		clear:	both;
+		margin:	0 5px 5px 0;
+		border:	1px solid #eeeeee;
+	}
+	
+	.decision .overviewHolder .overviewAnswer, .decision .overviewHolder .extraInfo {
+		margin-left: 1em;
+	}
+	
+	.decision .overviewHolder .overviewAnswer .ui-icon, .decision .overviewHolder .extraInfo .ui-icon {
+		border:	0px;
+	}
+	
+	.decision .overviewHolder .overviewStep {
+		border-bottom:	1px solid #cccccc;
+	}
+	
+	.decision .overviewHolder .overviewStep, .decision .overviewHolder .overviewAnswer {
+		padding-top:	1em;
+		padding-bottom:	1em;
+	}
+	
+	.decision .overviewHolder .overviewStep p {
+		display: inline;
+	}
+	
+	i[class*='fa-chevron'] {
+		font-size: 0.8em;
+	}
+

@@ -1,0 +1,35 @@
+.textCorrection .textHolder {
+    margin-bottom:	10px;
+}
+
+.textCorrection .question {
+    padding-bottom: 10px;
+}
+
+.textCorrection .text {
+    width: 100%;
+	box-sizing: border-box;
+}
+
+.textCorrection .checkButton {
+	margin: 10px 0 10px 10px;
+	float: right;
+}
+
+.textCorrection .attempts, .textCorrection .correctOrNot, .textCorrection .answer, .textCorrection .FurtherClarification {
+	padding-top: 1em;
+	clear: both;
+}
+.textCorrection .mainPanel {
+	overflow: auto;
+}
+
+.textCorrection .correctOrNot .markIcon {
+	margin-right: .5em;
+}
+
+.textCorrection h3.fbLabel {
+	padding-top: 1em;
+	padding-bottom: 0.5em;
+	border-top: 1px solid #ccc;
+}

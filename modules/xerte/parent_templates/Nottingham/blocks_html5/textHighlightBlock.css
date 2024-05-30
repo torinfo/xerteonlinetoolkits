@@ -1,0 +1,58 @@
+/* textHighlight.html */
+	
+	.textHighlight .textHolder {
+		margin-bottom: 1em;
+	}
+	
+	.textHighlight .initTxt, .textHighlight .notesTxt, .textHighlight .suggestedTxt {
+		border: 1px solid rgb(169, 169, 169);
+		overflow: auto;
+	}
+	
+	.textHighlight .notesTxt {
+		padding: 0.3em;
+	}
+	
+	.textHighlight .notesTxt p {
+		padding-left: 0;
+		padding-right: 0;
+	}
+	
+	.textHighlight .notesTxt p:first-child {
+		padding-top: 0;
+	}
+	
+	.textHighlight .btnHolder {
+		float: right;
+		padding-top: 0.3em;
+	}
+	
+	.textHighlight .btnHolder button {
+		float: left;
+		margin-right: 0em;
+	}
+	
+	.textHighlight .btnHolder button:not(:first-of-type) {
+		margin-left: .5em;
+	}
+	
+	.pageContents.textHighlight .ui-tabs .ui-tabs-panel {
+		padding: 0.5em 0.5em 0.6em;
+	}
+	
+	.textHighlight  .mainBtnHolder {
+		margin-top: 1em;
+		float: right;
+	}
+	
+	.textHighlight .tabHolder.ui-widget-header {
+		border: none;
+	}
+	
+	.textHighlight  .tabHolder .navChildTitle.ui-tabs-active {
+		border-bottom: 1px solid white !important;
+	}
+	
+	.textHighlight .paneHolder {
+		overflow: auto;
+	}

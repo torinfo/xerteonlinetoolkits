@@ -350,6 +350,7 @@ var textMatchBlock = new function() {
 
     this.finishTracking = function(blockid)
     {
+        let modelState = XTGetInteractionModelState(x_currentPage, x_getBlockNr(blockid));
 				if(modelState.finished) 
 						return;
         let pageXML = x_getBlockXML(blockid);
@@ -406,7 +407,6 @@ var textMatchBlock = new function() {
 
 
     this.initTracking = function(blockid){
-
         let pageXML = x_getBlockXML(blockid);
         this.weighting = 1.0;
         if (pageXML.getAttribute("trackingWeight") != undefined)

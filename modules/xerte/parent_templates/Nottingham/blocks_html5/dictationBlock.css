@@ -1,0 +1,34 @@
+/* dictation.html */
+
+	.pageContents.dictation .panel {
+		overflow:	auto;
+	}
+
+	.dictation .prompt, .dictation .count, .dictation .answer, .dictation .incorrect {
+		margin-bottom:	10px;
+	}
+
+	.dictation .audioHolder {
+		width:	100%;
+		margin-bottom:	10px;
+	}
+
+	.dictation .audioHolder audio {
+		width:	100%;
+	}
+
+	.dictation .answerTxt {
+		width:	100%;
+		margin-bottom:	10px;
+		box-sizing: border-box;
+	}
+
+	.dictation .btnHolder {
+		float:	right;
+		margin-bottom:	10px;
+	}
+	
+	.dictation .answer {
+		clear:	both;
+	}
+	

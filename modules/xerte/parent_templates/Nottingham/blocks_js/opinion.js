@@ -1,11 +1,9 @@
 var opinionBlock = new function()
 {
-    var $pageContents;
-
     this.sizeChanged = function(blockid)
     {
-
-        //$pageContents = jGetElement(blockid, ".pageContents");
+				const state = jGetElement(blockid, ".pageContents").data("state");
+        let $pageContents = jGetElement(blockid, ".pageContents");
         var $panel = jGetElement(blockid, ".pageContents .qPanel"),
             resized = false;
 
@@ -75,7 +73,7 @@ var opinionBlock = new function()
             textSize = 12;
         }
 
-        $pageContents.data('textSize', textSize);
+        state.textSize = textSize;
     };
 
     this.loadAudio = function(currentQuestion, soundFile)
@@ -92,7 +90,8 @@ var opinionBlock = new function()
 
     this.startQuestions = function(blockid)
     {
-
+				const state = jGetElement(blockid, ".pageContents").data("state");
+        let $pageContents = jGetElement(blockid, ".pageContents");
         let pageXML = x_getBlockXML(blockid);
         // If the language attribute is not defined in the xml, fall back to English.
         var questionNumberText = pageXML.getAttribute("quesCount");
@@ -100,17 +99,15 @@ var opinionBlock = new function()
         {
             questionNumberText = "Question {i} of {n}";
         }
-        $pageContents.data({
-            'resultShown': false,
-            'qNumTxt': questionNumberText
-        });
+        state.resultShown = false;
+        state.qNumTxt = questionNumberText;
 
         var showfeedback = false;
         if (pageXML.getAttribute("showfeedback") != undefined)
         {
             showfeedback = pageXML.getAttribute("showfeedback") == "true";
         }
-        $pageContents.data('showfeedback', showfeedback);
+        state.showfeedback = showfeedback;
 
         jGetElement(blockid, ".diagram").hide();
         jGetElement(blockid, ".qHolder").show();
@@ -118,7 +115,7 @@ var opinionBlock = new function()
             .show()
             .button("disable");
 
-        $pageContents.data('currentQuestion', 0);
+        state.currentQuestion = 0;
         var questions = []; // array of questions to use (index)
 
         var numberOfQuestions = $(pageXML).children().children().length; // Can't be 0
@@ -152,7 +149,7 @@ var opinionBlock = new function()
             }
         }
 
-        $pageContents.data('questions', questions);
+        state.questions = questions;
 
         var weighting =  pageXML.getAttribute("trackingWeight") != undefined ? pageXML.getAttribute("trackingWeight") : 1.0;
 
@@ -165,21 +162,23 @@ var opinionBlock = new function()
 
     this.loadQuestions = function(blockid)
     {
+				const state = jGetElement(blockid, ".pageContents").data("state");
+        let $pageContents = jGetElement(blockid, ".pageContents");
         jGetElement(blockid, ".checkBtn").button("disable");
 
-        $pageContents.data('radioButtonQuestions', []);
+        state.radioButtonQuestions = [];
 
-        var listMode = $pageContents.data('listMode'),
-            pageMode = $pageContents.data('pageMode'),
-            pageSize = $pageContents.data('pageSize'),
-            currentQuestion = $pageContents.data('currentQuestion'),
-            questions = $pageContents.data('questions');
+        var listMode = state.listMode,
+            pageMode = state.pageMode,
+            pageSize = state.pageSize,
+            currentQuestion = state.currentQuestion,
+            questions = state.questions;
 
         if (listMode || listMode == 'all')
         {
             if (pageMode || (pageMode == undefined && listMode == true))
             {
-                jGetElement(blockid, ".qNo").html($pageContents.data('qNumTxt').replace("{i}", (currentQuestion + 1) + " - " + (Math.min(currentQuestion + pageSize, questions.length))).replace("{n}", questions.length));
+                jGetElement(blockid, ".qNo").html(state.qNumTxt.replace("{i}", (currentQuestion + 1) + " - " + (Math.min(currentQuestion + pageSize, questions.length))).replace("{n}", questions.length));
                 jGetElement(blockid, ".qHolder").html("");
                 for (i=currentQuestion; i<Math.min(currentQuestion + pageSize, questions.length); i++)
                 {
@@ -190,7 +189,7 @@ var opinionBlock = new function()
             }
             else
             {
-                jGetElement(blockid, ".qNo").html($pageContents.data('qNumTxt').replace("{i}", (currentQuestion + 1) + " - " + questions.length).replace("{n}", questions.length));
+                jGetElement(blockid, ".qNo").html(state.qNumTxt.replace("{i}", (currentQuestion + 1) + " - " + questions.length).replace("{n}", questions.length));
                 jGetElement(blockid, ".qHolder").html("");
                 for (i=currentQuestion; i<questions.length; i++)
                 {
@@ -202,7 +201,7 @@ var opinionBlock = new function()
         }
         else
         {
-            jGetElement(blockid, ".qNo").html($pageContents.data('qNumTxt').replace("{i}", currentQuestion + 1).replace("{n}", questions.length));
+            jGetElement(blockid, ".qNo").html(state.qNumTxt.replace("{i}", currentQuestion + 1).replace("{n}", questions.length));
             jGetElement(blockid, ".qHolder").html('<legend id="qTxt' + currentQuestion + '" class="qTxt"></legend><div id="questionAudio'+currentQuestion + '" class="questionAudio"></div><div id="sliderHolder'
                 + currentQuestion + '" class="sliderHolder"><div id="labelHolder' + currentQuestion + '" class="labelHolder"></div><div id="rangeHolder' + currentQuestion + '" class="rangeHolder"></div></div>');
 
@@ -214,8 +213,10 @@ var opinionBlock = new function()
 
     this.checkButtonState = function(blockid)
     {
+				const state = jGetElement(blockid, ".pageContents").data("state");
+        let $pageContents = jGetElement(blockid, ".pageContents");
         var checked = true;
-        $.each($pageContents.data('radioButtonQuestions'), function(key, value){
+        $.each(state.radioButtonQuestions, function(key, value){
             if (value == false) {
                 checked = false;
             }
@@ -228,8 +229,10 @@ var opinionBlock = new function()
 
     this.loadQuestion = function(currentQuestion, blockid)
     {
+				const state = jGetElement(blockid, ".pageContents").data("state");
         let pageXML = x_getBlockXML(blockid);
-        var questions = $pageContents.data('questions');
+        let $pageContents = jGetElement(blockid, ".pageContents");
+        var questions = state.questions;
 
         if ($(pageXML).children().length == 0)
         {
@@ -282,9 +285,9 @@ var opinionBlock = new function()
 
                     var $optionGroup = $optionHolder.find(".optionGroup");
 
-                    var radioButtonQuestions = $pageContents.data('radioButtonQuestions');
+                    var radioButtonQuestions = state.radioButtonQuestions;
                     radioButtonQuestions[currentQuestion] = false;
-                    $pageContents.data('radioButtonQuestions', radioButtonQuestions);
+                    state.radioButtonQuestions = radioButtonQuestions;
 
                     var currentAnswers = [];
                     $($thisQ).children().each(function () {
@@ -320,7 +323,7 @@ var opinionBlock = new function()
                             .change(function () {
                                 var radioButtonQuestions = $pageContents.data('radioButtonQuestions');
                                 radioButtonQuestions[currentQuestion] = true;
-                                $pageContents.data('radioButtonQuestions', radioButtonQuestions);
+                                state.radioButtonQuestions = radioButtonQuestions;
                                 opinionBlock.checkButtonState(blockid);
                             });
                         $thisOption[0].score = index;
@@ -394,17 +397,18 @@ var opinionBlock = new function()
                 }
                 var weighting =  pageXML.getAttribute("trackingWeight") != undefined ? pageXML.getAttribute("trackingWeight") : 1.0;
                 XTEnterInteraction(x_currentPage, x_getBlockNr(blockid), 'numeric', name, correctOptions, correctAnswer, null, pageXML.getAttribute("grouping"), null, questions[currentQuestion]);
-                XTSetInteractionType(x_currentPage, x_getBlockNr(blockid), 'numeric', weighting, 1);
+                XTSetInteractionType(x_currentPage, x_getBlockNr(blockid), 'numeric', weighting, questions[currentQuestion]);
                 XTSetInteractionPageXML(x_currentPage, x_getBlockNr(blockid), questions[currentQuestion]);
-                $pageContents.data('checked', false);
+                state.checked = false;
             }
         }
     };
 
     this.pageChanged = function(blockid)
     {
-        $pageContents = jGetElement(blockid, ".pageContents");
-				if($pageContents.data('resultShown') == false){
+				const state = jGetElement(blockid, ".pageContents").data("state");
+        let $pageContents = jGetElement(blockid, ".pageContents");
+				if(state.resultShown == false){
 						this.checkButtonState(blockid);
 				}else {
             jGetElement(blockid, ".checkBtn").hide();
@@ -413,6 +417,8 @@ var opinionBlock = new function()
 
     this.trackQuestions = function(blockid)
     {
+				const state = jGetElement(blockid, ".pageContents").data("state");
+        let $pageContents = jGetElement(blockid, ".pageContents");
         var listMode = $pageContents.data('listMode'),
             pageMode = $pageContents.data('pageMode'),
             pageSize = $pageContents.data('pageSize'),
@@ -440,7 +446,7 @@ var opinionBlock = new function()
         {
             this.trackQuestion(currentQuestion, blockid);
         }
-        if ($pageContents.data('resultShown') == false)
+        if (state.resultShown == false)
         {
             this.loadQuestions(blockid);
         }
@@ -448,7 +454,9 @@ var opinionBlock = new function()
 
     this.trackQuestion = function(currentQuestion, blockid)
     {
+				const state = jGetElement(blockid, ".pageContents").data("state");
         let pageXML = x_getBlockXML(x_getBlockNr(blockid));
+        let $pageContents = jGetElement(blockid, ".pageContents");
         var questions = $pageContents.data('questions'),
             currentQ = $(pageXML).children().children()[questions[currentQuestion]],
             selected = 0,
@@ -490,40 +498,42 @@ var opinionBlock = new function()
 
         var currentQuestionString = currentQuestion + "";
 
-        var answeredValues = $pageContents.data('answeredValues');
+        var answeredValues = state.answeredValues;
         answeredValues[currentQuestionString] = currentQuestionValue;
-        $pageContents.data('answeredValues', answeredValues);
+        state.answeredValues = answeredValues;
 
-        var diagramLabels = $pageContents.data('diagramLabels');
+        var diagramLabels = state.diagramLabels;
         diagramLabels[currentQuestion] = currentQ;
-        $pageContents.data('diagramLabels', diagramLabels);
+        state.diagramLabels = diagramLabels;
 
-        var diagramAnswers = $pageContents.data('diagramAnswers');
+        var diagramAnswers = state.diagramAnswers;
         diagramAnswers[currentQuestion] = (Math.round(currentQuestionValue * 10.0) / 10.0);
-        $pageContents.data('diagramAnswers', diagramAnswers);
+        state.diagramAnswers = diagramAnswers;
 
         var result = {
             success: true,
             score: Math.round(currentQuestionValue * 10.0) / 10.0
         };
 
-        XTExitInteraction(x_currentPage, x_getBlockNr(blockid), result, l_options, l_answer, null, 0, pageXML.getAttribute("trackinglabel"));
+        XTExitInteraction(x_currentPage, x_getBlockNr(blockid), result, l_options, l_answer, null, questions[currentQuestion]);
 
         // Continue to next question
-        $pageContents.data('currentQuestion', $pageContents.data('currentQuestion')+1);
+        state.currentQuestion = state.currentQuestion+1;
 
         // If last question has been answered - show results, else continue
-        if ($pageContents.data('currentQuestion') == questions.length)
+        if (state.currentQuestion == questions.length)
         {
             this.trackOpinion(blockid);
-            $pageContents.data('resultShown', true);
+            state.resultShown = true;
         }
 
         x_pageContentsUpdated();
     };
 
     this.trackOpinion = function(blockid) {
+				const state = jGetElement(blockid, ".pageContents").data("state");
         let pageXML = x_getBlockXML(blockid);
+        let $pageContents = jGetElement(blockid, ".pageContents");
         // Last question answered - show results
         var JSONGraph = this.createGraphObject(blockid);
         if (pageXML.getAttribute("diagram") !== "true"){
@@ -531,10 +541,10 @@ var opinionBlock = new function()
             this.sizeChanged(blockid);
         }
 
-        jGetElement(blockid, ".qNo").html($pageContents.data("onCompletionText"));
+        jGetElement(blockid, ".qNo").html(state.onCompletionText);
 
         var myScore = 0;
-        var answeredValues = $pageContents.data('answeredValues');
+        var answeredValues = state.answeredValues;
         for (var key in answeredValues)
         {
             myScore += answeredValues[key];
@@ -558,19 +568,21 @@ var opinionBlock = new function()
         jGetElement(blockid, ".checkBtn").hide();
 
         //XTSetPageScoreJSON(x_currentPage, myScore, JSON.stringify(JSONGraph), pageXML.getAttribute("trackinglabel"));
-        $pageContents.data('checked', true);
+        state.checked = true;
     };
 
     this.createGraphObject = function(blockid)
     {
+        let $pageContents = jGetElement(blockid, ".pageContents");
         let pageXML = x_getBlockXML(blockid);
+				const state = jGetElement(blockid, ".pageContents").data("state");
         var classNames = [],
             classTitles = [],
             classValues = [],
             classWeighting = [];
 
-        var diagramLabels = $pageContents.data('diagramLabels'),
-            diagramAnswers = $pageContents.data('diagramAnswers');
+        var diagramLabels = state.diagramLabels,
+            diagramAnswers = state.diagramAnswers;
 
         for(var i = 0; i< diagramLabels.length; i++){
             var q = diagramLabels[i];
@@ -606,7 +618,9 @@ var opinionBlock = new function()
 
     this.createDiagram = function(graphObject, blockid)
     {
+				const state = jGetElement(blockid, ".pageContents").data("state");
         let pageXML = x_getBlockXML(blockid);
+        let $pageContents = jGetElement(blockid, ".pageContents");
         var htmlToChar = function(h){return $("<div>").html(h).text();},
             classTitles = graphObject.classtitles.map(function(a){return htmlToChar(a);}),
             classValues = graphObject.classvalues;
@@ -644,15 +658,15 @@ var opinionBlock = new function()
                     ticks: {
                         suggestedMin: 0,
                         suggestedMax: 100,
-                        fontSize: $pageContents.data('textSize') - 10
+                        fontSize: state.textSize - 10
                     },
                     pointLabels: {
-                        fontSize: $pageContents.data('textSize')
+                        fontSize: state.textSize
                     }
                 },
                 legend: {
                     labels: {
-                        fontSize: $pageContents.data('textSize')
+                        fontSize: state.textSize
                     },
                     display: pageXML.getAttribute("key") == 'false' ? false : true,
                 },
@@ -665,27 +679,29 @@ var opinionBlock = new function()
     this.init = function(blockid) {
         let pageXML = x_getBlockXML(blockid);
 
-        $pageContents = jGetElement(blockid, ".pageContents");
+        let $pageContents = jGetElement(blockid, ".pageContents");
 
-        $pageContents.data({
+        const state = {
             'listMode': false,
             'pageMode': true,
             'pageSize': 10,
             'answeredValues': {},
             'diagramLabels': [],
-            'diagramAnswers': []
-        });
+            'diagramAnswers': [],
+        };
+				
+				jGetElement(blockid, ".pageContents").data("state", state);
 
         if (pageXML.getAttribute("list") != undefined) {
-            $pageContents.data('listMode', pageXML.getAttribute("list") === "true" ? true : pageXML.getAttribute("list") === "all" ? "all" : false);
+            state.listMode = pageXML.getAttribute("list") === "true" ? true : pageXML.getAttribute("list") === "all" ? "all" : false;
         }
 
         if (pageXML.getAttribute("paging") != undefined) {
-            $pageContents.data('pageMode', pageXML.getAttribute("paging") === "true");
+            state.pageMode = pageXML.getAttribute("paging") === "true";
         }
 
         if (pageXML.getAttribute("pagesize") != undefined) {
-            $pageContents.data('pageSize', parseInt(pageXML.getAttribute("pagesize")));
+            state.pageSize = parseInt(pageXML.getAttribute("pagesize"));
         }
 
         var panelWidth = pageXML.getAttribute("panelWidth"),
@@ -765,9 +781,7 @@ var opinionBlock = new function()
             onCompletionText = "You have completed the questionaire";
         }
 
-        $pageContents.data({
-            "onCompletionText"	:onCompletionText,
-        });
+        state.onCompletionText = onCompletionText;
 
         // submit button
         jGetElement(blockid, ".checkBtn")
@@ -784,12 +798,11 @@ var opinionBlock = new function()
                 label: resetBtnText
             })
             .click(function() {
+								const state = jGetElement(blockid, ".pageContents").data("state");
                 if ($(pageXML).children().length > 0) {
-                    $pageContents.data({
-                        'answeredValues': {},
-                        'diagramLabels': [],
-                        'diagramAnswers': []
-                    });
+                    state.answeredValues = {};
+                    state.diagramLabels = [];
+                    state.diagramAnswers = [];
 
                     opinionBlock.startQuestions(blockid);
                 }

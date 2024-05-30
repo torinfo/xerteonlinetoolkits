@@ -1,0 +1,141 @@
+/* grid.html */
+	
+	.gridPage .gridHolder {
+		margin: 10px;
+		position: relative;
+	}
+	
+	.gridPage .gridHolder.x_floatLeft {
+		margin:	0px 10px 10px 0px;
+	}
+	
+	.gridPage .gridHolder.x_floatRight {
+		margin:	0px 0px 10px 10px;
+	}
+	
+	.gridPage .grid, .gridPage .gridBorders {
+		position:	absolute;
+	}
+	
+	.gridPage .grid .listHolder {
+		float:	left;
+		clear:	both;
+	}
+	
+	.gridPage .grid ul {
+		margin:		0px;
+		padding:	0px;
+	}
+	
+	.gridPage .grid ul.preview {
+		position:	absolute;
+	}
+	
+	.gridPage .grid .listHolder.constrainC {
+		clear:	none;
+	}
+	
+	.gridPage .grid ul li {
+		font-size:	1.2em;
+		border:		2px solid white;
+		float:		left;
+		padding:	5px;
+		margin:		5px;
+		list-style-type:	none;
+		background-image:	none;
+		cursor:	pointer;
+	}
+	
+	.gridPage .grid ul li.ui-draggable-disabled {
+		opacity:	1;
+	}
+	
+	.gridPage .grid .listHolder.constrainC li {
+		float:	none;
+		margin-bottom:	10px;
+	}
+	
+	.gridPage .grid ul li.static {
+		background:		none;
+		border-color:	transparent;
+	}
+	
+	.gridPage .grid ul li.header {
+		font-weight:	bold;
+	}
+	
+	.gridPage .grid ul:not(.preview) li.ui-state-highlight {
+		border:	2px solid green;
+		color:	white !important;
+		box-shadow:	none;
+	}
+	
+	.gridPage .grid ul.preview li {
+		border:	2px solid yellow;
+		background-color:	white;
+	}
+	
+	.gridPage .grid ul li .tick {
+		position:	absolute;
+		right:		2px;
+		bottom:		2px;
+	}
+	
+	.gridPage .grid li.focus {
+		border:	2px solid yellow;
+	}
+	
+	.gridPage .grid li.selected {
+		border:	2px solid green;
+	}
+
+	.gridPage .grid table	{
+		height: 100%;
+		width: 100%;
+	}
+
+	.gridPage .grid td {
+		vertical-align: middle !important;
+		text-align: center;
+	}
+
+	.gridPage .gridBorders {
+		background-color:	white;
+	}
+	
+	.gridPage table.header tr:first-child {
+		font-weight:	bold;
+	}
+	
+	.gridPage table.header.simple tr:first-child {
+		border-bottom:	1px solid #333333;
+	}
+	
+	.gridPage table.header.shaded tr:first-child {
+		background:	#F2F2F2;
+	}
+	
+	.gridPage .btnHolder {
+		width: 100%;
+		margin:	10px;
+	}
+
+	.gridPage  .btnHolder.x_floatRight {
+		margin:	0px 0px 10px 10px;
+	}
+	
+	/*.pageContents.gridPage > .btnHolder {
+		float:	right;
+	}*/
+	
+	.gridPage .feedback {
+		margin-top:	10px;
+	}
+
+	.gridPage .content{
+		display: flex;
+	}
+
+
+
+	

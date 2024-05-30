@@ -1,18 +1,7 @@
 var quizBlock = new function() {
-    var quizModel = {
-        questions: null,
-        currentAnswers: null,
-        currentQ: null,
-        qNoTxt: null,
-        myProgress: null,
-        resultsShown: false,
-        tracked: false,
-				initializedTracking: null,
-        questionFeedbackText: null
-    };
 
-    this.resetQuizModel = function(){
-        quizModel = {
+    this.generateQuizModel = function(){
+        return {
             questions: null,
             currentAnswers: null,
             currentQ: null,
@@ -21,7 +10,17 @@ var quizBlock = new function() {
             resultsShown: false,
             tracked: false,
 						initializedTracking: null,
-            questionFeedbackText: null
+            questionFeedbackText: null,
+						feedbackLabel: null,
+            generalFeedbackLabel: null,
+            singleRight: null,
+            singleWrong: null,
+            multiRight: null,
+            multiWrong: null,
+            onCompletionText: null,
+            scoreText: null,
+						checked: false,
+						currNrOptions: null,
         };
     }
 
@@ -79,43 +78,41 @@ var quizBlock = new function() {
 
 
     this.leavePage = function(blockid) {
+				const state = jGetElement(blockid, ".pageContents").data("state");
         let pageXML = x_getBlockXML(blockid);
         let blocknr = parseFloat(blockid.split("block").pop()) - 1;
-				jGetElement(blockid, ".pageContents").data("quizModel", quizModel);
-        quizModel = XTGetInteractionModelState(x_currentPage, blocknr, 0, true);
         if ($(pageXML).children().length > 0) {
-            if (!quizModel.tracked) {
+            if (!state.tracked) {
                 this.showFeedBackandTrackResults(blockid);
             }
-            if (!quizModel.resultsShown) {
+            if (!state.resultsShown) {
                 this.showResults(blockid);
             }
         }
     }
 
 
-    this.startQs = function(blockid) {
+    this.startQs = function(blockid, firstRun = false) {
         let pageXML = x_getBlockXML(blockid);
-				quizModel = jGetElement(blockid, ".pageContents").data("quizModel");
+				const state = jGetElement(blockid, ".pageContents").data("state");
         // if language attributes aren't in xml will have to use english fall back
-				if (quizModel === undefined) {
-					this.resetQuizModel();
-					quizModel.qNoTxt = pageXML.getAttribute("quesCount");
-					if (quizModel.qNoTxt == undefined) {
-						quizModel.qNoTxt = "Question {i} of {n}";
+				if (firstRun) {
+					state.qNoTxt = pageXML.getAttribute("quesCount");
+					if (state.qNoTxt == undefined) {
+						state.qNoTxt = "Question {i} of {n}";
 					}
-					this.showfeedback = true;
+					state.showfeedback = true;
 					if (pageXML.getAttribute("showfeedback") != undefined) {
-						this.showfeedback = pageXML.getAttribute("showfeedback") == "true";
+						state.showfeedback = pageXML.getAttribute("showfeedback") == "true";
 					}
 
 					jGetElement(blockid, ".optionHolder").show();
 					jGetElement(blockid, ".checkBtn, .nextBtn, .restartBtn").button("disable");
 					jGetElement(blockid, ".feedbackGroup").find('.feedbackBlock').html("");
 
-					quizModel.currentQ = 0;
-					quizModel.questions = []; // array of questions to use (index)
-					quizModel.myProgress = []; // array of whether each question was answered correctly
+					state.currentQ = 0;
+					state.questions = []; // array of questions to use (index)
+					state.myProgress = []; // array of whether each question was answered correctly
 					var numQs = $(pageXML).children().length;
 					if (pageXML.getAttribute("numQuestions") != "All" && pageXML.getAttribute("numQuestions") != undefined && Number(pageXML.getAttribute("numQuestions")) < numQs) {
 						numQs = Number(pageXML.getAttribute("numQuestions"));
@@ -127,34 +124,33 @@ var quizBlock = new function() {
 						}
 						for (var i = 0; i < numQs; i++) {
 							var qNum = Math.floor(Math.random() * qNums.length);
-							quizModel.questions.push(qNums[qNum]);
+							state.questions.push(qNums[qNum]);
 							qNums.splice(qNum, 1);
-							quizModel.myProgress.push("");
+							state.myProgress.push("");
 						}
 					} else {
 						for (var i = 0; i < numQs; i++) {
-							quizModel.questions.push(i);
-							quizModel.myProgress.push("");
+							state.questions.push(i);
+							state.myProgress.push("");
 						}
 					}
 				}
         // Track the quiz page
-        this.weighting = 1.0;
+        let weighting = 1.0;
         if (pageXML.getAttribute("trackingWeight") != undefined)
         {
-            this.weighting = pageXML.getAttribute("trackingWeight");
+            let weighting = pageXML.getAttribute("trackingWeight");
         }
-				if(quizModel.initializedTracking == null) {
-						XTSetInteractionType(x_currentPage, x_getBlockNr(blockid), 'multiplechoice', this.weighting, 1);
-						for (var i = 0; i < $(pageXML).children().length-1; i++) {
-								XTSetInteractionType(x_currentPage, x_getBlockNr(blockid), 'multiplechoice', 0, 1);
+				if(state.initializedTracking == null) {
+						XTSetInteractionType(x_currentPage, x_getBlockNr(blockid), 'multiplechoice', weighting, 0);
+						for (var i = 1; i < $(pageXML).children().length; i++) {
+								XTSetInteractionType(x_currentPage, x_getBlockNr(blockid), 'multiplechoice', weighting, i);
 						}
 						// XTSetPageType(x_currentPage, 'numeric', numQs, this.weighting);
-						quizModel.initializedTracking = [];
+						state.initializedTracking = [];
 				}
 
         this.loadQ(blockid);
-				jGetElement(blockid, ".pageContents").data("quizModel", quizModel);
 
         x_pageContentsUpdated();
     };
@@ -163,10 +159,8 @@ var quizBlock = new function() {
         let pageXML = x_getBlockXML(blockid);
         // Reset tracking flag
         var blocknr = parseFloat(blockid.split("block").pop()) - 1;
-        if(next){
-            quizModel = XTGetInteractionModelState(x_currentPage, blocknr, 0, true);
-        }
-        quizModel.tracked = false;
+				const state = jGetElement(blockid, ".pageContents").data("state");
+        state.tracked = false;
 
         if ($(pageXML).children().length == 0) {
 						;
@@ -178,9 +172,9 @@ var quizBlock = new function() {
                 pageXML = xmlState;
             }
 
-            $thisQ = $(pageXML).children()[quizModel.questions[quizModel.currentQ]];
+            $thisQ = $(pageXML).children()[state.questions[state.currentQ]];
 
-            jGetElement(blockid, ".qNo").html(quizModel.qNoTxt.replace("{i}", quizModel.currentQ + 1).replace("{n}", quizModel.questions.length));
+            jGetElement(blockid, ".qNo").html(state.qNoTxt.replace("{i}", state.currentQ + 1).replace("{n}", state.questions.length));
 
             var infoString = $thisQ.getAttribute("prompt");
 
@@ -226,7 +220,7 @@ var quizBlock = new function() {
                     correctFeedback = [];
 
                 // Store the answers in a temporary array
-                quizModel.currentAnswers = [];
+                state.currentAnswers = [];
                 $($thisQ).children().each(function(i) {
                     var label;
                     if (this.getAttribute("name") == undefined || this.getAttribute("name")=="")
@@ -237,7 +231,7 @@ var quizBlock = new function() {
                     {
                         label = this.getAttribute("name");
                     }
-                    quizModel.currentAnswers.push(
+                    state.currentAnswers.push(
                         {
                             text:		this.getAttribute("text"),
                             name:       label,
@@ -251,16 +245,16 @@ var quizBlock = new function() {
 
                 // Randomise the answers, if required
                 if ($thisQ.getAttribute("answerOrder") == 'random') {
-                    for (var tmp, j, k, l = quizModel.currentAnswers.length, i = l; i--;) {
+                    for (var tmp, j, k, l = state.currentAnswers.length, i = l; i--;) {
                         j = Math.floor(Math.random() * l);
                         k = Math.floor(Math.random() * l);
-                        tmp = quizModel.currentAnswers[j];
-                        quizModel.currentAnswers[j] = quizModel.currentAnswers[k];
-                        quizModel.currentAnswers[k] = tmp;
+                        tmp = state.currentAnswers[j];
+                        state.currentAnswers[j] = state.currentAnswers[k];
+                        state.currentAnswers[k] = tmp;
                     }
                 }
 
-                $.each(quizModel.currentAnswers, function(i, thisOption) {
+                $.each(state.currentAnswers, function(i, thisOption) {
 
                     var $thisOptionGroup, $thisOption, $thisOptionTxt;
                     if (i != 0) {
@@ -271,7 +265,7 @@ var quizBlock = new function() {
                     $thisOption = $thisOptionGroup.find("input");
                     $thisOptionTxt = $thisOptionGroup.find(".optionTxt");
 
-                    quizBlock.currNrOptions = i+1;
+                    state.currNrOptions = i+1;
 
                     correctOptions.push({
                         id: (i+1)+"",
@@ -322,13 +316,13 @@ var quizBlock = new function() {
                 {
                     name = $thisQ.getAttribute("name");
                 }
-								if(quizModel.initializedTracking.find((tracked) => tracked == name) === undefined) {
-										quizModel.initializedTracking.push(name);
-										XTEnterInteraction(x_currentPage, blocknr , 'multiplechoice', name, correctOptions, correctAnswer, correctFeedback, pageXML.getAttribute("grouping"), null, quizModel.questions[quizModel.currentQ]);
+								if(state.initializedTracking.find((tracked) => tracked == name) === undefined) {
+										state.initializedTracking.push(name);
+										XTEnterInteraction(x_currentPage, blocknr , 'multiplechoice', name, correctOptions, correctAnswer, correctFeedback, pageXML.getAttribute("grouping"), null, state.questions[state.currentQ]);
 								}
-								XTSetInteractionPageXML(x_currentPage, blocknr, pageXML, quizModel.questions[quizModel.currentQ]);
-								quizBlock.checked = false;
-								XTSetInteractionModelState(x_currentPage, blocknr, quizModel, quizModel.questions[quizModel.currentQ]);
+								XTSetInteractionPageXML(x_currentPage, blocknr, pageXML, state.questions[state.currentQ]);
+								state.checked = false;
+								//XTSetInteractionModelState(x_currentPage, blocknr, state, state.questions[state.currentQ]);
 
             }
         }
@@ -337,13 +331,13 @@ var quizBlock = new function() {
     this.showFeedBackandTrackResults = function(blockid)
     {
         let pageXML = x_getBlockXML(blockid);
+				const state = jGetElement(blockid, ".pageContents").data("state");
         var blocknr = parseFloat(blockid.split("block").pop()) - 1;
-        quizModel = XTGetInteractionModelState(x_currentPage, blocknr, 0, true);
         let currentPageXML = pageXML;
-        quizModel.tracked = true;
+        state.tracked = true;
 
 
-        var currentQuestion = currentPageXML.children[quizModel.questions[quizModel.currentQ]];
+        var currentQuestion = currentPageXML.children[state.questions[state.currentQ]];
 
         var selected = jGetElement(blockid, ".optionHolder input:checked"),
             optionFeedback = "",
@@ -355,9 +349,9 @@ var quizBlock = new function() {
         var generalFeedback = "";
         var correctCounter = 0;
 
-        var thisQ = currentPageXML.children[quizModel.questions[quizModel.currentQ]];
-        quizModel.questionFeedbackText = thisQ.getAttribute('generalFeedback')
-        var currentQuestionsChildren = $(currentPageXML.children[quizModel.questions[quizModel.currentQ]]).children();
+        var thisQ = currentPageXML.children[state.questions[state.currentQ]];
+        state.questionFeedbackText = thisQ.getAttribute('generalFeedback')
+        var currentQuestionsChildren = $(currentPageXML.children[state.questions[state.currentQ]]).children();
         for(i = 0; i < currentQuestionsChildren.length; i++)
         {
 
@@ -374,7 +368,7 @@ var quizBlock = new function() {
         // get feedback for selected options and check if they are correct
         for (var i=0; i<selected.length; i++) {
             var optionIndex = $(selected[i]).parent().index(),
-                selectedOption = quizModel.currentAnswers[optionIndex];
+                selectedOption = state.currentAnswers[optionIndex];
 
             optionFeedback += "<p>" + x_addLineBreaks(selectedOption.feedback)  + "</p>";
             if (selectedOption.audioFB != undefined && selectedOption.audioFB != "") {
@@ -401,7 +395,7 @@ var quizBlock = new function() {
             if (correct != false && currentQuestion.getAttribute("type") == "Multiple Answer") {
                 var notSelected = jGetElement(blockid, ".optionHolder input:not(:checked)");
                 for (var i=0; i<notSelected.length; i++) {
-                    var notSelectedOption = quizModel.currentAnswers[$(notSelected[i]).parent().index()];
+                    var notSelectedOption = state.currentAnswers[$(notSelected[i]).parent().index()];
                     if (notSelectedOption.correct == "true") {
                         correct = false;
                     }
@@ -428,7 +422,7 @@ var quizBlock = new function() {
 
         feedbackOrder = [...feedbackOrder];
 
-        if(this.showfeedback){
+        if(state.showfeedback){
             if(thisQ.getAttribute("type") != "Multiple Answer"){
                 for (var i=0; i<feedbackDiv.length; i++) {
                     var thisFeedback;
@@ -500,8 +494,8 @@ var quizBlock = new function() {
             success: correct,
             score: correct ? 100.0 : 0.0
         };
-        XTExitInteraction(x_currentPage, blocknr, result, l_options, l_answer, l_feedback,  quizModel.questions[quizModel.currentQ]);
-        quizModel.myProgress.splice(quizModel.currentQ, 1, correct);
+        XTExitInteraction(x_currentPage, blocknr, result, l_options, l_answer, l_feedback,  state.questions[state.currentQ]);
+        state.myProgress.splice(state.currentQ, 1, correct);
 
         generalFeedback += rightWrongTxt;
         var answerFeedback = "<h3>" + jGetElement(blockid, ".pageContents").data("feedbackLabel") + "</h3>" + generalFeedback;
@@ -509,12 +503,12 @@ var quizBlock = new function() {
         {
             // Disable all options
             var i=0;
-            for (i=0; i<quizBlock.currNrOptions; i++)
+            for (i=0; i<state.currNrOptions; i++)
             {
                 jGetElement(blockid, ".option"+i).attr("disabled", "disabled");
             }
         }
-        if (quizBlock.showfeedback)
+        if (state.showfeedback)
         {
             jGetElement(blockid, ".feedback")
                 .html(answerFeedback)
@@ -526,10 +520,10 @@ var quizBlock = new function() {
                 });
             });
 
-            if(quizModel.questionFeedbackText !== null){
-                if(quizModel.questionFeedbackText !== ""){
-                    var questionFeedback = "<h3>" + jGetElement(blockid, ".pageContents").data("generalFeedbackLabel") + "</h3>" + quizModel.questionFeedbackText
-                    $('.generalFeedback').html(questionFeedback)
+            if(state.questionFeedbackText !== null){
+                if(state.questionFeedbackText !== ""){
+                    var questionFeedback = "<h3>" + jGetElement(blockid, ".pageContents").data("generalFeedbackLabel") + "</h3>" + state.questionFeedbackText
+                    jGetElement(blockid, '.generalFeedback').html(questionFeedback)
                 }
 
             }
@@ -548,9 +542,9 @@ var quizBlock = new function() {
         {
             // Continue to next question
             jGetElement(blockid, ".checkBtn").button("disable");
-            quizModel.currentQ++;
-            XTSetInteractionModelState(x_currentPage, blocknr, quizModel, 0, true);
-            if (quizModel.currentQ == quizModel.questions.length) {
+            state.currentQ++;
+            XTSetInteractionModelState(x_currentPage, blocknr, state, 0, true);
+            if (state.currentQ == state.questions.length) {
                 // last question answered - show results
                 quizBlock.showResults();
             } else {
@@ -563,24 +557,24 @@ var quizBlock = new function() {
 
     this.showResults = function(blockid) {
         let pageXML = x_getBlockXML(blockid);
+				const state = jGetElement(blockid, ".pageContents").data("state");
         // last question answered - show results
         let blocknr = parseFloat(blockid.split("block").pop()) - 1;
-        quizModel = XTGetInteractionModelState(x_currentPage, blocknr, 0, true);
         var $pageContents = jGetElement(blockid, ".pageContents");
         jGetElement(blockid, ".qNo").html($pageContents.data("onCompletionText"));
         var fbTxt = "<p>" + x_addLineBreaks(pageXML.getAttribute("feedback")) + "</p>";
 
         var myScore = 0;
-        for (var i=0; i<quizModel.myProgress.length; i++) {
-            if (quizModel.myProgress[i] == true) {
+        for (var i=0; i<state.myProgress.length; i++) {
+            if (state.myProgress[i] == true) {
                 myScore++;
             }
         }
         if (pageXML.getAttribute("judge") != "false") {
             if (pageXML.getAttribute("scorePos") == "Above") {
-                fbTxt = "<p>" + $pageContents.data("scoreText").replace("{i}", myScore).replace("{n}", quizModel.questions.length) + "</p>" + fbTxt;
+                fbTxt = "<p>" + $pageContents.data("scoreText").replace("{i}", myScore).replace("{n}", state.questions.length) + "</p>" + fbTxt;
             } else {
-                fbTxt += "<p>" + $pageContents.data("scoreText").replace("{i}", myScore).replace("{n}", quizModel.questions.length) + "</p>";
+                fbTxt += "<p>" + $pageContents.data("scoreText").replace("{i}", myScore).replace("{n}", state.questions.length) + "</p>";
             }
         }
 
@@ -599,9 +593,9 @@ var quizBlock = new function() {
         }
         jGetElement(blockid, ".qTxt").html("");
 
-        var scormScore = Math.round((myScore * 100 / quizModel.questions.length) * 100)/100;
+        var scormScore = Math.round((myScore * 100 / state.questions.length) * 100)/100;
         //XTSetPageScore(x_currentPage, scormScore);
-        quizModel.resultsShown = true;
+        state.resultsShown = true;
     };
 
     this.loadVideo = function(blockid) {
@@ -630,9 +624,9 @@ var quizBlock = new function() {
             $splitScreen = jGetElement(blockid, ".pageContents .splitScreen"),
             $textHolder = jGetElement(blockid, ".textHolder");
 
-        this.resetQuizModel();
+        let state = this.generateQuizModel();
 
-        quizModel.resultsShown = false;
+        state.resultsShown = false;
         if (panelWidth == "Full") {
             jGetElement(blockid, ".infoHolder .panel").appendTo(jGetElement(blockid, ".pageContents"));
             $splitScreen.remove();
@@ -739,7 +733,7 @@ var quizBlock = new function() {
             generalFeedbackLabel = "General Feedback";
         }
 
-        jGetElement(blockid, ".pageContents").data({
+        $.extend(state, {
             "feedbackLabel"			:feedbackLabel,
             "generalFeedbackLabel"	:generalFeedbackLabel,
             "singleRight"			:singleRight,
@@ -755,8 +749,9 @@ var quizBlock = new function() {
                 label: submitBtnText
             })
             .click(function() {
+								const state = jGetElement(blockid, ".pageContents").data("state");
                 quizBlock.showFeedBackandTrackResults(blockid);
-                quizBlock.checked = true;
+                state.checked = true;
             });
 
         jGetElement(blockid, ".nextBtn")
@@ -764,15 +759,16 @@ var quizBlock = new function() {
                 label: nextBtnText
             })
             .click(function() {
+								const state = jGetElement(blockid, ".pageContents").data("state");
                 var blocknr = parseFloat(blockid.split("block").pop()) - 1;
-                var xmlState = XTGetPageXML(x_currentPage, blocknr,quizModel.questions[quizModel.currentQ])
+                var xmlState = XTGetPageXML(x_currentPage, blocknr,state.questions[state.currentQ])
                 $(this).button("disable");
                 jGetElement(blockid, ".feedbackGroup").find('.feedbackBlock').html("");
-                quizModel.currentQ++;
-                if (quizModel.currentQ == quizModel.questions.length) {
+                state.currentQ++;
+                if (state.currentQ == state.questions.length) {
                     // last question answered - show results
                     quizBlock.showResults(blockid);
-                    quizModel.resultsShown = true;
+                    state.resultsShown = true;
                 } else {
                     quizBlock.loadQ(blockid, true, xmlState);
                 }
@@ -788,7 +784,9 @@ var quizBlock = new function() {
                 quizBlock.startQs(blockid);
             });
 
-        this.startQs(blockid);
+				jGetElement(blockid, ".pageContents").data("state", state);
+
+        this.startQs(blockid, true);
         this.sizeChanged(blockid);
         x_pageLoaded();
     }

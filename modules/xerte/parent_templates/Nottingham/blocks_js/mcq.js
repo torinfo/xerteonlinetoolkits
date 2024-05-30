@@ -1,26 +1,24 @@
 var mcqBlock = new function() {
 
-    var mcqModel= {
-        optionElements: null
-    };
-
-    this.resetModelState = function () {
-        mcqModel = {
-            optionElements: null
+    this.generateModelState = function () {
+        return mcqModel = {
+						judge: null,
+            optionElements: null,
+						checked: null,
+						currNrOptions: null,
         };
     }
 
     // function called every time the page is viewed after it has initially loaded
     this.pageChanged = function(blockid) {
         let pageXML = x_getBlockXML(blockid);
-
-        this.optionElements = jGetElement(blockid, ".pageContents").data("optionElements");
+				const state = jGetElement(blockid, ".pageContents").data("state");
 
         if ($(pageXML).children().length > 0) {
             //this.startQ(blockid);
-            $(".feedback").find('.feedbackBlock').html("");
-            $(".optionHolder input:checked").prop("checked", false);
-            $(".checkBtn")
+            jGetElement(blockid, ".feedback").find('.feedbackBlock').html("");
+            jGetElement(blockid, ".optionHolder input:checked").prop("checked", false);
+            jGetElement(blockid, ".checkBtn")
                 .show()
                 .button("disable");
         }
@@ -33,12 +31,12 @@ var mcqBlock = new function() {
             $panel.height($x_pageHolder.height() - parseInt($x_pageDiv.css("padding-top")) * 2 - parseInt($panel.css("padding-top")) * 2 - 5);
         }
 
-        if ($(".pageContents .audioHolder").length > 0) {
+        if (jGetElement(blockid, ".pageContents .audioHolder").length > 0) {
             var audioBarW = 0;
-            $(".pageContents .audioHolder:eq(0) .mejs-inner .mejs-controls").children().each(function() {
+            jGetElement(blockid, ".pageContents .audioHolder:eq(0) .mejs-inner .mejs-controls").children().each(function() {
                 audioBarW += $(this).outerWidth();
             });
-            if (audioBarW - $(".pageContents .audioHolder").parents(".mainPanel").width() < -2 || audioBarW - $(".pageContents .audioHolder").parents(".mainPanel").width() > 2) {
+            if (audioBarW - jGetElement(blockid, ".pageContents .audioHolder").parents(".mainPanel").width() < -2 || audioBarW - jGetElement(blockid, ".pageContents .audioHolder").parents(".mainPanel").width() > 2) {
                 $x_window.resize();
             }
         }
@@ -46,47 +44,49 @@ var mcqBlock = new function() {
 
     this.startQ = function(blockid) {
         let pageXML = x_getBlockXML(blockid);
+				const state = jGetElement(blockid, ".pageContents").data("state");
+				
         var correctOptions = [],
             correctAnswer = [],
             correctFeedback = [],
             judge = false,
             blocknr = x_getBlockNr(blockid); // is there a correct answer for the question?
 
-        this.checked = false;
+        state.checked = false;
         // Track the quiz page
-        this.weighting = 1.0;
+        let weighting = 1.0;
         if (pageXML.getAttribute("trackingWeight") != undefined)
         {
-            this.weighting = pageXML.getAttribute("trackingWeight");
+            weighting = pageXML.getAttribute("trackingWeight");
         }
         //TODO: fix this mess:
-        XTSetInteractionType(x_currentPage, blocknr, 'numeric', this.weighting);
-        for (var i = 0; i < this.optionElements.length; i++) {
+        XTSetInteractionType(x_currentPage, blocknr, 'numeric', weighting);
+        for (var i = 0; i < state.optionElements.length; i++) {
             var answerTxt;
-            if (this.optionElements[i].label != undefined)
+            if (state.optionElements[i].label != undefined)
             {
-                var answerTxt=this.optionElements[i].label;
+                var answerTxt=state.optionElements[i].label;
             }
             else
             {
                 // Create fallback label
                 var answerTxt = (pageXML.getAttribute('answerTxt') != undefined ? pageXML.getAttribute('answerTxt') : "Option");
                 answerTxt += ' ' + (i+1);
-                answerTxt = x_GetTrackingTextFromHTML(this.optionElements[i].text, answerTxt);
+                answerTxt = x_GetTrackingTextFromHTML(state.optionElements[i].text, answerTxt);
             }
             correctOptions.push({
                 id: (i+1)+"",
                 answer: answerTxt,
-                result: this.optionElements[i].correct == 'true'
+                result: state.optionElements[i].correct == 'true'
             });
-            if (this.optionElements[i].correct == 'true') {
+            if (state.optionElements[i].correct == 'true') {
                 judge = true;
                 correctAnswer.push(answerTxt);
             }
-            correctFeedback.push(x_GetTrackingTextFromHTML(this.optionElements[i].feedback, ""));
+            correctFeedback.push(x_GetTrackingTextFromHTML(state.optionElements[i].feedback, ""));
         }
 
-        $(".pageContents").data("judge", judge);
+        state.judge = judge;
 
         // Create fallback label
         var label = (pageXML.getAttribute('questionTxt') != undefined ? pageXML.getAttribute('questionTxt') : "Multiple choice question");
@@ -101,14 +101,14 @@ var mcqBlock = new function() {
         }
         XTEnterInteraction(x_currentPage, blocknr, 'multiplechoice', label, correctOptions, correctAnswer, correctFeedback, pageXML.getAttribute("grouping"), null);
         XTSetInteractionPageXML(x_currentPage, blocknr, pageXML);
-        XTSetInteractionModelState(x_currentPage, blocknr, mcqModel);
     }
 
-    this.leavePage = function() {
+    this.leavePage = function(blockid) {
         let pageXML = x_getBlockXML(blockid);
+				const state = jGetElement(blockid, ".pageContents").data("state");
         if ($(pageXML).children().length > 0) {
-            if (!this.checked) {
-                this.showFeedBackandTrackScore();
+            if (!state.checked) {
+                mcqBlock.showFeedBackandTrackScore();
             }
         }
     }
@@ -117,8 +117,7 @@ var mcqBlock = new function() {
     {
         var blocknr = parseFloat(blockid.split("block").pop()) - 1;
         let currentPageXML = x_getBlockXML(blocknr);
-        mcqModel = XTGetInteractionModelState(x_currentPage, blocknr);
-        this.optionElements = mcqModel.optionElements;
+				const state = jGetElement(blockid, ".pageContents").data("state");
         var answerFeedback = "",
             genFeedback,
             correct = (currentPageXML.getAttribute("type") == "Multiple Answer"),
@@ -137,7 +136,7 @@ var mcqBlock = new function() {
         for (var i=0; i<selected.length; i++) {
             
             var optionIndex = $(selected[i]).parent().index(),
-                selectedOption = this.optionElements[optionIndex],
+                selectedOption = state.optionElements[optionIndex],
                 currCorrect;
 
             if (currentPageXML.getAttribute("type") == "Multiple Answer") {
@@ -197,7 +196,7 @@ var mcqBlock = new function() {
         // add correct feedback depending on if question overall has been answered correctly or not
         if (currentPageXML.getAttribute("markFeedback") != 'false') { // new optional property allows for this feedback to be turned off
             if (currentPageXML.getAttribute("type") == "Multiple Answer") {
-                if ($(".pageContents").data("judge") == true) { // there is a correct answer for question
+                if (state.judge == true) { // there is a correct answer for question
                     if (correct == true) {
                         rightWrongTxt = multiRight != '' ? '<p>' + multiRight + '</p>' : '';
                     } else {
@@ -205,7 +204,7 @@ var mcqBlock = new function() {
                     }
                 }
             } else {
-                if ($(".pageContents").data("judge") == true) { // there is a correct answer for question
+                if (state.judge == true) { // there is a correct answer for question
                     if (correct == true) {
                         rightWrongTxt = singleRight != '' ? '<p>' + singleRight + '</p>' : '';
                     } else {
@@ -278,7 +277,7 @@ var mcqBlock = new function() {
         {
             // Disable all options
             var i=0;
-            for (i=0; i<mcqBlock.currNrOptions; i++)
+            for (i=0; i<state.currNrOptions; i++)
             {
                 jGetElement(blockid, "#option"+i).attr("disabled", "disabled");
             }
@@ -306,6 +305,8 @@ var mcqBlock = new function() {
 
     this.init = function(blockid) {
         let pageXML = x_getBlockXML(blockid);
+				const state = this.generateModelState();
+				jGetElement(blockid, ".pageContents").data("state", state);
         // correct attribute on option also not used as it doesn't mark correct/incorrect - only gives feedback for each answer
         var panelWidth = pageXML.getAttribute("panelWidth"),
             $splitScreen = jGetElement(blockid, ".pageContents .splitScreen"),
@@ -373,22 +374,22 @@ var mcqBlock = new function() {
                     }
                 );
             });
-            this.optionElements = elements;
+            state.optionElements = elements;
 
             // Randomise the answers, if required
             if (pageXML.getAttribute("answerOrder") == 'random') {
-                for (var tmp, j, k, i = this.optionElements.length; i--;) {
-                    j = Math.floor(Math.random() * this.optionElements.length);
-                    k = Math.floor(Math.random() * this.optionElements.length);
-                    tmp = this.optionElements[j];
-                    this.optionElements[j] = this.optionElements[k];
-                    this.optionElements[k] = tmp;
+                for (var tmp, j, k, i = state.optionElements.length; i--;) {
+                    j = Math.floor(Math.random() * state.optionElements.length);
+                    k = Math.floor(Math.random() * state.optionElements.length);
+                    tmp = state.optionElements[j];
+                    state.optionElements[j] = state.optionElements[k];
+                    state.optionElements[k] = tmp;
                 }
             }
 
-            mcqModel.optionElements = this.optionElements;
+            state.optionElements = state.optionElements;
 
-            $.each(this.optionElements, function(i, thisOption) {
+            $.each(state.optionElements, function(i, thisOption) {
                 var $thisOptionGroup, $thisOption, $thisOptionTxt;
                 if (i != 0) {
                     $thisOptionGroup = $optionGroup.clone().appendTo($optionHolder);
@@ -398,7 +399,7 @@ var mcqBlock = new function() {
                 $thisOption = $thisOptionGroup.find("input");
                 $thisOptionTxt = $thisOptionGroup.find(".optionTxt");
 
-                mcqBlock.currNrOptions = i+1;
+                state.currNrOptions = i+1;
 
                 $thisOption
                     .attr({
@@ -450,12 +451,11 @@ var mcqBlock = new function() {
                 .click(function() {
                     $(this).hide();
                     mcqBlock.showFeedBackandTrackScore(blockid);
-                    mcqBlock.checked = true;
+                    state.checked = true;
                 })
 
-            this.startQ(blockid);
+            this.startQ(blockid, state);
 
-            jGetElement(blockid, ".pageContents").data("optionElements", this.optionElements);
         }
 
         this.sizeChanged(blockid);

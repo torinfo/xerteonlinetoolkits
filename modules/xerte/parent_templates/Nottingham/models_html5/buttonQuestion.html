@@ -17,101 +17,34 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-	
+
 	// pageChanged & sizeChanged functions are needed in every model file
 	// other functions for model should also be in here to avoid conflicts
-	var buttonQuestion = new function() {
-		// function called every time the page is viewed after it has initially loaded
-		this.pageChanged = function() {
-			$("#button").show();
-			$("#answer").empty(); // emptied rather than hidden so it's read immediately by screenreaders when text appears
+	var buttonQuestion = new function () {
+		this.init = function () {
+			this.setUp();
+			XTSetPageType(x_currentPage, 'numeric', 0, 0);
 		}
 		
-		// function called every time the size of the LO is changed
+		this.setUp = function() {
+			x_createBlock($("#pageContents"), x_currentPageXML, 1)
+		}
+		
 		this.sizeChanged = function() {
-			if (x_browserInfo.mobile == false) {
-				var $panel = $("#pageContents .panel");
-				$panel.height($x_pageHolder.height() - parseInt($x_pageDiv.css("padding-top")) * 2 - parseInt($panel.css("padding-top")) * 2 - 5);
-			}
+			//window["categoriesBlock"].sizeChanged("block1");
 		}
-		
-		this.init = function() {
-			// labelWidth attribute not used as button will be sized automatically
-			var panelWidth = x_currentPageXML.getAttribute("panelWidth"),
-				$splitScreen = $("#pageContents .splitScreen"),
-				$textHolder = $("#textHolder");
-			
-			if (panelWidth == "Full") {
-				$("#pageContents .panel").appendTo($("#pageContents"));
-				$splitScreen.remove();
-			} else {
-				$textHolder.html(x_addLineBreaks(x_currentPageXML.getAttribute("instruction")));
-				var textAlign = x_currentPageXML.getAttribute("align");
-				if (textAlign != "Right") {
-					if (panelWidth == "Small") {
-						$splitScreen.addClass("large");
-					} else if (panelWidth == "Large") {
-						$splitScreen.addClass("small");
-					} else {
-						$splitScreen.addClass("medium");
-					}
-				} else {
-					$textHolder
-						.removeClass("left")
-						.addClass("right")
-						.appendTo($splitScreen);
-					$("#infoHolder")
-						.removeClass("right")
-						.addClass("left");
-					if (panelWidth == "Small") {
-						$splitScreen.addClass("medium");
-					} else if (panelWidth == "Large") {
-						$splitScreen.addClass("xlarge");
-					} else {
-						$splitScreen.addClass("large");
-					}
-				}
-			}
-			
-			$("#prompt").html(x_addLineBreaks(x_currentPageXML.getAttribute("prompt")));
-			var btnTxt = x_currentPageXML.getAttribute("label");
-			if (btnTxt == undefined || btnTxt == "") {
-				btnTxt = "Let's See";
-			}
-			$("#button")
-				.button({
-					label:	btnTxt
-				})
-				.click(function() {
-					$(this).hide();
-					$("#answer").html(x_addLineBreaks(x_currentPageXML.getAttribute("feedback")));
-					x_pageContentsUpdated();
-				});
-			
-			this.sizeChanged();
-			x_pageLoaded();
+		this.pageChanged = function() {
+			//this.setUp();
+			//window["categoriesBlock"].pageChanged("block1");
+		}
+		this.leavePage = function () {
+			XTSetPageScore(x_currentPage, 100);
+			document.dispatchEvent(new Event('leavepage'));
 		}
 	}
-	
+
 	buttonQuestion.init();
-	
 </script>
 
-
 <div id="pageContents">
-	
-	<div class="splitScreen">
-		
-		<div id="textHolder" class="left"></div>
-		
-		<div id="infoHolder" class="right">
-			<div class="panel">
-				<div id="prompt"></div>
-				<button id="button"></button>
-				<div id="answer" aria-live="polite"></div>
-			</div>
-		</div>
-		
-	</div>
-	
 </div>

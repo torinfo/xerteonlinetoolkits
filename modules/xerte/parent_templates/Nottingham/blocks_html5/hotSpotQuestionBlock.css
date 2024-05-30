@@ -1,0 +1,121 @@
+/* hotspotImage.html */
+
+	.hotspotQuestion .panel.right {
+		float:	right;
+		margin:	0 0 20px 20px;
+	}
+
+	.hotspotQuestion .panel.left {
+		float:	left;
+		margin:	0 20px 20px 0;
+	}
+
+	.hotspotQuestion .imageHolder {
+		position:	relative;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+	}
+
+	.pageContents.hotspotQuestion .hotspot {
+		position:	absolute;
+		cursor:		pointer;
+	}
+
+	.hotspotQuestion .infoHolder {
+		padding-top: 10px;
+	}
+
+	.hotspotQuestion .infoHolder hr {
+		border: none;
+		background-color: #CCCCCC;
+		height: 1px;
+		margin-bottom: 20px;
+	}
+
+	.pageContents.hotspotQuestion .highlightBorder {
+		border:		1px solid;
+		margin-top: -1px;
+		margin-left: -1px;
+	}
+
+	.pageContents.hotspotQuestion .selected {
+		margin-top: -2px;
+		margin-left: -2px;
+	}
+
+	.hotspotQuestion .disableClick{
+		pointer-events: none;
+	}
+
+	.hotspotQuestion .mapster_el .x_noLightBox{
+		width: 100% !important;
+	}
+	.hotspotQuestion .mapster_el{
+		width: 100% !important;
+	}
+	/*.x_noLightBox{*/
+	/*	width: 100% !important;*/
+	/*}*/
+
+	.hotspotQuestion .infoHolder{
+		padding-top: 0!important;
+	}
+
+	.hotspotQuestion .feedbackIcon{
+		position: absolute;
+		z-index: 1;
+	}
+	.hotspotQuestion .textContents{
+		padding-top: 8px;
+	}
+	.hotspotQuestion .paddingLeft{
+		margin-left: 10% !important;
+
+	}
+	.hotspotQuestion .paddingLeft{
+		padding-right: 7% !important;
+
+	}
+	
+	.hotspotQuestion .mapster_wrap_0{
+		margin: auto !important;
+	}
+
+	.hotspotQuestion .checkButton{
+		float: right;
+	}
+
+	.hotspotQuestion .score h3{
+		padding: 0.3em;
+	}
+
+	.hotspotQuestion .text{
+		display: flex;
+		flex-direction: column;
+		align-items: flex-start;
+	}
+	
+	.hotspotQuestion .markingIcons .correct {
+		position: absolute;
+		margin-left: -22px;
+		margin-top: -22px;
+	}
+	
+	.hotspotQuestion .markingIcons .incorrect {
+		position: absolute;
+		margin-left: -17px;
+		margin-top: -22px;
+	}
+	
+	.hotspotQuestion .markingIcons .correct span:before {
+		font-family: FontAwesome;
+		content: "\f00c";
+		color: green;
+	}
+	
+	.hotspotQuestion .markingIcons .incorrect span:before {
+		font-family: FontAwesome;
+		content: "\f00d";
+		color: red;
+	}

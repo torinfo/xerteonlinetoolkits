@@ -51,6 +51,7 @@
 	</ivOverlayPanel>
 
 	<ivSynchBlockPanel>
+		<HotSpot label="Choose location" type="LocPicker" defaultValue="ERROR" />
 	    <disable label="Disable Controls" type="CheckBox"/>
         <synchStart label="Synch Point" type="TextInput" defaultValue="9999"/>
         <pauseMedia label="Pause Media" type="CheckBox" defaultValue="true"/>

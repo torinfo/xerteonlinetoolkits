@@ -17,126 +17,34 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-	
+
 	// pageChanged & sizeChanged functions are needed in every model file
 	// other functions for model should also be in here to avoid conflicts
-	var buttonSequence = new function() {
-		// function called every time the page is viewed after it has initially loaded
-		this.pageChanged = function() {
-			$("#myPanel .infoBtn").hide();
-			$("#myPanel .infoTxt").not(":eq(0)").empty();
-			$("#myPanel .infoGroup:eq(0) .infoBtn").show();
+	var buttonSequence = new function () {
+		this.init = function () {
+			this.setUp();
+			XTSetPageType(x_currentPage, 'numeric', 0, 0);
 		}
 		
-		// function called every time the size of the LO is changed
+		this.setUp = function() {
+			x_createBlock($("#pageContents"), x_currentPageXML, 1)
+		}
+		
 		this.sizeChanged = function() {
-			if (x_browserInfo.mobile == false) {
-				var $panel = $("#myPanel");
-				$panel.height($x_pageHolder.height() - parseInt($x_pageDiv.css("padding-top")) * 2 - parseInt($panel.css("padding-top")) * 2 - 5);
-			}
+			//window["categoriesBlock"].sizeChanged("block1");
 		}
-		
-		this.init = function() {
-			// buttonWidth attribute not used as button will be sized automatically
-			var panelWidth = x_currentPageXML.getAttribute("panelWidth"),
-				$splitScreen = $("#pageContents .splitScreen"),
-				$textHolder = $("#textHolder"),
-				$panel = $("#myPanel");
-			
-			if (panelWidth == "Full") {
-				$panel.appendTo($("#pageContents"));
-				$splitScreen.remove();
-			} else {
-				$textHolder.html(x_addLineBreaks(x_currentPageXML.getAttribute("text")));
-				var textAlign = x_currentPageXML.getAttribute("align");
-				if (textAlign != "Right") {
-					if (panelWidth == "Small") {
-						$splitScreen.addClass("large");
-					} else if (panelWidth == "Large") {
-						$splitScreen.addClass("small");
-					} else {
-						$splitScreen.addClass("medium");
-					}
-				} else {
-					$textHolder
-						.removeClass("left")
-						.addClass("right")
-						.appendTo($splitScreen);
-					$("#infoHolder")
-						.removeClass("right")
-						.addClass("left");
-					if (panelWidth == "Small") {
-						$splitScreen.addClass("medium");
-					} else if (panelWidth == "Large") {
-						$splitScreen.addClass("xlarge");
-					} else {
-						$splitScreen.addClass("large");
-					}
-				}
-			}
-			
-			var $infoGroup = $(".infoGroup:first");
-			
-			$(x_currentPageXML).children()
-				.each(function(i) {
-					var $thisGroup;
-					$thisGroup = $infoGroup.clone().appendTo($panel);
-					if (i == $(x_currentPageXML).children().length - 1) {
-						$thisGroup.find("button").remove();
-					}
-					$thisGroup.find(".infoBtn").hide();
-				});
-			
-			$infoGroup.find(".infoTxt").html(x_addLineBreaks(x_currentPageXML.getAttribute("intro")));
-			
-			$panel.children()
-				.each(function(i) {
-					if (i != $panel.children().length - 1) {
-						$panel.find(".infoGroup:eq(" + i + ") .infoBtn")
-							.button({
-								label:	$(x_currentPageXML).children()[i].getAttribute("name")
-								})
-							.click(function() {
-								var $this = $(this);
-								$this.hide();
-								if ($this.parent().index() != $("#pageContents .infoGroup").length-1) {
-									var $thisGroup = $("#pageContents .infoGroup:eq(" + ($this.parent().index() + 1) + ")");
-									$thisGroup.find(".infoTxt").html(x_addLineBreaks($(x_currentPageXML).children()[$thisGroup.index() - 1].getAttribute("text")));
-									$thisGroup.find(".infoBtn")
-										.show()
-										.focus();
-									
-									x_pageContentsUpdated();
-								}
-							});
-					}
-				});
-			
-			this.sizeChanged();
-			x_pageLoaded();
+		this.pageChanged = function() {
+			//this.setUp();
+			//window["categoriesBlock"].pageChanged("block1");
+		}
+		this.leavePage = function () {
+			XTSetPageScore(x_currentPage, 100);
+			document.dispatchEvent(new Event('leavepage'));
 		}
 	}
-	
+
 	buttonSequence.init();
-	
 </script>
 
-
 <div id="pageContents">
-	
-	<div class="splitScreen">
-		
-		<div id="textHolder" class="left"></div>
-		
-		<div id="infoHolder" class="right">
-			<div id="myPanel" class="panel">
-				<div class="infoGroup">
-					<div class="infoTxt" aria-live="polite">&nbsp;</div>
-					<button class="infoBtn"></button>
-				</div>
-			</div>
-		</div>
-		
-	</div>
-	
 </div>

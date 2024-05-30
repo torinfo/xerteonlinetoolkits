@@ -1,0 +1,26 @@
+/* modelAnswerResults.html */
+	
+	.pageContents.modelAnswerResults .panel {
+		overflow:	auto;
+	}
+	
+	.modelAnswerResults .copyBtn {
+		margin-top:	1em;
+	}
+	
+	.modelAnswerResults .copyTxt {
+		color:		red;
+		font-size:	0.8em;
+	}
+	
+	.modelAnswerResults .textHolder hr {
+		margin-top:		20px;
+		margin-bottom:	20px;
+	}
+	
+	.modelAnswerResults .pageBlock:not(:first-of-type) {
+		margin-top: 1em;
+		padding-top: 1em;
+		border-top: 1px solid #ccc;
+	}
+	
