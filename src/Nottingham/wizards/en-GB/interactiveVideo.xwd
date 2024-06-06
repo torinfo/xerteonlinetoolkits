@@ -39,6 +39,19 @@
 
 		<name label="Overlay Panel Title" type="TextInput"/>
 
+		<AIGroup type="group" label="AI" optional="true">
+            <aiSelector label="AI model" options="OpenAI,Copilot" type="comboBox" data="openai,copilot" defaultValue="openai" width="120" optional="true"/>
+            <uploadPrompt label="Upload file?" type="checkbox" defaultValue="false" optional ="true"/>
+            <fileType label="Which kind of file are you uploading?" options="Text,Audio,Video" type="comboBox" data="text,audio,video" defaultValue="text" width="120" optional="true"/>
+            <subject label="Which topic of the video should the questions focus on?" type="TextInput" wysiwyg="true" optional="true"/>
+            <nrq label="Number of multiple choice questions to generate" type="TextInput" wysiwyg="true" optional="true"/>
+            <nra label="Number of possible answers per question" type="TextInput" wysiwyg="true" optional="true"/>
+            <nrt label="Number of text objects to generate" type="TextInput" wysiwyg="true" optional="true"/>
+            <ageRange label="Age Range" type="TextInput" wysiwyg="true" optional="true"/>
+            <img label="File" type="media" defaultValue="Upload a file" optional="true"/>
+            <aiButton type="aibutton" optional="true"/>
+        </AIGroup>
+
 		<newNodes>
 			<ivSynchXot><![CDATA[<ivSynchXot name="Enter Title" url="Enter XOT Project URL" page="Enter Page Number" hide="none" synchStart="0" clearpanel="true" pauseMedia="true"/>]]></ivSynchXot>
 			<ivSynchMCQ><![CDATA[<ivSynchMCQ name="Enter Title" text="Enter a Prompt" type="radio" answerType="single" synchStart="0" clearpanel="true" pauseMedia="true" disable="true" feedbackLabel="Feedback" singleRight="Your answer is correct!" singleWrong="Your answer is incorrect" multiRight="You have selected all the correct answers" multiWrong="You have not selected the correct combination of answers" checkBtnTxt="Check" continueBtnTxt="Continue" topOption="Select Answer..."/>]]></ivSynchMCQ>
@@ -204,6 +217,4 @@
 		<pauseMedia label="Pause Media" type="CheckBox" defaultValue="true"/>
 
 	</ivSynchXotChange>
-	
-
 </wizard>

@@ -4829,6 +4829,7 @@ var EDITOR = (function ($, parent) {
 			case 'webpage':  //Not used??
 			case 'xerteurl':
             case 'aibutton':
+                debugger
                 var id = 'aibutton_' + form_id_offset;
                 form_id_offset++;
                 html = $('<button>')
@@ -4841,6 +4842,7 @@ var EDITOR = (function ($, parent) {
                         var uploadPrompt = lo_data[key].attributes["uploadPrompt"];
                         // Build the constructor object based on the type
                         var constructorObject;
+                        console.log(type);
                         switch (type) {
                             case 'crossword':
                                 constructorObject = {
@@ -4854,6 +4856,25 @@ var EDITOR = (function ($, parent) {
                                     "subject": lo_data[key].attributes["subject"],
                                     "nrq": lo_data[key].attributes["amountOfQuestions"],
                                     "nra": lo_data[key].attributes["amountOfAnswers"],
+                                }
+                                fileUrl = lo_data[key].attributes["img"];
+                                break;
+                            case 'learningObject':
+                                constructorObject = {
+                                    "subject": lo_data[key].attributes["subject"],
+                                    "amounts": lo_data[key].attributes["amounts"],
+                                    "structure": lo_data[key].attributes["structure"],
+                                    "instructions": lo_data[key].attributes["instructions"],
+                                }
+                                fileUrl = lo_data[key].attributes["img"];
+                                break;
+                            case 'ivOverlayPanel':
+                                constructorObject = {
+                                    "subject": lo_data[key].attributes["subject"],
+                                    "nrq": lo_data[key].attributes["nrq"],
+                                    "nra": lo_data[key].attributes["nra"],
+                                    "nrt": lo_data[key].attributes["nrt"],
+                                    "range": lo_data[key].attributes["ageRange"]
                                 }
                                 fileUrl = lo_data[key].attributes["img"];
                                 break;
