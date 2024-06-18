@@ -1467,7 +1467,7 @@ var interactiveVideBlock = new function () {
 					pluginAttributes.blockNrOffset = blockNrOffset;
 					blockNrOffset += thisContent.childNodes.length;
 				}
-				debugger;
+				
 				popcornInstance[pluginName](pluginAttributes);
 
 
@@ -1494,7 +1494,7 @@ var interactiveVideBlock = new function () {
 				}
 
 				if (data[0].type == "ivSynchMCQ") {
-					debugger;
+					
 					$(data).each(function (e) {
 						var testSynch = this.allInfo.getAttribute("synchStart");
 						if (this.allInfo.children.length !== 0) {

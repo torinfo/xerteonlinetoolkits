@@ -1,32 +1,29 @@
 // pageChanged & sizeChanged functions are needed in every model file
 // other functions for model should also be in here to avoid conflicts
 var dragDropLabelBlock = new function () {
-    var labelTxt1,
-        labelTxt2,
-        labelTxt3,
-        targetTxt1,
-        targetTxt2,
-        submitBtnTxt,
-        interactivity,
-        tooltips = [];
+    var tooltips = [];
 
     // function called every time the page is viewed after it has initially loaded
     this.pageChanged = function (blockid) {
         let pageXML = x_getBlockXML(blockid);
         var resize = jGetElement(blockid, ".labelHolder .label").length == jGetElement(blockid, ".labelHolder .label.ui-draggable-disabled").length && pageXML.getAttribute("labelPos") != "text" ? true : false;
-        this.createLabels(blockid);
+        //this.createLabels(blockid);
         if (resize) {
             this.sizeChanged(blockid, false);
         }
-        submitBtnTxt = pageXML.getAttribute("submitText") != undefined && pageXML.getAttribute("submitText") != "" ? pageXML.getAttribute("submitText") : "Submit";
+        //state.submitBtnTxt = pageXML.getAttribute("submitText") != undefined && pageXML.getAttribute("submitText") != "" ? pageXML.getAttribute("submitText") : "Submit";
 
     };
 
     // function called every time the size of the LO is changed
     this.sizeChanged = function (blockid, firstLoad = false) {
+				if(jGetElement(blockid, ".pageContents").length == 0){
+						return;
+				}
         let pageXML = x_getBlockXML(blockid);
         $x_pageHolder.scrollTop(0);
         var $panel = jGetElement(blockid, ".mainPanel");
+				var $block = $("#"+blockid);
 
         if (firstLoad == true) {
             firstLoad = false;
@@ -81,7 +78,8 @@ var dragDropLabelBlock = new function () {
         let pageXML = x_getBlockXML(blockid);
         pageXML = x_getBlockXML(x_getBlockNr(blockid));
         if ($(pageXML).children().length > 0) {
-            if (!dragDropLabelBlock.checked) {
+						const state = x_getPageDict("state", blockid);
+            if (!state.checked) {
                 dragDropLabelBlock.showFeedBackandTrackResults(blockid);
             }
         }
@@ -89,14 +87,16 @@ var dragDropLabelBlock = new function () {
 
     this.init = function (blockid) {
         let pageXML = x_getBlockXML(blockid);
+				const state = x_pushToPageDict({}, "state", blockid);
         // store strings used to give titles to labels and targets when keyboard is being used (for screen readers)
-        labelTxt1 = x_getLangInfo(x_languageData.find("interactions").find("draggableItem")[0], "name", "Draggable Item");
-        labelTxt2 = x_getLangInfo(x_languageData.find("interactions").find("draggableItem")[0], "selected", "Item Selected");
-        labelTxt3 = x_getLangInfo(x_languageData.find("interactions").find("draggableItem")[0], "toSelect", "Press space to select");
-        targetTxt1 = x_getLangInfo(x_languageData.find("interactions").find("targetArea")[0], "description", "Drop zone for");
-        targetTxt2 = x_getLangInfo(x_languageData.find("interactions").find("targetArea")[0], "toSelect", "Press space to drop the selected item.");
-        submitBtnTxt = pageXML.getAttribute("submitText") != undefined && pageXML.getAttribute("submitText") != "" ? pageXML.getAttribute("submitText") : "Submit";
-        interactivity = pageXML.getAttribute("interactivity") != undefined && pageXML.getAttribute("interactivity") != "" ? pageXML.getAttribute("interactivity") : "Describe";
+        state.labelTxt1 = x_getLangInfo(x_languageData.find("interactions").find("draggableItem")[0], "name", "Draggable Item");
+        state.labelTxt2 = x_getLangInfo(x_languageData.find("interactions").find("draggableItem")[0], "selected", "Item Selected");
+        state.labelTxt3 = x_getLangInfo(x_languageData.find("interactions").find("draggableItem")[0], "toSelect", "Press space to select");
+        state.targetTxt1 = x_getLangInfo(x_languageData.find("interactions").find("targetArea")[0], "description", "Drop zone for");
+        state.targetTxt2 = x_getLangInfo(x_languageData.find("interactions").find("targetArea")[0], "toSelect", "Press space to drop the selected item.");
+        state.submitBtnTxt = pageXML.getAttribute("submitText") != undefined && pageXML.getAttribute("submitText") != "" ? pageXML.getAttribute("submitText") : "Submit";
+        state.interactivity = pageXML.getAttribute("interactivity") != undefined && pageXML.getAttribute("interactivity") != "" ? pageXML.getAttribute("interactivity") : "Describe";
+				state.FirstLoad = true;
 
 
         jGetElement(blockid, ".mainText").html(x_addLineBreaks(pageXML.getAttribute("text")));
@@ -111,7 +111,7 @@ var dragDropLabelBlock = new function () {
         if (tryTxt == undefined || tryTxt == "") {
             tryTxt = "Try again";
         }
-        jGetElement(blockid, ".pageContents").data("tryTxt", tryTxt);
+        state.tryTxt = tryTxt;
 
         // if (pageXML.getAttribute("align") == "Right") {
         //     jGetElement(blockid, ".dragDropHolderLabelling").addClass("x_floatLeft");
@@ -119,12 +119,13 @@ var dragDropLabelBlock = new function () {
         //     jGetElement(blockid, ".dragDropHolderLabelling").addClass("x_floatRight");
         // }
 
-        if (interactivity == "Match") {
+        if (state.interactivity == "Match") {
             jGetElement(blockid, ".submitBtn")
                 .button({
-                    label: submitBtnTxt
+                    label: state.submitBtnTxt
                 })
                 .click(function () {
+										const state = x_getPageDict("state", blockid);
                     $x_pageHolder.scrollTop(0);
                     jGetElement(blockid, ".labelHolder .label").each(function () {
                         var $this = $(this)
@@ -145,7 +146,7 @@ var dragDropLabelBlock = new function () {
                     });
 
                     jGetElement(blockid, ".pageContents hr:eq(1)").remove();
-                    jGetElement(blockid, ".pageContents").data("selectedLabel", "");
+                    state.selectedLabel = "";
                     dragDropLabelBlock.showFeedBackandTrackResults(blockid);
                     if (XTGetMode() == "normal") {
                         jGetElement(blockid, ".submitBtn").hide();
@@ -182,13 +183,14 @@ var dragDropLabelBlock = new function () {
 
     this.createLabels = function (blockid) {
         let pageXML = x_getBlockXML(blockid);
+				const state = x_getPageDict("state", blockid);
         var $labelHolder = jGetElement(blockid, ".labelHolder"),
-            tempData = [],
-						firstLoad = jGetElement(blockid, ".pageContents").data("FirstLoad")?? true;
+            tempData = [];
 
         $labelHolder.empty();
         jGetElement(blockid, ".infoHolder").html("");
-        jGetElement(blockid, ".pageContents").data("selectedLabel", "").data("FirstLoad", false);
+        state.selectedLabel = "";
+				state.FirstLoad = false;
 
         $(pageXML).children()
             .each(function (i) {
@@ -204,21 +206,21 @@ var dragDropLabelBlock = new function () {
             .each(function (i) {
                 var labelNum = Math.floor(Math.random() * tempData.length);
 
-                $('<div class="label panel" id="label' + i + '" tabindex="' + (i + 3) + '" title="' + labelTxt1 + '">' + tempData[labelNum].name + '</div>')
+                $('<div class="label panel" id="label' + i + '" tabindex="' + (i + 3) + '" title="' + state.labelTxt1 + '">' + tempData[labelNum].name + '</div>')
                     .appendTo($labelHolder)
                     .data("correct", tempData[labelNum].correct);
 
-                if (interactivity == "Match") {
+                if (state.interactivity == "Match") {
                     correctOptions.push({source: tempData[labelNum].name, target: tempData[labelNum].name});
                     correctAnswer.push(tempData[labelNum].name + " --> " + tempData[labelNum].name);
-                    dragDropLabelBlock.checked = false;
+                    state.checked = false;
                 }
                 tempData.splice(labelNum, 1);
             });
 
         // set up drag events (mouse and keyboard controlled)
-        if (interactivity == "Match") {
-						if(firstLoad){
+        if (state.interactivity == "Match") {
+						if(state.firstLoad){
 								XTEnterInteraction(x_currentPage, x_getBlockNr(blockid), 'match', pageXML.getAttribute("name"), correctOptions, correctAnswer, correctFeedback, pageXML.getAttribute("grouping"), null);
 								XTSetLeavePage(x_currentPage, x_getBlockNr(blockid), this.leavePage);
 						}
@@ -235,7 +237,7 @@ var dragDropLabelBlock = new function () {
                                 jGetElement(blockid, ".targetHolder .target").eq($this.data("target")).droppable("enable");
 
                             $this
-                                .css({"position": "relative"})
+                                .css({"position": "absolute"})
                                 .data("target", "")
                                 .data("success", false)
                                 .data("ui-draggable").originalPosition = {
@@ -246,6 +248,7 @@ var dragDropLabelBlock = new function () {
                         return !event;
                     },
                     start: function (event, ui) {
+												const state = x_getPageDict("state", blockid);
                         var $this = $(this);
                         jGetElement(blockid, ".infoHolder").html('<h3>' + $this.html() + '</h3>');
 												if(ui.helper.data("originalPosition") == undefined){
@@ -257,15 +260,15 @@ var dragDropLabelBlock = new function () {
                         // remove any focus/selection highlights made by tabbing to labels/targets
                         var $pageContents = jGetElement(blockid, ".pageContents");
                         if (jGetElement(blockid, ".labelHolder .label.focus").length > 0) {
-                            jGetElement(blockid, ".labelHolder .label.focus").attr("title", labelTxt1);
-                        }
-                        if ($pageContents.data("selectedLabel") != undefined && $pageContents.data("selectedLabel") != "") {
-                            $pageContents.data("selectedLabel").attr("title", labelTxt1);
-                            $pageContents.data("selectedLabel", "");
+                            jGetElement(blockid, ".labelHolder .label.focus").attr("title", state.labelTxt1);
+                       e}
+                        if (state.selectedLabel != undefined && state.selectedLabel != "") {
+                            state.selectedLabel.attr("title", state.labelTxt1);
+                            state.selectedLabel = "";
                         }
                         var targetInFocus = jGetElement(blockid, ".targetHolder .target.highlight");
                         if (targetInFocus.length > 0) {
-                            targetInFocus.attr("title", (tooltips[targetInFocus.index()] != undefined && tooltips[targetInFocus.index()] != "") ? tooltips[targetInFocus.index()] : targetTxt1 + " " + (targetInFocus.index() + 1));
+                            targetInFocus.attr("title", (tooltips[targetInFocus.index()] != undefined && tooltips[targetInFocus.index()] != "") ? tooltips[targetInFocus.index()] : state.targetTxt1 + " " + (targetInFocus.index() + 1));
                         }
 
                         jGetElement(blockid, ".labelHolder .selected").removeClass("selected");
@@ -273,45 +276,49 @@ var dragDropLabelBlock = new function () {
                         jGetElement(blockid, ".labelHolder .highlight").addClass("transparent").removeClass("highlight");
                     },
                     stop: function () {
+												const state = x_getPageDict("state", blockid);
                         if ($(this).data("success") != true) {
-                            jGetElement(blockid, ".infoHolder").html(jGetElement(blockid, ".pageContents").data("tryTxt"));
+                            jGetElement(blockid, ".infoHolder").html(state.tryTxt);
                         }
                     }
                 })
                 // set up events used when keyboard rather than mouse is used
                 // these highlight selected labels / targets and set the title attr which the screen readers will use
                 .focusin(function () {
+										const state = x_getPageDict("state", blockid);
                     var $this = $(this);
                     jGetElement(blockid, ".infoHolder").html('<h3>' + $this.html() + '</h3>');
                     if ($this.is(jGetElement(blockid, ".pageContents").data("selectedLabel")) == false) {
                         $this
                             .addClass("focus")
-                            .attr("title", labelTxt1 + " - " + labelTxt3);
+                            .attr("title", state.labelTxt1 + " - " + state.labelTxt3);
                     }
                 })
                 .focusout(function () {
+										const state = x_getPageDict("state", blockid);
                     var $this = $(this);
                     jGetElement(blockid, ".infoHolder").html("");
                     $this.removeClass("focus");
                     if ($this.is(jGetElement(blockid, ".pageContents").data("selectedLabel")) == false) {
-                        $this.attr("title", labelTxt1);
+                        $this.attr("title", state.labelTxt1);
                     }
                 })
                 .keypress(function (e) {
+										const state = x_getPageDict("state", blockid);
                     var charCode = e.charCode || e.keyCode;
                     if (charCode == 32) {
                         var $pageContents = jGetElement(blockid, ".pageContents");
-                        if ($pageContents.data("selectedLabel") != undefined && $pageContents.data("selectedLabel") != "") {
-                            $pageContents.data("selectedLabel")
+                        if (state.selectedLabel != undefined && state.selectedLabel != "") {
+                            state.selectedLabel
                                 .removeClass("selected")
-                                .attr("title", labelTxt1);
+                                .attr("title", state.labelTxt1);
                         }
                         var $this = $(this);
                         $this
                             .removeClass("focus")
                             .addClass("selected")
-                            .attr("title", labelTxt1 + ' - ' + labelTxt2);
-                        $pageContents.data("selectedLabel", $this);
+                            .attr("title", state.labelTxt1 + ' - ' + state.labelTxt2);
+                        state.selectedLabel = $this;
 
                         jGetElement(blockid, ".infoHolder").html("");
                     }
@@ -324,6 +331,7 @@ var dragDropLabelBlock = new function () {
                     stack: "#" + blockid + " .labelHolder .label", // item being dragged is always on top (z-index)
                     revert: "invalid", // snap back to original position if not dropped on target
                     start: function (event, ui) {
+												const state = x_getPageDict("state", blockid);
                         // remove any focus/selection highlights made by tabbing to labels/targets
                         var $pageContents = jGetElement(blockid, ".pageContents");
 
@@ -334,15 +342,15 @@ var dragDropLabelBlock = new function () {
 												}
 
                         if (jGetElement(blockid, ".labelHolder .label.focus").length > 0) {
-                            jGetElement(blockid, ".labelHolder .label.focus").attr("title", labelTxt1);
+                            jGetElement(blockid, ".labelHolder .label.focus").attr("title", state.labelTxt1);
                         }
-                        if ($pageContents.data("selectedLabel") != undefined && $pageContents.data("selectedLabel") != "") {
-                            $pageContents.data("selectedLabel").attr("title", labelTxt1);
-                            $pageContents.data("selectedLabel", "");
+                        if (state.selectedLabel != undefined && state.selectedLabel != "") {
+                            state.selectedLabel.attr("title", state.labelTxt1);
+                            state.selectedLabel = "";
                         }
                         var targetInFocus = jGetElement(blockid, ".targetHolder .target.highlight");
                         if (targetInFocus.length > 0) {
-                            targetInFocus.attr("title", (tooltips[targetInFocus.index()] != undefined && tooltips[targetInFocus.index()] != "") ? tooltips[targetInFocus.index()] : targetTxt1 + " " + (targetInFocus.index() + 1));
+                            targetInFocus.attr("title", (tooltips[targetInFocus.index()] != undefined && tooltips[targetInFocus.index()] != "") ? tooltips[targetInFocus.index()] : state.targetTxt1 + " " + (targetInFocus.index() + 1));
                         }
 
                         jGetElement(blockid, ".labelHolder .selected").removeClass("selected");
@@ -353,42 +361,46 @@ var dragDropLabelBlock = new function () {
                     },
                     stop: function () {
                         if ($(this).data("success") != true) {
-                            jGetElement(blockid, ".infoHolder").html(jGetElement(blockid, ".pageContents").data("tryTxt"));
+														const state = x_getPageDict("state", blockid);
+                            jGetElement(blockid, ".infoHolder").html(state.tryTxt);
                         }
                     }
                 })
                 // set up events used when keyboard rather than mouse is used
                 // these highlight selected labels / targets and set the title attr which the screen readers will use
                 .focusin(function () {
+										const state = x_getPageDict("state", blockid);
                     var $this = $(this);
-                    if ($this.is(jGetElement(blockid, ".pageContents").data("selectedLabel")) == false) {
+                    if ($this.is(state.selectedLabel) == false) {
                         $this
                             .addClass("focus")
-                            .attr("title", labelTxt1 + " - " + labelTxt3);
+                            .attr("title", state.labelTxt1 + " - " + state.labelTxt3);
                     }
                 })
                 .focusout(function () {
+										const state = x_getPageDict("state", blockid);
                     var $this = $(this);
                     $this.removeClass("focus");
-                    if ($this.is(jGetElement(blockid, ".pageContents").data("selectedLabel")) == false) {
-                        $this.attr("title", labelTxt1);
+                    if ($this.is(state.selectedLabel) == false) {
+                        $this.attr("title", state.labelTxt1);
                     }
                 })
                 .keypress(function (e) {
+										const state = x_getPageDict("state", blockid);
                     var charCode = e.charCode || e.keyCode;
                     if (charCode == 32) {
                         var $pageContents = jGetElement(blockid, ".pageContents");
-                        if ($pageContents.data("selectedLabel") != undefined && $pageContents.data("selectedLabel") != "") {
-                            $pageContents.data("selectedLabel")
+                        if (state.selectedLabel != undefined && state.selectedLabel != "") {
+                            state.selectedLabel
                                 .removeClass("selected")
-                                .attr("title", labelTxt1);
+                                .attr("title", state.labelTxt1);
                         }
                         var $this = $(this);
                         $this
                             .removeClass("focus")
                             .addClass("selected")
-                            .attr("title", labelTxt1 + ' - ' + labelTxt2);
-                        $pageContents.data("selectedLabel", $this);
+                            .attr("title", state.labelTxt1 + ' - ' + state.labelTxt2);
+                        state.selectedLabel = $this;
 
                         jGetElement(blockid, ".infoHolder").html("");
                     }
@@ -412,7 +424,7 @@ var dragDropLabelBlock = new function () {
                 });
         } else {
             // labels are being reset - make sure targets will still accept them being dropped
-            if (interactivity == "Match") {
+            if (state.interactivity == "Match") {
                 jGetElement(blockid, ".targetHolder").html("");
                 dragDropLabelBlock.imgLoaded(blockid);
                 jGetElement(blockid, ".submitBtn").show();
@@ -459,6 +471,7 @@ var dragDropLabelBlock = new function () {
     };
 
     this.drawTargets = function (blockid) {
+				const state = x_getPageDict("state", blockid);
         let pageXML = x_getBlockXML(blockid);
         $targetHolder = jGetElement(blockid, ".targetHolder");
         var $image = jGetElement(blockid, ".image");
@@ -491,7 +504,7 @@ var dragDropLabelBlock = new function () {
                 // create target and position it
                 $('<div class="target transparent"></div>')
                     .appendTo($targetHolder)
-                    .attr("title", (tooltips[i] != undefined && tooltips[i] != "") ? tooltips[i] : targetTxt1 + " " + (i + 1))
+                    .attr("title", (tooltips[i] != undefined && tooltips[i] != "") ? tooltips[i] : state.targetTxt1 + " " + (i + 1))
                     .data("text", this.getAttribute("text"))
                     .css({
                         "left": xywh[0],
@@ -504,7 +517,7 @@ var dragDropLabelBlock = new function () {
                         // only correct label can be dropped on target
                         accept: jGetElement(blockid, ".labelHolder .label").filter(
                             function () {
-                                return (interactivity == "Match") || ($(this).data("correct") == i);
+                                return (state.interactivity == "Match") || ($(this).data("correct") == i);
                             }
                         )
                     });
@@ -536,41 +549,42 @@ var dragDropLabelBlock = new function () {
                     .addClass("highlight")
                     .removeClass("border")
                     .removeClass("transparent");
-                var $pageContents = jGetElement(blockid, ".pageContents");
-                if ($pageContents.data("selectedLabel") != undefined && $pageContents.data("selectedLabel") != "") {
-                    $(this).attr("title", (tooltips[$(this).index()] != undefined && tooltips[$(this).index()] != "") ? tooltips[$(this).index()] : targetTxt1 + " " + ($(this).index() + 1) + " - " + targetTxt2);
+								const state = x_getPageDict("state", blockid);
+                if (state.selectedLabel != undefined && state.selectedLabel != "") {
+                    $(this).attr("title", (tooltips[$(this).index()] != undefined && tooltips[$(this).index()] != "") ? tooltips[$(this).index()] : state.targetTxt1 + " " + ($(this).index() + 1) + " - " + state.targetTxt2);
                 }
             })
             .focusout(function () {
-                var $pageContents = jGetElement(blockid, ".pageContents");
+								const state = x_getPageDict("state", blockid);
                 $(this)
                     .addClass("transparent")
                     .removeClass("highlight")
-                    .attr("title", (tooltips[$(this).index()] != undefined && tooltips[$(this).index()] != "") ? tooltips[$(this).index()] : targetTxt1 + " " + ($(this).index() + 1));
+                    .attr("title", (tooltips[$(this).index()] != undefined && tooltips[$(this).index()] != "") ? tooltips[$(this).index()] : state.targetTxt1 + " " + ($(this).index() + 1));
                 if (pageXML.getAttribute("showHighlight") != "false") {
                     $(this).addClass("border");
                 }
             })
             .keypress(function (e) {
+								const state = x_getPageDict("state", blockid);
                 var charCode = e.charCode || e.keyCode;
                 if (charCode == 32) {
                     var $pageContents = jGetElement(blockid, ".pageContents");
-                    var $selectedLabel = $pageContents.data("selectedLabel");
+                    var $selectedLabel = state.selectedLabel;
                     if ($selectedLabel != undefined && $selectedLabel != "") {
-                        if (interactivity == "Match") {
+                        if (state.interactivity == "Match") {
                             dragDropLabelBlock.dropLabel($(this), $selectedLabel, blockid); // target, label
                         } else {
                             // only accept drops for correct answers
                             if ($selectedLabel.data("correct") == $(this).index()) {
                                 dragDropLabelBlock.dropLabel($(this), $selectedLabel, blockid); // target, label
                             } else {
-                                $(this).attr("title", (tooltips[$(this).index()] != undefined && tooltips[$(this).index()] != "") ? tooltips[$(this).index()] : targetTxt1 + " " + ($(this).index() + 1));
+                                $(this).attr("title", (tooltips[$(this).index()] != undefined && tooltips[$(this).index()] != "") ? tooltips[$(this).index()] : state.targetTxt1 + " " + ($(this).index() + 1));
                                 $selectedLabel
                                     .removeClass("selected")
-                                    .attr("title", labelTxt1);
+                                    .attr("title", state.labelTxt1);
 
-                                jGetElement(blockid, ".infoHolder").html($pageContents.data("tryTxt"));
-                                $pageContents.data("selectedLabel", "");
+                                jGetElement(blockid, ".infoHolder").html(state.tryTxt);
+                                state.selectedLabel = "";
                             }
                         }
                     }
@@ -591,9 +605,11 @@ var dragDropLabelBlock = new function () {
     // function called when label dropped on target - by mouse or keyboard
     this.dropLabel = function ($thisTarget, $thisLabel, blockid) {
         let pageXML = x_getBlockXML(blockid);
-        $x_pageHolder.scrollTop(0);
+				var $block = $("#"+blockid);
+				const state = x_getPageDict("state", blockid);
+        //$block.scrollParent().scrollTop(0);
         var $infoHolder = jGetElement(blockid, ".infoHolder");
-        if (interactivity == "Match") {
+        if (state.interactivity == "Match") {
             $infoHolder.html('<h3>' + $thisLabel.html() + '</h3>');
 
             if ($thisLabel.data("target") != undefined && $thisLabel.data("target") !== "")
@@ -605,11 +621,11 @@ var dragDropLabelBlock = new function () {
 				let offset = $thisLabel.data("originalPosition");
 				let scrollParent = $("#"+blockid).scrollParent()[0];
 				let targetRect = {y: scrollParent.scrollTop + $thisTarget[0].getBoundingClientRect().top, x: scrollParent.scrollLeft + $thisTarget[0].getBoundingClientRect().left };
-        if (interactivity == "Match") {
+        if (state.interactivity == "Match") {
             var targetIndex = $thisTarget.index();
             $thisLabel
                 .attr({
-                    "title": labelTxt1,
+                    "title": state.labelTxt1,
                     "tabindex": $thisTarget.attr("tabindex") + 1,
                     "style": "cursor: pointer !important;" // need to use !important as jQuery ui styles make cursor default !important - doing another !important is the only way to override it
                 })
@@ -617,9 +633,9 @@ var dragDropLabelBlock = new function () {
                 .removeClass("selected")
                 .css({
                     "opacity": 1,
-                    "position": "relative",
-                    "top": targetRect.y + 2 - offset.y,
-                    "left": targetRect.x + 2 - offset.x
+                    "position": "absolute",
+                    "top": $thisTarget.position().top + 2 + jGetElement(blockid, ".mainPanel").position().top,
+                    "left": $thisTarget.position().left + 2 + jGetElement(blockid, ".mainPanel").position().left
                 })
                 .click(function () {
                     jGetElement(blockid, ".infoHolder").html($(this).data("infoTxt"));
@@ -634,19 +650,19 @@ var dragDropLabelBlock = new function () {
                 })
                 .data("target", targetIndex);
             $thisTarget
-                .attr("title", (tooltips[$thisTarget.index()] != undefined && tooltips[$thisTarget.index()] != "") ? tooltips[$thisTarget.index()] : targetTxt1 + " " + ($thisTarget.index() + 1))
+                .attr("title", (tooltips[$thisTarget.index()] != undefined && tooltips[$thisTarget.index()] != "") ? tooltips[$thisTarget.index()] : state.targetTxt1 + " " + ($thisTarget.index() + 1))
                 .data("infoTxt", $infoHolder.html())
                 .css("cursor", "pointer")
                 .click(function () {
                     jGetElement(blockid, ".infoHolder").html($(this).data("infoTxt"));
                 })
                 .droppable("disable");
-            jGetElement(blockid, ".pageContents").data("selectedLabel", "");
+            state.selectedLabel = "";
 
         } else {
             $thisLabel
                 .attr({
-                    "title": labelTxt1,
+                    "title": state.labelTxt1,
                     "tabindex": $thisTarget.attr("tabindex") + 1,
                     "style": "cursor: pointer !important;" // need to use !important as jQuery ui styles make cursor default !important - doing another !important is the only way to override it
                 })
@@ -655,9 +671,9 @@ var dragDropLabelBlock = new function () {
                 .draggable("disable")
                 .css({
                     "opacity": 1,
-                    "position": "relative",
-                    "top": targetRect.y + 2 - offset.y,
-                    "left": targetRect.x + 2 - offset.x
+                    "position": "absolute",
+                    "top": $thisTarget.position().top + 2 + jGetElement(blockid, ".mainPanel").position().top,
+                    "left": $thisTarget.position().left + 2 + jGetElement(blockid, ".mainPanel").position().left
                 })
                 .off("keypress focusin focusout")
                 .click(function () {
@@ -674,7 +690,7 @@ var dragDropLabelBlock = new function () {
                 .data("target", $thisTarget);
 
             $thisTarget
-                .attr("title", (tooltips[$thisTarget.index()] != undefined && tooltips[$thisTarget.index()] != "") ? tooltips[$thisTarget.index()] : targetTxt1 + " " + ($thisTarget.index() + 1))
+                .attr("title", (tooltips[$thisTarget.index()] != undefined && tooltips[$thisTarget.index()] != "") ? tooltips[$thisTarget.index()] : state.targetTxt1 + " " + ($thisTarget.index() + 1))
                 .data("infoTxt", $infoHolder.html())
                 .css("cursor", "pointer")
                 .click(function () {
@@ -684,7 +700,7 @@ var dragDropLabelBlock = new function () {
                 jGetElement(blockid, ".pageContents hr:eq(1)").remove();
             }
 
-            jGetElement(blockid, ".pageContents").data("selectedLabel", "");
+            state.selectedLabel = "";
         }
 
         x_pageContentsUpdated();
@@ -694,13 +710,14 @@ var dragDropLabelBlock = new function () {
     this.showFeedBackandTrackResults = function (blockid) {
         let pageXML = x_getBlockXML(blockid);
         pageXML = x_getBlockXML(x_getBlockNr(blockid));
+				const state = x_getPageDict("state", blockid);
         var correct = false,
             numCorrect = 0,
             l_options = [],
             l_answer = [],
             l_feedback = [];
 
-        if (pageXML.getAttribute("judge") != "false" && interactivity == "Match") {
+        if (pageXML.getAttribute("judge") != "false" && state.interactivity == "Match") {
             var labelHolderSpec = XTGetMode() != "normal" ? ".labelHolder .label" : ".labelHolder .ui-draggable-disabled";
             jGetElement(blockid, labelHolderSpec).each(function (i) {
                 var $this = $(this)
@@ -753,7 +770,7 @@ var dragDropLabelBlock = new function () {
                             .attr({"tabindex": i + 3})
                             .removeAttr('style')
                             .css({
-                                "position": "relative",
+                                "position": "absolute",
                                 "z-index": 0,
                                 "top": "auto"
                             });
@@ -788,7 +805,7 @@ var dragDropLabelBlock = new function () {
                     jGetElement(blockid, ".submitBtn").hide();
                 }
             }
-            dragDropLabelBlock.checked = true;
+            state.checked = true;
         }
 
         x_pageContentsUpdated();

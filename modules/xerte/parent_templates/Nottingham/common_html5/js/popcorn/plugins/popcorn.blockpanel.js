@@ -37,8 +37,6 @@ language: feedbackLabel singleRight singleWrong multiRight multiWrong checkBtnTx
 
         return {
             _setup: function(options) {
-								console.log(options);
-								debugger;
                 media = this;
                 judge = false;
                 autoEnable = true;

@@ -28,17 +28,21 @@ var gridBlock = new function () {
 
 	// function called every time the size of the LO is changed
 	this.sizeChanged = function (blockid) {
+		if(jGetElement(blockid, ".pageContents").length == 0){
+            return
+        }
 		if($("#x_page" + x_currentPage).is(":hidden")){
 			$("#x_page" + x_currentPage).show();
 		}
 		let pageXML = x_getBlockXML(blockid);
-		let separator = jGetElement(blockid, ".pageContents").data("separator");
-		let {fixedRows, fixedCols} = jGetElement(blockid, ".pageContents").data();
+		const state = x_getPageDict("state", blockid);
+		let separator = state.separator;
+		let {fixedRows, fixedCols} = state;
 		var $grid = jGetElement(blockid, ".grid");
 		var data = pageXML.getAttribute("data").split("||");
 		this.addLabelRefresh(blockid, data);
 
-		row = data[0].split(separator);
+		let row = data[0].split(separator);
 		jGetElement(blockid, ".content").css({
 			'width': ""
 		})
@@ -241,13 +245,15 @@ var gridBlock = new function () {
 	}
 
 	this.leavePage = function (blockid) {
-		if (!this.checked) {
+		const state = x_getPageDict("state", blockid);
+		if (!state.checked) {
 			this.showFeedBackandTrackScore(blockid);
 		}
 	};
 
 	this.showFeedBackandTrackScore = function (blockid) {
 		let pageXML = x_getBlockXML(blockid);	
+		const state = x_getPageDict("state", blockid);
 		// there are loads of variations on how we could mark this - at the moment it has to be in exact position (taking identical labels into account)
 		// maybe at some point add an option to editor for how they want it marked (e.g. mark correct if in correct row but order in row irrelevant)
 		var Correct = true,
@@ -259,8 +265,8 @@ var gridBlock = new function () {
 			l_feedback,
 			counter = 0;
 		var numOfQuestions = 0, correct = 0;
-		let labelData = jGetElement(blockid, ".pageContents").data("labelData");
-		allCorrectLocal = true;
+		let labelData = state.labelData;
+		let allCorrectLocal = true;
 		jGetElement(blockid, ".grid").find("ul:not(.preview) li:not(.static)").each(function () {
 			Correct = true;
 			var $this = $(this);
@@ -289,13 +295,13 @@ var gridBlock = new function () {
 			l_feedbacks.push(l_feedback);
 			counter++;
 		});
-		this.allCorrect = allCorrectLocal;
+		state.allCorrect = allCorrectLocal;
 		var result = {
-			success: this.allCorrect,
+			success: state.allCorrect,
 			score: ((correct / numOfQuestions) * 100.0)
 		};
 
-		this.checked = true;
+		state.checked = true;
 		XTExitInteraction(x_currentPage, x_getBlockNr(blockid), result, l_options, l_answers, l_feedbacks, 0, pageXML.getAttribute("trackinglabel"));
 
 
@@ -308,14 +314,16 @@ var gridBlock = new function () {
 
 	this.init = function (blockid) {
 		let pageXML = x_getBlockXML(blockid);
-		this.checked = false;
-		jGetElement(blockid, ".pageContents").data({
+		let tempState = {
 				fixedRows: [],
 				fixedCols: [],
 				fixedCells: [],
-				labelData: [],
+				labelData: [], 
 				separator: "|"
-		});
+		};
+		const state = x_pushToPageDict(tempState, "state", blockid);
+		tempState = null;
+		state.checked = false;
 
 		jGetElement(blockid, ".textHolder").html(x_addLineBreaks(pageXML.getAttribute("text")));
 		if (pageXML.getAttribute("feedback") != undefined && pageXML.getAttribute("feedback") != "") {
@@ -383,15 +391,16 @@ var gridBlock = new function () {
 			.button({ label: pageXML.getAttribute("checkBtnTxt") != undefined ? pageXML.getAttribute("checkBtnTxt") : "Check Answers" })
 			.click(function () {
 				if ($(this).data("state") == "check") {
+					const state = x_getPageDict("state", blockid);
 					gridBlock.removeFocus(blockid);
 					gridBlock.showFeedBackandTrackScore(blockid);
-					if (gridBlock.allCorrect == true) {
+					if (state.allCorrect == true) {
 						$(this)
 							.button({ label: pageXML.getAttribute("resetBtnTxt") != undefined ? pageXML.getAttribute("resetBtnTxt") : "Reset" })
 							.data("state", "reset");
 						jGetElement(blockid, ".feedback").show();
 						jGetElement(blockid, ".grid .listHolder ul li.ui-draggable")
-							.draggable("option", "disabled", true)
+									.draggable("option", "disabled", true)
 							.off("focusin focusout keypress");
 					}
 				} else {
@@ -415,11 +424,12 @@ var gridBlock = new function () {
 				url: x_evalURL(pageXML.getAttribute("url")),
 				dataType: "text",
 				success: function (csv) {
+					const state = x_getPageDict("state", blockid);
 					var csvData = csv.split("\r\n");
 					if (csvData[csvData.length - 1] == "") {
 						csvData.splice(csvData.length - 1, 1);
 					}
-					jGetElement(blockid, ".pageContents").data("separator" ,",")
+					state.separator = ",";
 					gridBlock.sortData(blockid, csvData);
 				},
 				error: function () {
@@ -431,7 +441,7 @@ var gridBlock = new function () {
 		}
 		this.initTracking(blockid);
 		// call this function in every model once everything has loaded
-		//this.sizeChanged();
+		//this.sizeChanged(blockid);
 		x_pageLoaded();
 	}
 
@@ -452,7 +462,7 @@ var gridBlock = new function () {
 			$text.css("max-width", "25%");
 		}else{
 			$text.remove()
-		}
+		}
 
 
 		if(pageXML.getAttribute("align") == "left"){
@@ -468,11 +478,12 @@ var gridBlock = new function () {
 
 	this.sortData = function (blockid, data) {
 		let pageXML = x_getBlockXML(blockid);
+		const state = x_getPageDict("state", blockid);
 		var $grid = jGetElement(blockid, ".grid"), $ul, $holder, row,
 			$gridBorders = jGetElement(blockid, ".gridBorders"), $tr;
-		let labelData = jGetElement(blockid, ".pageContents").data("labelData");
-		let separator = jGetElement(blockid, ".pageContents").data("separator");
-		const {fixedRows,	fixedCols, fixedCells} = jGetElement(blockid, ".pageContents").data();
+		let labelData = state.labelData;
+		let separator = state.separator;
+		const {fixedRows,	fixedCols, fixedCells} = state;
 
 		// rows, columns & individual labels can be fixed
 		var tempR = pageXML.getAttribute("fixedRows") != undefined ? pageXML.getAttribute("fixedRows").split(",") : [],
@@ -651,7 +662,7 @@ var gridBlock = new function () {
 			}
 
 		} else {
-			debugger;
+			
 			$holder = $('<div class="listHolder"></div>').appendTo($grid);
 			$ul = $('<ul/>').appendTo($holder);
 			labelData.push([]);
@@ -707,7 +718,6 @@ var gridBlock = new function () {
 				$labels.height(maxH);
 			}
 		}
-		jGetElement(blockid, ".pageContents").data("labelData", labelData);
 
 		// insert rows & cells that make up grid borders (has to be overlaid as the swapping of labels would be too complicated if labels were really in the table)
 		$gridBorders.insertBefore($grid);
@@ -847,12 +857,13 @@ var gridBlock = new function () {
 			// set up events used when keyboard rather than mouse is used
 			.on("focusin", function () {
 				var $this = $(this);
-				if (jGetElement(blockid, ".pageContents").data("selectedLabel") != undefined && jGetElement(blockid, ".pageContents").data("selectedLabel") != "") { // a label has been selected...
-					if ($this.is(jGetElement(blockid, ".pageContents").data("selectedLabel")) == false) { // ...it's not the label in focus...
-						if ($this.parent().is(jGetElement(blockid, ".pageContents").data("selectedLabel").parent())) { // ... and the label in focus can have the selected label dropped on it
-							gridBlock.overEvent(blockid, $this, jGetElement(blockid, ".pageContents").data("selectedLabel"));
+				const state = x_getPageDict("state", blockid);
+				if (state.selectedLabel != undefined && state.selectedLabel != "") { // a label has been selected...
+					if ($this.is(state.selectedLabel) == false) { // ...it's not the label in focus...
+						if ($this.parent().is(state.selectedLabel.parent())) { // ... and the label in focus can have the selected label dropped on it
+							gridBlock.overEvent(blockid, $this, state.selectedLabel);
 							$this
-								.html(jGetElement(blockid, ".pageContents").data("selectedLabel").html())
+								.html(state.selectedLabel.html())
 								.addClass("selected");
 						} else {
 							$this.addClass("focus");
@@ -864,10 +875,11 @@ var gridBlock = new function () {
 				}
 			})
 			.on("focusout", function () {
+				const state = x_getPageDict("state", blockid);
 				var $this = $(this);
 				$this.removeClass("focus selected");
-				if (jGetElement(blockid, ".pageContents").data("selectedLabel") != undefined && jGetElement(blockid, ".pageContents").data("selectedLabel") != "" && $this.is(jGetElement(blockid, ".pageContents").data("selectedLabel")) == false) {
-					if ($this.parent().is(jGetElement(blockid, ".pageContents").data("selectedLabel").parent())) {
+				if (state.selectedLabel != undefined && state.selectedLabel != "" && $this.is(state.selectedLabel) == false) {
+					if ($this.parent().is(state.selectedLabel.parent())) {
 						gridBlock.outEvent(blockid, $this, 0);
 						$this.html(labelData[jGetElement(blockid, ".grid .listHolder").index($this.parents(".listHolder"))][$this.data("correct")]);
 					}
@@ -876,20 +888,21 @@ var gridBlock = new function () {
 			})
 			.on("keypress", function (e) {
 				var charCode = e.charCode || e.keyCode;
+				const state = x_getPageDict("state", blockid);
 				if (charCode == 32) {
 					var $this = $(this);
-					if (jGetElement(blockid, ".pageContents").data("selectedLabel") != undefined && jGetElement(blockid, ".pageContents").data("selectedLabel") != "") { // a label has been selected...
-						if ($this.is(jGetElement(blockid, ".pageContents").data("selectedLabel")) == false) { // ...it's not the label in focus...
-							if ($this.parent().is(jGetElement(blockid, ".pageContents").data("selectedLabel").parent())) { // ... and the label in focus can have the selected label dropped on it
+					if (state.selectedLabel != undefined && state.selectedLabel != "") { // a label has been selected...
+						if ($this.is(state.selectedLabel) == false) { // ...it's not the label in focus...
+							if ($this.parent().is(state.selectedLabel.parent())) { // ... and the label in focus can have the selected label dropped on it
 								$this.html(labelData[jGetElement(blockid, ".grid .listHolder").index($this.parents(".listHolder"))][$this.data("correct")]);
 
-								jGetElement(blockid, ".pageContents").data("selectedLabel")
+								state.selectedLabel
 									.removeClass("selected")
 									.addClass("focus");
 
 								$this.removeClass("focus");
 
-								gridBlock.dropEvent(blockid, $this, jGetElement(blockid, ".pageContents").data("selectedLabel"));
+								gridBlock.dropEvent(blockid, $this, state.selectedLabel);
 							}
 
 						} else {
@@ -898,14 +911,14 @@ var gridBlock = new function () {
 								.addClass("focus");
 						}
 
-						jGetElement(blockid, ".pageContents").data("selectedLabel", "");
+						state.selectedLabel = "";
 
 					} else {
 						$this
 							.removeClass("focus")
 							.addClass("selected");
 
-						jGetElement(blockid, ".pageContents").data("selectedLabel", $this);
+						state.selectedLabel = $this;
 					}
 				}
 			})
@@ -937,18 +950,17 @@ var gridBlock = new function () {
 			});
 
 		$grid.find("ul li").css("color", $x_body.css("color")); // override jquery ui style
-		jGetElement(blockid, ".pageContents").data({
-				fixedRows,
-				fixedCols,
-				fixedCells
-		});
+		state.fixedRows = fixedRows;
+		state.fixedCols = fixedCols;
+		state.fixedCells = fixedCells;
 	}
 
 	this.sortDataRefresh = function (blockid, data) {
 		let pageXML = x_getBlockXML(blockid);
+		const state = x_getPageDict("state", blockid);
 		var $grid = jGetElement(blockid, ".grid"), $ul, $holder, row,
 			$gridBorders = jGetElement(blockid, ".gridBorders"), $tr;
-		let separator = jGetElement(blockid, ".pageContents").data("separator");
+		let separator = state.separator;
 
 		if (pageXML.getAttribute("constrain") == "col") {
 			for (var i = 0; i < data.length; i++) {
@@ -960,7 +972,7 @@ var gridBlock = new function () {
 			}
 
 		} else if (pageXML.getAttribute("constrain") == "row") {
-			let labelData = jGetElement(blockid, ".pageContents").data("labelData");
+			let labelData = state.labelData;
 			for (i = 0; i < data.length; i++) {
 				labelData.push([]);
 				row = data[i].split(separator);
@@ -968,7 +980,6 @@ var gridBlock = new function () {
 					this.addLabelRefresh(blockid, i, j);
 				}
 			}
-			jGetElement(blockid, ".pageContents").data("labelData", labelData);
 		} else {
 
 			for (i = 0; i < data.length; i++) {
@@ -982,7 +993,8 @@ var gridBlock = new function () {
 	}
 
 	this.addLabelRefresh = function (blockid, data) {
-		let separator = jGetElement(blockid, ".pageContents").data("separator");
+		const state = x_getPageDict("state", blockid);
+		let separator = state.separator;
 		var row = data[0].split(separator).length;
 
 		jGetElement(blockid, ".listHolder ul:first li").each(function (index) {
@@ -995,9 +1007,9 @@ var gridBlock = new function () {
 	}
 
 	this.addLabel = function (blockid, txt, $parent, i, j) {
+		const state = x_getPageDict("state", blockid);
 		let pageXML = x_getBlockXML(blockid);
-		let {fixedRows, fixedCols, fixedCells} = jGetElement(blockid, ".pageContents").data();
-		console.log(jGetElement(blockid, ".pageContents").data());
+		let {fixedRows, fixedCols, fixedCells} = state;
 		var $li = $('<li>' + txt + '</li>')
 			.appendTo($parent)
 			.addClass("ui-state-default");
@@ -1027,7 +1039,7 @@ var gridBlock = new function () {
 				"correct": $li.index(),
 				"xy": [j, i]
 			});
-		let labelData = jGetElement(blockid, ".pageContents").data("labelData");
+		let labelData = state.labelData;
 		labelData[$parent.parent().index()].push(txt);
 	}
 
@@ -1057,8 +1069,9 @@ var gridBlock = new function () {
 	}
 
 	this.overEvent = function (blockid, $this, draggable) {
+		const state = x_getPageDict("state", blockid);
 		let pageXML = x_getBlockXML(blockid);
-		clearTimeout(jGetElement(blockid, ".pageContents").data("timeout"));
+		clearTimeout(state.timeout);
 		var $thisParent = $this.parent();
 
 		if (pageXML.getAttribute("drag") == "insert") {
@@ -1098,19 +1111,20 @@ var gridBlock = new function () {
 				.css("visibility", "visible")
 				.html($this.html());
 
-			if (jGetElement(blockid, ".pageContents").data("selectedLabel") != undefined && jGetElement(blockid, ".pageContents").data("selectedLabel") != "") {
-				jGetElement(blockid, ".pageContents").data("selectedLabel").css("visibility", "hidden");
+			if (state.selectedLabel != undefined && state.selectedLabel != "") {
+				state.selectedLabel.css("visibility", "hidden");
 			}
 		}
 	}
 
 	this.outEvent = function (blockid, $this, time) {
+		const state = x_getPageDict("state", blockid);
 		// slight delay in removing previews on roll over to avoid flickers over gaps between labels
 		let timeout = setTimeout(function () {
 			$this.parent().find("li").css("visibility", "visible");
 			$this.parent().prev(".preview").find("li").css("visibility", "hidden");
 		}, time);
-		jGetElement(blockid, ".pageContents").data("timeout", timeout);
+		state.timeout = timeout;
 	}
 
 	this.dropEvent = function (blockid, $this, draggable) {
@@ -1164,7 +1178,8 @@ var gridBlock = new function () {
 	}
 
 	this.removeFocus = function (blockid) {
-		jGetElement(blockid, ".pageContents").data("selectedLabel", "");
+		const state = x_getPageDict("state", blockid);
+		state.selectedLabel = "";
 
 		jGetElement(blockid, ".grid ul.preview li").css("visibility", "hidden");
 		jGetElement(blockid, ".grid ul:not(.preview) li")
@@ -1176,16 +1191,16 @@ var gridBlock = new function () {
 	this.initTracking = function (blockid) {
 		let pageXML = x_getBlockXML(blockid);
 		// Track the dictation page
-		this.weighting = 1.0;
+		let weighting = 1.0;
 		if (pageXML.getAttribute("trackingWeight") != undefined) {
-			this.weighting = pageXML.getAttribute("trackingWeight");
+			weighting = pageXML.getAttribute("trackingWeight");
 		}
 
-		correctOptions = [];
-		correctAnswer = [];
-		correctFeedback = [];
-		rows = pageXML.getAttribute("data").split("||");
-		rowCount = 1;
+		let correctOptions = [];
+		let correctAnswer = [];
+		let correctFeedback = [];
+		let rows = pageXML.getAttribute("data").split("||");
+		let rowCount = 1;
 
 		var header = (pageXML.getAttribute("header") != undefined ? pageXML.getAttribute("header") : "");
 		var fixedCells = (pageXML.getAttribute("fixedCells") != undefined ? pageXML.getAttribute("fixedCells") : "");
@@ -1201,7 +1216,7 @@ var gridBlock = new function () {
 				rowCount++;
 				continue;
 			}
-			columnCount = 1;
+			let columnCount = 1;
 
 			columns = rows[row].split("|");
 			for (column in columns) {
@@ -1223,14 +1238,14 @@ var gridBlock = new function () {
 			rowCount++;
 		}
 		//XTSetPageType(x_currentPage, 'numeric', 1, this.weighting);
-		XTSetInteractionType(x_currentPage, x_getBlockNr(blockid), "match", this.weighting);
 		XTSetLeavePage(x_currentPage, x_getBlockNr(blockid), this.leavePage);
 
 		var label = pageXML.getAttribute("name");
 		if (pageXML.getAttribute("trackinglabel") != null && pageXML.getAttribute("trackinglabel") != "") {
 			label = pageXML.getAttribute("trackinglabel");
 		}
-		XTEnterInteraction(x_currentPage, 0, 'match', label, correctOptions, correctAnswer, correctFeedback, pageXML.getAttribute("grouping"));
+		XTEnterInteraction(x_currentPage, x_getBlockNr(blockid), 'match', label, correctOptions, correctAnswer, correctFeedback, pageXML.getAttribute("grouping"));
+		XTSetInteractionType(x_currentPage, x_getBlockNr(blockid), "match", weighting);
 		/*
 		for(var i = 0; i < correctOptions.length; i++)
 		{

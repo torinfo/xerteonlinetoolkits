@@ -27,6 +27,9 @@ var modelAnswerResultsBlock = new function () {
 
 	// function called every time the size of the LO is changed
 	this.sizeChanged = function (blockid) {
+		if(jGetElement(blockid, ".pageContents").length == 0){
+            return
+        }
 		if (x_browserInfo.mobile == false) {
 			var $panel = jGetElement(blockid, ".pageContents .panel");
 			//$panel.height($x_pageHolder.height() - parseInt($x_pageDiv.css("padding-top")) * 2 - parseInt($panel.css("padding-top")) * 2 - 5);
@@ -70,7 +73,7 @@ var modelAnswerResultsBlock = new function () {
 
 		jGetElement(blockid, ".panelTxt").html(modelAnswerResultsBlock.getData());
 
-		this.sizeChanged();
+		this.sizeChanged(blockid);
 		x_pageLoaded();
 	}
 

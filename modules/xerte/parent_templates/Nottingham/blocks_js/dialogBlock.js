@@ -20,37 +20,37 @@
 // pageChanged & sizeChanged functions are needed in every model file
 // other functions for model should also be in here to avoid conflicts
 var dialogBlock = new function () {
-	var casesensitive,
-		tick;
-
 	// function called every time the page is viewed after it has initially loaded
 	this.pageChanged = function (blockid) {
-		var tick = x_getLangInfo(x_languageData.find("tick")[0], "label", "Tick");
+		const state = x_getPageDict("state", blockid);
 
 		// reset questions
-		jGetElement(blockid, ".pageContents").data("currentQ", 0);
-		jGetElement(blockid, ".submitBtn")
-			.button({ label: jGetElement(blockid, ".pageContents").data("submitTxt") })
-			.data({
-				"attempt": 0,
-				"state": 0
-			})
-			.show();
+		// state.currentQ = 0;
+		// jGetElement(blockid, ".submitBtn")
+		// 	.button({ label: state.submitTxt })
+		// 	.data({
+		// 		"attempt": 0,
+		// 		"state": 0
+		// 	})
+		// 	.show();
 
-		jGetElement(blockid, ".pageContents .result")
-			.addClass("hidden")
-			.parent().find(".tickTxt").html("");
+		// jGetElement(blockid, ".pageContents .result")
+		// 	.addClass("hidden")
+		// 	.parent().find(".tickTxt").html("");
 
-		jGetElement(blockid, ".pageContents input")
-			.prop("readonly", false)
-			.val("");
-		jGetElement(blockid, ".pageContents .question:first input").focus();
-		jGetElement(blockid, ".pageContents .question:not(:first)").hide();
-		jGetElement(blockid, ".feedback").html("");
+		// jGetElement(blockid, ".pageContents input")
+		// 	.prop("readonly", false)
+		// 	.val("");
+		// jGetElement(blockid, ".pageContents .question:first input").focus();
+		// jGetElement(blockid, ".pageContents .question:not(:first)").hide();
+		// jGetElement(blockid, ".feedback").html("");
 	}
 
 	// function called every time the size of the LO is changed
 	this.sizeChanged = function (blockid) {
+		if(jGetElement(blockid, ".pageContents").length == 0){
+            return
+        }
 		if (x_browserInfo.mobile == false) {
 			var $panel = jGetElement(blockid, ".pageContents .panel");
 			//$panel.height(jGetElement(blockid, "").height() - parseInt(jGetElement(blockid, "").css("padding-top")) * 2 - parseInt($panel.css("padding-top")) * 2 - 5);
@@ -58,6 +58,7 @@ var dialogBlock = new function () {
 	}
 
 	this.init = function (blockid) {
+		const state = x_pushToPageDict({}, "state", blockid);
 		var tick = x_getLangInfo(x_languageData.find("tick")[0], "label", "Tick");
 		let pageXML = x_getBlockXML(blockid);
 
@@ -105,14 +106,12 @@ var dialogBlock = new function () {
 			nextTxt = "Next";
 		}
 
-		jGetElement(blockid, ".pageContents").data({
-			"currentQ": 0,
-			"tryTxt": tryTxt,
-			"correctTxt": correctTxt,
-			"moveOnTxt": moveOnTxt,
-			"submitTxt": submitTxt,
-			"nextTxt": nextTxt
-		});
+		state.currentQ = 0;
+		state.tryTxt = tryTxt;
+		state.correctTxt = correctTxt;
+		state.moveOnTxt = moveOnTxt;
+		state.submitTxt = submitTxt;
+		state.nextTxt = nextTxt;
 
 		var $question = jGetElement(blockid, ".pageContents .question:first");
 		$question.find(".result")
@@ -161,7 +160,7 @@ var dialogBlock = new function () {
 
 					if ($this.data("state") == 0) { // mark answer
 						// Decode answer
-						var qNo = $pageContents.data("currentQ"),
+						var qNo = state.currentQ,
 							$thisInput = jGetElement(blockid, ".pageContents .question:eq(" + qNo + ") input"),
 							isCorrect = false,
 							correctAnswer = $('<div/>').html($(pageXML).children()[qNo].getAttribute("answer")).text();
@@ -209,7 +208,7 @@ var dialogBlock = new function () {
 							$this.focus();
 							if (qNo + 1 != $(pageXML).children().length) {
 								$this
-									.button({ label: $pageContents.data("nextTxt") })
+									.button({ label: state.nextTxt })
 									.data("state", 1);
 							} else {
 								$this.hide();
@@ -233,7 +232,7 @@ var dialogBlock = new function () {
 								$feedback.html($(pageXML).children()[qNo].getAttribute("hint"));
 								$thisInput.focus();
 							} else if (currentAttempt > allowedAttempts) { // show correct answer
-								$feedback.html($pageContents.data("correctTxt"));
+								$feedback.html(state.correctTxt);
 								$this.focus();
 								var correctAnswer = $('<div/>').html($(pageXML).children()[qNo].getAttribute("answer")).text();
 								if (correctAnswer.indexOf(answerDelimeter) != -1) {
@@ -244,14 +243,14 @@ var dialogBlock = new function () {
 									.prop("readonly", true);
 								if (qNo + 1 != $(pageXML).children().length) {
 									$this
-										.button({ label: $pageContents.data("nextTxt") })
+										.button({ label: state.nextTxt })
 										.data("state", 1);
-									$feedback.html($feedback.html() + "</br>" + $pageContents.data("moveOnTxt"));
+									$feedback.html($feedback.html() + "</br>" + state.moveOnTxt);
 								} else {
 									$this.hide();
 								}
 							} else { // another attempt allowed
-								$feedback.html($pageContents.data("tryTxt"));
+								$feedback.html(state.tryTxt);
 								$thisInput.focus();
 							}
 							let result = {
@@ -263,15 +262,15 @@ var dialogBlock = new function () {
 						}
 					} else { // move to next question
 						$feedback.html("");
-						jGetElement(blockid, ".pageContents .question:eq(" + ($pageContents.data("currentQ") + 1) + ")").fadeIn();
+						jGetElement(blockid, ".pageContents .question:eq(" + (state.currentQ + 1) + ")").fadeIn();
 						$this
 							.data({
 								"attempt": 0,
 								"state": 0
 							})
-							.button({ label: jGetElement(blockid, ".pageContents").data("submitTxt") });
+							.button({ label: state.submitTxt });
 
-						var qNo = $pageContents.data("currentQ");
+						var qNo = state.currentQ;
 						jGetElement(blockid, ".pageContents .question:eq(" + qNo + ") .result")
 							.removeClass("hidden")
 							.parent().find(".tickTxt").html(tick);
@@ -281,7 +280,7 @@ var dialogBlock = new function () {
 						let answers = question.getAttribute("answer").split(answerDelimeter);
 						XTEnterInteraction(x_currentPage, x_getBlockNr(blockid), 'fill-in', question.getAttribute("question"), answers, answers, null /* never used*/, x_currentPageXML.getAttribute("grouping"), null, qNo+1);
 						XTSetInteractionType(x_currentPage, x_getBlockNr(blockid), 'fill-in', 0, qNo+1);
-						$pageContents.data("currentQ", qNo + 1);
+						state.currentQ =  qNo + 1;
   					}
         }
 				// this is needed as if this is triggered via keypress in IE/Opera it's triggered twice so messes up no. attempts
@@ -307,7 +306,7 @@ var dialogBlock = new function () {
 			}
 		});
 
-		this.sizeChanged();
+		this.sizeChanged(blockid);
 		x_pageLoaded();
 	}
 }

@@ -22,12 +22,15 @@
 var buttonQuestionBlock = new function () {
 	// function called every time the page is viewed after it has initially loaded
 	this.pageChanged = function (blockid) {
-		jGetElement(blockid, ".button").show();
-		jGetElement(blockid, ".answer").empty(); // emptied rather than hidden so it's read immediately by screenreaders when text appears
+		//jGetElement(blockid, ".button").show();
+		//jGetElement(blockid, ".answer").empty(); // emptied rather than hidden so it's read immediately by screenreaders when text appears
 	}
 
 	// function called every time the size of the LO is changed
 	this.sizeChanged = function (blockid) {
+		if(jGetElement(blockid, ".pageContents").length == 0){
+            return
+        }
 		if (x_browserInfo.mobile == false) {
 			var $panel = jGetElement(blockid, ".pageContents .panel");
 			//$panel.height($x_pageHolder.height() - parseInt($x_pageDiv.css("padding-top")) * 2 - parseInt($panel.css("padding-top")) * 2 - 5);
@@ -88,7 +91,7 @@ var buttonQuestionBlock = new function () {
 				x_pageContentsUpdated();
 			});
 
-		this.sizeChanged();
+		this.sizeChanged(blockid);
 		x_pageLoaded();
 	}
 }

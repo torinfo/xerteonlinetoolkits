@@ -20,24 +20,18 @@ var annotatedDiagramBlock = new function () {
     }
 
     this.pageChanged = function (blockid) {
-        let pageContents = jGetElement(blockid, ".pageContents");
-        let infoHolder = jGetElement(blockid, ".infoHolder");
-
-        if (pageContents.data("hsType") == "centre") {
-            let canvas = x_getPageDict("canvas", blockid);
-            x_pushToPageDict(canvas[0].getContext("2d"), "context", blockid);
-        }
-
-        infoHolder.html("");
+        jGetElement(blockid, ".infoHolder").html("");
 
         this.sizeChanged(blockid);
     }
 
     // function called every time the size of the LO is changed
     this.sizeChanged = function (blockid) {
+        if(jGetElement(blockid, ".pageContents").length == 0){
+            return
+        }
         this.deselect(blockid);
-        let img = x_getPageDict("img", blockid);
-        img.css({
+        jGetElement(blockid, ".imageHolder img").css({
             "opacity": 0,
             "filter": 'alpha(opacity=0)'
         });
@@ -48,11 +42,9 @@ var annotatedDiagramBlock = new function () {
     this.init = function (blockid) {
         var blockXML = x_getBlockXML(blockid);
         //Set "global variables" for this block
-        let pageContents = x_pushToPageDict(jGetElement(blockid, ".pageContents"), "pageContents", blockid);
-        let img = x_pushToPageDict(jGetElement(blockid, ".imageHolder img"), "img", blockid);
-        let hsHolder = x_pushToPageDict(jGetElement(blockid, ".hsHolder"), "hsHolder", blockid);
-        x_pushToPageDict(jGetElement(blockid, ".infoHolder"), "infoHolder", blockid);
-        let panel = x_pushToPageDict(jGetElement(blockid, ".panel"), "panel", blockid);
+				const state = x_pushToPageDict({}, "state", blockid);
+        let hsHolder = jGetElement(blockid, ".hsHolder");
+        let panel = jGetElement(blockid, ".panel");
 
         if (x_browserInfo.mobile != true) {
             if (blockXML.getAttribute("align") == "Right") {
@@ -63,21 +55,19 @@ var annotatedDiagramBlock = new function () {
         }
 
         var highlightColour = blockXML.getAttribute("colour") != undefined && blockXML.getAttribute("colour") != "" ? x_getColour(blockXML.getAttribute("colour")) : "#FFFF00";
-        pageContents.data("highlightColour", highlightColour);
+        state.highlightColour = highlightColour;
         // if shape is set to oval, line or arrow, the hs can't be drawn with mapster - use old method
         // when shape is outline (previously called rectangle), mapster is used - even if the hotspot is just a simple rectangle
-        pageContents.data("hsType",
-            blockXML.getAttribute("shape") == "Oval" ? "oval" :
-                blockXML.getAttribute("shape") == "None" || blockXML.getAttribute("shape") == "Arrow" ? "centre" : "flex"
-        );
+        state.hsType =  blockXML.getAttribute("shape") == "Oval" ? "oval" :
+                blockXML.getAttribute("shape") == "None" || blockXML.getAttribute("shape") == "Arrow" ? "centre" : "flex";
 
-        if (pageContents.data("hsType") == "centre") {
-            let canvas = x_pushToPageDict(jGetElement(blockid, ".canvas"), "canvas", blockid);
-            let context = x_pushToPageDict(canvas[0].getContext("2d"), "context", blockid);
+        if (state.hsType == "centre") {
+            let canvas = jGetElement(blockid, "canvas");
+            let context = canvas[0].getContext("2d");
         } else {
-            jGetElement(blockid, ".canvas").remove();
+            jGetElement(blockid, "canvas").remove();
 
-            if (pageContents.data("hsType") == "flex") {
+            if (state.hsType == "flex") {
                 hsHolder.addClass("mapster");
 
             } else {
@@ -85,7 +75,7 @@ var annotatedDiagramBlock = new function () {
                     ".annotatedDiagramBlock.pageContents .hsHolder:not(.mapster).oval .hotspot." + blockid + ".selected, "+
                     ".annotatedDiagramBlock.pageContents .hsHolder:not(.mapster).oval .hsGroup.selected .hotspot." + blockid +
                     " { border-color: " + highlightColour + ";} </style>";
-                pageContents.prepend($(newStyles));
+                jGetElement(blockid, ".pageContents").prepend($(newStyles));
             }
         }
 
@@ -106,13 +96,14 @@ var annotatedDiagramBlock = new function () {
                     e.preventDefault();
 
                     var $this = $(this);
+										const state = x_getPageDict("state", blockid);
 
-                    hsHolder = x_getPageDict("hsHolder", blockid);
+                    hsHolder = jGetElement(blockid, ".hsHolder");
                     // not already selected - so select, show text & highlight hotspots
                     if (!$this.is(jGetElement(blockid, ".listItem.highlight"))) {
                         annotatedDiagramBlock.deselect(blockid);
                         annotatedDiagramBlock.selectLink($this, blockid);
-                        if (pageContents.data("hsType") == "flex") {
+                        if (state.hsType == "flex") {
                             $("area." + blockid + "." + $this.data("group")).mapster("select");
 
                         } else {
@@ -157,7 +148,7 @@ var annotatedDiagramBlock = new function () {
         let url = blockXML.getAttribute("url").split(".");
         if (url.length > 1) {
             if (url[1].slice(0, -1) != "swf") {
-                img
+                jGetElement(blockid, ".imageHolder img")
                     .data('firstLoad', true)
                     .css({
                         "opacity": 0,
@@ -184,8 +175,8 @@ var annotatedDiagramBlock = new function () {
                         }
                     });
 
-                if (pageContents.data("hsType") == "flex") {
-                    img.attr("usemap", "#hsHolder_map" + blockid);
+                if (state.hsType == "flex") {
+                    jGetElement(blockid, ".imageHolder img").attr("usemap", "#hsHolder_map" + blockid);
                 }
 
             } else {
@@ -205,11 +196,10 @@ var annotatedDiagramBlock = new function () {
 
     this.setUp = function (blockid) {
         var blockXML = x_getBlockXML(blockid);
+				const state = x_getPageDict("state", blockid);
 
-        let pageContents = x_getPageDict("pageContents", blockid);
-        let img = x_getPageDict( "img", blockid);
-        let hsHolder = x_getPageDict( "hsHolder", blockid);
-        let panel = x_getPageDict("panel", blockid);
+        let hsHolder = jGetElement(blockid, ".hsHolder");
+        let panel = jGetElement(blockid, ".panel");
 
         //Necessary as if this is hidden, the image doesn't get the correct scale as xPageN is hidden
         //and everything in it has size 0x0
@@ -230,8 +220,8 @@ var annotatedDiagramBlock = new function () {
         }
 
         // if old style hotspots are used, empty hsHolder (canvas is resized after image)
-        if (pageContents.data("hsType") == "flex") {
-            img.mapster('unbind');
+        if (state.hsType == "flex") {
+            jGetElement(blockid, ".imageHolder img").mapster('unbind');
         } else {
             hsHolder.empty();
         }
@@ -247,9 +237,9 @@ var annotatedDiagramBlock = new function () {
             imgMaxH = pageHolder_standin.height() * (align == "Top" ? maxPanel : 1) - (parseInt(pageDiv_standin.css("padding-left")) * 2) - panelOuterH;
 
 
-        x_scaleImg(img, imgMaxW, imgMaxH, true, img.data('firstLoad'), true);
+        x_scaleImg(jGetElement(blockid, ".imageHolder img"), imgMaxW, imgMaxH, true, jGetElement(blockid, ".imageHolder img").data('firstLoad'), true);
 
-        //debugger;
+        //
         // jGetElement(blockid, ".mainText").html( "blockid: "+ blockid +
         //                                         ",<br>imgMaxW: " + imgMaxW +
         //                                         ",<br>imgMaxH: " + imgMaxH +
@@ -264,19 +254,19 @@ var annotatedDiagramBlock = new function () {
             panel.css("margin-left", (pageDiv_standin.width() - panel.outerWidth()) / 2);
         }
 
-        img
+        jGetElement(blockid, ".imageHolder img")
             .data('firstLoad', false)
             .css({
                 "opacity": 1,
                 "filter": 'alpha(opacity=100)'
             });
 
-        if (pageContents.data("hsType") == "centre" && align == "Left") {
+        if (state.hsType == "centre" && align == "Left") {
             jGetElement(blockid, ".listItem").css("minWidth", $("#"+blockid).width() - panel.outerWidth(true) - 50);
         }
 
         // now get info about hotspots & create them
-        if (pageContents.data("hsType") == "flex") {
+        if (state.hsType == "flex") {
             hsHolder.html('<map id="hsHolder_map' + blockid + '" name="hsHolder_map' + blockid + '"></map>');
 
             var stroke = true,
@@ -292,7 +282,7 @@ var annotatedDiagramBlock = new function () {
                     fillColor: fillColor.substr(1),
                     fillOpacity: fillOpacity,
                     stroke: stroke,
-                    strokeColor: pageContents.data("highlightColour").substr(1),
+                    strokeColor: state.highlightColour.substr(1),
                     strokeOpacity: (strokeOpacity > 0 ? strokeOpacity : 1),
                     strokeWidth: strokeWidth
                 },
@@ -301,7 +291,7 @@ var annotatedDiagramBlock = new function () {
                     fillColor: fillColor.substr(1),
                     fillOpacity: fillOpacity,
                     stroke: stroke,
-                    strokeColor: pageContents.data("highlightColour").substr(1),
+                    strokeColor: state.highlightColour.substr(1),
                     strokeOpacity: strokeOpacity,
                     strokeWidth: strokeWidth
                 },
@@ -315,28 +305,28 @@ var annotatedDiagramBlock = new function () {
             tabfocusoptions.render_highlight.stroke = true;
             tabfocusoptions.render_highlight.strokeWidth = (strokeWidth == 0 ? 1 : strokeWidth * 2);
 
-            x_pushToPageDict(options, "options", blockid);
-            x_pushToPageDict(tabfocusoptions, "tabfocusoptions", blockid);
+            state.options = options;
+            state.tabfocusoptions = tabfocusoptions;
 
         } else {
             // Make hsHolder with same width and height as img
-            let width = img[0].width;
-            let height = img[0].height;
+            let width = jGetElement(blockid, ".imageHolder img")[0].width;
+            let height = jGetElement(blockid, ".imageHolder img")[0].height;
             hsHolder
                 .width(width)
                 .height(height);
 
 
-            if (pageContents.data("hsType") == "centre") {
+            if (state.hsType == "centre") {
                 // arrow or line
                 this.resizeCanvas(blockid, standalone);
-                let context = x_getPageDict("context", blockid);
-                context.strokeStyle = pageContents.data("highlightColour");
-                context.fillStyle = pageContents.data("highlightColour");
+                let context = GetElement(blockid, "canvas")[0].getContext("2d");
+                context.strokeStyle = state.highlightColour;
+                context.fillStyle = state.highlightColour;
                 context.lineWidth = borderW;
 
 
-            } else if (pageContents.data("hsType") == "oval") {
+            } else if (state.hsType == "oval") {
                 hsHolder.addClass("oval");
             }
 
@@ -347,13 +337,13 @@ var annotatedDiagramBlock = new function () {
             if (this.nodeName == "hotspotGroup") {
 
                 var $hsGroup;
-                if (pageContents.data("hsType") != "flex") {
+                if (state.hsType != "flex") {
                     $hsGroup = $('<div class="hsGroup"></div>');
                     hsHolder.append($hsGroup);
                 }
 
                 $(this).children().each(function (j) {
-                    if (pageContents.data("hsType") != "flex") {
+                    if (state.hsType != "flex") {
                         annotatedDiagramBlock.createHs(blockid, this, i, $hsGroup);
 
                     } else {
@@ -362,7 +352,7 @@ var annotatedDiagramBlock = new function () {
                 });
 
             } else {
-                if (pageContents.data("hsType") != "flex") {
+                if (state.hsType != "flex") {
                     annotatedDiagramBlock.createHs(blockid, this, i, hsHolder);
 
                 } else {
@@ -370,8 +360,8 @@ var annotatedDiagramBlock = new function () {
                 }
             }
         });
-        if (pageContents.data("hsType") == "flex") {
-            img.mapster(x_getPageDict("options", blockid));
+        if (state.hsType == "flex") {
+            jGetElement(blockid, ".imageHolder img").mapster(state.options);
 
             //TODO: check for weird mapster bug where it repeats image:
             //let mapster_canvasses = jGetElement(blockid, ".mapster_el");
@@ -382,14 +372,12 @@ var annotatedDiagramBlock = new function () {
     this.createHs = function (blockid, hsInfo, groupIndex, $parent) {
 
         var blockXML = x_getBlockXML(blockid);
-        let pageContents = x_getPageDict("pageContents", blockid);
-        let img = x_getPageDict("img", blockid);
-        let options = x_getPageDict("options", blockid);
-        let tabfocusoptions = x_getPageDict("tabfocusoptions", blockid);
+				const state = x_getPageDict("state", blockid);
+        let tabfocusoptions = state.tabfocusoptions;
         var $listItem = jGetElement(blockid, ".listHolder .listItem:eq(" + groupIndex + ")"),
             $hotspot;
 
-        if (pageContents.data("hsType") == "flex") {
+        if (state.hsType == "flex") {
             var _this = hsInfo,
                 coords = [],
                 coords_string = "";
@@ -435,6 +423,7 @@ var annotatedDiagramBlock = new function () {
                 .data("listItem", $listItem)
                 .click(function (e) {
                     var $this = $(this);
+										const state = x_getPageDict("state", blockid);
 
                     // not already selected - so select link, show text & highlight hotspots
                     if (!$this.data("listItem").is(jGetElement(blockid, ".listItem.highlight"))) {
@@ -459,7 +448,7 @@ var annotatedDiagramBlock = new function () {
                     }
                 })
                 .focusin(function () {
-                    img.mapster('set_options', tabfocusoptions);
+                    jGetElement(blockid, ".imageHolder img").mapster('set_options', state.tabfocusoptions);
 
                     $(this)
                         .removeClass("transparent")
@@ -468,13 +457,13 @@ var annotatedDiagramBlock = new function () {
                     $(this).mapster('highlight');
                 })
                 .focusout(function () {
-                    img.mapster('set_options', options);
+                    jGetElement(blockid, ".imageHolder img").mapster('set_options', state.options);
 
                     $(this)
                         .removeClass("highlight")
                         .addClass("transparent");
 
-                    img.mapster('highlight', false);
+                    jGetElement(blockid, ".imageHolder img").mapster('highlight', false);
 
                 });
 
@@ -490,7 +479,7 @@ var annotatedDiagramBlock = new function () {
 
             // take current scale into account
             var w, h, x, y,
-                scale = img[0].width / img.data("origSize")[0];
+                scale = jGetElement(blockid, ".imageHolder img")[0].width / jGetElement(blockid, ".imageHolder img").data("origSize")[0];
             if (hsInfo.getAttribute("mode") !== null) {
                 // this was drawn with polygon tool so not a rectangular hotspot
                 // if oval, draw oval using furthest top, bottom, left & right points
@@ -560,26 +549,26 @@ var annotatedDiagramBlock = new function () {
     this.selectLink = function ($link, blockid) {
         $link.addClass("highlight");
 
-        let infoHolder = x_getPageDict("infoHolder", blockid);
+        let infoHolder = jGetElement(blockid, ".infoHolder");
         infoHolder.html(x_addLineBreaks($link.data("text")));
         x_pageContentsUpdated();
     }
 
     this.deselect = function (blockid) {
-        let infoHolder = x_getPageDict("infoHolder", blockid);
+        let infoHolder = jGetElement(blockid, ".infoHolder");
         jGetElement(blockid, ".listItem.highlight").removeClass("highlight");
         $(infoHolder).html("");
         let pageContents = x_getPageDict("pageContents", blockid);;
-        if (pageContents.data("hsType") == "flex") {
+        if (state.hsType == "flex") {
             $("area." + blockid).mapster('set', false);
 
         } else {
             // remove highlights on list links & hotspots
-            pageContents.find(".hotspot.selected, .hsGroup.selected").removeClass("selected");
-            pageContents.find(".hotspot.highlight").removeClass("highlight");
-            let canvas = x_getPageDict("canvas", blockid);
-            if (canvas) {
-                let context = x_getPageDict("context", blockid);
+            jGetElement(blockid, ".pageContents").find(".hotspot.selected, .hsGroup.selected").removeClass("selected");
+            jGetElement(blockid, ".pageContents").find(".hotspot.highlight").removeClass("highlight");
+            let canvas = jGetElement(blockid, "canvas");
+            if (canvas.length !== 0) {
+                let context = canvas[0].getContext("2d");
                 context.clearRect(canvas.position().left, canvas.position().top, canvas.attr("width"), canvas.attr("height"));
             }
         }
@@ -587,7 +576,7 @@ var annotatedDiagramBlock = new function () {
 
     this.drawLine = function ($hs, $listItem, shape, blockXML, blockid) {
         var align = x_browserInfo.mobile == true ? "Top" : blockXML.getAttribute("align");
-        let context = x_getPageDict("context", blockid);
+        let context= jGetElement(blockid, "canvas").getContext("2d");
 
         // startX/Y = centre of hotspot
         var startX = $hs.offset().left - $(context.canvas).offset().left + ($hs.width() / 2);
@@ -611,13 +600,13 @@ var annotatedDiagramBlock = new function () {
 
     this.drawLineToText = function ($hs, shape, blockXML, blockid) {
         var align = x_browserInfo.mobile == true ? "Top" : blockXML.getAttribute("align");
-        let context = x_getPageDict("context", blockid);
-        let panel = x_getPageDict("panel", blockid);
+        let context = jGetElement(blockid, ".canvas").getContext("2d");
+        let panel = jGetElement(blockid, ".panel");
         var startX = $hs.offset().left - $(context.canvas).offset().left + ($hs.width() / 2);
         var startY = $hs.offset().top - $(context.canvas).offset().top + ($hs.height() / 2);
 
         var endX = panel.offset().left - parseInt(panel.css("margin-left")) - parseInt(panel.css("padding-left"));
-        var endY = x_getPageDict("infoHolder", blockid).offset().top;
+        var endY = jGetElement(blockid, ".infoHolder").offset().top;
 
         context.beginPath();
         context.moveTo(startX, startY);
@@ -632,7 +621,7 @@ var annotatedDiagramBlock = new function () {
     }
 
     this.resizeCanvas = function (blockid, standalone) {
-        let canvas = x_getPageDict('canvas', blockid);
+        let canvas = jGetElement(blockid, "canvas");
 
         if (standalone){
             $x_pageHolder.css('overflow', 'hidden');
@@ -811,7 +800,7 @@ var annotatedDiagramBlock = new function () {
         }
 
         this.createHotspot = function (hsXML, $parent, $listItem, groupXML) {
-            debugger;
+            
             var $hotspot = $('<div class="hotspot" tabindex="0"/>'),
                 hsName = hsXML.getAttribute("name");
             if (groupXML != undefined) { // hs in a group

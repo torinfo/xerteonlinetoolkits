@@ -1,51 +1,55 @@
 /* dragDropLabel.html */
 
-.dropDrogLabelBlock .textHolder {
+.iblock:has( .dragDropLabelBlock){
+	position: relative;
+}
+
+.dragDropLabelBlock .textHolder {
     margin-bottom:	10px;
 }
 
-.dropDrogLabelBlock .borderTop {
+.dragDropLabelBlock .borderTop {
     border-top:		1px solid gray;
     margin-top:		20px;
     padding-top:	20px;
 }
 
-.dropDrogLabelBlock .mainText {
+.dragDropLabelBlock .mainText {
     margin-bottom: 1em;
 }
 
-.dropDrogLabelBlock .mainPanel {
+.dragDropLabelBlock .mainPanel {
     position:	relative;
 }
 
-.dropDrogLabelBlock .mainPanel .labelHolder {
+.dragDropLabelBlock .mainPanel .labelHolder {
     margin-top:	10px;
 }
 
-.dropDrogLabelBlock .dragDropHolderLabelling .labelHolder {
+.dragDropLabelBlock .dragDropHolderLabelling .labelHolder {
     clear: both;
 }
 
-.dropDrogLabelBlock .labelHolder .label {
+.dragDropLabelBlock .labelHolder .label {
     display:	inline-block;
     cursor:		pointer;
     padding:	5px;
     margin:		10px;
 }
 
-.dropDrogLabelBlock .labelHolder .label.correct .result, .labelHolder .label.incorrect .result {
+.dragDropLabelBlock .labelHolder .label.correct .result, .labelHolder .label.incorrect .result {
     padding-left: 0.5em;
 }
 
-.dropDrogLabelBlock .labelHolder .label.focus {
+.dragDropLabelBlock .labelHolder .label.focus {
     border:		2px solid yellow;
 }
 
-.dropDrogLabelBlock .labelHolder .label.selected {
+.dragDropLabelBlock .labelHolder .label.selected {
     border:		2px solid green;
 }
 
-.dropDrogLabelBlock .buttonHolder {
+.dragDropLabelBlock .buttonHolder {
     margin   : 10px;
     float    : right;
     position : relative;
@@ -53,28 +57,28 @@
     right    : 0;
 }
 
-.dropDrogLabelBlock .targetHolder {
+.dragDropLabelBlock .targetHolder {
     position:	absolute;
     margin:		10px;
     top:		0;
     left:		0;
 }
 
-.dropDrogLabelBlock .targetHolder .target {
+.dragDropLabelBlock .targetHolder .target {
     position:	absolute;
 }
 
-.dropDrogLabelBlock .targetHolder .target.border {
+.dragDropLabelBlock .targetHolder .target.border {
     border:	1px solid;
 }
 
-.dropDrogLabelBlock .pageContents hr {
+.dragDropLabelBlock .pageContents hr {
     border: none;
     background-color: #CCCCCC;
     height: 1px;
 }
 
-.dropDrogLabelBlock .infoHolder {
+.dragDropLabelBlock .infoHolder {
     margin-top: 1em;
 }
 

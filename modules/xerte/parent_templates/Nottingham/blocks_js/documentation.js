@@ -18,19 +18,16 @@
  */
 
 var documentationBlock = new function () {
-	var currentPage = 0,
-		docData = {
-			'filename': 'documentation',
-			'pages': []
-		},
-	notAnsweredDefault = '',
-		required = [];
+	var currentPage = 0;
 
 	this.pageChanged = function (blockid) {
 
 	}
 
 	this.sizeChanged = function (blockid) {
+		if(jGetElement(blockid, ".pageContents").length == 0){
+            return
+        }
 		if (x_browserInfo.mobile == false) {
 			var $panel = jGetElement(blockid, ".pageContents .panel"),
 				$btnHolder = jGetElement(blockid, ".btnHolder"),
@@ -46,19 +43,26 @@ var documentationBlock = new function () {
 	}
 
 	this.init = function (blockid) {
-		let x_currentPageXML = x_getBlockXML(blockid);
+		let documentXML = x_getBlockXML(blockid);
+		const state = x_pushToPageDict({}, "state", blockid);
 		// styles used in downloaded word doc
 		var styles = '';
 		styles += 'body, .ui-widget { font-family: Arial, sans-serif; -webkit-font-smoothing: antialiased; color: black; font-size: 12pt; } ';
 		styles += 'table.tableDoc { font-size: 1em; margin: 0.2em; padding: 0.2em; width: 100%; border-collapse: collapse; } ';
-		jGetElement(blockid, '.pageContents').data('downloadStyles', styles);
+		state.downloadStyles = styles;
+		state.required = [];
+		state.docData = {
+			'filename': 'documentation',
+			'pages': []
+		};
+		state.currentPage = 0;
 
 		var pageIndex = 0;
 
 		// Set up main layout structure & add in all non-subpage text
-		jGetElement(blockid, ".textHolder").append(x_currentPageXML.getAttribute("text"));
+		jGetElement(blockid, ".textHolder").append(documentXML.getAttribute("text"));
 
-		switch (x_currentPageXML.getAttribute("panelWidth")) {
+		switch (documentXML.getAttribute("panelWidth")) {
 			case "Full":
 				jGetElement(blockid, ".textHolder")
 					.unwrap()
@@ -81,42 +85,43 @@ var documentationBlock = new function () {
 				jGetElement(blockid, ".pageContents .splitScreen").addClass("medium");
 		}
 
-		if (x_currentPageXML.getAttribute("intro") != "") {
-			jGetElement(blockid, ".mainIntro").append(x_currentPageXML.getAttribute("intro"));
+		if (documentXML.getAttribute("intro") != "") {
+			jGetElement(blockid, ".mainIntro").append(documentXML.getAttribute("intro"));
 		} else {
 			jGetElement(blockid, ".mainIntro").remove();
 		}
 
 
 		// Process filename
-		if (x_currentPageXML.getAttribute('filename')) {
-			var filename = x_currentPageXML.getAttribute('filename').trim();
+		if (documentXML.getAttribute('filename')) {
+			var filename = documentXML.getAttribute('filename').trim();
 			if (filename.length > 0) {
-				docData.filename = filename;
+				state.docData.filename = filename;
 			}
 		}
 
 		// Process document details
-		docData.documentName = x_currentPageXML.getAttribute('name');
-		docData.documentText = x_currentPageXML.getAttribute('text');
-		docData.documentIntro = x_currentPageXML.getAttribute('intro');
+		state.docData.documentName = documentXML.getAttribute('name');
+		state.docData.documentText = documentXML.getAttribute('text');
+		state.docData.documentIntro = documentXML.getAttribute('intro');
 
 		// Store 'No answer' text
-		if (x_currentPageXML.getAttribute('notAnswered')) notAnsweredDefault = x_currentPageXML.getAttribute('notAnswered');
+		state.notAnsweredDefault = '';
+		if (documentXML.getAttribute('notAnswered')) state.notAnsweredDefault = documentXML.getAttribute('notAnswered');
 
 		// Introductory page
-		if (x_currentPageXML.getAttribute('intro') != "" && x_currentPageXML.getAttribute('display') == 'separate') {
+		if (documentXML.getAttribute('intro') != "" && documentXML.getAttribute('display') == 'separate') {
 			jGetElement(blockid, ".mainIntro")
 				.attr("id", "page" + pageIndex++)
 				.addClass("page");
 		}
 
 		// Loop through all pages
-		for (var page = 0; page < $(x_currentPageXML).children().length; page++) {
-			var pageXML = $(x_currentPageXML).children()[page];
+		for (var page = 0; page < $(documentXML).children().length; page++) {
+			var pageXML = $(documentXML).children()[page];
 
 			if ($(pageXML).children().length != 0 || pageXML.getAttribute('name') != "" || pageXML.getAttribute('text') != "") {
-				docData.pages[page] = {};
+				state.docData.pages[page] = {};
 
 				// Create the pages and hide them all
 				$page = $('<div>')
@@ -126,18 +131,18 @@ var documentationBlock = new function () {
 				if (pageIndex > 1)
 					$page.attr('class', 'page hidepage');
 
-				docData.pages[page].pageName = pageXML.getAttribute('name');
-				docData.pages[page].pageText = pageXML.getAttribute('text');
+				state.docData.pages[page].pageName = pageXML.getAttribute('name');
+				state.docData.pages[page].pageText = pageXML.getAttribute('text');
 
 				var $intro = $('<div class="intro">').appendTo($page);
-				if (docData.pages[page].pageName.length > 0) {
+				if (state.docData.pages[page].pageName.length > 0) {
 					$('<h3>')
-						.html(docData.pages[page].pageName)
+						.html(state.docData.pages[page].pageName)
 						.appendTo($intro);
 				}
-				if (docData.pages[page].pageText.length > 0) {
+				if (state.docData.pages[page].pageText.length > 0) {
 					$('<div>')
-						.html(docData.pages[page].pageText)
+						.html(state.docData.pages[page].pageText)
 						.appendTo($intro);
 				}
 				if ($intro.children().length == 0) {
@@ -146,16 +151,16 @@ var documentationBlock = new function () {
 
 				// Create any sections
 				if ($(pageXML).children().length > 0) {
-					docData.pages[page].sections = [];
+					state.docData.pages[page].sections = [];
 					for (var section = 0, noSections = $(pageXML).children().length; section < noSections; section++) {
 						var sectionXML = $(pageXML).children()[section];
-						docData.pages[page].sections[section] = { 'items': [] };
+						state.docData.pages[page].sections[section] = { 'items': [] };
 
 						// Create the sections
 						if (sectionXML.nodeName == 'section') {
 							if (sectionXML.getAttribute('exclude') != 'doc') {
-								docData.pages[page].sections[section].sectionName = sectionXML.getAttribute('name');
-								docData.pages[page].sections[section].sectionText = sectionXML.getAttribute('text');
+								state.docData.pages[page].sections[section].sectionName = sectionXML.getAttribute('name');
+								state.docData.pages[page].sections[section].sectionText = sectionXML.getAttribute('text');
 							}
 
 							var $section = $('<fieldset>').attr('class', 'section'),
@@ -210,7 +215,7 @@ var documentationBlock = new function () {
 							}
 						}
 						else {
-							docData.pages[page].sections[section].items[0] = {};
+							state.docData.pages[page].sections[section].items[0] = {};
 							var $newItem = documentationBlock.processItem(blockid, page, section, 0, sectionXML);
 							if ($newItem !== null) $newItem.appendTo($page);
 						}
@@ -225,7 +230,7 @@ var documentationBlock = new function () {
 		var $downloadBtn = $('<button class="downloadBtn">');
 		var $downloadSection = $('<div class="item"/>');
 		$downloadBtn.appendTo($downloadSection);
-		if (x_currentPageXML.getAttribute('download') && x_currentPageXML.getAttribute('download') == 'extra') {
+		if (documentXML.getAttribute('download') && documentXML.getAttribute('download') == 'extra') {
 			$page = $('<div>')
 				.attr('class', 'page' + pageIndex + ' page hidepage');
 
@@ -236,17 +241,17 @@ var documentationBlock = new function () {
 			$downloadSection.insertAfter(jGetElement(blockid, '.pages').children().last().children().last());
 		}
 
-		if (x_currentPageXML.getAttribute('instructions') && x_currentPageXML.getAttribute('instructions') != "") {
-			$('<div>' + x_currentPageXML.getAttribute('instructions') + '</div>').insertBefore($downloadBtn);
+		if (documentXML.getAttribute('instructions') && documentXML.getAttribute('instructions') != "") {
+			$('<div>' + documentXML.getAttribute('instructions') + '</div>').insertBefore($downloadBtn);
 		}
 
-		jGetElement(blockid, ".pageContents").data("numPages", jGetElement(blockid, ".pages").children(".page").length);
+		state.numPages = jGetElement(blockid, ".pages").children(".page").length;
 
 		$downloadBtn.button({
 			icons: {
 				primary: "fa fa-x-download"
 			},
-			label: x_currentPageXML.getAttribute('downloadTxt') != undefined ? x_currentPageXML.getAttribute('downloadTxt') : "Download"
+			label: documentXML.getAttribute('downloadTxt') != undefined ? documentXML.getAttribute('downloadTxt') : "Download"
 		})
 			.click(function () {
 				documentationBlock.download(blockid);
@@ -260,7 +265,7 @@ var documentationBlock = new function () {
 					icons: {
 						primary: "fa fa-x-prev"
 					},
-					label: x_currentPageXML.getAttribute('prevTxt') != undefined ? x_currentPageXML.getAttribute('prevTxt') : "Previous",
+					label: documentXML.getAttribute('prevTxt') != undefined ? documentXML.getAttribute('prevTxt') : "Previous",
 					text: false
 				})
 				.click(function () {
@@ -274,7 +279,7 @@ var documentationBlock = new function () {
 					icons: {
 						primary: "fa fa-x-next"
 					},
-					label: x_currentPageXML.getAttribute('nextTxt') != undefined ? x_currentPageXML.getAttribute('nextTxt') : "Next",
+					label: documentXML.getAttribute('nextTxt') != undefined ? documentXML.getAttribute('nextTxt') : "Next",
 					text: false
 				})
 				.click(function () {
@@ -282,21 +287,22 @@ var documentationBlock = new function () {
 					jGetElement(blockid, ".pages").scrollTop(0);
 				})
 
-			jGetElement(blockid, ".slideTxt").html((currentPage + 1) + " / " + (jGetElement(blockid, ".pageContents").data("numPages")));
+			jGetElement(blockid, ".slideTxt").html((state.currentPage + 1) + " / " + (state.numPages));
 
 		}
 		else {
 			jGetElement(blockid, '.btnHolder').remove();
 		}
 
-		this.sizeChanged();
+		this.sizeChanged(blockid);
 
-		jGetElement(blockid, ".pageContents").data("docData", docData);
 
 		x_pageLoaded();
 	};
 
 	this.processItem = function (blockid, page, section, item, xml) {
+		const state = x_getPageDict("state", blockid);
+		let documentXML = x_getBlockXML(blockid);
 		// Item to be excluded?
 		var exclude = '';
 		if (xml.getAttribute('exclude')) {
@@ -304,14 +310,14 @@ var documentationBlock = new function () {
 		}
 
 		if (exclude != 'doc') {
-			docData.pages[page].sections[section].items[item] = {};
-			docData.pages[page].sections[section].items[item].itemName = xml.getAttribute('name');
-			docData.pages[page].sections[section].items[item].itemText = xml.getAttribute('text');
+			state.docData.pages[page].sections[section].items[item] = {};
+			state.docData.pages[page].sections[section].items[item].itemName = xml.getAttribute('name');
+			state.docData.pages[page].sections[section].items[item].itemText = xml.getAttribute('text');
 
 			if (xml.nodeName != 'tableDoc') {
-				docData.pages[page].sections[section].items[item].itemValue = "";
+				state.docData.pages[page].sections[section].items[item].itemValue = "";
 			} else {
-				docData.pages[page].sections[section].items[item].itemValue = documentationBlock.formatTableForDownload(this.createTable(xml, 'tableDoc ' + xml.getAttribute("borders")), '');
+				state.docData.pages[page].sections[section].items[item].itemValue = documentationBlock.formatTableForDownload(this.createTable(xml, 'tableDoc ' + xml.getAttribute("borders")), '');
 			}
 		}
 
@@ -339,7 +345,7 @@ var documentationBlock = new function () {
 					.addClass("required")
 					.appendTo($item);
 				requiredKey = 'idP' + page + 'S' + section + 'I' + item;
-				required.push({ 'page': page, 'section': section, 'item': item, 'key': requiredKey });
+				state.required.push({ 'page': page, 'section': section, 'item': item, 'key': requiredKey });
 			}
 
 			if (
@@ -352,8 +358,7 @@ var documentationBlock = new function () {
 			}
 
 			// Work out which Not Answered option to use
-			var notAnsweredText = notAnsweredDefault;
-			if (xml.getAttribute('notAnswered')) notAnsweredText = xml.getAttribute('notAnswered');
+			var notAnsweredText = state.notAnsweredDefault;
 
 			var $element;
 			switch (xml.nodeName) {
@@ -433,14 +438,14 @@ var documentationBlock = new function () {
 				case 'media':
 					if (xml.getAttribute('url') != undefined && xml.getAttribute('url') != '') {
 						if (exclude != 'doc') {
-							docData.pages[page].sections[section].items[item].itemText = '<img class="itemImg" src="' + xml.getAttribute('url') + '">';
+							state.docData.pages[page].sections[section].items[item].itemText = '<img class="itemImg" src="' + xml.getAttribute('url') + '">';
 						}
 						$element = $('<img class="itemImg">')
 							.attr('src', xml.getAttribute('url'));
 					}
 					else {
 						$element = $('<div>')
-							.html("<p class='alert'>" + (x_currentPageXML.getAttribute('mediaError') != undefined ? x_currentPageXML.getAttribute('mediaError') : "No media selected") + "</p>");
+							.html("<p class='alert'>" + (documentXML.getAttribute('mediaError') != undefined ? documentXML.getAttribute('mediaError') : "No media selected") + "</p>");
 					}
 					break;
 				case 'description':
@@ -491,7 +496,7 @@ var documentationBlock = new function () {
 					break;
 				case 'line':
 					if (exclude != 'doc') {
-						docData.pages[page].sections[section].items[item].itemText = '<hr/>';
+						state.docData.pages[page].sections[section].items[item].itemText = '<hr/>';
 					}
 					$element = $('<hr />');
 					break;
@@ -601,75 +606,82 @@ var documentationBlock = new function () {
 	}
 
 	this.updateData = function (blockid, p, s, i, data) {
-		var temp = jGetElement(blockid, ".pageContents").data("docData") == undefined ? docData : jGetElement(blockid, ".pageContents").data("docData");
+		const state = x_getPageDict("state", blockid);
+		var temp = state.docData;
 		temp.pages[p].sections[s].items[i].itemValue = data;
-		jGetElement(blockid, ".pageContents").data("docData", temp);
+		state.docData = temp;
 	};
 
 	this.previousPage = function (blockid) {
-		//if (documentation.checkRequired(currentPage)) {
-		if (currentPage > 0) {
-			jGetElement(blockid, '.page' + currentPage).addClass('hidepage');
-			if ((currentPage == 1 && x_currentPageXML.getAttribute("display") != "all") || x_currentPageXML.getAttribute("display") == "all") jGetElement(blockid, ".mainIntro").show();
-			currentPage--;
-			jGetElement(blockid, '.page' + currentPage).removeClass('hidepage');
-			if (currentPage == 0) jGetElement(blockid, '.prevBtn').prop('disabled', true);
+		const state = x_getPageDict("state", blockid);
+		let documentXML = x_getBlockXML(blockid);
+		//if (documentation.checkRequired(state.currentPage)) {
+		if (state.currentPage > 0) {
+			jGetElement(blockid, '.page' + state.currentPage).addClass('hidepage');
+			if ((state.currentPage == 1 && documentXML.getAttribute("display") != "all") || documentXML.getAttribute("display") == "all") jGetElement(blockid, ".mainIntro").show();
+			state.currentPage--;
+			jGetElement(blockid, '.page' + state.currentPage).removeClass('hidepage');
+			if (state.currentPage == 0) jGetElement(blockid, '.prevBtn').prop('disabled', true);
 		}
 		jGetElement(blockid, '.nextBtn').prop('disabled', false);
-		jGetElement(blockid, ".slideTxt").html((currentPage + 1) + " / " + (jGetElement(blockid, ".pageContents").data("numPages")));
+		jGetElement(blockid, ".slideTxt").html((state.currentPage + 1) + " / " + (state.numPages));
 
-		documentationBlock.showPage(blockid, currentPage + 1);
+		documentationBlock.showPage(blockid, state.currentPage + 1);
 		//}
 	};
 
 	this.nextPage = function (blockid) {
-		if (documentationBlock.checkRequired(blockid, currentPage)) {
-			if (currentPage < jGetElement(blockid, '.pages').children(".page").length - 1) {
-				jGetElement(blockid, '.page' + currentPage).addClass('hidepage');
-				if ((currentPage == 0 && x_currentPageXML.getAttribute("display") != "all") || (currentPage + 1 == jGetElement(blockid, '.pages').children(".page").length - 1 && x_currentPageXML.getAttribute("download") == "extra")) jGetElement(blockid, ".mainIntro").hide();
-				currentPage++;
-				jGetElement(blockid, '.page' + currentPage).removeClass('hidepage');
-				if (currentPage == jGetElement(blockid, '.pages').children(".page").length - 1) jGetElement(blockid, '.nextBtn').prop('disabled', true);
+		let documentXML = x_getBlockXML(blockid);
+		const state = x_getPageDict("state", blockid);
+		if (documentationBlock.checkRequired(blockid, state.currentPage)) {
+			if (state.currentPage < jGetElement(blockid, '.pages').children(".page").length - 1) {
+				jGetElement(blockid, '.page' + state.currentPage).addClass('hidepage');
+				if ((state.currentPage == 0 && documentXML.getAttribute("display") != "all") || (state.currentPage + 1 == jGetElement(blockid, '.pages').children(".page").length - 1 && documentXML.getAttribute("download") == "extra")) jGetElement(blockid, ".mainIntro").hide();
+				state.currentPage++;
+				jGetElement(blockid, '.page' + state.currentPage).removeClass('hidepage');
+				if (state.currentPage == jGetElement(blockid, '.pages').children(".page").length - 1) jGetElement(blockid, '.nextBtn').prop('disabled', true);
 			}
 			jGetElement(blockid, '.prevBtn').prop('disabled', false);
-			jGetElement(blockid, ".slideTxt").html((currentPage + 1) + " / " + (jGetElement(blockid, ".pageContents").data("numPages")));
+			jGetElement(blockid, ".slideTxt").html((state.currentPage + 1) + " / " + (state.numPages));
 
-			documentationBlock.showPage(blockid, currentPage + 1);
+			documentationBlock.showPage(blockid, state.currentPage + 1);
 		}
 	};
 
 	this.checkRequired = function (blockid, page) {
+		const state = x_getPageDict("state", blockid);
+		let documentXML = x_getBlockXML(blockid);
 		jGetElement(blockid, ".alertBorder").removeClass('alertBorder');
 		var ok = true;
-		for (var i = 0; i < required.length; i++) {
-			if (required[i].page == page) {
-				if (jGetElement(blockid, '#' + required[i].key).attr('type') == 'checkbox') {
-					if (!jGetElement(blockid, '#' + required[i].key).prop('checked')) {
+		for (var i = 0; i < state.required.length; i++) {
+			if (state.required[i].page == page) {
+				if (jGetElement(blockid, '#' + state.required[i].key).attr('type') == 'checkbox') {
+					if (!jGetElement(blockid, '#' + state.required[i].key).prop('checked')) {
 						ok = false;
-						jGetElement(blockid, '#' + required[i].key).closest('.item').addClass('alertBorder');
+						jGetElement(blockid, '#' + state.required[i].key).closest('.item').addClass('alertBorder');
 					}
 				} else {
-					if (jGetElement(blockid, '#' + required[i].key).parents('table.tableDoc').length > 0) {
-						var $tableDoc = jGetElement(blockid, '#' + required[i].key).parents('table.tableDoc');
-						// when an editable table is required all the text areas in it must be completed
+					if (jGetElement(blockid, '#' + state.required[i].key).parents('table.tableDoc').length > 0) {
+						var $tableDoc = jGetElement(blockid, '#' + state.required[i].key).parents('table.tableDoc');
+						// when an editable table is state.required all the text areas in it must be completed
 						for (var j = 0; j < $tableDoc.find('textarea').length; j++) {
 							if ($tableDoc.find('textarea')[j].value == '') {
 								ok = false;
-								jGetElement(blockid, '#' + required[i].key).closest('.item').addClass('alertBorder');
+								jGetElement(blockid, '#' + state.required[i].key).closest('.item').addClass('alertBorder');
 								break;
 							}
 						}
 					} else {
-						if (jGetElement(blockid, '#' + required[i].key).val() == '') {
+						if (jGetElement(blockid, '#' + state.required[i].key).val() == '') {
 							ok = false;
-							jGetElement(blockid, '#' + required[i].key).closest('.item').addClass('alertBorder');
+							jGetElement(blockid, '#' + state.required[i].key).closest('.item').addClass('alertBorder');
 						}
 					}
 				}
 			}
 		}
 
-		if (!ok) { alert(x_currentPageXML.getAttribute('requiredTxt') != undefined ? x_currentPageXML.getAttribute('requiredTxt') : "Please complete all required fields") }
+		if (!ok) { alert(documentXML.getAttribute('requiredTxt') != undefined ? documentXML.getAttribute('requiredTxt') : "Please complete all required fields") }
 
 		return ok;
 	};
@@ -741,8 +753,9 @@ var documentationBlock = new function () {
 	};
 
 	this.download = function (blockid) {
-		if (documentationBlock.checkRequired(blockid, currentPage)) {
-			documentationBlock.postData(blockid, jGetElement(blockid, ".pageContents").data("docData"));
+		const state = x_getPageDict("state", blockid);
+		if (documentationBlock.checkRequired(blockid, state.currentPage)) {
+			documentationBlock.postData(blockid, state.docData);
 		}
 	};
 
@@ -751,6 +764,8 @@ var documentationBlock = new function () {
 	};
 
 	this.postData = function (blockid, data) {
+		const state = x_getPageDict("state", blockid);
+		let documentXML = x_getBlockXML(blockid);
 		// remove anything that's excluded from document
 		var temp = jQuery.extend(true, {}, data),
 			i, j, k;
@@ -771,13 +786,13 @@ var documentationBlock = new function () {
 			}
 		}
 
-		temp.styles = jGetElement(blockid, '.pageContents').data('downloadStyles');
-		temp.orientation = x_currentPageXML.getAttribute('fileOrientation') != '' && x_currentPageXML.getAttribute('fileOrientation') != undefined ? x_currentPageXML.getAttribute('fileOrientation') : 'portrait';
-		temp.size = x_currentPageXML.getAttribute('fileOrientation') == 'landscape' ? '841.7pt 595.45pt' : '595.45pt 841.7pt';
-		temp.h1 = x_currentPageXML.getAttribute('h1') != null ? x_currentPageXML.getAttribute('h1') : 20 + "px";
-		temp.h2 = x_currentPageXML.getAttribute('h2') != null ? x_currentPageXML.getAttribute('h2') : 18 + "px";
-		temp.h3 = x_currentPageXML.getAttribute('h3') != null ? x_currentPageXML.getAttribute('h3') : 16 + "px";
-		temp.p = x_currentPageXML.getAttribute('p') != null ? x_currentPageXML.getAttribute('p') : 15 + "px";
+		temp.styles = state.downloadStyles;
+		temp.orientation = documentXML.getAttribute('fileOrientation') != '' && documentXML.getAttribute('fileOrientation') != undefined ? documentXML.getAttribute('fileOrientation') : 'portrait';
+		temp.size = documentXML.getAttribute('fileOrientation') == 'landscape' ? '841.7pt 595.45pt' : '595.45pt 841.7pt';
+		temp.h1 = documentXML.getAttribute('h1') != null ? documentXML.getAttribute('h1') : 20 + "px";
+		temp.h2 = documentXML.getAttribute('h2') != null ? documentXML.getAttribute('h2') : 18 + "px";
+		temp.h3 = documentXML.getAttribute('h3') != null ? documentXML.getAttribute('h3') : 16 + "px";
+		temp.p = documentXML.getAttribute('p') != null ? documentXML.getAttribute('p') : 15 + "px";
 
 		var form = document.createElement("form");
 		form.method = 'post';

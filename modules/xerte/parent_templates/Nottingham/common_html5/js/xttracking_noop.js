@@ -380,7 +380,7 @@ function XTResults(fullcompletion) {
             results.interactions[nrofquestions] = interaction;
             totalDuration += trackingManager.pageStates[i].duration;
             nrofquestions++;
-            debugger;
+            
             totalWeight += trackingManager.pageStates[i].weighting;
 
             function compare( a, b ) {
@@ -471,7 +471,7 @@ function XTResults(fullcompletion) {
             }
         }
     }
-    debugger;
+    
     results.completion = completion;
     results.score = score;
     results.nrofquestions = nrofquestions;

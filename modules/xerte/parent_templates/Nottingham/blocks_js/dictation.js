@@ -22,8 +22,9 @@
 var dictationBlock = new function () {
 	// function called every time the page is viewed after it has initially loaded
 	this.pageChanged = function (blockid) {
-		if (jGetElement(blockid, ".pageContents").data("mediaElement") != undefined) {
-			jGetElement(blockid, ".pageContents").data("mediaElement").setCurrentTime(jGetElement(blockid, ".pageContents").data("captionInfo")[jGetElement(blockid, ".pageContents").data("current")].start);
+		const state = x_getPageDict("state", blockid);
+		if (state.mediaElement != undefined) {
+			state.mediaElement.setCurrentTime(state.captionInfo[state.current].start);
 		}
 
 		jGetElement(blockid, ".button").show();
@@ -31,11 +32,14 @@ var dictationBlock = new function () {
 
 	// function called every time the size of the LO is changed
 	this.sizeChanged = function (blockid) {
+		if(jGetElement(blockid, ".pageContents").length == 0){
+            return
+        }
 		if($("#x_page" + x_currentPage).is(":hidden")){		
 				$("#x_page" + x_currentPage).show();
 		}
 		var $panel = jGetElement(blockid, ".pageContents .panel");
-		$panel.height($x_pageHolder.height() - parseInt($x_pageDiv.css("padding-top")) * 2 - parseInt($panel.css("padding-top")) * 2 - 5);
+		//$panel.height($x_pageHolder.height() - parseInt($x_pageDiv.css("padding-top")) * 2 - parseInt($panel.css("padding-top")) * 2 - 5);
 
 		var audioBarW = 0,
 			$pageAudio = jGetElement(blockid, ".pageAudio");
@@ -52,7 +56,8 @@ var dictationBlock = new function () {
 
 	this.init = function (blockid) {
 		let pageXML = x_getBlockXML(blockid);
-		jGetElement(blockid, ".pageContents").data({captionInfo: []});
+		const state = x_pushToPageDict({}, "state", blockid);
+		state.captionInfo = [];
 		//Add aria-label to answer box
 		var answerFieldLabel = pageXML.getAttribute("answerFieldLabel");
 		if (answerFieldLabel === undefined | answerFieldLabel === null) {
@@ -83,9 +88,9 @@ var dictationBlock = new function () {
 	}
 
 	this.ttCaptions = function (blockid) {
-		console.trace("init");
+		const state = x_getPageDict("state", blockid);
 		let pageXML = x_getBlockXML(blockid);
-		let captionInfo = jGetElement(blockid, ".pageContents").data("captionInfo");
+		let captionInfo = state.captionInfo;
 		$.ajax({
 			type: "GET",
 			url: x_evalURL(pageXML.getAttribute("timedText")),
@@ -102,10 +107,8 @@ var dictationBlock = new function () {
 					// replace from x_addLineBreaks function done here directly as text from timed text file won't be changed correctly otherwise
 				});
 
-				jGetElement(blockid, ".pageContents").data({
-					"captionInfo": captionInfo,
-					"audioSrc": "timedTxt"
-				});
+				state.captionInfo = captionInfo;
+				state.audioSrc = "timedTxt";
 				dictationBlock.setup(blockid);
 			},
 
@@ -116,9 +119,9 @@ var dictationBlock = new function () {
 	}
 
 	this.xmlCaptions = function (blockid) {
-		console.trace("init");
+		const state = x_getPageDict("state", blockid);
 		let pageXML = x_getBlockXML(blockid);
-		let captionInfo = jGetElement(blockid, ".pageContents").data("captionInfo");
+		let captionInfo = state.captionInfo;
 		$(pageXML).children().each(function () {
 			var $this = $(this);
 			captionInfo.push({
@@ -129,17 +132,18 @@ var dictationBlock = new function () {
 			});
 		});
 
-		jGetElement(blockid, ".pageContents").data("captionInfo", captionInfo);
+		state.captionInfo = captionInfo;
 		dictationBlock.setup(blockid);
 	}
 
 	this.setup = function (blockid) {
+		const state = x_getPageDict("state", blockid);
 		let pageXML = x_getBlockXML(blockid);
 
 		var panelWidth = pageXML.getAttribute("panelWidth");
 
 		this.initTracking(blockid);
-		jGetElement(blockid, ".pageContents").data("isRestarted", false);
+		state.isRestarted = false;
 
 		let showBtnTxt = "";
 
@@ -169,17 +173,18 @@ var dictationBlock = new function () {
 				label: showBtnTxt
 			})
 			.click(function () {
+				const state = x_getPageDict("state", blockid);
 				var feedback;
 				var $this = $(this);
 				jGetElement(blockid, ".showBtn").button("disable");
 				//Formats the answer to te correct format, so we can compare it with the input to check if it is correct
 
-				var text = $("<div/>").html(jGetElement(blockid, ".pageContents").data("captionInfo")[jGetElement(blockid, ".pageContents").data("current")].answer).text().replace(/(\r\n|\n|\r)/gm, "");
+				var text = $("<div/>").html(state.captionInfo[state.current].answer).text().replace(/(\r\n|\n|\r)/gm, "");
 				//Checks if the answer is correct, and if so it adds one to the total of correct answers
 				var answer = jGetElement(blockid, '.answerTxt').val();
 				var correct = false;
 				jGetElement(blockid, ".answer").slideDown(function () {
-					if (jGetElement(blockid, ".pageContents").data("current") + 1 < jGetElement(blockid, ".pageContents").data("captionInfo").length) {
+					if (state.current + 1 < state.captionInfo.length) {
 						jGetElement(blockid, ".showBtn").button("enable");
 					}
 					else {
@@ -209,9 +214,9 @@ var dictationBlock = new function () {
 					success: correct,
 					score: (correct ? 100.0 : 0.0)
 				};
-				XTExitInteraction(x_currentPage, x_getBlockNr(blockid), result, [], answer, feedback, jGetElement(blockid, ".pageContents").data("current"));
+				XTExitInteraction(x_currentPage, x_getBlockNr(blockid), result, [], answer, feedback, state.current);
 
-				if (jGetElement(blockid, ".pageContents").data("current") + 1 < jGetElement(blockid, ".pageContents").data("captionInfo").length) {
+				if (state.current + 1 < state.captionInfo.length) {
 					jGetElement(blockid, ".nextBtn").button("enable");
 				} else {
 					//Where done, finish tracking
@@ -227,10 +232,11 @@ var dictationBlock = new function () {
 				"disabled": true
 			})
 			.click(function () {
+				const state = x_getPageDict("state", blockid);
 				$(this).button("disable");
 				jGetElement(blockid, ".showBtn").button("enable");
 
-				jGetElement(blockid, ".pageContents").data("current", jGetElement(blockid, ".pageContents").data("current") + 1);
+				state.current = state.current + 1;
 				dictationBlock.loadQ(blockid);
 			});
 
@@ -240,7 +246,8 @@ var dictationBlock = new function () {
 				"disabled": true
 			})
 			.click(function () {
-				jGetElement(blockid, ".pageContents").data("isRestarted", true);
+				const state = x_getPageDict("state", blockid);
+				state.isRestarted = true;
 				$(this).button("disable");
 				jGetElement(blockid, ".showBtn").button("enable");
 
@@ -251,7 +258,7 @@ var dictationBlock = new function () {
 			jGetElement(blockid, ".restartBtn").hide();
 		}
 
-		if (jGetElement(blockid, ".pageContents").data("captionInfo").length == 0) {
+		if (state.captionInfo.length == 0) {
 			jGetElement(blockid, ".answerTxt, #btnHolder").remove();
 			x_pageLoaded();
 		} else {
@@ -260,37 +267,37 @@ var dictationBlock = new function () {
 	}
 
 	this.sortCaptions = function (blockid) {
+		const state = x_getPageDict("state", blockid);
 		let pageXML = x_getBlockXML(blockid);
-		let isRestarted = jGetElement(blockid, ".pageContents").data("isRestarted")?? false;
-		jGetElement(blockid, ".pageContents").data({
-			"captionInfo": pageXML.getAttribute("randomise") == "true" && !isRestarted ? x_shuffleArray(jGetElement(blockid, ".pageContents").data("captionInfo")) : jGetElement(blockid, ".pageContents").data("captionInfo"),
-			"current": 0
-		});
+		let isRestarted = state.isRestarted?? false;
+		state.captionInfo = pageXML.getAttribute("randomise") == "true" && !isRestarted ? x_shuffleArray(state.captionInfo) : state.captionInfo;
+		state.current = 0;
 		this.loadQ(blockid);
 	}
 
 	this.loadQ = function (blockid) {
+		const state = x_getPageDict("state", blockid);
 		let pageXML = x_getBlockXML(blockid);
 		let correctText = pageXML.getAttribute("correctText") != undefined && pageXML.getAttribute("correctText") != "" ? pageXML.getAttribute("correctText") : "Correct";
 		let incorrectText = pageXML.getAttribute("incorrectText") != undefined && pageXML.getAttribute("incorrectText") != "" ? pageXML.getAttribute("incorrectText") : "Incorrect";
 		let count = null;
 		if (count != null && count != "") {
-			jGetElement(blockid, ".count").html(pageXML.getAttribute("countText").replace("{i}", jGetElement(blockid, ".pageContents").data("current") + 1).replace("{n}", jGetElement(blockid, ".pageContents").data("captionInfo").length));
+			jGetElement(blockid, ".count").html(pageXML.getAttribute("countText").replace("{i}", state.current + 1).replace("{n}", state.captionInfo.length));
 		} else {
 			jGetElement(blockid, ".count").hide();
 		}
 
-		if (x_addLineBreaks(jGetElement(blockid, ".pageContents").data("captionInfo")[jGetElement(blockid, ".pageContents").data("current")].prompt == "")) {
+		if (x_addLineBreaks(state.captionInfo[state.current].prompt == "")) {
 			jGetElement(blockid, ".prompt").hide();
 		} else {
 			jGetElement(blockid, ".prompt")
 				.show()
-				.html(x_addLineBreaks(jGetElement(blockid, ".pageContents").data("captionInfo")[jGetElement(blockid, ".pageContents").data("current")].prompt));
+				.html(x_addLineBreaks(state.captionInfo[state.current].prompt));
 		}
 		jGetElement(blockid, ".answerTxt").val("");
 
 		//Correct answer
-		var answer = $("<div/>").html(jGetElement(blockid, ".pageContents").data("captionInfo")[jGetElement(blockid, ".pageContents").data("current")].answer);
+		var answer = $("<div/>").html(state.captionInfo[state.current].answer);
 
 		// Answer to be shown
 		jGetElement(blockid, ".answer").hide()
@@ -305,21 +312,22 @@ var dictationBlock = new function () {
 			.hide()
 			.html('<span class="tick fa fa-fw fa-x-tick"><span class="ui-helper-hidden-accessible">' + x_getLangInfo(x_languageData.find("tick")[0], "label", "Correct") + '</span></span>' + x_addLineBreaks(" " + correctText));
 
-		this.loadAudio(blockid, jGetElement(blockid, ".pageContents").data("captionInfo")[jGetElement(blockid, ".pageContents").data("current")]);
-		var name = $("<div/>").html(jGetElement(blockid, ".pageContents").data("captionInfo")[jGetElement(blockid, ".pageContents").data("current")].name).text().replace(/(\r\n|\n|\r)/gm, "");
+		this.loadAudio(blockid, state.captionInfo[state.current]);
+		var name = $("<div/>").html(state.captionInfo[state.current].name).text().replace(/(\r\n|\n|\r)/gm, "");
 		if (name == "") {
 			name = pageXML.getAttribute("name");
 		}
-		var trackedAnswer = $("<div/>").html(jGetElement(blockid, ".pageContents").data("captionInfo")[jGetElement(blockid, ".pageContents").data("current")].answer).text().replace(/(\r\n|\n|\r)/gm, "");
-		let isRestarted = jGetElement(blockid, ".pageContents").data("isRestarted")?? false;
+		var trackedAnswer = $("<div/>").html(state.captionInfo[state.current].answer).text().replace(/(\r\n|\n|\r)/gm, "");
+		let isRestarted = state.isRestarted?? false;
 		if(!isRestarted){
-				XTEnterInteraction(x_currentPage, x_getBlockNr(blockid), 'fill-in', name, [], trackedAnswer, "Correct", pageXML.getAttribute("grouping"), null, jGetElement(blockid, ".pageContents").data("current"));
+				XTEnterInteraction(x_currentPage, x_getBlockNr(blockid), 'fill-in', name, [], trackedAnswer, "Correct", pageXML.getAttribute("grouping"), null, state.current);
 		}
 	}
 
 	this.loadAudio = function (blockid, caption) {
+		const state = x_getPageDict("state", blockid);
 		let pageXML = x_getBlockXML(blockid);
-		if (jGetElement(blockid, ".pageContents").data("audioSrc") == "timedTxt") {
+		if (state.audioSrc == "timedTxt") {
 			jGetElement(blockid, ".pageAudio").mediaPlayer({
 				type: "audio",
 				source: pageXML.getAttribute("sound"),
@@ -336,8 +344,8 @@ var dictationBlock = new function () {
 			});
 		}
 
-		if (jGetElement(blockid, ".pageContents").data("loaded") != true) {
-			jGetElement(blockid, ".pageContents").data("loaded", true);
+		if (state.loaded != true) {
+			state.loaded = true;
 			dictationBlock.sizeChanged(blockid);
 			x_pageLoaded(); // call this function in every model once everything's loaded
 		}
@@ -345,14 +353,15 @@ var dictationBlock = new function () {
 
 	// function called from mediaPlayer.js when audio player has been set up
 	this.mediaFunct = function (blockid,mediaElement) {
-		if (jGetElement(blockid, ".pageContents").data("audioSrc") == "timedTxt") {
-			jGetElement(blockid, ".pageContents").data("mediaElement", mediaElement);
+		const state = x_getPageDict("state", blockid);
+		if (state.audioSrc == "timedTxt") {
+			state.mediaElement = mediaElement;
 
 			// force audio back to beginning of clip when end is reached
 			mediaElement.addEventListener("timeupdate", function (e) {
 				var currentTime = mediaElement.currentTime;
-				if (currentTime >= jGetElement(blockid, ".pageContents").data("captionInfo")[jGetElement(blockid, ".pageContents").data("current")].end || currentTime < jGetElement(blockid, ".pageContents").data("captionInfo")[jGetElement(blockid, ".pageContents").data("current")].start) {
-					mediaElement.setCurrentTime(jGetElement(blockid, ".pageContents").data("captionInfo")[jGetElement(blockid, ".pageContents").data("current")].start);
+				if (currentTime >= state.captionInfo[state.current].end || currentTime < state.captionInfo[state.current].start) {
+					mediaElement.setCurrentTime(state.captionInfo[state.current].start);
 				}
 			});
 		}
@@ -362,15 +371,16 @@ var dictationBlock = new function () {
 	}
 	//Starting the tracking
 	this.initTracking = function (blockid) {
+		const state = x_getPageDict("state", blockid);
 		let pageXML = x_getBlockXML(blockid);
 		// Track the dictation page
-		this.weighting = 1.0;
+		let weighting = 1.0;
 		if (pageXML.getAttribute("trackingWeight") != undefined) {
-			this.weighting = pageXML.getAttribute("trackingWeight");
+			weighting = pageXML.getAttribute("trackingWeight");
 		}
 		for(let i = 0; i < pageXML.children.length; i++){
-				XTSetInteractionType(x_currentPage, x_getBlockNr(blockid), "fill-in", this.weighting, i);
+				XTSetInteractionType(x_currentPage, x_getBlockNr(blockid), "fill-in", weighting, i);
 		}
-		// XTSetPageType(x_currentPage, 'numeric', jGetElement(blockid, ".pageContents").data("captionInfo").length, this.weighting);
+		// XTSetPageType(x_currentPage, 'numeric', state.captionInfo.length, weighting);
 	}
 }

@@ -1,4 +1,7 @@
 /* timeline.html */
+.iblock:has( .timelineBlock){
+	position: relative;
+}
 
 .timelineBlock .textHolder {
     margin-bottom:	10px;

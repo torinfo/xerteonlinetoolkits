@@ -14,18 +14,38 @@ var timelineBlock = new function () {
 
     // function called every time the page is viewed after it has initially loaded
     this.pageChanged = function (blockid) {
-        const state = jGetElement(blockid, ".pageContents").data("state");
-        jGetElement(blockid, ".labelHolder .label").remove();
-        jGetElement(blockid, ".targetHolder .target")
-            .data("currentLabel", "")
-            .css("height", "auto");
-        this.createLabels(blockid);
+        const state = x_getPageDict("state", blockid);
+        //jGetElement(blockid, ".labelHolder .label").remove();
+        //jGetElement(blockid, ".targetHolder .target")
+         //   .data("currentLabel", "")
+         //   .css("height", "auto");
+        //this.createLabels(blockid);
         this.sizeChanged(blockid);
     }
 
     // function called every time the size of the LO is changed
     this.sizeChanged = function (blockid) {
-        const state = jGetElement(blockid, ".pageContents").data("state");
+        if(jGetElement(blockid, ".pageContents").length == 0){
+            return
+        }
+        const state = x_getPageDict("state", blockid);
+        jGetElement(blockid, ".dragDropHolder .label").each(function () {
+						let $thisTarget = $(this).data("currentTarget");
+						if($thisTarget == null || $thisTarget == undefined || $thisTarget == ""){
+								return;
+						}
+						$(this).css({
+                "top": 0,
+                "left": 0,
+            });
+						let pagePosition = $("#pageContents")[0].getBoundingClientRect();
+						let blockPosition = $("#"+blockid).parent()[0].getBoundingClientRect(); 
+						let helperRect = this.getBoundingClientRect();
+						let scrollParent = $("#"+blockid).scrollParent()[0];
+						let y = helperRect.y + scrollParent.scrollTop - scrollParent.getBoundingClientRect().y - helperRect.height + parseInt($(this).css("padding"));
+						let x = helperRect.x + scrollParent.scrollLeft - scrollParent.getBoundingClientRect().x + parseInt($(this).css("padding")) - blockPosition.x;
+						$(this).data("originalPosition",{y, x});
+				});
 
 				if($("#x_page" + x_currentPage).is(":hidden")){
 						$("#x_page" + x_currentPage).show();
@@ -65,23 +85,34 @@ var timelineBlock = new function () {
         $target.height(tallestTarget + tallestLabel - 5);
 
 				let scrollParent = $("#"+blockid).scrollParent()[0];
+				let $lblHolder = jGetElement(blockid, ".labelHolder");
 
         $labels.each(function () {
             var $this = $(this);
             if ($this.data("currentTarget") != "") {
-								let offset = $this.data("originalPosition");
+								let labelOffset = $this.data("originalPosition");
                 // adjust label absolute position on target
                 var $thisTarget = $this.data("currentTarget");
-                $this.css({
-                    "top": scrollParent.scrollTop + $thisTarget.find("h3").position().top + $thisTarget.find("h3").height() + parseInt($thisTarget.css("padding-top")) - offset.y,
-                    "left": scrollParent.scrollLeft + $thisTarget.position().left + parseInt($thisTarget.css("margin-left")) + parseInt($thisTarget.css("padding-left")) - offset.x
-                });
+								$this.css({
+										"top": $thisTarget.find("h3").position().top + $thisTarget.find("h3").height() + parseInt($thisTarget.css("padding-top")),
+										"left": $thisTarget.position().left + parseInt($thisTarget.css("margin-left")) + parseInt($thisTarget.css("padding-left"))
+								});
+								// let xOffset = 0;
+								// if($thisTarget.hasClass("first")){
+										// xOffset = parseInt($thisTarget.css("margin-left"));
+								// }
+								// let top = scrollParent.scrollTop + $thisTarget.find("h3").position().top - $lblHolder.height() - parseInt($thisTarget.css("padding-top")) - labelOffset.y;
+								// let left = scrollParent.scrollLeft + $thisTarget.position().left - xOffset - labelOffset.x;
+                // $this.css({
+                    // top,
+                    // left,
+                // });
             }
         });
     };
 
     this.leavePage = function (blockid) {
-        const state = jGetElement(blockid, ".pageContents").data("state");
+        const state = x_getPageDict("state", blockid);
         let pageXML = x_getBlockXML(x_getBlockNr(blockid));
         if ($(pageXML).children().length > 0 && state.tracked != true) {
             ;
@@ -90,9 +121,9 @@ var timelineBlock = new function () {
     };
 
     this.init = function (blockid) {
-        let pageXML = x_getBlockXML(blockid);
-        let state = this.generateModelState();
-        jGetElement(blockid, ".pageContents").data("state", state);
+				let pageXML = x_getBlockXML(blockid);
+				let state = this.generateModelState();
+				x_pushToPageDict(state, "state", blockid);
         // store strings used to give titles to labels and targets when keyboard is being used (for screen readers)
         state.labelTxt1 = x_getLangInfo(x_languageData.find("interactions").find("draggableItem")[0], "name", "Draggable Item");
         state.labelTxt2 = x_getLangInfo(x_languageData.find("interactions").find("draggableItem")[0], "selected", "Item Selected");
@@ -227,6 +258,7 @@ var timelineBlock = new function () {
                 }
             })
             .focusin(function (e) {
+								const state = x_getPageDict("state", blockid);
                 if ($(e.target).hasClass("target")) {
                     $(this).addClass("focus");
                     var $pageContents = jGetElement(blockid, ".pageContents");
@@ -236,12 +268,14 @@ var timelineBlock = new function () {
                 }
             })
             .focusout(function () {
+								const state = x_getPageDict("state", blockid);
                 var $pageContents = jGetElement(blockid, ".pageContents");
                 $(this)
                     .removeClass("focus")
                     .attr("title", state.targetTxt1 + " " + $(this).find("h3").html());
             })
             .keypress(function (e) {
+								const state = x_getPageDict("state", blockid);
                 if ($(e.target).hasClass("target")) {
                     var charCode = e.charCode || e.keyCode;
                     if (charCode == 32) {
@@ -283,7 +317,7 @@ var timelineBlock = new function () {
 
     this.finishTracking = function(blockid)
     {
-        const state = jGetElement(blockid, ".pageContents").data("state");
+				const state = x_getPageDict("state", blockid);
 
         var l_options = [],
             l_answers = [],
@@ -330,7 +364,7 @@ var timelineBlock = new function () {
     this.initTracking = function (blockid) {
 
         let pageXML = x_getBlockXML(blockid);
-        const state = jGetElement(blockid, ".pageContents").data("state");
+				const state = x_getPageDict("state", blockid);
         let weighting = 1.0;
         if (pageXML.getAttribute("trackingWeight") != undefined) {
             weighting = pageXML.getAttribute("trackingWeight");
@@ -363,7 +397,7 @@ var timelineBlock = new function () {
 
 
     this.createLabels = function (blockid) {
-        const state = jGetElement(blockid, ".pageContents").data("state");
+				const state = x_getPageDict("state", blockid);
         let $feedback = jGetElement(blockid, ".feedback").hide();
         // randomise order and create labels
         var $pageContents = jGetElement(blockid, ".pageContents"),
@@ -392,18 +426,8 @@ var timelineBlock = new function () {
                 stack: "." + blockid + " .dragDropHolder .label", // item being dragged is always on top (z-index)
                 revert: "invalid", // snap back to original position if not dropped on target
                 start: function (event, ui) {
-
-										
-										if(ui.helper.data("originalPosition") == undefined){
-												let pagePosition = $("#pageContents")[0].getBoundingClientRect();
-												let blockPosition = $("#"+blockid).parent()[0].getBoundingClientRect(); 
-												let helperRect = ui.helper[0].getBoundingClientRect();
-												let scrollParent = $("#"+blockid).scrollParent()[0];
-												ui.helper.data("originalPosition",{y: scrollParent.scrollTop + helperRect.top - blockPosition.y, x: scrollParent.scrollLeft + helperRect.left - blockPosition.x});
-										}
-
+										const state = x_getPageDict("state", blockid);
                     // remove any focus/selection highlights made by tabbing to labels/targets
-                    var $pageContents = jGetElement(blockid, ".pageContents");
                     if (jGetElement(blockid, ".labelHolder .label.focus").length > 0) {
                         jGetElement(blockid, ".labelHolder .label.focus").attr("title", state.labelTxt1);
                     } else if (state.selectedLabel != undefined && state.selectedLabel != "") {
@@ -424,6 +448,7 @@ var timelineBlock = new function () {
             // set up events used when keyboard rather than mouse is used
             // these highlight selected labels / targets and set the title attr which the screen readers will use
             .focusin(function () {
+								const state = x_getPageDict("state", blockid);
                 var $this = $(this);
                 if ($this.is(state.selectedLabel) == false) {
                     $this
@@ -432,6 +457,7 @@ var timelineBlock = new function () {
                 }
             })
             .focusout(function () {
+								const state = x_getPageDict("state", blockid);
                 var $this = $(this);
                 $this.removeClass("focus");
                 if ($this.is(state.selectedLabel) == false) {
@@ -439,6 +465,7 @@ var timelineBlock = new function () {
                 }
             })
             .keypress(function (e) {
+								const state = x_getPageDict("state", blockid);
                 var charCode = e.charCode || e.keyCode;
                 if (charCode == 32) {
                     var $pageContents = jGetElement(blockid, ".pageContents");
@@ -458,14 +485,14 @@ var timelineBlock = new function () {
                     jGetElement(blockid, ".dragDropHolder .tick").remove();
                 }
             })
-            //.css("position", "absolute")
+            .css("position", "absolute")
             .data("currentTarget", "")
             .disableSelection();
     }
 
     // function called when label dropped on target - by mouse or keyboard
     this.dropLabel = function ($thisTarget, $thisLabel, blockid) {
-        const state = jGetElement(blockid, ".pageContents").data("state");
+				const state = x_getPageDict("state", blockid);
         var prevLabel = $thisTarget.data("currentLabel"),
             prevTarget = $thisLabel.data("currentTarget");
 
@@ -512,16 +539,19 @@ var timelineBlock = new function () {
 				
 				let $lblHolder = jGetElement(blockid, ".labelHolder");
 				//let offset = $thisLabel.data("originalPosition");
-				let offset = $thisLabel.data("originalPosition");
+				let labelOffset = $thisLabel.data("originalPosition");
 				let scrollParent = $("#"+blockid).scrollParent()[0];
-
+				
+				let xOffset = 0;
+				if($thisTarget.hasClass("first")){
+						xOffset = parseInt($thisTarget.css("margin-left"));
+				}
         $thisLabel
             .attr("title", state.labelTxt1)
             .removeClass("selected")
-            .css({
-                "top": scrollParent.scrollTop + $thisTarget.find("h3").position().top + $thisTarget.find("h3").height() - $lblHolder.height() + parseInt($thisTarget.css("padding-top")) - offset.y,
-                "left": scrollParent.scrollLeft + $thisTarget.position().left + parseInt($thisTarget.css("margin-left")) + parseInt($thisTarget.css("padding-left")) - offset.x
-            });
+						.css({
+								"top": $thisTarget.find("h3").position().top + $thisTarget.find("h3").height() + parseInt($thisTarget.css("padding-top")),
+								"left": $thisTarget.position().left + parseInt($thisTarget.css("margin-left")) + parseInt($thisTarget.css("padding-left"))
+						});
     }
 };
-

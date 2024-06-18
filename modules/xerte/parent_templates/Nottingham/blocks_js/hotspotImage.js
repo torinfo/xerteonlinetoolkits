@@ -33,6 +33,9 @@ var hotspotImageBlock = new function () {
 
 	// function called every time the size of the LO is changed
 	this.sizeChanged = function (blockid) {
+		if(jGetElement(blockid, ".pageContents").length == 0){
+            return
+        }
 		jGetElement(blockid, ".image").css({
 			"opacity": 0,
 			"filter": 'alpha(opacity=0)'
@@ -67,7 +70,7 @@ var hotspotImageBlock = new function () {
 			.attr({
 				"src": x_evalURL(pageXML.getAttribute("url")),
 				"alt": pageXML.getAttribute("tip"),
-				"usemap": "#hsHolder_map"
+				"usemap": "#" + blockid + "_hsHolder_map"
 			})
 			.each(function () { // called if loaded from cache as in some browsers load won't automatically trigger
 				if (this.complete) {
@@ -138,7 +141,7 @@ var hotspotImageBlock = new function () {
 		// create hotspots - taking scale of image into account
 		var selected = jGetElement(blockid, ".pageContents .hotspot.selected").length > 0 ? jGetElement(blockid, ".pageContents .hotspot.selected").index() : undefined;
 
-		jGetElement(blockid, ".hsHolder").html("<map class=\"hsHolder_map\" name=\"hsHolder_map\"></map>");
+		jGetElement(blockid, ".hsHolder").html("<map class=\"hsHolder_map\" name=\"" + blockid + "_hsHolder_map\"></map>");
 
 		var stroke = true;
 		var highlightColour = "#ffff00";

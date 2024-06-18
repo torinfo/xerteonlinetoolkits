@@ -26,10 +26,26 @@ var textHighlightBlock = new function () {
 
 	// function called every time the size of the LO is changed
 	this.sizeChanged = function (blockid) {
+		if(jGetElement(blockid, ".pageContents").length == 0){
+            return
+    }
+		if($("#x_page" + x_currentPage).is(":hidden")){
+			$("#x_page" + x_currentPage).show();
+		}
 		// resize panels to maximum possible height
 		var textHolderH = jGetElement(blockid, '.textHolder').length > 0 ? jGetElement(blockid, '.textHolder').outerHeight(true) : 0,
 			mainBtnHolderH = jGetElement(blockid, '.mainBtnHolder').length > 0 ? jGetElement(blockid, '.mainBtnHolder').outerHeight(true) : 0,
 			panels = ['panelA', 'panelB'];
+			
+		let maxPanelHeight = 0;
+
+		for (let i = 0; i < panels.length; i++){
+			jGetElement(blockid, '.' + panels[i])[0].style.height = null;
+			var height = jGetElement(blockid, '.' + panels[i])[0].getBoundingClientRect().height; 
+			if(maxPanelHeight < height){
+				maxPanelHeight += height;
+			}
+		}
 
 		for (var i = 0; i < panels.length; i++) {
 			var $thisPanel = jGetElement(blockid, '.' + panels[i]),
@@ -43,7 +59,7 @@ var textHighlightBlock = new function () {
 				availH = $x_pageHolder.height() - textHolderH - mainBtnHolderH - (parseInt($x_pageDiv.css('padding-top')) * 2) - (parseInt($thisPanel.css('padding-top')) * 2) - 4;
 			}
 
-			$thisPanel.height(availH);
+			$thisPanel.height(maxPanelHeight);
 
 			// this resizing is for if the panel is a tabbed navigator
 			$thisPanelPaneHolder.height($thisPanel.height() - $thisPanelTabHolder.outerHeight());
@@ -63,18 +79,18 @@ var textHighlightBlock = new function () {
 	};
 
 	this.leavePage = function (blockid) {
-		if (jGetElement(blockid, '.pageContents').data('tracked') != true) {
+		const state = x_getPageDict("state", blockid)
+		if (state.tracked != true) {
 			textHighlightBlock.finishTracking(blockid);
 		}
 	};
 
 	this.init = function (blockid) {
 		let pageXML = x_getBlockXML(blockid);
+		const state = x_pushToPageDict({}, "state", blockid);
 		let docData = {};
-		jGetElement(blockid, '.pageContents').data({
-			'mode': pageXML.getAttribute("mode"),
-			'tracked': false
-		});
+		state.mode = pageXML.getAttribute("mode");
+		state.tracked = false;
 
 		// tracking - there's no correct answer so tracking just saves highlighted text/notes text alongside the suggested text - any highlights/notes count as activity completed
 		var weighting = pageXML.getAttribute("trackingWeight") != undefined ? pageXML.getAttribute("trackingWeight") : 1.0;
@@ -116,7 +132,7 @@ var textHighlightBlock = new function () {
 		jGetElement(blockid, '.pageContents').prepend($(groupStyles));
 
 		// selected style is added as inline css rather than a class so that it shows up in downloaded files - selected class is also used but just so the highlights can be easily removed
-		jGetElement(blockid, '.pageContents').data("selectedStyle", "color:" + x_blackOrWhite(selectedColour) + "; background:" + selectedColour + ";");
+		state.selectedStyle = "color:" + x_blackOrWhite(selectedColour) + "; background:" + selectedColour + ";";
 
 		// if language attributes aren't in xml will have to use english fall back
 		var selectBtnLabel = pageXML.getAttribute("selectBtn") == undefined ? "Select" : pageXML.getAttribute("selectBtn"),
@@ -156,7 +172,7 @@ var textHighlightBlock = new function () {
 		}
 
 		// when in notes mode a text field for typing in will be on screen - placeholder text for this notes field is optional
-		if (jGetElement(blockid, '.pageContents').data('mode') == 'Notes') {
+		if (state.mode == 'Notes') {
 			position[pageXML.getAttribute("notesPos")].push({ txt: pageXML.getAttribute("notesText") != undefined ? pageXML.getAttribute("notesText") : '', title: pageXML.getAttribute("notesTitle"), index: index, class: 'notesTxt' })
 			index++;
 
@@ -216,10 +232,8 @@ var textHighlightBlock = new function () {
 		}
 
 		// remember all the position info in case of page changes
-		jGetElement(blockid, '.pageContents').data({
-			'position': position,
-			'docData': docData
-		});
+		state.position = position;
+		state.docData = docData;
 
 		// sort split screen & add required classes...
 		var $contentHolder = jGetElement(blockid, '.contentHolder'),
@@ -296,11 +310,11 @@ var textHighlightBlock = new function () {
 
 						// if download is enabled then keep track of the editable regions as we'll need to get text from these when download (might have changed)
 						if (pageXML.getAttribute('download') == 'true') {
-							if (jGetElement(blockid, '.pageContents').data('mode') == 'Notes' && info[i].class == 'notesTxt') {
+							if (state.mode == 'Notes' && info[i].class == 'notesTxt') {
 								$holder.find('.editableDiv').data('docDataIndex', info[i].index);
 							}
 
-							if (jGetElement(blockid, '.pageContents').data('mode') == 'Highlight' && info[i].class == 'initTxt') {
+							if (state.mode == 'Highlight' && info[i].class == 'initTxt') {
 								$holder.find('.editableDiv').data('docDataIndex', info[i].index);
 							}
 						}
@@ -348,7 +362,7 @@ var textHighlightBlock = new function () {
 			.attr('aria-readonly', 'true');
 
 		// also prevent editing of notes field when not in notes mode
-		if (jGetElement(blockid, '.pageContents').data('mode') != 'Notes' || pageXML.getAttribute('allowTyping') == 'false') {
+		if (state.mode != 'Notes' || pageXML.getAttribute('allowTyping') == 'false') {
 			jGetElement(blockid, '.notesTxt')
 				.on('keypress paste dragover drop', function (e) {
 					e.preventDefault();
@@ -368,7 +382,7 @@ var textHighlightBlock = new function () {
 		}
 
 		// add aria-labels for screen readers
-		jGetElement(blockid, '.initTxt').attr('aria-label', jGetElement(blockid, '.pageContents').data('mode') == 'Notes' ? initTxtLabel : initTxtLabel2);
+		jGetElement(blockid, '.initTxt').attr('aria-label', state.mode == 'Notes' ? initTxtLabel : initTxtLabel2);
 		jGetElement(blockid, '.suggestedTxt').attr('aria-label', suggestedTxtLabel);
 		jGetElement(blockid, '.notesTxt').attr('aria-label', notesTxtLabel);
 
@@ -388,11 +402,12 @@ var textHighlightBlock = new function () {
 		// select button - depending on mode this either duplicates text or highlights it
 		jGetElement(blockid, ".selectBtn")
 			.button({
-				label: jGetElement(blockid, '.pageContents').data('mode') == 'Notes' ? noteBtnLabel : selectBtnLabel
+				label: state.mode == 'Notes' ? noteBtnLabel : selectBtnLabel
 			})
 			.click(function () {
+				const state = x_getPageDict("state", blockid)
 				// selected sections of text can be moved to notes panel
-				if (jGetElement(blockid, '.pageContents').data('mode') == 'Notes') {
+				if (state.mode == 'Notes') {
 					var selectedInfo = textHighlightBlock.getSelectionHTML();
 					var selectedTxt = selectedInfo[0],
 						selectedParent = selectedInfo[1];
@@ -431,7 +446,7 @@ var textHighlightBlock = new function () {
 							span = document.createElement("span");
 
 						span.setAttribute('class', 'selected');
-						span.setAttribute('style', jGetElement(blockid, '.pageContents').data('selectedStyle'));
+						span.setAttribute('style', state.selectedStyle);
 						span.appendChild(selectedTxt);
 
 						// nothing's been selected
@@ -463,11 +478,12 @@ var textHighlightBlock = new function () {
 		// also resets hidden areas if already submitted
 		jGetElement(blockid, ".clearBtn")
 			.button({
-				label: jGetElement(blockid, '.pageContents').data('mode') != 'Notes' || jGetElement(blockid, '.notesTxt').hasClass('placeHolder') ? resetBtnLabel : clearBtnLabel
+				label: state.mode != 'Notes' || jGetElement(blockid, '.notesTxt').hasClass('placeHolder') ? resetBtnLabel : clearBtnLabel
 			})
 			.click(function () {
+				const state = x_getPageDict("state", blockid)
 				// clear the notes panel
-				if (jGetElement(blockid, '.pageContents').data('mode') == 'Notes') {
+				if (state.mode == 'Notes') {
 					if (jGetElement(blockid, '.notesTxt').hasClass('placeHolder')) {
 						jGetElement(blockid, '.notesTxt').html(jGetElement(blockid, '.notesTxt').data('placeHolder'));
 					} else {
@@ -486,11 +502,11 @@ var textHighlightBlock = new function () {
 				}
 
 				// if the activity has already been submitted then reset everything (hide suggestedTxt & feedbackTxt etc.)
-				if (jGetElement(blockid, '.pageContents').data('submitted') == true) {
-					jGetElement(blockid, '.pageContents').data('submitted', false);
+				if (state.submitted == true) {
+					state.submitted = false;
 
 					// rehide any bits bits of info that were hidden at the beginning of the activity
-					$.each(jGetElement(blockid, '.pageContents').data('position'), function (key, info) {
+					$.each(state.position, function (key, info) {
 						if (key == 'panelA' || key == 'panelB') {
 							var hidden = 0,
 								active = false;
@@ -532,6 +548,7 @@ var textHighlightBlock = new function () {
 				label: checkBtnLabel
 			})
 			.click(function () {
+				const state = x_getPageDict("state", blockid)
 				// show the suggestedTxt & feedbackTxt
 				var show = ['feedbackTxt', 'suggestedTxt'],
 					activateTab = true;
@@ -566,7 +583,7 @@ var textHighlightBlock = new function () {
 				}
 
 				// if reset button label is 'clear' change to 'reset'
-				if (jGetElement(blockid, '.pageContents').data('mode') == 'Notes' && !jGetElement(blockid, '.notesTxt').hasClass('placeHolder')) {
+				if (state.mode == 'Notes' && !jGetElement(blockid, '.notesTxt').hasClass('placeHolder')) {
 					jGetElement(blockid, ".clearBtn").button({ label: jGetElement(blockid, ".clearBtn").data('resetBtnLabel') });
 				}
 
@@ -581,17 +598,15 @@ var textHighlightBlock = new function () {
 					jGetElement(blockid, '.downloadBtn').prop('disabled', false);
 				}
 
-				jGetElement(blockid, '.pageContents').data({
-					'submitted': true,
-					'tracked': true
-				});
-
+				state.submitted = true;
+				state.tracked = true;
+				
 				textHighlightBlock.finishTracking(blockid);
 				textHighlightBlock.sizeChanged(blockid);
 
 				// only feedbackTxt can be in lightbox so no need to loop through them
-				if (jGetElement(blockid, '.pageContents').data('position').lightbox.length > 0) {
-					$.featherlight(jGetElement(blockid, '.pageContents').data('position').lightbox[0].txt);
+				if (state.position.lightbox.length > 0) {
+					$.featherlight(state.position.lightbox[0].txt);
 					x_pageContentsUpdated();
 				}
 			});
@@ -603,7 +618,8 @@ var textHighlightBlock = new function () {
 					label: downloadBtnLabel
 				})
 				.click(function () {
-					textHighlightBlock.postData(jGetElement(blockid, ".pageContents").data("docData"));
+					const state = x_getPageDict("state", blockid)
+					textHighlightBlock.postData(state.docData);
 				})
 				.prop('disabled', true)
 				.prop('disabled', true);
@@ -617,7 +633,7 @@ var textHighlightBlock = new function () {
 			jGetElement(blockid, ".checkBtn").prop('disabled', true);
 		}
 
-		this.sizeChanged();
+		this.sizeChanged(blockid);
 		x_pageLoaded();
 	};
 
@@ -644,7 +660,6 @@ var textHighlightBlock = new function () {
 			container = textRange.parentElement();
 			text = textRange.htmlText;
 		}
-
 		return [html, container];
 	};
 
@@ -669,8 +684,9 @@ var textHighlightBlock = new function () {
 	};
 
 	this.finishTracking = function (blockid) {
+		const state = x_getPageDict("state", blockid)
 		var answerTxt;
-		if (jGetElement(blockid, '.pageContents').data('mode') == 'Notes') {
+		if (state.mode == 'Notes') {
 			// if notes text has placeholder text only class as completed if the text here has changed
 			if (jGetElement(blockid, '.notesTxt').hasClass('placeHolder') && jGetElement(blockid, '.notesTxt').html() != jGetElement(blockid, '.notesTxt').data('placeHolder')) {
 				answerTxt = '';
@@ -689,7 +705,7 @@ var textHighlightBlock = new function () {
 		result = { success: answered, score: (answered == false ? 0.0 : 100.0) };
 		XTExitInteraction(x_currentPage, x_getBlockNr(blockid), result, [], answerTxt, []);
 		//XTSetPageScore(x_currentPage, (answered == false ? 0.0 : 100.0));
-		jGetElement(blockid, '.pageContents').data('tracked', true);
+		state.tracked = true;
 	};
 
 };

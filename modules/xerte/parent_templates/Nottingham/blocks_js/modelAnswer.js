@@ -1,5 +1,5 @@
 var modelAnswerBlock = new function () {
-    var modelAnswerModel = {
+    var state = {
         tracked: false
     }
 
@@ -12,6 +12,9 @@ var modelAnswerBlock = new function () {
 
     // function called every time the size of the LO is changed
     this.sizeChanged = function (blockid) {
+        if(jGetElement(blockid, ".pageContents").length == 0){
+            return
+        }
         if (x_browserInfo.mobile == false) {
             var $panel = jGetElement(blockid, ".pageContents .panel");
             $panel.height($x_pageHolder.height() - parseInt($x_pageDiv.css("padding-top")) * 2 - parseInt($panel.css("padding-top")) * 2 - 5);
@@ -33,7 +36,8 @@ var modelAnswerBlock = new function () {
 
     this.init = function (blockid) {
         let pageXML = x_getBlockXML(blockid);
-        modelAnswerModel.tracked = false;
+				const state = x_pushToPageDict({}, "state", blockid);
+        state.tracked = false;
         // if language attributes aren't in xml will have to use english fall back
         var instructA = pageXML.getAttribute("instructHeaderATxt");
         if (instructA == undefined) {
@@ -65,29 +69,26 @@ var modelAnswerBlock = new function () {
             }
         }
 
-        jGetElement(blockid, ".pageContents").data({
-            "dataString": '<p class="pageBlock">' + instructA + ' ' + pageNo + ' ' + instructB + '</p>' + x_addLineBreaks(pageXML.getAttribute("prompt")) + '<p><br/>' + x_addLineBreaks(responseTxt) + '</p><p>' + '{A}' + '</p><p><br/>' + x_addLineBreaks(exampleTxt) + '</p>' + x_addLineBreaks(pageXML.getAttribute("feedback")),
-            "noAnswerTxt": '<p>' + noAnswerTxt + '</p>'
-        });
+        state.dataString = '<p class="pageBlock">' + instructA + ' ' + pageNo + ' ' + instructB + '</p>' + x_addLineBreaks(pageXML.getAttribute("prompt")) + '<p><br/>' + x_addLineBreaks(responseTxt) + '</p><p>' + '{A}' + '</p><p><br/>' + x_addLineBreaks(exampleTxt) + '</p>' + x_addLineBreaks(pageXML.getAttribute("feedback"));
+        state.noAnswerTxt = '<p>' + noAnswerTxt + '</p>';
 
 				var label = pageXML.getAttribute("name");
         if (pageXML.getAttribute("trackinglabel") != null && pageXML.getAttribute("trackinglabel") != "") {
             label = pageXML.getAttribute("trackinglabel");
         }
 
-        this.weighting = 1.0;
+        let weighting = 1.0;
         if (pageXML.getAttribute("trackingWeight") != undefined) {
-            this.weighting = pageXML.getAttribute("trackingWeight");
+            weighting = pageXML.getAttribute("trackingWeight");
         }
 
         // XTSetPageType(x_currentPage, 'numeric', 1, this.weighting);
 
         var modelAnswerTxt = $('<div>').html(pageXML.getAttribute("feedback")).text();
         XTEnterInteraction(x_currentPage, x_getBlockNr(blockid), 'text', label, [], modelAnswerTxt, [], pageXML.getAttribute("grouping"), null);
-        XTSetInteractionType(x_currentPage, x_getBlockNr(blockid), 'text', this.weighting, 1);
+        XTSetInteractionType(x_currentPage, x_getBlockNr(blockid), 'text', weighting, 1);
         //XTSetLeavePage(x_currentPage, x_getBlockNr(blockid), this.leavePage);
         XTSetInteractionPageXML(x_currentPage, x_getBlockNr(blockid), pageXML);
-        XTSetInteractionModelState(x_currentPage, x_getBlockNr(blockid), modelAnswerModel);
 
         // feedbackBtnWidth attribute not used as button will be sized automatically
         var panelWidth = pageXML.getAttribute("panelWidth"),
@@ -170,9 +171,10 @@ var modelAnswerBlock = new function () {
                     label: copyBtnLabel
                 })
                 .click(function () {
+										const state = x_getPageDict("state", blockid)
                     // unlike in Flash version we can't automatically copy text to clipboard - instead the text to copy is put together, shown highlighted in a dialog, and the user is prompted to Ctrl-C to copy
                     jGetElement(blockid, ".x_popupDialog").parent().detach(); // removes any dialogs already open
-                    var $thisDialog = $('<div id="modelAnswerDialog" class="x_popupDialog">' + jGetElement(blockid, ".pageContents").data("savedData") + '</div>').appendTo($x_body);
+                    var $thisDialog = $('<div id="modelAnswerDialog" class="x_popupDialog">' + state.savedData + '</div>').appendTo($x_body);
 
                     $thisDialog.dialog({
                         closeOnEscape: true,
@@ -195,7 +197,7 @@ var modelAnswerBlock = new function () {
             jGetElement(blockid, ".copyBtn, .copyTxt").remove();
         }
 
-        jGetElement(blockid, ".pageContents").data("feedback", x_addLineBreaks(pageXML.getAttribute("feedback")));
+        state.feedback = x_addLineBreaks(pageXML.getAttribute("feedback"));
 
         var btnTxt = pageXML.getAttribute("feedbackBtnTxt");
         if (btnTxt == undefined || btnTxt == "") {
@@ -208,11 +210,12 @@ var modelAnswerBlock = new function () {
                 label: btnTxt
             })
             .click(function () {
+								const state = x_getPageDict("state", blockid)
                 var $this = $(this);
                 $this.hide();
                 jGetElement(blockid, ".fbTxt")
                     .empty()
-                    .html(jGetElement(blockid, ".pageContents").data("feedback"));
+                    .html(state.feedback);
 
                 jGetElement(blockid, ".copyBtn, .copyTxt").show();
 
@@ -263,21 +266,22 @@ var modelAnswerBlock = new function () {
 
     // function saves data to pageData array in xenith.js so it can be used later by modelAnswerResults page
     this.saveData = function (blockid) {
+				const state = x_getPageDict("state", blockid)
         var $pageContents = jGetElement(blockid, ".pageContents"),
-            stringToSave = $pageContents.data("dataString"),
+            stringToSave = state.dataString,
             answerTxt = jGetElement(blockid, ".answerTxt").val();
 
         if (answerTxt.trim() == "") {
-            answerTxt = $pageContents.data("noAnswerTxt");
+            answerTxt = state.noAnswerTxt;
         }
 
         stringToSave = stringToSave.replace("{A}", x_addLineBreaks(answerTxt, true));
-        jGetElement(blockid, ".pageContents").data("savedData", stringToSave);
+        state.savedData = stringToSave;
     };
 
     this.finishTracking = function (blockid) {
-        modelAnswerModel = XTGetInteractionModelState(x_currentPage, x_getBlockNr(blockid))
-        if(modelAnswerModel.tracked !== true){
+				const state = x_getPageDict("state", blockid)
+        if(!state.tracked){
             var answerTxt = jGetElement(blockid, ".answerTxt").val();
             result = {
                 success: (answerTxt.trim() == "" ? false : true),
@@ -285,7 +289,7 @@ var modelAnswerBlock = new function () {
             };
 
             XTExitInteraction(x_currentPage, x_getBlockNr(blockid), result, [], answerTxt, []);
-            this.tracked = true;
+            state.tracked = true;
         }
 
     };

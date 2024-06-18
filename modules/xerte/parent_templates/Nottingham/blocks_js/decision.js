@@ -24,9 +24,6 @@
 // other functions for model should also be in here to avoid conflicts
 var decisionBlock = new function () {
 
-	var $pageContents, $backBtn, $fwdBtn, $stepHolder, $submitBtn, $helpBtn, $overviewHolder,
-		currentStepInfo, pageXML;
-
 	// Called from xenith if tab level deeplinking is available
 	this.deepLink = function (blockid, item) {
 		this.startNewDecision(blockid, item);
@@ -35,28 +32,20 @@ var decisionBlock = new function () {
 	this.setVars = function (blockid) {
 		if(x_getBlockNr(blockid) < 0 || blockid == undefined | isNaN(x_getBlockNr(blockid)))
 			console.trace(blockid);
-		$pageContents = jGetElement(blockid, ".pageContents");
-		$backBtn = jGetElement(blockid, ".backBtn");
-		$fwdBtn = jGetElement(blockid, ".fwdBtn");
-		$stepHolder = jGetElement(blockid, ".stepHolder");
-		$submitBtn = jGetElement(blockid, ".submitBtn");
-		$helpBtn = jGetElement(blockid, ".helpBtn");
-		$overviewHolder = jGetElement(blockid, ".overviewHolder");
-		currentStepInfo = $pageContents.data("currentStepInfo");
-		pageXML = x_getBlockXML(blockid);
 	}
 
 	// function called every time the page is viewed after it has initially loaded
 	this.pageChanged = function (blockid) {
-		this.setVars(blockid);
 	}
 
 	// function called every time the size of the LO is changed
 	this.sizeChanged = function (blockid) {
-		this.setVars(blockid);
+		if(jGetElement(blockid, ".pageContents").length == 0){
+            return
+        }
 		if (x_browserInfo.mobile == false) {
 			var $panel = jGetElement(blockid, ".pageContents .panel"),
-				$btnHolder = jGetElement(blockid, ".btnHolder");
+					$btnHolder = jGetElement(blockid, ".btnHolder");
 
 			//$panel.height($x_pageHolder.height() - parseInt($x_pageDiv.css("padding-top")) * 2 - parseInt($panel.css("padding-top")) * 2 - 5);
 			//jGetElement(blockid, ".contentHolder").height($panel.height() - $btnHolder.height() - parseInt($btnHolder.css("margin-top")));
@@ -64,23 +53,25 @@ var decisionBlock = new function () {
 	}
 
 	this.init = function (blockid) {
-		$pageContents = jGetElement(blockid, ".pageContents");
-		$backBtn = jGetElement(blockid, ".backBtn");
-		$fwdBtn = jGetElement(blockid, ".fwdBtn");
-		$stepHolder = jGetElement(blockid, ".stepHolder");
-		$submitBtn = jGetElement(blockid, ".submitBtn");
-		$helpBtn = jGetElement(blockid, ".helpBtn");
-		$overviewHolder = jGetElement(blockid, ".overviewHolder");
+		let $pageContents = jGetElement(blockid, ".pageContents");
+		let $backBtn = jGetElement(blockid, ".backBtn");
+		let $fwdBtn = jGetElement(blockid, ".fwdBtn");
+		let $stepHolder = jGetElement(blockid, ".stepHolder");
+		let $submitBtn = jGetElement(blockid, ".submitBtn");
+		let $helpBtn = jGetElement(blockid, ".helpBtn");
+		let $overviewHolder = jGetElement(blockid, ".overviewHolder");
 		let pageXML = x_getBlockXML(blockid);
 
 		// set up the data that needs to be saved between page changes
-		$pageContents.data({
+		let tempState = {
 			"allSteps": [], // array containing an object with details for each possible step
 			"decisionHistory": [], // ids & options selected
 			"storedResultTxt": [], // text stored until presented as a collated result (optional)
 			"currentStep": 0,
 			"currentStepInfo": 0
-		});
+		};
+		const state = x_pushToPageDict(tempState, "state", blockid);
+		tempState = null;
 
 		// page layout
 		var panelWidth = pageXML.getAttribute("panelWidth");
@@ -104,7 +95,7 @@ var decisionBlock = new function () {
 		if ($(pageXML).children().length == 0) {
 			jGetElement(blockid, ".contentHolder").html('<span class="alert">' + x_getLangInfo(x_languageData.find("errorQuestions")[0], "noQ", "No questions have been added") + '</span>');
 			jGetElement(blockid, ".btnHolder").hide();
-			this.sizeChanged();
+			this.sizeChanged(blockid);
 		} else {
 			// get info for all steps
 			$(pageXML).children().each(function () {
@@ -124,7 +115,7 @@ var decisionBlock = new function () {
 					step.text = $(this).attr("text");
 				}
 
-				$pageContents.data("allSteps").push(step);
+				state.allSteps.push(step);
 			});
 
 
@@ -138,18 +129,19 @@ var decisionBlock = new function () {
 					text: false
 				})
 				.click(function () {
+					const state = x_getPageDict("state", blockid);
 					if ($overviewHolder.is(":visible")) {
 						decisionBlock.showHideHolders(blockid, $stepHolder);
-						if ($pageContents.data("currentStep") == 0) {
+						if (state.currentStep == 0) {
 							$(this).button("disable");
 						}
-						if ($pageContents.data("currentStep") + 1 >= $pageContents.data("decisionHistory").length) {
+						if (state.currentStep + 1 >= state.decisionHistory.length) {
 							$fwdBtn.button("disable");
 						}
 					} else {
-						jGetElement(blockid, ".displayInfo .info" + $pageContents.data("currentStep")).hide();
-						$pageContents.data("currentStep", $pageContents.data("currentStep") - 1);
-						decisionBlock.setUpStep(blockid, $pageContents.data("decisionHistory")[$pageContents.data("currentStep")].id);
+						jGetElement(blockid, ".displayInfo .info" + state.currentStep).hide();
+						state.currentStep = state.currentStep - 1;
+						decisionBlock.setUpStep(blockid, state.decisionHistory[state.currentStep].id);
 					}
 					jGetElement(blockid, ".x_popupDialog").parent().detach();
 				});
@@ -163,18 +155,19 @@ var decisionBlock = new function () {
 					text: false
 				})
 				.click(function () {
+					const state = x_getPageDict("state", blockid);
 					if ($overviewHolder.is(":visible")) {
 						decisionBlock.showHideHolders(blockid, $stepHolder);
-						if ($pageContents.data("currentStep") == 0) {
+						if (state.currentStep == 0) {
 							$backBtn.button("disable");
 						}
-						if ($pageContents.data("currentStep") + 1 >= $pageContents.data("decisionHistory").length) {
+						if (state.currentStep + 1 >= state.decisionHistory.length) {
 							$(this).button("disable");
 						}
 					} else {
-						$pageContents.data("currentStep", $pageContents.data("currentStep") + 1);
-						jGetElement(blockid, ".displayInfo .info" + $pageContents.data("currentStep")).show();
-							decisionBlock.setUpStep(blockid,$pageContents.data("decisionHistory")[$pageContents.data("currentStep")].id);
+						state.currentStep = state.currentStep + 1;
+						jGetElement(blockid, ".displayInfo .info" + state.currentStep).show();
+							decisionBlock.setUpStep(blockid,state.decisionHistory[state.currentStep].id);
 					}
 					jGetElement(blockid, ".x_popupDialog").parent().detach();
 				});
@@ -199,14 +192,15 @@ var decisionBlock = new function () {
 					label: pageXML.getAttribute("btnLabel") ? pageXML.getAttribute("btnLabel") : "Next"
 				})
 				.click(function () {
-					if ($pageContents.data("currentStep") + 1 != $pageContents.data("decisionHistory").length) {
-						$pageContents.data("decisionHistory", $pageContents.data("decisionHistory").slice(0, $pageContents.data("currentStep") + 1));
-						$pageContents.data("storedResultTxt", $pageContents.data("storedResultTxt").slice(0, $pageContents.data("currentStep") + 1));
+					const state = x_getPageDict("state", blockid);
+					if (state.currentStep + 1 != state.decisionHistory.length) {
+						state.decisionHistory = state.decisionHistory.slice(0, state.currentStep + 1);
+						state.storedResultTxt = state.storedResultTxt.slice(0, state.currentStep + 1);
 
 						jGetElement(blockid, ".displayInfo div[class^='info']:hidden").remove(); // remove any historical hidden displayInfo divs that are no longer required
 					}
 
-					currentStepInfo = $pageContents.data("currentStepInfo");
+					let currentStepInfo = state.currentStepInfo;
 
 					// button does different things depending on type of currentStep
 					if (currentStepInfo.type == "mcqStep") {
@@ -220,12 +214,12 @@ var decisionBlock = new function () {
 							target = $selected.data("target");
 
 							// store resultTxt (optional) so it can be shown as collated result at the end
-							$pageContents.data("storedResultTxt").push($selected.data("resultTxt"));
+							state.storedResultTxt.push($selected.data("resultTxt"));
 
 							// add text to left side
 							if ($selected.data("displayTxt") != undefined && $selected.data("displayTxt") != "") {
 								var clear = $selected.data("clear") == "true" ? " clear" : ""; // class used when previous info is to be cleared
-								jGetElement(blockid, ".textHolder .displayInfo").append('<div class="info' + ($pageContents.data("currentStep") + 1) + clear + '">' + $selected.data("displayTxt") + '</div>');
+								jGetElement(blockid, ".textHolder .displayInfo").append('<div class="info' + (state.currentStep + 1) + clear + '">' + $selected.data("displayTxt") + '</div>');
 							}
 
 						} else {
@@ -234,22 +228,22 @@ var decisionBlock = new function () {
 							target = $selected.data("target");
 
 							// store resultTxt (optional) so it can be shown as collated result at the end
-							$pageContents.data("storedResultTxt").push($selected.data("resultTxt"));
+							state.storedResultTxt.push($selected.data("resultTxt"));
 
 							// add text to left side
 							if ($selected.data("displayTxt") != undefined && $selected.data("displayTxt") != "") {
 								var clear = $selected.data("clear") == "true" ? " clear" : ""; // class used when previous info is to be cleared
-								jGetElement(blockid, ".textHolder .displayInfo").append('<div class="info' + ($pageContents.data("currentStep") + 1) + clear + '">' + $selected.data("displayTxt") + '</div>');
+								jGetElement(blockid, ".textHolder .displayInfo").append('<div class="info' + (state.currentStep + 1) + clear + '">' + $selected.data("displayTxt") + '</div>');
 							}
 						}
 
-						$pageContents.data("decisionHistory")[$pageContents.data("decisionHistory").length - 1].option = answer;
+						state.decisionHistory[state.decisionHistory.length - 1].option = answer;
 
 						decisionBlock.setUpStep(blockid, target, true);
 
 					} else if (currentStepInfo.type == "sliderStep") {
 						// save value, work out which option it falls in to (between min & max values) and load the new step associated with it
-						$pageContents.data("decisionHistory")[$pageContents.data("decisionHistory").length - 1].option = $stepHolder.find(".amount").val();
+						state.decisionHistory[state.decisionHistory.length - 1].option = $stepHolder.find(".amount").val();
 
 						var exists = false;
 						currentStepInfo.options.each(function (i) {
@@ -258,12 +252,12 @@ var decisionBlock = new function () {
 
 							if ($slider.slider("value") >= $this.attr("min") && $slider.slider("value") <= $this.attr("max")) {
 								// store resultTxt associated with this answer (optional) so it can be shown as collated result at the end
-								$pageContents.data("storedResultTxt").push($this.attr("resultTxt"));
+								state.storedResultTxt.push($this.attr("resultTxt"));
 
 								// add text to left side
 								if ($this.attr("displayTxt") != undefined && $this.attr("displayTxt") != "") {
 									var clear = $this.attr("clear") == "true" ? " clear" : ""; // class used when previous info is to be cleared
-									jGetElement(blockid, ".textHolder .displayInfo").append('<div class="info' + ($pageContents.data("currentStep") + 1) + clear + '">' + $this.attr("displayTxt") + '</div>');
+									jGetElement(blockid, ".textHolder .displayInfo").append('<div class="info' + (state.currentStep + 1) + clear + '">' + $this.attr("displayTxt") + '</div>');
 								}
 
 								var thisTarget = $this.attr("targetNew") != undefined && $this.attr("targetNew") != "" ? $this.attr("targetNew") : $this.attr("target");
@@ -278,7 +272,7 @@ var decisionBlock = new function () {
 
 					} else if (currentStepInfo.type == "infoStep") {
 						// there can't be any resultTxt stored for info steps so store empty string
-						$pageContents.data("storedResultTxt").push("");
+						state.storedResultTxt.push("");
 
 						// load new step
 						var thisTarget = currentStepInfo.targetNew != undefined && currentStepInfo.targetNew != "" ? currentStepInfo.targetNew : currentStepInfo.target;
@@ -297,12 +291,13 @@ var decisionBlock = new function () {
 					label: pageXML.getAttribute("helpString") ? pageXML.getAttribute("helpString") : "More information"
 				})
 				.click(function () {	
+					const state = x_getPageDict("state", blockid);
 					jGetElement(blockid, ".x_popupDialog").parent().detach();
-					currentStepInfo = $pageContents.data("currentStepInfo");
+					let currentStepInfo = state.currentStepInfo;
 
-					if ((currentStepInfo.helpTxt.indexOf("http://") == 0 || currentStepInfo.helpTxt.indexOf("https://") == 0) && currentStepInfo.helpTxt.indexOf(" ") == -1) {
+					if ((state.currentStepInfo.helpTxt.indexOf("http://") == 0 || state.currentStepInfo.helpTxt.indexOf("https://") == 0) && state.currentStepInfo.helpTxt.indexOf(" ") == -1) {
 						// treat helpString as link - open straight away
-						window.open(currentStepInfo.helpTxt);
+						window.open(state.currentStepInfo.helpTxt);
 					} else {
 						// show helpString in dialog
 						jGetElement(blockid, ".x_popupDialog").parent().detach();
@@ -315,7 +310,7 @@ var decisionBlock = new function () {
 								title: pageXML.getAttribute("helpString") ? pageXML.getAttribute("helpString") : "More information",
 								closeText: x_getLangInfo(x_languageData.find("closeBtnLabel")[0], "label", "Close")
 							})
-							.html(x_addLineBreaks(currentStepInfo.helpTxt));
+							.html(x_addLineBreaks(state.currentStepInfo.helpTxt));
 
 						x_setDialogSize($dialog);
 					}
@@ -354,17 +349,21 @@ var decisionBlock = new function () {
 
 	// _____ START NEW DECISION FROM 1st STEP _____
 	this.startNewDecision = function (blockid, deepLink) {
-		this.setVars(blockid);
-		$pageContents.data("currentStep", 0);
-		$pageContents.data("decisionHistory", []);
-		$pageContents.data("storedResultTxt", []);	
+		let $pageContents = jGetElement(blockid, ".pageContents");
+		let $stepHolder = jGetElement(blockid, ".stepHolder");
+		let $submitBtn = jGetElement(blockid, ".submitBtn");
+		let pageXML = x_getBlockXML(blockid);
+		const state = x_getPageDict("state", blockid);
+		state.currentStep = 0;
+		state.decisionHistory = [];
+		state.storedResultTxt = [];	
 
 		jGetElement(blockid, ".textHolder .displayInfo").empty();
 
 		$submitBtn.button("disable");
 
 		// set up 1st step - use firstStep from xml if valid id, otherwise use first step in array
-		var firstStep = deepLink != undefined ? $pageContents.data("allSteps")[deepLink].name : this.findStep(blockid, pageXML.getAttribute("firstStep")) ? pageXML.getAttribute("firstStep") : $pageContents.data("allSteps")[0].name;
+		var firstStep = deepLink != undefined ? state.allSteps[deepLink].name : this.findStep(blockid, pageXML.getAttribute("firstStep")) ? pageXML.getAttribute("firstStep") : state.allSteps[0].name;
 		this.setUpStep(blockid, firstStep, true);
 
 		this.showHideHolders(blockid, $stepHolder);
@@ -373,41 +372,46 @@ var decisionBlock = new function () {
 
 	// _____ SET UP STEP _____
 	this.setUpStep = function (blockid, stepID, isNew) {
-		this.setVars(blockid);
+		let $pageContents = jGetElement(blockid, ".pageContents");
+		let $backBtn = jGetElement(blockid, ".backBtn");
+		let $fwdBtn = jGetElement(blockid, ".fwdBtn");
+		let $stepHolder = jGetElement(blockid, ".stepHolder");
+		let $submitBtn = jGetElement(blockid, ".submitBtn");
+		let pageXML = x_getBlockXML(blockid);
+		const state = x_getPageDict("state", blockid);
 		$stepHolder.children(".step").detach();
 
-		currentStepInfo = this.findStep(blockid, stepID);
-		$pageContents.data("currentStepInfo", currentStepInfo);
+		state.currentStepInfo = this.findStep(blockid, stepID);
 
 		// set up step depending on its type
-		if (currentStepInfo != null) {
+		if (state.currentStepInfo != null) {
 
 			if (isNew) { // new step (not part of history)
-				if ($pageContents.data("decisionHistory").length > 0) {
-					$pageContents.data("currentStep", $pageContents.data("currentStep") + 1);
+				if (state.decisionHistory.length > 0) {
+					state.currentStep = state.currentStep + 1;
 				} else {
 					// info only gets added to this array when submit button clicked so add blank first entry so it keeps same length as decisionHistory
-					$pageContents.data("storedResultTxt").push("");
+					state.storedResultTxt.push("");
 				}
-				$pageContents.data("decisionHistory").push({ id: currentStepInfo.name });
+				state.decisionHistory.push({ id: state.currentStepInfo.name });
 			}
 
-			if (currentStepInfo.type == "mcqStep" || currentStepInfo.type == "sliderStep") {
+			if (state.currentStepInfo.type == "mcqStep" || state.currentStepInfo.type == "sliderStep") {
 				this.setUpQ(blockid, isNew);
-			} else if (currentStepInfo.type == "infoStep") {
+			} else if (state.currentStepInfo.type == "infoStep") {
 				this.setUpI(blockid, isNew);
-			} else if (currentStepInfo.type == "resultStep") {
+			} else if (state.currentStepInfo.type == "resultStep") {
 				this.setUpR(blockid, isNew);
 			}
 
 			// enable/disable fwd & bck history btns
-			if ($pageContents.data("currentStep") + 1 >= $pageContents.data("decisionHistory").length) {
+			if (state.currentStep + 1 >= state.decisionHistory.length) {
 				$fwdBtn.button("disable");
 			} else {
 				$fwdBtn.button("enable");
 			}
 
-			if ($pageContents.data("currentStep") == 0) {
+			if (state.currentStep == 0) {
 				$backBtn.button("disable");
 			} else {
 				$backBtn.button("enable");
@@ -420,8 +424,8 @@ var decisionBlock = new function () {
 			var errorString = pageXML.getAttribute("errorString") ? pageXML.getAttribute("errorString") : "ERROR! Invalid ID";
 			$stepHolder.prepend('<div class="step alert" >' + errorString + ' "' + stepID + '"</div>');
 
-			if ($pageContents.data("decisionHistory").length > 0) {
-				$pageContents.data("currentStep", $pageContents.data("currentStep") + 1);
+			if (state.decisionHistory.length > 0) {
+				state.currentStep = state.currentStep + 1;
 			}
 
 			$submitBtn.button("disable");
@@ -433,31 +437,36 @@ var decisionBlock = new function () {
 
 	// _____ BUILD QUESTION STEP (mcq/slider) _____
 	this.setUpQ = function (blockid, isNew) {
-		this.setVars(blockid);
+		let $pageContents = jGetElement(blockid, ".pageContents");
+		let $stepHolder = jGetElement(blockid, ".stepHolder");
+		let $submitBtn = jGetElement(blockid, ".submitBtn");
+		let $helpBtn = jGetElement(blockid, ".helpBtn");
+		let pageXML = x_getBlockXML(blockid);
+		const state = x_getPageDict("state", blockid);
 		$submitBtn.show();
 
-		if (currentStepInfo.built != false) {
+		if (state.currentStepInfo.built != false) {
 
 			// _____ Q ALREADY BUILT - RELOAD IT _____
-			$stepHolder.prepend(currentStepInfo.built);
+			$stepHolder.prepend(state.currentStepInfo.built);
 
 			var $thisStep = $stepHolder.children(".step");
-			var currentStep = $pageContents.data("currentStep");
+			var currentStep = state.currentStep;
 
 			// reset if it's being viewed fresh rather than via history
 			if (isNew == true) {
 
-				if (currentStepInfo.type == "mcqStep") {
+				if (state.currentStepInfo.type == "mcqStep") {
 
 					// should an option be selected by default?
 					var defaultSelect = -1;
-					currentStepInfo.options.each(function (i) {
+					state.currentStepInfo.options.each(function (i) {
 						if ($(this).attr("selected") == "true") {
 							defaultSelect = i;
 						}
 					});
 
-					if (currentStepInfo.format == "menu") {
+					if (state.currentStepInfo.format == "menu") {
 						$thisStep.find("select").prop("selectedIndex", defaultSelect);
 					} else {
 						if (defaultSelect == -1) {
@@ -473,23 +482,23 @@ var decisionBlock = new function () {
 						$submitBtn.button("disable");
 					}
 
-				} else if (currentStepInfo.type == "sliderStep") {
+				} else if (state.currentStepInfo.type == "sliderStep") {
 					var $slider = $thisStep.find(".slider");
-					$slider.slider({ value: Number(currentStepInfo.value) });
+					$slider.slider({ value: Number(state.currentStepInfo.value) });
 					$thisStep.find(".labelHolder .amount").val($slider.slider("value"));
 
 					$submitBtn.button("enable");
 				}
 
-				if (currentStepInfo.displayTxt != undefined && currentStepInfo.displayTxt != "") {
-					var clear = currentStepInfo.clear == "true" ? " clear" : ""; // class used when previous info is to be cleared
-					jGetElement(blockid, ".textHolder .displayInfo").append('<div class="info' + $pageContents.data("currentStep") + clear + '">' + currentStepInfo.displayTxt + '</div>');
+				if (state.currentStepInfo.displayTxt != undefined && state.currentStepInfo.displayTxt != "") {
+					var clear = state.currentStepInfo.clear == "true" ? " clear" : ""; // class used when previous info is to be cleared
+					jGetElement(blockid, ".textHolder .displayInfo").append('<div class="info' + state.currentStep + clear + '">' + state.currentStepInfo.displayTxt + '</div>');
 				}
 
 				// if part of history make sure it's showing the correct answer
 			} else {
-				if (currentStepInfo.type == "mcqStep") {
-					var answer = $pageContents.data("decisionHistory")[currentStep].option;
+				if (state.currentStepInfo.type == "mcqStep") {
+					var answer = state.decisionHistory[currentStep].option;
 					if (answer == undefined) {
 						answer = -1;
 						$submitBtn.button("disable");
@@ -497,7 +506,7 @@ var decisionBlock = new function () {
 						$submitBtn.button("enable");
 					}
 
-					if (currentStepInfo.format == "menu") {
+					if (state.currentStepInfo.format == "menu") {
 						$thisStep.find("select").prop("selectedIndex", answer);
 
 					} else {
@@ -505,15 +514,15 @@ var decisionBlock = new function () {
 						$($thisStep.find("input")[answer]).prop("checked", true);
 					}
 
-				} else if (currentStepInfo.type == "sliderStep") {
+				} else if (state.currentStepInfo.type == "sliderStep") {
 					var $slider = $thisStep.find(".slider");
-					if (currentStep + 1 >= $pageContents.data("decisionHistory").length) {
+					if (currentStep + 1 >= state.decisionHistory.length) {
 						// there is no value stored for this - set value to initial value
-						$slider.slider({ value: Number(currentStepInfo.value) });
+						$slider.slider({ value: Number(state.currentStepInfo.value) });
 						$thisStep.find(".labelHolder .amount").val($slider.slider("value"));
 					} else {
-						$slider.slider({ value: Number($pageContents.data("decisionHistory")[currentStep].option) });
-						$thisStep.find(".labelHolder .amount").val($pageContents.data("decisionHistory")[currentStep].option);
+						$slider.slider({ value: Number(state.decisionHistory[currentStep].option) });
+						$thisStep.find(".labelHolder .amount").val(state.decisionHistory[currentStep].option);
 					}
 
 					$submitBtn.button("enable");
@@ -524,15 +533,15 @@ var decisionBlock = new function () {
 		} else {
 
 			// _____ BUILD NEW Q _____
-			var authorSupport = x_params.authorSupport == "true" ? '<p class="alert">' + currentStepInfo.name + ' </p>' : "";
-			var $text = $(x_addLineBreaks(currentStepInfo.text));
+			var authorSupport = x_params.authorSupport == "true" ? '<p class="alert">' + state.currentStepInfo.name + ' </p>' : "";
+			var $text = $(x_addLineBreaks(state.currentStepInfo.text));
 
 			if (pageXML.getAttribute("number") == "true") {
 				if ($text.length > 0) {
-					$text.prepend('<span class="num">' + ($pageContents.data("currentStep") + 1) + ': </span>');
+					$text.prepend('<span class="num">' + (state.currentStep + 1) + ': </span>');
 				} else {
-					$text = $('<p>' + x_addLineBreaks(currentStepInfo.text) + '</p>');
-					$text.prepend('<span class="num">' + ($pageContents.data("currentStep") + 1) + ': </span>');
+					$text = $('<p>' + x_addLineBreaks(state.currentStepInfo.text) + '</p>');
+					$text.prepend('<span class="num">' + (state.currentStep + 1) + ': </span>');
 				}
 			}
 
@@ -540,24 +549,24 @@ var decisionBlock = new function () {
 			$stepHolder.find('.instruction').append(authorSupport).append($text);
 			var $thisStep = $stepHolder.children(".step");
 
-			if (currentStepInfo.options.length == 0) {
+			if (state.currentStepInfo.options.length == 0) {
 				$thisStep.append('<span class="alert">' + x_getLangInfo(x_languageData.find("errorQuestions")[0], "noA", "No answer options have been added") + '</span>');
 				$submitBtn.button("disable");
 			} else {
-				if (currentStepInfo.type == "mcqStep") {
+				if (state.currentStepInfo.type == "mcqStep") {
 
 					// _____ MCQ _____
 					var select = -1;
 					$submitBtn.button("disable");
 
 					// set up answer options
-					currentStepInfo.options.each(function (i) {
+					state.currentStepInfo.options.each(function (i) {
 						var $this = $(this);
 
 						var authorSupport = "";
 						if (x_params.authorSupport == "true") {
-							var bracket1 = currentStepInfo.format == "menu" ? "(" : "",
-								bracket2 = currentStepInfo.format == "menu" ? ")" : "",
+							var bracket1 = state.currentStepInfo.format == "menu" ? "(" : "",
+								bracket2 = state.currentStepInfo.format == "menu" ? ")" : "",
 								thisTarget = $this.attr("targetNew") != undefined && $this.attr("targetNew") != "" ?
 									(decisionBlock.findStep(blockid, $this.attr("targetNew")) != null ? decisionBlock.findStep($this.attr("targetNew")).name : $this.attr("target")) :
 									$this.attr("target");
@@ -565,7 +574,7 @@ var decisionBlock = new function () {
 						}
 
 						// is answer given via drop down menu or radio buttons
-						if (currentStepInfo.format == "menu") {
+						if (state.currentStepInfo.format == "menu") {
 							if (i == 0) {
 								$thisStep.append('<div class="dropDownAnswer"><select></select></div>');
 							}
@@ -606,7 +615,7 @@ var decisionBlock = new function () {
 					});
 
 					// disable $submitBtn when no answer is selected
-					if (currentStepInfo.format == "menu") {
+					if (state.currentStepInfo.format == "menu") {
 						$thisStep.find("select").change(function () {
 							if ($thisStep.find("select").prop("selectedIndex") != -1) {
 								$submitBtn.button("enable");
@@ -637,25 +646,25 @@ var decisionBlock = new function () {
 							});
 					}
 
-				} else if (currentStepInfo.type == "sliderStep") {
+				} else if (state.currentStepInfo.type == "sliderStep") {
 
 					// _____ SLIDER _____
-					var answerBox = '<input type="text" class="amount question"/><label for="amount">' + currentStepInfo.unit + '</label>';
-					if (currentStepInfo.unitPos == "start") {
-						answerBox = '<label for="amount">' + currentStepInfo.unit + '</label><input type="text" class="amount question"/>';
+					var answerBox = '<input type="text" class="amount question"/><label for="amount">' + state.currentStepInfo.unit + '</label>';
+					if (state.currentStepInfo.unitPos == "start") {
+						answerBox = '<label for="amount">' + state.currentStepInfo.unit + '</label><input type="text" class="amount question"/>';
 					}
 
 					// work out max length of answer string
-					var stepDec = currentStepInfo.step.split('.').length > 1 ? currentStepInfo.step.split('.')[1].length : 0,
-						minDec = currentStepInfo.min.split('.').length > 1 ? currentStepInfo.min.split('.')[1].length : 0,
-						maxDec = currentStepInfo.max.split('.').length > 1 ? currentStepInfo.max.split('.')[1].length : 0;
+					var stepDec = state.currentStepInfo.step.split('.').length > 1 ? state.currentStepInfo.step.split('.')[1].length : 0,
+						minDec = state.currentStepInfo.min.split('.').length > 1 ? state.currentStepInfo.min.split('.')[1].length : 0,
+						maxDec = state.currentStepInfo.max.split('.').length > 1 ? state.currentStepInfo.max.split('.')[1].length : 0;
 					var maxDecimals = Math.max(stepDec, minDec, maxDec);
-					var inputW = currentStepInfo.max.split('.')[0].length + (maxDecimals > 0 ? 1 + maxDecimals : 0);
+					var inputW = state.currentStepInfo.max.split('.')[0].length + (maxDecimals > 0 ? 1 + maxDecimals : 0);
 
 					var authorSupport = "";
 					if (x_params.authorSupport == "true") {
 						authorSupport += '<span class="alert">';
-						currentStepInfo.options.each(function (i) {
+						state.currentStepInfo.options.each(function (i) {
 							var $this = $(this),
 								thisTarget = $this.attr("targetNew") != undefined && $this.attr("targetNew") != "" ?
 									(decisionBlock.findStep(blockid, $this.attr("targetNew")) != null ? decisionBlock.findStep($this.attr("targetNew")).name : $this.attr("target")) :
@@ -673,10 +682,10 @@ var decisionBlock = new function () {
 						$amount = $thisStep.find(".labelHolder .amount");
 
 					$slider.slider({
-						value: Number(currentStepInfo.value),
-						min: Number(currentStepInfo.min),
-						max: Number(currentStepInfo.max),
-						step: Number(currentStepInfo.step),
+						value: Number(state.currentStepInfo.value),
+						min: Number(state.currentStepInfo.min),
+						max: Number(state.currentStepInfo.max),
+						step: Number(state.currentStepInfo.step),
 						slide: function (event, ui) {
 							$amount.val(ui.value);
 
@@ -687,10 +696,11 @@ var decisionBlock = new function () {
 					$amount
 						.val($slider.slider("value"))
 						.change(function () {
+							const state = x_getPageDict("state", blockid);
 							var value = Number($(this).val()),
-								step = Number(currentStepInfo.step),
-								min = Number(currentStepInfo.min),
-								max = Number(currentStepInfo.max);
+								step = Number(state.currentStepInfo.step),
+								min = Number(state.currentStepInfo.min),
+								max = Number(state.currentStepInfo.max);
 							if (value > max) {
 								value = max;
 								$amount.val(value);
@@ -712,17 +722,17 @@ var decisionBlock = new function () {
 					$submitBtn.button("enable");
 				}
 
-				if (currentStepInfo.displayTxt != undefined && currentStepInfo.displayTxt != "") {
-					var clear = currentStepInfo.clear == "true" ? " clear" : ""; // class used when previous info is to be cleared
-					jGetElement(blockid, ".textHolder .displayInfo").append('<div class="info' + $pageContents.data("currentStep") + clear + '">' + currentStepInfo.displayTxt + '</div>');
+				if (state.currentStepInfo.displayTxt != undefined && state.currentStepInfo.displayTxt != "") {
+					var clear = state.currentStepInfo.clear == "true" ? " clear" : ""; // class used when previous info is to be cleared
+					jGetElement(blockid, ".textHolder .displayInfo").append('<div class="info' + state.currentStep + clear + '">' + state.currentStepInfo.displayTxt + '</div>');
 				}
 
 				// save reference to this step so it can be reloaded later if needed
-				$pageContents.data("allSteps")[currentStepInfo.index].built = $thisStep;
+				state.allSteps[state.currentStepInfo.index].built = $thisStep;
 			}
 		}
 
-		if (currentStepInfo.helpTxt != undefined && currentStepInfo.helpTxt != "") {
+		if (state.currentStepInfo.helpTxt != undefined && state.currentStepInfo.helpTxt != "") {
 			$helpBtn.show();
 		} else {
 			$helpBtn.hide();
@@ -732,24 +742,29 @@ var decisionBlock = new function () {
 
 	// _____ BUILD INFORMATION STEP _____
 	this.setUpI = function (blockid, isNew) {
-		this.setVars(blockid);
-		if (currentStepInfo.built != false) {
+		let $pageContents = jGetElement(blockid, ".pageContents");
+		let $stepHolder = jGetElement(blockid, ".stepHolder");
+		let $submitBtn = jGetElement(blockid, ".submitBtn");
+		let $helpBtn = jGetElement(blockid, ".helpBtn");
+		let pageXML = x_getBlockXML(blockid);
+		const state = x_getPageDict("state", blockid);
+		if (state.currentStepInfo.built != false) {
 
 			// _____ INFO ALREADY BUILT - RELOAD IT _____
-			$stepHolder.prepend(currentStepInfo.built);
+			$stepHolder.prepend(state.currentStepInfo.built);
 
 		} else {
 
 			// _____ BUILD NEW INFO _____
-			var authorSupport = x_params.authorSupport == "true" ? '<p class="alert">' + currentStepInfo.name + ' </p>' : "";
-			var $text = $(x_addLineBreaks(currentStepInfo.text));
+			var authorSupport = x_params.authorSupport == "true" ? '<p class="alert">' + state.currentStepInfo.name + ' </p>' : "";
+			var $text = $(x_addLineBreaks(state.currentStepInfo.text));
 
 			if (pageXML.getAttribute("number") == "true") {
 				if ($text.length > 0) {
-					$text.prepend('<span class="num">' + ($pageContents.data("currentStep") + 1) + ': </span>');
+					$text.prepend('<span class="num">' + (state.currentStep + 1) + ': </span>');
 				} else {
-					$text = $('<p>' + x_addLineBreaks(currentStepInfo.text) + '</p>');
-					$text.prepend('<span class="num">' + ($pageContents.data("currentStep") + 1) + ': </span>');
+					$text = $('<p>' + x_addLineBreaks(state.currentStepInfo.text) + '</p>');
+					$text.prepend('<span class="num">' + (state.currentStep + 1) + ': </span>');
 				}
 			}
 			$text.prepend(authorSupport);
@@ -758,19 +773,19 @@ var decisionBlock = new function () {
 			$stepHolder.find('.info').append($text);
 
 			// save reference to this step so it can be reloaded later if needed
-			$pageContents.data("allSteps")[currentStepInfo.index].built = $stepHolder.children(".step");
+			state.allSteps[state.currentStepInfo.index].built = $stepHolder.children(".step");
 		}
 
-		if (currentStepInfo.helpTxt != undefined && currentStepInfo.helpTxt != "") {
+		if (state.currentStepInfo.helpTxt != undefined && state.currentStepInfo.helpTxt != "") {
 			$helpBtn.show();
 		} else {
 			$helpBtn.hide();
 		}
 
 		if (isNew == true) {
-			if (currentStepInfo.displayTxt != undefined && currentStepInfo.displayTxt != "") {
-				var clear = currentStepInfo.clear == "true" ? " clear" : ""; // class used when previous info is to be cleared
-				jGetElement(blockid, ".textHolder .displayInfo").append('<div class="info' + $pageContents.data("currentStep") + clear + '">' + currentStepInfo.displayTxt + '</div>');
+			if (state.currentStepInfo.displayTxt != undefined && state.currentStepInfo.displayTxt != "") {
+				var clear = state.currentStepInfo.clear == "true" ? " clear" : ""; // class used when previous info is to be cleared
+				jGetElement(blockid, ".textHolder .displayInfo").append('<div class="info' + state.currentStep + clear + '">' + state.currentStepInfo.displayTxt + '</div>');
 			}
 		}
 
@@ -782,27 +797,33 @@ var decisionBlock = new function () {
 
 	// _____ BUILD RESULT STEP _____
 	this.setUpR = function (blockid, isNew) {
-		this.setVars(blockid);
-		if (currentStepInfo.built != false && currentStepInfo.collate != "true") {
+		let $pageContents = jGetElement(blockid, ".pageContents");
+		let $stepHolder = jGetElement(blockid, ".stepHolder");
+		let $submitBtn = jGetElement(blockid, ".submitBtn");
+		let $helpBtn = jGetElement(blockid, ".helpBtn");
+		let $overviewHolder = jGetElement(blockid, ".overviewHolder");
+		let pageXML = x_getBlockXML(blockid);
+		const state = x_getPageDict("state", blockid);
+		if (state.currentStepInfo.built != false && state.currentStepInfo.collate != "true") {
 
 			// _____ RESULT ALREADY BUILT - RELOAD IT _____
-			$stepHolder.prepend(currentStepInfo.built);
+			$stepHolder.prepend(state.currentStepInfo.built);
 
 		} else {
 
 			// _____ BUILD NEW RESULT _____
 			var authorSupport = "";
 			if (x_params.authorSupport == "true") {
-				authorSupport = '<span class="alert">' + currentStepInfo.name + ' </span>';
+				authorSupport = '<span class="alert">' + state.currentStepInfo.name + ' </span>';
 			}
 
 			var goBtn = "";
-			if (currentStepInfo.destination != undefined && currentStepInfo != "") {
+			if (state.currentStepInfo.destination != undefined && state.currentStepInfo != "") {
 				goBtn = '<button class="goBtn"/>';
 			}
 
 			var resultEndString = pageXML.getAttribute("resultEndString") ? '<p>' + pageXML.getAttribute("resultEndString") + '</p>' : "";
-			$stepHolder.prepend('<div class="step"><div class="result">' + authorSupport + x_addLineBreaks(currentStepInfo.text) + decisionBlock.collateResult(blockid, currentStepInfo.collate, "html") + resultEndString + '</div>' + goBtn + '<button class="viewThisBtn" /></div>');
+			$stepHolder.prepend('<div class="step"><div class="result">' + authorSupport + x_addLineBreaks(state.currentStepInfo.text) + decisionBlock.collateResult(blockid, state.currentStepInfo.collate, "html") + resultEndString + '</div>' + goBtn + '<button class="viewThisBtn" /></div>');
 
 			if (pageXML.getAttribute("overview") != "false") {
 				// set up view overview & jump to page buttons
@@ -828,19 +849,19 @@ var decisionBlock = new function () {
 					label: pageXML.getAttribute("destinationBtn") ? pageXML.getAttribute("destinationBtn") : "Continue"
 				})
 				.click(function () {
-					if (x_lookupPage("linkID", $pageContents.data("currentStepInfo").destination) !== false) { // destination found
-						x_navigateToPage(false, { type: "linkID", ID: $pageContents.data("currentStepInfo").destination });
+					if (x_lookupPage("linkID", state.currentStepInfo.destination) !== false) { // destination found
+						x_navigateToPage(false, { type: "linkID", ID: state.currentStepInfo.destination });
 					}
 				});
 
 			// save reference to this step so it can be reloaded later if needed
-			$pageContents.data("allSteps")[currentStepInfo.index].built = $stepHolder.children(".step");
+			state.allSteps[state.currentStepInfo.index].built = $stepHolder.children(".step");
 		}
 
 		if (isNew == true) {
-			if (currentStepInfo.displayTxt != undefined && currentStepInfo.displayTxt != "") {
-				var clear = currentStepInfo.clear == "true" ? " clear" : ""; // class used when previous info is to be cleared
-				jGetElement(blockid, ".textHolder .displayInfo").append('<div class="info' + $pageContents.data("currentStep") + clear + '">' + currentStepInfo.displayTxt + '</div>');
+			if (state.currentStepInfo.displayTxt != undefined && state.currentStepInfo.displayTxt != "") {
+				var clear = state.currentStepInfo.clear == "true" ? " clear" : ""; // class used when previous info is to be cleared
+				jGetElement(blockid, ".textHolder .displayInfo").append('<div class="info' + state.currentStep + clear + '">' + state.currentStepInfo.displayTxt + '</div>');
 			}
 		}
 
@@ -851,9 +872,10 @@ var decisionBlock = new function () {
 
 	// _____ COLLATE RESULT TEXT FROM STORED STRINGS _____
 	this.collateResult = function (blockid, collate, type) {
-		this.setVars(blockid);
+		let $pageContents = jGetElement(blockid, ".pageContents");
+		const state = x_getPageDict("state", blockid);
 		if (collate == "true") {
-			var storedResultTxt = $pageContents.data("storedResultTxt");
+			var storedResultTxt = state.storedResultTxt;
 			var string = "";
 
 			for (var i = 0; i < storedResultTxt.length; i++) {
@@ -876,8 +898,9 @@ var decisionBlock = new function () {
 	// _____ CREATE OVERVIEW STRING FOR COPY & OVERVIEW _____
 	// string is formatted differently depending on whether it's for copying or overview shown in browser
 	this.createDecStr = function (blockid, type) {
-		this.setVars(blockid);
-		var decisionHistory = $pageContents.data("decisionHistory");
+		let $pageContents = jGetElement(blockid, ".pageContents");
+		let pageXML = x_getBlockXML(blockid);
+		const state = x_getPageDict("state", blockid);
 		var string = "";
 
 		if (type == "html") {
@@ -887,8 +910,8 @@ var decisionBlock = new function () {
 		}
 
 		// add details of each step in decision to string
-		for (var i = 0; i < decisionHistory.length; i++) {
-			var thisStep = this.findStep(blockid, decisionHistory[i].id);
+		for (var i = 0; i < state.decisionHistory.length; i++) {
+			var thisStep = this.findStep(blockid, state.decisionHistory[i].id);
 			// TODO look at this
 			var $text = $("<p>" + x_addLineBreaks(thisStep.text) + "</p>");
 
@@ -915,14 +938,14 @@ var decisionBlock = new function () {
 				if (thisStep.type == "mcqStep") {
 					if (type == "html") {
 						// include details of answers which weren't chosen too
-						string += '<div class="overviewAnswer"><i class="fa fa-fw fa-chevron-right"></i> &nbsp;' + x_addLineBreaks($(thisStep.options[decisionHistory[i].option]).attr("name")) + '</div>';
+						string += '<div class="overviewAnswer"><i class="fa fa-fw fa-chevron-right"></i> &nbsp;' + x_addLineBreaks($(thisStep.options[state.decisionHistory[i].option]).attr("name")) + '</div>';
 						string += '<div class="extraInfo"><i class="fa fa-fw fa-chevron-right"/> &nbsp;' + (pageXML.getAttribute("posAnswerString") ? pageXML.getAttribute("posAnswerString") : "Other possible answers") + ': ';
 
 						thisStep.options.each(function (j) {
-							if (j != decisionHistory[i].option) {
+							if (j != state.decisionHistory[i].option) {
 								string += x_addLineBreaks($(thisStep.options[j]).attr("name"));
 
-								if (j + 1 == thisStep.options.length || (j + 1 == decisionHistory[i].option && j + 2 == thisStep.options.length)) {
+								if (j + 1 == thisStep.options.length || (j + 1 == state.decisionHistory[i].option && j + 2 == thisStep.options.length)) {
 								} else {
 									string += ', ';
 								}
@@ -932,16 +955,16 @@ var decisionBlock = new function () {
 						string += '</div>';
 
 					} else {
-						string += '<p> >> ' + $(thisStep.options[decisionHistory[i].option]).attr("name") + '</p>';
+						string += '<p> >> ' + $(thisStep.options[state.decisionHistory[i].option]).attr("name") + '</p>';
 						string += '<p>-------------------------------------------------</p>';
 					}
 
 				} else if (thisStep.type == "sliderStep") {
-					var answer = decisionHistory[i].option + ' ' + thisStep.unit,
+					var answer = state.decisionHistory[i].option + ' ' + thisStep.unit,
 						posAnswer = thisStep.min + ' - ' + thisStep.max + ' ' + thisStep.unit;
 
 					if (thisStep.unitPos == "start") {
-						answer = thisStep.unit + ' ' + decisionHistory[i].option;
+						answer = thisStep.unit + ' ' + state.decisionHistory[i].option;
 						posAnswer = thisStep.unit + ' ' + thisStep.min + ' - ' + thisStep.max;
 					}
 
@@ -986,19 +1009,20 @@ var decisionBlock = new function () {
 
 	// _____ RETURN STEP WITH REQUESTED ID _____
 	this.findStep = function (blockid, stepID) {
-		this.setVars(blockid);
+		let $pageContents = jGetElement(blockid, ".pageContents");
+		const state = x_getPageDict("state", blockid);
 		// original version of this page required you to type a target ID in as destination step.
 		// this has changed so that there's a drop down box where you can select the destination step.
 		// although original attribute (target) is deprecated & the new attribute (targetNew) is now used where it exists (it saves linkID to xml)
 		// the old version still needs to work for older projects.
 
-		for (var i = 0; i < $pageContents.data("allSteps").length; i++) {
-			if ($pageContents.data("allSteps")[i].name == stepID) {
-				var thisStep = $pageContents.data("allSteps")[i];
+		for (var i = 0; i < state.allSteps.length; i++) {
+			if (state.allSteps[i].name == stepID) {
+				var thisStep = state.allSteps[i];
 				thisStep.index = i;
 				return thisStep;
-			} else if ($pageContents.data("allSteps")[i].linkID == stepID) {
-				var thisStep = $pageContents.data("allSteps")[i];
+			} else if (state.allSteps[i].linkID == stepID) {
+				var thisStep = state.allSteps[i];
 				thisStep.index = i;
 				return thisStep;
 			}
@@ -1009,7 +1033,9 @@ var decisionBlock = new function () {
 
 	// _____ TOGGLE HOLDER VISIBILITY _____
 	this.showHideHolders = function (blockid, $show) {
-		this.setVars(blockid);
+		let $stepHolder = jGetElement(blockid, ".stepHolder");
+		let $overviewHolder = jGetElement(blockid, ".overviewHolder");
+		let pageXML = x_getBlockXML(blockid);
 		$overviewHolder.hide();
 		$stepHolder.hide();
 		$show.show();
@@ -1019,18 +1045,19 @@ var decisionBlock = new function () {
 
 	// _____ CLEARS / SHOWS DISPLAY TEXT AS REQUIRED _____
 	this.clearText = function (blockid) {
-		this.setVars(blockid);
+		let $pageContents = jGetElement(blockid, ".pageContents");
+		const state = x_getPageDict("state", blockid);
 		// called when going forwards through steps to make sure any display text is cleared when required - and then should reappear if going back
 		if (jGetElement(blockid, ".textHolder .displayInfo div.clear").length > 0) {
 			var clear = false;
-			for (var i = 0; i < $pageContents.data("currentStep") + 1; i++) {
+			for (var i = 0; i < state.currentStep + 1; i++) {
 				if (clear == false) {
-					jGetElement(blockid, ".textHolder .displayInfo div.info" + ($pageContents.data("currentStep") - i)).show();
-					if (jGetElement(blockid, ".textHolder .displayInfo div.clear.info" + ($pageContents.data("currentStep") - i)).length > 0) {
+					jGetElement(blockid, ".textHolder .displayInfo div.info" + (state.currentStep - i)).show();
+					if (jGetElement(blockid, ".textHolder .displayInfo div.clear.info" + (state.currentStep - i)).length > 0) {
 						clear = true;
 					}
 				} else {
-					jGetElement(blockid, ".textHolder .displayInfo div.info" + ($pageContents.data("currentStep") - i)).hide();
+					jGetElement(blockid, ".textHolder .displayInfo div.info" + (state.currentStep - i)).hide();
 				}
 			}
 		}

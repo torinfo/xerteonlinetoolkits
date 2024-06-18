@@ -48,12 +48,12 @@ var modifyBlock = new function () {
 		if (feedbackBtnTip == undefined) {
 			feedbackBtnTip = "Feedback"
 		};
-		this.weighting = 1.0;
+		let weighting = 1.0;
 		if (pageXML.getAttribute("trackingWeight") != undefined) {
-			this.weighting = pageXML.getAttribute("trackingWeight");
+			weighting = pageXML.getAttribute("trackingWeight");
 		}
 		// XTSetPageType(x_currentPage, 'numeric', 1, this.weighting);
-		XTSetInteractionType(x_currentPage, x_getBlockNr(blockid), "text", this.weighting);
+		XTSetInteractionType(x_currentPage, x_getBlockNr(blockid), "text", weighting);
 		var label = "";
 		var modelAnswerTxt = "";
 		if (pageXML.getAttribute("trackinglabel") != null && pageXML.getAttribute("trackinglabel") != "") {

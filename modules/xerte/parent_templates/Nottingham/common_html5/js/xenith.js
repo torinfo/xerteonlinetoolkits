@@ -717,7 +717,7 @@ x_projectDataLoaded = function(xmlData) {
     }
 
 	// Setup nr of pages for tracking
-	debugger;
+	
     XTSetOption('nrpages', x_pageInfo.length);
 	XTSetOption('toComplete', markedPages);
 	XTSetOption('templateId', x_TemplateId);
@@ -2647,7 +2647,7 @@ function x_createBlock(container, module, modulePosition){
 			name += "Block";
 	}
 	//Insert block CSS files. These are different from the not block interactive modules
-	x_insertCSS(x_templateLocation + "blocks_html5/" + name + ".css", ()=>{$(window).trigger("resize");}, false, "page_model_css_"+name);
+	x_insertCSS(x_templateLocation + "blocks_html5/" + name + ".css", null, false, "page_model_css_"+name);
 }
 
 function x_loadAllBlocks(){
@@ -2991,6 +2991,7 @@ function x_endPageTracking(pagechange, x_gotoPage) {
 	// End page tracking of x_currentPage
     if (x_currentPage != -1 && !x_isMenu() && (!pagechange || x_currentPage != x_gotoPage) && x_pageInfo[x_currentPage].passwordPass != false)
     {
+        XTExitPage(x_currentPage);
         var pageObj;
         if (x_pageInfo[x_currentPage].type == "text") {
             pageObj = simpleText;
@@ -3009,7 +3010,6 @@ function x_endPageTracking(pagechange, x_gotoPage) {
                 customHTML.leavePage();
             }
         } 
-        XTExitPage(x_currentPage);
     }
 }
 

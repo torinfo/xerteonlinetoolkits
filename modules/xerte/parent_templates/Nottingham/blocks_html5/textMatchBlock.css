@@ -1,4 +1,8 @@
 /* textMatch.html */
+.iblock:has( .textMatchBlock){
+	position: relative;
+}
+
 .textMatchBlock .textHolder {
     margin-bottom: 20px;
 }

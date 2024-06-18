@@ -23,16 +23,17 @@ var interactiveTextBlock = new function () {
 	// function called every time the page is viewed after it has initially loaded
 	this.pageChanged = function (blockid) {
 		let pageXML = x_getBlockXML(blockid); 
-		jGetElement(blockid, ".pageContents").data("currentGroup", -1);
-		const groupInfo = jGetElement(blockid, ".pageContents").data("groupInfo");
+		const state = x_getPageDict("state", blockid)
+		state.currentGroup = -1;
+		const groupInfo = state.groupInfo;
 
-		jGetElement(blockid, ".passage .group").removeClass("on");
-		for (var group = 0; group < groupInfo.length; group++)
-			jGetElement(blockid, ".passage span").removeClass("wrongOn" + group);
-		jGetElement(blockid, ".groupInfo")
-			.html("")
-			.removeAttr("tabindex");
-		jGetElement(blockid, ".btnHolder .listItem").removeClass("highlight");
+		//jGetElement(blockid, ".passage .group").removeClass("on");
+		//for (var group = 0; group < groupInfo.length; group++)
+		//	jGetElement(blockid, ".passage span").removeClass("wrongOn" + group);
+		//jGetElement(blockid, ".groupInfo")
+		//	.html("")
+		//	.removeAttr("tabindex");
+		//jGetElement(blockid, ".btnHolder .listItem").removeClass("highlight");
 
 		if (pageXML.getAttribute("interactivity") == "explore") {
 			jGetElement(blockid, ".showBtn").hide();
@@ -64,9 +65,10 @@ var interactiveTextBlock = new function () {
 
 	this.leavePage = function (blockid) {
 		let pageXML = x_getBlockXML(blockid); 
-		const mcqAnswers = jGetElement(blockid, ".pageContents").data("mcqAnswers");
+		const state = x_getPageDict("state", blockid)
+		const mcqAnswers = state.mcqAnswers;
 		var numQs = pageXML.getAttribute("mcqNumQs") == undefined || pageXML.getAttribute("mcqNumQs") == "*" ? mcqAnswers.length : isNaN(pageXML.getAttribute("mcqNumQs")) ? mcqAnswers.length : Number(pageXML.getAttribute("mcqNumQs"));
-		if (jGetElement(blockid, ".pageContents").data("checked") && (numQs > 0 || pageXML.getAttribute("interactivity") == "find2")) {
+		if (state.checked && (numQs > 0 || pageXML.getAttribute("interactivity") == "find2")) {
 			interactiveTextBlock.finishTracking(blockid);
 		}
 	};
@@ -74,22 +76,21 @@ var interactiveTextBlock = new function () {
 	this.init = function (blockid) {
 		let pageXML = x_getBlockXML(blockid); 
 		let interactionText = x_addLineBreaks(pageXML.getAttribute("passage"));
-		jGetElement(blockid, ".pageContents").data({
-			openTagInfo: [],
-			groupInfo: [],
-			subGroups: [],
-			mcqAnswers: [],
-			mcqAnswerOptions: [],
-			currentGroup: -1,
-			tempTxtPos: 0,
-			tempTag: -1,
-			interactionText: interactionText,
-			tempTxt: "",
-			tabIndex: 2,
-			mcqCurrentQ: null,
-		});
-		const groupInfo = jGetElement(blockid, ".pageContents").data("groupInfo");
-		const subGroups = jGetElement(blockid, ".pageContents").data("subGroups");
+		const state = x_pushToPageDict({}, "state", blockid);
+		state.openTagInfo = [];
+		state.groupInfo = [];
+		state.subGroups = [];
+		state.mcqAnswers = [];
+		state.mcqAnswerOptions = [];
+		state.currentGroup = -1;
+		state.tempTxtPos = 0;
+		state.tempTag = -1;
+		state.interactionText = interactionText;
+		state.tempTxt = "";
+		state.tabIndex = 2;
+		state.mcqCurrentQ = null;
+		const groupInfo = state.groupInfo;
+		const subGroups = state.subGroups;
 
 		if (pageXML.getAttribute("text") != undefined && pageXML.getAttribute("text") != "") {
 			jGetElement(blockid, ".pageTxt").html(x_addLineBreaks(pageXML.getAttribute("text")));
@@ -291,26 +292,26 @@ var interactiveTextBlock = new function () {
 				}
 			}
 		}
-		let tabIndex = jGetElement(blockid, ".pageContents").data("tabIndex");
+		let tabIndex = state.tabIndex;
 		if (pageXML.getAttribute("interactivity") == "show" || pageXML.getAttribute("interactivity") == "find" || pageXML.getAttribute("interactivity") == "find2") {
 			tabIndex = tabIndex + groupInfo.length;
 		} else if (pageXML.getAttribute("interactivity") == "mcq") {
 			tabIndex--;
 			jGetElement(blockid, ".instructions").remove();
 		}
-		jGetElement(blockid, ".pageContents").data("tabIndex", tabIndex);
+		state.tabIndex = tabIndex;
 
-		let tempTxtPos = jGetElement(blockid, ".pageContents").data("tempTxtpos");
-		let tempTxt = jGetElement(blockid, ".pageContents").data("tempTxt");
+		let tempTxtPos = state.tempTxtpos;
+		let tempTxt = state.tempTxt;
 		// insert span tags into interactionText
 		while (tempTxtPos != interactionText.length) {
 			this.createTags(blockid);
-			tempTxtPos = jGetElement(blockid, ".pageContents").data("tempTxtpos");
-			tempTxt = jGetElement(blockid, ".pageContents").data("tempTxt");
-			tabIndex = jGetElement(blockid, ".pageContents").data("tabIndex");
+			tempTxtPos = state.tempTxtpos;
+			tempTxt = state.tempTxt;
+			tabIndex = state.tabIndex;
 		}
 		interactionText = tempTxt;
-		jGetElement(blockid, ".pageContents").data("interactionText", interactionText);
+		state.interactionText = interactionText;
 
 		jGetElement(blockid, ".passage").html(interactionText);
 
@@ -318,7 +319,7 @@ var interactiveTextBlock = new function () {
 			// Make every regular word a span so that they can be counted as wrong answers
 			let findAllowSelectionOfAllWords = (pageXML.getAttribute("findAllowSelectionOfAllWords") != undefined ? pageXML.getAttribute("findAllowSelectionOfAllWords") === "true" : false);
 
-			jGetElement(blockid, ".pageContents").data("findAllowSelectionOfAllWords", findAllowSelectionOfAllWords);
+			state.findAllowSelectionOfAllWords = findAllowSelectionOfAllWords;
 
 			if (findAllowSelectionOfAllWords) {
 				var passage = jGetElement(blockid, ".passage").children("p");
@@ -381,36 +382,35 @@ var interactiveTextBlock = new function () {
 
 			if (pageXML.getAttribute("interactivity") == "find2") {
 				// Track the page
-				this.weighting = 1.0;
+				let weighting = 1.0;
 				if (pageXML.getAttribute("trackingWeight") != undefined) {
-					this.weighting = pageXML.getAttribute("trackingWeight");
+					weighting = pageXML.getAttribute("trackingWeight");
 				}
-				//XTSetPageType(x_currentPage, 'numeric', groupInfo.filter(gi => gi.name !== '#distractor#').length, this.weighting);
-				XTSetInteractionType(x_currentPage, x_getBlockNr(blockid), "numeric", this.weighting, 0)
+				//XTSetPageType(x_currentPage, 'numeric', groupInfo.filter(gi => gi.name !== '#distractor#').length, weighting);
+				XTSetInteractionType(x_currentPage, x_getBlockNr(blockid), "numeric", weighting, 0)
 				for(let i = 1; i < groupInfo.filter(gi => gi.name !== '#distractor#').length; i++){
-					XTSetInteractionType(x_currentPage, x_getBlockNr(blockid), "numeric", this.weighting, i)
+					XTSetInteractionType(x_currentPage, x_getBlockNr(blockid), "numeric", weighting, i)
 				}
 				XTSetLeavePage(x_currentPage, x_getBlockNr(blockid), interactiveTextBlock.leavePage);
 			}
 		}
 
-		jGetElement(blockid, ".pageContents").data({
-			"groupInfo": groupInfo,
-			"subGroups": subGroups
-		});
+		state.groupInfo = groupInfo;
+		state.subGroups = subGroups;
 		this.setUpInteraction(blockid);
 
 		x_pageLoaded();
 	};
 
 	this.createTags = function (blockid) {
-		const openTagInfo = jGetElement(blockid, ".pageContents").data("openTagInfo");
-		const subGroups = jGetElement(blockid, ".pageContents").data("subGroups");
-		let tempTag = jGetElement(blockid, ".pageContents").data("tempTag");
-		let tempTxtPos = jGetElement(blockid, ".pageContents").data("tempTxtpos");
-		let tempTxt = jGetElement(blockid, ".pageContents").data("tempTxt");
-		let tabIndex = jGetElement(blockid, ".pageContents").data("tabIndex");
-		let interactionText = jGetElement(blockid, ".pageContents").data("interactionText");
+		const state = x_getPageDict("state", blockid)
+		const openTagInfo = state.openTagInfo;
+		const subGroups = state.subGroups;
+		let tempTag = state.tempTag;
+		let tempTxtPos = state.tempTxtpos;
+		let tempTxt = state.tempTxt;
+		let tabIndex = state.tabIndex;
+		let interactionText = state.interactionText;
 
 		if (openTagInfo.length == 0) { // there are no tags currently open...
 			if (subGroups.length - 1 == tempTag) { // ...no more tags to add
@@ -419,10 +419,10 @@ var interactiveTextBlock = new function () {
 
 			} else { // ...insert next tag
 				this.openTag(blockid);
-				tempTag = jGetElement(blockid, ".pageContents").data("tempTag");
-				tempTxtPos = jGetElement(blockid, ".pageContents").data("tempTxtpos");
-				tempTxt = jGetElement(blockid, ".pageContents").data("tempTxt");
-				tabIndex = jGetElement(blockid, ".pageContents").data("tabIndex");
+				tempTag = state.tempTag;
+				tempTxtPos = state.tempTxtpos;
+				tempTxt = state.tempTxt;
+				tabIndex = state.tabIndex;
 			}
 
 		} else { // there are some tags already open...
@@ -442,48 +442,50 @@ var interactiveTextBlock = new function () {
 					tabIndex++;
 					tempTxt += '<span class="group' + subGroups[subGroups[toClose].overlap[j]].ref + '" data-index="' + subGroups[toClose].overlap[j] + '" tabindex="' + tabIndex + '">';
 				}
-				debugger;
-				jGetElement(blockid, ".pageContents").data("openTagInfo", jQuery.grep(openTagInfo, function (value) {
+				
+				state.openTagInfo = jQuery.grep(openTagInfo, function (value) {
 					return value != toClose;
-				}));
+				});
 
 			} else { //...open another tag
 				this.openTag(blockid);
 			}
 		}
-		jGetElement(blockid, ".pageContents").data("tempTxtpos", tempTxtPos);
-		jGetElement(blockid, ".pageContents").data("tempTxt", tempTxt);
-		jGetElement(blockid, ".pageContents").data("tabIndex", tabIndex);
+		state.tempTxtpos = tempTxtPos;
+		state.tempTxt = tempTxt;
+		state.tabIndex = tabIndex;
 	};
 
 	this.openTag = function (blockid) {
-		const openTagInfo = jGetElement(blockid, ".pageContents").data("openTagInfo");
-		const subGroups = jGetElement(blockid, ".pageContents").data("subGroups");
-		let tempTag = jGetElement(blockid, ".pageContents").data("tempTag");
-		let tempTxtPos = jGetElement(blockid, ".pageContents").data("tempTxtpos");
-		let tempTxt = jGetElement(blockid, ".pageContents").data("tempTxt");
-		let interactionText = jGetElement(blockid, ".pageContents").data("interactionText");
-		let tabIndex = jGetElement(blockid, ".pageContents").data("tabIndex");
+		const state = x_getPageDict("state", blockid)
+		const openTagInfo = state.openTagInfo;
+		const subGroups = state.subGroups;
+		let tempTag = state.tempTag;
+		let tempTxtPos = state.tempTxtpos;
+		let tempTxt = state.tempTxt;
+		let interactionText = state.interactionText;
+		let tabIndex = state.tabIndex;
 		tabIndex++;
 		tempTag++;
 		tempTxt += interactionText.substring(tempTxtPos, subGroups[tempTag].open);
 		tempTxt += '<span class="group group' + subGroups[tempTag].ref + '" data-index="' + tempTag + '" tabindex="' + tabIndex + '">';
 		tempTxtPos = subGroups[tempTag].open + subGroups[tempTag].delim.length;
 		openTagInfo.push(tempTag);
-		jGetElement(blockid, ".pageContents").data("tempTag", tempTag);
-		jGetElement(blockid, ".pageContents").data("tempTxtpos", tempTxtPos);
-		jGetElement(blockid, ".pageContents").data("tempTxt", tempTxt);
-		jGetElement(blockid, ".pageContents").data("tabIndex", tabIndex);
+		state.tempTag = tempTag;
+		state.tempTxtpos = tempTxtPos;
+		state.tempTxt = tempTxt;
+		state.tabIndex = tabIndex;
 	};
 
 	this.setUpInteraction = function (blockid) {
+		const state = x_getPageDict("state", blockid)
 		let pageXML = x_getBlockXML(blockid); 
-		const groupInfo = jGetElement(blockid, ".pageContents").data("groupInfo");
-		const subGroups = jGetElement(blockid, ".pageContents").data("subGroups");
+		const groupInfo = state.groupInfo;
+		const subGroups = state.subGroups;
 		var intType = pageXML.getAttribute("interactivity");
 		let lang2 = x_getLangInfo(x_languageData.find("interactions").find("moreInfoItem")[0], "selected", "Selected");
 		let lang1 = x_getLangInfo(x_languageData.find("interactions").find("moreInfoItem")[0], "moreInfo", "Press space to learn more");
-		let tabIndex = jGetElement(blockid, ".pageContents").data("tabIndex");
+		let tabIndex = state.tabIndex;
 		jGetElement(blockid, ".pageContents").addClass(intType);
 		// --- EXPLORE ---
 		// click any subgroup - you then get info about the group it falls into, with the option of showing all related subgroups
@@ -497,6 +499,7 @@ var interactiveTextBlock = new function () {
 			jGetElement(blockid, ".questionHolder").hide();
 
 			jGetElement(blockid, ".passage").click(function (e) {
+				const state = x_getPageDict("state", blockid)
 				var $this = $(this);
 				$this.find(".group")
 					.removeClass("on")
@@ -507,7 +510,7 @@ var interactiveTextBlock = new function () {
 					interactiveTextBlock.clickExplore(blockid, $(clicked[0]));
 
 				} else {
-					jGetElement(blockid, ".pageContents").data("currentGroup", -1);
+					state.currentGroup = -1;
 					jGetElement(blockid, ".groupInfo")
 						.html("")
 						.removeAttr("tabindex");
@@ -547,9 +550,10 @@ var interactiveTextBlock = new function () {
 				.button({
 					label: (pageXML.getAttribute("showBtnTxt") != undefined ? pageXML.getAttribute("showBtnTxt") : "Show All")
 				}).click(function () {
-					jGetElement(blockid, ".passage .group" + jGetElement(blockid, ".pageContents").data("currentGroup"))
+		const state = x_getPageDict("state", blockid)
+					jGetElement(blockid, ".passage .group" + state.currentGroup)
 						.addClass("on")
-						.attr("title", lang2 + ": " + groupInfo[jGetElement(blockid, ".pageContents").data("currentGroup")].name);
+						.attr("title", lang2 + ": " + groupInfo[state.currentGroup].name);
 
 					$(this).hide();
 				});
@@ -584,7 +588,7 @@ var interactiveTextBlock = new function () {
 
 					var index = $(this).data("index");
 
-					if (jGetElement(blockid, ".pageContents").data("currentGroup") != index) {
+					if (state.currentGroup != index) {
 						jGetElement(blockid, ".btnHolder .listItem.highlight").removeClass("highlight");
 						jGetElement(blockid, ".passage .group")
 							.removeClass("on")
@@ -601,7 +605,7 @@ var interactiveTextBlock = new function () {
 							.attr("tabindex", tabIndex++)
 							.fadeIn();
 
-						jGetElement(blockid, ".pageContents").data("currentGroup", index);
+						state.currentGroup = index;
 						x_pageContentsUpdated();
 					}
 				});
@@ -631,7 +635,7 @@ var interactiveTextBlock = new function () {
 					disabled: (groupInfo.length == 0)
 				})
 				.click(function () {
-					var currentGroup = jGetElement(blockid, ".pageContents").data("currentGroup");
+					var currentGroup = state.currentGroup;
 					currentGroup++;
 
 					jGetElement(blockid, ".passage .group")
@@ -653,7 +657,7 @@ var interactiveTextBlock = new function () {
 					}
 					jGetElement(blockid, ".prevBtn").button("enable");
 
-					jGetElement(blockid, ".pageContents").data("currentGroup", currentGroup);
+					state.currentGroup = currentGroup;
 					x_pageContentsUpdated();
 				})
 				.attr("tabindex", tabIndex + 1);
@@ -668,7 +672,8 @@ var interactiveTextBlock = new function () {
 					disabled: true
 				})
 				.click(function () {
-					var currentGroup = jGetElement(blockid, ".pageContents").data("currentGroup");
+					const state = x_getPageDict("state", blockid)
+					var currentGroup = state.currentGroup;
 					currentGroup--;
 					jGetElement(blockid, ".passage .group")
 						.removeClass("on")
@@ -692,7 +697,7 @@ var interactiveTextBlock = new function () {
 					}
 					jGetElement(blockid, ".nextBtn").button("enable");
 
-					jGetElement(blockid, ".pageContents").data("currentGroup", currentGroup);
+					state.currentGroup = currentGroup;
 					x_pageContentsUpdated();
 				})
 				.attr("tabindex", tabIndex + 2);
@@ -702,19 +707,15 @@ var interactiveTextBlock = new function () {
 			// select a group and then click to find all of its subgroups
 		} else if (intType == "find" || intType == "find2") {
 			if (intType == "find") {
-				jGetElement(blockid, ".pageContents").data({
-					"found": [],
-					"wrongFound": [],
-					"complete": [],
-					"findTxt2": pageXML.getAttribute("findTxt2") != undefined ? pageXML.getAttribute("findTxt2") : "You have found {i} of {n}"
-				});
+				state.found = [];
+				state.wrongFound = [];
+				state.complete = [];
+				state.findTxt2 = pageXML.getAttribute("findTxt2") != undefined ? pageXML.getAttribute("findTxt2") : "You have found {i} of {n}";
 			} else {
-				jGetElement(blockid, ".pageContents").data({
-					"found": [],
-					"wrongFound": [],
-					"complete": [],
-					"findTxt2": pageXML.getAttribute("findTxt22") != undefined ? pageXML.getAttribute("findTxt22") : "You have selected {i} of {n}"
-				});
+				state.found = [];
+				state.wrongFound = [];
+				state.complete = [];
+				state.findTxt2 = pageXML.getAttribute("findTxt22") != undefined ? pageXML.getAttribute("findTxt22") : "You have selected {i} of {n}";
 			}
 
 			var $btnHolder = jGetElement(blockid, ".btnHolder");
@@ -751,18 +752,18 @@ var interactiveTextBlock = new function () {
 
 				if (intType == "find") {
 					jGetElement(blockid, ".feedback")
-						.html('<p>' + jGetElement(blockid, ".pageContents").data("findTxt2")
-							.replace("{i}", jGetElement(blockid, ".pageContents").data("found")[currentGroup].length)
+						.html('<p>' + state.findTxt2
+							.replace("{i}", state.found[currentGroup].length)
 							.replace("{n}", groupInfo[currentGroup].numSubGroups) + '</p>')
 						.show();
 				} else if (intType == "find2") {
 					jGetElement(blockid, ".feedback")
-						.html('<p>' + jGetElement(blockid, ".pageContents").data("findTxt2")
-							.replace("{i}", jGetElement(blockid, ".pageContents").data("found")[currentGroup].length + jGetElement(blockid, ".pageContents").data("wrongFound")[currentGroup].length)
+						.html('<p>' + state.findTxt2
+							.replace("{i}", state.found[currentGroup].length + state.wrongFound[currentGroup].length)
 							.replace("{n}", groupInfo[currentGroup].numSubGroups) + '</p>')
 						.show();
 				}
-				jGetElement(blockid, ".pageContents").data("currentGroup", currentGroup);
+				state.currentGroup = currentGroup;
 			} else {
 				jGetElement(blockid, ".instructions").html('<p>' + (pageXML.getAttribute("findTxt") != undefined ? pageXML.getAttribute("findTxt") : "Click a group to begin, then click the text to find all examples.") + '</p>');
 			}
@@ -771,7 +772,7 @@ var interactiveTextBlock = new function () {
 				e.preventDefault();
 
 				var index = $(this).data("index"),
-					currentGroup = jGetElement(blockid, ".pageContents").data("currentGroup");
+					currentGroup = state.currentGroup;
 
 				if (currentGroup != index) {
 					currentGroup = index;
@@ -784,17 +785,17 @@ var interactiveTextBlock = new function () {
 						.attr("tabindex", tabIndex + 2)
 						.fadeIn();
 
-					if ($.inArray(0, jGetElement(blockid, ".pageContents").data("complete")) != -1) {
+					if ($.inArray(0, state.complete) != -1) {
 						if (intType == "find") {
 							jGetElement(blockid, ".feedback")
-								.html('<p>' + jGetElement(blockid, ".pageContents").data("findTxt2")
-									.replace("{i}", jGetElement(blockid, ".pageContents").data("found")[currentGroup].length)
+								.html('<p>' + state.findTxt2
+									.replace("{i}", state.found[currentGroup].length)
 									.replace("{n}", groupInfo[currentGroup].numSubGroups) + '</p>')
 								.show();
 						} else if (intType == "find2") {
 							jGetElement(blockid, ".feedback")
-								.html('<p>' + jGetElement(blockid, ".pageContents").data("findTxt2")
-									.replace("{i}", jGetElement(blockid, ".pageContents").data("found")[currentGroup].length + jGetElement(blockid, ".pageContents").data("wrongFound")[currentGroup].length)
+								.html('<p>' + state.findTxt2
+									.replace("{i}", state.found[currentGroup].length + state.wrongFound[currentGroup].length)
 									.replace("{n}", groupInfo[currentGroup].numSubGroups) + '</p>')
 								.show();
 						}
@@ -810,20 +811,20 @@ var interactiveTextBlock = new function () {
 					}
 
 					// add correct highlights for this group
-					for (var i = 0; i < jGetElement(blockid, ".pageContents").data("found")[index].length; i++) {
-						jGetElement(blockid, ".passage .group" + currentGroup + "[data-index=" + jGetElement(blockid, ".pageContents").data("found")[index][i] + "]")
+					for (var i = 0; i < state.found[index].length; i++) {
+						jGetElement(blockid, ".passage .group" + currentGroup + "[data-index=" + state.found[index][i] + "]")
 							.addClass("on")
 							.attr("title", lang2 + ": " + groupInfo[currentGroup].name);
 					}
 
-					for (var i = 0; i < jGetElement(blockid, ".pageContents").data("wrongFound")[index].length; i++) {
-						jGetElement(blockid, ".wrongGroup" + currentGroup + "[data-index=" + jGetElement(blockid, ".pageContents").data("wrongFound")[index][i] + "]")
+					for (var i = 0; i < state.wrongFound[index].length; i++) {
+						jGetElement(blockid, ".wrongGroup" + currentGroup + "[data-index=" + state.wrongFound[index][i] + "]")
 							.addClass("wrongOn" + currentGroup)
 					}
 
 					var passageList = jGetElement(blockid, '.passage').children()[0].childNodes;
 
-					jGetElement(blockid, ".pageContents").data("currentGroup", currentGroup);
+					state.currentGroup = currentGroup;
 				}
 			});
 
@@ -883,7 +884,7 @@ var interactiveTextBlock = new function () {
 			for (var i = 0; i < langOptions.length; i++) {
 				phrases[langOptions[i]] = pageXML.getAttribute(langOptions[i]) != undefined ? pageXML.getAttribute(langOptions[i]) : defaultText[i];
 			}
-			jGetElement(blockid, ".pageContents").data("phrases", phrases);
+			state.phrases = phrases;
 
 
 			jGetElement(blockid, ".questionHolder").html('<h3 class="qNum" tabindex="' + (tabIndex + 1) + '"></h3><div class="qText" tabindex="' + (tabIndex + 2) + '"><p>' + phrases.mcqText + '</p></div><div class="optionHolder"></div>');
@@ -895,8 +896,8 @@ var interactiveTextBlock = new function () {
 				.on("click", ".more", function (e) {
 					e.preventDefault();
 
-					var mcqAnswers = jGetElement(blockid, ".pageContents").data("mcqAnswers"),
-						mcqCurrentQ = jGetElement(blockid, ".pageContents").data("mcqCurrentQ"),
+					var mcqAnswers = state.mcqAnswers,
+						mcqCurrentQ = state.mcqCurrentQ,
 						correctGroup = pageXML.getAttribute("mcqType") == "all" ? mcqAnswers[mcqCurrentQ] : subGroups[mcqAnswers[mcqCurrentQ]].ref;
 
 					x_openDialog("interactiveText", groupInfo[correctGroup].name, x_getLangInfo(x_languageData.find("closeBtnLabel")[0], "label", "Close"), { left: "center", top: "middle", width: undefined, height: undefined }, x_addLineBreaks(groupInfo[correctGroup].text));
@@ -910,9 +911,10 @@ var interactiveTextBlock = new function () {
 			jGetElement(blockid, ".quizBtn")
 				.button()
 				.click(function () {
-					const mcqAnswers = jGetElement(blockid, ".pageContents").data("mcqAnswers");
-					const mcqAnswerOptions = jGetElement(blockid, ".pageContents").data("mcqAnswerOptions");
-					var	mcqCurrentQ = jGetElement(blockid, ".pageContents").data("mcqCurrentQ"),
+					const state = x_getPageDict("state", blockid)
+					const mcqAnswers = state.mcqAnswers;
+					const mcqAnswerOptions = state.mcqAnswerOptions;
+					var	mcqCurrentQ = state.mcqCurrentQ,
 						correct,
 						l_options = [],
 						l_answer = [],
@@ -932,11 +934,11 @@ var interactiveTextBlock = new function () {
 						jGetElement(blockid, ".optionHolder input").prop('disabled', true);
 
 						if (correctGroup == jGetElement(blockid, ".optionHolder input:checked").val()) {
-							jGetElement(blockid, ".marking").html('<p>' + jGetElement(blockid, ".pageContents").data("phrases").mcqCorrect + '</p>');
-							jGetElement(blockid, ".pageContents").data("mcqScore", jGetElement(blockid, ".pageContents").data("mcqScore") + 1);
+							jGetElement(blockid, ".marking").html('<p>' + state.phrases.mcqCorrect + '</p>');
+							state.mcqScore = state.mcqScore + 1;
 							correct = true;
 						} else {
-							jGetElement(blockid, ".marking").html('<p>' + jGetElement(blockid, ".pageContents").data("phrases").mcqWrong.replace("{i}", groupInfo[correctGroup].name) + '</p>');
+							jGetElement(blockid, ".marking").html('<p>' + state.phrases.mcqWrong.replace("{i}", groupInfo[correctGroup].name) + '</p>');
 							correct = false;
 						}
 
@@ -961,7 +963,7 @@ var interactiveTextBlock = new function () {
 						XTExitInteraction(x_currentPage, x_getBlockNr(blockid), result, l_options, l_answer, l_feedback, mcqCurrentQ);
 
 						$(this)
-							.button({ "label": jGetElement(blockid, ".pageContents").data("phrases").mcqBtnTxt2 })
+							.button({ "label": state.phrases.mcqBtnTxt2 })
 							.data("state", 1);
 
 					} else if ($(this).data("state") == 1) { // next
@@ -976,13 +978,13 @@ var interactiveTextBlock = new function () {
 							var $moreInfo = jGetElement(blockid, ".more");
 							$moreInfo.remove();
 							jGetElement(blockid, ".marking")
-								.html('<p>' + jGetElement(blockid, ".pageContents").data("phrases").mcqScore.replace("{i}", jGetElement(blockid, ".pageContents").data("mcqScore")).replace("{n}", mcqAnswers.length) + '</p>' + (pageXML.getAttribute("mcqFB") != "" && pageXML.getAttribute("mcqFB") != undefined ? '<p>' + x_addLineBreaks(pageXML.getAttribute("mcqFB")) + '</p>' : ""))
+								.html('<p>' + state.phrases.mcqScore.replace("{i}", state.mcqScore).replace("{n}", mcqAnswers.length) + '</p>' + (pageXML.getAttribute("mcqFB") != "" && pageXML.getAttribute("mcqFB") != undefined ? '<p>' + x_addLineBreaks(pageXML.getAttribute("mcqFB")) + '</p>' : ""))
 								.children().last().append($moreInfo);
 							jGetElement(blockid, ".more").hide();
 
-							jGetElement(blockid, ".qNum").html(jGetElement(blockid, ".pageContents").data("phrases").mcqFeedback);
+							jGetElement(blockid, ".qNum").html(state.phrases.mcqFeedback);
 
-							finalFeedbackMcq(blockid, jGetElement(blockid, ".pageContents").data("mcqScore"), mcqAnswers.length);
+							finalFeedbackMcq(blockid, state.mcqScore, mcqAnswers.length);
 							jGetElement(blockid, ".feedback").show();
 
 							if (XTGetMode() == "normal") {
@@ -992,7 +994,7 @@ var interactiveTextBlock = new function () {
 							}
 							else {
 								$(this)
-									.button({ "label": jGetElement(blockid, ".pageContents").data("phrases").mcqBtnTxt3 })
+									.button({ "label": state.phrases.mcqBtnTxt3 })
 									.data("state", 2);
 							}
 
@@ -1008,17 +1010,18 @@ var interactiveTextBlock = new function () {
 				});
 			this.createQuiz(blockid);
 		}
-		jGetElement(blockid, ".pageContents").data("tabIndex", tabIndex);
+		state.tabIndex = tabIndex;
 	};
 
 	// only used in explore interaction - triggered when subgroup selected (with or without mouse)
 	this.clickExplore = function (blockid, $this) {
-		const groupInfo = jGetElement(blockid, ".pageContents").data("groupInfo");
-		const subGroups = jGetElement(blockid, ".pageContents").data("subGroups");
-		let tabIndex = jGetElement(blockid, ".pageContents").data("tabIndex");
+		const state = x_getPageDict("state", blockid)
+		const groupInfo = state.groupInfo;
+		const subGroups = state.subGroups;
+		let tabIndex = state.tabIndex;
 		let lang2 = x_getLangInfo(x_languageData.find("interactions").find("moreInfoItem")[0], "selected", "Selected");
 		var index = $this.data("index"),
-			currentGroup = jGetElement(blockid, ".pageContents").data("currentGroup"),
+			currentGroup = state.currentGroup,
 			prevGroup = currentGroup;
 
 		currentGroup = subGroups[index].ref;
@@ -1046,20 +1049,21 @@ var interactiveTextBlock = new function () {
 			jGetElement(blockid, ".showBtn").hide();
 		}
 
-		jGetElement(blockid, ".pageContents").data("tabIndex", tabIndex);
-		jGetElement(blockid, ".pageContents").data("currentGroup", currentGroup);
+		state.tabIndex = tabIndex;
+		state.currentGroup = currentGroup;
 		x_pageContentsUpdated();
 	};
 
 	// only used in find interactions - sets up arrays to hold found/complete data & create buttons
 	this.setUpFind = function (blockid, firstLoad) {
+		const state = x_getPageDict("state", blockid)
 		let pageXML = x_getBlockXML(blockid); 
-		const groupInfo = jGetElement(blockid, ".pageContents").data("groupInfo");
+		const groupInfo = state.groupInfo;
 		var count = 0;
 		for (var i = 0; i < groupInfo.length; i++) {
 			if (firstLoad) {
-				jGetElement(blockid, ".pageContents").data("found").push([]);
-				jGetElement(blockid, ".pageContents").data("wrongFound").push([]);
+				state.found.push([]);
+				state.wrongFound.push([]);
 			}
 			if (groupInfo[i].numSubGroups > 0 && groupInfo[i].name != "#distractor#") {
 				if (firstLoad == true) {
@@ -1077,9 +1081,9 @@ var interactiveTextBlock = new function () {
 				}
 
 				count++;
-				jGetElement(blockid, ".pageContents").data("complete").push(0);
+				state.complete.push(0);
 			} else {
-				jGetElement(blockid, ".pageContents").data("complete").push(1);
+				state.complete.push(1);
 			}
 		}
 		return count;
@@ -1087,27 +1091,28 @@ var interactiveTextBlock = new function () {
 
 	// only used in find interaction - triggered when subgroup selected (with or without mouse)
 	this.clickFind = function (blockid, $this) {
+		const state = x_getPageDict("state", blockid)
 		let pageXML = x_getBlockXML(blockid); 
-		const groupInfo = jGetElement(blockid, ".pageContents").data("groupInfo");
-		if (jGetElement(blockid, ".pageContents").data("checked"))
+		const groupInfo = state.groupInfo;
+		if (state.checked)
 			return;
 		let lang2 = x_getLangInfo(x_languageData.find("interactions").find("moreInfoItem")[0], "selected", "Selected");
 
-		let findAllowSelectionOfAllWords = jGetElement(blockid, ".pageContents").data("findAllowSelectionOfAllWords");
+		let findAllowSelectionOfAllWords = state.findAllowSelectionOfAllWords;
 
-		var currentGroup = jGetElement(blockid, ".pageContents").data("currentGroup");
+		var currentGroup = state.currentGroup;
 		var intType = pageXML.getAttribute("interactivity");
 		if (currentGroup != -1) { // If no group is selected, do nothing.
 
 			// If the user wants to undo their choice:
 			if ($this.hasClass("on")) {
 				$this.removeClass("on");
-				var arr = jGetElement(blockid, ".pageContents").data("found")[currentGroup];
+				var arr = state.found[currentGroup];
 				arr.splice(arr.indexOf($this.data("index")), 1);
 			} else if ($this.hasClass("wrongOn" + currentGroup)) {
 				$this.removeClass("wrongOn" + currentGroup);
 				$this.removeClass("wrongGroup" + currentGroup);
-				var arr = jGetElement(blockid, ".pageContents").data("wrongFound")[currentGroup];
+				var arr = state.wrongFound[currentGroup];
 				arr.splice(arr.indexOf($this.data("index")), 1);
 			}
 			// if the clicked word is a "wrongWord" count it as wrong.
@@ -1129,7 +1134,7 @@ var interactiveTextBlock = new function () {
 									.attr("title", lang2 + ": " + groupInfo[currentGroup].name);
 
 								//Add found (correct) answer to the found array
-								jGetElement(blockid, ".pageContents").data("found")[currentGroup].push($(clicked[i]).data("index"));
+								state.found[currentGroup].push($(clicked[i]).data("index"));
 							}
 
 							break; // break out of loop when one correct answer is found, no need to check further parents, this would only result in false negatives
@@ -1146,35 +1151,35 @@ var interactiveTextBlock = new function () {
 
 			if (intType == "find") {
 				jGetElement(blockid, ".feedback")
-					.html('<p>' + jGetElement(blockid, ".pageContents").data("findTxt2")
-						.replace("{i}", jGetElement(blockid, ".pageContents").data("found")[currentGroup].length)
+					.html('<p>' + state.findTxt2
+						.replace("{i}", state.found[currentGroup].length)
 						.replace("{n}", groupInfo[currentGroup].numSubGroups) + '</p>')
 					.show();
 
 				// If all answers in this groups are found:
-				if (jGetElement(blockid, ".pageContents").data("found")[currentGroup].length == groupInfo[currentGroup].numSubGroups) {
+				if (state.found[currentGroup].length == groupInfo[currentGroup].numSubGroups) {
 					// Put a 1 in the complete array on the index of this group
-					jGetElement(blockid, ".pageContents").data("complete").splice(currentGroup, 1, 1);
+					state.complete.splice(currentGroup, 1, 1);
 					// If there are no more 0's in the "complete array" (aka everything is complete)
-					if ($.inArray(0, jGetElement(blockid, ".pageContents").data("complete")) == -1) {
-						var incorrectFound = jGetElement(blockid, ".pageContents").data("wrongFound");
+					if ($.inArray(0, state.complete) == -1) {
+						var incorrectFound = state.wrongFound;
 						finalFeedback(blockid, incorrectFound);
 						jGetElement(blockid, ".feedback").html('<p>' + (pageXML.getAttribute("findFeedback") != undefined ? pageXML.getAttribute("findFeedback") : "You have completed this activity.") + '</p>');
 					}
 				}
 			} else if (intType == "find2") {
 				jGetElement(blockid, ".feedback")
-					.html('<p>' + jGetElement(blockid, ".pageContents").data("findTxt2")
-						.replace("{i}", jGetElement(blockid, ".pageContents").data("found")[currentGroup].length + jGetElement(blockid, ".pageContents").data("wrongFound")[currentGroup].length)
+					.html('<p>' + state.findTxt2
+						.replace("{i}", state.found[currentGroup].length + state.wrongFound[currentGroup].length)
 						.replace("{n}", groupInfo[currentGroup].numSubGroups) + '</p>')
 					.show();
 
 				// If there are as many selections made as there are right answers to be found in this group:
-				if (jGetElement(blockid, ".pageContents").data("found")[currentGroup].length + jGetElement(blockid, ".pageContents").data("wrongFound")[currentGroup].length == groupInfo[currentGroup].numSubGroups) {
+				if (state.found[currentGroup].length + state.wrongFound[currentGroup].length == groupInfo[currentGroup].numSubGroups) {
 					// Put a 1 in the complete array on the index of this group:
-					jGetElement(blockid, ".pageContents").data("complete").splice(currentGroup, 1, 1);
+					state.complete.splice(currentGroup, 1, 1);
 					// If there are no more 0's in the "complete array" (aka everything is complete)
-					if ($.inArray(0, jGetElement(blockid, ".pageContents").data("complete")) == -1) {
+					if ($.inArray(0, state.complete) == -1) {
 						jGetElement(blockid, ".feedback").html('<p>' + (pageXML.getAttribute("find2Feedback") != undefined ? pageXML.getAttribute("find2Feedback") : "You have selected the the correct number of items, please click the button to check your answers.") + '</p>');
 						jGetElement(blockid, ".markAtEnd").button("enable");
 					}
@@ -1194,10 +1199,11 @@ var interactiveTextBlock = new function () {
 		we could see the difference between a right and wrong answer that is the same word
 	*/
 	this.endFindInteraction = function (blockid) {
+		const state = x_getPageDict("state", blockid)
 		let pageXML = x_getBlockXML(blockid); 
-		var correctFound = jGetElement(blockid, ".pageContents").data("found");
-		var incorrectFound = jGetElement(blockid, ".pageContents").data("wrongFound");
-		var groupInfo = jGetElement(blockid, ".pageContents").data("groupInfo");
+		var correctFound = state.found;
+		var incorrectFound = state.wrongFound;
+		var groupInfo = state.groupInfo;
 		var endScore = 0;
 		var l_options = [];
 		var l_answers = [];
@@ -1264,35 +1270,38 @@ var interactiveTextBlock = new function () {
 			total++;
 		}
 		var score = endScore / total * 100;
-		jGetElement(blockid, ".pageContents").data("checked")
+		state.checked
 	};
 
 	//Mark a wrong word as wrong in the find2 interaction
 	function markWrong(blockid, target, intType, currentGroup) {
+		const state = x_getPageDict("state", blockid)
 		if (checkComplete(blockid, intType, currentGroup)) {
 			return;
 		}
 		if (!$(target).hasClass("wrongGroup" + currentGroup + " wrongOn" + currentGroup)) {
 			$(target).addClass("wrongGroup" + currentGroup + " wrongOn" + currentGroup);
 
-			jGetElement(blockid, ".pageContents").data("wrongFound")[currentGroup].push($(target).data("index"))
+			state.wrongFound[currentGroup].push($(target).data("index"))
 		}
 	};
 
 	// Check if enough words have been chosen in the find2 interaction
 	function checkComplete(blockid, intType, currentGroup) {
-		const groupInfo = jGetElement(blockid, ".pageContents").data("groupInfo");
+		const state = x_getPageDict("state", blockid)
+		const groupInfo = state.groupInfo;
 		if (intType == "find") {
-			return (jGetElement(blockid, ".pageContents").data("found")[currentGroup].length >= groupInfo[currentGroup].numSubGroups);
+			return (state.found[currentGroup].length >= groupInfo[currentGroup].numSubGroups);
 		} else if (intType == "find2") {
-			return (jGetElement(blockid, ".pageContents").data("found")[currentGroup].length + jGetElement(blockid, ".pageContents").data("wrongFound")[currentGroup].length >= groupInfo[currentGroup].numSubGroups);
+			return (state.found[currentGroup].length + state.wrongFound[currentGroup].length >= groupInfo[currentGroup].numSubGroups);
 		}
 	};
 
 	// Show the answers in the find2 interaction, in feedback and colors wrong and right answers
 	function showAnswers(blockid, l_answers, l_options, correctAnswers, correctOptions) {
+		const state = x_getPageDict("state", blockid)
 		let pageXML = x_getBlockXML(blockid); 
-		var groupInfo = jGetElement(blockid, ".pageContents").data("groupInfo");
+		var groupInfo = state.groupInfo;
 		var feedbackTxt = (pageXML.getAttribute('feedbackTxt') != undefined ? pageXML.getAttribute('feedbackTxt') : "Feedback");
 		var groupTxt = (pageXML.getAttribute('groupTxt') != undefined ? pageXML.getAttribute('groupTxt') : "Group");
 		var yourAnswerTxt = (pageXML.getAttribute('yourAnswerTxt') != undefined ? pageXML.getAttribute('yourAnswerTxt') : "Your Answer");
@@ -1399,19 +1408,20 @@ var interactiveTextBlock = new function () {
 	}
 	// only used in mcq interaction - creates new quiz
 	this.createQuiz = function (blockid) {
+		const state = x_getPageDict("state", blockid)
 		let pageXML = x_getBlockXML(blockid); 
 		let mcqCurrentQ = -1;
-		const mcqAnswers = jGetElement(blockid, ".pageContents").data("mcqAnswers");
-		const groupInfo = jGetElement(blockid, ".pageContents").data("groupInfo");
-		const mcqAnswerOptions = jGetElement(blockid, ".pageContents").data("mcqAnswerOptions");
-		const subGroups = jGetElement(blockid, ".pageContents").data("subGroups");
+		const mcqAnswers = state.mcqAnswers;
+		const groupInfo = state.groupInfo;
+		const mcqAnswerOptions = state.mcqAnswerOptions;
+		const subGroups = state.subGroups;
 		mcqAnswers.length = 0;
 		mcqAnswerOptions.length = 0;
 
 		jGetElement(blockid, ".qText").show();
 		jGetElement(blockid, ".questionHolder").show();
 		jGetElement(blockid, ".feedback").hide();
-		jGetElement(blockid, ".pageContents").data("mcqCurrentQ", mcqCurrentQ);
+		state.mcqCurrentQ = mcqCurrentQ;
 
 		// highlight shown for question can be either for all group or an individual sub group
 		if (pageXML.getAttribute("mcqType") == "all") {
@@ -1431,10 +1441,8 @@ var interactiveTextBlock = new function () {
 			mcqAnswerOptions.push({ index: i, text: groupInfo[i].name });
 		}
 
-		jGetElement(blockid, ".pageContents").data({
-			"mcqAnswers": mcqAnswers.slice(0, numQs),
-			"mcqScore": 0
-		});
+		state.mcqAnswers = mcqAnswers.slice(0, numQs);
+		state.mcqScore = 0;
 
 		// start tracking
 		this.startTracking(blockid);
@@ -1443,13 +1451,14 @@ var interactiveTextBlock = new function () {
 
 	// only used in mcq interaction - creates new question
 	this.createQ = function (blockid) {
+		const state = x_getPageDict("state", blockid);
 		let pageXML = x_getBlockXML(blockid); 
-		let mcqCurrentQ = jGetElement(blockid, ".pageContents").data("mcqCurrentQ");
+		let mcqCurrentQ = state.mcqCurrentQ;
 		mcqCurrentQ++;
-		jGetElement(blockid, ".pageContents").data("mcqCurrentQ", mcqCurrentQ);
-		const mcqAnswers = jGetElement(blockid, ".pageContents").data("mcqAnswers");
-		const mcqAnswerOptions = jGetElement(blockid, ".pageContents").data("mcqAnswerOptions");
-		const subGroups = jGetElement(blockid, ".pageContents").data("subGroups");
+		state.mcqCurrentQ = mcqCurrentQ;
+		const mcqAnswers = state.mcqAnswers;
+		const mcqAnswerOptions = state.mcqAnswerOptions;
+		const subGroups = state.subGroups;
 		let lang2 = x_getLangInfo(x_languageData.find("interactions").find("moreInfoItem")[0], "selected", "Selected");
 
 		jGetElement(blockid, ".feedback").hide();
@@ -1457,9 +1466,9 @@ var interactiveTextBlock = new function () {
 			.removeClass("on")
 			.removeAttr("title");
 
-		jGetElement(blockid, ".qNum").html(jGetElement(blockid, ".pageContents").data("phrases").mcqQuesCount.replace("{i}", (mcqCurrentQ + 1)).replace("{n}", mcqAnswers.length));
+		jGetElement(blockid, ".qNum").html(state.phrases.mcqQuesCount.replace("{i}", (mcqCurrentQ + 1)).replace("{n}", mcqAnswers.length));
 		jGetElement(blockid, ".quizBtn")
-			.button({ "label": jGetElement(blockid, ".pageContents").data("phrases").mcqBtnTxt })
+			.button({ "label": state.phrases.mcqBtnTxt })
 			.data("state", 0)
 			.button("disable");
 
@@ -1496,7 +1505,7 @@ var interactiveTextBlock = new function () {
 			result: true
 		});
 		correctAnswer.push(correct['text']);
-		correctFeedback.push(jGetElement(blockid, ".pageContents").data("phrases").mcqCorrect);
+		correctFeedback.push(state.phrases.mcqCorrect);
 
 		x_shuffleArray(options);
 		var numOptions = pageXML.getAttribute("mcqNumAs") == undefined ? 3 : pageXML.getAttribute("mcqNumAs") == "*" ? options.length + 1 : isNaN(pageXML.getAttribute("mcqNumAs")) ? 3 : Number(pageXML.getAttribute("mcqNumAs"));
@@ -1509,7 +1518,7 @@ var interactiveTextBlock = new function () {
 				result: false
 			});
 			correctAnswer.push(thisOption['text']);
-			correctFeedback.push(jGetElement(blockid, ".pageContents").data("phrases").mcqWrong);
+			correctFeedback.push(state.phrases.mcqWrong);
 		});
 		options.push(correct);
 
@@ -1555,8 +1564,9 @@ var interactiveTextBlock = new function () {
 	};
 
 	this.startTracking = function (blockid) {
+		const state = x_getPageDict("state", blockid)
 		let pageXML = x_getBlockXML(blockid); 
-		const mcqAnswers = jGetElement(blockid, ".pageContents").data("mcqAnswers");
+		const mcqAnswers = state.mcqAnswers;
 		var numQs = pageXML.getAttribute("mcqNumQs") == undefined || pageXML.getAttribute("mcqNumQs") == "*" ? mcqAnswers.length : isNaN(pageXML.getAttribute("mcqNumQs")) ? mcqAnswers.length : Number(pageXML.getAttribute("mcqNumQs")),
 			weighting = (pageXML.getAttribute("trackingWeight") != undefined) ? pageXML.getAttribute("trackingWeight") : 1.0;
 		//XTSetPageType(x_currentPage, 'numeric', numQs, weighting);
@@ -1567,17 +1577,18 @@ var interactiveTextBlock = new function () {
 	};
 
 	this.finishTracking = function (blockid) {
+		const state = x_getPageDict("state", blockid)
 		let pageXML = x_getBlockXML(blockid); 
-		const mcqAnswers = jGetElement(blockid, ".pageContents").data("mcqAnswers");
+		const mcqAnswers = state.mcqAnswers;
 		// if this is a find2 interaction
 		if (pageXML.getAttribute("interactivity") == "find2") {
 			interactiveTextBlock.endFindInteraction(blockid);
-			jGetElement(blockid, ".pageContents").data("checked", true);
+			state.checked = true;
 			return;
 		}
 
 		//used for mcq:
-		var score = jGetElement(blockid, ".pageContents").data("mcqScore"),
+		var score = state.mcqScore,
 			numQs = pageXML.getAttribute("mcqNumQs") == undefined || pageXML.getAttribute("mcqNumQs") == "*" ? mcqAnswers.length : isNaN(pageXML.getAttribute("mcqNumQs")) ? mcqAnswers.length : Number(pageXML.getAttribute("mcqNumQs"));
 
 		if (numQs === 0) {
@@ -1587,7 +1598,7 @@ var interactiveTextBlock = new function () {
 			//XTSetPageScore(x_currentPage, score * 100 / numQs, pageXML.getAttribute("trackinglabel"));
 		}
 
-		jGetElement(blockid, ".pageContents").data("checked", true);
+		state.checked = true;
 	};
 
 	this.showFeedBackandTrackResults = function (blockid) {

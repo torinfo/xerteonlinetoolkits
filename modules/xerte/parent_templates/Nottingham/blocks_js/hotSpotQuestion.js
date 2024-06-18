@@ -26,14 +26,18 @@ var hotSpotQuestionBlock= new function () {
 	};
 
 	this.sizeChanged = function (blockid) {
+		if(jGetElement(blockid, ".pageContents").length == 0){
+            return
+        }
+		const state = x_getPageDict("state", blockid)
 		var resizehighlightArray = []
-		let allHighlightsArray = jGetElement(blockid, ".pageContents").data("allHighlightsArray");
+		let allHighlightsArray = state.allHighlightsArray;
 		allHighlightsArray.forEach((highlight, index) => {
 			if (jGetElement(blockid, 'area[data-key="' + index + '"]').hasClass('selected')) {
 				resizehighlightArray.push(index)
 			}
 		});
-		let highlightsArray = jGetElement(blockid, ".pageContents").data('highlightsArray');
+		let highlightsArray = state.highlightsArray;
 		allHighlightsArray = [];
 
 		this.resizeImg(blockid, false);
@@ -70,18 +74,17 @@ var hotSpotQuestionBlock= new function () {
 	};
 
 	this.init = function (blockid) {
+		const state = x_pushToPageDict({}, "state", blockid);
 		let pageXML = x_getBlockXML(blockid);
 		var weighting = 1.0;
 		let attempts = 0;
 		let highlightsIndexArray = [];
 		let highlightsArray = [];
 		let allHighlightsArray = [];
-		jGetElement(blockid, ".pageContents").data({
-			'attempts': attempts,
-			'highlightsIndexArray': highlightsIndexArray,
-			'highlightsArray': highlightsArray,
-			'allHighlightsArray': allHighlightsArray
-		});
+		state.attempts = attempts;
+		state.highlightsIndexArray = highlightsIndexArray;
+		state.highlightsArray = highlightsArray;
+		state.allHighlightsArray = allHighlightsArray;
 		if (pageXML.getAttribute("trackingWeight") != null) {
 			weighting = pageXML.getAttribute("trackingWeight");
 		}
@@ -132,6 +135,7 @@ var hotSpotQuestionBlock= new function () {
 		jGetElement(blockid, ".checkButton")
 			.button({ label: pageXML.getAttribute("btnLabel") != undefined ? pageXML.getAttribute("btnLabel") : "Submit" })
 			.click(function () {
+				const state = x_getPageDict("state", blockid)
 				var stroke = true;
 				var highlightColour = "#ffff00";
 				var strokeWidth = 2;
@@ -351,15 +355,13 @@ var hotSpotQuestionBlock= new function () {
 
 				}
 
-				jGetElement(blockid, ".pageContents").data('attempts', attempts);
+				state.attempts = attempts;
 			});
 
-		jGetElement(blockid, ".pageContents").data({
-			'attempts': attempts,
-			'highlightsIndexArray': highlightsIndexArray,
-			'highlightsArray': highlightsArray,
-			'allHighlightsArray': allHighlightsArray
-		});
+		state.attempts = attempts;
+		state.highlightsIndexArray = highlightsIndexArray;
+		state.highlightsArray = highlightsArray;
+		state.allHighlightsArray = allHighlightsArray;
 	};
 
 	this.resizeImg = function (blockid, firstLoad) {
@@ -406,10 +408,11 @@ var hotSpotQuestionBlock= new function () {
 	};
 
 	this.createHS = function (blockid, first = false) {
+		const state = x_getPageDict("state", blockid)
 		let pageXML = x_getBlockXML(blockid);
-		const highlightsIndexArray = jGetElement(blockid, ".pageContents").data('highlightsIndexArray');
-		const highlightsArray = jGetElement(blockid, ".pageContents").data('highlightsArray');
-		const allHighlightsArray = jGetElement(blockid, ".pageContents").data('allHighlightsArray');
+		const highlightsIndexArray = state.highlightsIndexArray;
+		const highlightsArray = state.highlightsArray;
+		const allHighlightsArray = state.allHighlightsArray;
 		// create hotspots - taking scale of image into account
 		var scale = jGetElement(blockid, ".image").width() / jGetElement(blockid, ":not(.mapster_el).image").data("origSize")[0],
 			correctOptions = [],
@@ -467,7 +470,7 @@ var hotSpotQuestionBlock= new function () {
 			$hotspot
 				.attr("coords", coords_string)
 				.click(function () {
-						console.log(this);
+					const state = x_getPageDict("state", blockid)
 					var $this = $(this);
 					if ($this.hasClass('hotspot') && highlightsIndexArray.indexOf(i) == -1) {
 						$this.addClass("selected");
@@ -483,10 +486,8 @@ var hotSpotQuestionBlock= new function () {
 						}
 					}
 
-					jGetElement(blockid, ".pageContents").data({
-						'highlightsArray': highlightsArray,
-						'highlightsIndexArray': highlightsIndexArray
-					});
+					state.highlightsArray = highlightsArray;
+					state.highlightsIndexArray = highlightsIndexArray;
 				})
 				.focusin(function () {
 					jGetElement(blockid, 'img').mapster('set_options', tabfocusoptions);

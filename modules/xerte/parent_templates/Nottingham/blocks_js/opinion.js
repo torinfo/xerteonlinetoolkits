@@ -2,7 +2,10 @@ var opinionBlock = new function()
 {
     this.sizeChanged = function(blockid)
     {
-				const state = jGetElement(blockid, ".pageContents").data("state");
+        if(jGetElement(blockid, ".pageContents").length == 0){
+            return
+        }
+				const state = x_getPageDict("state", blockid)
         let $pageContents = jGetElement(blockid, ".pageContents");
         var $panel = jGetElement(blockid, ".pageContents .qPanel"),
             resized = false;
@@ -90,7 +93,7 @@ var opinionBlock = new function()
 
     this.startQuestions = function(blockid)
     {
-				const state = jGetElement(blockid, ".pageContents").data("state");
+				const state = x_getPageDict("state", blockid)
         let $pageContents = jGetElement(blockid, ".pageContents");
         let pageXML = x_getBlockXML(blockid);
         // If the language attribute is not defined in the xml, fall back to English.
@@ -162,7 +165,7 @@ var opinionBlock = new function()
 
     this.loadQuestions = function(blockid)
     {
-				const state = jGetElement(blockid, ".pageContents").data("state");
+				const state = x_getPageDict("state", blockid)
         let $pageContents = jGetElement(blockid, ".pageContents");
         jGetElement(blockid, ".checkBtn").button("disable");
 
@@ -213,7 +216,7 @@ var opinionBlock = new function()
 
     this.checkButtonState = function(blockid)
     {
-				const state = jGetElement(blockid, ".pageContents").data("state");
+				const state = x_getPageDict("state", blockid)
         let $pageContents = jGetElement(blockid, ".pageContents");
         var checked = true;
         $.each(state.radioButtonQuestions, function(key, value){
@@ -229,7 +232,7 @@ var opinionBlock = new function()
 
     this.loadQuestion = function(currentQuestion, blockid)
     {
-				const state = jGetElement(blockid, ".pageContents").data("state");
+				const state = x_getPageDict("state", blockid)
         let pageXML = x_getBlockXML(blockid);
         let $pageContents = jGetElement(blockid, ".pageContents");
         var questions = state.questions;
@@ -321,7 +324,7 @@ var opinionBlock = new function()
                                 "id": "option" + currentQuestion + "_" + index
                             })
                             .change(function () {
-                                var radioButtonQuestions = $pageContents.data('radioButtonQuestions');
+                                var radioButtonQuestions = state.radioButtonQuestions;
                                 radioButtonQuestions[currentQuestion] = true;
                                 state.radioButtonQuestions = radioButtonQuestions;
                                 opinionBlock.checkButtonState(blockid);
@@ -384,7 +387,7 @@ var opinionBlock = new function()
                     });
 
                     var cellWidth = 100.0/numberOfOptions;
-                    jGetElement(blockid, "td.labelCell").css("width", cellWidth + "%");
+                    $labelHolder.find("td.labelCell").css("width", cellWidth + "%");
                     jGetElement(blockid, "#slider" + currentQuestion).css("width", 100-cellWidth + 2 +"%");
                     jGetElement(blockid, "#slider" + currentQuestion).css("margin-left", cellWidth/2 - 1 + "%");
 
@@ -406,7 +409,7 @@ var opinionBlock = new function()
 
     this.pageChanged = function(blockid)
     {
-				const state = jGetElement(blockid, ".pageContents").data("state");
+				const state = x_getPageDict("state", blockid)
         let $pageContents = jGetElement(blockid, ".pageContents");
 				if(state.resultShown == false){
 						this.checkButtonState(blockid);
@@ -417,13 +420,13 @@ var opinionBlock = new function()
 
     this.trackQuestions = function(blockid)
     {
-				const state = jGetElement(blockid, ".pageContents").data("state");
+				const state = x_getPageDict("state", blockid)
         let $pageContents = jGetElement(blockid, ".pageContents");
-        var listMode = $pageContents.data('listMode'),
-            pageMode = $pageContents.data('pageMode'),
-            pageSize = $pageContents.data('pageSize'),
-            currentQuestion = $pageContents.data('currentQuestion'),
-            questions = $pageContents.data('questions');
+        var listMode = state.listMode,
+            pageMode = state.pageMode,
+            pageSize = state.pageSize,
+            currentQuestion = state.currentQuestion,
+            questions = state.questions;
 
         if (listMode || listMode == 'all')
         {
@@ -454,10 +457,10 @@ var opinionBlock = new function()
 
     this.trackQuestion = function(currentQuestion, blockid)
     {
-				const state = jGetElement(blockid, ".pageContents").data("state");
+				const state = x_getPageDict("state", blockid)
         let pageXML = x_getBlockXML(x_getBlockNr(blockid));
         let $pageContents = jGetElement(blockid, ".pageContents");
-        var questions = $pageContents.data('questions'),
+        var questions = state.questions,
             currentQ = $(pageXML).children().children()[questions[currentQuestion]],
             selected = 0,
             options = $(currentQ).children();
@@ -531,7 +534,7 @@ var opinionBlock = new function()
     };
 
     this.trackOpinion = function(blockid) {
-				const state = jGetElement(blockid, ".pageContents").data("state");
+				const state = x_getPageDict("state", blockid)
         let pageXML = x_getBlockXML(blockid);
         let $pageContents = jGetElement(blockid, ".pageContents");
         // Last question answered - show results
@@ -552,7 +555,7 @@ var opinionBlock = new function()
         myScore = Math.round(10 * myScore / Object.keys(answeredValues).length) / 10;
 
         var feedbackText = pageXML.getAttribute("feedback") != '' ? "<p>" + x_addLineBreaks(pageXML.getAttribute("feedback")) + "</p>" : '';
-        if ($pageContents.data('showfeedback') && feedbackText != '') {
+        if (state.showfeedback && feedbackText != '') {
             jGetElement(blockid, ".feedback").html(feedbackText);
         } else {
             jGetElement(blockid, ".feedback").remove();
@@ -575,7 +578,7 @@ var opinionBlock = new function()
     {
         let $pageContents = jGetElement(blockid, ".pageContents");
         let pageXML = x_getBlockXML(blockid);
-				const state = jGetElement(blockid, ".pageContents").data("state");
+				const state = x_getPageDict("state", blockid)
         var classNames = [],
             classTitles = [],
             classValues = [],
@@ -618,7 +621,7 @@ var opinionBlock = new function()
 
     this.createDiagram = function(graphObject, blockid)
     {
-				const state = jGetElement(blockid, ".pageContents").data("state");
+				const state = x_getPageDict("state", blockid)
         let pageXML = x_getBlockXML(blockid);
         let $pageContents = jGetElement(blockid, ".pageContents");
         var htmlToChar = function(h){return $("<div>").html(h).text();},
@@ -690,7 +693,7 @@ var opinionBlock = new function()
             'diagramAnswers': [],
         };
 				
-				jGetElement(blockid, ".pageContents").data("state", state);
+        x_pushToPageDict(state, "state", blockid);
 
         if (pageXML.getAttribute("list") != undefined) {
             state.listMode = pageXML.getAttribute("list") === "true" ? true : pageXML.getAttribute("list") === "all" ? "all" : false;
@@ -798,7 +801,7 @@ var opinionBlock = new function()
                 label: resetBtnText
             })
             .click(function() {
-								const state = jGetElement(blockid, ".pageContents").data("state");
+								const state = x_getPageDict("state", blockid)
                 if ($(pageXML).children().length > 0) {
                     state.answeredValues = {};
                     state.diagramLabels = [];

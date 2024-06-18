@@ -31,6 +31,9 @@ var inventoryBlock = new function () {
 
 	// function called every time the size of the LO is changed
 	this.sizeChanged = function (blockid) {
+		if(jGetElement(blockid, ".pageContents").length == 0){
+            return
+        }
 		if (x_browserInfo.mobile == false) {
 			var $panel = jGetElement(blockid, ".infoHolder .panel");
 			// fix sizing
@@ -39,7 +42,8 @@ var inventoryBlock = new function () {
 	}
 
 	this.init = function (blockid) {
-		let pageXML = x_getBlockXML(blockid); 
+		let pageXML = x_getBlockXML(blockid);
+		const state = x_pushToPageDict({}, "state", blockid);
 		// set fixed text fields and page layout
 		jGetElement(blockid, ".mainTxt").html(x_addLineBreaks(pageXML.getAttribute("instructions")));
 		jGetElement(blockid, ".feedbackTxt").html(x_addLineBreaks(pageXML.getAttribute("feedback")));
@@ -88,15 +92,16 @@ var inventoryBlock = new function () {
 		}
 
 		var scoreQ = function ($btn) {
+			const state = x_getPageDict("state", blockid)
 			jGetElement(blockid, ".optionHolder input").attr("disabled", "disabled");
 
 			// add question weighted score to class score
-			var currentQuestion = $(pageXML).children()[jGetElement(blockid, ".pageContents").data("questions")[jGetElement(blockid, ".pageContents").data("currentQ")]];
+			var currentQuestion = $(pageXML).children()[state.questions[state.currentQ]];
 
 			jGetElement(blockid, ".optionHolder input:checked").each(function () {
 				// calculate and store new score for this option's class based on it's previous score and this option's weight
 				var selectedOptionData = $(currentQuestion).children()[$(this).parent().index()];
-				jGetElement(blockid, ".pageContents").data("scores").splice(selectedOptionData.getAttribute("class"), 1, jGetElement(blockid, ".pageContents").data("scores")[selectedOptionData.getAttribute("class")] + Number([selectedOptionData.getAttribute("weight")]));
+				state.scores.splice(selectedOptionData.getAttribute("class"), 1, state.scores[selectedOptionData.getAttribute("class")] + Number([selectedOptionData.getAttribute("weight")]));
 			});
 
 			$btn.attr("disabled", "disabled");
@@ -110,8 +115,9 @@ var inventoryBlock = new function () {
 			})
 			.attr("disabled", "disabled")
 			.click(function () {
+				const state = x_getPageDict("state", blockid)
 				// get feedback for selected options
-				var currentQuestion = $(pageXML).children()[jGetElement(blockid, ".pageContents").data("questions")[jGetElement(blockid, ".pageContents").data("currentQ")]],
+				var currentQuestion = $(pageXML).children()[state.questions[state.currentQ]],
 					feedbackTxt = "";
 
 				jGetElement(blockid, ".optionHolder input:checked").each(function () {
@@ -139,7 +145,8 @@ var inventoryBlock = new function () {
 			})
 			.attr("disabled", "disabled")
 			.click(function () {
-				var currentQuestion = $(pageXML).children()[jGetElement(blockid, ".pageContents").data("questions")[jGetElement(blockid, ".pageContents").data("currentQ")]];
+				const state = x_getPageDict("state", blockid)
+				var currentQuestion = $(pageXML).children()[state.questions[state.currentQ]];
 				if (currentQuestion.getAttribute("questionFeedback") != "yes") {
 					scoreQ($(this));
 				} else {
@@ -147,8 +154,8 @@ var inventoryBlock = new function () {
 					$(this).hide().show(); // hack to take care of IEs inconsistent handling of clicks
 				}
 
-				jGetElement(blockid, ".pageContents").data("currentQ", jGetElement(blockid, ".pageContents").data("currentQ") + 1);
-				if (jGetElement(blockid, ".pageContents").data("currentQ") == jGetElement(blockid, ".pageContents").data("questions").length) {
+				state.currentQ = state.currentQ + 1;
+				if (state.currentQ == state.questions.length) {
 					inventoryBlock.drawChart(blockid);
 				} else {
 					inventoryBlock.loadQ(blockid);
@@ -180,22 +187,23 @@ var inventoryBlock = new function () {
 				qNoTxt = "Question {i} of {n}";
 			}
 
-			jGetElement(blockid, ".pageContents").data({
-				"classes": classes,
-				"qNoTxt": qNoTxt
-			});
+			
+			state.classes = classes;
+			state.qNoTxt = qNoTxt;
+			
 
 
 			this.startQs(blockid);
 		}
 
-		this.sizeChanged();
+		this.sizeChanged(blockid);
 		x_pageLoaded();
 	}
 
 
 	this.startQs = function (blockid) {
 		let pageXML = x_getBlockXML(blockid); 
+		const state = x_getPageDict("state", blockid)
 		jGetElement(blockid, ".pageContents .quiz").show();
 		jGetElement(blockid, ".pageContents .chart").hide();
 		jGetElement(blockid, ".nextBtn, .checkBtn").attr("disabled", "disabled");
@@ -225,17 +233,15 @@ var inventoryBlock = new function () {
 		}
 
 		// reset stored scores
-		for (i = 0; i < jGetElement(blockid, ".pageContents").data("classes").length; i++) {
+		for (i = 0; i < state.classes.length; i++) {
 			scores.push(0);
 			totals.push(0);
 		}
 
-		jGetElement(blockid, ".pageContents").data({
-			"questions": questions,
-			"currentQ": 0,
-			"scores": scores,
-			"totals": totals
-		});
+		state.questions = questions;
+		state.currentQ = 0;
+		state.scores = scores;
+		state.totals = totals;
 
 		this.loadQ(blockid);
 	}
@@ -243,10 +249,11 @@ var inventoryBlock = new function () {
 
 	this.loadQ = function (blockid) {
 		let pageXML = x_getBlockXML(blockid); 
-		var thisQ = $(pageXML).children()[jGetElement(blockid, ".pageContents").data("questions")[jGetElement(blockid, ".pageContents").data("currentQ")]];
+		const state = x_getPageDict("state", blockid)
+		var thisQ = $(pageXML).children()[state.questions[state.currentQ]];
 
 		// set up question text, image, feedback text
-		jGetElement(blockid, ".qNo").html(jGetElement(blockid, ".pageContents").data("qNoTxt").replace("{i}", jGetElement(blockid, ".pageContents").data("currentQ") + 1).replace("{n}", jGetElement(blockid, ".pageContents").data("questions").length));
+		jGetElement(blockid, ".qNo").html(state.qNoTxt.replace("{i}", state.currentQ + 1).replace("{n}", state.questions.length));
 
 		var infoString = thisQ.getAttribute("prompt"),
 			url = thisQ.getAttribute("image");
@@ -316,7 +323,7 @@ var inventoryBlock = new function () {
 
 					var optTxt = x_addLineBreaks(this.getAttribute("text"));
 					if (x_params.authorSupport == "true") {
-						optTxt += ' <span class="alert">[' + jGetElement(blockid, ".pageContents").data("classes")[this.getAttribute("class")] + " : " + this.getAttribute("weight") + ']</span>';
+						optTxt += ' <span class="alert">[' + state.currentQ[this.getAttribute("class")] + " : " + this.getAttribute("weight") + ']</span>';
 					}
 
 					$thisOptionTxt
@@ -327,7 +334,7 @@ var inventoryBlock = new function () {
 
 					if (pageXML.getAttribute("scoreType") == "individual percent") {
 						// need to keep track of max score possible for each class
-						jGetElement(blockid, ".pageContents").data("totals").splice(this.getAttribute("class"), 1, jGetElement(blockid, ".pageContents").data("totals")[this.getAttribute("class")] + Number(this.getAttribute("weight")));
+						state.totals.splice(this.getAttribute("class"), 1, state.totals[this.getAttribute("class")] + Number(this.getAttribute("weight")));
 					}
 				});
 		}
@@ -344,10 +351,11 @@ var inventoryBlock = new function () {
 
 	this.drawChart = function (blockid) {
 		let pageXML = x_getBlockXML(blockid); 
+		const state = x_getPageDict("state", blockid)
 		jGetElement(blockid, ".pageContents .quiz").hide();
 		jGetElement(blockid, ".pageContents .chart").show();
 
-		var scores = jGetElement(blockid, ".pageContents").data("scores"),
+		var scores = state.scores,
 			maxScore = 0, // max value to show on bar / line graph
 			i;
 
@@ -366,7 +374,7 @@ var inventoryBlock = new function () {
 		} else if (pageXML.getAttribute("scoreType") == "individual percent") {
 			// coverts scores to percantage of total points possible for that class
 			// e.g. classA = 70%, classB = 60%, classC = 20%
-			var totals = jGetElement(blockid, ".pageContents").data("totals");
+			var totals = state.totals;
 			for (i = 0; i < scores.length; i++) {
 				if (scores[i] > 0) {
 					scores.splice(i, 1, Math.round((scores[i] / totals[i]) * 100));
@@ -429,7 +437,7 @@ var inventoryBlock = new function () {
 			// give canvas a description including data so it's accessible
 			var chartDescr = pageXML.getAttribute("chartTitle") + ":";
 			for (i = 0; i < scores.length; i++) {
-				chartDescr += " " + jGetElement(blockid, ".pageContents").data("classes")[i] + " = " + scores[i];
+				chartDescr += " " + state.classes[i] + " = " + scores[i];
 				if (pageXML.getAttribute("scoreType") == "relative percent" || pageXML.getAttribute("scoreType") == "individual percent") {
 					chartDescr += "%";
 				}
@@ -448,7 +456,7 @@ var inventoryBlock = new function () {
 			tableHolder.find("table, p").remove();
 
 			for (var i = 0; i < scores.length; i++) {
-				table += '<tr><td>' + jGetElement(blockid, ".pageContents").data("classes")[i] + '</td><td>' + scores[i];
+				table += '<tr><td>' + state.classes[i] + '</td><td>' + scores[i];
 				if (pageXML.getAttribute("scoreType") == "relative percent" || pageXML.getAttribute("scoreType") == "individual percent") {
 					table += "%";
 				}
@@ -492,6 +500,7 @@ var inventoryBlock = new function () {
 	}
 
 	this.doAxesAndLabels = function (blockid, canvas, scores, maxScore, availW, availH, txtColour) {
+		const state = x_getPageDict("state", blockid)
 		// draw x/y axis
 		canvas.strokeStyle = "#000000";
 		canvas.beginPath();
@@ -506,8 +515,8 @@ var inventoryBlock = new function () {
 		for (var i = 0; i < scores.length; i++) {
 			canvas.fillStyle = txtColour;
 			canvas.textBaseline = "top";
-			var xLength = canvas.measureText(jGetElement(blockid, ".pageContents").data("classes")[i]).width;
-			canvas.fillText(jGetElement(blockid, ".pageContents").data("classes")[i], barW * (i + 0.5) - xLength / 2 - 1, availH - 16);
+			var xLength = canvas.measureText(state.classes[i]).width;
+			canvas.fillText(state.classes[i], barW * (i + 0.5) - xLength / 2 - 1, availH - 16);
 		}
 
 		// draw the y labels
@@ -516,6 +525,7 @@ var inventoryBlock = new function () {
 	}
 
 	this.doPie = function (blockid, canvas, scores, colour, availW, availH, txtColour) {
+		const state = x_getPageDict("state", blockid)
 		// build the colour array - convert to rgb to get different shades and then convert back to hex
 		var rgbToHex = function (r, g, b) {
 			return "#" + ((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1);
@@ -544,7 +554,7 @@ var inventoryBlock = new function () {
 			canvas.fill();
 			canvas.textBaseline = "top";
 			canvas.fillStyle = txtColour;
-			canvas.fillText(jGetElement(blockid, ".pageContents").data("classes")[i], -30, 10 + i * 20);
+			canvas.fillText(state.classes[i], -30, 10 + i * 20);
 		}
 
 		// draw chart

@@ -1,5 +1,5 @@
 var gapFillBlock = new function() {
-    var gapFillModelState = {
+    var state = {
         labelTxt1: null,
         labelTxt2: null,
         labelTxt3: null,
@@ -16,14 +16,9 @@ var gapFillBlock = new function() {
         allDropDownAnswers:null,
         labelAnswers: {}
     };
-
-    var $pageContents,
-        $targetHolder,
-        $feedbackTxt,
-        $audioHolder;
-
+		
     this.resetModelState = function(){
-        gapFillModelState = {
+        return {
             labelTxt1: null,
             labelTxt2: null,
             labelTxt3: null,
@@ -42,47 +37,23 @@ var gapFillBlock = new function() {
         };
     }
 
-    this.refreshPageVariables = function(blockid){
-        $pageContents = jGetElement(blockid, ".pageContents");
-        $targetHolder = jGetElement(blockid, ".targetHolder");
-        $feedbackTxt = jGetElement(blockid, ".feedbackTxt");
-        $audioHolder = jGetElement(blockid, ".audioHolder");
-    }
-
     // function called every time the page is viewed after it has initially loaded
     this.pageChanged = function(blockid) {
-        gapFillModelState = XTGetInteractionModelState(x_currentPage, x_getBlockNr(blockid));
-        this.refreshPageVariables(blockid);
+        let $pageContents = jGetElement(blockid, ".pageContents");
+        const state = x_getPageDict("state",blockid)
 
-        gapFillModelState.casesensitive = $pageContents.data('casesensitive');
-        gapFillModelState.answerData = $pageContents.data('answerData');
-        gapFillModelState.allDropDownAnswers = $pageContents.data('allDropDownAnswers');
-        gapFillModelState.labelAnswers = $pageContents.data('labelAnswers');
-        gapFillModelState.finished = $pageContents.data('finished');
-        gapFillModelState.score = $pageContents.data('score');
-        gapFillModelState.attempts = $pageContents.data('attempts');
-
-        if (XTGetMode() == "normal") { this.isTracked = true; };
+        if (XTGetMode() == "normal") { state.isTracked = true; };
 
         $pageContents.find("#hint").remove();
-        XTSetInteractionModelState(x_currentPage, x_getBlockNr(blockid), gapFillModelState);
+        XTSetInteractionModelState(x_currentPage, x_getBlockNr(blockid), state);
 				this.sizeChanged(blockid);
     }
 
     this.leavePage = function(blockid) {
+        const state = x_getPageDict("state", blockid);
         let pageXML = x_getBlockXML(blockid);
-        gapFillBlock.refreshPageVariables(blockid);
-        $pageContents.data({
-            'casesensitive': gapFillModelState.casesensitive,
-            'answerData': gapFillModelState.answerData,
-            'allDropDownAnswers': gapFillModelState.allDropDownAnswers,
-            'labelAnswers': gapFillModelState.labelAnswers,
-            'finished': gapFillModelState.finished,
-            'score': gapFillModelState.score,
-            'attempts': gapFillModelState.attempts
-        });
 
-        if (gapFillModelState.finished == false) {
+        if (state.finished == false) {
             if(pageXML.getAttribute("interactivity") == "Drag Drop")
             {
                 gapFillBlock.dragDropSubmit(true, blockid);
@@ -100,7 +71,12 @@ var gapFillBlock = new function() {
 
     // function called every time the size of the LO is changed
     this.sizeChanged = function(blockid) {
-        this.refreshPageVariables(blockid);
+        if(jGetElement(blockid, ".pageContents").length == 0){
+            return
+        }
+        let $pageContents = jGetElement(blockid, ".pageContents");
+        let $targetHolder = jGetElement(blockid, ".targetHolder");
+        let $audioHolder = jGetElement(blockid, ".audioHolder");
         var $panel = jGetElement(blockid, ".mainPanel");
 
         if (x_browserInfo.mobile == false) {
@@ -119,7 +95,8 @@ var gapFillBlock = new function() {
     }
 
     this.audioFbResize = function(show, blockid) {
-        this.refreshPageVariables(blockid);
+        let $targetHolder = jGetElement(blockid, ".targetHolder");
+        let $audioHolder = jGetElement(blockid, ".audioHolder");
         if (show === true) {
             $audioHolder.show();
         }
@@ -137,14 +114,17 @@ var gapFillBlock = new function() {
     }
 
     this.init = function(blockid) {
+        let $pageContents = jGetElement(blockid, ".pageContents");
+        let $targetHolder = jGetElement(blockid, ".targetHolder");
+        let $feedbackTxt = jGetElement(blockid, ".feedbackTxt");
+        let $audioHolder = jGetElement(blockid, ".audioHolder");
+        const state = x_pushToPageDict(this.resetModelState(), "state", blockid);
         let pageXML = x_getBlockXML(blockid);
-        this.resetModelState();
-        this.refreshPageVariables(blockid);
 
-        this.weighting = 1.0;
+        let weighting = 1.0;
         if (pageXML.getAttribute("trackingWeight") != undefined)
         {
-            this.weighting = pageXML.getAttribute("trackingWeight");
+            weighting = pageXML.getAttribute("trackingWeight");
         }
 
         $dragDropHolder = jGetElement(blockid, ".dragDropHolder");
@@ -152,12 +132,12 @@ var gapFillBlock = new function() {
 
         const blocknr = x_getBlockNr(blockid);
 
-        gapFillModelState.delimiter = pageXML.getAttribute("answerDelimiter") != undefined && pageXML.getAttribute("answerDelimiter") != "" ? pageXML.getAttribute("answerDelimiter")  : ",";
+        state.delimiter = pageXML.getAttribute("answerDelimiter") != undefined && pageXML.getAttribute("answerDelimiter") != "" ? pageXML.getAttribute("answerDelimiter")  : ",";
 
         if(XTGetMode() == "normal") {
-            this.isTracked = true;
+            state.isTracked = true;
         } else {
-            this.isTracked = false;
+            state.isTracked = false;
         }
 
         // add aria-label to answer box input/selects
@@ -194,8 +174,8 @@ var gapFillBlock = new function() {
             markedWord = false,
             i;
 
-        gapFillModelState.answerData = []; // contains array of possible correct texts for blanks
-        gapFillModelState.allDropDownAnswers = [];
+        state.answerData = []; // contains array of possible correct texts for blanks
+        state.allDropDownAnswers = [];
 
         var dropDownDelimiter,
             dropDownNoise;
@@ -227,17 +207,17 @@ var gapFillBlock = new function() {
                 //reminder
                 if (pageXML.getAttribute("interactivity") == "Drag Drop") {
                     gapFillStr += '<span id="gap' + (i-1)/2 + '" class="target highlight" tabindex="0">' + decodedAnswer + '</span>';
-                    gapFillModelState.answerData.push(decodedAnswer.split(gapFillModelState.delimiter));
+                    state.answerData.push(decodedAnswer.split(state.delimiter));
 
                 } else if (pageXML.getAttribute("interactivity") == "Drop Down Menu") {
 
                     var answer = $("<div>").html(decodedAnswer).text();
                     var allAnswers = answer.split(dropDownDelimiter);
-                    gapFillModelState.answerData.push(allAnswers[0].split(gapFillModelState.delimiter));
+                    state.answerData.push(allAnswers[0].split(state.delimiter));
 
                     // options in combo boxes include all correct answers (1st answers separated by gapFillModelState.delimiter ","), all incorrect answers (subsequent answers separated by dropDownDelimiter "/") & all noise answers (separated by noiseDelimiter)
                     // e.g. dog,cat/fish/bird - where dog & cat are possible correct answers & fish & bird are distractors
-                    allAnswers = allAnswers.concat(allAnswers[0].split(gapFillModelState.delimiter));
+                    allAnswers = allAnswers.concat(allAnswers[0].split(state.delimiter));
                     allAnswers.splice(0,1);
                     if (dropDownNoise != undefined) {
                         allAnswers = allAnswers.concat(dropDownNoise);
@@ -257,7 +237,7 @@ var gapFillBlock = new function() {
                         }
                     }
 
-                    gapFillModelState.allDropDownAnswers.push(allAnswers);
+                    state.allDropDownAnswers.push(allAnswers);
                     gapFillStr += '<select id="gap' + (i-1)/2 + '" class="menu" tabindex="0" aria-label="' + answerFieldLabel + ' ' + (1+(i-1)/2) + '">';
                     gapFillStr += '<option value=" "> </option>';
                     for (var j=0; j<allAnswers.length; j++) {
@@ -271,16 +251,16 @@ var gapFillBlock = new function() {
                     gapFillStr += '<input type="text" id="gap' + (i-1)/2 + '" value="' + answer + '" tabindex="0" aria-label="' + answerFieldLabel + ' ' + (1+(i-1)/2) + '" autocapitalize="none" autocomplete="off" autocorrect="off" spellcheck="false" />';
 
                     var tempArray = [];
-                    tempArray = answer.split(gapFillModelState.delimiter);
+                    tempArray = answer.split(state.delimiter);
 
-                    gapFillModelState.casesensitive = pageXML.getAttribute("casesensitive") != "true" && pageXML.getAttribute("casesensitive") != "1" ? false : true;
+                    state.casesensitive = pageXML.getAttribute("casesensitive") != "true" && pageXML.getAttribute("casesensitive") != "1" ? false : true;
 
-                    if (!gapFillModelState.casesensitive) {
+                    if (!state.casesensitive) {
                         for (var j=0; j < tempArray.length; j++) {
                             tempArray[j] = tempArray[j].toLowerCase();
                         }
                     }
-                    gapFillModelState.answerData.push(tempArray);
+                    state.answerData.push(tempArray);
                 }
                 markedWord = false;
             }
@@ -291,12 +271,12 @@ var gapFillBlock = new function() {
             var $this = $(this);
             if (pageXML.getAttribute("interactivity") == "Drag Drop") {
                 $this.data("answer", $this.html());
-                var	answers = $this.html().split(gapFillModelState.delimiter),
+                var	answers = $this.html().split(state.delimiter),
                     longest = answers.sort(function (a, b) { return b.length - a.length; })[0];
                 $this.html(longest);
 
             } else if (pageXML.getAttribute("interactivity") != "Drop Down Menu") { // text fill in blank
-                var	answers = $this.attr("value").split(gapFillModelState.delimiter),
+                var	answers = $this.attr("value").split(state.delimiter),
                     longest = answers.sort(function (a, b) { return b.length - a.length; })[0];
                 $this.attr("value", longest);
             }
@@ -335,14 +315,14 @@ var gapFillBlock = new function() {
             correctOption,
             correctOptions;
         if(pageXML.getAttribute("interactivity") == "Fill in Blank"){
-            for (interactionNumber=0;  interactionNumber<gapFillModelState.answerData.length;  interactionNumber++) {
+            for (interactionNumber=0;  interactionNumber<state.answerData.length;  interactionNumber++) {
                 name = "interaction number" + " " + interactionNumber;
-                correctAnswer = gapFillModelState.answerData[interactionNumber];
+                correctAnswer = state.answerData[interactionNumber];
                 XTEnterInteraction(x_currentPage,  blocknr , 'fill-in', name, [], correctAnswer, "Correct", pageXML.getAttribute("grouping"), null, interactionNumber);
-                XTSetInteractionType(x_currentPage, x_getBlockNr(blockid), 'fill-in', this.weighting, 1);
+                XTSetInteractionType(x_currentPage, x_getBlockNr(blockid), 'fill-in', weighting, 1);
                 XTSetLeavePage(x_currentPage, blocknr, this.leavePage);
                 XTSetInteractionPageXML(x_currentPage, blocknr, pageXML, interactionNumber);
-                XTSetInteractionModelState(x_currentPage, blocknr, gapFillModelState, interactionNumber);
+                XTSetInteractionModelState(x_currentPage, blocknr, state, interactionNumber);
             }
         }
         else if(pageXML.getAttribute("interactivity") == "Drag Drop"){
@@ -353,32 +333,32 @@ var gapFillBlock = new function() {
             {
                 name = pageXML.getAttribute("trackinglabel");
             }
-            for (interactionNumber=0;  interactionNumber<gapFillModelState.answerData.length;  interactionNumber++) {
-                correctAnswer = gapFillModelState.answerData[interactionNumber][0];
+            for (interactionNumber=0;  interactionNumber<state.answerData.length;  interactionNumber++) {
+                correctAnswer = state.answerData[interactionNumber][0];
                 correctAnswer = correctAnswer + "-->" + correctAnswer;
                 correctAnswers.push(correctAnswer);
-                correctOption = {source: gapFillModelState.answerData[interactionNumber][0], target: gapFillModelState.answerData[interactionNumber][0]}
+                correctOption = {source: state.answerData[interactionNumber][0], target: state.answerData[interactionNumber][0]}
                 correctOptions.push(correctOption);
             }
             
             XTEnterInteraction(x_currentPage,  blocknr , 'match', name, correctOptions, correctAnswers, "", pageXML.getAttribute("grouping"), null);
-            XTSetInteractionType(x_currentPage, x_getBlockNr(blockid), 'match', this.weighting, 1);
+            XTSetInteractionType(x_currentPage, x_getBlockNr(blockid), 'match', weighting, 1);
             XTSetLeavePage(x_currentPage, blocknr, this.leavePage);
             XTSetInteractionPageXML(x_currentPage, blocknr, pageXML)
-            XTSetInteractionModelState(x_currentPage, blocknr, gapFillModelState)
+            XTSetInteractionModelState(x_currentPage, blocknr, state)
         }
         else{ // drop down menu
-            for (interactionNumber=0;  interactionNumber<gapFillModelState.answerData.length;  interactionNumber++) {
+            for (interactionNumber=0;  interactionNumber<state.answerData.length;  interactionNumber++) {
                 correctAnswers = [];
                 correctOptions = [];
                 name = "interaction number" + " " + interactionNumber;
-                for (var i=0; i<gapFillModelState.answerData[interactionNumber].length; i++) {
-                    correctAnswers.push(gapFillModelState.answerData[interactionNumber][i]);
+                for (var i=0; i<state.answerData[interactionNumber].length; i++) {
+                    correctAnswers.push(state.answerData[interactionNumber][i]);
                 }
-                for (var i=0; i<gapFillModelState.allDropDownAnswers[interactionNumber].length; i++)
+                for (var i=0; i<state.allDropDownAnswers[interactionNumber].length; i++)
                 {
                     var correctAnswer = false;
-                    var p = gapFillModelState.answerData[interactionNumber].indexOf(gapFillModelState.allDropDownAnswers[interactionNumber][i]);
+                    var p = state.answerData[interactionNumber].indexOf(state.allDropDownAnswers[interactionNumber][i]);
                     if (p >=0)
                     {
                         correctAnswer = true;
@@ -386,15 +366,15 @@ var gapFillBlock = new function() {
 
                     correctOptions.push({
                         id: (i + 1) + "",
-                        answer: gapFillModelState.allDropDownAnswers[interactionNumber][i],
+                        answer: state.allDropDownAnswers[interactionNumber][i],
                         result: correctAnswer
                     });
                 }
                 XTEnterInteraction(x_currentPage,  blocknr , 'multiplechoice', name, correctOptions, correctAnswers, "Correct", pageXML.getAttribute("grouping"), null, interactionNumber);
-                XTSetInteractionType(x_currentPage, x_getBlockNr(blockid), 'multiplechoice', this.weighting, 1);
+                XTSetInteractionType(x_currentPage, x_getBlockNr(blockid), 'multiplechoice', weighting, 1);
                 XTSetLeavePage(x_currentPage, blocknr, this.leavePage);
                 XTSetInteractionPageXML(x_currentPage, blocknr, pageXML, interactionNumber);
-                XTSetInteractionModelState(x_currentPage, blocknr, gapFillModelState, interactionNumber);
+                XTSetInteractionModelState(x_currentPage, blocknr, state, interactionNumber);
             }
         }
 
@@ -405,8 +385,10 @@ var gapFillBlock = new function() {
     }
 
     this.setUpDropDown = function(blockid) {
+        let $targetHolder = jGetElement(blockid, ".targetHolder");
+        let $feedbackTxt = jGetElement(blockid, ".feedbackTxt");
+        const state = x_getPageDict("state",blockid);
         let pageXML = x_getBlockXML(blockid);
-        this.refreshPageVariables(blockid);
         jGetElement(blockid, ".labelHolder").remove();
 
         if (pageXML.getAttribute("spaceLines") != "false") {
@@ -428,11 +410,11 @@ var gapFillBlock = new function() {
             .click(function() {
                 $targetHolder.find("select").each(function(i) {
                     var $this = $(this);
-                    if ($.inArray($this.val(), gapFillModelState.answerData[i]) != -1) {
+                    if ($.inArray($this.val(), state.answerData[i]) != -1) {
                         $this.attr("disabled", "disabled");
                     } else {
                         $this
-                            .val(gapFillModelState.answerData[i][0])
+                            .val(state.answerData[i][0])
                             .attr("disabled", "disabled")
                             .addClass("answerShown");
                     }
@@ -445,7 +427,7 @@ var gapFillBlock = new function() {
                 $(this).hide();
                 jGetElement(blockid, ".submitBtn").hide();
 
-                gapFillModelState.finished = true;
+                state.finished = true;
             });
 
         $targetHolder.find("select").on("change", function() {
@@ -454,8 +436,11 @@ var gapFillBlock = new function() {
     }
 
     this.setUpFillBlank = function(blockid) {
+        let $pageContents = jGetElement(blockid, ".pageContents");
+        let $targetHolder = jGetElement(blockid, ".targetHolder");
+        let $feedbackTxt = jGetElement(blockid, ".feedbackTxt");
+        const state = x_getPageDict("state",blockid);
         let pageXML = x_getBlockXML(blockid);
-        this.refreshPageVariables(blockid);
 
         jGetElement(blockid, ".labelHolder").remove();
 
@@ -479,20 +464,19 @@ var gapFillBlock = new function() {
                 $(this).data("index", $targetHolder.find("input").index($(this))); // stored here as using .index() won't return result needed as there are other elements (line breaks etc.) in $targetHolder
             });
 
-        if ((pageXML.getAttribute("markEnd") == undefined || pageXML.getAttribute("markEnd") == "false") && !this.isTracked) {
+        if ((pageXML.getAttribute("markEnd") == undefined || pageXML.getAttribute("markEnd") == "false") && !state.isTracked) {
             jGetElement(blockid, ".submitBtn, .showBtn").remove();
 
             $targetHolder.find("input")
                 .addClass("incorrect")
                 .on("keypress", function() {
-                    gapFillModelState = XTGetInteractionModelState(x_currentPage, x_getBlockNr(blockid));
-                    if (gapFillModelState.finished == false) {
+                    const state = x_getPageDict("state",blockid)
+                    if (state.finished == false) {
                         var $this = $(this);
                         setTimeout(function() {
                             pageXML = x_getBlockXML(x_getBlockNr(blockid));
-                            gapFillBlock.refreshPageVariables(blockid);
-                            var currvalue = !gapFillModelState.casesensitive ? $this.val().trim().toLowerCase() : $this.val().trim();
-                            if (gapFillModelState.answerData[$this.data("index")].indexOf(currvalue) != -1) { // correct
+                            var currvalue = !state.casesensitive ? $this.val().trim().toLowerCase() : $this.val().trim();
+                            if (state.answerData[$this.data("index")].indexOf(currvalue) != -1) { // correct
                                 $this
                                     .attr("readonly", "readonly")
                                     .addClass("correct")
@@ -507,21 +491,21 @@ var gapFillBlock = new function() {
                                 }
 
 
-                                gapFillModelState.correct_answers++;
-                                gapFillModelState.total++;
+                                state.correct_answers++;
+                                state.total++;
                                 var result = {
                                     success: true,
                                     score: 100.0
                                 };
-                                let answer = !gapFillModelState.casesensitive ? $this.val().trim().toLowerCase() : $this.val().trim();
+                                let answer = !state.casesensitive ? $this.val().trim().toLowerCase() : $this.val().trim();
 
                                 XTExitInteraction(x_currentPage, x_getBlockNr(blockid) , result, [], answer, "Correct", $this.data("index"), pageXML.getAttribute("trackinglabel"));
-                                XTSetInteractionModelState(x_currentPage, x_getBlockNr(blockid), gapFillModelState, $this.data("index"));
+                                XTSetInteractionModelState(x_currentPage, x_getBlockNr(blockid), state, $this.data("index"));
                             } else { // wrong - start showing hint after 3 wrong characters entered - this only gives hint if there's only 1 possible correct answer for the gap
                                 if (pageXML.getAttribute("showHint") != "false") {
                                     var wrong = 0;
                                     for (i=0; i<$this.val().length; i++) {
-                                        if (gapFillModelState.answerData[$this.data("index")].length == 1 && (i+1 > gapFillModelState.answerData[$this.data("index")][0].length || currvalue[i] != gapFillModelState.answerData[$this.data("index")][0][i])) {
+                                        if (state.answerData[$this.data("index")].length == 1 && (i+1 > state.answerData[$this.data("index")][0].length || currvalue[i] != state.answerData[$this.data("index")][0][i])) {
                                             wrong++;
                                         }
                                     }
@@ -535,7 +519,7 @@ var gapFillBlock = new function() {
                                             $this.data("attempt", $this.data("attempt")+1);
                                             if ($this.data("attempt") % 2 != 0) { // odd num
                                                 var currentHint = $this.data("hint"),
-                                                    correctAnswer = gapFillModelState.answerData[$this.data("index")][0]
+                                                    correctAnswer = state.answerData[$this.data("index")][0]
 
                                                 if (currentHint == undefined) { // show 1st letter
                                                     currentHint = "";
@@ -613,15 +597,16 @@ var gapFillBlock = new function() {
                     label:	pageXML.getAttribute("showBtn") != undefined && pageXML.getAttribute("showBtn") != "" ? pageXML.getAttribute("showBtn") : "Show Answers"
                 })
                 .click(function() {
+										const state = x_getPageDict("state",blockid);
                     $targetHolder.find("input").each(function() {
                         var $this = $(this),
-                            currvalue = !gapFillModelState.casesensitive ? $this.val().trim().toLowerCase() : $this.val().trim();
+                            currvalue = !state.casesensitive ? $this.val().trim().toLowerCase() : $this.val().trim();
 
-                        if (gapFillModelState.answerData[$this.data("index")].indexOf(currvalue) != -1) {
+                        if (state.answerData[$this.data("index")].indexOf(currvalue) != -1) {
                             $this.attr("readonly", "readonly");
                             $this.attr("correct", "correct");
                         } else {
-                            $this.val(gapFillModelState.answerData[$this.data("index")][0]);
+                            $this.val(state.answerData[$this.data("index")][0]);
                             $this
                                 .addClass("answerShown")
                                 .attr("readonly", "readonly");
@@ -634,24 +619,27 @@ var gapFillBlock = new function() {
                     $feedbackTxt.fadeIn();
                     gapFillBlock.audioFbResize(true, blockid);
 
-                    gapFillModelState.finished = true;
+                    state.finished = true;
                 });
         }
 
         $targetHolder.find("input").on("keypress", function() {
-            if (gapFillModelState.finished == false) {
+						const state = x_getPageDict("state",blockid);
+            if (state.finished == false) {
                 $feedbackTxt.hide();
             }
         });
     }
 
     this.setUpDragDrop = function(blockid) {
+        let $targetHolder = jGetElement(blockid, ".targetHolder");
+        let $feedbackTxt = jGetElement(blockid, ".feedbackTxt");
+        const state = x_getPageDict("state",blockid);
         let pageXML = x_getBlockXML(blockid);
         
-        this.refreshPageVariables(blockid);
         let blocknr = x_getBlockNr(blockid);
         // if mark at end is off but tracking is on then it will mark at end anyway
-        if (!this.isTracked && (pageXML.getAttribute("markEnd") == undefined || pageXML.getAttribute("markEnd") == "false")) {
+        if (!state.isTracked && (pageXML.getAttribute("markEnd") == undefined || pageXML.getAttribute("markEnd") == "false")) {
             jGetElement(blockid, ".submitBtn").hide();
 
         } else {
@@ -668,6 +656,7 @@ var gapFillBlock = new function() {
                     label:	pageXML.getAttribute("showBtn") != undefined && pageXML.getAttribute("showBtn") != "" ? pageXML.getAttribute("showBtn") : "Show Answers"
                 })
                 .click(function() {
+										const state = x_getPageDict("state",blockid);
                     var $incorrectTargets = jGetElement(blockid, ".targetHolder .target").filter(function () {
                         return $(this).data("correct") != true;
                     });
@@ -689,16 +678,16 @@ var gapFillBlock = new function() {
                     $feedbackTxt.fadeIn();
                     gapFillBlock.audioFbResize(true, blockid);
 
-                    gapFillModelState.finished = true;
+                    state.finished = true;
                 });
         }
 
         // store strings used to give titles to labels and targets when keyboard is being used (for screen readers)
-        gapFillModelState.labelTxt1 = x_getLangInfo(x_languageData.find("interactions").find("draggableItem")[0], "name", "Draggable Item");
-        gapFillModelState.labelTxt2 = x_getLangInfo(x_languageData.find("interactions").find("draggableItem")[0], "selected", "Item Selected");
-        gapFillModelState.labelTxt3 = x_getLangInfo(x_languageData.find("interactions").find("draggableItem")[0], "toSelect", "Press space to select");
-        gapFillModelState.targetTxt1 = x_getLangInfo(x_languageData.find("interactions").find("targetArea")[0], "description", "Drop zone for");
-        gapFillModelState.targetTxt2 = x_getLangInfo(x_languageData.find("interactions").find("targetArea")[0], "toSelect", "Press space to drop the selected item.");
+        state.labelTxt1 = x_getLangInfo(x_languageData.find("interactions").find("draggableItem")[0], "name", "Draggable Item");
+        state.labelTxt2 = x_getLangInfo(x_languageData.find("interactions").find("draggableItem")[0], "selected", "Item Selected");
+        state.labelTxt3 = x_getLangInfo(x_languageData.find("interactions").find("draggableItem")[0], "toSelect", "Press space to select");
+        state.targetTxt1 = x_getLangInfo(x_languageData.find("interactions").find("targetArea")[0], "description", "Drop zone for");
+        state.targetTxt2 = x_getLangInfo(x_languageData.find("interactions").find("targetArea")[0], "toSelect", "Press space to drop the selected item.");
         
         // set up targets
         var	maxW = 0,
@@ -711,7 +700,7 @@ var gapFillBlock = new function() {
 
         $($targetHolder.find(".target")).each(function(i) {
             $(this)
-                .attr("title", gapFillModelState.targetTxt1 + " " + (i + 1))
+                .attr("title", state.targetTxt1 + " " + (i + 1))
                 .data("index", i); // stored here as using .index() won't return result needed as there are other elements (line breaks etc.) in $targetHolder
         });
         //reminder
@@ -738,7 +727,7 @@ var gapFillBlock = new function() {
 
         this.setUpTargetListeners($targetHolder.find(".target"), blockid);
 
-        var allLabels = gapFillModelState.answerData.slice();
+        var allLabels = state.answerData.slice();
 
         // set up labels
         if (pageXML.getAttribute("noise") != undefined && pageXML.getAttribute("noise") != "") { // save distractor data
@@ -756,7 +745,7 @@ var gapFillBlock = new function() {
             var arrayString = "";
             for (var j=0; j<allLabels[i].length; j++) {
                 if (j != 0) {
-                    arrayString += gapFillModelState.delimiter;
+                    arrayString += state.delimiter;
                 }
                 arrayString += allLabels[i][j];
             }
@@ -764,7 +753,7 @@ var gapFillBlock = new function() {
             // where there are multiple gaps where the answers can be placed in any order, only create the labels for these once
             if (tempMultiAnswers.indexOf(arrayString) == -1) {
                 for (var j=0; j<allLabels[i].length; j++) {
-                    $('<div class="label panel" title="' + gapFillModelState.labelTxt1 + '">' + allLabels[i][j] + '</div>')
+                    $('<div class="label panel" title="' + state.labelTxt1 + '">' + allLabels[i][j] + '</div>')
                         .appendTo(jGetElement(blockid, ".labelHolder"))
                         .data("answer", arrayString);
                 }
@@ -793,15 +782,15 @@ var gapFillBlock = new function() {
                 start:			function() {
                     // remove any focus/selection highlights made by tabbing to labels/targets
                     if (jGetElement(blockid, ".labelHolder .label.focus").length > 0) {
-                        jGetElement(blockid, ".labelHolder .label.focus").attr("title", gapFillModelState.labelTxt1);
+                        jGetElement(blockid, ".labelHolder .label.focus").attr("title", state.labelTxt1);
                     }
-                    if ($pageContents.data("selectedLabel") != undefined && $pageContents.data("selectedLabel") != "") {
-                        $pageContents.data("selectedLabel").attr("title", gapFillModelState.labelTxt1);
-                        $pageContents.data("selectedLabel", "");
+                    if (state.selectedLabel != undefined && state.selectedLabel != "") {
+                        state.selectedLabel.attr("title", state.labelTxt1);
+                        state.selectedLabel = "";
                     }
                     var targetInFocus = jGetElement(blockid, ".targetHolder .target.highlightDark");
                     if (targetInFocus.length > 0) {
-                        targetInFocus.attr("title", gapFillModelState.targetTxt1 + " " + (targetInFocus.index() + 1));
+                        targetInFocus.attr("title", state.targetTxt1 + " " + (targetInFocus.index() + 1));
                     }
                     jGetElement(blockid, ".dragDropHolder .selected").removeClass("selected");
                     jGetElement(blockid, ".dragDropHolder .focus").removeClass("focus");
@@ -810,11 +799,11 @@ var gapFillBlock = new function() {
             })
             .disableSelection();
 
-        this.setUpLabelListeners(jGetElement(blockid, ".dragDropHolder .label"));
+				this.setUpLabelListeners(jGetElement(blockid, ".dragDropHolder .label"), blockid);
 
         for (i=0; i<jGetElement(blockid, ".targetHolder .target").length; i++) {
             jGetElement(blockid, ".targetHolder .target:eq(" + i + ")").droppable({
-                accept:	(!this.isTracked && (pageXML.getAttribute("markEnd") == undefined || pageXML.getAttribute("markEnd") == "false")) ?
+                accept:	(!state.isTracked && (pageXML.getAttribute("markEnd") == undefined || pageXML.getAttribute("markEnd") == "false")) ?
                     jGetElement(blockid, ".labelHolder .label").filter(function() {
                         return $(this).data("answer") == jGetElement(blockid, ".targetHolder .target:eq(" + i + ")").data("answer");
                     }) : jGetElement(blockid, ".labelHolder .label")
@@ -824,9 +813,10 @@ var gapFillBlock = new function() {
 
     // function called when label dropped on target - by mouse or keyboard
     this.dropLabel = function($thisTarget, $thisLabel, blockid) {
+        let $targetHolder = jGetElement(blockid, ".targetHolder");
+        let $feedbackTxt = jGetElement(blockid, ".feedbackTxt");
+        const state = x_getPageDict("state",blockid)
         let pageXML = x_getBlockXML(blockid);
-        this.refreshPageVariables(blockid);
-        gapFillModelState = XTGetInteractionModelState(x_currentPage, x_getBlockNr(blockid));
         $feedbackTxt.hide();
 
         $thisLabel
@@ -836,15 +826,15 @@ var gapFillBlock = new function() {
             .off("keypress focusin focusout")
             .css("opacity", 0);
 
-        if (this.isTracked || pageXML.getAttribute("markEnd") == "true") {
+        if (state.isTracked || pageXML.getAttribute("markEnd") == "true") {
             if ($thisLabel.data("answer") == $thisTarget.data("answer")) {
-                gapFillModelState.score++;
+                state.score++;
                 $thisLabel.add($thisTarget).data("correct", true);
             }
         } else {
             $thisTarget.addClass("correct");
             if ($thisLabel.data("answer") == $thisTarget.data("answer")) {
-                gapFillModelState.score++;
+                state.score++;
                 $thisLabel.add($thisTarget).data("correct", true);
             }
         }
@@ -856,11 +846,11 @@ var gapFillBlock = new function() {
             .droppable("option", "disabled", true)
             .removeClass("highlight highlightDark ui-state-disabled");
 
-        $pageContents.data("selectedLabel", "");
-        gapFillModelState.labelAnswers[$thisTarget.data("answer")] = $thisLabel.data("answer");
+        state.selectedLabel = "";
+        state.labelAnswers[$thisTarget.data("answer")] = $thisLabel.data("answer");
 
         // if it's marked as completed (can only drop on correct targets) then show feedback immediately when complete
-        if (!this.isTracked && (pageXML.getAttribute("markEnd") != "true" && $targetHolder.find(".target.highlight").length == 0)) {
+        if (!state.isTracked && (pageXML.getAttribute("markEnd") != "true" && $targetHolder.find(".target.highlight").length == 0)) {
             jGetElement(blockid, ".labelHolder").hide();
             jGetElement(blockid, ".feedbackTxt .txt").html(x_addLineBreaks(pageXML.getAttribute("feedback")));
             $feedbackTxt.fadeIn();
@@ -868,12 +858,11 @@ var gapFillBlock = new function() {
             gapFillBlock.dragDropSubmit(false, blockid);
             //reminder
         }
-        XTSetInteractionModelState(x_currentPage, x_getBlockNr(blockid), gapFillModelState)
+        XTSetInteractionModelState(x_currentPage, x_getBlockNr(blockid), state)
     }
 
     // set up events used when keyboard rather than mouse is used
     this.setUpTargetListeners = function($targets, blockid) {
-        this.refreshPageVariables(blockid);
         $targets
             .focusin(function (e) {
                 return targetFocusIn(e, blockid);
@@ -887,89 +876,93 @@ var gapFillBlock = new function() {
     }
 
     var targetFocusIn = function(e, blockid) {
-        gapFillBlock.refreshPageVariables(blockid);
+        const state = x_getPageDict("state",blockid);
         var $this = $(this);
         $this.addClass("highlightDark");
-        if ($pageContents.data("selectedLabel") != undefined && $pageContents.data("selectedLabel") != "") {
-            $this.attr("title", gapFillModelState.targetTxt1 + " " + ($this.data("index") + 1) + " - " + gapFillModelState.targetTxt2);
+        if (state.selectedLabel != undefined && state.selectedLabel != "") {
+            $this.attr("title", state.targetTxt1 + " " + ($this.data("index") + 1) + " - " + state.targetTxt2);
         }
     }
 
     var targetFocusOut = function(e, blockid) {
-        gapFillBlock.refreshPageVariables(blockid);
+        const state = x_getPageDict("state",blockid);
         var $this = $(this);
         $this
             .removeClass("highlightDark")
-            .attr("title", gapFillModelState.targetTxt1 + " " + ($this.data("index") + 1));
+            .attr("title", state.targetTxt1 + " " + ($this.data("index") + 1));
     }
 
     var targetKeyPress = function(e, blockid) {
-        gapFillBlock.refreshPageVariables(blockid);
+        const state = x_getPageDict("state",blockid);
         var charCode = e.charCode || e.keyCode;
         if (charCode == 32) {
-            var $selectedLabel = $pageContents.data("selectedLabel");
+            var $selectedLabel = state.selectedLabel;
             if ($selectedLabel != undefined && $selectedLabel != "") {
-                if (gapFillModelState.answerData[$(this).data("index")].indexOf($selectedLabel.html()) != -1 || (pageXML.getAttribute("markEnd") != undefined && pageXML.getAttribute("markEnd") != "false") || (this.isTracked)) {
+                if (state.answerData[$(this).data("index")].indexOf($selectedLabel.html()) != -1 || (pageXML.getAttribute("markEnd") != undefined && pageXML.getAttribute("markEnd") != "false") || (state.isTracked)) {
                     gapFillBlock.dropLabel($(this), $selectedLabel, blockid); // target, label
                 } else {
-                    $(this).attr("title", gapFillModelState.targetTxt1 + " " + ($(this).data("index") + 1));
+                    $(this).attr("title", state.targetTxt1 + " " + ($(this).data("index") + 1));
                     $selectedLabel
                         .removeClass("selected")
-                        .attr("title", gapFillModelState.labelTxt1);
-                    $pageContents.data("selectedLabel", "");
+                        .attr("title", state.labelTxt1);
+                    state.selectedLabel = "";
                 }
             }
         }
     }
 
     // set up events used when keyboard rather than mouse is used
-    this.setUpLabelListeners = function($labels) {
+    this.setUpLabelListeners = function($labels, blockid) {
         // highlight selected labels / targets and set the title attr which the screen readers will use
         $labels
-            .focusin(labelFocusIn)
-            .focusout(labelFocusOut)
-            .keypress(labelKeyPress);
+            .focusin(labelFocusIn.bind(null, blockid))
+            .focusout(labelFocusOut.bind(null, blockid))
+            .keypress(labelKeyPress.bind(null, blockid));
     }
 
-    var labelFocusIn = function(e) {
+    var labelFocusIn = function(blockid, e) {
+        const state = x_getPageDict("state",blockid);
         var $this = $(this);
-        if ($this.is($pageContents.data("selectedLabel")) == false) {
+        if ($this.is(state.selectedLabel) == false) {
             $this
                 .addClass("focus")
-                .attr("title", gapFillModelState.labelTxt1 + " - " + gapFillModelState.labelTxt3);
+                .attr("title", state.labelTxt1 + " - " + state.labelTxt3);
         }
     }
 
-    var labelFocusOut = function(e) {
+    var labelFocusOut = function(blockid, e) {
+        const state = x_getPageDict("state",blockid);
         var $this = $(this);
         $this.removeClass("focus");
-        if ($this.is($pageContents.data("selectedLabel")) == false) {
-            $this.attr("title", gapFillModelState.labelTxt1);
+        if ($this.is(state.selectedLabel) == false) {
+            $this.attr("title", state.labelTxt1);
         }
     }
 
-    var labelKeyPress = function(e) {
+    var labelKeyPress = function(blockid, e) {
+        const state = x_getPageDict("state",blockid);
         var charCode = e.charCode || e.keyCode;
         if (charCode == 32) {
-            if ($pageContents.data("selectedLabel") != undefined && $pageContents.data("selectedLabel") != "") {
-                $pageContents.data("selectedLabel")
+            if (state.selectedLabel != undefined && state.selectedLabel != "") {
+                state.selectedLabel
                     .removeClass("selected")
-                    .attr("title", gapFillModelState.labelTxt1);
+                    .attr("title", state.labelTxt1);
             }
             var $this = $(this);
             $this
                 .removeClass("focus")
                 .addClass("selected")
-                .attr("title", gapFillModelState.labelTxt1 + ' - ' + gapFillModelState.labelTxt2);
-            $pageContents.data("selectedLabel", $this);
+                .attr("title", state.labelTxt1 + ' - ' + state.labelTxt2);
+            state.selectedLabel = $this;
         }
     };
 
     this.dropDownSubmit = function(forced, blockid) {
+        let $targetHolder = jGetElement(blockid, ".targetHolder");
+        let $feedbackTxt = jGetElement(blockid, ".feedbackTxt");
+        const state = x_getPageDict("state",blockid)
         let pageXML = x_getBlockXML(blockid);
         let blocknr = x_getBlockNr(blockid);
-        gapFillModelState = XTGetInteractionModelState(x_currentPage, blocknr);
-        this.refreshPageVariables(blockid);
 
         // no answers given
         if ($targetHolder.find('select option:selected[value=" "]').parent().length == $targetHolder.find('select').length) {
@@ -982,7 +975,7 @@ var gapFillBlock = new function() {
             // an attempt (even if partial) has been made
         } else {
             // mark exercise (unless force tracking mode is on & exercise is incomplete)
-            if ($targetHolder.find('select option:selected[value=" "]').parent().length == 0 || !this.isTracked) {
+            if ($targetHolder.find('select option:selected[value=" "]').parent().length == 0 || !state.isTracked) {
                 var wrong = 0,
                     correct,
                     result,
@@ -990,22 +983,22 @@ var gapFillBlock = new function() {
                     answers,
                     options;
 
-                gapFillModelState.total = 0;
-                gapFillModelState.correct_answers = 0;
+                state.total = 0;
+                state.correct_answers = 0;
 
                 $targetHolder.find("select").each(function(i) {
                     var $this = $(this);
                     answers = [];
                     options = [];
                     answer = $this.val();
-                    gapFillModelState.total++;
+                    state.total++;
 
-                    if ($.inArray($this.val(), gapFillModelState.answerData[i]) != -1) {
+                    if ($.inArray($this.val(), state.answerData[i]) != -1) {
                         $this
                             .attr("disabled", "disabled")
                             .addClass('correct');
                         correct = true;
-                        gapFillModelState.correct_answers++;
+                        state.correct_answers++;
                     } else {
                         wrong++;
                         correct = false;
@@ -1019,9 +1012,9 @@ var gapFillBlock = new function() {
                     $this.find(":selected").each(function(j) {
                         $this = $(this);
                         options.push({
-                            id: $.inArray($this.val(), gapFillModelState.allDropDownAnswers[i]) + 1 + "",
+                            id: $.inArray($this.val(), state.allDropDownAnswers[i]) + 1 + "",
                             answer: $this.val(),
-                            result: ($.inArray($this.val(), gapFillModelState.answerData[i]) != -1)
+                            result: ($.inArray($this.val(), state.answerData[i]) != -1)
                         });
                     });
 
@@ -1036,14 +1029,14 @@ var gapFillBlock = new function() {
                     $feedbackTxt.fadeIn();
                     gapFillBlock.audioFbResize(true, blockid);
 
-                    gapFillModelState.finished = true;
+                    state.finished = true;
 
                 } else {
                     if (pageXML.getAttribute("showHint") != "false") {
                         $targetHolder.find("select").each(function() {
                             if ($(this).val() != " ") {
-                                gapFillModelState.attempts++;
-                                if (gapFillModelState.attempts >= (pageXML.getAttribute("attemptsBeforeHint") != undefined && $.isNumeric(pageXML.getAttribute("attemptsBeforeHint")) ? Number(pageXML.getAttribute("attemptsBeforeHint")) : 2)) {
+                                state.attempts++;
+                                if (state.attempts >= (pageXML.getAttribute("attemptsBeforeHint") != undefined && $.isNumeric(pageXML.getAttribute("attemptsBeforeHint")) ? Number(pageXML.getAttribute("attemptsBeforeHint")) : 2)) {
                                     jGetElement(blockid, ".showBtn").show();
                                 }
                                 return false;
@@ -1055,13 +1048,13 @@ var gapFillBlock = new function() {
                     var gapFillWrong = x_addLineBreaks(pageXML.getAttribute("gapFillWrong") != undefined && pageXML.getAttribute("gapFillWrong") != "" ? pageXML.getAttribute("gapFillWrong") : "You have not filled any gaps correctly. Try again."),
                         gapFillPartWrong = x_addLineBreaks(pageXML.getAttribute("gapFillPartWrong") != undefined && pageXML.getAttribute("gapFillPartWrong") != "" ? pageXML.getAttribute("gapFillPartWrong") : "Your correct answers are shown in green. Try again with those you have got wrong.");
 
-                    if (this.isTracked) {
+                    if (state.isTracked) {
                         gapFillWrong = x_addLineBreaks(pageXML.getAttribute("gapFillWrongTracking") != undefined && pageXML.getAttribute("gapFillWrongTracking") != "" ? pageXML.getAttribute("gapFillWrongTracking") : "You have not filled any gaps correctly.");
                         gapFillPartWrong = x_addLineBreaks(pageXML.getAttribute("gapFillPartWrongTracking") != undefined && pageXML.getAttribute("gapFillPartWrongTracking") != "" ? pageXML.getAttribute("gapFillPartWrongTracking") : "Your correct answers are shown in green.");
 
                         jGetElement(blockid, ".submitBtn").hide();
                         jGetElement(blockid, ".showBtn").show();
-                        gapFillModelState.finished = true;
+                        state.finished = true;
 
                         $targetHolder.find("select").each(function(i) {
                             $(this).attr("disabled", "disabled");
@@ -1085,10 +1078,11 @@ var gapFillBlock = new function() {
     };
 
     this.fillInSubmit = function(forced, blockid){
+        let $targetHolder = jGetElement(blockid, ".targetHolder");
+        let $feedbackTxt = jGetElement(blockid, ".feedbackTxt");
+        const state = x_getPageDict("state",blockid);
         let pageXML = x_getBlockXML(blockid);
-        this.refreshPageVariables(blockid);
         let blocknr = x_getBlockNr(blockid);
-        pageXML = x_getBlockXML(blocknr);
         // no answers given
         if ($targetHolder.find("input").filter(function() { return $(this).val() != ""; }).length == 0) {
             // prompt to complete exercise unless this has been triggered by leaving the page
@@ -1100,32 +1094,32 @@ var gapFillBlock = new function() {
             // an attempt (even if partial) has been made
         } else {
             // mark exercise (unless force tracking mode is on & exercise is incomplete)
-            if ($targetHolder.find("input").filter(function() { return $(this).val() == ""; }).length == 0 || !this.isTracked) {
+            if ($targetHolder.find("input").filter(function() { return $(this).val() == ""; }).length == 0 || !state.isTracked) {
                 if (pageXML.getAttribute("showHint") != "false") {
-                    gapFillModelState.attempts++;
-                    if (gapFillModelState.attempts >= (pageXML.getAttribute("attemptsBeforeHint") != undefined && $.isNumeric(pageXML.getAttribute("attemptsBeforeHint")) ? Number(pageXML.getAttribute("attemptsBeforeHint")) : 2)) {
+                    state.attempts++;
+                    if (state.attempts >= (pageXML.getAttribute("attemptsBeforeHint") != undefined && $.isNumeric(pageXML.getAttribute("attemptsBeforeHint")) ? Number(pageXML.getAttribute("attemptsBeforeHint")) : 2)) {
                         jGetElement(blockid, ".showBtn").show();
                     }
                 }
 
                 var wrong = 0;
-                gapFillModelState.total = 0;
-                gapFillModelState.correct_answers = 0;
+                state.total = 0;
+                state.correct_answers = 0;
 
                 $targetHolder.find("input").each(function() {
                     var $this = $(this),
-                        currvalue = !gapFillModelState.casesensitive ? $this.val().trim().toLowerCase() : $this.val().trim();
+                        currvalue = !state.casesensitive ? $this.val().trim().toLowerCase() : $this.val().trim();
                     var feedback = "Incorrect";
                     var correct = false;
                     var answer = currvalue;
 
-                    if (gapFillModelState.answerData.length > 0 && gapFillModelState.answerData[$this.data("index")].indexOf(currvalue) != -1) { // correct
+                    if (state.answerData.length > 0 && state.answerData[$this.data("index")].indexOf(currvalue) != -1) { // correct
                         $this.attr("readonly", "readonly");
                         $this.attr("correct", "correct");
                         $this.addClass("correct");
                         feedback = "Correct";
                         correct = true;
-                        gapFillModelState.correct_answers++;
+                        state.correct_answers++;
 
                     } else {
                         if(XTGetMode() == "normal") {
@@ -1136,7 +1130,7 @@ var gapFillBlock = new function() {
                         wrong++;
                     }
 
-                    gapFillModelState.total++;
+                    state.total++;
                     var result = {
                         success: correct,
                         score: (correct ? 100.0 : 0.0)
@@ -1151,11 +1145,11 @@ var gapFillBlock = new function() {
                 var gapFillWrong = x_addLineBreaks(pageXML.getAttribute("gapFillWrong") != undefined && pageXML.getAttribute("gapFillWrong") != "" ? pageXML.getAttribute("gapFillWrong") : "You have not filled any gaps correctly. Try again."),
                     gapFillPartWrong = x_addLineBreaks(pageXML.getAttribute("gapFillPartWrong") != undefined && pageXML.getAttribute("gapFillPartWrong") != "" ? pageXML.getAttribute("gapFillPartWrong") : "Your correct answers are shown in green. Try again with those you have got wrong.");
 
-                if (this.isTracked) {
+                if (state.isTracked) {
                     gapFillWrong = x_addLineBreaks(pageXML.getAttribute("gapFillWrongTracking") != undefined && pageXML.getAttribute("gapFillWrongTracking") != "" ? pageXML.getAttribute("gapFillWrongTracking") : "You have not filled any gaps correctly.");
                     gapFillPartWrong = x_addLineBreaks(pageXML.getAttribute("gapFillPartWrongTracking") != undefined && pageXML.getAttribute("gapFillPartWrongTracking") != "" ? pageXML.getAttribute("gapFillPartWrongTracking") : "Your correct answers are shown in green.");
 
-                    gapFillModelState.finished = true;
+                    state.finished = true;
                 }
 
                 if (wrong == 0) {
@@ -1164,7 +1158,7 @@ var gapFillBlock = new function() {
                     $feedbackTxt.fadeIn();
                     gapFillBlock.audioFbResize(true, blockid);
 
-                    gapFillModelState.finished = true;
+                    state.finished = true;
 
                 } else {
                     if (wrong == $targetHolder.find("input").length) {
@@ -1174,7 +1168,7 @@ var gapFillBlock = new function() {
                     }
                     $feedbackTxt.fadeIn();
 
-                    if (this.isTracked) {
+                    if (state.isTracked) {
                         jGetElement(blockid, ".submitBtn").hide();
                         jGetElement(blockid, ".showBtn").show();
                     }
@@ -1189,8 +1183,10 @@ var gapFillBlock = new function() {
     };
 
     this.dragDropSubmit = function(forced, blockid) {
+        let $targetHolder = jGetElement(blockid, ".targetHolder");
+        let $feedbackTxt = jGetElement(blockid, ".feedbackTxt");
+        const state = x_getPageDict("state",blockid);
         let pageXML = x_getBlockXML(blockid);
-        this.refreshPageVariables(blockid);
         // no blanks completed
         if ($targetHolder.find(".target:not(.highlight)").length == 0) {
             // prompt to complete exercise unless this has been triggered by leaving the page
@@ -1202,7 +1198,7 @@ var gapFillBlock = new function() {
             // an attempt (even if partial) has been made
         } else {
             // mark exercise (unless force tracking mode is on & exercise is incomplete)
-            if ($targetHolder.find(".target.highlight").length == 0 || !this.isTracked) {
+            if ($targetHolder.find(".target.highlight").length == 0 || !state.isTracked) {
                 jGetElement(blockid, ".targetHolder .target").filter(function () {
                     return $(this).data("correct") == true;
                 }).addClass("correct");
@@ -1219,23 +1215,23 @@ var gapFillBlock = new function() {
                 var l_options = [];
                 var l_answers = [];
                 var feedback = "Correct";
-                gapFillModelState.total = 0;
-                gapFillModelState.correct_answers = 0;
+                state.total = 0;
+                state.correct_answers = 0;
 
-                for (var interactionNumber = 0; interactionNumber < gapFillModelState.answerData.length; interactionNumber++) {
-                    var correctAnswer = gapFillModelState.answerData[interactionNumber][0];
-                    var labelSource = gapFillModelState.labelAnswers[correctAnswer];
+                for (var interactionNumber = 0; interactionNumber < state.answerData.length; interactionNumber++) {
+                    var correctAnswer = state.answerData[interactionNumber][0];
+                    var labelSource = state.labelAnswers[correctAnswer];
                     var option = {source: labelSource, target: correctAnswer};
                     l_options.push(option);
                     if (option.source == option.target) {
-                        gapFillModelState.correct_answers++;
+                        state.correct_answers++;
                     }
 
                     var l_answer = labelSource + "-->" + correctAnswer;
                     l_answers.push(l_answer);
-                    gapFillModelState.total++;
+                    state.total++;
                 }
-                var correct = (gapFillModelState.total == gapFillModelState.correct_answers);
+                var correct = (state.total == state.correct_answers);
                 var result = {
                     success: correct,
                     score: (correct ? 100.0 : 0.0)
@@ -1245,7 +1241,7 @@ var gapFillBlock = new function() {
 
                 gapFillBlock.finishTracking(blockid);
 
-                if (!this.isTracked) {
+                if (!state.isTracked) {
                     // reset incorrect labels so you can try again
                     $incorrectTargets
                         .html("")
@@ -1258,12 +1254,12 @@ var gapFillBlock = new function() {
                         .addClass("highlight");
 
                     $incorrectTargets.each(function() {
-                        $(this).attr("title", gapFillModelState.targetTxt1 + " " + ($(this).data("index") + 1));
-                        delete gapFillModelState.labelAnswers[$(this).data("answer")];
+                        $(this).attr("title", state.targetTxt1 + " " + ($(this).data("index") + 1));
+                        delete state.labelAnswers[$(this).data("answer")];
                     });
 
                     $incorrectLabels
-                        .attr("title", gapFillModelState.labelTxt1)
+                        .attr("title", state.labelTxt1)
                         .draggable("option", "disabled", false)
                         .focusin(labelFocusIn)
                         .focusout(labelFocusOut)
@@ -1277,8 +1273,8 @@ var gapFillBlock = new function() {
                     if ($targetHolder.find(".target.highlight").length == 0) {
                         jGetElement(blockid, ".submitBtn, .showBtn").hide();
                     } else if (pageXML.getAttribute("showHint") != "false") {
-                        gapFillModelState.attempts++;
-                        if (gapFillModelState.attempts >= (pageXML.getAttribute("attemptsBeforeHint") != undefined && $.isNumeric(pageXML.getAttribute("attemptsBeforeHint")) ? Number(pageXML.getAttribute("attemptsBeforeHint")) : 2)) {
+                        state.attempts++;
+                        if (state.attempts >= (pageXML.getAttribute("attemptsBeforeHint") != undefined && $.isNumeric(pageXML.getAttribute("attemptsBeforeHint")) ? Number(pageXML.getAttribute("attemptsBeforeHint")) : 2)) {
                             jGetElement(blockid, ".showBtn").show();
                         }
                     }
@@ -1287,7 +1283,7 @@ var gapFillBlock = new function() {
                     // if tracked then you don't get to try again (is this how it should be?)
                     $incorrectTargets.addClass("incorrect");
                     jGetElement(blockid, ".submitBtn").hide();
-                    gapFillModelState.finished = true;
+                    state.finished = true;
 
                     if (correct !== true) {
                         jGetElement(blockid, ".showBtn").show();
@@ -1295,14 +1291,14 @@ var gapFillBlock = new function() {
                 }
 
                 // feedback...
-                if (gapFillModelState.score == jGetElement(blockid, ".targetHolder .target").length) {
+                if (state.score == jGetElement(blockid, ".targetHolder .target").length) {
                     jGetElement(blockid, ".labelHolder").hide();
                     jGetElement(blockid, ".feedbackTxt .txt").html(x_addLineBreaks(pageXML.getAttribute("feedback")));
                     $feedbackTxt.fadeIn();
                     gapFillBlock.audioFbResize(true, blockid);
-                    gapFillModelState.finished = true;
+                    state.finished = true;
                 } else {
-                    if (gapFillModelState.score == 0) {
+                    if (state.score == 0) {
                         jGetElement(blockid, ".feedbackTxt .txt").html('<p>' + x_addLineBreaks(pageXML.getAttribute("gapFillWrongTracking") != undefined && pageXML.getAttribute("gapFillWrongTracking") != "" ? pageXML.getAttribute("gapFillWrongTracking") : "You have not filled any gaps correctly.") + '</p>');
                     } else {
                         jGetElement(blockid, ".feedbackTxt .txt").html('<p>' + x_addLineBreaks(pageXML.getAttribute("gapFillPartWrongTracking") != undefined && pageXML.getAttribute("gapFillPartWrongTracking") != "" ? pageXML.getAttribute("gapFillPartWrongTracking") : "Your correct answers are shown in green.") + '</p>');
@@ -1321,11 +1317,11 @@ var gapFillBlock = new function() {
     //Starting the tracking
     this.initTracking = function(blockid) {
         let pageXML = x_getBlockXML(blockid);
+        const state = x_getPageDict("state", blockid);
         // Track the gapfill page
-        gapFillModelState = XTGetInteractionModelState(x_currentPage, x_getBlockNr(blockid));
         if (pageXML.getAttribute("interactivity") == "Drop Down Menu" || pageXML.getAttribute("interactivity") == "Fill in Blank")
         {
-            // XTSetPageType(x_currentPage, 'numeric', gapFillModelState.answerData.length, this.weighting);
+            // XTSetPageType(x_currentPage, 'numeric', state.answerData.length, this.weighting);
         }
         else { // text fill in blank or drag & drop
             // XTSetPageType(x_currentPage, 'numeric', 1, this.weighting);

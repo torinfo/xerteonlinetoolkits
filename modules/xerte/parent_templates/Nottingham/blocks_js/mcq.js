@@ -12,20 +12,23 @@ var mcqBlock = new function() {
     // function called every time the page is viewed after it has initially loaded
     this.pageChanged = function(blockid) {
         let pageXML = x_getBlockXML(blockid);
-				const state = jGetElement(blockid, ".pageContents").data("state");
+				const state = x_getPageDict("state", blockid)
 
         if ($(pageXML).children().length > 0) {
             //this.startQ(blockid);
-            jGetElement(blockid, ".feedback").find('.feedbackBlock').html("");
-            jGetElement(blockid, ".optionHolder input:checked").prop("checked", false);
-            jGetElement(blockid, ".checkBtn")
-                .show()
-                .button("disable");
+            //jGetElement(blockid, ".feedback").find('.feedbackBlock').html("");
+            //jGetElement(blockid, ".optionHolder input:checked").prop("checked", false);
+            //jGetElement(blockid, ".checkBtn")
+            //    .show()
+            //    .button("disable");
         }
     }
 
     // function called every time the size of the LO is changed
     this.sizeChanged = function(blockid) {
+        if(jGetElement(blockid, ".pageContents").length == 0){
+            return
+        }
         if (x_browserInfo.mobile == false) {
             var $panel = jGetElement(blockid,".pageContents .panel");
             $panel.height($x_pageHolder.height() - parseInt($x_pageDiv.css("padding-top")) * 2 - parseInt($panel.css("padding-top")) * 2 - 5);
@@ -44,7 +47,7 @@ var mcqBlock = new function() {
 
     this.startQ = function(blockid) {
         let pageXML = x_getBlockXML(blockid);
-				const state = jGetElement(blockid, ".pageContents").data("state");
+				const state = x_getPageDict("state", blockid)
 				
         var correctOptions = [],
             correctAnswer = [],
@@ -105,7 +108,7 @@ var mcqBlock = new function() {
 
     this.leavePage = function(blockid) {
         let pageXML = x_getBlockXML(blockid);
-				const state = jGetElement(blockid, ".pageContents").data("state");
+				const state = x_getPageDict("state", blockid)
         if ($(pageXML).children().length > 0) {
             if (!state.checked) {
                 mcqBlock.showFeedBackandTrackScore();
@@ -117,7 +120,7 @@ var mcqBlock = new function() {
     {
         var blocknr = parseFloat(blockid.split("block").pop()) - 1;
         let currentPageXML = x_getBlockXML(blocknr);
-				const state = jGetElement(blockid, ".pageContents").data("state");
+				const state = x_getPageDict("state", blockid)
         var answerFeedback = "",
             genFeedback,
             correct = (currentPageXML.getAttribute("type") == "Multiple Answer"),
@@ -306,7 +309,7 @@ var mcqBlock = new function() {
     this.init = function(blockid) {
         let pageXML = x_getBlockXML(blockid);
 				const state = this.generateModelState();
-				jGetElement(blockid, ".pageContents").data("state", state);
+				x_pushToPageDict(state, "state", blockid);
         // correct attribute on option also not used as it doesn't mark correct/incorrect - only gives feedback for each answer
         var panelWidth = pageXML.getAttribute("panelWidth"),
             $splitScreen = jGetElement(blockid, ".pageContents .splitScreen"),

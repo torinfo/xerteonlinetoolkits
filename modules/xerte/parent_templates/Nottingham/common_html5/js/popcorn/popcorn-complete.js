@@ -97,6 +97,7 @@
   //  Declare constructor
   //  Returns an instance object.
   Popcorn = function( entity, options ) {
+		debugger;
     //  Return new Popcorn object
     return new Popcorn.p.init( entity, options || null );
   };
@@ -2020,7 +2021,9 @@
 
     //  Extend Popcorn.p with new named definition
     //  Assign new named definition
+		debugger;
     Popcorn.p[ name ] = plugin[ name ] = function( id, options ) {
+			debugger;
       var length = arguments.length,
           trackEvent, defaults, mergedSetupOpts, previousOpts, newOpts;
 
@@ -2952,9 +2955,9 @@
 
           Popcorn.player.defineProperty( basePlayer, val, {
             get: (function( value ) {
-
               return function() {
 
+									debugger;
                 return container[ value ];
               };
             }( val )),

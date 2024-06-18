@@ -62,13 +62,16 @@ var categoriesBlock = new function() {
 
     // function called every time the page is viewed after it has initially loaded
     this.pageChanged = function(blockid) {
-        jGetElement(blockid,".dragDropHolder .label").remove();
-        jGetElement(blockid,".feedback").hide();
-        this.createLabels(blockid);
+        //jGetElement(blockid,".dragDropHolder .label").remove();
+        //jGetElement(blockid,".feedback").hide();
+        //this.createLabels(blockid);
     }
 
     // function called every time the size of the LO is changed
     this.sizeChanged = function(blockid) {
+        if(jGetElement(blockid, ".pageContents").length == 0){
+            return
+        }
         var tallestLabel = 0;
         jGetElement(blockid,".dragDropHolder .label").each(function() {
             var $this = $(this);
@@ -102,7 +105,8 @@ var categoriesBlock = new function() {
 
     this.leavePage = function(blockid)
     {
-        if ( x_getPageDict('variables', blockid).checked)
+				const state = x_getPageDict("state", blockid);
+        if (state.checked)
         {
             this.showFeedBackandTrackScore(blockid);
         }
@@ -110,7 +114,7 @@ var categoriesBlock = new function() {
 
     this.showFeedBackandTrackScore = function(blockid)
     {
-        let variables = x_getPageDict('variables', blockid);
+				const state = x_getPageDict("state", blockid);
         var l_options = [],
             l_answers = [],
             l_feedback = [],
@@ -144,25 +148,25 @@ var categoriesBlock = new function() {
         });
 
         jGetElement(blockid,"#scoreTxt").html(l_correct);
-        jGetElement(blockid,"#totalTxt").html(variables.totaloptions);
+        jGetElement(blockid,"#totalTxt").html(state.totaloptions);
         jGetElement(blockid,".feedback").show();
         var result = {
-            success: (l_correct == variables.totaloptions),
-            score: (l_correct * 100.0)/variables.totaloptions
+            success: (l_correct == state.totaloptions),
+            score: (l_correct * 100.0)/state.totaloptions
         }
         ;
         XTExitInteraction(x_currentPage, x_getBlockNr(blockid), result, l_options, l_answers, l_feedback);
         //XTSetPageScore(x_currentPage, (l_correct * 100.0)/variables.totaloptions);
-        variables.checked = true;
+        state.checked = true;
     }
 
     this.init = function(blockid) {
-        //updateContainment();
+        updateContainment();
         var blockXML = x_getBlockXML(blockid);
-        let variables = {checked: false,
+        let temp_state = {checked: false,
                          totaloptions: 0,
                          weighting: 1.0};
-        x_pushToPageDict(variables, 'variables', blockid);
+				const state = x_pushToPageDict(temp_state, "state", blockid);
 
         var correctOptions = [],
             correctAnswer = [],
@@ -170,11 +174,11 @@ var categoriesBlock = new function() {
 
         // store strings used to give titles to labels and categories when keyboard is being used (for screen readers)
         // These string values are never changed so we can push them to the pagedict as is. (not in an object like checked, totaloptions and weighting)
-        let labelTxt1 = x_pushToPageDict(x_getLangInfo(x_languageData.find("interactions").find("draggableItem")[0], "name", "Draggable Item"),'labelTxt1', blockid);
-        let labelTxt2 = x_pushToPageDict(x_getLangInfo(x_languageData.find("interactions").find("draggableItem")[0], "selected", "Item Selected"),  'labelTxt2', blockid);
-        let labelTxt3 = x_pushToPageDict(x_getLangInfo(x_languageData.find("interactions").find("draggableItem")[0], "toSelect", "Press space to select"), 'labelTxt3', blockid);
-        let targetTxt1 = x_pushToPageDict(x_getLangInfo(x_languageData.find("interactions").find("targetArea")[0], "description", "Drop zone for"), 'targetTxt1', blockid);
-        let targetTxt2 = x_pushToPageDict(x_getLangInfo(x_languageData.find("interactions").find("targetArea")[0], "toSelect", "Press space to drop the selected item."), 'targetTxt2', blockid);
+        let labelTxt1 = state.labelTxt1 = x_getLangInfo(x_languageData.find("interactions").find("draggableItem")[0], "name", "Draggable Item");
+        let labelTxt2 = state.labelTxt2 = x_getLangInfo(x_languageData.find("interactions").find("draggableItem")[0], "selected", "Item Selected");
+        let labelTxt3 = state.labelTxt3 = x_getLangInfo(x_languageData.find("interactions").find("draggableItem")[0], "toSelect", "Press space to select");
+        let targetTxt1 = state.targetTxt1 = x_getLangInfo(x_languageData.find("interactions").find("targetArea")[0], "description", "Drop zone for");
+        let targetTxt2 = state.targetTxt2 = x_getLangInfo(x_languageData.find("interactions").find("targetArea")[0], "toSelect", "Press space to drop the selected item.");
 
         jGetElement(blockid,".textHolder")
             .html(x_addLineBreaks(blockXML.getAttribute("text")))
@@ -203,7 +207,8 @@ var categoriesBlock = new function() {
             })
             .click(function() { // mark labels and show feedback
                 categoriesBlock.showFeedBackandTrackScore(blockid);
-                x_getPageDict('variables', blockid).checked = true;
+                const state = x_getPageDict("state", blockid);
+                state.checked = true;
             });
 
         // create categories
@@ -233,7 +238,7 @@ var categoriesBlock = new function() {
                     correctOptions.push(correctOption);
                     correctAnswer.push(itemName + "-->" + catName);
                     correctFeedback.push("Correct");
-                    x_getPageDict('variables', blockid).totaloptions++;
+										state.totaloptions++;
                 });
             });
 
@@ -248,12 +253,12 @@ var categoriesBlock = new function() {
         XTEnterInteraction(x_currentPage, x_getBlockNr(blockid), 'match', label, correctOptions, correctAnswer, correctFeedback, blockXML.getAttribute("grouping"), null);
         if (blockXML.getAttribute("trackingWeight") != undefined)
         {
-            variables.weighting = blockXML.getAttribute("trackingWeight");
+            state.weighting = blockXML.getAttribute("trackingWeight");
         }
-        XTSetInteractionType(x_currentPage, x_getBlockNr(blockid), 'numeric', variables.weighting, 1);
+        XTSetInteractionType(x_currentPage, x_getBlockNr(blockid), 'numeric', state.weighting, 1);
 
         var $pageContents = jGetElement(blockid,".pageContents");
-        $pageContents.data("labels", labels);
+        state.labels = labels;
 
         // style categories
         var numColumns = $(blockXML).children().length,
@@ -274,9 +279,10 @@ var categoriesBlock = new function() {
             .focusin(function(e) {
                 if ($(e.target).hasClass("category")) {
                     $(this).addClass("highlightDark");
+										const state = x_getPageDict("state", blockid);
                     var $pageContents = jGetElement(blockid,".pageContents");
                     var categoryTitle = $("<div>").html($(this).find("h3").html()).text();
-                    if ($pageContents.data("selectedLabel") != undefined && $pageContents.data("selectedLabel") != "") {
+                    if (state.selectedLabel != undefined && state.selectedLabel != "") {
                         $(this).attr("title", targetTxt1 + " " + categoryTitle + " - " + targetTxt2);
                     }
                 }
@@ -293,8 +299,9 @@ var categoriesBlock = new function() {
                 if ($(e.target).hasClass("category")) {
                     var charCode = e.charCode || e.keyCode;
                     if (charCode == 32) {
+												const state = x_getPageDict("state", blockid);
                         var $pageContents = jGetElement(blockid,".pageContents");
-                        var $selectedLabel = $pageContents.data("selectedLabel");
+                        var $selectedLabel = state.selectedLabel;
                         // drop selected label on target, remove selection and show next label
                         if ($selectedLabel != undefined && $selectedLabel != "") {
                             if ($selectedLabel.parent().is(jGetElement(blockid,".initHolder"))) {
@@ -304,7 +311,7 @@ var categoriesBlock = new function() {
                                 .removeClass("selected")
                                 .attr("title", labelTxt1)
                                 .appendTo($(this));
-                            $pageContents.data("selectedLabel", "");
+                            state.selectedLabel = "";
                             var categoryTitle = $("<div>").html($(this).find("h3").html()).text();
 
                             $(this).attr("title", targetTxt1 + " " + categoryTitle);
@@ -322,7 +329,7 @@ var categoriesBlock = new function() {
         // set tab index for targets - leaving space between them for any labels that are put on them
         var tabIndex = 0;
         for (let i=0; i<$categoryHolder.find(".category").length; i++) {
-            tabIndex = (i + 1) * ($pageContents.data("labels").length + 1) + 1;
+            tabIndex = (i + 1) * (state.labels.length + 1) + 1;
             var $category = $categoryHolder.find(".category:eq(" + i + ")");
             var categoryTitle = $("<div>").html($category.find("h3").html()).text();
 
@@ -331,7 +338,7 @@ var categoriesBlock = new function() {
                 "title"		:targetTxt1 + " " + categoryTitle
             });
         }
-        tabIndex += $pageContents.data("labels").length;
+        tabIndex += state.labels.length;
         $button.attr("tabindex", tabIndex + 1);
         $feedback.attr("tabindex", tabIndex + 2);
 
@@ -342,17 +349,18 @@ var categoriesBlock = new function() {
     };
 
     this.createLabels = function(blockid) {
-        let labelTxt1 = x_getPageDict('labelTxt1', blockid);
-        let labelTxt2 = x_getPageDict('labelTxt2', blockid);
-        let labelTxt3 = x_getPageDict('labelTxt3', blockid);
-        let targetTxt1 = x_getPageDict('targetTxt1', blockid);
+				const state = x_getPageDict("state", blockid);
+        let labelTxt1 = state.labelTxt1;
+        let labelTxt2 = state.labelTxt2;
+        let labelTxt3 = state.labelTxt3;
+        let targetTxt1 = state.targetTxt1;
         // randomise order and create labels
         var $pageContents = jGetElement(blockid,".pageContents"),
             labels = [],
-            tempLabels = $pageContents.data("labels").slice(0),
+            tempLabels = state.labels.slice(0),
             i;
 
-        for (i=0; i<$pageContents.data("labels").length; i++) {
+        for (i=0; i<state.labels.length; i++) {
             var labelNum = Math.floor(Math.random() * tempLabels.length);
             labels.push(tempLabels[labelNum]);
             tempLabels.splice(labelNum, 1);
@@ -393,13 +401,14 @@ var categoriesBlock = new function() {
                 }
             },
             start:	function() {
+								const state = x_getPageDict("state", blockid);
                 // remove any focus/selection highlights made by tabbing to labels/targets
                 var $pageContents = jGetElement(blockid,".pageContents");
                 if (jGetElement(blockid,".dragDropHolder .label.focus").length > 0) {
                     jGetElement(blockid,".dragDropHolder .label.focus").attr("title", labelTxt1);
-                } else if ($pageContents.data("selectedLabel") != undefined && $pageContents.data("selectedLabel") != "") {
-                    $pageContents.data("selectedLabel").attr("title", labelTxt1);
-                    $pageContents.data("selectedLabel", "");
+                } else if (state.selectedLabel != undefined && state.selectedLabel != "") {
+                    state.selectedLabel.attr("title", labelTxt1);
+                    state.selectedLabel = "";
                 }
                 var targetInFocus = jGetElement(blockid,".dragDropHolder .category.highlightDark");
                 if (targetInFocus.length > 0) {
@@ -430,8 +439,9 @@ var categoriesBlock = new function() {
         // these highlight selected labels / targets and set the title attr which the screen readers will use
         jGetElement(blockid,".dragDropHolder .label")
             .focusin(function() {
+								const state = x_getPageDict("state", blockid);
                 var $this = $(this);
-                if ($this.is($pageContents.data("selectedLabel")) == false) {
+                if ($this.is(state.selectedLabel) == false) {
                     $this
                         .addClass("focus")
                         .attr("title", labelTxt1 + " - " + labelTxt3);
@@ -440,16 +450,17 @@ var categoriesBlock = new function() {
             .focusout(function() {
                 var $this = $(this);
                 $this.removeClass("focus");
-                if ($this.is($pageContents.data("selectedLabel")) == false) {
+                if ($this.is(state.selectedLabel) == false) {
                     $this.attr("title", labelTxt1);
                 }
             })
             .keypress(function(e) {
                 var charCode = e.charCode || e.keyCode;
                 if (charCode == 32) {
+										const state = x_getPageDict("state", blockid);
                     var $pageContents = jGetElement(blockid,".pageContents");
-                    if ($pageContents.data("selectedLabel") != undefined && $pageContents.data("selectedLabel") != "") {
-                        $pageContents.data("selectedLabel")
+                    if (state.selectedLabel != undefined && state.selectedLabel != "") {
+                        state.selectedLabel
                             .removeClass("selected")
                             .attr("title", labelTxt1);
                     }
@@ -458,7 +469,7 @@ var categoriesBlock = new function() {
                         .removeClass("focus")
                         .addClass("selected")
                         .attr("title", labelTxt1 + ' - ' + labelTxt2);
-                    $pageContents.data("selectedLabel", $this);
+                    state.selectedLabel = $this;
 
                     jGetElement(blockid,".feedback").hide();
                     jGetElement(blockid,".dragDropHolder .tick").remove();

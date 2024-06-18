@@ -23,9 +23,12 @@ var textCorrectionBlock = new function () {
 	};
 
 	this.sizeChanged = function (blockid) {
+		if(jGetElement(blockid, ".pageContents").length == 0){
+            return
+        }
 		if (x_browserInfo.mobile === false) {
 			var $panel = jGetElement(blockid, ".pageContents .panel");
-			$panel.height($x_pageHolder.height() - parseInt($x_pageDiv.css("padding-top")) * 2 - parseInt($panel.css("padding-top")) * 2 - 5);
+			//$panel.height($x_pageHolder.height() - parseInt($x_pageDiv.css("padding-top")) * 2 - parseInt($panel.css("padding-top")) * 2 - 5);
 		}
 
 		var $mainPanel = jGetElement(blockid, ".mainPanel");
@@ -33,16 +36,18 @@ var textCorrectionBlock = new function () {
 	};
 
 	this.leavePage = function (blockid) {
-		if (!jGetElement(blockid, '.pageContents').data('hasExited')) {
+		const state = x_getPageDict("state", blockid)
+		if (!state.hasExited) {
 			textCorrectionBlock.exitTrackTextCorrection(blockid);
 		}
 	};
 
 	this.exitTrackTextCorrection = function (blockid) {
+		const state = x_getPageDict("state", blockid)
 		var input = jGetElement(blockid, '.answerInput textarea').val();
 
 		var checkAnswer = false;
-		if (input === jGetElement(blockid, '.pageContents').data('answer')) {
+		if (input === state.answer) {
 			checkAnswer = true;
 		}
 
@@ -56,8 +61,9 @@ var textCorrectionBlock = new function () {
 	};
 
 	this.init = function (blockid) {
+		const state = x_pushToPageDict({}, "state", blockid);
 		let pageXML = x_getBlockXML(blockid);
-		jGetElement(blockid, '.pageContents').data('hasExited', false)
+		state.hasExited = false
 
 		var weighting = 1.0;
 		if (pageXML.getAttribute("trackingWeight") != null) {
@@ -110,7 +116,7 @@ var textCorrectionBlock = new function () {
 		$question.html(convertedQuestion);
 
 		var answer = $('<div>').html(pageXML.getAttribute("answer")).text().trim();
-		jGetElement(blockid, '.pageContents').data('answer', answer);
+		state.answer = answer;
 		if (pageXML.getAttribute("disableAnswers") !== "false") {
 			var correctLabel = pageXML.getAttribute("correctLabel") !== null ? pageXML.getAttribute("correctLabel") : 'Correct Answer',
 				convertedAnswer = '<p>' + answer.replace(/(?:\r\n|\r|\n)/g, '<br>') + '</p>';
@@ -123,7 +129,7 @@ var textCorrectionBlock = new function () {
 			$('answer').remove();
 		}
 		var label = x_GetTrackingTextFromHTML(pageXML.getAttribute("introduction"), "");
-		XTEnterInteraction(x_currentPage, x_getBlockNr(blockid), "text", label, [jGetElement(blockid, '.pageContents').data('answer')], jGetElement(blockid, '.pageContents').data('answer'));
+		XTEnterInteraction(x_currentPage, x_getBlockNr(blockid), "text", label, [state.answer], state.answer);
 
 		//Add aria-label to answer box
 		var answerFieldLabel = pageXML.getAttribute("answerLabel");
@@ -160,10 +166,10 @@ var textCorrectionBlock = new function () {
 		var amountOfTries = pageXML.getAttribute("amountOfTries");
 
 		if (amountOfTries !== null && amountOfTries !== undefined) {
-			jGetElement(blockid, '.pageContents').data('triesLeft', parseInt(amountOfTries));
+			state.triesLeft = parseInt(amountOfTries);
 			jGetElement(blockid, '.attempts').html('<p>' + attemptLabel + ": " + amountOfTries + '</p>');
 		} else {
-			jGetElement(blockid, '.pageContents').data('triesLeft', undefined);
+			state.triesLeft = undefined;
 			jGetElement(blockid, '.attempts').remove();
 		}
 
@@ -172,18 +178,18 @@ var textCorrectionBlock = new function () {
 				label: checkButtonTxt
 			})
 			.click(function () {
-
+				const state = x_getPageDict("state", blockid)
 				var input = jGetElement(blockid, '.answerInput textarea').val(),
 					attemptMade = !(input === "" || (jGetElement(blockid, '.answerInput textarea').data('placeHolder') != undefined && jGetElement(blockid, '.answerInput textarea').data('placeHolder') == input));
 
-				if (attemptMade && jGetElement(blockid, '.pageContents').data('triesLeft') !== undefined) {
-					jGetElement(blockid, '.pageContents').data('triesLeft', jGetElement(blockid, '.pageContents').data('triesLeft') - 1);
+				if (attemptMade && state.triesLeft !== undefined) {
+					state.triesLeft = state.triesLeft - 1;
 				}
 
-				var triesLeft = jGetElement(blockid, '.pageContents').data('triesLeft');
+				var triesLeft = state.triesLeft;
 
 				if (jGetElement(blockid, '.attempts').length > 0) {
-					jGetElement(blockid, '.attempts').html('<p>' + attemptLabel + ": " + jGetElement(blockid, '.pageContents').data('triesLeft') + '</p>');
+					jGetElement(blockid, '.attempts').html('<p>' + attemptLabel + ": " + state.triesLeft + '</p>');
 				}
 				if (pageXML.getAttribute("trackinglabel") != null && pageXML.getAttribute("trackinglabel") != "") {
 					label = pageXML.getAttribute("trackinglabel");
@@ -196,19 +202,19 @@ var textCorrectionBlock = new function () {
 					$correctOrNot.append(incompleet);
 
 				} else {
-					if (input == jGetElement(blockid, '.pageContents').data('answer')) {
+					if (input == state.answer) {
 						$correctOrNot.append(correct);
 					} else {
 						$correctOrNot.append(incorrect);
 					}
 
 					textCorrectionBlock.exitTrackTextCorrection(blockid);
-					jGetElement(blockid, '.pageContents').data('hasExited', true);
+					state.hasExited = true;
 				}
 
-				if (attemptMade && (input === jGetElement(blockid, '.pageContents').data('answer') || triesLeft == undefined || triesLeft <= 0)) {
+				if (attemptMade && (input === state.answer || triesLeft == undefined || triesLeft <= 0)) {
 					// disable check btn & text area when correct answer entered or max tries reached
-					if ((triesLeft != undefined && triesLeft <= 0) || input == jGetElement(blockid, '.pageContents').data('answer')) {
+					if ((triesLeft != undefined && triesLeft <= 0) || input == state.answer) {
 						$(this).hide();
 						jGetElement(blockid, '.attempts').hide();
 						jGetElement(blockid, '.answerInput textarea').attr('readonly', 'true');
@@ -220,13 +226,13 @@ var textCorrectionBlock = new function () {
 					}
 
 					// show the correct answer unless answer entered is correct or show answer optional property is off
-					if (input !== jGetElement(blockid, '.pageContents').data('answer')) {
+					if (input !== state.answer) {
 						$('answer').show();
 					}
 				}
 			});
 
-		this.sizeChanged();
+		this.sizeChanged(blockid);
 
 		x_pageLoaded();
 	}

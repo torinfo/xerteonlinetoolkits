@@ -135,7 +135,155 @@
 		<page><![CDATA[<page name="Enter Page Title" subtitle="Enter Page Subtitle"/>]]></page></newNodes>
 
 	</learningObject>
-<page menu="Website" hint="A new page" icon="icLayoutContent" remove="true" duplicate="true" menuItem="Page" deepLink="true">
+<annotatedDiagramBlock icon="icPageWhiteStar"><name label="Page Title" type="TextInput" wysiwyg="true"/><text label="Page Text" type="TextArea" height="250"/><align label="Text Align" type="ComboBox" options="Left,Right,Bottom" data="Left,Right,Top" defaultValue="Left" width="100"/><image type="group" label="Image">
+		<url label="File" type="media"/>
+		<tip label="Description" type="TextInput"/>
+		<panelWidth label="Size" options="Small,Medium,Large" type="ComboBox" data="Small,Medium,Large" defaultValue="Medium" mandatory="true" width="100"/>
+	</image><hs type="group" label="Highlight">
+		<shape label="Type" type="ComboBox" options="Line,Oval,Outline,Arrow" data="None,Oval,Rectangle,Arrow" defaultValue="Rectangle" width="120"/>
+		<colour label="Colour" type="ColourPicker" defaultValue="0xFFFF00"/>
+	</hs><link label="Hide list" type="Checkbox" optional="true" defaultValue="false" tooltip="Enable or disable the list"/><movieSize label="Video Size (w,h)" type="textInput" defaultValue="320,240" optional="true" deprecated="This property is deprecated."/><newNodes>
+      <hotspotGroup><![CDATA[<hotspotGroup name="Enter Hotspot Group Title Here" text="Description for the hotspot"/>]]></hotspotGroup>
+	  <flexhotspot><![CDATA[<flexhotspot name="Enter Hotspot Title Here" text="Description for the hotspot" x="0" y="0" w="100" h="100"/>]]></flexhotspot>
+    </newNodes></annotatedDiagramBlock><hotspotGroup menuItem="Hotspot Group" icon="icGroup" remove="true">
+
+    <name label="Group Title" type="TextInput" wysiwyg="true"/>
+    <text label="Text" type="TextArea" height="250"/>
+
+    <newNodes>
+	  <flexhotspot><![CDATA[<flexhotspot name="Enter Hotspot Title Here" text="Description for the hotspot" x="0" y="0" w="100" h="100"/>]]></flexhotspot>
+    </newNodes>
+
+  </hotspotGroup><hotspot label="Edit Hotspot" menuItem="Hotspot" type="hotSpot" icon="icLayers" remove="true">
+
+    <name label="Title" type="TextInput" wysiwyg="true"/>
+    <text label="Text" type="TextArea" height="250"/>
+	<alttext label="Tooltip Description" type="script" height="100" defaultValue="Enter a Description for Accessibility" optional="true"/>
+
+  </hotspot><flexhotspot type="flexhotSpot" upgradefrom="hotspot" label="Edit Hotspot" menuItem="Hotspot" icon="icLayers" remove="true">
+    <name label="Title" type="TextInput" wysiwyg="true"/>
+    <text label="Text" type="TextArea" height="250"/>
+	<alttext label="Tooltip Description" type="script" height="100" defaultValue="Enter a Description for Accessibility" optional="true"/>
+  </flexhotspot><buttonQuestionBlock icon="icComment"><name label="Page Title" type="TextInput" wysiwyg="true"/><instruction label="Instruction" type="TextArea" height="50"/><prompt label="Question" type="TextArea" height="150"/><feedback label="Feedback" type="TextArea" height="150"/><align label="Align Text" options="Left,Right" type="ComboBox" data="Left,Right" defaultValue="Left" width="100"/><label label="Button Label" type="TextInput" wysiwyg="true" divider="true" language="true"/><labelWidth label="Button Width" type="NumericStepper" min="100" max="300" step="10" defaultValue="100" width="100" language="true" deprecated="Width is now set automatically"/></buttonQuestionBlock><buttonSequenceBlock icon="icButtons"><name label="Page Title" type="TextInput" wysiwyg="true"/><text label="Page Text" type="TextArea" height="200"/><intro label="Introduction" type="TextArea" height="100"/><align label="Align Text" options="Left,Right" type="ComboBox" data="Left,Right" defaultValue="Left" width="100"/><newNodes>
+      <button><![CDATA[<button name="Show More" text="Feedback"/>]]></button>
+    </newNodes></buttonSequenceBlock><button menuItem="Button" icon="icBulletBlue" remove="true">
+    <name label="Button Label" type="TextInput" wysiwyg="true"/>
+	<buttonWidth label="Button Width" type="NumericStepper" min="100" max="300" step="10" defaultValue="100" width="100" deprecated="Width is now set automatically"/>	
+    <text label="Feedback" type="TextArea" height="250"/>
+  </button><categoriesBlock icon="icLayers"><name label="Page Title" type="TextInput" wysiwyg="true"/><text label="Page Text" type="TextArea" height="200"/><feedback label="Feedback" type="TextArea" height="100"/><buttonLabel label="Button Label" type="TextInput" wysiwyg="true" divider="true" language="true"/><buttonWidth label="Button Width" type="NumericStepper" min="100" max="300" step="10" defaultValue="120" width="100" language="true" deprecated="Width is now set automatically"/><feedbackScore label="Score Feedback" type="TextInput" wysiwyg="true" language="true"/><trackingWeight label="Tracking Score Weight (0=Off)" optional="true" type="textInput" width="120" defaultValue="1.0"/><newNodes>
+      <category><![CDATA[<category name="Enter Category Name Here"/>]]></category>
+    </newNodes></categoriesBlock><category menuItem="Category" icon="icGroup" remove="true">
+
+    <name label="Category Name" type="TextInput" wysiwyg="true"/>
+
+    <newNodes>
+      <item><![CDATA[<item name="Enter Item Text Here"/>]]></item>
+    </newNodes>
+
+  </category><item menuItem="Item" icon="icBullet">
+    <name label="Item Text" type="TextInput" wysiwyg="true"/>
+  </item><decisionBlock icon="icDecision"><name type="TextInput" wysiwyg="true" label="Page Title"/><text label="Intro Text" type="TextArea" height="100"/><firstStep label="First Step ID" type="TextInput"/><overview label="Show Final Overview" type="CheckBox" defaultValue="true" mandatory="true"/><copy label="Copy Overview Option" type="CheckBox" optional="true" defaultValue="true" tooltip="Adds a button to the overview screen that presents users with an easy to copy version of their answers and results."/><number label="Question Numbering" type="CheckBox" optional="true" defaultValue="true" tooltip="Displays question / step numbers"/><newBtnLabel label="Refresh Button" type="TextInput" wysiwyg="true" language="true"/><viewThisBtn label="Overview Button" type="TextInput" wysiwyg="true" language="true"/><backBtn label="Back Button" type="TextInput" wysiwyg="true" language="true"/><fwdBtn label="Forward Button" type="TextInput" wysiwyg="true" language="true"/><copyBtn label="Copy Button" type="TextInput" wysiwyg="true" language="true"/><copyShortcutTxt label="Copy Instructions" type="TextInput" wysiwyg="true" language="true"/><posAnswerString label="Other Answers Label" type="TextInput" wysiwyg="true" language="true"/><fromRangeString label="Slider Range Label" type="TextInput" wysiwyg="true" language="true"/><resultString label="Solution Label" type="TextInput" wysiwyg="true" language="true"/><resultEndString label="Final Instruction" type="TextInput" wysiwyg="true" language="true"/><overviewString label="Overview Label" type="TextInput" wysiwyg="true" language="true"/><helpString label="Question Help Label" type="TextInput" wysiwyg="true" language="true"/><btnLabel label="Next Button Label" type="TextInput" wysiwyg="true" language="true"/><newNodes>
+		<resultStep><![CDATA[<resultStep name="e.g. R1" text="Enter result text here" destinationBtn="Continue"/>]]></resultStep>
+		<infoStep><![CDATA[<infoStep name="e.g. I1" targetNew="" text="Enter text here"/>]]></infoStep>
+		<sliderStep><![CDATA[<sliderStep name="e.g. Q1" text="Enter question here" unit="e.g. £" min="0" max="100" step="1" value="0"/>]]></sliderStep>
+		<mcqStep><![CDATA[<mcqStep name="e.g. Q1" text="Enter question here" format="radio"/>]]></mcqStep>
+	</newNodes></decisionBlock><mcqStep icon="icComments" remove="true" duplicate="true" menuItem="Multiple Choice Question">
+	
+	<name label="Unique ID" type="TextInput"/>
+	<text label="Question" type="TextArea" height="100"/>
+	<format label="Question Type" type="ComboBox" options="Radio buttons,Drop down menu" data="radio,menu" defaultValue="radio" width="200"/>
+	<helpTxt label="More Information" type="TextArea" height="100" optional="true" tooltip="Allows access to extra information via a button and popup dialog."/>
+	<displayTxt label="Progress Text" type="TextArea" height="100" optional="true" tooltip="Adds extra text below the Intro Text. Any Progress Text will remain on screen throughout subsequent steps until Clear Progress Text (optional property) is used."/>
+	<clear label="Clear Progress Text" type="CheckBox" optional="true" tooltip="Clears any Progress Text added in previous steps."/>
+
+	<newNodes>
+		<mcqStepOption><![CDATA[<mcqStepOption name="Enter answer here" targetNew=""/>]]></mcqStepOption>
+	</newNodes>
+	
+  </mcqStep><mcqStepOption icon="icBullet" remove="true" duplicate="true" menuItem="Option">
+	<name label="Answer Option" type="TextInput" wysiwyg="true"/>
+	<target label="Target ID" type="TextInput" optional="true" deprecated="This property has been deprecated - use the Target ID drop down menu to select the target step instead. The ID entered in this field will continue to work until the drop down menu is used"/>
+	<targetNew label="Target ID" type="pageList" listTarget="1" defaultValue="" mandatory="true"/>
+	<resultTxt label="Stored Result Text" type="TextArea" height="100" optional="true" tooltip="Stores text associated with this answer for use in the results. This text will only display on result steps where Compile Stored Results (optional property) is added."/>
+	<displayTxt label="Progress Text" type="TextArea" height="100" optional="true" tooltip="Adds extra text below the Intro Text. Any Progress Text will remain on screen throughout subsequent steps until Clear Progress Text (optional property) is used."/>
+	<clear label="Clear Progress Text" type="CheckBox" optional="true" tooltip="Clears any Progress Text added in previous steps."/>
+	
+	<info><![CDATA[Make sure the Target ID matches the Unique ID of a question, result or information step.]]></info>
+  </mcqStepOption><sliderStep icon="icComment" remove="true" duplicate="true" menuItem="Slider Question">
+	<name label="Unique ID" type="TextInput"/>
+	<text label="Question" type="TextArea" height="100"/>
+	<unit label="Unit of answer" type="TextInput" wysiwyg="true"/>
+	<min label="Minimum value" type="TextInput"/>
+	<max label="Maximum value" type="TextInput"/>
+	<step label="Increment" type="TextInput"/>
+	<value label="Initial value" type="TextInput"/>
+	<helpTxt label="More Information" type="TextArea" height="100" optional="true" tooltip="Allows access to extra information via a button and popup dialog."/>
+	<unitPos label="Unit Position" type="ComboBox" options="Start,End" data="start,end" defaultValue="end" width="100" optional="true" tooltip="Should the unit of answer appear before (&#xA3;10) or after (10%) the number?"/>
+	<displayTxt label="Progress Text" type="TextArea" height="100" optional="true" tooltip="Adds extra text below the Intro Text. Any Progress Text will remain on screen throughout subsequent steps until Clear Progress Text (optional property) is used."/>
+	<clear label="Clear Progress Text" type="CheckBox" optional="true" tooltip="Clears any Progress Text added in previous steps."/>
+	
+	<newNodes>
+		<sliderStepOption><![CDATA[<sliderStepOption min="0" max="1" targetNew=""/>]]></sliderStepOption>
+	</newNodes>
+	
+  </sliderStep><sliderStepOption icon="icBullet" remove="true" duplicate="true" menuItem="Option">
+	<min label="Range minimum" type="TextInput"/>
+	<max label="Range maximum" type="TextInput"/>
+	<target label="Target ID" type="TextInput" optional="true" deprecated="This property has been deprecated. Use the Target ID drop down menu to select the target step instead. The ID entered in this field will continue to work until the drop down menu is used"/>
+	<targetNew label="Target ID" type="pageList" listTarget="1" defaultValue="" mandatory="true"/>
+	<resultTxt label="Stored Result Text" type="TextArea" height="100" optional="true" tooltip="Stores text associated with this answer for use in the results. This text will only display on result steps where Compile Stored Results (optional property) is added."/>
+	<displayTxt label="Progress Text" type="TextArea" height="100" optional="true" tooltip="Adds extra text below the Intro Text. Any Progress Text will remain on screen throughout subsequent steps until Clear Progress Text (optional property) is used."/>
+	<clear label="Clear Progress Text" type="CheckBox" optional="true" tooltip="Clears any Progress Text added in previous steps."/>
+	
+	<info><![CDATA[Make sure the Target ID matches the Unique ID of a question, result or information step.]]></info>
+  </sliderStepOption><infoStep icon="icPageWhiteInfo" remove="true" duplicate="true" menuItem="Information Step">
+	<name label="Unique ID" type="TextInput"/>
+	<text label="Text" type="TextArea" height="100"/>
+	<target label="Target ID" type="TextInput" optional="true" deprecated="This property has been deprecated. Use the Target ID drop down menu to select the target step instead. The ID entered in this field will continue to work until the drop down menu is used"/>
+	<targetNew label="Target ID" type="pageList" listTarget="0" defaultValue="" mandatory="true"/>
+	<helpTxt label="More Information" type="TextArea" height="100" optional="true" tooltip="Allows access to extra information via a button and popup dialog."/>
+	<displayTxt label="Progress Text" type="TextArea" height="100" optional="true" tooltip="Adds extra text below the Intro Text. Any Progress Text will remain on screen throughout subsequent steps until Clear Progress Text (optional property) is used."/>
+	<clear label="Clear Progress Text" type="CheckBox" optional="true" tooltip="Clears any Progress Text added in previous steps."/>
+	
+	<info><![CDATA[Make sure the Target ID matches the Unique ID of a question, result or information step.]]></info>
+  </infoStep><resultStep icon="icLightbulb" remove="true" duplicate="true" menuItem="Result">
+	<name label="Unique ID" type="TextInput"/>
+	<text label="Text" type="TextArea" height="100"/>
+	
+	<collate label="Compile Stored Results" type="CheckBox" optional="true" tooltip="Include Stored Result Text (optional property) from steps in the result."/>
+	<destination label="Go to Page ID" type="pageList" optional="true" tooltip="Adds a button link to a page of your choice."/>
+	<displayTxt label="Progress Text" type="TextArea" height="100" optional="true" tooltip="Adds extra text below the Intro Text. Any Progress Text will remain on screen throughout subsequent steps until Clear Progress Text (optional property) is used."/>
+	<clear label="Clear Progress Text" type="CheckBox" optional="true" tooltip="Clears any Progress Text added in previous steps."/>
+	
+	<destinationBtn label="Go Button Label" type="TextInput" language="true"/>
+  </resultStep><dialogBlock icon="icScript"><name label="Page Title" type="TextInput" wysiwyg="true"/><text label="Page Text" type="TextArea" height="100"/><attempts label="Attempts Before Hint" options="0,1,2,3,4" type="ComboBox" width="100" data="0,1,2,3,4"/><tryTxt label="Try Again Text" type="TextInput" wysiwyg="true" divider="true" language="true"/><correctTxt label="Correct Text" type="TextInput" wysiwyg="true" language="true"/><moveOnTxt label="Move On Text" type="TextInput" wysiwyg="true" language="true"/><submitBtnTxt label="Submit Button Text" type="TextInput" wysiwyg="true" language="true"/><nextBtnTxt label="Next Button Text" type="TextInput" wysiwyg="true" language="true"/><answerDelimeter label="Answer Delimiter" type="textInput" defaultValue="," optional="true" tooltip="The character separating the possible correct answers for each question"/><casesensitive label="Case Sensitive" defaultValue="false" type="CheckBox" optional="true" tooltip="Treat answers as case sensitive"/><newNodes>
+      <dialogStep><![CDATA[<dialogStep name="Question - tree label" question="Enter question text here" answer="Enter answer here" hint="Enter hint here"/>]]></dialogStep>
+    </newNodes></dialogBlock><dialogStep menuItem="Question" icon="icComment" remove="true" max="12">
+
+    <name label="Label" type="TextInput" mandatory="true" defaultValue="Question - tree label"/>
+    <question label="Question" type="TextArea" height="100"/> 
+    <answer label="Answer" type="TextInput" wysiwyg="true" tooltip="Where there is more than possible correct answer, list each one separated by a comma"/>
+    <commentary label="Commentary" type="TextArea" height="100" deprecated="This property is deprecated."/> 
+    <hint label="Hint" type="TextInput" wysiwyg="true"/>
+
+  </dialogStep><dictationBlock icon="icTranscript"><name label="Page Title" type="TextInput" wysiwyg="true"/><text label="Page Text" type="TextArea" height="200"/><randomise label="Randomise" type="checkBox"/><showText label="Show Button Text" type="TextInput" wysiwyg="true" language="true"/><trackedShowText label="Show Button Text when tracked" type="TextInput" wysiwyg="true" language="true"/><correctText label="Correct text" type="TextInput" wysiwyg="true" language="true"/><incorrectText label="Incorrect text" type="TextInput" wysiwyg="true" language="true"/><nextText label="Next Button Text" type="TextInput" wysiwyg="true" language="true"/><restartText label="Restart Button Text" type="TextInput" wysiwyg="true" language="true"/><countText label="Clip {i} of {n}" type="TextInput" wysiwyg="true" language="true"/><answerFieldLabel label="Answer Field Hidden Aria-Label" type="TextInput" wysiwyg="false" language="true" mandatory="true" defaultValue="Answer" tooltip="This is a hidden label specifically for screen reader users so that the text field where they should respond is labelled and the label is spoken to the screenreader user. e.g. Answer."/><showCorrectness label="Mark Answers" type="checkBox" optional="true" defaultValue="false" tooltip="Mark answer as correct or incorrect."/><trackingWeight label="Tracking Score Weight (0=Off)" optional="true" type="textInput" width="120" defaultValue="1.0"/><tt type="group" label="Timed Text" optional="true">
+		<timedText label="File" type="Media" defaultValue="Select a Timed Text File" optional="true"/>
+		<sound label="Audio File" type="Media" defaultValue="Select an Audio File" optional="true"/>
+	</tt><newNodes>
+      <nestedDictation><![CDATA[<nestedDictation name="Sentence" prompt="Enter Text Here" audio="Select an Audio File" answer="Enter Answer Here"/>]]></nestedDictation>
+    </newNodes></dictationBlock><nestedDictation menuItem="Sentence" icon="icBullet" remove="true">
+    <prompt label="Prompt Text" type="TextArea" height="200"/>
+    <name label="Label" type="TextInput" mandatory="true" defaultValue="Sentence" wysiwyg="false"/>
+    <audio label="Audio File" type="Media"/>
+	<answer label="Answer Text" type="TextArea" height="200"/>
+  </nestedDictation><documentationBlock icon="icForm"><name label="Page Title" type="TextInput" wysiwyg="true"/><text label="Page Text" type="TextArea" height="120"/><intro label="Introduction Text" type="TextArea" height="120"/><display label="Show Introduction Text" data="separate,first,all" type="ComboBox" options="On additional page,On first page only,On all pages" width="120"/><download label="Show Download Button" data="last,extra" type="ComboBox" options="On last page,On additional page" width="120"/><filename label="Filename (without extension)" type="TextInput" defaultValue="documentation" optional="true"/><fileOrientation label="File Orientation" data="portrait,landscape" type="ComboBox" options="Portrait,Landscape" width="120" defaultValue="portrait" optional="true" tooltip="Orientation of downloaded file"/><fontSize type="group" label="Font Size" optional="true" tooltip="Customise the font sizes used in the downloaded document">
+		<h1 label="h1" type="TextInput" defaultValue="20" width="100" optional="true"/>
+		<h2 label="h2" type="TextInput" defaultValue="18" width="100" optional="true"/>
+		<h3 label="h3" type="TextInput" defaultValue="16" width="100" optional="true"/>
+		<p label="p" type="TextInput" defaultValue="15" width="100" optional="true"/>
+    </fontSize><instructions label="Download Instructions" type="TextArea" height="120" language="true"/><notAnswered label="Not Answered Text" type="TextInput" language="true"/><requiredTxt label="Incomplete Error Text" type="TextInput" language="true"/><downloadTxt label="Download Button Label" type="TextInput" language="true"/><nextTxt label="Next Button Label" type="TextInput" language="true"/><prevTxt label="Previous Button Label" type="TextInput" language="true"/><newNodes>
+      <page><![CDATA[<page name="Enter title here" text="Enter text for the nested page here" />]]></page>
+	</newNodes></documentationBlock><page menu="Website" hint="A new page" icon="icLayoutContent" remove="true" duplicate="true" menuItem="Page" deepLink="true">
 
 		<name type="TextInput" label="Page Title" wysiwyg="true"/>
 		<subtitle type="TextInput" label="Page Subtitle" wysiwyg="true"/>
@@ -144,50 +292,7 @@
 			<section><![CDATA[<section name="Enter Section Title"/>]]></section>
 		</newNodes>
 
-	<notes label="Notes" type="TextArea" height="150" defaultValue="" optional="true" tooltip="Your notes for the page. These are not shown in the live project." common="true"/><headerGroup type="group" label="Header" optional="true" common="true">
-		<header type="Media" optional="true" label="Image"/>
-		<headerPos type="ComboBox" data="left,center,right" options="Left,Centre,Right" optional="true" label="Image Position" defaultValue="left" width="175"/>
-		<headerRepeat conditionTrigger="true" type="ComboBox" data="repeat,repeat-x,repeat-y,no-repeat" options="Horizontal and Vertical Repeat,Horizontal Repeat,Vertical Repeat,No Repeat" optional="true" label="Image Repeat" defaultValue="repeat" width="175"/>
-		<headerSize type="ComboBox" data="not-set,auto,contain,cover" options="Do not set,Auto,Contain,Cover" optional="true" label="Image Size" condition="headerRepeat=='no-repeat'" defaultValue="not-set" width="175" tooltip="Set the background image size options"/>
-		<headerTitleAlign type="ComboBox" optional="true" label="Title Position" data="left,center,right" options="Left,Center,Right" defaultValue="center" tooltip="The horizontal alignment of the title"/>
-		<headerColour type="ColourPicker" optional="true" label="Background Colour"/>
-		<headerTextColour type="ColourPicker" optional="true" label="Text Colour"/>
-		<headerBanner type="ComboBox" label="Banner" conditionTrigger="true" data="fullscreen,fixedheight" options="Full screen,Fixed height" optional="true" defaultValue="fixedheight" width="175" tooltip="Choose whether the banner needs to be full screen or fixed height when opening page"/>
-		<headerTopMargin type="NumericStepper" label="Title top margin [%]" condition="headerBanner=='fullscreen'" min="2" max="60" step="1" defaultValue="20" optional="true" tooltip="The position of the titles as a percentage from the top of the banner when using a fullscreen banner"/>
-		<bannerCollapse type="CheckBox" conditionTrigger="true" condition="headerBanner=='fullscreen'" label="Collapse banner" optional="true" defaultValue="true" tooltip="Whether to collapse the full screen banner when scrolling down"/>
-		<bannerFixedHeight type="CheckBox" conditionTrigger="true" condition="headerBanner=='fixedheight' || bannerCollapse=='true'" label="Fixed height" optional="true" defaultValue="false" tooltip="Whether the 'Fixed height' banner is just the height needed for the titles, or actually a given set height."/>
-		<bannerHeight type="NumericStepper" condition="bannerFixedHeight=='true' &amp;&amp; (headerBanner=='fixedheight' || bannerCollapse=='true')" label="Banner height" min="10" max="100" step="1" width="100" optional="true" defaultValue="20" tooltip="The height (in %) of the fixed height banner or the collapsed full height banner"/>
-		<bannerFullScrolldownInfo type="CheckBox" condition="headerBanner=='fullscreen'" label="Enable scroll down info" optional="true" defaultValue="true" tooltip="Show an arrow and a help text to scroll down when the banner is full screen"/>
-		<bannerFullScrolldownText type="TextInput" wysiwyg="true" condition="headerBanner=='fullscreen'&amp;&amp;bannerFullScrolldownInfo=='true'" label="Scroll down text" optional="true" defaultValue="" tooltip="Leave blank to use the default scroll down text or add your own text here to replace it"/>
-	</headerGroup><pageLink label="Page Link" type="TextInput" wysiwyg="true" defaultValue="" optional="true" tooltip="The link text for the page menu (by default this will be the page title)" common="true"/><hideShow type="group" label="Hide/Show Page" optional="true" tooltip="Hide the page completely or hide/show the page between specified dates" info="Hide this page from view at all times or use the 'From' &amp; 'Until' fields to specify when it should be available" common="true">
-		<hidePage label="Hide Page" type="CheckBox" defaultValue="false" optional="true"/>
-		<hideOnDate label="From" type="DateField" defaultValue="" optional="true" allowBlank="true" preventPrev="true" tooltip="Use the calendar to select a date (format YYYY-MM-DD)"/>
-		<hideOnTime label="From (hh:mm)" type="TextInput" defaultValue="00:00" optional="true"/>
-		<hideUntilDate label="Until" type="DateField" defaultValue="" optional="true" allowBlank="true" preventPrev="true" tooltip="Use the calendar to select a date (format YYYY-MM-DD)"/>
-		<hideUntilTime label="Until (hh:mm)" type="TextInput" defaultValue="00:00" optional="true"/>
-	</hideShow><linkGroup type="group" label="Stand-Alone Page" optional="true" tooltip="Remove page from page menu so it can only be accessed via Xerte page links" common="true">
-		<linkPage label="Remove From Page Menu" type="CheckBox" defaultValue="true" optional="true"/>
-		<newWindow label="Open in New Window" type="CheckBox" defaultValue="false" optional="true" tooltip="Links to this page will open in a new browser window"/>
-		<headerHide label="Hide Header" type="Checkbox" defaultValue="false" optional="true"/>
-		<navbarHide label="Navigation Bar" type="ComboBox" data="default,back,hidden" options="Default,Back Button Only,Hidden" defaultValue="back" optional="true"/>
-	</linkGroup><sectionGroup type="group" label="Section Menu Options" optional="true" tooltip="Hide the table of contents for this page and set whether or not to expand the main contents to the width of the page" common="true">
-        <sectionMenu label="Hide Menu" type="CheckBox" defaultValue="false" optional="true" conditionTrigger="true" tooltip="Hide the table of contents for this page"/>
-        <expandMain label="Expand main contents" type="CheckBox" defaultValue="false" optional="true" condition="sectionMenu=='true'" tooltip="If the table of contents is set to hidden then also expand the main contents to the width of the page"/>
-    </sectionGroup><customLinkGroup type="group" label="Page ID" optional="true" tooltip="Create a customised URL to this page" info="Create a link directly to this page by adding #yourPageID to the end of the project URL&lt;br/&gt;Avoid using spaces, special characters and the words 'page' and 'section' in page IDs" common="true">
-		<customLinkID label="Page ID" type="TextInput" optional="true"/>
-	</customLinkGroup><passwordGroup type="group" label="Access Code" optional="true" tooltip="Access to this page will be restricted until an access code is entered. Please note, to securely protect your project you should password protect via the access tab in the project properties rather than using this optional property" common="true">
-		<password label="Access Code(s)" type="TextInput" optional="true" defaultValue="" tooltip="A comma separated list of codes which give access to this page"/>
-		<passwordCase label="Case Sensitive" type="CheckBox" optional="true" defaultValue="true" tooltip="Access codes are case sensitive when this option is checked"/>
-		<passwordInfo label="Instructions" type="TextArea" height="50" optional="true" defaultValue="Enter an access code below to view the page:" tooltip="The instructions which appear in the access code block"/>
-		<passwordError label="Error Message" type="TextArea" height="50" optional="true" defaultValue="Invalid access code" tooltip="The error message which appears when an incorrect access code is entered"/>
-		<passwordSubmit label="Button Label" type="TextInput" optional="true" defaultValue="Submit" tooltip="The label on the submit button"/>
-	</passwordGroup><filter type="CategoryList" label="Filter Categories" target="categoryInfo" defaultValue="" optional="true" tooltip="Use in conjunction with the project-level 'Search' optional property. Tick the relevant filter terms used in category searches" common="true"/><lightboxGroup type="group" label="Lightbox" optional="true" tooltip="By default, clicked images will open in a lightbox. Use these properties to turn the lightbox functionality on/off for this page only" common="true">
-		<lightbox type="CheckBox" label="Lightbox Images" defaultValue="true" optional="true"/>
-		<lightboxCaption type="ComboBox" label="Caption" defaultValue="false" optional="true" options="None,Below Image,Above Image" data="false,below,above" tooltip="Add a caption to lightbox images on this page. The caption text is taken from the 'Description' or 'Alt Text' fields."/>
-	</lightboxGroup><variables type="group" label="Variables" optional="true" tooltip="Use in conjunction with the project level 'Variables' optional property" common="true">
-		<varConfirm label="Submit Message" type="TextInput" defaultValue="Thank you for submitting your answers" optional="true" tooltip="Message shown after new variable values are submitted by end user"/>
-		<varUpdate label="Update Variables" type="CheckBox" defaultValue="true" optional="true" tooltip="Update any instances of variables on this page after new variable values are submitted by end user"/>
-	</variables></page><section icon="icPageWhite" remove="true" duplicate="true" menuItem="Section">
+	</page><section icon="icPageWhite" remove="true" duplicate="true" menuItem="Section">
 
 		<name type="TextInput" label="Section Title" wysiwyg="true"/>
 
@@ -234,7 +339,606 @@
 			<text><![CDATA[<text name="Title" showTitleFix="true">Enter Text Here</text>]]></text>
 		</newNodes>
 
-	</section><link icon="icLink" menuItem="Link" remove="true">
+        <interactiveBlocks>
+        <quizBlock name="Quiz">
+    <quizBlock name="Enter Page Title" order="random" numQuestions="*" align="left" panelWidth="Medium" instructions="Provide instructions here" judge="true" showfeedback="true" feedback="Provide feedback here" quesCount="Question {i} of {n}" feedbackLabel="Feedback" generalFeedbackLabel="General Feedback" singleRight="Your answer is correct!" singleWrong="Your answer is incorrect" multiRight="You have selected all the correct answers" multiWrong="You have not selected the correct combination of answers" onCompletion="You have completed the exercise" score="You scored {i} / {n}" submitBtnText="Submit" nextBtnText="Next" restartBtnText="Restart"/></quizBlock><mcqBlock name="Multiple Choice Question">
+    <mcqBlock name="Enter Page Title" instruction="Enter Instruction" prompt="Enter a Prompt" type="Single Answer" align="Left" panelWidth="Medium" feedbackLabel="Feedback" singleRight="Your answer is correct!" singleWrong="Your answer is incorrect" multiRight="You have selected all the correct answers" multiWrong="You have not selected the correct combination of answers" checkBtnTxt="Check"/></mcqBlock><opinionBlock name="Opinion">
+    <opinionBlock name="Enter Page Title" order="sequence" align="left" panelWidth="Medium" instructions="Enter Instruction" showfeedback="true" feedback="Provide feedback here" quesCount="Question {i} of {n}" onCompletion="You have completed the questionnaire" score="You answered {i} / {n}" submitBtnText="Submit" resetBtnText="Reset" backBtnText="Back"/></opinionBlock><gapFillBlock name="Gap Fill">
+    <gapFillBlock name="Enter Page Title" text="Enter text for the page here" passage="Enter interactive text here. To mark words for the exercise select the word using the mouse and right-click, choosing 'mark word' from the menu." interactivity="Drag Drop" feedback="Enter feedback here" panelWidth="Medium" checkBtn="Check" showBtn="Show Answers" gapFillBlockWrong="You have not filled in any answers correctly. Please try again." gapFillBlockWrongTracking="You have not filled in any answers correctly." gapFillBlockIncomplete="Please complete the exercise." gapFillBlockPartWrongTracking="Your correct answers are shown in green." gapFillBlockPartWrong="Your correct answers are shown in green. Try again with those you have got wrong." answerFieldLabel="Answer"/></gapFillBlock><textMatchBlock name="Text Match">
+    <textMatchBlock name="Enter Page Title" text="Provide Instructions here" maxAttempts="3" correctMessage="Correct answers are shown" submitBtnTxt="Submit" feedback="Enter feedback here" allWrong="You have not placed any labels correctly. Try again." allWrongTracking="You have not placed any labels correctly." score="You have scored {i} out of {n}. Try again." scoreTracking="You have scored {i} out of {n}." incomplete="Complete the exercise."/></textMatchBlock><categoriesBlock name="Category">
+    <categoriesBlock name="Enter Page Title" text="Enter text for the page here" feedback="Enter feedback here" buttonLabel="Check Answers" feedbackScore="You have placed {i} out of {n} labels correctly"/></categoriesBlock><dragDropLabelBlock name="Drag and Drop Labelling">
+    <dragDropLabelBlock name="Enter Page Title" text="Enter text for the page here" imgWidth="Medium" url="Select an Image" interactivity="Describe" submitText="Submit" tip="Enter a Description for Accessibility" align="Left" showHighlight="true" highlightColour="0xFFFF00" tryAgainTxt="Try again"/></dragDropLabelBlock><topXQBlock name="Top X Q">
+    <topXQBlock name="Enter Page Title" instruction="Enter Instruction" prompt="Enter a Prompt" align="Left" panelWidth="Medium" numberAnswers="*" caseSensitivity="true" feedbackLabel="Feedback" attemptLabel="Attempts remaining" correctAnswersLabel="Correct answers" passed="Well done, you have completed the activity" failed="Not all of the answers are correct" answerFieldLabel="Answer" checkBtnTxt="Submit"/></topXQBlock><timelineBlock name="Timeline">
+    <timelineBlock name="Enter Page Title" text="Enter text for the page here" interactivity="Timeline" feedback="Enter feedback here" checkBtnTxt="Check Answers" allWrong="You have not placed any labels correctly. Try again." allWrongTracking="You have not placed any labels correctly." score="You have scored {i} out of {n}. Try again." scoreTracking="You have scored {i} out of {n}." incomplete="Complete the exercise."/></timelineBlock><modelAnswerBlock name="Model Answer">
+    <modelAnswerBlock name="Enter Page Title" text="Enter text for the page here" prompt="Enter prompt here" feedback="Enter feedback here" panelWidth="Medium" align="left" feedbackBtnTxt="Feedback" instructHeaderATxt="The instruction and question on page" instructHeaderBTxt="was:" responseHeaderTxt="Your response was:" noAnswerHeaderTxt="You didn't answer this question." exampleHeaderTxt="The example answer was:" copyBtnLabel="Select Text" copyShortcutTxt="Press Ctrl + C to copy" answerFieldLabel="Answer"/></modelAnswerBlock><annotatedDiagramBlock name="Annotated Diagram">
+    <annotatedDiagramBlock name="Enter Page Title" text="Enter text for the page here" url="Select an Image" panelWidth="Medium" tip="Enter a Description for Accessibility" colour="0xFFFF00" shape="Rectangle" align="Left"/></annotatedDiagramBlock><dialogBlock name="Dialog">
+	<dialogBlock name="Enter Page Title" text="Enter text for the page here" attempts="2" panelWidth="Large" tryTxt="Try again" correctTxt="The correct answer is shown." moveOnTxt="Press enter to move on." submitBtnTxt="Submit" nextBtnTxt="Next"/></dialogBlock><documentationBlock name="Documentation">
+	<documentationBlock name="Enter Page Title" text="Enter text for the page here" intro="Enter introductory text here" display="all" download="last" panelWidth="Medium" instructions="Click the download button to save a copy of your answers" notAnswered="Not answered" requiredTxt="Please complete all required fields" mediaError="No image selected" downloadTxt="Download" nextTxt="Next" prevTxt="Previous"/></documentationBlock><buttonSequenceBlock name="Button Sequence">
+	<buttonSequenceBlock name="Enter Page Title" text="Enter text for the page here" intro="Enter introduction text here" align="Left" panelWidth="Medium"/></buttonSequenceBlock><decisionBlock name="Decision Tree">
+	<decisionBlock name="Enter Page Title" text="Enter text for the page here" panelWidth="Medium" firstStep="e.g. Q1" overview="true" newBtnLabel="Restart" viewThisBtn="Overview" backBtn="Previous Step" fwdBtn="Next Step" copyBtn="Copy Overview" copyShortcutTxt="Press Ctrl + C to copy" posAnswerString="Other possible answers" fromRangeString="From range" resultString="Result" resultEndString="" overviewString="Overview" helpString="More information" btnLabel="Next" errorString="ERROR! Invalid ID" sliderError="There is no next step for this value!"/></decisionBlock><hotspotImageBlock name="Hotspot Image">
+	<hotspotImageBlock name="Enter Page Title" text="Enter here the instructions for the page" url="Select an Image" tip="Enter a Description for Accessibility" interactivity="Show Me" highlight="false" align="Left" nextTxt="Next" priorTxt="Previous"/></hotspotImageBlock><buttonQuestionBlock name="Stimulating Question">
+	<buttonQuestionBlock name="Enter Page Title" instruction="Enter Instructions" prompt="Enter a prompt" feedback="Enter the Feedback" align="Left" panelWidth="Medium" label="Check"/></buttonQuestionBlock><inventoryBlock name="Inventory">
+	<inventoryBlock name="Enter Page Title" instructions="Enter user instructions" feedback="Enter feedback" order="random" align="left" panelWidth="Medium" classes="class1,class2,class3" scoreType="absolute" chartTitle="Chart Title" chartType="bar" chartColour="0xFFFF00" quesCount="Question {i} of {n}" feedbackLabel="Feedback" submitBtnText="Submit" nextBtnText="Next" restartBtnText="Restart"/></inventoryBlock><dictationBlock name="Dictation">
+	<dictationBlock name="Enter Page Title" text="Enter text for the page here" panelWidth="Medium" randomise="true" showText="Show Answer" trackedShowText="Submit" correctText="Correct!" incorrectText="Incorrect." nextText="Next" restartText="Restart" answerFieldLabel="Answer" countText="Clip {i} of {n}"/></dictationBlock><textHighlightBlock name="Highlight Text">
+	<textHighlightBlock name="Enter Page Title" text="&lt;p&gt;Enter text for the page here&lt;/p&gt;" textPos="top" textTitle="Introduction" initialText="&lt;p&gt;Enter initial text here&lt;/p&gt;" initialPos="panelA" initialTitle="Initial Text" suggestedText="&lt;p&gt;Enter suggested answer text here&lt;/p&gt;" suggestedPos="panelB" suggestedTitle="Suggested Text" notesPos="panelB" notesTitle="Notes" mode="Highlight" highlight1="0xFFFF00" highlight2="0xFFCC00" selectBtn="Highlight" noteBtn="Copy to Notes" downloadBtn="Download" checkBtn="Submit" clearBtn="Clear" resetBtn="Reset" errorTxt="Selection error - you can not select content from more than one paragraph at a time" highlightTxt="Selection error - no text selected" initTxtLabel="Initial text - select text and copy to your notes" initTxtLabel2="Initial text - select text before clicking highlight button" suggestedTxtLabel="A suggested answer" notesTxtLabel="Notes"/></textHighlightBlock><hotSpotQuestionBlock name="Hotspot Question">
+	<hotSpotQuestionBlock name="Enter Page Title" textWidth="narrow" panelWidth="Medium" generalFeedback="Enter feedback here" text="Enter text for the page here" url="Select an Image" tip="Enter a Description for Accessibility" answers="true" align="Left" attempts="1" warning="You have not selected anything" scoreTxt="You have /r answer(s) right (out of&#xA0;/c) and /w wrong." again="Try again, you have /a attempt(s) remaining." allGood="Well done, you have selected all of the correct answers." allGood2="You have not selected all of the /c correct answers." allWrong="You have not selected any of the /c correct answers." btnLabel="Submit"/></hotSpotQuestionBlock><interactiveTextBlock name="Interactive Text">
+	<interactiveTextBlock name="Enter Page Title" text="&lt;p&gt;Enter text for the page here&lt;/p&gt;" passage="&lt;p&gt;Enter interactive text here. Create a 'New Group' for each of the exercise's categories and give it a unique delimiter. Then mark up sections of this interactive text by surrounding it with the relevant delimiter.&lt;/p&gt;&lt;p&gt;For example:&lt;/p&gt;&lt;p&gt;The |quick| |brown| #fox# *jumped* over the |lazy| #dog#&lt;/p&gt;&lt;p&gt;Where | are adjectives, * are verbs and # are nouns.&lt;/p&gt;" interactivity="explore" highlight="false" panelWidth="medium" exploreTxt="Explore the text. Click on the various parts to learn more." showMeTxt2="Click a group to learn more." showMeTxt="Click the arrow buttons to learn more." showBtnTxt="Show All" nextTxt="Next" prevTxt="Previous" findTxt="Click a group to begin, then click the text to find all examples." findTxt3="Can you find all of the examples?" findFeedback="You have completed this activity." find2Feedback="You have selected the the correct number of items, please click the button to check your answers." findTxt2="You have found {i} of {n}" findTxt22="You have selected {i} of {n}" findCheckTxt="Check" feedbackTxt="Feedback" groupTxt="Group" yourAnswerTxt="Your Answer" correctAnswerTxt="Correct Answer" passedQuestionTxt="You passed the question" failedQuestionTxt="Not all answers are correct" passedFindTxt="All selections are correct" failedFindTxt="You still have incorrect selections" mcqText="What is highlighted in the text? Choose from the following options:" mcqQuesCount="Question {i} of {n}" mcqCorrect="That's right." mcqWrong="No, the correct answer is {i}." mcqFeedback="You have completed the quiz." mcqMore="More Information" mcqScore="You scored {i} / {n}" mcqBtnTxt="Check" mcqBtnTxt2="Next" mcqBtnTxt3="Restart" delimiterErrorMsg="Error: The delimiters {n} and {m} are not allowed." delimiterErrorMsg2="Error: The delimiter {n} is not allowed."/></interactiveTextBlock><interactiveVideoBlock name="Interactive Video">
+	<interactiveVideoBlock name="Enter Page Title" layout="grid" introTitle="Introduction" introClose="close" supportStart="start" supportEnd="end" supportSkip="skip" supportPage="page"><ivMediaPanel name="Enter Panel Title" media="Select Media" tip="Enter a Description for Accessibility" autoplay="false" transcriptBtnTxt="Transcript"/><ivOverlayPanel name="Enter Panel Title"/></interactiveVideoBlock></interactiveVideoBlock><modelAnswerResultsBlock name="Model Answer Results">
+	<modelAnswerResultsBlock name="Enter Page Title" panelWidth="Medium" copyBtnLabel="Select Text" copypasteinfo="Note: Click the 'Select Text' button to highlight the text on the right and then Ctrl + C to copy this text to the clipboard. You can then paste (Ctrl + V) into another application such as Open Office, Word or an email to save for future reference.">Enter text for the page here</modelAnswerResultsBlock></modelAnswerResultsBlock><modifyBlock name="Modify Exercise">
+	<modifyBlock name="Enter Page Title" instruction="Provide instructions here" text="Provide initial text here" prompt="Provide a prompt here" answer="Provide a model answer here" answerHeaderTxt="Write your answer here:" feedbackBtnTxt="Feedback" answerFieldLabel="Answer"/></modifyBlock><gridBlock name="Sortable Grid">
+	<gridBlock name="Enter Page Title" text="Enter text for the page here" feedback="Enter feedback here" data="1|2|3" constrain="none" style="row" align="left" gridBlockSize="medium" drag="insert" checkBtnTxt="Check Answers" resetBtnTxt="Reset"/></gridBlock><textCorrectionBlock name="Text Correction">
+	<textCorrectionBlock name="Enter Page Title" copyText="false" align="Left" introduction="Enter text for the page here" wrongText="Enter the wrong text here" answer="Enter the correct text here" feedback="Enter the feedback here" panelWidth="Medium" disableAnswers="true" checkBtn="Submit" textRight="Your answer is correct" textWrong="Your answer is incorrect" FurtherClarificationLabel="Feedback" answerLabel="Answer" attemptLabel="Attempts remaining" correctLabel="Correct Answer" textIncomplete="You have not attempted the question"/></textCorrectionBlock></interactiveBlocks>
+
+	</section><tableDoc menuItem="Editable Table" icon="icTable">
+    <name label="Table Title" type="TextInput" wysiwyg="true"/>
+    <text label="Text" type="TextArea" height="100"/>
+    <data label="Table Data" newRow=" " newCol=" " type="DataGrid" height="190" width="390" columns="2" editable="1,1" controls="1" addCols="true" showHeaderRow="false" wysiwyg="full"/>
+	
+	<appearance type="group" label="Table Appearance">
+		<borders label="Borders" options="None,Full grid,Simple,Horizontal only,Vertical only,Outside border" type="ComboBox" data="none,full,simple,horizontal,vertical,outside" defaultValue="full" width="120"/>
+		<header label="Header/Footer Rows" options="None,Header,Footer,Both" type="ComboBox" data="none,header,footer,both" defaultValue="none" width="120"/>
+		<shadeHeader label="Shade Header/Footer" type="Checkbox" defaultValue="true"/>
+		<shade label="Shade Alternate Rows" type="Checkbox" defaultValue="false"/>
+	</appearance>
+	
+	<replace label="Insert Text Areas" type="CheckBox" defaultValue="true" tooltip="Insert text area fields into empty cells in table. Use markup '[empty]' in the cell to force it to remain empty."/>
+	
+	<rows label="Text Area Lines" type="NumericStepper" min="1" max="15" defaultValue="3" optional="true"/>
+	<exclude label="Exclude From" type="ComboBox" data="lo,doc" options="Learning Object,Documentation" defaultValue="doc" width="120" optional="true"/>
+	<required label="Required Field" type="Checkbox" defaultValue="true" optional="true"/>
+	<empty label="Empty Cell Markup" type="TextInput" defaultValue="[empty]" optional="true" tooltip="The string used to markup empty cells. Default: [empty]"/>
+	
+	<notAnswered label="Not Answered Text" type="TextInput" language="true"/>
+	
+  </tableDoc><selectlist menuItem="List" icon="icBullets">
+    <name label="List Title" type="TextInput" wysiwyg="true"/>
+    <text label="Text" type="TextArea" height="100"/>
+    <type label="Question Type" type="ComboBox" data="radio,checkbox" options="Single Answer,Multiple Answer" width="120"/>
+	<display label="Display Options" type="ComboBox" data="horizontal,vertical" options="Horizontal,Vertical" width="120"/>
+	
+	<exclude label="Exclude From" type="ComboBox" data="lo,doc" options="Learning Object,Documentation" defaultValue="doc" width="120" optional="true"/>
+
+    <newNodes>
+      <selectitem><![CDATA[<selectitem name="Option" text="Enter text for this option here" />]]></selectitem>
+    </newNodes>
+  </selectlist><selectitem menuItem="Option" icon="icBullet">
+    <name label="Label" type="TextInput"/>
+    <text label="Option" type="TextArea" height="100"/>
+  </selectitem><description menuItem="Description" icon="icComment">
+    <name label="Description Title" type="TextInput" wysiwyg="true"/>
+    <text label="Text" type="TextArea" height="100"/>
+    
+    <exclude label="Exclude From" type="ComboBox" data="lo,doc" options="Learning Object,Documentation" defaultValue="doc" width="120" optional="true"/>
+  </description><line menuItem="Horizontal Rule" icon="icHr">
+    <exclude label="Exclude From" type="ComboBox" data="lo,doc" options="Learning Object,Documentation" defaultValue="doc" width="120" optional="true"/>
+  </line><media menuItem="Image" icon="icPicture">
+    <name label="Image Title" type="TextInput" wysiwyg="true"/>
+    <text label="Text" type="TextArea" height="100"/>
+	
+	<mediaGroup type="group" label="Image">
+		<url label="File" type="media"/>
+		<tip label="Description" type="textInput" defaultValue="Enter a Description for Accessibility"/>
+	</mediaGroup>
+
+    <exclude label="Exclude From" type="ComboBox" data="lo,doc" options="Learning Object,Documentation" defaultValue="doc" width="120" optional="true"/>
+  </media><checkbox menuItem="Checkbox" icon="icCheckbox">
+    <name label="Checkbox Title" type="TextInput" wysiwyg="true"/>
+    <text label="Text" type="TextArea" height="100"/>
+	<label label="Label" type="TextInput" wysiwyg="true"/>
+	
+	<default label="Default State" type="Checkbox" defaultValue="false" optional="true"/>
+    <required label="Required Field" type="Checkbox" defaultValue="true" optional="true"/>
+	<exclude label="Exclude From" type="ComboBox" data="lo,doc" options="Learning Object,Documentation" defaultValue="doc" width="120" optional="true"/>
+	
+	<checked label="Checked" type="TextInput" language="true"/>
+	<unchecked label="Unchecked" type="TextInput" language="true"/>
+  </checkbox><textarea menuItem="Text Area" icon="icTextArea">
+    <name label="Text Area Title" type="TextInput" wysiwyg="true"/>
+    <text label="Text" type="TextArea" height="100"/>
+
+    <rows label="Text Area Lines" type="NumericStepper" min="1" max="15" defaultValue="3" optional="true"/>
+	<width label="Width" options="Small,Medium,Large" type="ComboBox" data="Small,Medium,Large" defaultValue="Medium" width="100" optional="true"/>
+	<defaultTxt label="Placeholder Text" type="TextInput" optional="true"/>
+    <required label="Required Field" type="Checkbox" defaultValue="true" optional="true"/>
+    <exclude label="Exclude From" type="ComboBox" data="lo,doc" options="Learning Object,Documentation" defaultValue="doc" width="120" optional="true"/>
+	
+	<notAnswered label="Not Answered Text" type="TextInput" language="true"/>
+  </textarea><textbox menuItem="Text Box" icon="icTextEntry">
+    <name label="Text Box Title" type="TextInput" wysiwyg="true"/>
+    <text label="Text" type="TextArea" height="100"/>
+    
+	<width label="Width" options="Small,Medium,Large" type="ComboBox" data="Small,Medium,Large" defaultValue="Medium" width="100" optional="true"/>
+	<defaultTxt label="Placeholder Text" type="TextInput" optional="true"/>
+    <required label="Required Field" type="Checkbox" defaultValue="true" optional="true"/>
+    <exclude label="Exclude From" type="ComboBox" data="lo,doc" options="Learning Object,Documentation" defaultValue="doc" width="120" optional="true"/>
+	
+	<notAnswered label="Not Answered Text" type="TextInput" language="true"/>
+  </textbox><dragDropLabelBlock icon="icTagBlue"><name label="Page Title" type="TextInput" wysiwyg="true"/><text label="Page Text" type="TextArea" height="250"/><align label="Align Text" options="Left,Right" type="ComboBox" data="Left,Right" defaultValue="Left" width="100"/><image type="group" label="Image">
+		<url label="File" type="media"/>
+		<tip label="Description" type="TextInput"/>
+	</image><highlight type="group" label="Hotspot Highlight">
+		<showHighlight label="Show Highlight" type="CheckBox" defaultValue="true"/>
+		<highlightColour label="Colour" type="ColourPicker" defaultValue="0xFFFF00"/>
+	</highlight><interactivity label="Interactivity" options="Describe,Match" type="ComboBox" data="Describe,Match" defaultValue="Describe" mandatory="true" width="100" tooltip="Describe: only allow labels to be dragged to the correct hotspot and then show description text. Match: labels can be dropped on any hotspot and answers are marked after clicking submit button (no description text shown)"/><tryAgainTxt label="Try Again Text" type="TextInput" wysiwyg="true" divider="true" language="true"/><submitText label="Submit button label for Match" type="TextInput" wysiwyg="true" language="true"/><imgWidth label="Image Width" options="Small,Medium,Large" type="ComboBox" data="Small,Medium,Large" defaultValue="Medium" optional="true"/><labelPos label="Label Position" type="ComboBox" data="image,text" options="Below Image,Below Text" defaultValue="image" optional="true"/><trackingWeight label="Tracking Score Weight (0=Off)" optional="true" type="textInput" width="120" defaultValue="1.0"/><newNodes>
+	  <hotspot><![CDATA[<hotspot name="Hotspot" text="Description for the hotspot" x="0" y="0" w="100" h="100" />]]></hotspot>
+    </newNodes></dragDropLabelBlock><hotspot label="Edit Hotspot" menuItem="Hotspot" type="hotSpot" icon="icLayers" remove="true">
+
+    <name label="Drag Label" type="TextInput" wysiwyg="true"/>
+    <text label="Text" type="TextArea" height="250"/>
+	<alttext label="Tooltip Description" type="script" height="100" defaultValue="Enter a Description for Accessibility" optional="true"/>
+
+  </hotspot><gapFillBlock icon="icTextEntry"><name label="Page Title" type="TextInput" wysiwyg="true"/><text label="Introductory Text" type="TextArea" height="100"/><passage label="Gap Fill Text" type="TextArea" height="150"/><interactivity label="Interactivity" options="Drag Drop,Fill in Blank,Drop Down Menu" type="ComboBox" data="Drag Drop,Fill in Blank,Drop Down Menu" defaultValue="Drag Drop" width="100" conditionTrigger="true"/><feedback label="Feedback" type="TextArea" height="50"/><checkBtn label="Check Button Text" type="TextInput" wysiwyg="true" language="true"/><showBtn label="Show Button Text" type="TextInput" wysiwyg="true" language="true"/><gapFillWrong label="Gap Fill All Wrong" type="TextInput" wysiwyg="true" language="true"/><gapFillPartWrong label="Gap Fill Part Wrong" type="TextInput" wysiwyg="true" language="true"/><gapFillIncomplete label="Gap Fill Incomplete" type="TextInput" wysiwyg="true" language="true"/><answerFieldLabel label="Answer Field Hidden Aria-Label" type="TextInput" wysiwyg="false" language="true" mandatory="true" defaultValue="Answer" tooltip="This is a hidden label specifically for screen reader users so that the text field where they should respond is labelled and the label is spoken to the screenreader user. e.g. Answer."/><gapFillWrongTracking label="Gap Fill All Wrong (Tracking)" type="TextInput" wysiwyg="true" language="true"/><gapFillPartWrongTracking label="Gap Fill Part Wrong (Tracking)" type="TextInput" wysiwyg="true" language="true"/><delimiters type="group" label="Delimiters" optional="true">
+		<mainDelimiter label="Marked Word" type="textInput" defaultValue="|" optional="true" tooltip="The character used to mark words for the exercise"/>
+		<answerDelimiter label="Correct Answer" type="textInput" defaultValue="," optional="true" tooltip="The character separating each correct answer, where there is more than one correct answer for a gap, e.g. |Doctor,Dr|"/>
+		<noiseDelimiter label="Distractor" type="textInput" defaultValue=" " optional="true" tooltip="The character used to separate distractors"/>
+		<dropDownDelimiter label="Drop Down Menu Option" type="textInput" defaultValue="/" condition="interactivity=='Drop Down Menu'" optional="true" tooltip="The character separating the options that will appear within a drop down menu, e.g. |England/Scotland/Wales|, where the first in the list is the correct answer"/>
+	</delimiters><dropDownSort label="Drop Down Menu Option Sort" options="Alphabetic,Random" type="ComboBox" data="alphabetic,random" defaultValue="alphabetic" condition="interactivity=='Drop Down Menu'" width="100" optional="true"/><trackingWeight label="Tracking Score Weight (0=Off)" optional="true" type="textInput" width="120" defaultValue="1.0"/><noise label="Distractors" type="TextInput" height="50" optional="true" wysiwyg="false" defaultValue="Add list of distractor words separated by spaces" tooltip="A list of incorrect words to be used in Drop Down Menu or Drag Drop exercises"/><markEnd label="Mark at End" type="CheckBox" defaultValue="true" optional="true"/><audioGroup type="group" label="Audio Feedback" optional="true" tooltip="Include an audio player below the written feedback">
+		<audioFeedback label="File" type="media" optional="true"/>
+		<audioTranscript label="Transcript" type="textArea" height="100" defaultValue="" optional="true" tooltip="A transcript button will appear on the audio player when text is added here"/>
+	</audioGroup><spaceLines label="Space Lines Evenly" type="CheckBox" defaultValue="true" optional="true"/><hints type="group" label="Hints" optional="true">
+		<showHint label="Show Hint/Correct Answers Button" type="CheckBox" defaultValue="true" optional="true"/>
+    	<attemptsBeforeHint label="Attempts Before Hint" defaultValue="2" type="NumericStepper" min="0" max="10" step="1" width="100" optional="true"/>
+    </hints><casesensitive label="Case Sensitive" defaultValue="false" type="CheckBox" condition="interactivity=='Fill in Blank'" optional="true" tooltip="Treat fill in the gap exercise answers as case sensitive"/></gapFillBlock><gridBlock icon="icGrid"><name label="Page Title" type="TextInput" wysiwyg="true"/><text label="Page Text" type="TextArea" height="150"/><feedback label="Feedback" type="TextArea" height="150"/><data label="Table Data" newRow="data,data" newCol="data" type="DataGrid" height="190" width="390" columns="2" editable="1,1" controls="1" addCols="true" showHeaderRow="false" wysiwyg="true"/><constrain label="Constrain Labels" type="ComboBox" options="Off,On (Row),On (Column)" data="none,row,col"/><style label="Borders" type="ComboBox" options="None,Full Grid,Simple,Horizontal Only,Vertical Only,Outside Border" data="none,full,simple,horizontal,vertical,outside"/><align label="Text Align" type="ComboBox" options="Left,Right,Top" data="left,right,top" defaultValue="left" width="100" conditionTrigger="true"/><gridSize label="Grid Size" type="ComboBox" options="Small, Medium, Large, Full" data="small,medium,large,full" defaultValue="medium" width="100" mandatory="true" condition="align!='top'"/><drag label="Drop Label Action" type="ComboBox" options="Insert,Replace" data="insert,replace"/><fix type="group" label="Fixed Cells" optional="true">
+		<fixedRows label="Rows" type="TextInput" defaultValue="Enter numbers of any fixed rows here (e.g. 1,3)" optional="true"/>
+		<fixedCols label="Columns" type="TextInput" defaultValue="Enter numbers of any fixed columns here (e.g. 1,3)" optional="true"/>
+		<fixedCells label="Cells" type="TextInput" defaultValue="Enter reference to fixed individual cells here (e.g. 1,3|2,5)" optional="true"/>
+	</fix><display type="group" label="Table Appearance" optional="true">
+		<header label="Header Row/Column" options="None,First Row,First Column,First Row and Column" type="ComboBox" data="none,row,col,both" defaultValue="none" optional="true"/>
+		<shadeHeader label="Shade Header Row/Column" type="Checkbox" defaultValue="false" optional="true"/>
+		<shade label="Shade Alternate Rows" type="Checkbox" defaultValue="false" optional="true"/>
+	</display><checkBtnTxt label="Check Button Label" type="TextInput" wysiwyg="true" language="true"/><resetBtnTxt label="Reset Button Label" type="TextInput" wysiwyg="true" language="true"/><url label="CSV File" type="Media" optional="true"/><trackingWeight label="Tracking Score Weight (0=Off)" optional="true" type="textInput" width="120" defaultValue="1.0"/></gridBlock><hotspotImageBlock icon="icHotspot"><name label="Page Title" type="TextInput" wysiwyg="true"/><text label="Page Text" type="TextArea" height="250"/><align label="Align Text" options="Left,Right" type="ComboBox" data="Left,Right" defaultValue="Left" width="100"/><image type="group" label="Image">
+		<url label="File" type="media"/>
+		<tip label="Description" type="TextInput"/>
+	</image><highlight label="Show Highlight" type="CheckBox" defaultValue="false"/><hsAppearance type="group" label="Hotspot Highlight Appearance" optional="true" tooltip="Set colours of hotspots">
+        <hicol label="Stroke Colour" type="ColourPicker" optional="true" defaultValue="0xFFFF00" tooltip="The colour of the edges of the hotspot"/>
+        <hs_strokeOpacity label="Stroke Opacity" type="TextInput" optional="true" defaultValue="1" tooltip="The opacity (a decimal number between 0 and 1) of the edges of the hotspot"/>
+        <hs_strokeWidth label="Stroke Width" type="TextInput" optional="true" defaultValue="2" tooltip="Width of the edges of the hotspot"/>
+        <hs_fill label="Fill Hotspot" type="CheckBox" optional="true" defaultValue="true" tooltip="Fill the hotspot"/>
+        <hs_fillColor label="Fill Colour" type="ColourPicker" optional="true" defaultValue="0x000000" tooltip="The fill colour of the hotspot"/>
+        <hs_fillOpacity label="Fill Opacity" type="TextInput" optional="true" defaultValue="0.1" tooltip="The opacity (a decimal number between 0 and 1) of fill colour of the hotspot"/>
+        <hs_showTooltip label="Show Tooltip" type="CheckBox" optional="true" defaultValue="true" tooltip="Show tooltip on hover, the label is used as tooltip"/>
+	</hsAppearance><interactivity label="Interactivity" options="Show Me,Click Explore" type="ComboBox" data="Show Me,Click Explore" defaultValue="Show Me" tooltip="Include forward and back buttons to highlight the hotspots in order (Show Me) or hotspots must be found by exploring the image itself (Click Explore)" width="100"/><nextTxt label="Next Arrow Label" type="TextInput" wysiwyg="true" divider="true" language="true"/><priorTxt label="Prior Arrow Label" type="TextInput" wysiwyg="true" language="true"/><newNodes>
+	  <flexhotspot><![CDATA[<flexhotspot name="Hotspot" text="Description for the hotspot" x="0" y="0" w="100" h="100"/>]]></flexhotspot>
+    </newNodes></hotspotImageBlock><hotspot type="hotspot" label="Edit Hotspot" menuItem="Hotspot" icon="icLayers" remove="true">
+    <name label="Title" type="TextInput" wysiwyg="true"/>
+    <text label="Text" type="TextArea" height="250"/>
+	<alttext label="Tooltip Description" type="script" height="100" defaultValue="Enter a Description for Accessibility" optional="true"/>
+  </hotspot><flexhotspot type="flexhotSpot" upgradefrom="hotspot" label="Edit Hotspot" menuItem="Hotspot" icon="icLayers" remove="true">
+    <name label="Title" type="TextInput" wysiwyg="true"/>
+    <text label="Text" type="TextArea" height="250"/>
+	<alttext label="Tooltip Description" type="script" height="100" defaultValue="Enter a Description for Accessibility" optional="true"/>
+  </flexhotspot><hotspotquestion type="hotSpot" label="Edit Hotspot" menuItem="Hotspot" icon="icLayers" remove="true">
+
+    <name label="Label" type="TextInput" wysiwyg="true"/>
+    <question label="Question" type="TextArea" height="250"/>
+    <feedback label="Feedback" type="TextArea" wysiwyg="true" DefaultValue="true"/>
+    <hint label="Hint" type="TextArea" wysiwyg="true" optional="true"/>
+
+  </hotspotquestion><hotSpotQuestionBlock icon="icHotspotQuestion"><name label="Page Title" type="TextInput" wysiwyg="true"/><text label="Page Text" type="TextArea" height="250"/><align label="Align Text" options="Left,Right" type="ComboBox" data="Left,Right" defaultValue="Left" width="100"/><image type="group" label="Image">
+		<url label="File" type="media"/>
+		<tip label="Description" type="TextInput"/>
+		<textWidth label="Size" options="Full Screen,Large,Medium,Small" type="ComboBox" data="none,narrow,wide,max" defaultValue="narrow" width="200" tooltip="The page text will be hidden when the image is set to full screen"/>
+	</image><answers label="Show Answers" type="CheckBox" mandatory="true" defaultValue="false" tooltip="Show the correct answers after the maximum number of attempts have been made"/><hsAppearance type="group" label="Hotspot Appearance" optional="true">
+        <hicol label="Stroke Colour" type="ColourPicker" optional="true" defaultValue="0xFFFF00" tooltip="The colour of the hotspot border"/>
+        <hs_strokeOpacity label="Stroke Opacity" type="TextInput" optional="true" defaultValue="1" tooltip="The opacity (a decimal number between 0 and 1) of the hotspot border"/>
+        <hs_strokeWidth label="Stroke Width" type="TextInput" optional="true" defaultValue="2" tooltip="The hotspot border width"/>
+        <hs_fill label="Fill Hotspot" type="CheckBox" optional="true" defaultValue="true" tooltip="Fill the hotspot"/>
+        <hs_fillColor label="Fill Colour" type="ColourPicker" optional="true" defaultValue="0x000000" tooltip="The fill colour of the hotspot"/>
+        <hs_fillOpacity label="Fill Opacity" type="TextInput" optional="true" defaultValue="0.1" tooltip="The opacity (a decimal number between 0 and 1) of fill colour of the hotspot"/>
+        <hs_showTooltip label="Show Tooltip" type="CheckBox" optional="true" defaultValue="true" tooltip="Show the hotspot title as a tooltip when hovered with the mouse"/>
+    </hsAppearance><attempts label="Attempts" type="TextInput" defaultValue="1"/><generalFeedback label="Feedback" type="TextArea" wysiwyg="true"/><trackingWeight label="Tracking Score Weight (0=Off)" optional="true" type="textInput" width="120" defaultValue="1.0"/><scoreTxt label="Score Label" type="TextInput" wysiwyg="true" divider="true" language="true" tooltip="where /c is the total number of correct answers available, /r is the number of right selections made and /w is the number of wrong selections made"/><warning label="Warning Label" type="TextInput" wysiwyg="true" language="true"/><again label="Try Again Label" type="TextInput" wysiwyg="true" language="true" tooltip="where /a is the number of attempts remaining"/><allGood label="All Correct Label" type="TextInput" wysiwyg="true" mandatory="true" language="true"/><allWrong label="All Wrong Label" type="TextInput" wysiwyg="true" mandatory="true" language="true" tooltip="where /c is the total number of correct answers available."/><allGood2 label="Incomplete Correct Label" type="TextInput" wysiwyg="true" language="true" mandatory="true" defaultValue="" tooltip="where /c is the total number of correct answers available."/><btnLabel label="Submit Label" type="TextInput" wysiwyg="true" language="true" mandatory="true" defaultValue="Submit"/><newNodes>
+	  <QHotSpot><![CDATA[<QHotSpot name="Hotspot" Feedback="Feedback for the hotspot" x="0" y="0" w="100" h="100" truth="false"/>]]></QHotSpot>
+    </newNodes></hotSpotQuestionBlock><QHotSpot type="flexhotspot" label="Edit Hotspot" menuItem="Hotspot" icon="icLayers" remove="true">
+    <name label="Title" type="TextInput" wysiwyg="true"/>
+    <text label="Feedback" type="TextArea" height="250"/>
+    <truth label="Correct Answer" options="True,False" type="ComboBox" data="true,false" defaultValue="true" width="100"/>
+	<alttext label="Tooltip Description" type="script" height="100" defaultValue="Enter a Description for Accessibility" optional="true"/>
+  </QHotSpot><interactiveTextBlock icon="icInteractiveTxt"><name label="Name" type="TextInput" wysiwyg="true"/><text label="Page Text" type="TextArea" height="150"/><passage label="Interactive Text" type="TextArea" height="200"/><interactivity label="Interactivity" options="Explore,Show Me (By Name),Show Me (In Order),Find,Find (Mark at end),MCQ" type="ComboBox" data="explore,show,show2,find,find2,mcq" conditionTrigger="true"/><highlight label="Underline Text" type="CheckBox"/><trackingWeight label="Tracking Score Weight (0=Off)" optional="true" type="textInput" width="120" defaultValue="1.0"/><findOptions type="group" label="Distractors" optional="true">
+        <findAllowSelectionOfAllWords label="Automatic distractors" condition="interactivity=='find'||interactivity=='find2'" tooltip="Allow the selection of all the individual words, not only delimited ones" type="CheckBox" defaultValue="false" optional="true"/>
+        <findUseDistractors label="Custom distractors" type="CheckBox" defaultValue="false" optional="true" conditionTrigger="true" condition="interactivity=='find'||interactivity=='find2'" tooltip="Be able to mark distractors by setting the distractor delimiter below."/>
+        <findDistractorDelimiter label="Distractor delimiter" type="TextInput" optional="true" defaultValue="The character used to mark up this group in the interactive text, e.g. *" condition="interactivity=='find'||interactivity=='find2'&amp;&amp;findUseDistractors=='true'" tooltip="The character used to mark up this group in the interactive text, e.g. *. This delimiter can only be sued if 'custom distractors' is enabled."/>
+    </findOptions><mcqOptions type="group" label="MCQ Options" optional="true">
+		<mcqType label="Question Type" options="Highlight One From Group,Highlight Whole Group" type="ComboBox" data="one,all" defaultValue="one" condition="interactivity=='mcq'" optional="true"/>
+		<mcqFB label="Feedback" type="TextArea" height="150" defaultValue="Enter feedback text here" condition="interactivity=='mcq'" optional="true"/>
+		<mcqNumQs label="Number of Questions (*=All)" type="TextInput" defaultValue="*" condition="interactivity=='mcq'" optional="true"/>
+		<mcqNumAs label="Number of Answer Options (*=All)" type="TextInput" defaultValue="*" condition="interactivity=='mcq'" optional="true"/>
+	</mcqOptions><exploreTxt label="Explore Instructions" type="TextInput" wysiwyg="true" language="true"/><showMeTxt2 label="Show Me Instructions" type="TextInput" wysiwyg="true" language="true"/><showMeTxt label="Show Me (Button) Instructions" type="TextInput" wysiwyg="true" language="true"/><showBtnTxt label="Show Button Label" type="TextInput" wysiwyg="true" language="true"/><nextTxt label="Next Button Label" type="TextInput" wysiwyg="true" language="true"/><prevTxt label="Previous Button Label" type="TextInput" wysiwyg="true" language="true"/><findTxt label="Find Instructions" type="TextInput" wysiwyg="true" language="true"/><findTxt3 label="Find Instructions: Single Group" type="TextInput" wysiwyg="true" language="true"/><findFeedback label="Find Feedback" type="TextInput" wysiwyg="true" language="true"/><find2Feedback label="Find (Mark at end) Feedback" type="TextInput" wysiwyg="true" language="true"/><findTxt2 label="You have found {i} of {n}" type="TextInput" wysiwyg="true" language="true"/><findTxt22 label="You have selected {i} of {n}" type="TextInput" wysiwyg="true" language="true"/><findCheckTxt label="Find Check" type="TextInput" wysiwyg="true" language="true"/><mcqText label="MCQ Instructions" type="TextInput" wysiwyg="true" language="true"/><mcqQuesCount label="Question {i} of {n}" type="TextInput" wysiwyg="true" language="true"/><mcqCorrect label="MCQ Correct" type="TextInput" wysiwyg="true" language="true"/><mcqWrong label="MCQ Incorrect" type="TextInput" wysiwyg="true" language="true"/><mcqFeedback label="MCQ Feedback" type="TextInput" wysiwyg="true" language="true"/><mcqMore label="MCQ More Information" type="TextInput" wysiwyg="true" language="true"/><mcqScore label="You scored {i}/{n}" type="TextInput" wysiwyg="true" language="true"/><mcqBtnTxt label="MCQ Check Button" type="TextInput" wysiwyg="true" language="true"/><mcqBtnTxt2 label="MCQ Next Button" type="TextInput" wysiwyg="true" language="true"/><mcqBtnTxt3 label="MCQ Restart Button" type="TextInput" wysiwyg="true" language="true"/><feedbackTxt label="Feedback" type="TextInput" wysiwyg="true" language="true"/><groupTxt label="Group" type="TextInput" wysiwyg="true" language="true"/><yourAnswerTxt label="Your Answer" type="TextInput" wysiwyg="true" language="true"/><correctAnswerTxt label="Correct Answer" type="TextInput" wysiwyg="true" language="true"/><passedFindTxt label="All selections are correct" type="TextInput" wysiwyg="true" language="true"/><failedFindTxt label="You still have incorrect selections" type="TextInput" wysiwyg="true" language="true"/><passedQuestionTxt label="You passed the question" type="TextInput" wysiwyg="true" language="true"/><failedQuestionTxt label="Not all answers are correct" type="TextInput" wysiwyg="true" language="true"/><newNodes>
+		<group><![CDATA[<group name="Enter Name Here" delimiter="The character used to mark up this group in the interactive text, e.g. *" text="Enter Description Here" textColour="0xFFFFFF" bgColour="0xFF0000" />]]></group>
+    </newNodes></interactiveTextBlock><group menuItem="Group" icon="icBullet" remove="true">
+
+	<name label="Name" type="TextInput" wysiwyg="true"/>
+	<delimiter label="Delimiter" type="TextInput"/>
+    <text label="Description" type="TextArea" height="150"/>
+	<bgColour label="Highlight Colour" type="ColourPicker"/>
+
+  </group><interactiveVideoBlock icon="icApplicationMedia"><name label="Page Title" type="TextInput" wysiwyg="true"/><intro label="Introduction Panel" type="TextArea" height="200" defaultValue="Enter Introduction Text" optional="true" deprecated="Although the introduction panel still works, the new introduction optional property is now the recommended way of adding an introduction to the page"/><introTitle label="Introduction Title" type="TextInput" wysiwyg="true" divider="true" language="true"/><introClose label="Introduction Close" type="TextInput" wysiwyg="true" language="true"/><trackingWeight label="Tracking Score Weight (0=Off)" optional="true" type="textInput" width="120" defaultValue="1.0"/><trackVideo label="Track video progress" optional="true" type="ComboBox" data="no_mcqs,only_video,no,yes" options="Only if no MCQ's,Only video,No (only track MCQ's),Yes" defaultValue="no_mcqs" tooltip="Track video progress as part of the score. By default the video view percentage is only taken into account if there are no Multiple Choice Questions (MCQ's) present. Here you can choose to include the video progress (or not) in the score (when tracking)."/></interactiveVideoBlock><ivMediaPanel menuItem="Media Panel" icon="icFilm" remove="false" duplicate="false">
+
+		<name label="Media Panel Title" type="TextInput" wysiwyg="true"/>
+		
+		<mediaGroup type="group" label="Video" tooltip="Add video (file or url)">
+			<media label="File" type="media"/>
+			<tip label="Description" type="TextInput"/>
+			<autoplay label="Auto Play" type="CheckBox" defaultValue="false"/>
+		</mediaGroup>
+
+		<transcript label="Transcript" type="textArea" height="150" optional="true"/>
+		<transcriptBtnTxt label="Transcript Button Label" type="TextInput" wysiwyg="true" divider="true" language="true"/>
+
+	</ivMediaPanel><ivOverlayPanel menuItem="Overlay Panel" icon="icApplication" remove="false" max="1">
+
+		<name label="Overlay Panel Title" type="TextInput"/>
+
+		<newNodes>
+			<ivSynchXot><![CDATA[<ivSynchXot name="Enter Title" url="Enter XOT Project URL" page="Enter Page Number" hide="none" synchStart="0" clearpanel="true" pauseMedia="true"/>]]></ivSynchXot>
+			<ivSynchMCQ><![CDATA[<ivSynchMCQ name="Enter Title" text="Enter a Prompt" type="radio" answerType="single" synchStart="0" clearpanel="true" pauseMedia="true" disable="true" feedbackLabel="Feedback" singleRight="Your answer is correct!" singleWrong="Your answer is incorrect" multiRight="You have selected all the correct answers" multiWrong="You have not selected the correct combination of answers" checkBtnTxt="Check" continueBtnTxt="Continue" topOption="Select Answer..."/>]]></ivSynchMCQ>
+			<ivSynchTextPlus><![CDATA[<ivSynchTextPlus name="Enter Title" text="Enter Panel Contents" synchStart="0" clearpanel="true" pauseMedia="true"/>]]></ivSynchTextPlus>
+			<ivSynchBlockPanel><![CDATA[<ivSynchBlockPanel name="Enter Title" text="Enter Panel Contents" synchStart="0" clearpanel="true" pauseMedia="true" synchEnd="0" disable="false"/>]]></ivSynchBlockPanel>
+		</newNodes>
+
+
+
+	</ivOverlayPanel><ivSynchBlockPanel>
+		<HotSpot label="Choose location" type="LocPicker" defaultValue="ERROR"/>
+	    <disable label="Disable Controls" type="CheckBox"/>
+        <synchStart label="Synch Point" type="TextInput" defaultValue="9999"/>
+        <pauseMedia label="Pause Media" type="CheckBox" defaultValue="true"/>
+        <clearPanel label="Clear Existing Content" type="CheckBox" condition="parent.nodeName=='panel'" defaultValue="true"/>
+        <synchEnd label="Synch Point: End" type="TextInput" defaultValue="9999" optional="true"/>
+        <hsAppearance type="group" label="Optional Event" optional="true" tooltip="Customise the appearance of hotspots">
+            <optional label="Optional Event" type="CheckBox" defaultValue="false" optional="true"/>
+            <tooltip label="Hotspot" type="ComboBox" options="Icon and Tooltip,Icon and Label,Icon Only" data="tooltip,label,none" defaultValue="label" optional="true" tooltip="Label not suited for small screens"/>
+            <icon label="Icon" type="FontAwesome" iconList="hotspot" defaultValue="fas fa-info" optional="true"/>
+            <colour1 label="Background Colour Icon" type="ColourPicker" defaultValue="0x000000" optional="true"/>
+            <colour2 label="Icon Colour" type="ColourPicker" defaultValue="0xFFFFFF" optional="true"/>
+            <hsSize label="Size" type="NumericStepper" min="4" max="40" step="1" defaultValue="7" optional="true" tooltip="Size in %; Max = 40"/>
+        </hsAppearance>
+        <position label="Position" type="ComboBox" options="Top,Bottom" data="top,bottom" condition="parent.nodeName=='panel'" defaultValue="top" width="100" optional="true"/>
+        <line label="Divider" type="CheckBox" condition="parent.nodeName=='panel'" defaultValue="false" optional="true"/>
+
+        <interactiveBlocks>
+        </interactiveBlocks>
+	</ivSynchBlockPanel><ivSynchTextPlus menuItem="Text Content" icon="icPageWhiteText" remove="true">
+		<HotSpot label="Choose location" type="LocPicker" defaultValue="ERROR"/>
+		<name label="Title" type="TextInput" wysiwyg="true"/>
+		<text label="Text" type="TextArea" height="250"/>
+
+		<synchStart label="Synch Point" type="TextInput"/>
+		<synchEnd label="Synch Point: End" type="TextInput" defaultValue="9999" optional="true"/>
+		<hsAppearance type="group" label="Optional Event" optional="true" tooltip="Customise the appearance of hotspots">
+			<optional label="Optional Event" type="CheckBox" defaultValue="false" optional="true"/>
+			<tooltip label="Hotspot" type="ComboBox" options="Icon and Tooltip,Icon and Label,Icon Only" data="tooltip,label,none" defaultValue="label" optional="true" tooltip="Label not suited for small screens"/>
+			<icon label="Icon" type="FontAwesome" iconList="hotspot" defaultValue="fas fa-info" optional="true"/>
+			<colour1 label="Background Colour Icon" type="ColourPicker" defaultValue="0x000000" optional="true"/>
+			<colour2 label="Icon Colour" type="ColourPicker" defaultValue="0xFFFFFF" optional="true"/>
+			<hsSize label="Size" type="NumericStepper" min="4" max="40" step="1" defaultValue="7" optional="true" tooltip="Size in %; Max = 40%"/>
+		</hsAppearance>
+		<pauseMedia label="Pause Media" type="CheckBox" defaultValue="true"/>
+		<clearPanel label="Clear Existing Content" type="CheckBox" condition="parent.nodeName=='panel'" defaultValue="true"/>
+		<position label="Position" type="ComboBox" options="Top,Bottom" data="top,bottom" condition="parent.nodeName=='panel'" defaultValue="top" width="100" optional="true"/>
+		<line label="Divider" type="CheckBox" condition="parent.nodeName=='panel'" defaultValue="false" optional="true"/>
+		
+
+	</ivSynchTextPlus><ivSynchSlides menuItem="Slideshow" icon="icFolderImg" remove="true">
+
+		<name label="Title" type="TextInput" wysiwyg="true"/>
+		<HotSpot label="Choose location" type="LocPicker" defaultValue="ERROR"/>
+		<synchStart label="Synch Point" type="TextInput"/>
+		<synchEnd label="Synch Point: End" type="TextInput" defaultValue="9999" optional="true"/>
+		<hsAppearance type="group" label="Optional Event" optional="true" tooltip="Customise the appearance of hotspots">
+			<optional label="Optional Event" type="CheckBox" defaultValue="false" optional="true"/>
+			<tooltip label="Hotspot" type="ComboBox" options="Icon and Tooltip,Icon and Label,Icon Only" data="tooltip,label,none" defaultValue="label" optional="true" tooltip="Label not suited for small screens"/>
+			<icon label="Icon" type="FontAwesome" iconList="hotspot" defaultValue="fas fa-info" optional="true"/>
+			<colour1 label="Background Colour Icon" type="ColourPicker" defaultValue="0x000000" optional="true"/>
+			<colour2 label="Icon Colour" type="ColourPicker" defaultValue="0xFFFFFF" optional="true"/>
+			<hsSize label="Size" type="NumericStepper" min="4" max="40" step="1" defaultValue="7" optional="true" tooltip="Size in %; Max = 40"/>
+		</hsAppearance>
+		<pauseMedia label="Pause Media" type="CheckBox" condition="parent.nodeName=='panel'" defaultValue="true"/>
+		<clearPanel label="Clear Existing Content" type="CheckBox" condition="parent.nodeName=='panel'" defaultValue="true"/>
+		<position label="Position" type="ComboBox" options="Top,Bottom" data="top,bottom" condition="parent.nodeName=='panel'" defaultValue="top" width="100" optional="true"/>
+		<line label="Divider" type="CheckBox" condition="parent.nodeName=='panel'" defaultValue="false" optional="true"/>
+
+		<newNodes>
+			<ivSynchSlide><![CDATA[<synchSlide name="Enter a Description for Accessibility" url="Select Image" synchStart="0" clearpanel="true" pauseMedia="false"/>]]></ivSynchSlide>
+		</newNodes>
+
+	</ivSynchSlides><ivSynchSlide menuItem="Slide" icon="icBullet" remove="true">
+
+		<name label="Image Description" type="TextInput"/>
+		<url label="Image" type="media"/>
+		<synchStart label="Synch Point" type="TextInput"/>
+		<optional label="optional Event" type="CheckBox" defaultValue="false" optional="true"/>
+		<pauseMedia label="Pause Media" type="CheckBox" defaultValue="true"/>
+
+		<captionOptions type="group" label="Caption" optional="true">
+			<caption label="Text" type="TextInput" wysiwyg="true" defaultValue="Enter Caption Text" optional="true"/>
+			<captionPosV label="Vertical Position" type="ComboBox" options="Top,Middle,Bottom" data="top,middle,bottom" defaultValue="bottom" width="100" optional="true"/>
+			<captionPosH label="Horizontal Position" type="ComboBox" options="Left,Centre,Right" data="left,centre,right" defaultValue="centre" width="100" optional="true"/>
+		</captionOptions>
+
+	</ivSynchSlide><ivSynchMCQ menuItem="Multiple Choice Question" icon="icComments" remove="true">
+
+		<name label="Title" type="TextInput" wysiwyg="true"/>
+		<HotSpot label="Choose location" type="LocPicker" defaultValue="ERROR"/>
+		<text label="Question" type="TextArea" height="100"/>
+		<!--<type label="Question Type" type="ComboBox" options="Buttons,Radio Buttons,Drop Down Menu" data="button,radio,list" width="150"/>-->
+		<!--<type label="Question Type" type="ComboBox" options="Radio Buttons" data="radio" width="150"/>-->
+		<answerType label="Answer Type" type="ComboBox" options="Single Answer,Multiple Answer" data="single,multiple" width="150"/>
+		<disable label="Disable Controls" type="CheckBox"/>
+		<synchStart label="Synch Point" type="TextInput" defaultValue="9999"/>
+		<pauseMedia label="Pause Media" type="CheckBox" defaultValue="true"/>
+		<clearPanel label="Clear Existing Content" type="CheckBox" condition="parent.nodeName=='panel'" defaultValue="true"/>
+		<synchEnd label="Synch Point: End" type="TextInput" defaultValue="9999" optional="true"/>
+		<hsAppearance type="group" label="Optional Event" optional="true" tooltip="Customise the appearance of hotspots">
+			<optional label="Optional Event" type="CheckBox" defaultValue="false" optional="true"/>
+			<tooltip label="Hotspot" type="ComboBox" options="Icon and Tooltip,Icon and Label,Icon Only" data="tooltip,label,none" defaultValue="label" optional="true" tooltip="Label not suited for small screens"/>
+			<icon label="Icon" type="FontAwesome" iconList="hotspot" defaultValue="fas fa-info" optional="true"/>
+			<colour1 label="Background Colour Icon" type="ColourPicker" defaultValue="0x000000" optional="true"/>
+			<colour2 label="Icon Colour" type="ColourPicker" defaultValue="0xFFFFFF" optional="true"/>
+			<hsSize label="Size" type="NumericStepper" min="4" max="40" step="1" defaultValue="7" optional="true" tooltip="Size in %; Max = 40"/>
+		</hsAppearance>
+		<position label="Position" type="ComboBox" options="Top,Bottom" data="top,bottom" condition="parent.nodeName=='panel'" defaultValue="top" width="100" optional="true"/>
+		<line label="Divider" type="CheckBox" condition="parent.nodeName=='panel'" defaultValue="false" optional="true"/>
+
+		
+
+		<feedback type="TextArea" height="40" label="Feedback" optional="true"/>
+
+		<feedbackLabel label="Feedback Label" type="textInput" wysiwyg="true" divider="true" language="true"/>
+		<singleRight label="Single Answer Correct" type="TextInput" wysiwyg="true" language="true"/>
+		<singleWrong label="Single Answer Wrong" type="TextInput" wysiwyg="true" language="true"/>
+		<multiRight label="Multi Answer Correct" type="TextInput" wysiwyg="true" language="true"/>
+		<multiWrong label="Multi Answer Wrong" type="TextInput" wysiwyg="true" language="true"/>
+		<checkBtnTxt label="Check Button Label" type="TextInput" wysiwyg="true" language="true"/>
+		<continueBtnTxt label="Continue Button Label" type="TextInput" wysiwyg="true" language="true"/>
+		<topOption label="Drop Down Menu Option 1" type="TextInput" wysiwyg="true" language="true"/>
+
+		<newNodes>
+			<ivSynchMCQOption><![CDATA[<synchMCQOption name="Answer" text="Option text" correct="false"/>]]></ivSynchMCQOption>
+		</newNodes>
+
+	</ivSynchMCQ><ivSynchMCQOption menuItem="Answer" icon="icBullet" remove="true">
+
+		<text label="Answer" type="TextArea" wysiwyg="true"/>
+	    <name label="Label" type="TextInput" mandatory="true" defaultValue="Answer" wysiwyg="false"/>
+	    <correct label="Correct" options="True,False" type="ComboBox" data="true,false" defaultValue="false" width="100"/>
+
+		<feedback label="Feedback" type="TextArea" height="100" defaultValue="Feedback for this option" optional="true"/>
+		<page label="Go to Page" type="PageList" optional="true"/>
+		<synch label="Go to Synch Point" type="TextInput" optional="true"/>
+		<play label="Play Media" type="CheckBox" defaultValue="false" optional="true"/>
+		<enable label="Enable Controls" type="CheckBox" defaultValue="true" optional="true"/>
+
+	</ivSynchMCQOption><ivSynchXot menuItem="Embed XOT Project" icon="icPageWhiteCodeRed" remove="true">
+
+		<name label="Title" type="TextInput" wysiwyg="true"/>
+		<url label="URL" type="TextInput"/>
+		<page label="Page" type="TextInput" wysiwyg="true" defaultValue="Enter Page Number"/>
+		<hide label="Hide" type="ComboBox" options="None,Header,Footer,Both" data="none,top,bottom,both" defaultValue="none" width="100"/>
+
+		<synchStart label="Synch Point" type="TextInput"/>
+		<synchEnd label="Synch Point: End" type="TextInput" defaultValue="9999" optional="true"/>
+		<hsAppearance type="group" label="Optional Event" optional="true" tooltip="Customise the appearance of hotspots">
+			<optional label="Optional Event" type="CheckBox" defaultValue="false" optional="true"/>
+			<tooltip label="Hotspot" type="ComboBox" options="Icon and Tooltip,Icon and Label,Icon Only" data="tooltip,label,none" defaultValue="label" optional="true" tooltip="Label not suited for small screens"/>
+			<icon label="Icon" type="FontAwesome" iconList="hotspot" defaultValue="fas fa-info" optional="true"/>
+			<colour1 label="Background Colour Icon" type="ColourPicker" defaultValue="0x000000" optional="true"/>
+			<colour2 label="Icon Colour" type="ColourPicker" defaultValue="0xFFFFFF" optional="true"/>
+			<hsSize label="Size" type="NumericStepper" min="4" max="40" step="1" defaultValue="7" optional="true" tooltip="Size in %; Max = 40"/>
+		</hsAppearance>
+		<pauseMedia label="Pause Media" type="CheckBox" defaultValue="true"/>
+		<clearPanel label="Clear Existing Content" type="CheckBox" defaultValue="false"/>
+		<position label="Position" type="ComboBox" options="Top,Bottom" data="top,bottom" condition="parent.nodeName=='panel'" defaultValue="top" width="100" optional="true"/>
+
+		<newNodes>
+			<ivSynchXotChange><![CDATA[<synchXotChange page="Enter Page Number" synchStart="0" pauseMedia="false"/>]]></ivSynchXotChange>
+		</newNodes>
+
+	</ivSynchXot><ivSynchXotChange menuItem="XOT Page Change" icon="icBullet" remove="true">
+
+		<page label="Page" type="TextInput" defaultValue="Enter Page Number"/>
+
+		<synchStart label="Synch Point" type="TextInput"/>
+		<pauseMedia label="Pause Media" type="CheckBox" defaultValue="true"/>
+
+	</ivSynchXotChange><inventoryBlock icon="icInventory"><name label="Page Title" type="TextInput" wysiwyg="true"/><instructions label="Instructions" type="textArea" height="100"/><feedback label="Inventory Feedback" type="textArea" height="100"/><order label="Question Order" options="Sequence,Random" type="comboBox" data="sequence,random" defaultValue="random" width="120"/><align label="Align Text" options="Left,Right" type="comboBox" data="left,right" defaultValue="left" width="120"/><classes label="Classes (max 10)" type="TextInput"/><scoreType label="Score Type" options="Absolute,Individual Percent,Relative Percent" type="comboBox" data="absolute,individual percent,relative percent" defaultValue="absolute" width="120"/><chartTitle label="Chart Title" type="TextInput" wysiwyg="true"/><chartType label="Chart Type" options="Bar,Pie,Line" type="ComboBox" data="bar,pie,line" defaultValue="bar" width="120"/><chartColour label="Colour" type="colourPicker"/><quesCount label="{i} of {n} questions" type="TextInput" wysiwyg="true" divider="true" language="true"/><feedbackLabel label="Feedback Label" type="TextInput" wysiwyg="true" language="true"/><testModeText label="Test mode text" type="TextInput" wysiwyg="true" language="true" deprecated="This property is no longer required"/><submitBtnText label="Submit Button Label" type="TextInput" wysiwyg="true" language="true"/><submitBtnTip label="Submit Button Tip" type="textInput" language="true" deprecated="This property is no longer required"/><submitBtnWidth label="Submit Button Width" type="NumericStepper" min="100" max="250" step="10" width="100" defaultValue="100" language="true" deprecated="Width is now set automatically"/><nextBtnText label="Next Button Label" type="TextInput" wysiwyg="true" language="true"/><nextBtnTip label="Next Button Tip" type="textInput" language="true" deprecated="This property is no longer required"/><nextBtnWidth label="Next Button Width" type="NumericStepper" min="100" max="250" step="10" width="100" defaultValue="100" language="true" deprecated="Width is now set automatically"/><restartBtnText label="Restart Button Label" type="TextInput" wysiwyg="true" language="true"/><restartBtnTip label="Restart Button Tip" type="textInput" language="true" deprecated="This property is no longer required"/><restartBtnWidth label="Restart Button Width" type="NumericStepper" min="100" max="250" step="10" width="100" defaultValue="100" language="true" deprecated="Width is now set automatically"/><info><![CDATA[<b>For full details on how to use the Inventory Page. <u><a href="http://xerte.org.uk/docs/xot/help/InventoryPageGuide.pdf" target="_blank">Click here</a></u></b>]]></info><newNodes>
+      <invQuestion><![CDATA[<invQuestion name="Question" prompt="Here is a prompt" type="Single Answer" questionFeedback="no" />]]></invQuestion>
+    </newNodes></inventoryBlock><invQuestion menuItem="Question" remove="true">
+    <name label="Label" type="TextInput" mandatory="true" defaultValue="Question" wysiwyg="false"/>
+    <prompt label="Question" type="TextArea" height="100"/>
+    <type label="Question Type" options="Single Answer,Multiple Answer" type="ComboBox" data="Single Answer,Multiple Answer" defaultValue="Single Answer" width="120"/>
+    <questionFeedback label="Display Feedback" options="No,Yes" type="ComboBox" data="no,yes" defaultValue="no" width="120"/>
+
+	<imgInfo type="group" label="Image" optional="true">
+		<image label="Image" type="Media" optional="true" defaultValue="Select an Image"/>
+		<tip label="Image Description" type="textInput" optional="true" defaultValue="Enter a Description for Accessibility"/>
+	</imgInfo>
+
+    <newNodes>
+      <invOption><![CDATA[<invOption name="Answer" text="Here is an option" class="0" feedback="Feedback for this option"   weight="1"/>]]></invOption>
+    </newNodes>
+
+  </invQuestion><invOption menuItem="Option" icon="icBullet" remove="true">
+    <text label="Answer" type="TextArea" height="100"/>
+    <name label="Label" type="TextInput" mandatory="true" defaultValue="Answer"/>
+    <class label="Classification" options="0,1,2,3,4,5,6,7,8,9" type="ComboBox" data="0,1,2,3,4,5,6,7,8,9" defaultValue="0" width="100"/>
+    <feedback label="Feedback" type="TextArea" height="100"/>
+	<weight label="Weight or Score" options="0,1,2,3,4,5" type="ComboBox" data="0,1,2,3,4,5" defaultValue="1" width="100"/>
+  </invOption><mcqBlock icon="icComments"><name label="Page Title" type="TextInput" wysiwyg="true"/><align label="Align Text" options="Left,Right" type="ComboBox" data="Left,Right" defaultValue="Left" width="100"/><instruction label="Instruction" type="TextArea" height="100"/><prompt label="Question" type="TextArea" height="100"/><type label="Question Type" options="Single Answer,Multiple Answer" type="ComboBox" data="Single Answer,Multiple Answer" defaultValue="Single Answer" width="120"/><trackingWeight label="Tracking Score Weight (0=Off)" optional="true" type="textInput" width="120" defaultValue="1.0"/><feedbackLabel label="Feedback Label" type="TextInput" wysiwyg="true" divider="true" language="true"/><singleRight label="Single Answer Correct" type="TextInput" wysiwyg="true" language="true"/><singleWrong label="Single Answer Wrong" type="TextInput" wysiwyg="true" language="true"/><multiRight label="Multi Answer Correct" type="TextInput" wysiwyg="true" language="true"/><multiWrong label="Multi Answer Wrong" type="TextInput" wysiwyg="true" language="true"/><checkBtnTxt label="Check Button Label" type="TextInput" wysiwyg="true" language="true"/><checkBtnTip label="Check Button Tip" type="textInput" language="true" deprecated="This property is no longer required"/><checkBtnWidth label="Check Button Width" type="NumericStepper" min="100" max="250" step="10" width="100" defaultValue="100" language="true" deprecated="Width is now set automatically"/><answerOrder label="Answer Order" options="Sequence,Random" type="comboBox" data="sequence,random" defaultValue="sequence" width="120" optional="true"/><feedbackGroup type="group" label="Feedback" optional="true">
+		<feedback type="TextArea" height="40" label="General Feedback" optional="true" tooltip="Feedback shown when an answer is submitted. Can be used in conjunction with tailored feedback for each answer option."/>
+		<markFeedback label="Mark Answer" type="CheckBox" defaultValue="true" optional="true" tooltip="Mark answer as correct or incorrect in feedback block (at least one answer option must also be set as correct for this to be shown)"/>
+		<feedbackPos label="Feedback Order" options="General &gt; Answer &gt; Correct/Incorrect,General &gt; Correct/Incorrect &gt; Answer,Answer &gt; Correct/Incorrect &gt; General,Answer &gt; General &gt; Correct/Incorrect,Correct/Incorrect &gt; General &gt; Answer,Correct/Incorrect &gt; Answer &gt; General" type="ComboBox" data="GAC,GCA,ACG,AGC,CGA,CAG" defaultValue="GAC" width="120" optional="true" tooltip="The order the different types of feedback are shown within the feedback block. Default order is General feedback &gt; Answer feedback &gt; Correct/Incorrect feedback"/>
+	</feedbackGroup><newNodes>
+      <option><![CDATA[<option name="Answer" text="Here is an option" feedback="Feedback for this option" correct="false"/>]]></option>
+    </newNodes></mcqBlock><option menuItem="Answer" icon="icBullet">
+    <text label="Answer" type="TextArea" height="100"/>
+    <name label="Label" type="TextInput" mandatory="true" defaultValue="Answer" wysiwyg="false"/>
+    <feedback label="Feedback" type="TextArea" height="100" tooltip="Feedback shown when this answer is submitted"/>
+    <correct label="Correct" options="True,False" type="ComboBox" data="true,false" defaultValue="false" width="100"/>
+
+	<audioGroup type="group" label="Audio Feedback" optional="true" tooltip="Add an audio player below the feedback text">
+		<audioFB label="File" defaultValue="" type="media" optional="true"/>
+		<audioTranscript label="Transcript" type="textArea" height="100" defaultValue="" optional="true" tooltip="A transcript button will appear on the audio player when text is added here"/>
+	</audioGroup>
+
+  </option><modelAnswerBlock icon="icPageWhiteEdit"><name label="Page Title" type="TextInput" wysiwyg="true"/><text label="Page Text" type="TextArea" height="100"/><prompt label="Prompt" type="TextArea" height="100"/><feedback label="Feedback" type="TextArea" height="100"/><align label="Align Text" options="Left,Right" type="ComboBox" data="Left,Right" defaultValue="Left" width="100"/><feedbackBtnTxt label="Check Button Label" type="TextInput" wysiwyg="true" divider="true" language="true"/><feedbackBtnTip label="Check Button Tip" type="textInput" language="true" deprecated="This property is no longer required"/><feedbackBtnWidth label="Check Button Width" type="NumericStepper" min="80" max="250" step="10" width="100" defaultValue="100" language="true" deprecated="Width is now set automatically"/><instructHeaderATxt label="Instruction Header (a)" type="TextInput" wysiwyg="true" language="true"/><instructHeaderBTxt label="Instruction Header (b)" type="TextInput" wysiwyg="true" language="true"/><responseHeaderTxt label="Response Header" type="TextInput" wysiwyg="true" language="true"/><noAnswerHeaderTxt label="No Answer Header" type="TextInput" wysiwyg="true" language="true"/><exampleHeaderTxt label="Example Header" type="TextInput" wysiwyg="true" language="true"/><copyBtnLabel label="Select Button Label" type="TextInput" wysiwyg="true" language="true"/><copyShortcutTxt label="Copy Shortcut Text" type="TextInput" wysiwyg="true" language="true"/><answerFieldLabel label="Answer Field Hidden Aria-Label" type="TextInput" wysiwyg="false" language="true" mandatory="true" defaultValue="Answer" tooltip="This is a hidden label specifically for screen reader users so that the text field where they should respond is labelled and the label is spoken to the screenreader user. e.g. Answer."/><copypasteinfo label="Copy and Paste Info (Flash)" defaultValue="Note: the instruction  and question, your response and the example answer, have been copied to the clipboard which you can paste (ctrl + v) into another application such as Open Office, Word or an email to save for future reference." type="TextArea" height="50" optional="true" deprecated="This property is no longer required"/><copypasteinfo2 label="Copy and Paste Info" defaultValue="Note: Click the 'Select Text' button to highlight the instruction, question, your response and the example answer and then Ctrl + C to copy this text to the clipboard. You can then paste (Ctrl + V) into another application such as Open Office, Word or an email to save for future reference." type="TextArea" height="50" optional="true"/><label label="Button Label" defaultValue="deprecated - for backward compatibility only" type="TextInput" wysiwyg="true" optional="true" deprecated="This property is no longer required"/><required label="Answer Required Before Feedback" type="CheckBox" optional="true" defaultValue="true"/><imgInfo type="group" label="Image" optional="true">
+		<image label="Image" type="media" optional="true" defaultValue="Select an Image"/>	
+		<tooltip label="Image Description" type="TextInput" optional="true" defaultValue="Enter a Description for Accessibility"/>
+	</imgInfo></modelAnswerBlock><modelAnswerResultsBlock icon="icFolderPage"><name label="Page Title" type="TextInput" wysiwyg="true"/><copyBtnTxt label="Copy Button Label" type="TextInput" wysiwyg="true" divider="true" language="true" deprecated="This property is no longer required"/><copyBtnTip label="Copy Button Tip" type="textInput" language="true" deprecated="This property is no longer required"/><copyBtnWidth label="Copy Button Width" type="NumericStepper" min="80" max="250" step="10" width="100" defaultValue="130" language="true" deprecated="Width is now set automatically"/><copyBtnLabel label="Select Button Label" type="TextInput" wysiwyg="true" language="true"/><copypasteinfo label="Copy and Paste Info" type="TextArea" height="50" language="true"/></modelAnswerResultsBlock><modifyBlock icon="icModify"><name label="Page Title" type="TextInput" wysiwyg="true"/><instruction label="Instruction" type="TextArea" height="100"/><text label="Initial Text" type="script" height="100"/><prompt label="Answer Prompt" type="script" height="100"/><answer label="Model Answer" type="script" height="100"/><trackingWeight label="Tracking Score Weight (0=Off)" optional="true" type="textInput" width="120" defaultValue="1.0"/><answerHeaderTxt label="Instruction Header" type="TextInput" wysiwyg="true" divider="true" language="true"/><feedbackBtnTxt label="Button Label" type="TextInput" wysiwyg="true" language="true"/><feedbackBtnTip label="Button Tip" type="textInput" language="true" deprecated="This property is no longer required"/><feedbackBtnWidth label="Button Width" type="NumericStepper" min="80" max="250" step="10" width="100" defaultValue="100" language="true" deprecated="Width is now set automatically"/><answerFieldLabel label="Answer Field Hidden Aria-Label" type="TextInput" wysiwyg="false" language="true" mandatory="true" defaultValue="Answer" tooltip="This is a hidden label specifically for screen reader users so that the text field where they should respond is labelled and the label is spoken to the screenreader user. e.g. Answer."/></modifyBlock><opinionBlock icon="icOpinion"><name label="Page Title" type="TextInput" wysiwyg="true"/><instructions label="Instructions" type="textArea" height="120"/><align label="Align Text" options="Left,Right" type="comboBox" data="left,right" defaultValue="left" width="120"/><order label="Question Order" options="Sequence,Random" type="comboBox" data="sequence,random" defaultValue="random" width="120"/><showfeedback label="Show Feedback" type="CheckBox" defaultValue="true" conditionTrigger="true"/><feedback label="Feedback" type="textArea" height="120" condition="showfeedback!='false'"/><quesCount label="{i} of {n} questions" type="TextInput" wysiwyg="true" divider="true" language="true"/><onCompletion label="Completion Text" type="TextInput" wysiwyg="true" language="true"/><submitBtnText label="Submit Button Label" type="TextInput" wysiwyg="true" language="true"/><resetBtnText label="Reset Button Label" type="TextInput" wysiwyg="true" mandatory="true" defaultValue="Reset" language="true"/><backBtnText label="Back Button Label" type="TextInput" wysiwyg="true" mandatory="true" defaultValue="Back" language="true"/><trackingWeight label="Tracking Score Weight (0=Off)" optional="true" type="textInput" width="120" defaultValue="1.0"/><imgGroup type="group" label="Image" optional="true">
+		<img label="File" type="media" defaultValue="Select an Image" optional="true"/>
+		<tip label="Description" type="textInput" optional="true" defaultValue="Enter a Description for Accessibility"/>
+	</imgGroup><graph label="Graph" type="group" optional="true">
+		<diagram label="Hide Graph" type="CheckBox" defaultValue="false" optional="true" conditionTrigger="true" tooltip="Do not show the graph at the end of the questionnaire"/>
+		<colour label="Colour" type="colourPicker" defaultValue="0x000000" optional="true" condition="diagram!='true'" tooltip="The colour used for this page on the graph"/>
+		<key label="Show Key" type="CheckBox" defaultValue="true" optional="true" condition="diagram!='true'" tooltip="Show a key listing page names and colours"/>
+	</graph><disableprinting label="Disable printing" type="CheckBox" optional="true" defaultValue="false"/><layout label="Layout" type="group" optional="true">
+      <list label="Question Layout" type="ComboBox" options="One Per Page,List in Pages,List All" data="false,true,all" optional="true" defaultValue="false" conditionTrigger="true"/>
+      <paging label="Use Paging" type="checkbox" optional="true" tooltip="Group question list in pages if using list mode" defaultValue="true" deprecated="This property is deprecated - use the List in Pages question layout to create pages of questions"/>
+	  <pagesize label="Questions Per Page" type="NumericStepper" min="1" max="100" step="1" optional="true" defaultValue="10" condition="list=='true'" tooltip="Maximum number of questions per page (when list in pages layout)"/>
+    </layout><newNodes>
+        <opinionClass><![CDATA[<opinionClass title="Title used on graph" name="Class"/>]]></opinionClass>
+      </newNodes></opinionBlock><opinionClass menuItem="Class">
+      <title label="Title" type="TextInput" mandatory="true" defaultValue="Title used on graph" wysiwyg="true"/>
+	  <name label="Label" type="TextInput" mandatory="true" defaultValue="Class" wysiwyg="false"/>
+
+    <newNodes>
+      <opinionQuestion><![CDATA[<opinionQuestion  name="Question" prompt="Enter a Prompt" scale="false" classWeight="1" interactivity="slider" />]]></opinionQuestion>
+    </newNodes>
+  </opinionClass><opinionQuestion menuItem="Question">
+    <prompt label="Question" type="TextArea" height="100"/>
+    <name label="Label" type="TextInput" mandatory="true" defaultValue="Question" wysiwyg="false"/>
+    <classWeight label="Weighting" type="TextInput" wysiwyg="false"/>
+	<interactivity label="Interactivity" options="Radio Buttons, Slider" mandatory="true" type="ComboBox" data="radio-buttons,slider" defaultValue="slider" width="120"/>
+	
+	<imgGroup type="group" label="Image" optional="true">
+		<image label="File" type="media" defaultValue="Select an Image" optional="true"/>
+		<tip label="Description" type="textInput" optional="true" defaultValue="Enter a Description for Accessibility"/>
+	</imgGroup>
+	
+    <scale label="Reverse scale" type="CheckBox"/>  
+	
+	<soundGroup type="group" label="Audio" optional="true" tooltip="Add an audio player below the question text">
+		<sound label="File" type="Media" optional="true"/>
+		<soundTranscript label="Transcript" type="textArea" height="100" defaultValue="" optional="true" tooltip="A transcript button will appear on the audio player when text is added here"/>
+	</soundGroup>
+		
+    <newNodes>
+      <opinionOption><![CDATA[<opinionOption name="Answer" text="Here is an option" />]]></opinionOption>
+    </newNodes>
+
+  </opinionQuestion><opinionOption menuItem="Answer" icon="icBullet">
+    <text label="Text" type="TextArea" manadtory="true" defaultValue="Here is an option" wysiwig="true"/>
+	<name label="Label" type="TextInput" mandatory="true" defaultValue="Answer" wysiwyg="false"/>
+  </opinionOption><quizBlock icon="icPageWhiteGear"><name label="Quiz Title" type="TextInput" wysiwyg="true"/><order label="Question Order" options="Sequence,Random" type="comboBox" data="sequence,random" defaultValue="random" width="120"/><numQuestions label="Number of Questions (*=All)" type="TextInput" width="120"/><align label="Align Text" options="Left,Right" type="comboBox" data="left,right" defaultValue="left" width="120"/><instructions label="Instructions" type="textArea" height="120"/><judge label="Judge Questions" type="CheckBox" defaultValue="true"/><showfeedback label="Show Feedback" type="CheckBox" defaultValue="true"/><feedback label="Feedback" type="textArea" height="120"/><trackingWeight label="Tracking Score Weight (0=Off)" optional="true" type="textInput" width="120" defaultValue="1.0"/><scorePos label="Score Position" options="Above Feedback,Below Feedback" type="ComboBox" data="Above,Below" defaultValue="Below" width="120" optional="true"/><quesCount label="{i} of {n} questions" type="TextInput" wysiwyg="true" divider="true" language="true"/><feedbackLabel label="Feedback Label" type="TextInput" wysiwyg="true" language="true"/><generalFeedbackLabel label="General Feedback Label" type="TextInput" wysiwyg="true" language="true"/><singleRight label="Single Answer Correct" type="TextInput" wysiwyg="true" language="true"/><singleWrong label="Single Answer Wrong" type="TextInput" wysiwyg="true" language="true"/><multiRight label="Multi Answer Correct" type="TextInput" wysiwyg="true" language="true"/><multiWrong label="Multi Answer Wrong" type="TextInput" wysiwyg="true" language="true"/><onCompletion label="Completion Text" type="TextInput" wysiwyg="true" language="true"/><score label="You scored {i} out of {n} marks" type="TextInput" wysiwyg="true" language="  true"/><submitBtnText label="Submit Button Label" type="TextInput" wysiwyg="true" language="true"/><submitBtnTip label="Submit Button Tip" type="textInput" language="true" deprecated="This property is no longer required"/><submitBtnWidth label="Submit Button Width" type="NumericStepper" min="100" max="250" step="10" width="100" defaultValue="100" language="true" deprecated="Width is now set automatically"/><nextBtnText label="Next Button Label" type="TextInput" wysiwyg="true" language="true"/><nextBtnTip label="Next Button Tip" type="textInput" language="true" deprecated="This property is no longer required"/><nextBtnWidth label="Next Button Width" type="NumericStepper" min="100" max="250" step="10" width="100" defaultValue="100" language="true" deprecated="Width is now set automatically"/><restartBtnText label="Restart Button Label" type="TextInput" wysiwyg="true" language="true"/><restartBtnTip label="Restart Button Tip" type="textInput" language="true" deprecated="This property is no longer required"/><restartBtnWidth label="Restart Button Width" type="NumericStepper" min="100" max="250" step="10" width="100" defaultValue="100" language="true" deprecated="Width is now set automatically"/><imgInfo type="group" label="Image" optional="true">
+		<img label="Image" type="media" defaultValue="Select an Image" optional="true"/>
+		<tip label="Description" type="textInput" optional="true" defaultValue="Enter a Description for Accessibility"/>
+	</imgInfo><videoInfo type="group" label="Video" optional="true">
+		<video label="Video" type="media" defaultValue="Select a Video" optional="true"/>
+		<movieSize label="Size" type="textInput" defaultValue="320,240" optional="true"/>
+	</videoInfo><newNodes>
+      <question><![CDATA[<question prompt="Enter question" name="Question" type="Single Answer" />]]></question>
+	</newNodes></quizBlock><question menuItem="Question">
+  
+    <prompt label="Question" type="TextArea" height="100"/>
+    <name label="Label" type="TextInput" mandatory="true" defaultValue="Question" wysiwyg="false"/>
+    <type label="Question Type" options="Single Answer,Multiple Answer" type="ComboBox" data="Single Answer,Multiple Answer" defaultValue="Single Answer" width="120"/>
+	
+	<feedbackGroup type="group" label="Feedback" optional="true">
+    	<feedback type="TextArea" height="40" label="General Feedback" optional="true" tooltip="Feedback shown when an answer is submitted. Can be used in conjunction with tailored feedback for each answer option."/>
+    	<markFeedback label="Mark Answer" type="CheckBox" defaultValue="true" optional="true" tooltip="Mark answer as correct or incorrect in feedback block (at least one answer option must also be set as correct for this to be shown)"/>
+    	<feedbackPos label="Feedback Order" options="General &gt; Answer &gt; Correct/Incorrect,General &gt; Correct/Incorrect &gt; Answer,Answer &gt; Correct/Incorrect &gt; General,Answer &gt; General &gt; Correct/Incorrect,Correct/Incorrect &gt; General &gt; Answer,Correct/Incorrect &gt; Answer &gt; General" type="ComboBox" data="GAC,GCA,ACG,AGC,CGA,CAG" defaultValue="GAC" width="120" optional="true" tooltip="The order the different types of feedback are shown within the feedback block. Default order is General feedback &gt; Answer feedback &gt; Correct/Incorrect feedback"/>
+    </feedbackGroup>
+	
+	<imgInfo type="group" label="Image" optional="true">
+		<image label="Image" type="Media" defaultValue="Select an Image" optional="true"/>
+		<tip label="Image Description" type="TextInput" optional="true" defaultValue="Enter a Description for Accessibility"/>
+	</imgInfo>
+	
+	<soundGroup type="group" label="Audio" optional="true" tooltip="Add an audio player below the question text">
+		<sound label="File" type="media" optional="true"/>
+		<soundTranscript label="Transcript" type="textArea" height="100" defaultValue="" optional="true" tooltip="A transcript button will appear on the audio player when text is added here"/>
+	</soundGroup>
+	
+	<answerOrder label="Answer Order" options="Sequence,Random" type="comboBox" data="sequence,random" defaultValue="sequence" width="120" optional="true"/>
+		
+    <newNodes>
+      <option><![CDATA[<option text="Enter option" name="Answer" feedback="Feedback for this option" correct="false"/>]]></option>
+    </newNodes>
+
+  </question><option menuItem="Answer" icon="icBullet">
+    <text label="Answer" type="TextArea" height="100"/>
+    <name label="Label" type="TextInput" mandatory="true" defaultValue="Answer" wysiwyg="false"/>
+    <feedback label="Feedback" type="TextArea" height="100" tooltip="Feedback shown when this answer is submitted"/>
+    <correct label="Correct" options="True,False" type="ComboBox" data="true,false" defaultValue="false" width="100"/>
+	
+	<audioGroup type="group" label="Audio Feedback" optional="true" tooltip="Add an audio player below the feedback text">
+		<audioFB label="File" defaultValue="" type="media" optional="true"/>
+		<audioTranscript label="Transcript" type="textArea" height="100" defaultValue="" optional="true" tooltip="A transcript button will appear on the audio player when text is added here"/>
+	</audioGroup>
+  </option><textCorrectionBlock icon="icTextCorrection"><name label="Page Title" type="textInput" wysiwyg="true"/><introduction label="Page Text" type="TextArea" height="100"/><wrongTextGroup type="group" label="Incorrect Text">
+			<wrongText label="Text" type="script" height="150"/>
+			<copyText label="Use As Prompt" defaultValue="false" type="CheckBox" tooltip="Pre-populate answer box with incorrect text" mandatory="true"/>
+		</wrongTextGroup><answerTextGroup type="group" label="Correct Text">
+			<answer label="Text" type="script" height="150"/>
+			<disableAnswers label="Show At End" type="CheckBox" mandatory="true" defaultValue="true" tooltip="Show the correct answer after the maximum number of attempts have been made (unless the correct answer has been submitted)."/>
+		</answerTextGroup><align label="Align Text" options="Left,Right" type="ComboBox" data="Left,Right" defaultValue="Left" width="100"/><showFurtherClarification label="Show Feedback" defaultValue="false" type="CheckBox" optional="true" deprecated="This property is deprecated."/><FurtherClarification label="Feedback" type="TextArea" height="50" defaultValue="Enter feedback here" optional="true"/><amountOfTries label="Attempts" type="TextInput" defaultValue="1" optional="true" tooltip="Attempts allowed before feedback is given"/><trackingWeight label="Tracking Score Weight (0=Off)" optional="true" type="textInput" width="120" defaultValue="1.0"/><checkBtn label="Check Button Text" type="TextInput" wysiwyg="true" language="true"/><attemptLabel label="Attempt Label" type="TextInput" wysiwyg="true" language="true"/><textRight label="Passed the test" type="TextInput" wysiwyg="true" language="true"/><textWrong label="Failed the test" type="TextInput" wysiwyg="true" language="true"/><textIncomplete label="Text Incomplete" type="TextInput" wysiwyg="true" language="true"/><resultLabel label="Result" type="TextInput" wysiwyg="true" language="true" deprecated="This property is deprecated"/><correctLabel label="Correct Answer" type="TextInput" wysiwyg="true" language="true" mandatory="true" defaultValue="Correct Answer"/><FurtherClarificationLabel label="Feedback" type="TextInput" wysiwyg="true" language="true"/><answerLabel label="Answer" type="TextInput" wysiwyg="false" language="true"/></textCorrectionBlock><textHighlightBlock icon="icHighlight"><name label="Page Title" type="TextInput" wysiwyg="true"/><mode label="Interactivity Type" type="combobox" conditionTrigger="true" options="Highlighting,Note Taking" data="Highlight,Notes"/><textGroup type="group" label="Page Text">
+		<textTitle label="Title" type="TextInput" wysiwyg="true" condition="(textPos=='panelA'||textPos=='panelB'||textPos=='left') || download=='true'" tooltip="Title to appear on tab and in downloaded document"/>
+		<text label="Text" type="TextArea" height="100"/>
+		<textPos label="Position" type="combobox" options="Top,Left,Panel 1,Panel 2" data="top,left,panelA,panelB" conditionTrigger="true" tooltip="The position of this introductory text on the screen. Text can only appear on the left when there is only one panel being used."/>
+	</textGroup><initialGroup type="group" label="Initial Text">
+		<initialTitle label="Title" type="TextInput" wysiwyg="true" tooltip="Title to appear on tab and in downloaded document"/>
+		<initialText label="Text" type="TextArea" height="100"/>
+		<initialPos label="Position" type="combobox" options="Panel 1,Panel 2" data="panelA,panelB" tooltip="The position of the initial text on the screen"/>
+	</initialGroup><suggestedGroup type="group" label="Suggested Text" tooltip="The suggested text appears after answers are submitted. It should contain a suggested version of appropriate highlights or notes. Highlights can be added to this text using the background colour button on the text toolbar">
+		<suggestedTitle label="Title" type="TextInput" wysiwyg="true" tooltip="Title to appear on tab and in downloaded document"/>
+		<suggestedText label="Text" type="TextArea" height="100"/>
+		<suggestedPos label="Position" type="combobox" options="Panel 1,Panel 2" data="panelA,panelB" tooltip="The position of the suggested text on the screen"/>
+	</suggestedGroup><notesGroup type="group" label="Notes Area" condition="mode=='Notes'" tooltip="This text area is only shown when in note taking mode">
+		<notesTitle label="Title" type="TextInput" wysiwyg="true" condition="mode=='Notes'" tooltip="Title to appear on tab and in downloaded document"/>
+		<notesPos label="Position" type="combobox" options="Panel 1,Panel 2" data="panelA,panelB" condition="mode=='Notes'" tooltip="The position of the notes text on the screen"/>
+	</notesGroup><highlight1 label="Highlight Colour" type="ColourPicker" defaultValue="0xFFFF00" tooltip="The background colour used when highlighting text"/><highlight2 label="Select Colour" type="ColourPicker" defaultValue="0xFFCC00" condition="mode=='Highlight'" tooltip="The background colour used for selected text"/><feedbackGroup type="group" label="Feedback Text" optional="true" tooltip="The optional feedback text appears after answers are submitted">
+		<feedbackTitle label="Title" type="TextInput" wysiwyg="true" condition="(feedbackPos=='panelA'||feedbackPos=='panelB') || download=='true'" defaultValue="Feedback" optional="true" tooltip="Title to appear on tab and in downloaded document"/>
+		<feedback label="Text" type="TextArea" height="100" defaultValue="&lt;p&gt;Enter feedback text here&lt;/p&gt;" optional="true"/>
+		<feedbackPos label="Position" type="combobox" options="Panel 1,Panel 2,Lightbox" data="panelA,panelB,lightbox" conditionTrigger="true" defaultValue="panelB" optional="true" tooltip="The position of the feedback text on the screen"/>
+	</feedbackGroup><notesText label="Notes Placeholder Text" type="TextArea" height="100" defaultValue="" condition="mode=='Notes'" optional="true" tooltip="When in note taking mode this text will appear in the notes area by default"/><downloadGroup type="group" label="Download Notes" optional="true" tooltip="Allow text on the page to be downloaded as a Word document">
+		<download label="Allow Download" type="CheckBox" defaultValue="true" conditionTrigger="true" optional="true"/>
+		<filename label="Filename (without extension)" type="TextInput" defaultValue="textHighlight" condition="download=='true'" optional="true"/>
+		<fileOrientation label="File Orientation" data="portrait,landscape" type="ComboBox" options="Portrait,Landscape" width="120" defaultValue="portrait" condition="download=='true'" optional="true"/>
+		
+		<fontSize type="group" label="Font Size" optional="true" tooltip="Customise the font sizes used in the downloaded document">
+			<h1 label="h1" type="TextInput" defaultValue="20" width="100" optional="true"/>
+			<h2 label="h2" type="TextInput" defaultValue="18" width="100" optional="true"/>
+			<h3 label="h3" type="TextInput" defaultValue="16" width="100" optional="true"/>
+			<p label="p" type="TextInput" defaultValue="15" width="100" optional="true"/>
+		</fontSize>
+	</downloadGroup><allowTyping label="Allow Typing" type="CheckBox" optional="true" condition="mode=='Notes'" defaultValue="true" tooltip="Allow typing directly in notes area (on by default)"/><required label="Answer Required Before Feedback" type="CheckBox" optional="true" defaultValue="true"/><forceTabs label="Panels to Tabs" type="CheckBox" optional="true" defaultValue="true" tooltip="Force all panels to be shown as tabbed navigators, even when they contain just one pane of information"/><selectBtn label="Select Button Label" type="TextInput" wysiwyg="true" divider="true" language="true"/><noteBtn label="Notes Button Label" type="TextInput" wysiwyg="true" divider="true" language="true"/><downloadBtn label="Download Button Label" type="TextInput" wysiwyg="true" language="true"/><checkBtn label="Check Button Label" type="TextInput" wysiwyg="true" language="true"/><clearBtn label="Clear Button Label" type="TextInput" wysiwyg="true" language="true"/><resetBtn label="Reset Button Label" type="TextInput" wysiwyg="true" language="true"/><errorTxt label="Selection Error" type="TextInput" language="true"/><highlightTxt label="Highlight Error" type="TextInput" language="true"/><initTxtLabel label="Initial Text Label (Notes)" type="TextInput" language="true"/><initTxtLabel2 label="Initial Text Label (Highlight)" type="TextInput" language="true"/><suggestedTxtLabel label="Suggested Text Label" type="TextInput" language="true"/><notesTxtLabel label="Notes Text Label" type="TextInput" language="true"/></textHighlightBlock><textMatchBlock icon="icConnect"><name label="Page Title" type="TextInput" wysiwyg="true"/><text label="Instructions" type="TextArea" height="100"/><feedback label="Feedback" type="TextArea" height="100"/><maxAttempts label="Attempts Before Hint" type="NumericStepper" min="1" max="99" step="1" defaultValue="3" mandatory="true"/><correctMessage label="Correct Message" type="TextInput" wysiwyg="true" divider="true" language="true"/><submitBtnTxt label="Check Button Label" type="TextInput" wysiwyg="true" language="true"/><submitBtnTip label="Check Button Tip" type="textInput" language="true" deprecated="This property is no longer required"/><submitBtnWidth label="Check Button Width" type="NumericStepper" min="80" max="250" step="10" width="100" defaultValue="80" language="true" deprecated="Width is now set automatically"/><allWrong label="All Wrong Text" type="TextInput" wysiwyg="true" language="true"/><score label="{i} out of {n} Text" type="TextInput" wysiwyg="true" language="true"/><allWrongTracking label="All Wrong Text Tracking" type="TextInput" wysiwyg="true" language="true"/><scoreTracking label="{i} out of {n} Text Tracking" type="TextInput" wysiwyg="true" language="true"/><incomplete label="Incomplete Text" type="TextInput" wysiwyg="true" language="true"/><trackingWeight label="Tracking Score Weight (0=Off)" optional="true" type="textInput" width="120" defaultValue="1.0"/><markEnd label="Mark at End" type="CheckBox" defaultValue="true" optional="true"/><newNodes>
+      <sentence><![CDATA[<sentence p1="Write part one of your sentence here." p2="Write part two of your sentence here" hint="Provide a hint" name="Sentence" />]]></sentence>
+    </newNodes></textMatchBlock><sentence menuItem="Sentence" icon="icPageWhiteText" remove="true" max="5">
+    <p1 label="Part 1" type="TextArea" height="50"/>
+    <p2 label="Part 2" type="TextArea" height="50"/>
+	<hint label="Hint" type="TextArea" height="50"/>
+	
+	<audioGroup type="group" label="Audio Feedback" optional="true" tooltip="Add an audio player to this label, which appears when marked as correct">
+		<audioFeedback label="File" type="media" optional="true"/>
+		<audioTranscript label="Transcript" type="textArea" height="100" defaultValue="" optional="true" tooltip="A transcript button will appear on the audio player when text is added here"/>
+	</audioGroup>
+	
+    <name label="Label" type="TextInput" mandatory="true" defaultValue="Sentence" wysiwyg="false"/>
+
+  </sentence><timelineBlock icon="icTime"><name label="Page Title" type="TextInput" wysiwyg="true"/><text label="Page Text" type="TextArea" height="250"/><interactivity label="Interactivity" options="Timeline,Matching Pairs" type="ComboBox" data="Timeline,Matching Pairs" defaultValue="Timeline" width="120"/><feedback label="Feedback" type="TextArea" height="100"/><checkBtnTxt label="Check Button Label" type="TextInput" wysiwyg="true" divider="true" language="true"/><checkBtnTip label="Check Button Tip" type="textInput" language="true" deprecated="This property is no longer required"/><checkBtnWidth label="Check Button Width" type="NumericStepper" min="100" max="250" step="10" width="100" defaultValue="100" language="true" deprecated="Width is now set automatically"/><allWrong label="All Wrong Text" type="TextInput" wysiwyg="true" language="true"/><score label="{i} out of {n} Text" type="TextInput" wysiwyg="true" language="true"/><allWrongTracking label="All Wrong Text Tracking" type="TextInput" wysiwyg="true" language="true"/><scoreTracking label="{i} out of {n} Text Tracking" type="TextInput" wysiwyg="true" language="true"/><incomplete label="Incomplete Text" type="TextInput" wysiwyg="true" language="true"/><trackingWeight label="Tracking Score Weight (0=Off)" optional="true" type="textInput" width="120" defaultValue="1.0"/><newNodes>
+      <timelinedate><![CDATA[<timelinedate name="Enter Item Name" text="Enter description"/>]]></timelinedate>
+    </newNodes></timelineBlock><timelinedate menuItem="Item" icon="icPageWhite" max="12" remove="true">
+
+    <name label="Name" type="TextInput" wysiwyg="true"/>
+    <text label="Description" type="TextArea" height="100"/>
+
+  </timelinedate><topXQBlock icon="icTopXQ"><name label="Page Title" type="TextInput" wysiwyg="true"/><instruction label="Instruction" type="TextArea" height="100"/><prompt label="Question" type="TextArea" height="100"/><align label="Align Text" options="Left,Right" type="ComboBox" data="Left,Right" defaultValue="Left" width="100"/><numberAnswers label="Number of Answers" type="TextInput" defaultValue="*" tooltip="Number of answer fields shown on the page. Specify a number or enter * to create an answer field for every possible answer."/><caseSensitivity label="Case Sensitive" defaultValue="true" type="CheckBox" tooltip="Treat answers as case sensitive" mandatory="true"/><feedback type="TextArea" height="40" label="Feedback" optional="true" defaultValue="Enter feedback here"/><showAnswers label="Show Answers" defaultValue="true" type="CheckBox" optional="true" tooltip="Show all possible answers when activity is complete"/><delimiters type="group" label="Delimiters" optional="true">
+        <answerDelimiter label="Answer Delimiter" type="textInput" defaultValue="," optional="true" tooltip="The character separating the answers"/>
+    </delimiters><amountOfTries label="Attempts" type="TextInput" defaultValue="1" optional="true" tooltip="Attempts allowed before feedback is given"/><trackingWeight label="Tracking Score Weight (0=Off)" optional="true" type="textInput" width="120" defaultValue="1.0"/><feedbackLabel label="Feedback Label" type="TextInput" wysiwyg="false" divider="true" language="true"/><correctAnswersLabel label="Correct Answers Label" type="TextInput" wysiwyg="false" language="true"/><passed label="Correct Text" type="TextInput" wysiwyg="false" language="true"/><failed label="Incorrect Text" type="TextInput" wysiwyg="false" language="true"/><attemptLabel label="Attempt Label" type="TextInput" wysiwyg="false" language="true"/><checkBtnTxt label="Check Button Label" type="TextInput" wysiwyg="false" language="true"/><answerFieldLabel label="Answer Field Hidden Aria-Label" type="TextInput" wysiwyg="false" language="true" mandatory="true" defaultValue="Answer" tooltip="This is a hidden label specifically for screen reader users so that each text field is labelled and spoken as Answer 1, Answer 2 etc."/><newNodes>
+        <optionXQ><![CDATA[<option answer = "Here is an option" name = "Answer" feedback = "Feedback for this option" correct = "false"/>]]></optionXQ>
+    </newNodes></topXQBlock><optionXQ menuItem="Answer" icon="icBullet">
+        <answer label="Answer" type="TextInput" wysiwyg="false" mandatory="true"/>
+        <name label="Label" type="TextInput"/>
+    </optionXQ><link icon="icLink" menuItem="Link" remove="true">
 
 		<name type="TextInput" label="Title" wysiwyg="true"/>
 		<url type="TextInput" label="URL"/>
@@ -250,7 +954,50 @@
 
 		<windowName type="TextInput" label="Window Name" optional="true"/>
 
-	</link><markup icon="icTag" type="html" height="300" menuItem="HTML Code" label="HTML Code" remove="true" advanced="true">
+	<notes label="Notes" type="TextArea" height="150" defaultValue="" optional="true" tooltip="Your notes for the page. These are not shown in the live project." common="true"/><headerGroup type="group" label="Header" optional="true" common="true">
+		<header type="Media" optional="true" label="Image"/>
+		<headerPos type="ComboBox" data="left,center,right" options="Left,Centre,Right" optional="true" label="Image Position" defaultValue="left" width="175"/>
+		<headerRepeat conditionTrigger="true" type="ComboBox" data="repeat,repeat-x,repeat-y,no-repeat" options="Horizontal and Vertical Repeat,Horizontal Repeat,Vertical Repeat,No Repeat" optional="true" label="Image Repeat" defaultValue="repeat" width="175"/>
+		<headerSize type="ComboBox" data="not-set,auto,contain,cover" options="Do not set,Auto,Contain,Cover" optional="true" label="Image Size" condition="headerRepeat=='no-repeat'" defaultValue="not-set" width="175" tooltip="Set the background image size options"/>
+		<headerTitleAlign type="ComboBox" optional="true" label="Title Position" data="left,center,right" options="Left,Center,Right" defaultValue="center" tooltip="The horizontal alignment of the title"/>
+		<headerColour type="ColourPicker" optional="true" label="Background Colour"/>
+		<headerTextColour type="ColourPicker" optional="true" label="Text Colour"/>
+		<headerBanner type="ComboBox" label="Banner" conditionTrigger="true" data="fullscreen,fixedheight" options="Full screen,Fixed height" optional="true" defaultValue="fixedheight" width="175" tooltip="Choose whether the banner needs to be full screen or fixed height when opening page"/>
+		<headerTopMargin type="NumericStepper" label="Title top margin [%]" condition="headerBanner=='fullscreen'" min="2" max="60" step="1" defaultValue="20" optional="true" tooltip="The position of the titles as a percentage from the top of the banner when using a fullscreen banner"/>
+		<bannerCollapse type="CheckBox" conditionTrigger="true" condition="headerBanner=='fullscreen'" label="Collapse banner" optional="true" defaultValue="true" tooltip="Whether to collapse the full screen banner when scrolling down"/>
+		<bannerFixedHeight type="CheckBox" conditionTrigger="true" condition="headerBanner=='fixedheight' || bannerCollapse=='true'" label="Fixed height" optional="true" defaultValue="false" tooltip="Whether the 'Fixed height' banner is just the height needed for the titles, or actually a given set height."/>
+		<bannerHeight type="NumericStepper" condition="bannerFixedHeight=='true' &amp;&amp; (headerBanner=='fixedheight' || bannerCollapse=='true')" label="Banner height" min="10" max="100" step="1" width="100" optional="true" defaultValue="20" tooltip="The height (in %) of the fixed height banner or the collapsed full height banner"/>
+		<bannerFullScrolldownInfo type="CheckBox" condition="headerBanner=='fullscreen'" label="Enable scroll down info" optional="true" defaultValue="true" tooltip="Show an arrow and a help text to scroll down when the banner is full screen"/>
+		<bannerFullScrolldownText type="TextInput" wysiwyg="true" condition="headerBanner=='fullscreen'&amp;&amp;bannerFullScrolldownInfo=='true'" label="Scroll down text" optional="true" defaultValue="" tooltip="Leave blank to use the default scroll down text or add your own text here to replace it"/>
+	</headerGroup><pageLink label="Page Link" type="TextInput" wysiwyg="true" defaultValue="" optional="true" tooltip="The link text for the page menu (by default this will be the page title)" common="true"/><hideShow type="group" label="Hide/Show Page" optional="true" tooltip="Hide the page completely or hide/show the page between specified dates" info="Hide this page from view at all times or use the 'From' &amp; 'Until' fields to specify when it should be available" common="true">
+		<hidePage label="Hide Page" type="CheckBox" defaultValue="false" optional="true"/>
+		<hideOnDate label="From" type="DateField" defaultValue="" optional="true" allowBlank="true" preventPrev="true" tooltip="Use the calendar to select a date (format YYYY-MM-DD)"/>
+		<hideOnTime label="From (hh:mm)" type="TextInput" defaultValue="00:00" optional="true"/>
+		<hideUntilDate label="Until" type="DateField" defaultValue="" optional="true" allowBlank="true" preventPrev="true" tooltip="Use the calendar to select a date (format YYYY-MM-DD)"/>
+		<hideUntilTime label="Until (hh:mm)" type="TextInput" defaultValue="00:00" optional="true"/>
+	</hideShow><linkGroup type="group" label="Stand-Alone Page" optional="true" tooltip="Remove page from page menu so it can only be accessed via Xerte page links" common="true">
+		<linkPage label="Remove From Page Menu" type="CheckBox" defaultValue="true" optional="true"/>
+		<newWindow label="Open in New Window" type="CheckBox" defaultValue="false" optional="true" tooltip="Links to this page will open in a new browser window"/>
+		<headerHide label="Hide Header" type="Checkbox" defaultValue="false" optional="true"/>
+		<navbarHide label="Navigation Bar" type="ComboBox" data="default,back,hidden" options="Default,Back Button Only,Hidden" defaultValue="back" optional="true"/>
+	</linkGroup><sectionGroup type="group" label="Section Menu Options" optional="true" tooltip="Hide the table of contents for this page and set whether or not to expand the main contents to the width of the page" common="true">
+        <sectionMenu label="Hide Menu" type="CheckBox" defaultValue="false" optional="true" conditionTrigger="true" tooltip="Hide the table of contents for this page"/>
+        <expandMain label="Expand main contents" type="CheckBox" defaultValue="false" optional="true" condition="sectionMenu=='true'" tooltip="If the table of contents is set to hidden then also expand the main contents to the width of the page"/>
+    </sectionGroup><customLinkGroup type="group" label="Page ID" optional="true" tooltip="Create a customised URL to this page" info="Create a link directly to this page by adding #yourPageID to the end of the project URL&lt;br/&gt;Avoid using spaces, special characters and the words 'page' and 'section' in page IDs" common="true">
+		<customLinkID label="Page ID" type="TextInput" optional="true"/>
+	</customLinkGroup><passwordGroup type="group" label="Access Code" optional="true" tooltip="Access to this page will be restricted until an access code is entered. Please note, to securely protect your project you should password protect via the access tab in the project properties rather than using this optional property" common="true">
+		<password label="Access Code(s)" type="TextInput" optional="true" defaultValue="" tooltip="A comma separated list of codes which give access to this page"/>
+		<passwordCase label="Case Sensitive" type="CheckBox" optional="true" defaultValue="true" tooltip="Access codes are case sensitive when this option is checked"/>
+		<passwordInfo label="Instructions" type="TextArea" height="50" optional="true" defaultValue="Enter an access code below to view the page:" tooltip="The instructions which appear in the access code block"/>
+		<passwordError label="Error Message" type="TextArea" height="50" optional="true" defaultValue="Invalid access code" tooltip="The error message which appears when an incorrect access code is entered"/>
+		<passwordSubmit label="Button Label" type="TextInput" optional="true" defaultValue="Submit" tooltip="The label on the submit button"/>
+	</passwordGroup><filter type="CategoryList" label="Filter Categories" target="categoryInfo" defaultValue="" optional="true" tooltip="Use in conjunction with the project-level 'Search' optional property. Tick the relevant filter terms used in category searches" common="true"/><lightboxGroup type="group" label="Lightbox" optional="true" tooltip="By default, clicked images will open in a lightbox. Use these properties to turn the lightbox functionality on/off for this page only" common="true">
+		<lightbox type="CheckBox" label="Lightbox Images" defaultValue="true" optional="true"/>
+		<lightboxCaption type="ComboBox" label="Caption" defaultValue="false" optional="true" options="None,Below Image,Above Image" data="false,below,above" tooltip="Add a caption to lightbox images on this page. The caption text is taken from the 'Description' or 'Alt Text' fields."/>
+	</lightboxGroup><variables type="group" label="Variables" optional="true" tooltip="Use in conjunction with the project level 'Variables' optional property" common="true">
+		<varConfirm label="Submit Message" type="TextInput" defaultValue="Thank you for submitting your answers" optional="true" tooltip="Message shown after new variable values are submitted by end user"/>
+		<varUpdate label="Update Variables" type="CheckBox" defaultValue="true" optional="true" tooltip="Update any instances of variables on this page after new variable values are submitted by end user"/>
+	</variables></link><markup icon="icTag" type="html" height="300" menuItem="HTML Code" label="HTML Code" remove="true" advanced="true">
 
 		<name type="TextInput" label="Title" wysiwyg="true"/>
 		<showTitle label="Show Title" type="CheckBox" defaultValue="false" mandatory="true"/>

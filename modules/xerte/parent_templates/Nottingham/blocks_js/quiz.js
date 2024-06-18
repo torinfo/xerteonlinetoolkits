@@ -27,7 +27,7 @@ var quizBlock = new function() {
     // function called every time the page is viewed after it has initially loaded
     this.pageChanged = function(blockid) {
         let pageXML = x_getBlockXML(blockid);
-        jGetElement(blockid, ".feedbackGroup").find('.feedbackBlock').html("");
+        //jGetElement(blockid, ".feedbackGroup").find('.feedbackBlock').html("");
         if ($(pageXML).children().length > 0) {
             this.startQs(blockid);
         }
@@ -38,6 +38,9 @@ var quizBlock = new function() {
 
     // function called every time the size of the LO is changed
     this.sizeChanged = function(blockid) {
+        if(jGetElement(blockid, ".pageContents").length == 0){
+            return
+        }
         let pageXML = x_getBlockXML(blockid);
         var $panel = jGetElement(blockid, ".pageContents .qPanel");
         if (x_browserInfo.mobile == false) {
@@ -78,7 +81,7 @@ var quizBlock = new function() {
 
 
     this.leavePage = function(blockid) {
-				const state = jGetElement(blockid, ".pageContents").data("state");
+				const state = x_getPageDict("state", blockid)
         let pageXML = x_getBlockXML(blockid);
         let blocknr = parseFloat(blockid.split("block").pop()) - 1;
         if ($(pageXML).children().length > 0) {
@@ -94,7 +97,7 @@ var quizBlock = new function() {
 
     this.startQs = function(blockid, firstRun = false) {
         let pageXML = x_getBlockXML(blockid);
-				const state = jGetElement(blockid, ".pageContents").data("state");
+				const state = x_getPageDict("state", blockid)
         // if language attributes aren't in xml will have to use english fall back
 				if (firstRun) {
 					state.qNoTxt = pageXML.getAttribute("quesCount");
@@ -159,7 +162,7 @@ var quizBlock = new function() {
         let pageXML = x_getBlockXML(blockid);
         // Reset tracking flag
         var blocknr = parseFloat(blockid.split("block").pop()) - 1;
-				const state = jGetElement(blockid, ".pageContents").data("state");
+				const state = x_getPageDict("state", blockid)
         state.tracked = false;
 
         if ($(pageXML).children().length == 0) {
@@ -331,7 +334,7 @@ var quizBlock = new function() {
     this.showFeedBackandTrackResults = function(blockid)
     {
         let pageXML = x_getBlockXML(blockid);
-				const state = jGetElement(blockid, ".pageContents").data("state");
+				const state = x_getPageDict("state", blockid)
         var blocknr = parseFloat(blockid.split("block").pop()) - 1;
         let currentPageXML = pageXML;
         state.tracked = true;
@@ -404,15 +407,15 @@ var quizBlock = new function() {
             // add correct feedback depending on if question overall has been answered correctly or not
             if (currentQuestion.getAttribute("type") == "Multiple Answer") {
                 if (correct == true) {
-                    rightWrongTxt = '<p>' + jGetElement(blockid, ".pageContents").data("multiRight") + '</p>';
+                    rightWrongTxt = '<p>' + state.multiRight + '</p>';
                 } else {
-                    rightWrongTxt = '<p>' + jGetElement(blockid, ".pageContents").data("multiWrong") + '</p>';
+                    rightWrongTxt = '<p>' + state.multiWrong + '</p>';
                 }
             } else {
                 if (correct == true) {
-                    rightWrongTxt = '<p>' + jGetElement(blockid, ".pageContents").data("singleRight") + '</p>';
+                    rightWrongTxt = '<p>' + state.singleRight + '</p>';
                 } else {
-                    rightWrongTxt = '<p>' + jGetElement(blockid, ".pageContents").data("singleWrong") + '</p>';
+                    rightWrongTxt = '<p>' + state.singleWrong + '</p>';
                 }
             }
         }
@@ -498,7 +501,7 @@ var quizBlock = new function() {
         state.myProgress.splice(state.currentQ, 1, correct);
 
         generalFeedback += rightWrongTxt;
-        var answerFeedback = "<h3>" + jGetElement(blockid, ".pageContents").data("feedbackLabel") + "</h3>" + generalFeedback;
+        var answerFeedback = "<h3>" + state.feedbackLabel + "</h3>" + generalFeedback;
         if (XTGetMode() == "normal")
         {
             // Disable all options
@@ -522,7 +525,7 @@ var quizBlock = new function() {
 
             if(state.questionFeedbackText !== null){
                 if(state.questionFeedbackText !== ""){
-                    var questionFeedback = "<h3>" + jGetElement(blockid, ".pageContents").data("generalFeedbackLabel") + "</h3>" + state.questionFeedbackText
+                    var questionFeedback = "<h3>" + state.generalFeedbackLabel + "</h3>" + state.questionFeedbackText
                     jGetElement(blockid, '.generalFeedback').html(questionFeedback)
                 }
 
@@ -557,11 +560,11 @@ var quizBlock = new function() {
 
     this.showResults = function(blockid) {
         let pageXML = x_getBlockXML(blockid);
-				const state = jGetElement(blockid, ".pageContents").data("state");
+				const state = x_getPageDict("state", blockid)
         // last question answered - show results
         let blocknr = parseFloat(blockid.split("block").pop()) - 1;
         var $pageContents = jGetElement(blockid, ".pageContents");
-        jGetElement(blockid, ".qNo").html($pageContents.data("onCompletionText"));
+        jGetElement(blockid, ".qNo").html(state.onCompletionText);
         var fbTxt = "<p>" + x_addLineBreaks(pageXML.getAttribute("feedback")) + "</p>";
 
         var myScore = 0;
@@ -572,9 +575,9 @@ var quizBlock = new function() {
         }
         if (pageXML.getAttribute("judge") != "false") {
             if (pageXML.getAttribute("scorePos") == "Above") {
-                fbTxt = "<p>" + $pageContents.data("scoreText").replace("{i}", myScore).replace("{n}", state.questions.length) + "</p>" + fbTxt;
+                fbTxt = "<p>" + state.scoreText.replace("{i}", myScore).replace("{n}", state.questions.length) + "</p>" + fbTxt;
             } else {
-                fbTxt += "<p>" + $pageContents.data("scoreText").replace("{i}", myScore).replace("{n}", state.questions.length) + "</p>";
+                fbTxt += "<p>" + state.scoreText.replace("{i}", myScore).replace("{n}", state.questions.length) + "</p>";
             }
         }
 
@@ -625,6 +628,7 @@ var quizBlock = new function() {
             $textHolder = jGetElement(blockid, ".textHolder");
 
         let state = this.generateQuizModel();
+        x_pushToPageDict(state, "state", blockid);
 
         state.resultsShown = false;
         if (panelWidth == "Full") {
@@ -749,7 +753,7 @@ var quizBlock = new function() {
                 label: submitBtnText
             })
             .click(function() {
-								const state = jGetElement(blockid, ".pageContents").data("state");
+								const state = x_getPageDict("state", blockid)
                 quizBlock.showFeedBackandTrackResults(blockid);
                 state.checked = true;
             });
@@ -759,7 +763,7 @@ var quizBlock = new function() {
                 label: nextBtnText
             })
             .click(function() {
-								const state = jGetElement(blockid, ".pageContents").data("state");
+								const state = x_getPageDict("state", blockid)
                 var blocknr = parseFloat(blockid.split("block").pop()) - 1;
                 var xmlState = XTGetPageXML(x_currentPage, blocknr,state.questions[state.currentQ])
                 $(this).button("disable");
@@ -784,7 +788,6 @@ var quizBlock = new function() {
                 quizBlock.startQs(blockid);
             });
 
-				jGetElement(blockid, ".pageContents").data("state", state);
 
         this.startQs(blockid, true);
         this.sizeChanged(blockid);
