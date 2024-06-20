@@ -27,6 +27,8 @@
             <subject label="List the different categories separated by ," type="TextInput" wysiwyg="true" optional="true"/>
             <wordsPerCategory label="Amount of words for each category" type="TextInput" wysiwyg="true" optional="true"/>
             <ageRange label="Age Range" type="TextInput" wysiwyg="true" optional="true"/>
+            <img label="File" type="media" defaultValue="Upload a file" optional="true"/>
+            <uploadPrompt label="Upload file?" type="checkbox" defaultValue="false" optional ="true"/>
             <aiButton type="aibutton" optional="true"/>
       </AIGroup>
   </categories>

@@ -15,26 +15,71 @@ $object = LEARNING_RESULT_QUIZ;
 //$openAI_preset_models->type_list["quiz"] = ["payload" => ["model" => $model, "max_tokens" => 3096, "n" => 1, "temperature" => 0.2, "messages" => [["role" => "user", "content" => $q], ["role" => "assistant", "content" => $object], ["role" => "user", "content" => ""]]], "url" => $chat_url];
 // Construct the payload for the request
 $payload = [
-    "assistant_id" => $assistantId,
-    // Optional: remove if you wish to use the assistant's default model as defined on assistant creation
+    "assistant_id" => $assistantId, // Required: The ID of the assistant to use for the run
+
+    // Optional: If you want to use a specific model other than the default, uncomment the following line and set the model ID
     // "model" => $model,
+
     "thread" => [
         "messages" => [
             ["role" => "user", "content" => LEARNING_PROMPT_QUIZ],
-            ["role" => "user", "content" => LEARNING_RESULT_QUIZ], //The assistant endpoint doesn't support anyone other than 'user' as the author of the message. As a workaround, ensure that 'Assistant:' is appended to the learning result itself.
+            ["role" => "assistant", "content" => LEARNING_RESULT_QUIZ],
             ["role" => "user", "content" => ""]
         ],
     ],
-    // Optional: include if overriding the default instructions
-    "instructions" => "Use the information in the provided file, if there is one. Otherwise, supplement with your own. Follow the example xml structure as exactly as possible. Do not respond with any additional text other than the xml.",
-    // Optional: include if modifying the tools available for this run
-    /*"tools" => [
-        // Define tools and their configurations here
-    ],*/
-    // Optional: include if you need to attach metadata to this run, use key-value pairs
-    /*"metadata" => [
-        // Add up to 16 key-value pairs
-    ]*/
+
+    // Optional: Uncomment and set instructions to override the assistant's default instructions
+    "instructions" => "Follow the instructions in the last message from the user. Use the appropriate uploaded transcript as your source. If no source has been uploaded, try to fulfil the request using general knowledge about the specified subject.",
+
+    // Optional: Uncomment and set additional instructions to append to the existing instructions without overriding them
+    "additional_instructions" => "When following XML examples, make sure you follow it exactly. This includes formatting, special characters, node structure and everything else. Do not deviate from the example AND how it is presented other than the content and the amount of each type of node and the contents therein. Notably, do NOT use markdown syntax when formatting your answer! Only return plain text.",
+
+    // Optional: Uncomment and add additional messages to the thread before creating the run
+    // "additional_messages" => [
+    //     ["role" => "user", "content" => "Additional message content"]
+    // ],
+
+    // Optional: Uncomment and attach metadata to this run, using key-value pairs
+    // "metadata" => [
+    //     "key1" => "value1",
+    //     "key2" => "value2"
+    // ],
+
+    // Optional: Uncomment and override the tools available for this run
+    "tools" => [
+        //     ["type" => "code_interpreter"],
+        ["type" => "file_search"]
+    ],
+
+    // Optional: Uncomment and set temperature to control the randomness of the output (between 0 and 2)
+    // "temperature" => 0.7,
+
+    // Optional: Uncomment and set top_p for nucleus sampling (considers top_p probability mass)
+    // "top_p" => 0.9,
+
+    // Optional: Uncomment to enable streaming of events during the run
+    // "stream" => true,
+
+    // Optional: Uncomment and set to limit the maximum number of prompt tokens
+    // "max_prompt_tokens" => 500,
+
+    // Optional: Uncomment and set to limit the maximum number of completion tokens
+    // "max_completion_tokens" => 500,
+
+    // Optional: Uncomment and set truncation strategy to control initial context window of the run
+    // "truncation_strategy" => [
+    //     "type" => "last_messages",
+    //     "last_messages" => 5
+    // ],
+
+    // Optional: Uncomment and set tool_choice to control which tool (if any) is called by the model
+    "tool_choice" => "required",
+
+    // Optional: Uncomment and set response_format to specify the format that the model must output
+    // "response_format" => ["type" => "json_object"],
+
+    // Optional: Uncomment to enable parallel function calling during tool use
+    // "parallel_tool_calls" => true,
 ];
 
 $openAI_preset_models->type_list["quiz"] = ["payload" => ["model" => $model, "max_tokens" => 3096, "n" => 1, "temperature" => 0.2, "messages" => [["role" => "user", "content" => $q], ["role" => "assistant", "content" => $object], ["role" => "user", "content" => ""]]], "url" => $chat_url];

@@ -113,7 +113,7 @@ class openaiApi
         curl_setopt($curl, CURLOPT_POST, 1);
         curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
         curl_setopt($curl, CURLOPT_URL, $settings["url"]);
-        curl_setopt($curl, CURLOPT_HTTPHEADER, [$authorization, "Content-Type: application/json", "OpenAI-Beta: assistants=v1"]);
+        curl_setopt($curl, CURLOPT_HTTPHEADER, [$authorization, "Content-Type: application/json", "OpenAI-Beta: assistants=v2"]);
         curl_setopt($curl, CURLOPT_POSTFIELDS, $payload);
 
         $result = curl_exec($curl);
@@ -181,7 +181,7 @@ class openaiApi
         $curl = curl_init();
         curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
         curl_setopt($curl, CURLOPT_URL, $url);
-        curl_setopt($curl, CURLOPT_HTTPHEADER, [$authorization, "Content-Type: application/json", "OpenAI-Beta: assistants=v1"]);
+        curl_setopt($curl, CURLOPT_HTTPHEADER, [$authorization, "Content-Type: application/json", "OpenAI-Beta: assistants=v2"]);
 
         $result = curl_exec($curl);
         curl_close($curl);
@@ -238,9 +238,9 @@ class openaiApi
         return $prompt;
     }
 
-    private function fileUpload($filePath){
+    private function fileUpload($finalPath){
         $authorization = "Authorization: Bearer " . $this->xerte_toolkits_site->openAI_key;
-        //$filePath = 'C:\xampp\htdocs\xot\USER-FILES\15-guest2-Nottingham\media\test.txt';
+        /*//$filePath = 'C:\xampp\htdocs\xot\USER-FILES\15-guest2-Nottingham\media\test.txt';
         $basePath = __DIR__ . '/../../'; // Moves up from ai -> editor -> xot
 
         // Normalize the directory separators to the current operating system's preference
@@ -249,11 +249,11 @@ class openaiApi
         // Append the $filePath to the normalized base path
         $finalPath = $normalizedBasePath . str_replace(['/', '\\'], DIRECTORY_SEPARATOR, $filePath);
         $finalPath = realpath($finalPath);
-
+        //IMPORTANT !!! File paths here are totally messed up. Adjust functions so the file path is proper to begin with...*/
         $fileName = basename($finalPath);
 
         if (!file_exists($finalPath)) {
-            echo "File does not exist: $filePath";
+            echo "File does not exist: $finalPath";
             return;
         }
 
@@ -263,7 +263,7 @@ class openaiApi
         curl_setopt($ch, CURLOPT_HTTPHEADER, [
             $authorization,
             'Content-Type: multipart/form-data',
-            "OpenAI-Beta: assistants=v1"
+            //"OpenAI-Beta: assistants=v1"
         ]);
 
         // Define the POST fields, including the file in 'file' parameter
@@ -284,6 +284,139 @@ class openaiApi
             echo "cURL Error: " . curl_error($ch);
         }
 
+    }
+
+    private function createVectorStorage() {
+        $authorization = "Authorization: Bearer " . $this->xerte_toolkits_site->openAI_key;
+        $ch = curl_init('https://api.openai.com/v1/vector_stores');
+        curl_setopt($ch, CURLOPT_HTTPHEADER, [
+            $authorization,
+            'Content-Type: application/json',
+            "OpenAI-Beta: assistants=v2"
+        ]);
+        curl_setopt($ch, CURLOPT_POST, 1);
+        curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode([
+            'name' => 'learning_object_creation_supplement'
+        ]));
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+
+        $response = curl_exec($ch);
+        curl_close($ch);
+
+        $vectorStorageData = json_decode($response, true);
+        return $vectorStorageData['id'];
+    }
+
+    //Creates a vector store file by converting an uploaded file to vector storage, effectively "attaching" said file
+    private function createVectorStoreFile($fileId, $vectorStorageId) {
+        $authorization = "Authorization: Bearer " . $this->xerte_toolkits_site->openAI_key;
+        $ch = curl_init("https://api.openai.com/v1/vector_stores/$vectorStorageId/files");
+        curl_setopt($ch, CURLOPT_HTTPHEADER, [
+            $authorization,
+            'Content-Type: application/json',
+            "OpenAI-Beta: assistants=v2"
+        ]);
+        curl_setopt($ch, CURLOPT_POST, 1);
+        curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode(['file_id' => $fileId]));
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+
+        $response = curl_exec($ch);
+        curl_close($ch);
+
+        return $response;
+    }
+
+    //updates existing assistant with new info on which storage to access
+    private function attachStorageToAssistant($assistantId, $vectorStorageId) {
+        $authorization = "Authorization: Bearer " . $this->xerte_toolkits_site->openAI_key;
+        $ch = curl_init("https://api.openai.com/v1/assistants/$assistantId");
+        curl_setopt($ch, CURLOPT_HTTPHEADER, [
+            $authorization,
+            'Content-Type: application/json',
+            'OpenAI-Beta: assistants=v2'
+        ]);
+        curl_setopt($ch, CURLOPT_POST, 1); // Use POST method as per the API documentation
+        curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode([
+            'tool_resources' => [
+                'file_search' => [
+                    'vector_store_ids' => [$vectorStorageId]
+                ]
+            ]
+        ]));
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+
+        $response = curl_exec($ch);
+        curl_close($ch);
+
+        return $response;
+    }
+
+    private function detachStorageFromAssistant($assistantId, $vectorStorageId) {
+        $authorization = "Authorization: Bearer " . $this->xerte_toolkits_site->openAI_key;
+
+        // Fetch the current tool_resources configuration
+        $ch = curl_init("https://api.openai.com/v1/assistants/$assistantId");
+        curl_setopt($ch, CURLOPT_HTTPHEADER, [
+            $authorization,
+            'Content-Type: application/json',
+            'OpenAI-Beta: assistants=v2'
+        ]);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        $response = curl_exec($ch);
+        $assistantData = json_decode($response, true);
+        curl_close($ch);
+
+        if (!isset($assistantData['tool_resources']['file_search']['vector_store_ids'])) {
+            throw new Exception("Vector storage not found in assistant's tool resources.");
+        }
+
+        // Remove the vector_storage_id from the list
+        $vectorStoreIds = $assistantData['tool_resources']['file_search']['vector_store_ids'];
+        $vectorStoreIds = array_filter($vectorStoreIds, function($id) use ($vectorStorageId) {
+            return $id !== $vectorStorageId;
+        });
+
+        // Update the assistant with the modified tool_resources
+        $ch = curl_init("https://api.openai.com/v1/assistants/$assistantId");
+        curl_setopt($ch, CURLOPT_HTTPHEADER, [
+            $authorization,
+            'Content-Type: application/json',
+            'OpenAI-Beta: assistants=v2'
+        ]);
+        curl_setopt($ch, CURLOPT_POST, 1); // Use POST method as per the API documentation
+        curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode([
+            'tool_resources' => [
+                'file_search' => [
+                    'vector_store_ids' => array_values($vectorStoreIds)
+                ]
+            ]
+        ]));
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+
+        $response = curl_exec($ch);
+        curl_close($ch);
+
+        return $response;
+    }
+
+    private function deleteVectorStorage($vectorStorageId)
+    {
+        $url = "https://api.openai.com/v1/vector_stores/$vectorStorageId";
+        $authorization = "Authorization: Bearer " . $this->xerte_toolkits_site->openAI_key;
+
+        $curl = curl_init();
+        curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
+        curl_setopt($curl, CURLOPT_URL, $url);
+        curl_setopt($curl, CURLOPT_HTTPHEADER, [
+            $authorization,
+            "Content-Type: application/json",
+            'OpenAI-Beta: assistants=v2'
+        ]);
+        curl_setopt($curl, CURLOPT_CUSTOMREQUEST, "DELETE");
+        $result = curl_exec($curl);
+        curl_close($curl);
+
+        return $result;
     }
 
     private function attachFile ($fileId, $assistantId){
@@ -382,6 +515,18 @@ class openaiApi
         return $result;
     }
 
+    private function getDynamicPath($filePath){
+        $basePath = __DIR__ . '/../../'; // Moves up from ai -> editor -> xot
+
+        // Normalize the directory separators to the current operating system's preference
+        $normalizedBasePath = str_replace(['/', '\\'], DIRECTORY_SEPARATOR, $basePath);
+
+        // Append the $filePath to the normalized base path
+        $finalPath = $normalizedBasePath . str_replace(['/', '\\'], DIRECTORY_SEPARATOR, $filePath);
+        $finalPath = realpath($finalPath);
+        //IMPORTANT !!! File paths here are totally messed up. Adjust functions so the file path is proper to begin with...
+        return $finalPath;
+    }
     private function transcribeAudio($filePath){
         $authorization = "Authorization: Bearer " . $this->xerte_toolkits_site->openAI_key;
         $url = "https://api.openai.com/v1/audio/transcriptions";
@@ -436,6 +581,11 @@ class openaiApi
         $normalizedBasePath = str_replace(['/', '\\'], DIRECTORY_SEPARATOR, $basePath);
         $finalPath = $normalizedBasePath . str_replace(['/', '\\'], DIRECTORY_SEPARATOR, $uploadPath);
         $finalPath = realpath($finalPath);
+
+        if ($uploadPath === false) {
+            throw new Exception("File does not exist: $finalPath");
+        }
+
         return $finalPath;
     }
     private function transcribeAudioTimestamped($filePath){
@@ -485,15 +635,27 @@ class openaiApi
         return $result; // Return formatted string with timestamps and text
     }
 
-    private function extractAudio($videoUrlBase) {
-        $basePath = __DIR__ . '/../../'; // Moves up from ai -> editor -> xot
+    private function saveAsTextFile($transcript, $audioFilePath) {
+        // Extract the directory path from the audio file path
+        $directoryPath = dirname($audioFilePath);
+
+        // Construct the path for the transcript file
+        $transcriptFileName = 'transcription_result.txt';
+        $transcriptFilePath = $directoryPath . DIRECTORY_SEPARATOR . $transcriptFileName;
+
+        // Save the transcript to the constructed file path
+        if (file_put_contents($transcriptFilePath, $transcript)) {
+            return $transcriptFilePath;
+        } else {
+            return "Failed to save the transcript.";
+        }
+    }
+
+    private function extractAudio($videoUrl) {
+        /*$basePath = __DIR__ . '/../../'; // Moves up from ai -> editor -> xot
         $normalizedBasePath = str_replace(['/', '\\'], DIRECTORY_SEPARATOR, $basePath);
         $finalPath = $normalizedBasePath . str_replace(['/', '\\'], DIRECTORY_SEPARATOR, $videoUrlBase);
-        $videoUrl = realpath($finalPath);
-
-        if ($videoUrl === false) {
-            throw new Exception("File does not exist: $finalPath");
-        }
+        $videoUrl = realpath($finalPath);*/
 
         // Generate a unique output file name
         $outputFileName = 'output_audio_' . uniqid() . '.mp3';
@@ -560,10 +722,33 @@ class openaiApi
         return $this->removeSpecialCharacters($formattedText);
     }
 
-    function removeSpecialCharacters($string) {
+    private function removeSpecialCharacters($string) {
         $charactersToRemove = array('"', "'", "/", "\\");
         $cleanedString = str_replace($charactersToRemove, '', $string);
         return $cleanedString;
+    }
+
+    private function deleteLocalFile($filePath) {
+        if (file_exists($filePath)) {
+            if (unlink($filePath)) {
+                return "File deleted successfully.";
+            } else {
+                return "Error: Could not delete the file.";
+            }
+        } else {
+            return "Error: File does not exist.";
+        }
+    }
+
+    //meant to remove citiations which openAI assistant will automatically add between chinese brackets
+    //These will break the xml if not cleaned out.
+    function removeBracketsAndContent($text) {
+        // Define the regex pattern to match the brackets and the content inside
+        $pattern = '/【.*?】/u';
+        // Use preg_replace to remove the matched patterns
+        $cleanedText = preg_replace($pattern, '', $text);
+        // Return the cleaned text
+        return $cleanedText;
     }
     //test ver for audio transcripts
     /*public function ai_request($p, $type, $uploadUrl)
@@ -653,25 +838,22 @@ class openaiApi
             }
             $prompt = preg_replace('/'.strval($block_size).'/', strval($nrq_remaining), $prompt, 1);
         }*/
-        if (isset($this->preset_models->type_list[$type]['payload']['assistant_id'])) {
-            // assistant_id exists, meaning we're dealing with an assistant request which can but doesn't have to include a file upload
-            if($uploadUrl!=null){
-                $fileId = "";
-                $fileId = $this->fileUpload($uploadUrl);
-                if ($fileId!=""){
-                    $this->attachFile($fileId, $this->preset_models->type_list[$type]['payload']['assistant_id']);
-                }
-            }
-            $results[] = $this->POST_OpenAi_Assistant($prompt, $this->preset_models->type_list[$type]);
-            if ($fileId!=""){
-                $detactch = $this->detatchFile($fileId, $this->preset_models->type_list[$type]['payload']['assistant_id']);
-                $delete = $this->deleteFile($fileId);
-            }
-        }
-        elseif ($uploadUrl!=null){
+        if ($uploadUrl!=null){
             $videoMimeTypes = ['video/mp4', 'video/avi', 'video/mpeg', 'video/quicktime', 'application/octet-stream'];
             $audioMimeTypes = ['audio/mpeg', 'audio/mp3', 'audio/wav', 'audio/ogg'];
-            $textMimeTypes = ['application/pdf', 'text/plain'];
+            $textMimeTypes = [
+                'application/pdf',          // PDF
+                'text/plain',               // TXT
+                'application/msword',       // DOC
+                'application/vnd.openxmlformats-officedocument.wordprocessingml.document', // DOCX
+                'application/rtf',          // RTF
+                'application/vnd.oasis.opendocument.text', // ODT
+                'application/vnd.ms-excel', // XLS
+                'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', // XLSX
+                'text/csv',                 // CSV
+                'application/vnd.ms-powerpoint', // PPT
+                'application/vnd.openxmlformats-officedocument.presentationml.presentation' // PPTX
+            ];
 
             $filePath = $this->prepareURL($uploadUrl);
             // Get MIME type of the file
@@ -683,15 +865,78 @@ class openaiApi
             // Check against each category
             if (in_array($mimeType, $videoMimeTypes)) {
                 // If it's a video file
-                $results[]=$this->POST_OpenAi_Transcription($prompt, $this->preset_models->type_list[$type], $this->extractAudio($uploadUrl));
-                // Add code for handling video files here
+                $extractedAudio = $this->extractAudio($filePath);
+                if (isset($this->preset_models->type_list[$type]['payload']['assistant_id'])) {
+                    // assistant_id exists, meaning we're dealing with an assistant request which can but doesn't have to include a file upload
+                    $transcription = $this->saveAsTextFile($this->transcribeAudioTimestamped($extractedAudio),$extractedAudio);
+                    if($transcription!=null){
+                        $fileId = "";
+                        $fileId = $this->fileUpload($transcription);
+                        if ($fileId!=""){
+                            //$this->attachFile($fileId, $this->preset_models->type_list[$type]['payload']['assistant_id']);
+                            $vectorStorageId = $this->createVectorStorage();
+                            $vectorFileId = $this->createVectorStoreFile($fileId, $vectorStorageId);
+                            $this->attachStorageToAssistant($this->preset_models->type_list[$type]['payload']['assistant_id'], $vectorStorageId);
+                        }
+                    }
+                    $results[] = $this->POST_OpenAi_Assistant($prompt, $this->preset_models->type_list[$type]);
+                    if ($fileId!=""){
+                        $detatchment = $this->detachStorageFromAssistant($this->preset_models->type_list[$type]['payload']['assistant_id'], $vectorStorageId);
+                        $deletion = $this->deleteVectorStorage($vectorStorageId);
+                        $delete = $this->deleteFile($fileId);
+                        $deletelocal = $this->deleteLocalFile($transcription);
+                    }
+                }
+                else{ //this is a redundancy left if we don't want to use the openAI assistant.\
+                    //If the payload doesn't use it, we instead default to supplying the transcript with the prompt instead of as an uploaded file
+                    $results[]=$this->POST_OpenAi_Transcription($prompt, $this->preset_models->type_list[$type], $extractedAudio);
+                }
+                $deletedAudio = $this->deleteLocalFile($extractedAudio);
             } elseif (in_array($mimeType, $audioMimeTypes)) {
-                $results[]=$this->POST_OpenAi_Transcription($prompt, $this->preset_models->type_list[$type], $uploadUrl);
+                if (isset($this->preset_models->type_list[$type]['payload']['assistant_id'])) {
+                    // assistant_id exists, meaning we're dealing with an assistant request which can but doesn't have to include a file upload
+                    $transcription = $this->saveAsTextFile($this->transcribeAudioTimestamped($filePath),$filePath);
+                    if($transcription!=null){
+                        $fileId = "";
+                        $fileId = $this->fileUpload($transcription);
+                        if ($fileId!=""){
+                            //$this->attachFile($fileId, $this->preset_models->type_list[$type]['payload']['assistant_id']);
+                            $vectorStorageId = $this->createVectorStorage();
+                            $vectorFileId = $this->createVectorStoreFile($fileId, $vectorStorageId);
+                            $this->attachStorageToAssistant($this->preset_models->type_list[$type]['payload']['assistant_id'], $vectorStorageId);
+                        }
+                    }
+                    $results[] = $this->POST_OpenAi_Assistant($prompt, $this->preset_models->type_list[$type]);
+                    if ($fileId!=""){
+                        $detatchment = $this->detachStorageFromAssistant($this->preset_models->type_list[$type]['payload']['assistant_id'], $vectorStorageId);
+                        $deletion = $this->deleteVectorStorage($vectorStorageId);
+                        $delete = $this->deleteFile($fileId);
+                        $deletelocal = $this->deleteLocalFile($transcription);
+                    }
+                }
+                else{ //this is a redundancy left if we don't want to use the openAI assistant.\
+                    //If the payload doesn't use it, we instead default to supplying the transcript with the prompt instead of as an uploaded file
+                    $results[]=$this->POST_OpenAi_Transcription($prompt, $this->preset_models->type_list[$type], $filePath);
+                }
+                //$results[]=$this->POST_OpenAi_Transcription($prompt, $this->preset_models->type_list[$type], $uploadUrl);
                 // Add code for handling audio files here
             } elseif (in_array($mimeType, $textMimeTypes)) {
-                // If it's a PDF or TXT file
-                echo "The file is a text file (PDF or TXT).";
-                // Add code for handling text files here
+                if (isset($this->preset_models->type_list[$type]['payload']['assistant_id'])) {
+                    // assistant_id exists, meaning we're dealing with an assistant request which can but doesn't have to include a file upload
+                        $fileId = "";
+                        $fileId = $this->fileUpload($filePath);
+                        if ($fileId!=""){
+                            $vectorStorageId = $this->createVectorStorage();
+                            $vectorFileId = $this->createVectorStoreFile($fileId, $vectorStorageId);
+                            $this->attachStorageToAssistant($this->preset_models->type_list[$type]['payload']['assistant_id'], $vectorStorageId);
+                        }
+                    $results[] = $this->POST_OpenAi_Assistant($prompt, $this->preset_models->type_list[$type]);
+                    if ($fileId!=""){
+                        $detatchment = $this->detachStorageFromAssistant($this->preset_models->type_list[$type]['payload']['assistant_id'], $vectorStorageId);
+                        $deletion = $this->deleteVectorStorage($vectorStorageId);
+                        $delete = $this->deleteFile($fileId);
+                    }
+                }
             } else {
                 // If the file does not fit any of the above categories
                 echo "The file type is not supported.";
@@ -699,7 +944,27 @@ class openaiApi
             }
 
         }
+        elseif (isset($this->preset_models->type_list[$type]['payload']['assistant_id'])) {
+            //A sort of default behavior - if the file is not yet supported, try uploading it anyway.
+            //If a file doesn't need to be uploaded (assuming the assistant has pre-made instructions or another reason), skip the upload step and call assisstant directly
+                $filePath = $this->prepareURL($uploadUrl);
+                $fileId = "";
+                $fileId = $this->fileUpload($filePath);
+                if ($fileId!=""){
+                    $vectorStorageId = $this->createVectorStorage();
+                    $vectorFileId = $this->createVectorStoreFile($fileId, $vectorStorageId);
+                    $this->attachStorageToAssistant($this->preset_models->type_list[$type]['payload']['assistant_id'], $vectorStorageId);
+                }
+                $results[] = $this->POST_OpenAi_Assistant($prompt, $this->preset_models->type_list[$type]);
+                if ($fileId!=""){
+                    $detatchment = $this->detachStorageFromAssistant($this->preset_models->type_list[$type]['payload']['assistant_id'], $vectorStorageId);
+                    $deletion = $this->deleteVectorStorage($vectorStorageId);
+                    $delete = $this->deleteFile($fileId);
+                }
+
+        }
         else {
+            //Post using non-assistant chat completion endpoint
             $results[] = $this->POST_OpenAi($prompt, $this->preset_models->type_list[$type]);
         }
 
@@ -720,6 +985,7 @@ class openaiApi
 
         //todo change if lop level is changed
         //return "<". $type ." >" . $answer. "</". $type .">";
+        $answer = $this->removeBracketsAndContent($answer);
         return $answer;
     }
 

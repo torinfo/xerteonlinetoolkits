@@ -4887,8 +4887,8 @@ var EDITOR = (function ($, parent) {
                                     "languageMode": lo_data[key].attributes["languageMode"],
                                     "reverseMode": lo_data[key].attributes["reverseMode"],
                                     "language": lo_data[key].attributes["languageChoice"],
-
-                                };
+                                }
+                                fileUrl = lo_data[key].attributes["img"];
                                 break;
                             case 'gapFill':
                                 constructorObject = {
@@ -4919,6 +4919,7 @@ var EDITOR = (function ($, parent) {
                                     "range": lo_data[key].attributes["ageRange"],
                                     "wpc": lo_data[key].attributes["wordsPerCategory"],
                                 };
+                                fileUrl = lo_data[key].attributes["img"];
                                 break;
                             case 'decision':
                                 constructorObject = {
