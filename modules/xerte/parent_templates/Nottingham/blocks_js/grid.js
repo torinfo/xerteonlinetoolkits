@@ -214,6 +214,8 @@ var gridBlock = new function () {
 			.width($grid.width())
 			.height($grid.height());
 
+		console.log($grid.height());
+
 		if (align == 'top') {
 			jGetElement(blockid, ".gridHolder").css("margin", "10px auto auto");
 		}

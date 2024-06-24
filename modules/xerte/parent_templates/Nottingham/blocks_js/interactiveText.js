@@ -382,16 +382,6 @@ var interactiveTextBlock = new function () {
 
 			if (pageXML.getAttribute("interactivity") == "find2") {
 				// Track the page
-				let weighting = 1.0;
-				if (pageXML.getAttribute("trackingWeight") != undefined) {
-					weighting = pageXML.getAttribute("trackingWeight");
-				}
-				//XTSetPageType(x_currentPage, 'numeric', groupInfo.filter(gi => gi.name !== '#distractor#').length, weighting);
-				XTSetInteractionType(x_currentPage, x_getBlockNr(blockid), "numeric", weighting, 0)
-				for(let i = 1; i < groupInfo.filter(gi => gi.name !== '#distractor#').length; i++){
-					XTSetInteractionType(x_currentPage, x_getBlockNr(blockid), "numeric", weighting, i)
-				}
-				XTSetLeavePage(x_currentPage, x_getBlockNr(blockid), interactiveTextBlock.leavePage);
 			}
 		}
 
@@ -1255,6 +1245,12 @@ var interactiveTextBlock = new function () {
 			};
 
 			XTEnterInteraction(x_currentPage, x_getBlockNr(blockid), 'multiplechoice', groupName, correctOptions[group], correctAnswers[group], [], pageXML.getAttribute("grouping"), null, group);
+			let weighting = 1.0;
+			if (pageXML.getAttribute("trackingWeight") != undefined) {
+				weighting = pageXML.getAttribute("trackingWeight");
+			}
+			XTSetInteractionType(x_currentPage, x_getBlockNr(blockid), "multiplechoice", weighting, group);
+			XTSetLeavePage(x_currentPage, x_getBlockNr(blockid), interactiveTextBlock.leavePage);
 			XTExitInteraction(x_currentPage, x_getBlockNr(blockid), result, l_options[group], l_answers[group], [], group);
 		}
 		//finalFeedback(incorrectFound);
@@ -1529,6 +1525,12 @@ var interactiveTextBlock = new function () {
 
 
 		XTEnterInteraction(x_currentPage, x_getBlockNr(blockid), 'multiplechoice', name, correctOptions, answerText, correctFeedback, pageXML.getAttribute("grouping"),null, mcqCurrentQ);
+		let weighting = 1.0;
+		if (pageXML.getAttribute("trackingWeight") != undefined) {
+			weighting = pageXML.getAttribute("trackingWeight");
+		}
+		XTSetInteractionType(x_currentPage, x_getBlockNr(blockid), "multiplechoice", weighting, mcqCurrentQ);
+		XTSetLeavePage(x_currentPage, x_getBlockNr(blockid), interactiveTextBlock.leavePage);
 		var $optionHolder = jGetElement(blockid, ".questionHolder .optionHolder")
 			.html('<div class="optionGroup"><input type="radio" name="option" /><label class="optionTxt"></label></div>')
 			.show();
@@ -1570,9 +1572,9 @@ var interactiveTextBlock = new function () {
 		var numQs = pageXML.getAttribute("mcqNumQs") == undefined || pageXML.getAttribute("mcqNumQs") == "*" ? mcqAnswers.length : isNaN(pageXML.getAttribute("mcqNumQs")) ? mcqAnswers.length : Number(pageXML.getAttribute("mcqNumQs")),
 			weighting = (pageXML.getAttribute("trackingWeight") != undefined) ? pageXML.getAttribute("trackingWeight") : 1.0;
 		//XTSetPageType(x_currentPage, 'numeric', numQs, weighting);
-		XTSetInteractionType(x_currentPage, x_getBlockNr(blockid), "multiplechoice", weighting, 0);
+		//XTSetInteractionType(x_currentPage, x_getBlockNr(blockid), "multiplechoice", weighting, 0);
 		for(let i = 1; i < numQs;i++){
-				XTSetInteractionType(x_currentPage, x_getBlockNr(blockid), "multiplechoice", weighting, i);
+				//XTSetInteractionType(x_currentPage, x_getBlockNr(blockid), "multiplechoice", weighting, i);
 		}
 	};
 

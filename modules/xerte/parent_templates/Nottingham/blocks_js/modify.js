@@ -48,12 +48,6 @@ var modifyBlock = new function () {
 		if (feedbackBtnTip == undefined) {
 			feedbackBtnTip = "Feedback"
 		};
-		let weighting = 1.0;
-		if (pageXML.getAttribute("trackingWeight") != undefined) {
-			weighting = pageXML.getAttribute("trackingWeight");
-		}
-		// XTSetPageType(x_currentPage, 'numeric', 1, this.weighting);
-		XTSetInteractionType(x_currentPage, x_getBlockNr(blockid), "text", weighting);
 		var label = "";
 		var modelAnswerTxt = "";
 		if (pageXML.getAttribute("trackinglabel") != null && pageXML.getAttribute("trackinglabel") != "") {
@@ -68,6 +62,12 @@ var modifyBlock = new function () {
 		var ansText = $("<div>").html(pageXML.getAttribute("prompt")).text()
 		var feedbackText = $("<div>").html(pageXML.getAttribute("answer")).text()
 		XTEnterInteraction(x_currentPage, x_getBlockNr(blockid), 'text', label, [], modelAnswerTxt, [], pageXML.getAttribute("grouping"));
+		let weighting = 1.0;
+		if (pageXML.getAttribute("trackingWeight") != undefined) {
+			weighting = pageXML.getAttribute("trackingWeight");
+		}
+		// XTSetPageType(x_currentPage, 'numeric', 1, this.weighting);
+		XTSetInteractionType(x_currentPage, x_getBlockNr(blockid), "text", weighting);
 		jGetElement(blockid, ".instruction").html(x_addLineBreaks(pageXML.getAttribute("instruction")));
 		jGetElement(blockid, ".initText").html(initText);
 		jGetElement(blockid, ".answer").html(answerHeaderTxt);

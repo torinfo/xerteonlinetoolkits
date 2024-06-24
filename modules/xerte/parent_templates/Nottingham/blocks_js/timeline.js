@@ -1,5 +1,5 @@
 var timelineBlock = new function () {
-    this.generateModelState = function(){
+    this.generateModelState = function() {
         return {
             labelTxt1: null,
             labelTxt2: null,
@@ -11,7 +11,6 @@ var timelineBlock = new function () {
 						selectedLabel: null,
         };
     }
-
     // function called every time the page is viewed after it has initially loaded
     this.pageChanged = function (blockid) {
         const state = x_getPageDict("state", blockid);
@@ -391,7 +390,7 @@ var timelineBlock = new function () {
         }
         XTEnterInteraction(x_currentPage, x_getBlockNr(blockid), 'match', label, correctOptions, correctAnswers, correctFeedbacks, pageXML.getAttribute("grouping"), null);
         XTSetLeavePage(x_currentPage, x_getBlockNr(blockid), this.leavePage);
-        XTSetInteractionType(x_currentPage, x_getBlockNr(blockid), 'match', weighting, 1);
+        XTSetInteractionType(x_currentPage, x_getBlockNr(blockid), 'match', weighting);
         XTSetInteractionPageXML(x_currentPage, x_getBlockNr(blockid), pageXML);
     }
 

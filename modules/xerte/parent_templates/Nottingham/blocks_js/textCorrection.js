@@ -70,7 +70,6 @@ var textCorrectionBlock = new function () {
 			weighting = pageXML.getAttribute("trackingWeight");
 		}
 		//XTSetPageType(x_currentPage, "fill in", 1, weighting);
-		XTSetInteractionType(x_currentPage, x_getBlockNr(blockid), "text", weighting);
 
 		// page layout
 		var panelWidth = pageXML.getAttribute("panelWidth"),
@@ -130,6 +129,7 @@ var textCorrectionBlock = new function () {
 		}
 		var label = x_GetTrackingTextFromHTML(pageXML.getAttribute("introduction"), "");
 		XTEnterInteraction(x_currentPage, x_getBlockNr(blockid), "text", label, [state.answer], state.answer);
+		XTSetInteractionType(x_currentPage, x_getBlockNr(blockid), "text", weighting);
 
 		//Add aria-label to answer box
 		var answerFieldLabel = pageXML.getAttribute("answerLabel");

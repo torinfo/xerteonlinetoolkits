@@ -96,9 +96,9 @@ var textHighlightBlock = new function () {
 		var weighting = pageXML.getAttribute("trackingWeight") != undefined ? pageXML.getAttribute("trackingWeight") : 1.0;
 		var label = pageXML.getAttribute("trackinglabel") != null && pageXML.getAttribute("trackinglabel") != "" ? pageXML.getAttribute("trackinglabel") : $('<div>').html(pageXML.getAttribute('name')).text();
 		//XTSetPageType(x_currentPage, 'numeric', 1, weighting);
-		XTSetInteractionType(x_currentPage, x_getBlockNr(blockid), 'text', weighting);
 		var suggestedTxt = $('<div>').html(pageXML.getAttribute("suggestedText")).text();
 		XTEnterInteraction(x_currentPage, x_getBlockNr(blockid), 'text', label, [], suggestedTxt, [], pageXML.getAttribute("grouping"));
+		XTSetInteractionType(x_currentPage, x_getBlockNr(blockid), 'text', weighting);
 		XTSetLeavePage(x_currentPage, x_getBlockNr(blockid), this.leavePage);
 
 		// get info about downloadable document if download is allowed

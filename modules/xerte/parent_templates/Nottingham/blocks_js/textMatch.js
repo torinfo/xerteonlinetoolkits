@@ -457,7 +457,7 @@ var textMatchBlock = new function() {
         var blocknr = parseFloat(blockid.split("block").pop()) - 1;
 
         XTEnterInteraction(x_currentPage, blocknr, 'match', label, correctOptions, correctAnswers, correctFeedbacks, pageXML.getAttribute("grouping"), null);
-        XTSetInteractionType(x_currentPage, x_getBlockNr(blockid), 'match', weighting, 1);
+        XTSetInteractionType(x_currentPage, x_getBlockNr(blockid), 'match', weighting);
         XTSetLeavePage(x_currentPage, blocknr, this.leavePage);
     }
 

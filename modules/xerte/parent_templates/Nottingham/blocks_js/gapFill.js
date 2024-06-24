@@ -319,7 +319,7 @@ var gapFillBlock = new function() {
                 name = "interaction number" + " " + interactionNumber;
                 correctAnswer = state.answerData[interactionNumber];
                 XTEnterInteraction(x_currentPage,  blocknr , 'fill-in', name, [], correctAnswer, "Correct", pageXML.getAttribute("grouping"), null, interactionNumber);
-                XTSetInteractionType(x_currentPage, x_getBlockNr(blockid), 'fill-in', weighting, 1);
+                XTSetInteractionType(x_currentPage, x_getBlockNr(blockid), 'fill-in', weighting, interactionNumber);
                 XTSetLeavePage(x_currentPage, blocknr, this.leavePage);
                 XTSetInteractionPageXML(x_currentPage, blocknr, pageXML, interactionNumber);
                 XTSetInteractionModelState(x_currentPage, blocknr, state, interactionNumber);
@@ -342,7 +342,7 @@ var gapFillBlock = new function() {
             }
             
             XTEnterInteraction(x_currentPage,  blocknr , 'match', name, correctOptions, correctAnswers, "", pageXML.getAttribute("grouping"), null);
-            XTSetInteractionType(x_currentPage, x_getBlockNr(blockid), 'match', weighting, 1);
+            XTSetInteractionType(x_currentPage, x_getBlockNr(blockid), 'match', weighting);
             XTSetLeavePage(x_currentPage, blocknr, this.leavePage);
             XTSetInteractionPageXML(x_currentPage, blocknr, pageXML)
             XTSetInteractionModelState(x_currentPage, blocknr, state)
@@ -371,7 +371,7 @@ var gapFillBlock = new function() {
                     });
                 }
                 XTEnterInteraction(x_currentPage,  blocknr , 'multiplechoice', name, correctOptions, correctAnswers, "Correct", pageXML.getAttribute("grouping"), null, interactionNumber);
-                XTSetInteractionType(x_currentPage, x_getBlockNr(blockid), 'multiplechoice', weighting, 1);
+                XTSetInteractionType(x_currentPage, x_getBlockNr(blockid), 'multiplechoice', weighting, interactionNumber);
                 XTSetLeavePage(x_currentPage, blocknr, this.leavePage);
                 XTSetInteractionPageXML(x_currentPage, blocknr, pageXML, interactionNumber);
                 XTSetInteractionModelState(x_currentPage, blocknr, state, interactionNumber);

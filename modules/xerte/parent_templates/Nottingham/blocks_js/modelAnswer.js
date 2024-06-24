@@ -86,7 +86,7 @@ var modelAnswerBlock = new function () {
 
         var modelAnswerTxt = $('<div>').html(pageXML.getAttribute("feedback")).text();
         XTEnterInteraction(x_currentPage, x_getBlockNr(blockid), 'text', label, [], modelAnswerTxt, [], pageXML.getAttribute("grouping"), null);
-        XTSetInteractionType(x_currentPage, x_getBlockNr(blockid), 'text', weighting, 1);
+        XTSetInteractionType(x_currentPage, x_getBlockNr(blockid), 'text', weighting);
         //XTSetLeavePage(x_currentPage, x_getBlockNr(blockid), this.leavePage);
         XTSetInteractionPageXML(x_currentPage, x_getBlockNr(blockid), pageXML);
 

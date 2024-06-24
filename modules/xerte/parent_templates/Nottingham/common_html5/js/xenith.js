@@ -32,7 +32,8 @@ var x_languageData  = [],
 	x_blocksXML = [],
     x_blocksInfo = [],
     x_pageDicts = [],
-
+		x_blockCount = 0,
+		x_loadedBlockCount = 0,
 	x_specialChars  = [],
     x_inputFocus    = false,
     x_dialogInfo    = [], // (type, built)
@@ -2650,6 +2651,11 @@ function x_createBlock(container, module, modulePosition){
 	x_insertCSS(x_templateLocation + "blocks_html5/" + name + ".css", null, false, "page_model_css_"+name);
 }
 
+function x_setBlockCount(count){
+		x_blockCount = count;
+		x_loadedBlockCount = 0;
+}
+
 function x_loadAllBlocks(){
 	let counter = 1;
 	for (let module of x_blocksXML[x_currentPage]){
@@ -2669,6 +2675,10 @@ function x_loadInBlock(blockid, module){
 	}
 	container.load(x_templateLocation + "blocks_html5/" + name + ".html", function() {
 		window[name].init(blockid);
+		x_loadedBlockCount += 1;
+		if(x_loadedBlockCount == x_blockCount){
+				x_allBlocksSizeChanged();
+		}
 	});
 }
 
@@ -2928,6 +2938,7 @@ function x_closeStandAlonePage(event) {
 		}
 
 		XTExitPage(standAlonePage);
+		x_setBlockCount(0); // resets blockCount and loadedBlockCount
 	}
 }
 
@@ -4119,7 +4130,11 @@ function x_updateCss2(updatePage) {
 function x_allBlocksSizeChanged(){
 	for (let i = 0, len=x_blocksXML[x_currentPage].length; i<len; i++){
 		let blockid = "block" + (i + 1);
-		x_blockSizeChanged(blockid);
+		try {
+				x_blockSizeChanged(blockid);
+		}catch(error){
+				console.error(error);
+		}
 	}
 }
 

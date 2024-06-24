@@ -255,7 +255,7 @@ var categoriesBlock = new function() {
         {
             state.weighting = blockXML.getAttribute("trackingWeight");
         }
-        XTSetInteractionType(x_currentPage, x_getBlockNr(blockid), 'numeric', state.weighting, 1);
+        XTSetInteractionType(x_currentPage, x_getBlockNr(blockid), 'match', state.weighting);
 
         var $pageContents = jGetElement(blockid,".pageContents");
         state.labels = labels;

@@ -139,17 +139,7 @@ var quizBlock = new function() {
 					}
 				}
         // Track the quiz page
-        let weighting = 1.0;
-        if (pageXML.getAttribute("trackingWeight") != undefined)
-        {
-            let weighting = pageXML.getAttribute("trackingWeight");
-        }
 				if(state.initializedTracking == null) {
-						XTSetInteractionType(x_currentPage, x_getBlockNr(blockid), 'multiplechoice', weighting, 0);
-						for (var i = 1; i < $(pageXML).children().length; i++) {
-								XTSetInteractionType(x_currentPage, x_getBlockNr(blockid), 'multiplechoice', weighting, i);
-						}
-						// XTSetPageType(x_currentPage, 'numeric', numQs, this.weighting);
 						state.initializedTracking = [];
 				}
 
@@ -320,8 +310,13 @@ var quizBlock = new function() {
                     name = $thisQ.getAttribute("name");
                 }
 								if(state.initializedTracking.find((tracked) => tracked == name) === undefined) {
+										let weighting = 1.0;
+										if (pageXML.getAttribute("trackingWeight") != undefined) {
+												weighting = pageXML.getAttribute("trackingWeight");
+										}
 										state.initializedTracking.push(name);
 										XTEnterInteraction(x_currentPage, blocknr , 'multiplechoice', name, correctOptions, correctAnswer, correctFeedback, pageXML.getAttribute("grouping"), null, state.questions[state.currentQ]);
+										XTSetInteractionType(x_currentPage, x_getBlockNr(blockid), 'multiplechoice', weighting, state.questions[state.currentQ]);
 								}
 								XTSetInteractionPageXML(x_currentPage, blocknr, pageXML, state.questions[state.currentQ]);
 								state.checked = false;

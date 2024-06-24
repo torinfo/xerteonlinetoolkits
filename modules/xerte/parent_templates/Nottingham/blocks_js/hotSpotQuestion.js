@@ -26,9 +26,9 @@ var hotSpotQuestionBlock= new function () {
 	};
 
 	this.sizeChanged = function (blockid) {
-		if(jGetElement(blockid, ".pageContents").length == 0){
+		if(jGetElement(blockid, ".pageContents").length == 0 || jGetElement(blockid, ":not(.mapster_el).image").data("origSize") == undefined){
             return
-        }
+		}
 		const state = x_getPageDict("state", blockid)
 		var resizehighlightArray = []
 		let allHighlightsArray = state.allHighlightsArray;
@@ -76,7 +76,6 @@ var hotSpotQuestionBlock= new function () {
 	this.init = function (blockid) {
 		const state = x_pushToPageDict({}, "state", blockid);
 		let pageXML = x_getBlockXML(blockid);
-		var weighting = 1.0;
 		let attempts = 0;
 		let highlightsIndexArray = [];
 		let highlightsArray = [];
@@ -85,10 +84,6 @@ var hotSpotQuestionBlock= new function () {
 		state.highlightsIndexArray = highlightsIndexArray;
 		state.highlightsArray = highlightsArray;
 		state.allHighlightsArray = allHighlightsArray;
-		if (pageXML.getAttribute("trackingWeight") != null) {
-			weighting = pageXML.getAttribute("trackingWeight");
-		}
-		XTSetInteractionType(x_currentPage, x_getBlockNr(blockid), "multiplechoice", weighting);
 
 		var $textHolder = jGetElement(blockid, '.textHolder');
 		if (pageXML.getAttribute("textWidth") == "none") {
@@ -530,7 +525,12 @@ var hotSpotQuestionBlock= new function () {
 			label = pageXML.getAttribute("trackinglabel");
 		}
 		if(first) {
+			var weighting = 1.0;
+			if (pageXML.getAttribute("trackingWeight") != null) {
+				weighting = pageXML.getAttribute("trackingWeight");
+			}
 			XTEnterInteraction(x_currentPage, x_getBlockNr(blockid), 'multiplechoice', label, correctOptions, correctAnswer, correctFeedback, pageXML.getAttribute("grouping"));
+			XTSetInteractionType(x_currentPage, x_getBlockNr(blockid), "multiplechoice", weighting);
 		}
 		
 		var stroke = true;

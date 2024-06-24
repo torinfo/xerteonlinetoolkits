@@ -63,7 +63,6 @@ var mcqBlock = new function() {
             weighting = pageXML.getAttribute("trackingWeight");
         }
         //TODO: fix this mess:
-        XTSetInteractionType(x_currentPage, blocknr, 'numeric', weighting);
         for (var i = 0; i < state.optionElements.length; i++) {
             var answerTxt;
             if (state.optionElements[i].label != undefined)
@@ -103,6 +102,7 @@ var mcqBlock = new function() {
             label = x_GetTrackingTextFromHTML(pageXML.getAttribute("prompt"), label);
         }
         XTEnterInteraction(x_currentPage, blocknr, 'multiplechoice', label, correctOptions, correctAnswer, correctFeedback, pageXML.getAttribute("grouping"), null);
+        XTSetInteractionType(x_currentPage, blocknr, 'numeric', weighting);
         XTSetInteractionPageXML(x_currentPage, blocknr, pageXML);
     }
 
