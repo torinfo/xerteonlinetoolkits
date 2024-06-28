@@ -4829,7 +4829,6 @@ var EDITOR = (function ($, parent) {
 			case 'webpage':  //Not used??
 			case 'xerteurl':
             case 'aibutton':
-                debugger
                 var id = 'aibutton_' + form_id_offset;
                 form_id_offset++;
                 html = $('<button>')
@@ -4839,6 +4838,7 @@ var EDITOR = (function ($, parent) {
                     .click({key: key}, function(event) {
                         var type = lo_data[key].attributes.nodeName; //get the node-type
                         var fileUrl = null;
+                        var infoPrompt = lo_data[key].attributes["fileAccessPrompt"];
                         var uploadPrompt = lo_data[key].attributes["uploadPrompt"];
                         // Build the constructor object based on the type
                         var constructorObject;
@@ -4856,8 +4856,10 @@ var EDITOR = (function ($, parent) {
                                     "subject": lo_data[key].attributes["subject"],
                                     "nrq": lo_data[key].attributes["amountOfQuestions"],
                                     "nra": lo_data[key].attributes["amountOfAnswers"],
+                                    "tone": lo_data[key].attributes["voiceSelector"],
+                                    "range": lo_data[key].attributes["ageRange"],
                                 }
-                                fileUrl = lo_data[key].attributes["img"];
+                                fileUrl = lo_data[key].attributes["file"];
                                 break;
                             case 'learningObject':
                                 constructorObject = {
@@ -4887,8 +4889,9 @@ var EDITOR = (function ($, parent) {
                                     "languageMode": lo_data[key].attributes["languageMode"],
                                     "reverseMode": lo_data[key].attributes["reverseMode"],
                                     "language": lo_data[key].attributes["languageChoice"],
+                                    "tone": lo_data[key].attributes["voiceSelector"],
                                 }
-                                fileUrl = lo_data[key].attributes["img"];
+                                fileUrl = lo_data[key].attributes["file"];
                                 break;
                             case 'gapFill':
                                 constructorObject = {
@@ -4918,8 +4921,9 @@ var EDITOR = (function ($, parent) {
                                     "subject": lo_data[key].attributes["subject"],
                                     "range": lo_data[key].attributes["ageRange"],
                                     "wpc": lo_data[key].attributes["wordsPerCategory"],
+                                    "tone": lo_data[key].attributes["voiceSelector"],
                                 };
-                                fileUrl = lo_data[key].attributes["img"];
+                                fileUrl = lo_data[key].attributes["file"];
                                 break;
                             case 'decision':
                                 constructorObject = {
@@ -4954,7 +4958,12 @@ var EDITOR = (function ($, parent) {
                                 constructorObject = {};
                                 break;
                         }
-                        if (fileUrl!=null && uploadPrompt === 'true'){
+                        if (infoPrompt === 'true'){
+                            constructorObject["access"] = "HAVE";
+                        }else{
+                            constructorObject["access"] = "DON'T HAVE";
+                        }
+                        if (fileUrl!=null && uploadPrompt === 'true'){ //IMPORTANT: pass the value of baseurl as separate, to help with knowing which media file/user file to store videos in?
                             var baseUrl = rlopathvariable.substr(rlopathvariable.indexOf("USER-FILES"));
                             var cleanFileUrl = fileUrl.replace("FileLocation + '", "").replace("'", "");
                             var fullUrl = baseUrl + cleanFileUrl;

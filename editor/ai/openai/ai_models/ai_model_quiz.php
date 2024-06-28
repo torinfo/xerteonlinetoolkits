@@ -29,7 +29,7 @@ $payload = [
     ],
 
     // Optional: Uncomment and set instructions to override the assistant's default instructions
-    "instructions" => "Follow the instructions in the last message from the user. Use the appropriate uploaded transcript as your source. If no source has been uploaded, try to fulfil the request using general knowledge about the specified subject.",
+    "instructions" => "Follow the instructions in the last message from the user. Use the appropriate uploaded transcript as your source. If no source has been uploaded or the source does not contain information relevant to the subject, and you have been given explicit permission to use knowledge outside of the uploaded file, try to fulfil the request using general knowledge about the specified subject.",
 
     // Optional: Uncomment and set additional instructions to append to the existing instructions without overriding them
     "additional_instructions" => "When following XML examples, make sure you follow it exactly. This includes formatting, special characters, node structure and everything else. Do not deviate from the example AND how it is presented other than the content and the amount of each type of node and the contents therein. Notably, do NOT use markdown syntax when formatting your answer! Only return plain text.",

@@ -1557,7 +1557,6 @@ var EDITOR = (function ($, parent) {
         var tree = $.jstree.reference("#treeview");
         //show wait icon
         $('body').css("cursor", "wait");
-        debugger
         console.log("start openai api request please wait");
         console.log(node_type, "+", api_choice, "+", p, "+", fileUrl, "+", event.data.key)
         $.ajax({

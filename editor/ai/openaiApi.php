@@ -240,16 +240,6 @@ class openaiApi
 
     private function fileUpload($finalPath){
         $authorization = "Authorization: Bearer " . $this->xerte_toolkits_site->openAI_key;
-        /*//$filePath = 'C:\xampp\htdocs\xot\USER-FILES\15-guest2-Nottingham\media\test.txt';
-        $basePath = __DIR__ . '/../../'; // Moves up from ai -> editor -> xot
-
-        // Normalize the directory separators to the current operating system's preference
-        $normalizedBasePath = str_replace(['/', '\\'], DIRECTORY_SEPARATOR, $basePath);
-
-        // Append the $filePath to the normalized base path
-        $finalPath = $normalizedBasePath . str_replace(['/', '\\'], DIRECTORY_SEPARATOR, $filePath);
-        $finalPath = realpath($finalPath);
-        //IMPORTANT !!! File paths here are totally messed up. Adjust functions so the file path is proper to begin with...*/
         $fileName = basename($finalPath);
 
         if (!file_exists($finalPath)) {
@@ -281,7 +271,7 @@ class openaiApi
             return $decodedResponse['id'];
         } else {
             // If cURL encountered an error
-            echo "cURL Error: " . curl_error($ch);
+            $error = "cURL Error: " . curl_error($ch);
         }
 
     }
@@ -515,18 +505,6 @@ class openaiApi
         return $result;
     }
 
-    private function getDynamicPath($filePath){
-        $basePath = __DIR__ . '/../../'; // Moves up from ai -> editor -> xot
-
-        // Normalize the directory separators to the current operating system's preference
-        $normalizedBasePath = str_replace(['/', '\\'], DIRECTORY_SEPARATOR, $basePath);
-
-        // Append the $filePath to the normalized base path
-        $finalPath = $normalizedBasePath . str_replace(['/', '\\'], DIRECTORY_SEPARATOR, $filePath);
-        $finalPath = realpath($finalPath);
-        //IMPORTANT !!! File paths here are totally messed up. Adjust functions so the file path is proper to begin with...
-        return $finalPath;
-    }
     private function transcribeAudio($filePath){
         $authorization = "Authorization: Bearer " . $this->xerte_toolkits_site->openAI_key;
         $url = "https://api.openai.com/v1/audio/transcriptions";
@@ -600,12 +578,6 @@ class openaiApi
             "Content-Type: multipart/form-data"
         ]);
         curl_setopt($curl, CURLOPT_POST, 1);
-
-        // Prepare the file
-        /*$basePath = __DIR__ . '/../../'; // Moves up from ai -> editor -> xot
-        $normalizedBasePath = str_replace(['/', '\\'], DIRECTORY_SEPARATOR, $basePath);
-        $finalPath = $normalizedBasePath . str_replace(['/', '\\'], DIRECTORY_SEPARATOR, $filePath);
-        $finalPath = realpath($finalPath);*/
         $fileName = basename($filePath);
         $cFile = new CURLFile($filePath, 'audio/mpeg', $fileName);
 
@@ -652,11 +624,6 @@ class openaiApi
     }
 
     private function extractAudio($videoUrl) {
-        /*$basePath = __DIR__ . '/../../'; // Moves up from ai -> editor -> xot
-        $normalizedBasePath = str_replace(['/', '\\'], DIRECTORY_SEPARATOR, $basePath);
-        $finalPath = $normalizedBasePath . str_replace(['/', '\\'], DIRECTORY_SEPARATOR, $videoUrlBase);
-        $videoUrl = realpath($finalPath);*/
-
         // Generate a unique output file name
         $outputFileName = 'output_audio_' . uniqid() . '.mp3';
         $outputAudioPath = dirname($videoUrl) . DIRECTORY_SEPARATOR . $outputFileName;
@@ -740,6 +707,73 @@ class openaiApi
         }
     }
 
+    private function isUrl($input) {
+        // Separate the file path and URL
+        $pos = strpos($input, 'http');
+        if ($pos === false) {
+            return false;
+        }
+        $filePath = substr($input, 0, $pos - 1);
+        $url = substr($input, $pos);
+        return filter_var($url, FILTER_VALIDATE_URL) !== false;
+    }
+
+    private function isSupportedUrl($url) {
+        $parsedUrl = parse_url($url);
+        $host = $parsedUrl['host'] ?? '';
+
+        $supportedHosts = ['youtube.com', 'youtu.be', 'vimeo.com', 'video.dlearning.nl'];
+
+        foreach ($supportedHosts as $supportedHost) {
+            if (strpos($host, $supportedHost) !== false) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    private function downloadVideo($input) {
+        // Separate the file path and URL
+        // Separate the file path and URL
+        $pos = strpos($input, 'http');
+        if ($pos === false) {
+            throw new Exception("Invalid input format");
+        }
+
+        $filePath = substr($input, 0, $pos - 1);
+        $url = substr($input, $pos);
+
+        // Append /media to the file path
+        $mediaPath = $this->prepareURL($filePath . '/media');
+
+            // Handle URL case
+            if ($this->isSupportedUrl($url)) {
+                // Create a unique filename for the downloaded audio
+                $uniqueFilename = uniqid('video_', true) . '.mp4';
+                $outputPath = $mediaPath . DIRECTORY_SEPARATOR . $uniqueFilename;
+
+                // Prepare the yt-dlp command
+                $command = escapeshellcmd("yt-dlp -f best -o " . escapeshellarg($outputPath) . " " . escapeshellarg($url));
+
+                // Execute the command
+                $output = [];
+                $returnVar = 0;
+                exec($command, $output, $returnVar);
+
+                // Check if the download was successful
+                if ($returnVar !== 0) {
+                    throw new Exception("Failed to download audio: " . implode("\n", $output));
+                }
+                $pos = strpos($outputPath, 'USER-FILES');
+                $relativePath = substr($outputPath, $pos);
+                return $relativePath;
+            } else {
+                throw new Exception("Unsupported URL");
+            }
+    }
+
+
     //meant to remove citiations which openAI assistant will automatically add between chinese brackets
     //These will break the xml if not cleaned out.
     function removeBracketsAndContent($text) {
@@ -750,59 +784,6 @@ class openaiApi
         // Return the cleaned text
         return $cleanedText;
     }
-    //test ver for audio transcripts
-    /*public function ai_request($p, $type, $uploadUrl)
-    {
-        if (is_null($this->preset_models->type_list[$type]) or $type == "") {
-            return (object) ["status" => "error", "message" => "there is no match in type_list for " . $type];
-        }
-        //todo check for corresponding key to api
-        if ($this->xerte_toolkits_site->openAI_key == "") {
-            return (object) ["status" => "error", "message" => "there is no corresponding API key"];
-        }
-
-        $prompt = $this->generatePrompt($p, $type);
-
-        $results = array();
-
-        $block_size = 6;
-        if (in_array($type, $this->preset_models->multi_run) and isset($p['nrq']) and $p['nrq'] > $block_size){
-
-            $nrq_remaining = $p['nrq'];
-
-            while ($nrq_remaining > $block_size) {
-                $prompt = preg_replace('/'.$p['nrq'].'/', strval($block_size), $prompt, 1);
-
-                $results[] = $this->POST_OpenAi($prompt, $this->preset_models->type_list[$type]);
-                $tempxml = simplexml_load_string(end($results)->choices[0]->message->content);
-                foreach ($tempxml->children() as $child){
-                    $prompt = $prompt . $child->attributes()->prompt . " ; ";
-                }
-
-                $nrq_remaining = $nrq_remaining - $block_size;
-            }
-            $prompt = preg_replace('/'.strval($block_size).'/', strval($nrq_remaining), $prompt, 1);
-        }
-
-        $results[] = $this->POST_OpenAi_Transcription($prompt, $this->preset_models->type_list[$type], $uploadUrl);
-
-        $answer = "";
-        $total_tokens_used = 0;
-        //if status is set something went wrong
-        foreach ($results as $result) {
-            if ($result->status) {
-                return $result;
-            }
-            $total_tokens_used += $result->usage->total_tokens;
-            $answer = $answer . $result->choices[0]->message->content;
-        }
-        #move to frontend or change it here -> this is for things that generate children, need options for 1) not generating and 2) for both top level + generating
-        $answer = str_replace(["<". $type .">", "</". $type .">"], "", $answer);
-
-        //todo change if lop level is changed
-        return "<". $type ." >" . $answer. "</". $type .">";
-        return $answer;
-    }*/
 
     //public function must be ai_request($p, $type) when adding new api
     //todo maybe change this to top level object and extend with api functions?
@@ -838,7 +819,19 @@ class openaiApi
             }
             $prompt = preg_replace('/'.strval($block_size).'/', strval($nrq_remaining), $prompt, 1);
         }*/
+
+        $linkSource = $this->isUrl($uploadUrl);
+
         if ($uploadUrl!=null){
+            if ($linkSource){
+                try {
+                    $uploadUrl = $this->downloadVideo($uploadUrl);
+                } catch (Exception $e) {
+                    // Handle the exception
+                    $errorUpload = $e->getMessage();
+                }
+            }
+
             $videoMimeTypes = ['video/mp4', 'video/avi', 'video/mpeg', 'video/quicktime', 'application/octet-stream'];
             $audioMimeTypes = ['audio/mpeg', 'audio/mp3', 'audio/wav', 'audio/ogg'];
             $textMimeTypes = [
@@ -861,6 +854,8 @@ class openaiApi
             //$mimeType = finfo_file($finfo, $filePath);
             $mimeType = mime_content_type($filePath);
             finfo_close($finfo);
+
+
 
             // Check against each category
             if (in_array($mimeType, $videoMimeTypes)) {
@@ -885,6 +880,9 @@ class openaiApi
                         $deletion = $this->deleteVectorStorage($vectorStorageId);
                         $delete = $this->deleteFile($fileId);
                         $deletelocal = $this->deleteLocalFile($transcription);
+                        if ($linkSource){
+                        $deletelocal = $this->deleteLocalFile($filePath);
+                        }
                     }
                 }
                 else{ //this is a redundancy left if we don't want to use the openAI assistant.\
@@ -918,7 +916,6 @@ class openaiApi
                     //If the payload doesn't use it, we instead default to supplying the transcript with the prompt instead of as an uploaded file
                     $results[]=$this->POST_OpenAi_Transcription($prompt, $this->preset_models->type_list[$type], $filePath);
                 }
-                //$results[]=$this->POST_OpenAi_Transcription($prompt, $this->preset_models->type_list[$type], $uploadUrl);
                 // Add code for handling audio files here
             } elseif (in_array($mimeType, $textMimeTypes)) {
                 if (isset($this->preset_models->type_list[$type]['payload']['assistant_id'])) {
@@ -945,7 +942,7 @@ class openaiApi
 
         }
         elseif (isset($this->preset_models->type_list[$type]['payload']['assistant_id'])) {
-            //A sort of default behavior - if the file is not yet supported, try uploading it anyway.
+            //A sort of default behavior - if the file type is not yet supported, try uploading it anyway.
             //If a file doesn't need to be uploaded (assuming the assistant has pre-made instructions or another reason), skip the upload step and call assisstant directly
                 $filePath = $this->prepareURL($uploadUrl);
                 $fileId = "";
