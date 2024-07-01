@@ -4878,7 +4878,7 @@ var EDITOR = (function ($, parent) {
                                     "nrt": lo_data[key].attributes["nrt"],
                                     "range": lo_data[key].attributes["ageRange"]
                                 }
-                                fileUrl = lo_data[key].attributes["img"];
+                                fileUrl = lo_data[key].attributes["file"];
                                 break;
                             case 'flashCards':
                                 constructorObject = {
