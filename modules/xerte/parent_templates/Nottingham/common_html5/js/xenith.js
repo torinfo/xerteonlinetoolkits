@@ -17,6 +17,15 @@
  * limitations under the License.
  */
 
+let handler = {
+	set(obj, prop, newval) {
+			console.trace(obj, prop);
+
+			obj[prop] = newval;
+			return true;
+	}	
+};
+
 // all elements, variables and functions for interface are called "x_id" - do not make new id's prefixed with "x_" in page models
 var XENITH = {};
 var x_languageData  = [],
@@ -37,7 +46,7 @@ var x_languageData  = [],
 	x_specialChars  = [],
     x_inputFocus    = false,
     x_dialogInfo    = [], // (type, built)
-    x_browserInfo   = {iOS:false, Android:false, touchScreen:false, mobile:false, orientation:"portrait"}, // holds info about browser/device
+    x_browserInfo   = new Proxy({iOS:false, Android:false, touchScreen:false, mobile:false, orientation:"portrait"}, handler), // holds info about browser/device
 	x_pageHistory   = [], // keeps track of pages visited for historic navigation
     x_firstLoad     = true,
     x_fillWindow    = false,
@@ -154,13 +163,13 @@ $(document).ready(function() {
 
     if (navigator.userAgent.match(/iPhone/i) != null || navigator.userAgent.match(/iPod/i) != null || navigator.userAgent.match(/iPad/i) != null) {
         x_browserInfo.iOS = true;
-		if (navigator.userAgent.match(/iPad/i) != null) {
-			x_browserInfo.Device = "iPad";
-		}
-		else
-		{
-			x_browserInfo.Device = "iPhone";
-		}
+				if (navigator.userAgent.match(/iPad/i) != null) {
+						x_browserInfo.Device = "iPad";
+				}
+				else
+				{
+						x_browserInfo.Device = "iPhone";
+				}
     }
     if (navigator.userAgent.match(/Android/i) != null)
     {

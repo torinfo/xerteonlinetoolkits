@@ -51,9 +51,10 @@ else
 		$skipPageBasic = $argv[1] . '/basicPages.xwd';
 		$skipInteractiveBlocks = $argv[1] . '/interactiveBlocks.xwd';
 		$xwds = folder_loop($argv[1]);
+		$xwdsInteractiveBlocks = folder_loop(str_replace("/website_code/php/rebuildtemplate.php", "/src/Nottingham/wizards/en-GB", str_replace("\\", "/", $argv[0])));
         sort($xwds);
 
-        $xwd->populateInteractiveBlocks($xwds, $skipInteractiveBlocks);
+        $xwd->populateInteractiveBlocks($xwdsInteractiveBlocks, $skipInteractiveBlocks);
 
 		foreach($xwds as $model)
 		{

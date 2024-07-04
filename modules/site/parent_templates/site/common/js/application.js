@@ -39,6 +39,14 @@ var validPages = [];
 var collapseBanner = false;
 var collapseHeight = -1;
 var fullscreenBannerTitleMargin=10;
+var x_params = {};
+var blockCount = 0;
+var loadedBlockCount = 0;
+var blocksXML = [];
+var blocksInfo = [];
+var pageDicts = [];
+var x_browserInfo = {iOS:false, Android:false, touchScreen:false, mobile:false, orientation:"portrait"}; // holds info about browser/device
+
 
 function init(){
 	loadContent();
@@ -139,7 +147,10 @@ function loadContent(){
 		success: function(text) {
 			var newString = makeAbsolute(text);
 			data = $.parseXML(newString);
-
+			for(let i=0;i < data.activeElement.attributes.length; i++){
+					let attrib = data.activeElement.attributes[i];
+					x_params[attrib.name] = attrib.value;
+			}
 			//step one - css
 			cssSetUp('theme');
 
@@ -362,6 +373,9 @@ function setup() {
 	if (window.location.pathname.substring(window.location.pathname.lastIndexOf("/") + 1, window.location.pathname.length).indexOf("preview") != -1 && $(data).find('learningObject').attr('authorSupport') == 'true' ) {
 		authorSupport = true;
 	}
+
+	x_params.dialogTxt = getLangInfo(languageData.find("screenReaderInfo")[0], "dialog", "") != "" && getLangInfo(languageData.find("screenReaderInfo")[0], "dialog", "") != null ? " " + getLangInfo(languageData.find("screenReaderInfo")[0], "dialog", "") : "";
+	x_params.newWindowTxt = getLangInfo(languageData.find("screenReaderInfo")[0], "newWindow", "") != "" && getLangInfo(languageData.find("screenReaderInfo")[0], "newWindow", "") != null ? " " + getLangInfo(languageData.find("screenReaderInfo")[0], "newWindow", "") : "";
 
 	if ($(data).find('learningObject').attr('variables') != undefined) {
 		// calculate author set variables
@@ -1623,6 +1637,7 @@ function parseContent(pageRef, sectionNum, contentNum, addHistory) {
 
 			// store current page
 			currentPage = pageIndex;
+			x_currentPage = currentPage;
 			this.x_CheckBanner(currentPage)
 
 			//set the main page title and subtitle
@@ -1764,14 +1779,14 @@ function loadPage(page, pageHash, sectionNum, contentNum, pageIndex, standAloneP
 				}
 			}
 			
+			//add the section to the document
+			$('#mainContent').append(section);
+
 			if (pswds.length > 0) {
 				passwordSection(this, section, sectionVisibleIndex, page, pageHash, pageIndex, pswds);
 			} else {
 				loadSection(this, section, sectionVisibleIndex, page, pageHash, pageIndex);
 			}
-
-			//add the section to the document
-			$('#mainContent').append(section);
 			
 			sectionVisibleIndex++;
 		}
@@ -1850,6 +1865,7 @@ function loadSection(thisSection, section, sectionIndex, page, pageHash, pageInd
 
 	//add the section contents
 	$(thisSection).children().each( function(itemIndex, value){
+		console.log("name", this.nodeName);
 		if ($(this).attr('name') != '' && $(this).attr('name') != undefined && ($(this).attr('showTitle') == 'true' || $(this).attr('showTitleFix') == 'true')) {
 
 			if ($(this).attr('showTitle') == 'true' || $(this).attr('showTitleFix') == 'true') {
@@ -1967,6 +1983,10 @@ function loadSection(thisSection, section, sectionIndex, page, pageHash, pageInd
 
 		if (this.nodeName == 'xot'){
 			section.append(loadXotContent($(this)));
+		}
+		
+		if (this.nodeName == "blocks"){
+			loadBlocksContent($(this), section);
 		}
 
 		if (this.nodeName == 'navigator'){
@@ -2805,6 +2825,134 @@ function makeCarousel(node, section, sectionIndex, itemIndex){
 
 	}, 0);
 }
+
+// begin SECTION: interactive blocks
+
+function jGetElement(blockid, element) {
+	let temp_element;
+	if(element.includes(",")){
+
+		var finalElement = "";
+		var elements = element.split(",");
+		for( var i=0; i< elements.length; i++){
+			var e = "#"+blockid+" "+elements[i];
+			if(i !== elements.length-1){
+				e += ", "
+			}
+			finalElement += e;
+		}
+		temp_element = $(finalElement);
+	} else{
+		temp_element = $("#" + blockid + ' ' + element);
+	}
+	if(temp_element.length == 0){
+			let noop = 0;
+			//console.trace("\"" + temp_element.selector + "\" not found");
+	}
+	return temp_element;
+}
+
+function x_pushToPageDict(object, name, blockid = -1){
+    let key = blockid == -1 ? name : name + "_" + blockid;
+    pageDicts[key] = object;
+    return object;
+}
+
+// Gets an object from x_pageDicts with optional blockid
+function x_getPageDict(name, blockid = -1){
+    let key = blockid == -1 ? name : name + "_" + blockid;
+    let result = pageDicts[key];
+	return result;
+}
+
+function x_getBlockXML(blockid){
+	var blocknr = x_getBlockNr(blockid);
+	if (blocksXML.length >= blocknr){
+		return blocksXML[blocknr];
+	}
+	return null
+}
+
+function x_getBlockNr(blockid){
+	if(blockid && typeof blockid == "string"){
+		return parseInt(blockid.replace('block',"")) - 1;
+	}else if(typeof blockid == "number"){
+			return blockid;
+	} else{
+		return NaN;
+	}
+}
+
+function createBlock(container, module, modulePosition){
+	//Create the area for the block to be populated in. Then call the init of the block.
+	var blockid = "block" + modulePosition;
+	// var jsName = module.tagName; //.replace("Block", "")
+	container.append('<div id="block' + modulePosition +'" class="iblock x-card"></div>');
+	loadInBlock(blockid, module);
+	let name = module.tagName;
+	if (!module.tagName.includes("Block")){
+			name += "Block";
+	}
+	//Insert block CSS files. These are different from the not block interactive modules
+	insertCSS("modules/xerte/parent_templates/Nottingham/blocks_html5/" + name + ".css", null, false, "page_model_css_"+name);
+}
+
+function setBlockCount(count){
+		blockCount = count;
+		loadedBlockCount = 0;
+}
+
+function blockSizeChanged(blockid){
+	if (!$('#'+blockid).is(':empty')) {
+		eval(blocksInfo[x_getBlockNr(blockid)].type).sizeChanged(blockid);
+	};
+}
+
+function allBlocksSizeChanged(){
+	for (let i = 0, len=blocksXML.length; i<len; i++){
+		let blockid = "block" + (i + 1);
+		try {
+				blockSizeChanged(blockid);
+		}catch(error){
+				console.error(error);
+		}
+	}
+}
+
+function loadInBlock(blockid, module){
+	let name = module.tagName;
+	if (!module.tagName.includes("Block")){
+			name += "Block";
+	}
+	blocksInfo[x_getBlockNr(blockid)] = {type: name};
+	let container = $("#"+blockid);
+	if(container.length == 0){
+			console.log("Can't find container: #"+blockid);
+	}
+	container.load("modules/xerte/parent_templates/Nottingham/blocks_html5/" + name + ".html", function() { 
+		window[name].init(blockid);
+		loadedBlockCount += 1;
+		if(loadedBlockCount == blockCount){
+				allBlocksSizeChanged();
+		}
+	});
+}
+
+function loadBlocksContent($this, section) {
+	let offset = blockCount;
+	blockCount += $this.children().length;
+	XTEnterPage(currentPage, "numeric", "blockspage");
+	XTSetPageType(currentPage, "numeric", blockCount, 1);
+	$(function () {
+		$this.children().each(function (index, value) {
+			blocksXML.push(value);
+			offset++;
+			createBlock(section, value, offset);
+		});
+	});		
+}
+
+// end SECTION: interactive blocks
 
 function loadXotContent($this) {
 	// get link & store url parameters to add back in later if not overridden
