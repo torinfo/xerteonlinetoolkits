@@ -18,6 +18,7 @@ $prompt_params = $_POST["prompt"];
 $type = $_POST["type"];
 $ai_api = $_POST["api"];
 $file_url = $_POST["url"];
+$context = $_POST["context"];
 
 //todo Timo IMPORTANT check if $ai_api is valid IMPORTANT
 //prob combine with check for allowed apis

@@ -275,6 +275,33 @@ class openaiApi
         }
 
     }
+    //use to check if a vector storage is attached to an assistant
+    private function vectorStorageAttached($assistantId){
+        $authorization = "Authorization: Bearer " . $this->xerte_toolkits_site->openAI_key;
+
+        $ch = curl_init('https://api.openai.com/v1/assistants/' . $assistantId);
+        curl_setopt($ch, CURLOPT_HTTPHEADER, [
+            $authorization,
+            'Content-Type: application/json',
+            "OpenAI-Beta: assistants=v2"
+        ]);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+
+        $response = curl_exec($ch);
+        curl_close($ch);
+
+        $assistantData = json_decode($response, true);
+
+        if (isset($assistantData['tools'])) {
+            foreach ($assistantData['tools'] as $tool) {
+                if ($tool['type'] === 'file_search' && isset($assistantData['tool_resources']['file_search']['vector_store_ids']) && !empty($assistantData['tool_resources']['file_search']['vector_store_ids'])) {
+                    return $assistantData['tool_resources']['file_search']['vector_store_ids'][0];
+                }
+            }
+        }
+
+        return false;
+    }
 
     private function createVectorStorage() {
         $authorization = "Authorization: Bearer " . $this->xerte_toolkits_site->openAI_key;
@@ -774,7 +801,7 @@ class openaiApi
     }
 
 
-    //meant to remove citiations which openAI assistant will automatically add between chinese brackets
+    //meant to remove citations which openAI assistant will automatically add between chinese brackets
     //These will break the xml if not cleaned out.
     function removeBracketsAndContent($text) {
         // Define the regex pattern to match the brackets and the content inside
@@ -827,7 +854,7 @@ class openaiApi
                 try {
                     $uploadUrl = $this->downloadVideo($uploadUrl);
                 } catch (Exception $e) {
-                    // Handle the exception
+                    // Store exception
                     $errorUpload = $e->getMessage();
                 }
             }
@@ -855,8 +882,6 @@ class openaiApi
             $mimeType = mime_content_type($filePath);
             finfo_close($finfo);
 
-
-
             // Check against each category
             if (in_array($mimeType, $videoMimeTypes)) {
                 // If it's a video file
@@ -868,16 +893,25 @@ class openaiApi
                         $fileId = "";
                         $fileId = $this->fileUpload($transcription);
                         if ($fileId!=""){
-                            //$this->attachFile($fileId, $this->preset_models->type_list[$type]['payload']['assistant_id']);
-                            $vectorStorageId = $this->createVectorStorage();
+                            if (!$this->vectorStorageAttached($this->preset_models->type_list[$type]['payload']['assistant_id'])){
+                                $vectorStorageId = $this->createVectorStorage();
+                                $deleteVectorStorage = true; //if a vector storage is created, this signifies it should be deleted
+                            }
+                            else
+                            {
+                                $vectorStorageId = vectorStorageAttached($this->preset_models->type_list[$type]['payload']['assistant_id']);
+                                $deleteVectorStorage = false; //if a vector storage already exists, this signifies to only delete the uploaded file and to not tamper with the rest
+                            }
                             $vectorFileId = $this->createVectorStoreFile($fileId, $vectorStorageId);
                             $this->attachStorageToAssistant($this->preset_models->type_list[$type]['payload']['assistant_id'], $vectorStorageId);
                         }
                     }
                     $results[] = $this->POST_OpenAi_Assistant($prompt, $this->preset_models->type_list[$type]);
                     if ($fileId!=""){
-                        $detatchment = $this->detachStorageFromAssistant($this->preset_models->type_list[$type]['payload']['assistant_id'], $vectorStorageId);
-                        $deletion = $this->deleteVectorStorage($vectorStorageId);
+                        if ($deleteVectorStorage){
+                            $detatchment = $this->detachStorageFromAssistant($this->preset_models->type_list[$type]['payload']['assistant_id'], $vectorStorageId);
+                            $deletion = $this->deleteVectorStorage($vectorStorageId);
+                        }
                         $delete = $this->deleteFile($fileId);
                         $deletelocal = $this->deleteLocalFile($transcription);
                         if ($linkSource){
@@ -898,16 +932,25 @@ class openaiApi
                         $fileId = "";
                         $fileId = $this->fileUpload($transcription);
                         if ($fileId!=""){
-                            //$this->attachFile($fileId, $this->preset_models->type_list[$type]['payload']['assistant_id']);
-                            $vectorStorageId = $this->createVectorStorage();
+                            if (!$this->vectorStorageAttached($this->preset_models->type_list[$type]['payload']['assistant_id'])){
+                                $vectorStorageId = $this->createVectorStorage();
+                                $deleteVectorStorage = true; //if a vector storage is created, this signifies it should be deleted
+                            }
+                            else
+                            {
+                                $vectorStorageId = vectorStorageAttached($this->preset_models->type_list[$type]['payload']['assistant_id']);
+                                $deleteVectorStorage = false; //if a vector storage already exists, this signifies to only delete the uploaded file and to not tamper with the rest
+                            }
                             $vectorFileId = $this->createVectorStoreFile($fileId, $vectorStorageId);
                             $this->attachStorageToAssistant($this->preset_models->type_list[$type]['payload']['assistant_id'], $vectorStorageId);
                         }
                     }
                     $results[] = $this->POST_OpenAi_Assistant($prompt, $this->preset_models->type_list[$type]);
                     if ($fileId!=""){
-                        $detatchment = $this->detachStorageFromAssistant($this->preset_models->type_list[$type]['payload']['assistant_id'], $vectorStorageId);
-                        $deletion = $this->deleteVectorStorage($vectorStorageId);
+                        if ($deleteVectorStorage){
+                            $detatchment = $this->detachStorageFromAssistant($this->preset_models->type_list[$type]['payload']['assistant_id'], $vectorStorageId);
+                            $deletion = $this->deleteVectorStorage($vectorStorageId);
+                        }
                         $delete = $this->deleteFile($fileId);
                         $deletelocal = $this->deleteLocalFile($transcription);
                     }
@@ -923,14 +966,25 @@ class openaiApi
                         $fileId = "";
                         $fileId = $this->fileUpload($filePath);
                         if ($fileId!=""){
-                            $vectorStorageId = $this->createVectorStorage();
+                            $attachedVectorStore = $this->vectorStorageAttached($this->preset_models->type_list[$type]['payload']['assistant_id']);
+                            if ($attachedVectorStore === false){
+                                $vectorStorageId = $this->createVectorStorage();
+                                $deleteVectorStorage = true; //if a vector storage is created, this signifies it should be deleted
+                            }
+                            else
+                            {
+                                $vectorStorageId = $attachedVectorStore;
+                                $deleteVectorStorage = false; //if a vector storage already exists, this signifies to only delete the uploaded file and to not tamper with the rest
+                            }
                             $vectorFileId = $this->createVectorStoreFile($fileId, $vectorStorageId);
                             $this->attachStorageToAssistant($this->preset_models->type_list[$type]['payload']['assistant_id'], $vectorStorageId);
                         }
                     $results[] = $this->POST_OpenAi_Assistant($prompt, $this->preset_models->type_list[$type]);
                     if ($fileId!=""){
-                        $detatchment = $this->detachStorageFromAssistant($this->preset_models->type_list[$type]['payload']['assistant_id'], $vectorStorageId);
-                        $deletion = $this->deleteVectorStorage($vectorStorageId);
+                        if ($deleteVectorStorage){
+                            $detatchment = $this->detachStorageFromAssistant($this->preset_models->type_list[$type]['payload']['assistant_id'], $vectorStorageId);
+                            $deletion = $this->deleteVectorStorage($vectorStorageId);
+                        }
                         $delete = $this->deleteFile($fileId);
                     }
                 }
@@ -948,14 +1002,24 @@ class openaiApi
                 $fileId = "";
                 $fileId = $this->fileUpload($filePath);
                 if ($fileId!=""){
-                    $vectorStorageId = $this->createVectorStorage();
+                    if (!$this->vectorStorageAttached($this->preset_models->type_list[$type]['payload']['assistant_id'])){
+                        $vectorStorageId = $this->createVectorStorage();
+                        $deleteVectorStorage = true; //if a vector storage is created, this signifies it should be deleted
+                    }
+                    else
+                    {
+                        $vectorStorageId = vectorStorageAttached($this->preset_models->type_list[$type]['payload']['assistant_id']);
+                        $deleteVectorStorage = false; //if a vector storage already exists, this signifies to only delete the uploaded file and to not tamper with the rest
+                    }
                     $vectorFileId = $this->createVectorStoreFile($fileId, $vectorStorageId);
                     $this->attachStorageToAssistant($this->preset_models->type_list[$type]['payload']['assistant_id'], $vectorStorageId);
                 }
                 $results[] = $this->POST_OpenAi_Assistant($prompt, $this->preset_models->type_list[$type]);
                 if ($fileId!=""){
-                    $detatchment = $this->detachStorageFromAssistant($this->preset_models->type_list[$type]['payload']['assistant_id'], $vectorStorageId);
-                    $deletion = $this->deleteVectorStorage($vectorStorageId);
+                    if ($deleteVectorStorage){
+                        $detatchment = $this->detachStorageFromAssistant($this->preset_models->type_list[$type]['payload']['assistant_id'], $vectorStorageId);
+                        $deletion = $this->deleteVectorStorage($vectorStorageId);
+                    }
                     $delete = $this->deleteFile($fileId);
                 }
 
