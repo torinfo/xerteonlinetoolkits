@@ -396,7 +396,7 @@ var inventoryBlock = new function () {
 		if (chartHolder.getContext) {
 			var $panel = jGetElement(blockid, ".pageContents .panel"),
 				availW = Math.min(550, Math.max(300, $panel.width())),
-				availH = Math.min(550, Math.max(300, $x_pageHolder.height() - parseInt($x_pageDiv.css("padding-top")) * 2 - parseInt($panel.css("padding-top")) * 2 - 15 - jGetElement(blockid, ".restartBtn").height() - jGetElement(blockid, ".chartTitle").height()));
+				availH = Math.min(550, Math.max(300, $x_pageHolder.height() - parseInt($x_pageDiv.css("padding-top")?? 0) * 2 - parseInt($panel.css("padding-top")) * 2 - 15 - jGetElement(blockid, ".restartBtn").height() - jGetElement(blockid, ".chartTitle").height()));
 
 			chartHolder.width = availW;
 			chartHolder.height = availH;

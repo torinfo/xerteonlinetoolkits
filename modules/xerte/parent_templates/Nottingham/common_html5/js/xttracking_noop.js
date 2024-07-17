@@ -347,7 +347,7 @@ function XTResults(fullcompletion) {
         totalDuration = 0;
     results.interactions = Array();
 
-    for (i = 0; i < trackingManager.pageStates.length - 1; i++) {
+    for (i = 0; i < trackingManager.pageStates.length; i++) {
 
         if (trackingManager.pageStates[i].nrinteractions > 0) {
             score += trackingManager.pageStates[i].score * trackingManager.pageStates[i].weighting;

@@ -22,6 +22,7 @@ $(document).ready(init);
 var XBOOTSTRAP = {};
 var data;
 var languageData;
+var x_languageData;
 var startPage = 0;
 var startSection;
 var startContent;
@@ -39,17 +40,26 @@ var validPages = [];
 var collapseBanner = false;
 var collapseHeight = -1;
 var fullscreenBannerTitleMargin=10;
+
+//xenith for blocks
 var x_params = {};
 var blockCount = 0;
 var loadedBlockCount = 0;
 var blocksXML = [];
 var blocksInfo = [];
 var pageDicts = [];
+var x_mediaText = [];
 var x_browserInfo = {iOS:false, Android:false, touchScreen:false, mobile:false, orientation:"portrait"}; // holds info about browser/device
+var $x_body;
+var $x_pageHolder;
+var $x_pageDiv;
 
 
 function init(){
 	loadContent();
+	$x_body = $("body");
+	$x_pageHolder = $("#mainContent");
+	$x_pageDiv = $($x_pageHolder.children()[1]);
 };
 
 // called after all content loaded to set up mediaelement.js players
@@ -207,6 +217,7 @@ function loadContent(){
 		});
 	}, 500);
 
+		
 	x_xAPI_SessionId = new Date().getTime() + "" + Math.round(Math.random() * 1000000);
 }
 
@@ -340,7 +351,7 @@ function getLangData(lang) {
 
 		success: function (xml) {
 
-			languageData = $(xml).find("language");
+			x_languageData = languageData = $(xml).find("language");
 
 			//step three
 			setup();
@@ -355,7 +366,7 @@ function getLangData(lang) {
 			if (lang != "en-GB") { // no language file found - try default GB one
 				getLangData("en-GB");
 			} else { // hasn't found GB language file - set up anyway, will use fallback text in code
-				languageData = $("");
+				x_languageData = languageData = $("");
 				setup();
 				parseContent({ type: "start", id: startPage }, startSection, startContent);
 			}
@@ -373,6 +384,42 @@ function setup() {
 	if (window.location.pathname.substring(window.location.pathname.lastIndexOf("/") + 1, window.location.pathname.length).indexOf("preview") != -1 && $(data).find('learningObject').attr('authorSupport') == 'true' ) {
 		authorSupport = true;
 	}
+
+// SECTION: blocks
+	var mediaElementText = [{
+		name: "stopButton",
+		label: "Stop",
+		description: "Stop Media Button"
+	}, {
+		name: "playPauseButton",
+		label: "Play/Pause",
+		description: "Play/Pause Media Button"
+	}, {
+		name: "muteButton",
+		label: "Mute Toggle",
+		description: "Toggle Mute Button"
+	}, { 
+		name: "fullscreenButton", 
+		label: "Fullscreen", 
+		description: "Fullscreen Movie Button"
+	}, {
+		name: "captionsButton",
+		label: "Captions/Subtitles",
+		description: "Show/Hide Captions Button"
+	}];
+
+	for (var i = 0, len = mediaElementText.length; i < len; i++) {
+		x_mediaText.push({
+			label: x_getLangInfo(languageData.find("mediaElementControls").find(mediaElementText[i].name)[0], "label", mediaElementText[i].label[0]),
+			description: x_getLangInfo(languageData.find("mediaElementControls").find(mediaElementText[i].name)[0], "description", mediaElementText[i].description[0])
+		});
+	}
+	x_mediaText.push(
+		{ label: x_getLangInfo(languageData.find("mediaElementControls")[0], "video", "") },
+		{ label: x_getLangInfo(languageData.find("mediaElementControls")[0], "audio", "") }
+	);
+// END SECTION: Blocks
+
 
 	x_params.dialogTxt = getLangInfo(languageData.find("screenReaderInfo")[0], "dialog", "") != "" && getLangInfo(languageData.find("screenReaderInfo")[0], "dialog", "") != null ? " " + getLangInfo(languageData.find("screenReaderInfo")[0], "dialog", "") : "";
 	x_params.newWindowTxt = getLangInfo(languageData.find("screenReaderInfo")[0], "newWindow", "") != "" && getLangInfo(languageData.find("screenReaderInfo")[0], "newWindow", "") != null ? " " + getLangInfo(languageData.find("screenReaderInfo")[0], "newWindow", "") : "";

@@ -165,7 +165,7 @@ color: #6FD9D9;
 }
 
 /* --PANELS-------------------------------------------------------------- */
-.panel {
+*:not(.iblock) .panel {
   position: relative;
   margin: 15px 0;
   padding: 39px 19px 14px;
@@ -177,7 +177,7 @@ color: #6FD9D9;
           border-radius: 4px;
 }
 /* Echo out a label for the example */
-.panel:after {
+(*:not(.iblock) .panel)::after {
   content: attr(title);
   position: absolute;
   top: -1px;

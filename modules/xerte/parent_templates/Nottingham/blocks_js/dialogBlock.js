@@ -128,7 +128,7 @@ var dialogBlock = new function () {
 					$thisQ = $question;
 					let answers = this.getAttribute("answer").split(answerDelimeter);
 					XTSetInteractionType(x_currentPage, x_getBlockNr(blockid), 'fill-in', 1, 0);
-					XTEnterInteraction(x_currentPage, x_getBlockNr(blockid), 'fill-in', this.getAttribute("question"), answers, answers, null /* never used*/, x_currentPageXML.getAttribute("grouping"), null, 0);
+					XTEnterInteraction(x_currentPage, x_getBlockNr(blockid), 'fill-in', this.getAttribute("question"), answers, answers, null /* never used*/, pageXML.getAttribute("grouping"), null, 0);
 				}
 
 				$thisQ.find("div")
@@ -278,7 +278,7 @@ var dialogBlock = new function () {
 						jGetElement(blockid, ".pageContents .question:eq(" + (qNo + 1) + ") input").focus();
 						let question = $(pageXML).children()[qNo+1];
 						let answers = question.getAttribute("answer").split(answerDelimeter);
-						XTEnterInteraction(x_currentPage, x_getBlockNr(blockid), 'fill-in', question.getAttribute("question"), answers, answers, null /* never used*/, x_currentPageXML.getAttribute("grouping"), null, qNo+1);
+						XTEnterInteraction(x_currentPage, x_getBlockNr(blockid), 'fill-in', question.getAttribute("question"), answers, answers, null /* never used*/, pageXML.getAttribute("grouping"), null, qNo+1);
 						XTSetInteractionType(x_currentPage, x_getBlockNr(blockid), 'fill-in', 0, qNo+1);
 						state.currentQ =  qNo + 1;
   					}

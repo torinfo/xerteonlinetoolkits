@@ -160,6 +160,9 @@ class XerteXWDBuilder
 								if($c->getName() == "icon"){
 									$tempxml->addAttribute($c->getName(), $c[0]);
 								}
+								if($c->getName() == "menuItem"){
+									$tempxml->addAttribute($c->getName(), $c[0]);
+								}
 
 							}
 							foreach($child as $childnode) {

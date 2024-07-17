@@ -60,11 +60,11 @@ var modelAnswerBlock = new function () {
             exampleTxt = "The example answer was:"
         }
         var pageNo = x_currentPage;
-        if (x_pageInfo[x_currentPage].standalone == true) {
+        if (typeof x_pageInfo !== "undefined" && x_pageInfo[x_currentPage].standalone == true) {
             // if the page is a standalone page then use the page name instead of page number
             pageNo = "'" + pageXML.getAttribute("name") + "'";
         } else {
-            if (x_pageInfo[0].type != "menu") {
+            if (typeof x_pageInfo !== "undefined" && x_pageInfo[0].type != "menu") {
                 pageNo++;
             }
         }

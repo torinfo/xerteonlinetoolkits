@@ -268,7 +268,7 @@ var hotspotImageBlock = new function () {
 							}, 100);
 						}
 
-						x_pageContentsUpdated();
+						//x_pageContentsUpdated();
 					})
 					.focusin(function () {
 						jGetElement(blockid, ".image").mapster('set_options', tabfocusoptions);

@@ -320,7 +320,7 @@ var annotatedDiagramBlock = new function () {
             if (state.hsType == "centre") {
                 // arrow or line
                 this.resizeCanvas(blockid, standalone);
-                let context = GetElement(blockid, "canvas")[0].getContext("2d");
+                let context = jGetElement(blockid, "canvas")[0].getContext("2d");
                 context.strokeStyle = state.highlightColour;
                 context.fillStyle = state.highlightColour;
                 context.lineWidth = borderW;

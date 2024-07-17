@@ -67,6 +67,7 @@
 	<script type="text/javascript" src="%TEMPLATEPATH%common/mediaelement/mediaelement-and-player.min.js%VERSION_PARAM%"></script>
 	<script type="text/javascript" src="%TEMPLATEPATH%common/mediaelement/renderers/vimeo.min.js%VERSION_PARAM%"></script>
 	<link rel="stylesheet" href="%TEMPLATEPATH%common/mediaelement/mediaelementplayer-legacy.min.css%VERSION_PARAM%" />
+	<link rel="stylesheet" href="%TEMPLATEPATH%common/mediaelement/mediaelementplayer.min.css%VERSION_PARAM%" />
 
     <script type="text/javascript">
         var x_SiteUrl = "%SITEURL%";
@@ -101,10 +102,12 @@
 		};
     </script>
 
+<!-- begin blocks -->
 	<script type="text/javascript" src="modules/xerte/parent_templates/Nottingham/blocks_js/js/trackingManager.js%VERSION_PARAM%"></script>
 	<script type="text/javascript" src="modules/xerte/parent_templates/Nottingham/blocks_js/js/state.js%VERSION_PARAM%"></script>
 	<script type="text/javascript" src="modules/xerte/parent_templates/Nottingham/blocks_js/js/pageState.js%VERSION_PARAM%"></script>
 	<script type="text/javascript" src="modules/xerte/parent_templates/Nottingham/blocks_js/js/interactionState.js%VERSION_PARAM%"></script>
+<!-- end blocks -->
 
     %TRACKING_SUPPORT%
 
@@ -195,17 +198,22 @@
 <!--bootstrap script-->
 
 <script src="%TEMPLATEPATH%common/js/bootstrap.js%VERSION_PARAM%"></script>
+<script src="modules/xerte/parent_templates/Nottingham/common_html5/js/jquery-ui-1.10.4.min.js%VERSION_PARAM%"></script> <!-- blocks -->
 
 <!--initialise the application specific code-->
 <script src="%TEMPLATEPATH%common/js/application.js%VERSION_PARAM%"></script>
 
 
-<script src="%TEMPLATEPATH%common/js/blocks.js%VERSION_PARAM%"></script>
+<script src="%TEMPLATEPATH%common/js/blocks.js%VERSION_PARAM%"></script> <!-- blocks -->
 
 <script type="text/javascript" language="JavaScript">
 
 </script>
 
+<!-- begin blocks -->
+	<script type="text/javascript" src="modules/xerte/parent_templates/Nottingham/common_html5/js/jquery.imagemapster.js%VERSION_PARAM%"></script>
+    <script type="text/javascript" src="modules/xerte/parent_templates/Nottingham/common_html5/js/mediaPlayer.js%VERSION_PARAM%"></script>
+	<script type="text/javascript" src="modules/xerte/parent_templates/Nottingham/common_html5/js/chart.js%VERSION_PARAM%"></script>
 
 	<script type="text/javascript" src="modules/xerte/parent_templates/Nottingham/blocks_js/mcq.js"></script>
 	<script type="text/javascript" src="modules/xerte/parent_templates/Nottingham/blocks_js/quiz.js"></script>
@@ -237,5 +245,6 @@
 
 	<!-- <script type="text/javascript" src="modules/xerte/parent_templates/Nottingham/blocks_js/js/trackingManager.js"></script> -->
 	<link rel="stylesheet" href="modules/xerte/parent_templates/Nottingham/blocks_html5/iblock.css">
+<!-- end blocks -->
 </body>
 </html>

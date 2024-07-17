@@ -20,10 +20,12 @@
 let handler = {
 	set(obj, prop, newval) {
 			console.trace(obj, prop);
-
-			obj[prop] = newval;
-			return true;
-	}	
+			return Reflect.set(...arguments);
+	},
+	get(obj, prop, receiver){
+			console.trace(prop);
+			return Reflect.get(...arguments);
+	}
 };
 
 // all elements, variables and functions for interface are called "x_id" - do not make new id's prefixed with "x_" in page models
@@ -46,7 +48,7 @@ var x_languageData  = [],
 	x_specialChars  = [],
     x_inputFocus    = false,
     x_dialogInfo    = [], // (type, built)
-    x_browserInfo   = new Proxy({iOS:false, Android:false, touchScreen:false, mobile:false, orientation:"portrait"}, handler), // holds info about browser/device
+    x_browserInfo   = {iOS:false, Android:false, touchScreen:false, mobile:false, orientation:"portrait"}, // holds info about browser/device
 	x_pageHistory   = [], // keeps track of pages visited for historic navigation
     x_firstLoad     = true,
     x_fillWindow    = false,

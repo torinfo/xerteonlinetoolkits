@@ -5623,7 +5623,7 @@ a.thumbnail:focus {
   list-style: none;
 }
 
-.label,
+(*:not(.iblock) .label),
 .badge {
   display: inline-block;
   padding: 2px 4px;
@@ -5637,7 +5637,7 @@ a.thumbnail:focus {
   background-color: #595959;
 }
 
-.label {
+(*:not(.iblock) .label) {
   -webkit-border-radius: 3px;
      -moz-border-radius: 3px;
           border-radius: 3px;

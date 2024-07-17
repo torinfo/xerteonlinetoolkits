@@ -63,7 +63,7 @@
 			<audio><![CDATA[<audio name="Title" showTitleFix="true" url="Select a Sound File"/>]]></audio>
 			<image><![CDATA[<image name="Title" showTitleFix="true" url="Select an Image" alt="Enter a Description for Accessibility"/>]]></image>
 			<text><![CDATA[<text name="Title" showTitleFix="true">Enter Text Here</text>]]></text>
-			<blocks><![CDATA[<blocks name="Title"></blocks>]]></blocks>
+			<blocks><![CDATA[<blocks name="Title" showTitle="true"></blocks>]]></blocks>
 		</newNodes>
 	</section>
 
@@ -104,8 +104,9 @@
 
 	</text>
 
-	<blocks>
+	<blocks menuItem="Blocks">
 		<name type="TextInput" label="Title" wysiwyg="true"/>
+		<showTitle label="Show Title" type="CheckBox"/>
 
         <interactiveBlocks>
         </interactiveBlocks>
