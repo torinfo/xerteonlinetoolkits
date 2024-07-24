@@ -2987,6 +2987,7 @@ function loadInBlock(blockid, module){
 
 function loadBlocksContent($this, section) {
 	let offset = blockCount;
+	let blockContainer = $("<div class=\"blocksContainer\"></div>").appendTo(section);
 	blockCount += $this.children().length;
 	XTEnterPage(currentPage, "numeric", "blockspage");
 	XTSetPageType(currentPage, "numeric", blockCount, 1);
@@ -2994,7 +2995,7 @@ function loadBlocksContent($this, section) {
 		$this.children().each(function (index, value) {
 			blocksXML.push(value);
 			offset++;
-			createBlock(section, value, offset);
+			createBlock(blockContainer, value, offset);
 		});
 	});		
 }

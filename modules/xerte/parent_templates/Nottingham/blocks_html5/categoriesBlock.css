@@ -3,6 +3,10 @@
 
  }
 
+.categoriesBlock .highlight{
+	background-image: url("../common_html5/highlight.png");
+}
+
 .categoriesBlock .dragDropHolder {
     overflow:	auto;
 }

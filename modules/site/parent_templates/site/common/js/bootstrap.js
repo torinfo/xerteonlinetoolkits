@@ -18,16 +18,16 @@
  * ========================================================== */
 let handler = {
 	set(obj, prop, newval) {
-			console.trace(obj, prop);
+			//console.trace(obj, prop);
 			return Reflect.set(...arguments);
 	},
 	get(obj, prop, receiver){
-			console.trace(prop);
+			//console.trace(prop);
 			return Reflect.get(...arguments);
 	}
 };
 
-$ = new Proxy($, handler);
+//$ = new Proxy($, handler);
 
 !function ($) {
 

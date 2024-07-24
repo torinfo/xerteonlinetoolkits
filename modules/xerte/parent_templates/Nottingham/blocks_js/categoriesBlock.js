@@ -72,8 +72,10 @@ var categoriesBlock = new function() {
         if(jGetElement(blockid, ".pageContents").length == 0){
             return
         }
-        var tallestLabel = 0;
+        let tallestLabel = 0;
+				let labelCount = 0;
         jGetElement(blockid,".dragDropHolder .label").each(function() {
+						labelCount += 1;
             var $this = $(this);
             if ($this.outerHeight() > tallestLabel) {
                 tallestLabel = $this.outerHeight();
@@ -100,7 +102,7 @@ var categoriesBlock = new function() {
         let blockOffset = parseInt($("#"+blockid).parent().children().first().offset().top) - parseInt(pageHolder_standin.offset().top) + parseInt($("#"+blockid).css("padding-top")) * 2 + parseInt($("#"+blockid).css("margin-bottom"));
         let min_height = pageHolder_standin.height() - parseInt(pageDiv_standin.css("padding-top")) * 2 - (-blockOffset) - categoryHolderOffset - parseInt($category.css("padding-top")) * 2 - jGetElement(blockid,".button").height() - 25;
 
-        $category.css("min-height", min_height);
+        $category.css("min-height", tallestLabel*labelCount);
     }
 
     this.leavePage = function(blockid)
