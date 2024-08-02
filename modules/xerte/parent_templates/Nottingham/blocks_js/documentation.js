@@ -112,7 +112,7 @@ var documentationBlock = new function () {
 		// Introductory page
 		if (documentXML.getAttribute('intro') != "" && documentXML.getAttribute('display') == 'separate') {
 			jGetElement(blockid, ".mainIntro")
-				.attr("id", "page" + pageIndex++)
+				.attr("class", "page" + pageIndex++)
 				.addClass("page");
 		}
 
@@ -129,7 +129,7 @@ var documentationBlock = new function () {
 					.addClass('page');
 
 				if (pageIndex > 1)
-					$page.attr('class', 'page hidepage');
+					$page.addClass('hidepage');
 
 				state.docData.pages[page].pageName = pageXML.getAttribute('name');
 				state.docData.pages[page].pageText = pageXML.getAttribute('text');
@@ -157,7 +157,7 @@ var documentationBlock = new function () {
 						state.docData.pages[page].sections[section] = { 'items': [] };
 
 						// Create the sections
-						if (sectionXML.nodeName == 'section') {
+						if (sectionXML.nodeName == 'docsection') {
 							if (sectionXML.getAttribute('exclude') != 'doc') {
 								state.docData.pages[page].sections[section].sectionName = sectionXML.getAttribute('name');
 								state.docData.pages[page].sections[section].sectionText = sectionXML.getAttribute('text');

@@ -573,13 +573,13 @@
 		<h3 label="h3" type="TextInput" defaultValue="16" width="100" optional="true"/>
 		<p label="p" type="TextInput" defaultValue="15" width="100" optional="true"/>
     </fontSize><instructions label="Download Instructions" type="TextArea" height="120" language="true"/><notAnswered label="Not Answered Text" type="TextInput" language="true"/><requiredTxt label="Incomplete Error Text" type="TextInput" language="true"/><downloadTxt label="Download Button Label" type="TextInput" language="true"/><nextTxt label="Next Button Label" type="TextInput" language="true"/><prevTxt label="Previous Button Label" type="TextInput" language="true"/><newNodes>
-      <page><![CDATA[<page name="Enter title here" text="Enter text for the nested page here" />]]></page>
-	</newNodes></documentationBlock><page menuItem="Nested Page" icon="icFolderPage">
+      <docpage><![CDATA[<docpage name="Enter title here" text="Enter text for the nested page here" />]]></docpage>
+	</newNodes></documentationBlock><docpage menuItem="Nested Page" icon="icFolderPage">
     <name label="Title" type="TextInput" wysiwyg="true"/>
 	<text label="Text" type="TextArea" height="120"/>
 	
     <newNodes>
-      <section><![CDATA[<section name="Section Title" text="Enter text here"/>]]></section>
+      <docsection><![CDATA[<docSection name="Section Title" text="Enter text here"/>]]></docsection>
       <line><![CDATA[<line />]]></line>
 	  <media><![CDATA[<media name="Media Title" text="Enter text here" url="Select an Image" tip="Enter a Description for Accessibility"/>]]></media>
 	  <selectlist><![CDATA[<selectlist name="List Title" text="Enter text here" type="radio" display="vertical"/>]]></selectlist>
@@ -589,7 +589,7 @@
 	  <textarea><![CDATA[<textarea name="Text Area Title" text="Enter text here" notAnswered="Not answered"/>]]></textarea>
 	  <textbox><![CDATA[<textbox name="Text Box Title" text="Enter text here" notAnswered="Not answered"/>]]></textbox>
     </newNodes>
-  </page><section menuItem="Section">
+  </docpage><docsection menuItem="Section">
     <name label="Section Title" type="TextInput" wysiwyg="true"/>
     <text label="Text" type="TextArea" height="100"/>
 	
@@ -605,7 +605,7 @@
 	  <textarea><![CDATA[<textarea name="Text Area Title" text="Enter text here" notAnswered="Not answered"/>]]></textarea>
 	  <textbox><![CDATA[<textbox name="Text Box Title" text="Enter text here" notAnswered="Not answered"/>]]></textbox>
     </newNodes>
-  </section><tableDoc menuItem="Editable Table" icon="icTable">
+  </docsection><tableDoc menuItem="Editable Table" icon="icTable">
     <name label="Table Title" type="TextInput" wysiwyg="true"/>
     <text label="Text" type="TextArea" height="100"/>
     <data label="Table Data" newRow=" " newCol=" " type="DataGrid" height="190" width="390" columns="2" editable="1,1" controls="1" addCols="true" showHeaderRow="false" wysiwyg="full"/>
@@ -3629,7 +3629,7 @@
 	<prevTxt label="Previous Button Label" type="TextInput" language="true"/>
 	
     <newNodes>
-      <page><![CDATA[<page name="Enter title here" text="Enter text for the nested page here" />]]></page>
+      <docpage><![CDATA[<docpage name="Enter title here" text="Enter text for the nested page here" />]]></docpage>
 	</newNodes>
 	
   <narrate type="group" label="Narration" optional="true" tooltip="Add an audio player to the bottom of the page" common="true">

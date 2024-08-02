@@ -282,64 +282,39 @@
 		<h3 label="h3" type="TextInput" defaultValue="16" width="100" optional="true"/>
 		<p label="p" type="TextInput" defaultValue="15" width="100" optional="true"/>
     </fontSize><instructions label="Download Instructions" type="TextArea" height="120" language="true"/><notAnswered label="Not Answered Text" type="TextInput" language="true"/><requiredTxt label="Incomplete Error Text" type="TextInput" language="true"/><downloadTxt label="Download Button Label" type="TextInput" language="true"/><nextTxt label="Next Button Label" type="TextInput" language="true"/><prevTxt label="Previous Button Label" type="TextInput" language="true"/><newNodes>
-      <page><![CDATA[<page name="Enter title here" text="Enter text for the nested page here" />]]></page>
-	</newNodes></documentationBlock><page menu="Website" hint="A new page" icon="icLayoutContent" remove="true" duplicate="true" menuItem="Page" deepLink="true">
+      <docpage><![CDATA[<docpage name="Enter title here" text="Enter text for the nested page here" />]]></docpage>
+	</newNodes></documentationBlock><docpage menuItem="Nested Page" icon="icFolderPage">
+    <name label="Title" type="TextInput" wysiwyg="true"/>
+	<text label="Text" type="TextArea" height="120"/>
+	
+    <newNodes>
+      <docsection><![CDATA[<docSection name="Section Title" text="Enter text here"/>]]></docsection>
+      <line><![CDATA[<line />]]></line>
+	  <media><![CDATA[<media name="Media Title" text="Enter text here" url="Select an Image" tip="Enter a Description for Accessibility"/>]]></media>
+	  <selectlist><![CDATA[<selectlist name="List Title" text="Enter text here" type="radio" display="vertical"/>]]></selectlist>
+	  <description><![CDATA[<description name="Description Title" text="Enter text here"/>]]></description>
+	  <tableDoc><![CDATA[<tableDoc name="Table Title" text="Enter text here" data=" | " borders="full" header="header" shadeHeader="true" shade="false" notAnswered="Not answered" replace="true"/>]]></tableDoc>
+	  <checkbox><![CDATA[<checkbox name="Checkbox Title" text="Enter text here" label="Enter label text here" checked="Checked" unchecked="Unchecked"/>]]></checkbox>
+	  <textarea><![CDATA[<textarea name="Text Area Title" text="Enter text here" notAnswered="Not answered"/>]]></textarea>
+	  <textbox><![CDATA[<textbox name="Text Box Title" text="Enter text here" notAnswered="Not answered"/>]]></textbox>
+    </newNodes>
+  </docpage><docsection menuItem="Section">
+    <name label="Section Title" type="TextInput" wysiwyg="true"/>
+    <text label="Text" type="TextArea" height="100"/>
+	
+	<exclude label="Exclude From" type="ComboBox" data="lo,doc" options="Learning Object,Documentation" defaultValue="doc" width="120" optional="true"/>
 
-		<name type="TextInput" label="Page Title" wysiwyg="true"/>
-		<subtitle type="TextInput" label="Page Subtitle" wysiwyg="true"/>
-
-		<newNodes>
-			<section><![CDATA[<section name="Enter Section Title"/>]]></section>
-		</newNodes>
-
-	</page><section icon="icPageWhite" remove="true" duplicate="true" menuItem="Section">
-
-		<name type="TextInput" label="Section Title" wysiwyg="true"/>
-
-		<hideShow type="group" label="Hide/Show Section" optional="true" tooltip="Hide the section completely or hide/show the section between specified dates" info="Hide this section from view at all times or use the 'From' &amp; 'Until' fields to specify when it should be available">
-			<hidePage label="Hide Section" type="CheckBox" defaultValue="false" optional="true"/>
-			<hideOnDate label="From" type="DateField" defaultValue="" optional="true" allowBlank="true" preventPrev="true" tooltip="Use the calendar to select a date (format YYYY-MM-DD)"/>
-			<hideOnTime label="From (hh:mm)" type="TextInput" defaultValue="00:00" optional="true"/>
-			<hideUntilDate label="Until" type="DateField" defaultValue="" optional="true" allowBlank="true" preventPrev="true" tooltip="Use the calendar to select a date (format YYYY-MM-DD)"/>
-			<hideUntilTime label="Until (hh:mm)" type="TextInput" defaultValue="00:00" optional="true"/>
-		</hideShow>
-
-		<customSectionLinkGroup type="group" label="Section ID" optional="true" tooltip="Create a customised URL to this Section" info="Create a link directly to this section by adding #yourSectionID to the end of the project URL&lt;br/&gt;Avoid using spaces and the words 'page' and 'section' in page IDs">
-            <customLinkID label="Section ID" type="TextInput" optional="true"/>
-        </customSectionLinkGroup>
-
-		<passwordGroup type="group" label="Access Code" optional="true" tooltip="Access to this section will be restricted until an access code is entered. Please note, to securely protect your project you should password protect via the access tab in the project properties rather than using this optional property">
-			<password label="Access Code(s)" type="TextInput" optional="true" defaultValue="" tooltip="A comma separated list of codes which give access to this section"/>
-			<passwordCase label="Case Sensitive" type="CheckBox" optional="true" defaultValue="true" tooltip="Access codes are case sensitive when this option is checked"/>
-			<passwordInfo label="Instructions" type="TextArea" height="50" optional="true" defaultValue="Enter an access code below to view this section:" tooltip="The instructions which appear in the access code block"/>
-			<passwordError label="Error Message" type="TextArea" height="50" optional="true" defaultValue="Invalid access code" tooltip="The error message which appears when an incorrect access code is entered"/>
-			<passwordSubmit label="Button Label" type="TextInput" optional="true" defaultValue="Submit" tooltip="The label on the submit button"/>
-		</passwordGroup>
-		
-		<links label="Subsection Links" type="ComboBox" width="80" options="None,Horizontal List,Vertical List" data="none,hlist,vlist" defaultValue="hlist" optional="true" tooltip="Add a list of subsection links below the section title. Only subsections where title isn't hidden will be included."/>
-		
-		<lightboxGroup type="group" label="Lightbox" optional="true" tooltip="By default, clicked images will open in a lightbox. Use these properties to turn the lightbox functionality on/off for this section only">
-			<lightbox type="CheckBox" label="Lightbox Images" defaultValue="true" optional="true"/>
-			<lightboxCaption type="ComboBox" label="Caption" defaultValue="false" optional="true" options="None,Below Image,Above Image" data="false,below,above" tooltip="Add a caption to lightbox images on this section. The caption text is taken from the 'Description' or 'Alt Text' fields."/>
-		</lightboxGroup>
-		
-		<filter type="CategoryList" label="Filter Categories" target="categoryInfo" defaultValue="" optional="true" tooltip="Use in conjunction with the project-level 'Search' optional property. Tick the relevant filter terms used in category searches"/>
-
-		<newNodes>
-			<xot><![CDATA[<xot name="Title" showTitleFix="true" link="Xerte XOT Project URL" header="false" footer="false"/>]]></xot>
-			<pdf><![CDATA[<pdf name="Title" showTitleFix="true" url="Select a PDF File" width="500" height="350" openPDF="Open PDF in new tab"/>]]></pdf>
-			<markup><![CDATA[<markup name="Title" showTitle="true">&lt;!--Enter HTML Code--&gt;</markup>]]></markup>
-			<canvas><![CDATA[<canvas name="Title" showTitle="true" id="EnterID" width="500" height="350"/>]]></canvas>
-			<script><![CDATA[<script name="Title">//javascript</script>]]></script>
-			<link><![CDATA[<link name="Title" url="Link URL"/>]]></link>
-			<navigator><![CDATA[<navigator name="Title" showTitle="true" type="Tabs"/>]]></navigator>
-			<video><![CDATA[<video name="Title" showTitleFix="true" url="Select a Video"/>]]></video>
-			<audio><![CDATA[<audio name="Title" showTitleFix="true" url="Select a Sound File"/>]]></audio>
-			<image><![CDATA[<image name="Title" showTitleFix="true" url="Select an Image" alt="Enter a Description for Accessibility"/>]]></image>
-			<text><![CDATA[<text name="Title" showTitleFix="true">Enter Text Here</text>]]></text>
-			<blocks><![CDATA[<blocks name="Title" showTitle="true"></blocks>]]></blocks>
-		</newNodes>
-	</section><tableDoc menuItem="Editable Table" icon="icTable">
+    <newNodes>
+      <line><![CDATA[<line />]]></line>
+	  <media><![CDATA[<media name="Media Title" text="Enter text here" url="Select an Image" tip="Enter a Description for Accessibility"/>]]></media>
+      <selectlist><![CDATA[<selectlist name="List Title" text="Enter text here" type="radio" display="vertical"/>]]></selectlist>
+	  <description><![CDATA[<description name="Description Title" text="Enter text here"/>]]></description>
+	  <tableDoc><![CDATA[<tableDoc name="Table Title" text="Enter text here" data=" | " borders="full" header="header" shadeHeader="true" shade="false" notAnswered="Not answered" replace="true"/>]]></tableDoc>
+	  <checkbox><![CDATA[<checkbox name="Checkbox Title" text="Enter text here" label="Enter label text here" checked="Checked" unchecked="Unchecked"/>]]></checkbox>
+	  <textarea><![CDATA[<textarea name="Text Area Title" text="Enter text here" notAnswered="Not answered"/>]]></textarea>
+	  <textbox><![CDATA[<textbox name="Text Box Title" text="Enter text here" notAnswered="Not answered"/>]]></textbox>
+    </newNodes>
+  </docsection><tableDoc menuItem="Editable Table" icon="icTable">
     <name label="Table Title" type="TextInput" wysiwyg="true"/>
     <text label="Text" type="TextArea" height="100"/>
     <data label="Table Data" newRow=" " newCol=" " type="DataGrid" height="190" width="390" columns="2" editable="1,1" controls="1" addCols="true" showHeaderRow="false" wysiwyg="full"/>
@@ -908,21 +883,14 @@
     </newNodes></topXQBlock><optionXQ menuItem="Answer" icon="icBullet">
         <answer label="Answer" type="TextInput" wysiwyg="false" mandatory="true"/>
         <name label="Label" type="TextInput"/>
-    </optionXQ><link icon="icLink" menuItem="Link" remove="true">
+    </optionXQ><page menu="Website" hint="A new page" icon="icLayoutContent" remove="true" duplicate="true" menuItem="Page" deepLink="true">
 
-		<name type="TextInput" label="Title" wysiwyg="true"/>
-		<url type="TextInput" label="URL"/>
-		
-		<width label="Width" type="textInput" optional="true" default="800"/>
-		<height label="Height" type="textInput" optional="true" default="600"/>
-		<scrollbars type="ComboBox" width="80" options="yes,no" data="yes,no" label="Scrollbars" optional="true"/>
-		<location type="ComboBox" width="80" options="yes,no" data="yes,no" label="Location" optional="true"/>
-		<status type="ComboBox" width="80" options="yes,no" data="yes,no" label="Status" optional="true"/>
-		<titlebar type="ComboBox" width="80" options="yes,no" data="yes,no" label="Titlebar" optional="true"/>
-		<toolbar type="ComboBox" width="80" options="yes,no" data="yes,no" label="Toolbar" optional="true"/>
-		<resizable type="ComboBox" width="80" options="yes,no" data="yes,no" label="Resizable" optional="true"/>
+		<name type="TextInput" label="Page Title" wysiwyg="true"/>
+		<subtitle type="TextInput" label="Page Subtitle" wysiwyg="true"/>
 
-		<windowName type="TextInput" label="Window Name" optional="true"/>
+		<newNodes>
+			<section><![CDATA[<section name="Enter Section Title"/>]]></section>
+		</newNodes>
 
 	<notes label="Notes" type="TextArea" height="150" defaultValue="" optional="true" tooltip="Your notes for the page. These are not shown in the live project." common="true"/><headerGroup type="group" label="Header" optional="true" common="true">
 		<header type="Media" optional="true" label="Image"/>
@@ -967,7 +935,70 @@
 	</lightboxGroup><variables type="group" label="Variables" optional="true" tooltip="Use in conjunction with the project level 'Variables' optional property" common="true">
 		<varConfirm label="Submit Message" type="TextInput" defaultValue="Thank you for submitting your answers" optional="true" tooltip="Message shown after new variable values are submitted by end user"/>
 		<varUpdate label="Update Variables" type="CheckBox" defaultValue="true" optional="true" tooltip="Update any instances of variables on this page after new variable values are submitted by end user"/>
-	</variables></link><markup icon="icTag" type="html" height="300" menuItem="HTML Code" label="HTML Code" remove="true" advanced="true">
+	</variables></page><section icon="icPageWhite" remove="true" duplicate="true" menuItem="Section">
+
+		<name type="TextInput" label="Section Title" wysiwyg="true"/>
+
+		<hideShow type="group" label="Hide/Show Section" optional="true" tooltip="Hide the section completely or hide/show the section between specified dates" info="Hide this section from view at all times or use the 'From' &amp; 'Until' fields to specify when it should be available">
+			<hidePage label="Hide Section" type="CheckBox" defaultValue="false" optional="true"/>
+			<hideOnDate label="From" type="DateField" defaultValue="" optional="true" allowBlank="true" preventPrev="true" tooltip="Use the calendar to select a date (format YYYY-MM-DD)"/>
+			<hideOnTime label="From (hh:mm)" type="TextInput" defaultValue="00:00" optional="true"/>
+			<hideUntilDate label="Until" type="DateField" defaultValue="" optional="true" allowBlank="true" preventPrev="true" tooltip="Use the calendar to select a date (format YYYY-MM-DD)"/>
+			<hideUntilTime label="Until (hh:mm)" type="TextInput" defaultValue="00:00" optional="true"/>
+		</hideShow>
+
+		<customSectionLinkGroup type="group" label="Section ID" optional="true" tooltip="Create a customised URL to this Section" info="Create a link directly to this section by adding #yourSectionID to the end of the project URL&lt;br/&gt;Avoid using spaces and the words 'page' and 'section' in page IDs">
+            <customLinkID label="Section ID" type="TextInput" optional="true"/>
+        </customSectionLinkGroup>
+
+		<passwordGroup type="group" label="Access Code" optional="true" tooltip="Access to this section will be restricted until an access code is entered. Please note, to securely protect your project you should password protect via the access tab in the project properties rather than using this optional property">
+			<password label="Access Code(s)" type="TextInput" optional="true" defaultValue="" tooltip="A comma separated list of codes which give access to this section"/>
+			<passwordCase label="Case Sensitive" type="CheckBox" optional="true" defaultValue="true" tooltip="Access codes are case sensitive when this option is checked"/>
+			<passwordInfo label="Instructions" type="TextArea" height="50" optional="true" defaultValue="Enter an access code below to view this section:" tooltip="The instructions which appear in the access code block"/>
+			<passwordError label="Error Message" type="TextArea" height="50" optional="true" defaultValue="Invalid access code" tooltip="The error message which appears when an incorrect access code is entered"/>
+			<passwordSubmit label="Button Label" type="TextInput" optional="true" defaultValue="Submit" tooltip="The label on the submit button"/>
+		</passwordGroup>
+		
+		<links label="Subsection Links" type="ComboBox" width="80" options="None,Horizontal List,Vertical List" data="none,hlist,vlist" defaultValue="hlist" optional="true" tooltip="Add a list of subsection links below the section title. Only subsections where title isn't hidden will be included."/>
+		
+		<lightboxGroup type="group" label="Lightbox" optional="true" tooltip="By default, clicked images will open in a lightbox. Use these properties to turn the lightbox functionality on/off for this section only">
+			<lightbox type="CheckBox" label="Lightbox Images" defaultValue="true" optional="true"/>
+			<lightboxCaption type="ComboBox" label="Caption" defaultValue="false" optional="true" options="None,Below Image,Above Image" data="false,below,above" tooltip="Add a caption to lightbox images on this section. The caption text is taken from the 'Description' or 'Alt Text' fields."/>
+		</lightboxGroup>
+		
+		<filter type="CategoryList" label="Filter Categories" target="categoryInfo" defaultValue="" optional="true" tooltip="Use in conjunction with the project-level 'Search' optional property. Tick the relevant filter terms used in category searches"/>
+
+		<newNodes>
+			<xot><![CDATA[<xot name="Title" showTitleFix="true" link="Xerte XOT Project URL" header="false" footer="false"/>]]></xot>
+			<pdf><![CDATA[<pdf name="Title" showTitleFix="true" url="Select a PDF File" width="500" height="350" openPDF="Open PDF in new tab"/>]]></pdf>
+			<markup><![CDATA[<markup name="Title" showTitle="true">&lt;!--Enter HTML Code--&gt;</markup>]]></markup>
+			<canvas><![CDATA[<canvas name="Title" showTitle="true" id="EnterID" width="500" height="350"/>]]></canvas>
+			<script><![CDATA[<script name="Title">//javascript</script>]]></script>
+			<link><![CDATA[<link name="Title" url="Link URL"/>]]></link>
+			<navigator><![CDATA[<navigator name="Title" showTitle="true" type="Tabs"/>]]></navigator>
+			<video><![CDATA[<video name="Title" showTitleFix="true" url="Select a Video"/>]]></video>
+			<audio><![CDATA[<audio name="Title" showTitleFix="true" url="Select a Sound File"/>]]></audio>
+			<image><![CDATA[<image name="Title" showTitleFix="true" url="Select an Image" alt="Enter a Description for Accessibility"/>]]></image>
+			<text><![CDATA[<text name="Title" showTitleFix="true">Enter Text Here</text>]]></text>
+			<blocks><![CDATA[<blocks name="Title" showTitle="true"></blocks>]]></blocks>
+		</newNodes>
+	</section><link icon="icLink" menuItem="Link" remove="true">
+
+		<name type="TextInput" label="Title" wysiwyg="true"/>
+		<url type="TextInput" label="URL"/>
+		
+		<width label="Width" type="textInput" optional="true" default="800"/>
+		<height label="Height" type="textInput" optional="true" default="600"/>
+		<scrollbars type="ComboBox" width="80" options="yes,no" data="yes,no" label="Scrollbars" optional="true"/>
+		<location type="ComboBox" width="80" options="yes,no" data="yes,no" label="Location" optional="true"/>
+		<status type="ComboBox" width="80" options="yes,no" data="yes,no" label="Status" optional="true"/>
+		<titlebar type="ComboBox" width="80" options="yes,no" data="yes,no" label="Titlebar" optional="true"/>
+		<toolbar type="ComboBox" width="80" options="yes,no" data="yes,no" label="Toolbar" optional="true"/>
+		<resizable type="ComboBox" width="80" options="yes,no" data="yes,no" label="Resizable" optional="true"/>
+
+		<windowName type="TextInput" label="Window Name" optional="true"/>
+
+	</link><markup icon="icTag" type="html" height="300" menuItem="HTML Code" label="HTML Code" remove="true" advanced="true">
 
 		<name type="TextInput" label="Title" wysiwyg="true"/>
 		<showTitle label="Show Title" type="CheckBox" defaultValue="false" mandatory="true"/>
