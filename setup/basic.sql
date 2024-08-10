@@ -1,40 +1,40 @@
 
-CREATE DATABASE IF NOT EXISTS `<databasename>`;
+CREATE DATABASE IF NOT EXISTS `<databasename>` ;
 
-USE `<databasename>`;
+USE `<databasename>` ;
 
-DROP TABLE IF EXISTS `$additional_sharing`;
-DROP TABLE IF EXISTS `$folderdetails`;
-DROP TABLE IF EXISTS `$ldap`;
-DROP TABLE IF EXISTS `$logindetails` ;
-DROP TABLE IF EXISTS `$originaltemplatesdetails` ;
-DROP TABLE IF EXISTS `$play_security_details` ;
-DROP TABLE IF EXISTS `$sitedetails` ;
-DROP TABLE IF EXISTS `$syndicationcategories` ;
-DROP TABLE IF EXISTS `$educationlevel` ;
-DROP TABLE IF EXISTS `$grouping` ;
-DROP TABLE IF EXISTS `$course`;
-DROP TABLE IF EXISTS `$syndicationlicenses` ;
-DROP TABLE IF EXISTS `$templatedetails` ;
-DROP TABLE IF EXISTS `$templaterights` ;
-DROP TABLE IF EXISTS `$templatesyndication` ;
-DROP TABLE IF EXISTS `$user_sessions` ;
-DROP TABLE IF EXISTS `$user` ;
-DROP TABLE IF EXISTS `$user_groups` ;
-DROP TABLE IF EXISTS `$user_group_members` ;
-DROP TABLE IF EXISTS `$template_group_rights` ;
-DROP TABLE IF EXISTS `$folderrights` ;
-DROP TABLE IF EXISTS `$folder_group_rights` ;
-DROP TABLE IF EXISTS `$oai_publish` ;
+DROP TABLE IF EXISTS <databasename>.`$additional_sharing` ;
+DROP TABLE IF EXISTS <databasename>.`$folderdetails` ;
+DROP TABLE IF EXISTS <databasename>.`$ldap` ;
+DROP TABLE IF EXISTS <databasename>.`$logindetails` ;
+DROP TABLE IF EXISTS <databasename>.`$originaltemplatesdetails` ;
+DROP TABLE IF EXISTS <databasename>.`$play_security_details` ;
+DROP TABLE IF EXISTS <databasename>.`$sitedetails` ;
+DROP TABLE IF EXISTS <databasename>.`$syndicationcategories` ;
+DROP TABLE IF EXISTS <databasename>.`$educationlevel` ;
+DROP TABLE IF EXISTS <databasename>.`$grouping` ;
+DROP TABLE IF EXISTS <databasename>.`$course` ;
+DROP TABLE IF EXISTS <databasename>.`$syndicationlicenses` ;
+DROP TABLE IF EXISTS <databasename>.`$templatedetails` ;
+DROP TABLE IF EXISTS <databasename>.`$templaterights` ;
+DROP TABLE IF EXISTS <databasename>.`$templatesyndication` ;
+DROP TABLE IF EXISTS <databasename>.`$user_sessions` ;
+DROP TABLE IF EXISTS <databasename>.`$user` ;
+DROP TABLE IF EXISTS <databasename>.`$user_groups` ;
+DROP TABLE IF EXISTS <databasename>.`$user_group_members` ;
+DROP TABLE IF EXISTS <databasename>.`$template_group_rights` ;
+DROP TABLE IF EXISTS <databasename>.`$folderrights` ;
+DROP TABLE IF EXISTS <databasename>.`$folder_group_rights` ;
+DROP TABLE IF EXISTS <databasename>.`$oai_publish` ;
 
-DROP TABLE IF EXISTS `$lti_context` ;
-DROP TABLE IF EXISTS `$lti_keys` ;
-DROP TABLE IF EXISTS `$lti_resource` ;
-DROP TABLE IF EXISTS `$lti_user` ;
-DROP TABLE IF EXISTS `$lti_resource` ;
-DROP TABLE IF EXISTS `$lti_user` ;
+DROP TABLE IF EXISTS <databasename>.`$lti_context` ;
+DROP TABLE IF EXISTS <databasename>.`$lti_keys` ;
+DROP TABLE IF EXISTS <databasename>.`$lti_resource` ;
+DROP TABLE IF EXISTS <databasename>.`$lti_user` ;
+DROP TABLE IF EXISTS <databasename>.`$lti_resource` ;
+DROP TABLE IF EXISTS <databasename>.`$lti_user` ;
 
-CREATE TABLE `$additional_sharing` (
+CREATE TABLE <databasename>.`$additional_sharing` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `template_id` int(11) DEFAULT NULL,
   `sharing_type` char(255) DEFAULT NULL,
@@ -43,7 +43,7 @@ CREATE TABLE `$additional_sharing` (
 ) DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 
-CREATE TABLE `$folderdetails` (
+CREATE TABLE <databasename>.`$folderdetails` (
   `folder_id` bigint(20) NOT NULL AUTO_INCREMENT,
   `login_id` bigint(20) DEFAULT NULL,
   `folder_parent` bigint(20) DEFAULT NULL,
@@ -52,7 +52,7 @@ CREATE TABLE `$folderdetails` (
   PRIMARY KEY (`folder_id`)
 ) DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
-CREATE TABLE `$ldap` (
+CREATE TABLE <databasename>.`$ldap` (
   `ldap_id` bigint(20) NOT NULL auto_increment,
   `ldap_knownname` text NOT NULL,
   `ldap_host` text NOT NULL,
@@ -65,7 +65,7 @@ CREATE TABLE `$ldap` (
   PRIMARY KEY  (`ldap_id`)
 ) DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
-CREATE TABLE `$logindetails` (
+CREATE TABLE <databasename>.`$logindetails` (
   `login_id` bigint(20) NOT NULL AUTO_INCREMENT,
   `username` char(255) DEFAULT NULL,
   `lastlogin` datetime DEFAULT NULL,
@@ -74,7 +74,7 @@ CREATE TABLE `$logindetails` (
   PRIMARY KEY (`login_id`)
 ) DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
-CREATE TABLE `$originaltemplatesdetails` (
+CREATE TABLE <databasename>.`$originaltemplatesdetails` (
   `template_type_id` bigint(20) NOT NULL AUTO_INCREMENT,
   `template_framework` char(255) DEFAULT NULL,
   `template_name` char(255) DEFAULT NULL,
@@ -89,9 +89,9 @@ CREATE TABLE `$originaltemplatesdetails` (
   PRIMARY KEY (`template_type_id`)
 ) DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
-insert  into `$originaltemplatesdetails`(`template_type_id`,`template_framework`,`template_name`,`parent_template`,`description`,`date_uploaded`,`display_name`,`display_id`,`access_rights`,`active`) values (5,'xerte','Nottingham','Nottingham','A flexible template for creating interactive learning objects.','2009-09-02','Xerte Online Toolkit',0,'*',1),(8,'xerte','Rss','Rss','Easily create and maintain an RSS Feed.','2008-04-02','RSS Feed',0,'*',0),(14,'xerte','multipersp','multipersp','A template for creating learning objects to present multiple perspectives on a topic','2009-07-08','Multiple Perspectives',0,'*',0),(15,'xerte','mediaInteractions','mediaInteractions','A  template for presenting a piece of media and creating a series of interactions','2009-09-01','Media Interactions',0,'*',0),(16,'site','site','site','A responsive template for delivering content to all devices.','2009-04-02','Bootstrap Template',0,'*',1),(17,'decision','decision','decision','A template for presenting a series of questions to reach a solution to a problem.','2009-01-01','Decision Tree Template',0,'*',0);;
+insert into <databasename>.`$originaltemplatesdetails`(`template_type_id`,`template_framework`,`template_name`,`parent_template`,`description`,`date_uploaded`,`display_name`,`display_id`,`access_rights`,`active`) values (5,'xerte','Nottingham','Nottingham','A flexible template for creating interactive learning objects.','2009-09-02','Xerte Online Toolkit',0,'*',1),(8,'xerte','Rss','Rss','Easily create and maintain an RSS Feed.','2008-04-02','RSS Feed',0,'*',0),(14,'xerte','multipersp','multipersp','A template for creating learning objects to present multiple perspectives on a topic','2009-07-08','Multiple Perspectives',0,'*',0),(15,'xerte','mediaInteractions','mediaInteractions','A  template for presenting a piece of media and creating a series of interactions','2009-09-01','Media Interactions',0,'*',0),(16,'site','site','site','A responsive template for delivering content to all devices.','2009-04-02','Bootstrap Template',0,'*',1),(17,'decision','decision','decision','A template for presenting a series of questions to reach a solution to a problem.','2009-01-01','Decision Tree Template',0,'*',0);
 
-CREATE TABLE `$play_security_details` (
+CREATE TABLE <databasename>.`$play_security_details` (
   `security_id` int(11) NOT NULL AUTO_INCREMENT,
   `security_setting` char(255) DEFAULT NULL,
   `security_data` char(255) DEFAULT NULL,
@@ -99,7 +99,7 @@ CREATE TABLE `$play_security_details` (
   PRIMARY KEY (`security_id`)
 ) DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
-CREATE TABLE `$sitedetails` (
+CREATE TABLE <databasename>.`$sitedetails` (
   `site_id` int(11) NOT NULL AUTO_INCREMENT,
   `site_url` char(255) DEFAULT NULL,
   `apache` char(255) DEFAULT NULL,
@@ -180,47 +180,47 @@ CREATE TABLE `$sitedetails` (
   PRIMARY KEY (`site_id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
-CREATE TABLE `$syndicationcategories` (
+CREATE TABLE <databasename>.`$syndicationcategories` (
   `category_id` int(11) NOT NULL AUTO_INCREMENT,
   `category_name` char(255) DEFAULT NULL,
   `parent_id` int(11) DEFAULT 0,
   PRIMARY KEY (`category_id`)
 ) DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
-insert  into `$syndicationcategories`(`category_id`,`category_name`) values (1,'American and Canadian Studies'),(2,'Biology'),(3,'Biomedical Sciences'),(4,'Biosciences'),(5,'Built Environment, The'),(6,'Centre for English Language Education'),(7,'Chemistry'),(9,'Community Health Sciences'),(10,'Computer Science'),(11,'Contemporary Chinese Studies'),(12,'Economics'),(13,'Education'),(14,'English Studies'),(15,'Geography'),(16,'Medicine and Health'),(17,'History'),(18,'Humanities'),(20,'Mathematical Sciences'),(21,'Modern Languages and Cultures'),(22,'Nursing, Midwifery and Physiotherapy'),(23,'Pharmacy'),(24,'Physics & Astronomy'),(25,'Politics and International Relations'),(26,'Psychology'),(27,'Sociology & Social Policy'),(28,'Veterinary Medicine and Science');
+insert into <databasename>.`$syndicationcategories`(`category_id`,`category_name`) values (1,'American and Canadian Studies'),(2,'Biology'),(3,'Biomedical Sciences'),(4,'Biosciences'),(5,'Built Environment, The'),(6,'Centre for English Language Education'),(7,'Chemistry'),(9,'Community Health Sciences'),(10,'Computer Science'),(11,'Contemporary Chinese Studies'),(12,'Economics'),(13,'Education'),(14,'English Studies'),(15,'Geography'),(16,'Medicine and Health'),(17,'History'),(18,'Humanities'),(20,'Mathematical Sciences'),(21,'Modern Languages and Cultures'),(22,'Nursing, Midwifery and Physiotherapy'),(23,'Pharmacy'),(24,'Physics & Astronomy'),(25,'Politics and International Relations'),(26,'Psychology'),(27,'Sociology & Social Policy'),(28,'Veterinary Medicine and Science');
 
-CREATE TABLE `$educationlevel` (
+CREATE TABLE <databasename>.`$educationlevel` (
                                    `educationlevel_id` int(11) NOT NULL AUTO_INCREMENT,
                                    `educationlevel_name` char(255) DEFAULT NULL,
                                    `parent_id` int(11) DEFAULT 0,
                                    PRIMARY KEY (`educationlevel_id`)
 ) DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
-insert into `$educationlevel` (`educationlevel_id`,`educationlevel_name`) values (1,'University'),(2,'College'),(3,'Secondary Education'),(4,'Primary Educaton'),(5,'Vocational Education'),(6,'Adult Education'),(7,'All');
+insert into <databasename>.`$educationlevel` (`educationlevel_id`,`educationlevel_name`) values (1,'University'),(2,'College'),(3,'Secondary Education'),(4,'Primary Educaton'),(5,'Vocational Education'),(6,'Adult Education'),(7,'All');
 
-CREATE TABLE `$grouping` (
+CREATE TABLE <databasename>.`$grouping` (
   `grouping_id` int(11) NOT NULL AUTO_INCREMENT,
   `grouping_name` char(255) DEFAULT NULL,
   PRIMARY KEY (`grouping_id`)
 ) DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
-insert  into `$grouping` (`grouping_id`,`grouping_name`) values (1,'Grouping 1'),(2,'Grouping 2'),(3,'Grouping 3'),(4,'Grouping 4'),(5,'Grouping 5'),(6,'Grouping 6'),(7,'Grouping 7'),(8,'Grouping 8'),(9,'Grouping 9'),(10,'Grouping 10');
+insert into <databasename>.`$grouping` (`grouping_id`,`grouping_name`) values (1,'Grouping 1'),(2,'Grouping 2'),(3,'Grouping 3'),(4,'Grouping 4'),(5,'Grouping 5'),(6,'Grouping 6'),(7,'Grouping 7'),(8,'Grouping 8'),(9,'Grouping 9'),(10,'Grouping 10');
 
-CREATE TABLE `$course` (
+CREATE TABLE <databasename>.`$course` (
   `course_id` int(11) NOT NULL AUTO_INCREMENT,
   `course_name` char(255) DEFAULT NULL,
   PRIMARY KEY (`course_id`)
 ) DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
-CREATE TABLE `$syndicationlicenses` (
+CREATE TABLE <databasename>.`$syndicationlicenses` (
   `license_id` int(11) NOT NULL AUTO_INCREMENT,
   `license_name` char(255) DEFAULT NULL,
   PRIMARY KEY (`license_id`)
 ) DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
-insert  into `$syndicationlicenses`(`license_id`,`license_name`) values (6,'Creative Commons Attribution-ShareAlike'),(5,'Creative Commons Attribution-NonCommercial-ShareAlike'),(4,'Creative Commons Attribution-NonCommercial'),(3,'Creative Commons Attribution-NonCommercial-NoDerivs'),(2,'Creative Commons Attribution-NoDerivs');
+insert into <databasename>.`$syndicationlicenses`(`license_id`,`license_name`) values (6,'Creative Commons Attribution-ShareAlike'),(5,'Creative Commons Attribution-NonCommercial-ShareAlike'),(4,'Creative Commons Attribution-NonCommercial'),(3,'Creative Commons Attribution-NonCommercial-NoDerivs'),(2,'Creative Commons Attribution-NoDerivs');
 
-CREATE TABLE `$templatedetails` (
+CREATE TABLE <databasename>.`$templatedetails` (
   `template_id` bigint(20) NOT NULL AUTO_INCREMENT,
   `creator_id` bigint(20) DEFAULT NULL,
   `template_type_id` bigint(20) DEFAULT NULL,
@@ -248,7 +248,7 @@ CREATE TABLE `$templatedetails` (
   PRIMARY KEY (`template_id`)
 ) DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
-CREATE TABLE `$templaterights` (
+CREATE TABLE <databasename>.`$templaterights` (
   `template_id` bigint(20) NOT NULL,
   `user_id` bigint(20) DEFAULT NULL,
   `role` char(255) DEFAULT NULL,
@@ -258,7 +258,7 @@ CREATE TABLE `$templaterights` (
    KEY `index2` (`folder`)
 ) DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
-CREATE TABLE `$templatesyndication` (
+CREATE TABLE <databasename>.`$templatesyndication` (
   `template_id` bigint(20) NOT NULL,
   `description` char(255) DEFAULT NULL,
   `keywords` char(255) DEFAULT NULL,
@@ -269,14 +269,14 @@ CREATE TABLE `$templatesyndication` (
   `license` char(255) DEFAULT NULL
 ) DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
-CREATE TABLE `$user_sessions` (
+CREATE TABLE <databasename>.`$user_sessions` (
   `session_id` varchar(32) NOT NULL DEFAULT '',
   `access` int(10) unsigned DEFAULT NULL,
   `data` text,
   PRIMARY KEY (`session_id`)
 ) DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
-CREATE TABLE `$user` (
+CREATE TABLE <databasename>.`$user` (
   `iduser` int(11) NOT NULL AUTO_INCREMENT,
   `username` varchar(45) DEFAULT NULL,
   `password` varchar(45) DEFAULT NULL,
@@ -286,20 +286,20 @@ CREATE TABLE `$user` (
   PRIMARY KEY (`iduser`)
 ) DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
-CREATE TABLE `$user_groups` (
+CREATE TABLE <databasename>.`$user_groups` (
   `group_id` bigint(20) NOT NULL AUTO_INCREMENT,
   `group_name` char(255) DEFAULT NULL,
   PRIMARY KEY (`group_id`)
 ) DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
-CREATE TABLE `$user_group_members` (
+CREATE TABLE <databasename>.`$user_group_members` (
   `id` bigint(20) NOT NULL AUTO_INCREMENT,
   `group_id` bigint(20) NOT NULL,
   `login_id` bigint(20) NOT NULL,
   PRIMARY KEY (`id`)
 ) DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
-CREATE TABLE `$template_group_rights` (
+CREATE TABLE <databasename>.`$template_group_rights` (
   `id` bigint(20) NOT NULL AUTO_INCREMENT,
   `group_id` bigint(20) NOT NULL,
   `template_id` bigint(20) NOT NULL,
@@ -307,7 +307,7 @@ CREATE TABLE `$template_group_rights` (
   PRIMARY KEY (`id`)
 ) DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
-CREATE TABLE `$folderrights` (
+CREATE TABLE <databasename>.`$folderrights` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `folder_id` int(11) NOT NULL,
   `login_id` int(11) NOT NULL,
@@ -318,7 +318,7 @@ CREATE TABLE `$folderrights` (
   KEY `index2` (`folder_parent`)
 ) DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
-CREATE TABLE `$folder_group_rights` (
+CREATE TABLE <databasename>.`$folder_group_rights` (
   `id` bigint(20) NOT NULL AUTO_INCREMENT,
   `folder_id` bigint(20) NOT NULL,
   `group_id` bigint(20) NOT NULL,
@@ -326,7 +326,7 @@ CREATE TABLE `$folder_group_rights` (
   PRIMARY KEY (`id`)
 ) DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
-CREATE TABLE IF NOT EXISTS `$oai_publish` (
+CREATE TABLE IF NOT EXISTS <databasename>.`$oai_publish` (
       `audith_id` int(11) NOT NULL AUTO_INCREMENT,
       `template_id` BIGINT(20) NOT NULL,
       `login_id` BIGINT(20) NOT NULL,
@@ -336,7 +336,7 @@ CREATE TABLE IF NOT EXISTS `$oai_publish` (
       PRIMARY KEY (`audith_id`)
 ) DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
-CREATE TABLE IF NOT EXISTS `$lti_context` (
+CREATE TABLE IF NOT EXISTS <databasename>.`$lti_context` (
   `lti_context_key` varchar(255) NOT NULL,
   `c_internal_id` varchar(255) NOT NULL,
   `updated_on` datetime NOT NULL,
@@ -344,7 +344,7 @@ CREATE TABLE IF NOT EXISTS `$lti_context` (
   KEY `c_internal_id` (`c_internal_id`)
 ) DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
-CREATE TABLE IF NOT EXISTS `$lti_keys` (
+CREATE TABLE IF NOT EXISTS <databasename>.`$lti_keys` (
   `id` mediumint(9) NOT NULL AUTO_INCREMENT,
   `oauth_consumer_key` char(255) NOT NULL,
   `secret` char(255) DEFAULT NULL,
@@ -356,7 +356,7 @@ CREATE TABLE IF NOT EXISTS `$lti_keys` (
   KEY `oauth_consumer_key` (`oauth_consumer_key`)
 ) DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
-CREATE TABLE IF NOT EXISTS `$lti_resource` (
+CREATE TABLE IF NOT EXISTS <databasename>.`$lti_resource` (
   `lti_resource_key` varchar(255) NOT NULL,
   `internal_id` varchar(255) DEFAULT NULL,
   `internal_type` varchar(255) NOT NULL,
@@ -366,7 +366,7 @@ CREATE TABLE IF NOT EXISTS `$lti_resource` (
   KEY `destination` (`internal_id`)
 ) DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
-CREATE TABLE IF NOT EXISTS `$lti_user` (
+CREATE TABLE IF NOT EXISTS <databasename>.`$lti_user` (
   `lti_user_key` varchar(255) NOT NULL DEFAULT '',
   `lti_user_equ` varchar(255) NOT NULL,
   `updated_on` datetime NOT NULL,
@@ -374,19 +374,19 @@ CREATE TABLE IF NOT EXISTS `$lti_user` (
   KEY `lti_user_equ` (`lti_user_equ`)
 ) DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
-CREATE TABLE IF NOT EXISTS `$role` (	
+CREATE TABLE IF NOT EXISTS <databasename>.`$role` (
   `roleid` int NOT NULL AUTO_INCREMENT,
   `name` varchar(45) NOT NULL UNIQUE,
   PRIMARY KEY (`roleid`)
 ) DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
-CREATE TABLE IF NOT EXISTS `$logindetailsrole` (
+CREATE TABLE IF NOT EXISTS <databasename>.`$logindetailsrole` (
   `roleid` int NOT NULL,
   `userid` bigint(20) NOT NULL,
   PRIMARY KEY (`roleid`, `userid`)
 ) DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
-insert into `$role`(`roleid`, `name`) values
+insert into <databasename>.`$role`(`roleid`, `name`) values
   (1, 'super'),
   (2, 'system'),
   (3, 'templateadmin'),
