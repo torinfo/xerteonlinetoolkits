@@ -1,5 +1,5 @@
 {
   "dependencies": {
-    "jspdf": "^2.5.1"
+    "jspdf": "^2.5.2"
   }
 }
