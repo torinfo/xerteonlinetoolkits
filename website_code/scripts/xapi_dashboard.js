@@ -436,6 +436,96 @@ xAPIDashboard.prototype.drawInteraction = function (
   }
 };
 
+/**
+ * Create the journey table
+ *
+ * @param canvas - The html element to draw on
+ */
+xAPIDashboard.prototype.createJourneyTable = function (canvas) {
+  const header = this.createJourneyTableHeader();
+  const rows = this.data.state.users.map(
+    (user) => this.createJourneyTableRow(user),
+  );
+
+  const table = `
+    <table>
+      ${header}
+      ${rows}
+    </table>`;
+
+  canvas.append(table);
+}
+
+/**
+ * Create a header row for the journey table
+ */
+xAPIDashboard.prototype.createJourneyTableHeader = function () {
+  const completion = `<th>${XAPI_DASHBOARD_COMPLETION}</th>`;
+  const score = `<th>${XAPI_DASHBOARD_SCORE}</th>`;
+  const start = `<th>${XAPI_DASHBOARD_STARTCOL}</th>`;
+  const interactions = this.data.state.interactions.map(
+    (interaction) => `<th>${interaction.name}</th>`,
+  );
+
+  return `
+    <tr>
+      ${completion}
+      ${score}
+      ${start}
+      ${interactions.join('')}
+    </tr>`;
+}
+
+/**
+ * Create a row for the journey table
+ */
+xAPIDashboard.prototype.createJourneyTableRow = function (user) {
+  const completion = `<td>${Math.round(user.attempts[0].completedPercentage)}%</td>`;
+  const score = `<td>${Math.round(user.attempts[0].score)}%</td>`;
+  const start = `<td>${this.formatStart(user.attempts[0].start)}</td>`;
+  const interactions = this.createJourneyTableInteractionColumns(user.interactions);
+
+  return `
+    <tr>
+      ${completion}
+      ${score}
+      ${start}
+      ${interactions.join('')}
+    </tr>`;
+}
+
+/**
+ * Create interaction completion block for the journey table
+ */
+xAPIDashboard.prototype.createJourneyTableInteractionCompletionBlock = function (interaction) {
+  const redDiv = '<i class="status-indicator status-red fa fa-square"></i>';
+  const greenDiv = '<i class="status-indicator status-green fa fa-square"></i>';
+  const orangeDiv = '<i class="status-indicator status-orange fa fa-square"></i>';
+  const greyDiv = '<i class="status-indicator status-gray fa fa-square"></i>';
+
+  if (interaction.successStatus === 'passed') {
+    return greenDiv;
+  } else if (interaction.successStatus === 'failed') {
+    return redDiv;
+  }
+
+  return greyDiv;
+}
+
+/**
+ * Create interaction columns for the journey table
+ */
+xAPIDashboard.prototype.createJourneyTableInteractionColumns = function (interactions) {
+  return interactions.map((interaction) => {
+    const block = this.createJourneyTableInteractionCompletionBlock(interaction);
+
+    return col = `
+      <td>
+        ${block}
+      </td>`;
+  });
+}
+
 xAPIDashboard.prototype.createJourneyTableSession = function (div) {
   var $this = this;
   this.data.rawData = this.data.combineUrls();
@@ -444,6 +534,13 @@ xAPIDashboard.prototype.createJourneyTableSession = function (div) {
     $("#journeyData").html('<div id="loader"><p id="loader_text"></p></div>');
     $("#loader_text").html(XAPI_DASHBOARD_NO_STATEMENTS_FOUND);
   }
+
+  const containerCanvas = $("#journeyData");
+
+  this.data.state = new DS.GroupedData(this.data.rawData);
+
+  this.createJourneyTable(containerCanvas);
+
   var learningObjects = this.data.getLearningObjects();
   var data = this.data.groupStatements();
   this.data.getAllInteractions(this.data.rawDatamap);

@@ -26,6 +26,7 @@ function DashboardState(info) {
   this.currentGroup = {
     group_id: "all-groups",
   };
+  this.state = undefined;
 }
 
 DashboardState.prototype.clear = function () {
@@ -824,6 +825,7 @@ DashboardState.prototype.groupStatements = function (data) {
   if (learningObjects.length > 0) {
     url = learningObjects[0].url;
   }
+  console.log('aaaaa', learningObjects)
   for (var user in groupedData) {
     var lastcompleted = null;
     var maxcompletedattempt = null;
