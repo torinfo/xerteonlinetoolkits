@@ -440,6 +440,7 @@ xAPIDashboard.prototype.drawInteraction = function (
  * Create the journey table
  *
  * @param canvas - The html element to draw on
+ * @returns The html for the table
  */
 xAPIDashboard.prototype.createJourneyTable = function (canvas) {
   const header = this.createJourneyTableHeader();
@@ -448,7 +449,7 @@ xAPIDashboard.prototype.createJourneyTable = function (canvas) {
   );
 
   const table = `
-    <table>
+    <table class="table table-hover table-bordered table-responsive">
       ${header}
       ${rows}
     </table>`;
@@ -458,44 +459,83 @@ xAPIDashboard.prototype.createJourneyTable = function (canvas) {
 
 /**
  * Create a header row for the journey table
+ *
+ * @returns The html for the header row
  */
 xAPIDashboard.prototype.createJourneyTableHeader = function () {
+  const completed = `<th>${XAPI_DASHBOARD_COMPLETED}</th>`;
   const completion = `<th>${XAPI_DASHBOARD_COMPLETION}</th>`;
   const score = `<th>${XAPI_DASHBOARD_SCORE}</th>`;
+  const passed = `<th>${XAPI_DASHBOARD_PASSED}</th>`;
   const start = `<th>${XAPI_DASHBOARD_STARTCOL}</th>`;
+  const duration = `<th>${XAPI_DASHBOARD_DURATIONCOL}</th>`;
   const interactions = this.data.state.interactions.map(
     (interaction) => `<th>${interaction.name}</th>`,
   );
 
   return `
     <tr>
+      ${completed}
       ${completion}
       ${score}
+      ${passed}
       ${start}
+      ${duration}
       ${interactions.join('')}
     </tr>`;
 }
 
 /**
  * Create a row for the journey table
+ *
+ * @param user - The user to create a row for
+ * @returns The html for the row
  */
 xAPIDashboard.prototype.createJourneyTableRow = function (user) {
+  const completed = `<td>${this.createJourneyTableCompletedTick(user.attempts[0])}</td>`;
   const completion = `<td>${Math.round(user.attempts[0].completedPercentage)}%</td>`;
   const score = `<td>${Math.round(user.attempts[0].score)}%</td>`;
+  const passed = '<td><i class="status-indicator status-green fa fa-check"></i></td>';
   const start = `<td>${this.formatStart(user.attempts[0].start)}</td>`;
+  const duration = `<td>${this.formatDuration(user.attempts[0].duration)}</td>`;
   const interactions = this.createJourneyTableInteractionColumns(user.interactions);
 
   return `
     <tr>
+      ${completed}
       ${completion}
       ${score}
+      ${passed}
       ${start}
+      ${duration}
       ${interactions.join('')}
     </tr>`;
 }
 
 /**
+ * Create a completed tick for the journey table based on an attempt
+ *
+ * @param attempt - The attempt to create a completion tick for
+ * @returns The html for the completion tick
+ */
+xAPIDashboard.prototype.createJourneyTableCompletedTick = function (attempt) {
+  console.log('attempt', attempt);
+  if (attempt.completedStatus === 'completed') {
+    return '<i class="status fa fa-x-tick" />';
+  }
+
+  if (attempt.completedStatus === 'incomplete') {
+    return '<i class="status fa fa-x-inprogress" />';
+  }
+
+  return '<i class="status fa fa-minus" />';
+}
+
+/**
  * Create interaction completion block for the journey table
+ *
+ * @param interaction - The interaction to create a block for
+ * @returns The html for the completion block (red/green/orange/grey)
  */
 xAPIDashboard.prototype.createJourneyTableInteractionCompletionBlock = function (interaction) {
   const redDiv = '<i class="status-indicator status-red fa fa-square"></i>';
@@ -504,16 +544,24 @@ xAPIDashboard.prototype.createJourneyTableInteractionCompletionBlock = function 
   const greyDiv = '<i class="status-indicator status-gray fa fa-square"></i>';
 
   if (interaction.successStatus === 'passed') {
+    // Successfully completed
     return greenDiv;
   } else if (interaction.successStatus === 'failed') {
+    // Unsuccessfully completed
     return redDiv;
+  } else if (interactin.successStatus === 'incomplete') {
+    // Started, but not completed
+    return orangeDiv;
   }
-
+  // Not started
   return greyDiv;
 }
 
 /**
  * Create interaction columns for the journey table
+ *
+ * @param interactions - The interactions to create columns for
+ * @returns The html for the columns
  */
 xAPIDashboard.prototype.createJourneyTableInteractionColumns = function (interactions) {
   return interactions.map((interaction) => {
