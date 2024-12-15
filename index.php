@@ -188,7 +188,10 @@ $version = getVersion();
     <script type="text/javascript" src="modules/xerte/xAPI/xapicollection.min.js?version=<?php echo $version;?>"></script>
     <script type="text/javascript" src="modules/xerte/xAPI/xapidashboard.min.js?version=<?php echo $version;?>"></script>
     <script type="text/javascript" src="modules/xerte/xAPI/xapiwrapper.min.js?version=<?php echo $version;?>"></script>
-    <script type="text/javascript" src="website_code/scripts/moment.js?version=<?php echo $version;?>"></script>
+    <script type="text/javascript" src="modules/xerte/parent_templates/Nottingham/common_html5/js/chart.min.js?version=<?php echo $version; ?>"></script>
+    <script type="text/javascript" src="website_code/scripts/moment.js?version=<?php echo $version; ?>"></script>
+    <script type="text/javascript" src="website_code/scripts/luxon.min.js?version=<?php echo $version; ?>"></script>
+    <script type="text/javascript" src="website_code/scripts/luxon.chartjs.min.js?version=<?php echo $version; ?>"></script>
     <script type="text/javascript" src="website_code/scripts/jquery-ui-i18n.min.js?version=<?php echo $version;?>"></script>
     <script type="text/javascript" src="website_code/scripts/result.js?version=<?php echo $version;?>"></script>
     <script type="text/javascript" src="website_code/scripts/user_settings.js?version=<?php echo $version;?>"></script>
