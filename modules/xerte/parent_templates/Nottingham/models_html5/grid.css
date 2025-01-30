@@ -43,6 +43,7 @@
 		list-style-type:	none;
 		background-image:	none;
 		cursor:	pointer;
+		word-wrap: break-word;
 	}
 	
 	#grid ul li.ui-draggable-disabled {

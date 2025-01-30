@@ -44,13 +44,25 @@
 			var $grid = $("#grid");
 			var data = x_currentPageXML.getAttribute("data").split("||");
 			this.addLabelRefresh(data)
+			let gridMaxSizeText = x_currentPageXML.getAttribute("gridSize");
+			let gridMaxSize = $("#pageContents").width();
+			if(gridMaxSizeText == "small"){
+				//$text.css("max-width", "75%")
+				gridMaxSize = gridMaxSize * 0.25;
+			}else if(gridMaxSizeText == "large"){
+				//$text.css("max-width", "25%");
+				gridMaxSize = gridMaxSize * 0.75;
+			}else if (gridMaxSizeText != "top"){
+				//$text.css("max-width", "50%");
+				gridMaxSize = gridMaxSize * 0.50;
+			}
 
 			row = data[0].split(separator);
 			$("#content").css({
 				'width': ""
 			})
 
-			var colWidth = $("#pageContents").width() - $("#otherContent").width();
+			var colWidth = gridMaxSize;
 			if(x_currentPageXML.getAttribute("align") == "top"){
 				colWidth =  $("#pageContents").width()
 			}
@@ -82,6 +94,7 @@
 			$("#gridBorders")
 				.css("width", "")
 				.css("height", "");
+			let borderLeftRightWidth = 1.6;// for enough space for border
 			if (x_currentPageXML.getAttribute("constrain") == "col") {
 				var column = 0;
 				var maxW, maxH = 0;
@@ -91,16 +104,22 @@
 				$grid.find("ul[class!='preview']").each(function() {
 					maxW = 0;
 					$(this).find("li").each(function(i) {
-						maxW = Math.max(maxW, $(this).width());
+						maxW = Math.min(Math.max(maxW, $(this).width()), colWidth+borderLeftRightWidth);
+					}).width(maxW + 5 + 1.6 + "px");
+					rowsWidth.push(maxW)
+					column += maxW+5+1.6;
+				})
+
+				$grid.find("ul[class!='preview']").each(function() {
+					$(this).find("li[class!='static']").each(function(i) {
 						if ($.inArray(i,fixedRows) == -1) {
 							maxH = Math.max(maxH, $(this).height());
 						}
-					}).width(maxW + 5 + "px");
-					rowsWidth.push(maxW)
-					column += maxW+5;
-				}).find("li")
-						.height(maxH + "px");
-				$grid.find("ul[class='preview']").each(function(i) {
+					});	
+				}).add("ul.preview").find("li[class!='static']")
+						.height(maxH + 1 + "px");
+
+				$grid.find("ul.preview").each(function(i) {
 					const maxW = rowsWidth[i];
 					$(this).find("li").width(maxW + 5 + "px")
 				});
@@ -116,10 +135,16 @@
 							maxH = Math.max(maxH, $(this).height());
 						}
 					});
-					$grid.find("ul[class!='preview'] li.static").each(function() {
-						if ($(this).data("xy")[1] == fixedRows[i]) {
-							$(this).css("height", maxH);
-						}
+					maxH +=1;
+					$grid.find("ul[class!='preview']").each(function(ulI) {
+						$(this).find("li.static").each(function(liI) {
+							if ($(this).data("xy")[1] == fixedRows[i]) {
+								$(this).css("height", maxH);
+								let previewList = $($grid.find("ul.preview")[ulI]);
+								let previewItem = $(previewList.find("li.static")[liI]);
+								previewItem.css("height", maxH);
+							}
+						});
 					});
 				}
 
@@ -127,19 +152,24 @@
 				// labels on each row should be same height & all labels should be same width...
 				var maxW = 0, maxH;
 				$grid.find("ul[class!='preview']").each(function() {
-					maxH = 0;
 					$(this).find("li").each(function(i) {
-						maxH = Math.max(maxH, $(this).height());
 						if ($.inArray(i,fixedCols) == -1) {
-							maxW = Math.max(maxW, $(this).width());
-							console.log($(this).width());
+							maxW = Math.min(Math.max(maxW, $(this).width()), colWidth+borderLeftRightWidth);
 						}
 						/*if(maxW > ($grid.width()-24)){
 							maxW = $grid.width()-24;
 						}*/
-					}).height(maxH + "px");
+					});
 				}).find("li")
 						.width(maxW + 5 + "px");
+
+				$grid.find("ul[class!='preview']").each(function() {
+					maxH = 0;
+					$(this).find("li").each(function(i) {
+						maxH = Math.max(maxH, $(this).height());
+					}).height(maxH + "px");
+				});
+
 				$grid.find("ul[class='preview']").find("li").width(maxW + 5 + "px");
 
 				column = maxW+5;
@@ -157,14 +187,15 @@
 				var maxW = 0, maxH = 0;
 				$grid.find("ul li").each(function(i) {
 					if ($.inArray($(this).data("xy")[0],fixedCols) == -1) {
-						maxW = Math.max(maxW, $(this).width());
+						maxW = Math.min(Math.max(maxW, $(this).width()), colWidth+borderLeftRightWidth);
 					}
+				})
+						.width(maxW + 5 + "px");
+				$grid.find("ul li").each(function(i){
 					if ($.inArray(i,fixedRows) == -1) {
 						maxH = Math.max(maxH, $(this).height());
 					}
-				})
-						.width(maxW + 5 + "px")
-						.height(maxH + "px");
+				}).height(maxH + "px");
 
 				column = maxW+5;
 
@@ -205,6 +236,7 @@
 					//gridWidth = column * (row.length) + maxW + 5 + (24*row.length);
 					gridWidth = column * (row.length) + (23.2*row.length);
 				}
+				gridWidth = Math.ceil(gridWidth);
 				$(".listHolder ul:first").css('width', gridWidth);
 				$(".listHolder ul:not(:first)").css('width', gridWidth);
 			}else{
@@ -213,6 +245,7 @@
 				}else{
 					gridWidth = column + (24*row.length);
 				}
+				gridWidth = Math.ceil(gridWidth);
 				$grid.css('width', gridWidth);
 			}
 			// limit #otherContent to what is left when alignment is right
@@ -236,10 +269,13 @@
 
 			$("#gridBorders").find("tr").each(function(i) {
 				if(x_currentPageXML.getAttribute("constrain") == "col") {
-					var $li = $grid.find("ul[class != 'preview']:eq(0) li:eq(" + i + ")")
+					var $li = $grid.find("ul[class != 'preview']:eq(" + 0 + ") li:eq(" + i + ")")
 					$(this).height($li.outerHeight(true) - 5);
-				}else{
-					var $li = $grid.find("ul[class != 'preview']:eq(" + i + ") li:eq(0)")
+				}else if(x_currentPageXML.getAttribute("constrain") == "row"){
+					var $li = $grid.find("ul[class != 'preview']:eq(" + i + ") li:eq(" + 0 + ")")
+					$(this).height($li.outerHeight(true));
+				}else {
+					var $li = $grid.find("ul[class != 'preview']:eq(0) li:eq(" + i*row.length + ")")
 					$(this).height($li.outerHeight(true));
 				}
 			});
