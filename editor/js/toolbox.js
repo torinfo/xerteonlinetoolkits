@@ -724,6 +724,7 @@ var EDITOR = (function ($, parent) {
             }
 			else
             {
+
                 tr.append(tdlabel)
                     .append($('<td>')
                         .addClass("wizardvalue")
@@ -732,8 +733,12 @@ var EDITOR = (function ($, parent) {
                             .append(displayDataType(value, options, name, key, label))));
             }
 
+            var hidden = (typeof options.hidden != "undefined" && options.hidden == "true");
 
-            $(id).append(tr);
+            if(hidden == undefined || !hidden){
+                $(id).append(tr);
+            }
+
             if (options.optional == 'true' && groupChild == false) {
                 $("#optbtn_"+ name).on("click", function () {
                     var this_name = name;
@@ -3876,8 +3881,11 @@ var EDITOR = (function ($, parent) {
 
     displayDataType = function (value, options, name, key, label) {
 		var html;
-
+        debugger
 		var conditionTrigger = (typeof options.conditionTrigger != "undefined" && options.conditionTrigger == "true");
+        var disable = (typeof options.disable != "undefined" && options.disable == "true");
+
+
 		switch(options.type.toLowerCase())
 		{
 			case 'checkbox':
@@ -3894,6 +3902,7 @@ var EDITOR = (function ($, parent) {
                             triggerRedrawPage(event.data.key);
                         }
 					});
+
 				if (options.extraCheckBoxLabel !== undefined && options.extraCheckBoxLabel.length > 0)
                 {
                     // It is rather difficult to add an element after another that is not yet in DOM
@@ -3936,6 +3945,7 @@ var EDITOR = (function ($, parent) {
                         }
 					});
 
+
 				if (value == '') {
 					html.append($('<option>').attr('value', '').prop('selected', true));
 				}
@@ -3974,6 +3984,9 @@ var EDITOR = (function ($, parent) {
                 if (options.height) textarea += "height:" + options.height + "px";
                 textarea += "\">" + textvalue + "</textarea>";
                 $textarea = $(textarea);
+                if(disable){
+                    $textarea.attr("disabled","disabled");
+                }
 
                 if (textvalue.length == 0) $textarea.data('afterckeditor', value);
 
@@ -4185,6 +4198,10 @@ var EDITOR = (function ($, parent) {
                                         }
 									});
 
+                                if(disable){
+                                    checkbox.attr("disabled","disabled");
+                                }
+
 								var label = $('<label for="cat_' + categories[i].options[j].id + '">' + categories[i].options[j].name + '</label>');
 
 								$('<div class="catGroup">')
@@ -4285,6 +4302,11 @@ var EDITOR = (function ($, parent) {
                             triggerRedrawPage(event.data.key);
                         }
 					});
+
+                if(disable){
+                    select.attr("disabled","disabled");
+                }
+
 				for (var i=0; i<theme_list.length; i++) {
 					var option = $('<option>')
 						.attr('value', i);
@@ -4385,6 +4407,10 @@ var EDITOR = (function ($, parent) {
                             triggerRedrawPage(event.data.key);
                         }
 					});
+
+                if(disable){
+                    select.attr("disabled","disabled");
+                }
 				// Add empty option
 				var option = $('<option>')
 					.attr('value', "");
@@ -4989,7 +5015,7 @@ var EDITOR = (function ($, parent) {
 						
 						inputChanged($this.data('id'), $this.data('key'), $this.data('name'), this.value);
 					});
-				
+
 				$('<button id="' + id + '_btn" class="xerte_button icon_browse" data-iconpicker-input="input#' + id + '_hiddenInput" data-iconpicker-preview="i#' + id + '_preview"></button>')
 					.data('input', $input)
 					.html(value != undefined && value != '' ? '<i id="' + id + '_preview" class="fa-fw ' + value + '" title="' + language.fontawesome.preview + ': ' + value + '"></i>' : language.fontawesome.preview)
@@ -5067,6 +5093,9 @@ var EDITOR = (function ($, parent) {
 						.attr('value', value);
 				}
 		}
+        if(disable){
+            html.attr("disabled","disabled");
+        }
 		return html;
 	};
 
