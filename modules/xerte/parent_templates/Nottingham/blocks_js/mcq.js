@@ -102,8 +102,8 @@ var mcqBlock = new function() {
             label = x_GetTrackingTextFromHTML(pageXML.getAttribute("prompt"), label);
         }
         XTEnterInteraction(x_currentPage, blocknr, 'multiplechoice', label, correctOptions, correctAnswer, correctFeedback, pageXML.getAttribute("grouping"), null);
-        XTSetInteractionType(x_currentPage, blocknr, 'numeric', weighting);
-        XTSetInteractionPageXML(x_currentPage, blocknr, pageXML);
+        XTSetInteractionType(x_currentPage, blocknr, 'multiplechoice', weighting);
+        //XTSetInteractionPageXML(x_currentPage, blocknr, pageXML);
     }
 
     this.leavePage = function(blockid) {
@@ -309,7 +309,7 @@ var mcqBlock = new function() {
     this.init = function(blockid) {
         let pageXML = x_getBlockXML(blockid);
 				const state = this.generateModelState();
-				x_pushToPageDict(state, "state", blockid);
+				x_pushToPageDict(state, "state", blockid, true);
         // correct attribute on option also not used as it doesn't mark correct/incorrect - only gives feedback for each answer
         var panelWidth = pageXML.getAttribute("panelWidth"),
             $splitScreen = jGetElement(blockid, ".pageContents .splitScreen"),

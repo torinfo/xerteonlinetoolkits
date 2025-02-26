@@ -87,7 +87,7 @@ var textHighlightBlock = new function () {
 
 	this.init = function (blockid) {
 		let pageXML = x_getBlockXML(blockid);
-		const state = x_pushToPageDict({}, "state", blockid);
+		const state = x_pushToPageDict({}, "state", blockid, true);
 		let docData = {};
 		state.mode = pageXML.getAttribute("mode");
 		state.tracked = false;
@@ -99,7 +99,7 @@ var textHighlightBlock = new function () {
 		var suggestedTxt = $('<div>').html(pageXML.getAttribute("suggestedText")).text();
 		XTEnterInteraction(x_currentPage, x_getBlockNr(blockid), 'text', label, [], suggestedTxt, [], pageXML.getAttribute("grouping"));
 		XTSetInteractionType(x_currentPage, x_getBlockNr(blockid), 'text', weighting);
-		XTSetLeavePage(x_currentPage, x_getBlockNr(blockid), this.leavePage);
+		//XTSetLeavePage(x_currentPage, x_getBlockNr(blockid), this.leavePage);
 
 		// get info about downloadable document if download is allowed
 		if (pageXML.getAttribute('download') == 'true') {

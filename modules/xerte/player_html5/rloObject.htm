@@ -115,11 +115,36 @@
 
 	<!-- for audio & video players -->
     <script type="text/javascript" src="%TEMPLATEPATH%common_html5/js/mediaPlayer.js%VERSION_PARAM%"></script>
+	<!-- Tracking debug -->
+	<script>
+	 class handler_proxy_class {
+		 constructor(name){
+			 this.name = name
+		 }
+		 get(target, prop, reciever) {
+debugger;
+			 let value = Reflect.get(target, prop, reciever);
+			 if(typeof value == "function"){
+				 console.log(this.name + ": get\n", prop, target, reciever);
+				 return value.bind(target);
+			 }
+			 return value;
+		 }
+		 set(target, prop, value, reciever) {
+			 console.log(this.name + ": set\n", prop, value, target, reciever);
+			 return Reflect.set(target, prop, value, reciever);
+		 }
+	 }
+	 const handler_proxy = new handler_proxy_class("manager");
+	 const handler_proxy_interaction = new handler_proxy_class("interaction");
+	</script>
 	<!-- Tracking Files-->
 	<script type="text/javascript" src="%TEMPLATEPATH%blocks_js/js/trackingManager.js%VERSION_PARAM%"></script>
 	<script type="text/javascript" src="%TEMPLATEPATH%blocks_js/js/state.js%VERSION_PARAM%"></script>
-	<script type="text/javascript" src="%TEMPLATEPATH%blocks_js/js/pageState.js%VERSION_PARAM%"></script>
+<!--<script type="text/javascript" src="%TEMPLATEPATH%blocks_js/js/pageState.js%VERSION_PARAM%"></script>
+	<script type="text/javascript" src="%TEMPLATEPATH%blocks_js/js/XAPI_pageState.js%VERSION_PARAM%"></script>
 	<script type="text/javascript" src="%TEMPLATEPATH%blocks_js/js/interactionState.js%VERSION_PARAM%"></script>
+	<script type="text/javascript" src="%TEMPLATEPATH%blocks_js/js/XAPI_interactionState.js%VERSION_PARAM%"></script> -->
 	<!-- End Tracking Files -->
 	<script type="text/javascript" src="%TEMPLATEPATH%common_html5/js/xenith.js%VERSION_PARAM%"></script>
 	<script type="text/javascript" src="%TEMPLATEPATH%common_html5/js/chart.js%VERSION_PARAM%"></script>

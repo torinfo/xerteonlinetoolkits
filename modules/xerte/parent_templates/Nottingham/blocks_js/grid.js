@@ -323,7 +323,7 @@ var gridBlock = new function () {
 				labelData: [], 
 				separator: "|"
 		};
-		const state = x_pushToPageDict(tempState, "state", blockid);
+		const state = x_pushToPageDict(tempState, "state", blockid, true);
 		tempState = null;
 		state.checked = false;
 
@@ -464,7 +464,8 @@ var gridBlock = new function () {
 			$text.css("max-width", "25%");
 		}else{
 			$text.remove()
-		}
+		}
+
 
 
 		if(pageXML.getAttribute("align") == "left"){
@@ -1240,7 +1241,7 @@ var gridBlock = new function () {
 			rowCount++;
 		}
 		//XTSetPageType(x_currentPage, 'numeric', 1, this.weighting);
-		XTSetLeavePage(x_currentPage, x_getBlockNr(blockid), this.leavePage);
+		//XTSetLeavePage(x_currentPage, x_getBlockNr(blockid), this.leavePage);
 
 		var label = pageXML.getAttribute("name");
 		if (pageXML.getAttribute("trackinglabel") != null && pageXML.getAttribute("trackinglabel") != "") {

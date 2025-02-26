@@ -1,6 +1,6 @@
 // noinspection JSPotentiallyInvalidUsageOfThis,SpellCheckingInspection
 
-function TrackingManager(){
+function TrackingManager(tracking_type){
 
     this.pageStates = new Array();
     this.initialised = false;
@@ -16,8 +16,13 @@ function TrackingManager(){
     this.page_timeout = 0;
     this.forcetrackingmode = false;
     this.debug = false;
+		this.tracking_type = tracking_type;
 
+		this.canResume = canResume;
+		this.doResume = doResume;
+    this.setVars = setVars;
     this.makeId = makeId;
+    this.find = find;
     this.findCreatePageState = findCreatePageState;
     this.enterPage = enterPage;
     this.initialise = initialise;
@@ -51,6 +56,144 @@ function TrackingManager(){
     this.setInteractionModelState = setInteractionModelState;
     this.getInteractionModelState = getInteractionModelState;
 
+    this.resumedSessions= new Array();
+
+    function canResume()
+    {
+        if (actor.objectType === 'Agent') {
+            // Try to fetch previous exit statement
+            var q = {};
+            q['agent'] = JSON.stringify(actor);
+            q['verb'] = ADL.verbs.exited.id;
+            q['activity'] = baseUrl() + state.templateId;
+            var suspend_str = "";
+            var result = getStatements(q, true);
+            if (result.length > 0
+                && result[0].result != undefined
+                && result[0].result.extensions != undefined
+                && result[0].result.extensions["http://xerte.org.uk/xapi/trackingstate"] != undefined) {
+                suspend_str = result[0].result.extensions["http://xerte.org.uk/xapi/trackingstate"];
+            }
+            if (suspend_str.length > 0) {
+                var tmp = new XApiTrackingState();
+                tmp.setVars(suspend_str, false);
+                if (tmp.getCompletionStatus() != 'completed') {
+                    return {canResume: true, date: result[0].timestamp};
+                }
+                else
+                {
+                    return {canResume: false, date: ""};
+                }
+            }
+            else
+            {
+                return {canResume: false, date: ""};
+            }
+        }
+        else
+        {
+            return {canResume: false, date: ""};
+        }
+    }
+
+    function doResume()
+    {
+        if (this.resume) {
+            if (actor.objectType === 'Agent') {
+                // Try to fetch previous exit statement
+                var q = {};
+                q['agent'] = JSON.stringify(actor);
+                q['verb'] = ADL.verbs.exited.id;
+                q['activity'] = baseUrl() + state.templateId;
+                var suspend_str = "";
+                var result = getStatements(q, true);
+                if (result.length > 0
+                    && result[0].result != undefined
+                    && result[0].result.extensions != undefined
+                    && result[0].result.extensions["http://xerte.org.uk/xapi/trackingstate"] != undefined) {
+                    var suspend_str = result[0].result.extensions["http://xerte.org.uk/xapi/trackingstate"];
+                }
+                if (suspend_str.length > 0) {
+                    var tmp = new TrackingManager();
+                    tmp.setVars(suspend_str, false);
+                    if (tmp.getCompletionStatus() != 'completed') {
+                        this.setVars(suspend_str);
+                    }
+                }
+            }
+        }
+    }
+		
+		function setVars(jsonStr, restoreXerteState)
+    {
+        var restore = true;
+        if (restoreXerteState != undefined)
+        {
+            restore = restoreXerteState;
+        }
+        if (jsonStr.length > 0)
+        {
+            var jsonObj = JSON.parse(jsonStr);
+            // Do NOT touch scormmode, don't touch start and don't touch finished
+            this.currentid = jsonObj.currentid;
+            this.currentpageid = jsonObj.currentpageid;
+            this.trackingmode = jsonObj.trackingmode;
+            this.forcetrackingmode = jsonObj.forcetrackingmode;
+            this.scoremode = jsonObj.scoremode;
+            this.nrpages = jsonObj.nrpages;
+            this.toCompletePages = jsonObj.toCompletePages;
+            this.completedPages = jsonObj.completedPages;
+//            this.start = new Date(jsonObj.start);
+            this.lo_completed = jsonObj.lo_completed;
+            this.lo_type = jsonObj.lo_type;
+            this.lo_passed = jsonObj.lo_passed;
+            this.page_timeout = jsonObj.page_timeout;
+            this.templateId = jsonObj.templateId;
+            this.templateName = jsonObj.templateName;
+            this.debug = jsonObj.debug;
+            // this.sessionId = "";
+            this.category = jsonObj.category;
+            // this.language = "en";
+            // this.resume = false;
+            // this.finished = jsonObj.finished;
+						//this.pageStates = jsonObj.pageStates;
+						this.pageStates = new Array();
+						for(let i = 0; i < jsonObj.pageStates.length; i++){
+								let jsonPage = jsonObj.pageStates[i];
+								let page = new pageState(jsonPage.id, jsonPage.page_nr, jsonPage.ia_type, jsonPage.ia_name);
+								page.setVars(jsonPage);
+								this.pageStates.push(page);
+						}
+						/*
+            this.interactions = new Array();
+            var i=0;
+            for (i=0; i<jsonObj.interactions.length; i++)
+            {
+                var jsonSit = jsonObj.interactions[i];
+                var sit = new XApiInteractionTracking(jsonSit.page_nr, jsonSit.ia_nr, jsonSit.ia_type, jsonSit.ia_name);
+                sit.setVars(jsonSit, restoreXerteState);
+                this.interactions.push(sit);
+            }
+						*/
+            if (restore) {
+                if (typeof jsonObj.pageHistory != "undefined") {
+                    x_pageHistory = jsonObj.pageHistory;
+                }
+                if (typeof jsonObj.pagesViewed != "undefined") {
+                    x_restorePagesViewed(jsonObj.pagesViewed);
+                }
+                if (typeof jsonObj.resumedSessions != "undefined")
+                {
+                    this.resumedSessions = jsonObj.resumedSessions;
+                }
+								if(typeof jsonObj.pageDicts != "undefined"){
+										x_pageDicts = jsonObj.pageDicts;
+								}
+                this.resumedSessions.push(jsonObj.sessionId);
+            }
+        }
+    }
+
     function makeId(page_nr, ia_nr, ia_type, ia_name){
 
         var tmpid = 'urn:x-xerte:p-' + (page_nr + 1);
@@ -75,16 +218,35 @@ function TrackingManager(){
         return tmpid;
     }
 
-    function findCreatePageState (page_nr, ia_type, ia_name){
-        var tmpid = makeId(page_nr,-1, ia_type, ia_name);
+		function find(id){
+				for (let i = 0; i < this.pageStates.length; i++) {
+            if (this.pageStates[i].id == id)
+                return this.pageStates[i];
+        }
 
+        return null;
+
+		}
+
+    function findCreatePageState (page_nr, ia_type, ia_name, grouping){
+				debugger;
+        var tmpid = makeId(page_nr,-1, ia_type, ia_name);
+ 
         for (var i=0; i<this.pageStates.length; i++)
         {
             if (this.pageStates[i].id === tmpid)
                 return this.pageStates[i];
         }
         // Not found
-				let sit = new pageState(tmpid,page_nr, ia_type, ia_name);
+				let sit;
+				switch(this.tracking_type){
+				case "noop":
+						sit = new pageState(tmpid,page_nr, ia_type, ia_name);
+						break;
+				case "xapi":
+						sit = new XAPI_pageState(tmpid, page_nr, ia_type, ia_name, grouping);
+						break;
+				}
         if (ia_type !== "page" && ia_type !== "result")
         {
             this.lo_type = "interactive";
@@ -98,8 +260,10 @@ function TrackingManager(){
         return sit;
     }
 
-    function enterPage(page_nr, ia_type, ia_name){
-        this.findCreatePageState(page_nr, ia_type, ia_name)
+    function enterPage(page_nr, ia_type, ia_name, grouping){
+        let sitp = this.findCreatePageState(page_nr, ia_type, ia_name, grouping);
+				sitp.enter();
+				return sitp;
     }
 
     function initialise()
@@ -279,16 +443,20 @@ function TrackingManager(){
         return done;
     }
 
-    function enterInteraction(page_nr, ia_nr, ia_type, ia_name, correctoptions, correctanswer, feedback, ia_sub_nr = 0)
+    function enterInteraction(page_nr, ia_nr, ia_type, ia_name, correctoptions, correctanswer, feedback, grouping, context, ia_sub_nr = 0)
     {
 
-        var tempid = makeId(page_nr, ia_nr, ia_type, ia_name)
+        var tempid = makeId(page_nr, ia_nr, ia_type, ia_name);
+        var page = this.findPage(page_nr);
 
-        interaction = new InteractionState(tempid, page_nr, ia_nr, ia_type, ia_name, ia_sub_nr);
+        let interaction = page.createInteraction(tempid, page_nr, ia_nr, ia_type, ia_name, grouping, context, ia_sub_nr);
+				if(localStorage.getItem("ib_debug")){
+						interaction = new Proxy(interaction, handler_proxy_interaction);
+				}
         this.verifyEnterInteractionParameters(ia_type, ia_name, correctoptions, correctanswer, feedback);
         interaction.enterInteraction(correctanswer, correctoptions);
-        var page = this.findPage(page_nr)
-        page.interactions.push(interaction)
+				page.nrInteraction += 1;
+        page.interactions.push(interaction);
     }
 
     function exitInteraction(page_nr, ia_nr, result, learneroptions, learneranswer, feedback, ia_sub_nr = 0)

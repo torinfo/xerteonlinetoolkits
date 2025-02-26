@@ -18,6 +18,16 @@
  * limitations under the License.
  */
 
+function print_xml($xml){
+	$dom = new DOMDocument("1.0");
+	$dom->preserveWhiteSpace = false;
+	$dom->formatOutput = true;
+	$dom->loadXML($xml->asXML());
+	echo "<xmp>";
+	echo $dom->saveXML();
+	echo "</xmp>";
+}
+
 /**
  * @param SimpleXMLElement $parentNode the node to add the new node to.
  * @param SimpleXMLElement $oldNode the node to replace.
@@ -51,7 +61,8 @@ if(DIRECTORY_SEPARATOR !== '/') {
 $realpath = realpath($full_unsafe_file_path);
 // Check that is start with root_path/USER-FILES
 if ($realpath !== false && $realpath === $full_unsafe_file_path) {
-    $xml = new SimpleXMLElement(file_get_contents($realpath));
+    //xml element rename 
+	$xml = new SimpleXMLElement(file_get_contents($realpath));
 	$toDeleteNodes = [];
 	foreach($xml->documentation as $documentation){
 		foreach($documentation->page as $page){

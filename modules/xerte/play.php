@@ -106,17 +106,17 @@ function show_template_page($row, $datafile="", $xapi_enabled = false)
             $engine = $_REQUEST['engine'];
         }
     }
-    $tracking_js_file = array($template_path . "common_html5/js/xttracking_noop.js");
+    $tracking_js_file = array($template_path . "common_html5/js/xttracking_noop.js", $flash_js_dir . "parent_templates/Nottingham/blocks_js/js/NOOP_pageState.js", $flash_js_dir . "parent_templates/Nottingham/blocks_js/js/NOOP_interactionState.js");
     if($xapi_enabled) {
         if ($pedit_enabled) {
             if ($row["tsugi_xapi_enabled"] == 1) {
-                $tracking_js_file = array($flash_js_dir . "pedit/ALOConnection.js", $flash_js_dir . "xAPI/xttracking_xapi.js");
+                $tracking_js_file = array($flash_js_dir . "pedit/ALOConnection.js", $flash_js_dir . "xAPI/xttracking_xapi.js", $flash_js_dir . "parent_templates/Nottingham/blocks_js/js/XAPI_pageState.js", $flash_js_dir . "parent_templates/Notting/blocks_js/js/XAPI_interactionState.js");
             } else {
-                $tracking_js_file = array($flash_js_dir . "pedit/ALOConnection.js", $template_path . "common_html5/js/xttracking_noop.js");
+                $tracking_js_file = array($flash_js_dir . "pedit/ALOConnection.js", $template_path . "common_html5/js/xttracking_noop.js", $flash_js_dir . "parent_templates/Nottingham/blocks_js/js/NOOP_pageState.js", $flash_js_dir . "parent_templates/Nottingham/blocks_js/js/NOOP_interactionState.js");
             }
         } else {
             if ($row["tsugi_xapi_enabled"] == 1) {
-                $tracking_js_file = array($flash_js_dir . "xAPI/xttracking_xapi.js");
+                $tracking_js_file = array($flash_js_dir . "xAPI/xttracking_xapi.js", $flash_js_dir . "parent_templates/Nottingham/blocks_js/js/XAPI_pageState.js", $flash_js_dir . "parent_templates/Nottingham/blocks_js/js/XAPI_interactionState.js");
             }
         }
     }

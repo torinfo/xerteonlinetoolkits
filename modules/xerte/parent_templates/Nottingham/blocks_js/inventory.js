@@ -43,7 +43,7 @@ var inventoryBlock = new function () {
 
 	this.init = function (blockid) {
 		let pageXML = x_getBlockXML(blockid);
-		const state = x_pushToPageDict({}, "state", blockid);
+		const state = x_pushToPageDict({}, "state", blockid, true);
 		// set fixed text fields and page layout
 		jGetElement(blockid, ".mainTxt").html(x_addLineBreaks(pageXML.getAttribute("instructions")));
 		jGetElement(blockid, ".feedbackTxt").html(x_addLineBreaks(pageXML.getAttribute("feedback")));

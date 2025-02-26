@@ -2727,10 +2727,16 @@ function jGetElement(blockid, element) {
 // returns the given object for convenience.
 // When dealing with primitives and immutables, push new values to the dictionary,
 // or wrap them in an object if you plan on changing the values later.
-function x_pushToPageDict(object, name, blockid = -1){
+function x_pushToPageDict(object, name, blockid = -1, first = false){
     let key = blockid == -1 ? name : name + "_" + blockid;
-    x_pageDicts[x_currentPage][key] = object;
-    return object;
+		if(!first){
+				x_pageDicts[x_currentPage][key] = object;
+		}else {
+				if(x_pageDicts[x_currentPage][key] == null){
+						x_pageDicts[x_currentPage][key] = object;
+				}
+		}
+    return x_pageDicts[x_currentPage][key];
 }
 
 // Gets an object from x_pageDicts with optional blockid
@@ -3102,6 +3108,7 @@ function x_changePageStep5a(x_gotoPage) {
 				"buttonQuestion",
 				"buttonSequence",
 				"decision",
+				"dictation",
 				"documentation",
 				"grid",
 				"hotspotImage",

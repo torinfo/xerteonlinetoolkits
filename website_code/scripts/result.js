@@ -95,6 +95,7 @@
 
             var showzeroweight = false;
             xtresults = XTResults(true, trackingState);
+						console.log(trackingState);
             var altnormalrow = false;
             var altfullrow = false;
             $("#" + classIdentifier + " .averageScore").html(xtresults.averageScore + "%");
@@ -532,28 +533,43 @@ function XTResults(fullcompletion, trackingState) {
     var score = 0,
         nrofquestions = 0,
         totalWeight = 0,
-        totalDuration = 0;
+        totalDuration = 0,
+				interactions = [];
     results.interactions = Array();
+		// FIXME: make this correct. THIS IS A BAND-AID FIX
+		if(trackingState.interactions != null){
+				interactions = trackingState.interactions;
+		}else {
+				for(let i = 0; i < trackingState.pageStates.length; i++){
+						for(let j = 0; j < trackingState.pageStates[i].interactions.length; j++){
+							let interaction = trackingState.pageStates[i].interactions[j];
+								interaction.nrinteractions = 1;
+							interactions.push(interaction);
+						}
+				}
+		}
+		trackingState.interactions = interactions;
+		
 
-    for (i = 0; i < trackingState.interactions.length; i++) {
+    for (i = 0; i < interactions.length; i++) {
 
 
-        score += trackingState.interactions[i].score * trackingState.interactions[i].weighting;
-        if (trackingState.interactions[i].ia_nr < 0 || trackingState.interactions[i].nrinteractions > 0) {
+        score += interactions[i].score * interactions[i].weighting;
+        if (interactions[i].ia_nr < 0 || interactions[i].nrinteractions > 0) {
 
             var interaction = {};
-            interaction.score = Math.round(trackingState.interactions[i].score);
-            interaction.title = trackingState.interactions[i].ia_name;
-            interaction.type = trackingState.interactions[i].ia_type;
-            interaction.correct = trackingState.interactions[i].result;
-            interaction.duration = Math.round(trackingState.interactions[i].duration / 1000);
-            interaction.weighting = trackingState.interactions[i].weighting;
+            interaction.score = Math.round(interactions[i].score);
+            interaction.title = interactions[i].ia_name;
+            interaction.type = interactions[i].ia_type;
+            interaction.correct = interactions[i].result;
+            interaction.duration = Math.round(interactions[i].duration / 1000);
+            interaction.weighting = interactions[i].weighting;
             interaction.subinteractions = Array();
 
             var j = 0;
             for (j; j < trackingState.toCompletePages.length; j++) {
                 var currentPageNr = trackingState.toCompletePages[j];
-                if (currentPageNr == trackingState.interactions[i].page_nr) {
+                if (currentPageNr == interactions[i].page_nr) {
                     if (trackingState.completedPages[j]) {
                         interaction.completed = "true";
                     }
@@ -567,16 +583,16 @@ function XTResults(fullcompletion, trackingState) {
             }
 
             results.interactions[nrofquestions] = interaction;
-            totalDuration += trackingState.interactions[i].duration;
+            totalDuration += interactions[i].duration;
             nrofquestions++;
-            totalWeight += trackingState.interactions[i].weighting;
+            totalWeight += interactions[i].weighting;
 
         }
         else if (results.mode == "full-results") {
             var subinteraction = {};
 
             var learnerAnswer, correctAnswer;
-            switch (trackingState.interactions[i].ia_type) {
+            switch (interactions[i].ia_type) {
                 case "match":
                     // If unique targets, match answers by target, otherwise match by source
                     const targets = [];
@@ -629,38 +645,38 @@ function XTResults(fullcompletion, trackingState) {
                     }
                     break;
                 case "text":
-                    learnerAnswer = trackingState.interactions[i].learnerAnswers;
-                    correctAnswer = trackingState.interactions[i].correctAnswers;
+                    learnerAnswer = interactions[i].learnerAnswers;
+                    correctAnswer = interactions[i].correctAnswers;
                     break;
                 case "multiplechoice":
-                    learnerAnswer = trackingState.interactions[i].learnerAnswers[0] != undefined ? trackingState.interactions[i].learnerAnswers[0] : "";
-                    for (var j = 1; j < trackingState.interactions[i].learnerAnswers.length; j++) {
-                        learnerAnswer += "\n" + trackingState.interactions[i].learnerAnswers[j];
+                    learnerAnswer = interactions[i].learnerAnswers[0] != undefined ? interactions[i].learnerAnswers[0] : "";
+                    for (var j = 1; j < interactions[i].learnerAnswers.length; j++) {
+                        learnerAnswer += "\n" + interactions[i].learnerAnswers[j];
                     }
                     correctAnswer = "";
-                    for (var j = 0; j < trackingState.interactions[i].correctAnswers.length; j++) {
-                        if (trackingState.interactions[i].correctAnswers[j] != undefined) {
+                    for (var j = 0; j < interactions[i].correctAnswers.length; j++) {
+                        if (interactions[i].correctAnswers[j] != undefined) {
                             if (correctAnswer.length > 0)
                                 correctAnswer += "\n";
-                            correctAnswer += trackingState.interactions[i].correctAnswers[j];
+                            correctAnswer += interactions[i].correctAnswers[j];
                         }
                     }
                     break;
                 case "numeric":
 
-                    learnerAnswer = trackingState.interactions[i].learnerAnswers;
+                    learnerAnswer = interactions[i].learnerAnswers;
                     correctAnswer = "-";  // Not applicable
                     //TODO: We don't have a good example of an interactivity where the numeric type has a correctAnswer. Currently implemented for the survey page.
                     break;
                 case "fill-in":
-                    learnerAnswer = trackingState.interactions[i].learnerAnswers;
-                    correctAnswer = trackingState.interactions[i].correctAnswers;
+                    learnerAnswer = interactions[i].learnerAnswers;
+                    correctAnswer = interactions[i].correctAnswers;
                     break;
             }
-            if (trackingState.interactions[i].ia_type != "match") {
-                subinteraction.question = trackingState.interactions[i].ia_name;
-                if (trackingState.interactions[i].result != undefined && trackingState.interactions[i].result.success != undefined) {
-                    subinteraction.correct = trackingState.interactions[i].result.success;
+            if (interactions[i].ia_type != "match") {
+                subinteraction.question = interactions[i].ia_name;
+                if (interactions[i].result != undefined && interactions[i].result.success != undefined) {
+                    subinteraction.correct = interactions[i].result.success;
                 }
                 else
                 {

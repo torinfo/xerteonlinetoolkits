@@ -76,7 +76,7 @@ var interactiveTextBlock = new function () {
 	this.init = function (blockid) {
 		let pageXML = x_getBlockXML(blockid); 
 		let interactionText = x_addLineBreaks(pageXML.getAttribute("passage"));
-		const state = x_pushToPageDict({}, "state", blockid);
+		const state = x_pushToPageDict({}, "state", blockid, true);
 		state.openTagInfo = [];
 		state.groupInfo = [];
 		state.subGroups = [];
@@ -1250,7 +1250,7 @@ var interactiveTextBlock = new function () {
 				weighting = pageXML.getAttribute("trackingWeight");
 			}
 			XTSetInteractionType(x_currentPage, x_getBlockNr(blockid), "multiplechoice", weighting, group);
-			XTSetLeavePage(x_currentPage, x_getBlockNr(blockid), interactiveTextBlock.leavePage);
+			//XTSetLeavePage(x_currentPage, x_getBlockNr(blockid), interactiveTextBlock.leavePage);
 			XTExitInteraction(x_currentPage, x_getBlockNr(blockid), result, l_options[group], l_answers[group], [], group);
 		}
 		//finalFeedback(incorrectFound);
@@ -1530,7 +1530,7 @@ var interactiveTextBlock = new function () {
 			weighting = pageXML.getAttribute("trackingWeight");
 		}
 		XTSetInteractionType(x_currentPage, x_getBlockNr(blockid), "multiplechoice", weighting, mcqCurrentQ);
-		XTSetLeavePage(x_currentPage, x_getBlockNr(blockid), interactiveTextBlock.leavePage);
+		//XTSetLeavePage(x_currentPage, x_getBlockNr(blockid), interactiveTextBlock.leavePage);
 		var $optionHolder = jGetElement(blockid, ".questionHolder .optionHolder")
 			.html('<div class="optionGroup"><input type="radio" name="option" /><label class="optionTxt"></label></div>')
 			.show();

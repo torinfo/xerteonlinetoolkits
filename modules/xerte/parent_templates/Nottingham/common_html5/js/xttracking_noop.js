@@ -25,7 +25,7 @@
  * To change this template use File | Settings | File Templates.
  */
 
-const trackingManager = new TrackingManager();
+const trackingManager = new TrackingManager("noop");
 
 trackingManager.debug = true;
 
@@ -212,7 +212,7 @@ function XTVideo(page_nr, name, block_name, verb, videotrackingManager, grouping
 
 function XTEnterInteraction(page_nr, ia_nr, ia_type, ia_name, correctoptions, correctanswer, feedback, grouping, context, ia_sub_nr = 0)
 {
-	trackingManager.enterInteraction(page_nr, ia_nr, ia_type, ia_name, correctoptions, correctanswer, feedback, ia_sub_nr);
+	trackingManager.enterInteraction(page_nr, ia_nr, ia_type, ia_name, correctoptions, correctanswer, feedback, grouping, context, ia_sub_nr);
 }
 
 function XTExitInteraction(page_nr, ia_nr, result, learneroptions, learneranswer, feedback, ia_sub_nr = 0)

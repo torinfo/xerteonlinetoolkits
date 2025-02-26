@@ -44,7 +44,7 @@ var documentationBlock = new function () {
 
 	this.init = function (blockid) {
 		let documentXML = x_getBlockXML(blockid);
-		const state = x_pushToPageDict({}, "state", blockid);
+		const state = x_pushToPageDict({}, "state", blockid, true);
 		// styles used in downloaded word doc
 		var styles = '';
 		styles += 'body, .ui-widget { font-family: Arial, sans-serif; -webkit-font-smoothing: antialiased; color: black; font-size: 12pt; } ';

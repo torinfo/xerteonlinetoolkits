@@ -110,7 +110,7 @@ var textMatchBlock = new function() {
 
     this.init = function(blockid) {
         let pageXML = x_getBlockXML(blockid);
-        x_pushToPageDict(this.generateModelState(), "state", blockid);
+        x_pushToPageDict(this.generateModelState(), "state", blockid, true);
         const state = x_getPageDict("state", blockid)
 				state.audioW = 0;
 
@@ -411,7 +411,7 @@ var textMatchBlock = new function() {
 
 				state.finished = result.success;
 
-        XTSetInteractionModelState(x_currentPage, blocknr, state);
+        //XTSetInteractionModelState(x_currentPage, blocknr, state);
 
         if(XTGetMode() == "normal" && pageXML.getAttribute('markEnd') !== 'false'){
             jGetElement(blockid, ".dragDropHolder .label")
@@ -458,7 +458,7 @@ var textMatchBlock = new function() {
 
         XTEnterInteraction(x_currentPage, blocknr, 'match', label, correctOptions, correctAnswers, correctFeedbacks, pageXML.getAttribute("grouping"), null);
         XTSetInteractionType(x_currentPage, x_getBlockNr(blockid), 'match', weighting);
-        XTSetLeavePage(x_currentPage, blocknr, this.leavePage);
+        //XTSetLeavePage(x_currentPage, blocknr, this.leavePage);
     }
 
 

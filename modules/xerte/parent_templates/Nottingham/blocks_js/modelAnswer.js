@@ -36,7 +36,7 @@ var modelAnswerBlock = new function () {
 
     this.init = function (blockid) {
         let pageXML = x_getBlockXML(blockid);
-				const state = x_pushToPageDict({}, "state", blockid);
+				const state = x_pushToPageDict({}, "state", blockid, true);
         state.tracked = false;
         // if language attributes aren't in xml will have to use english fall back
         var instructA = pageXML.getAttribute("instructHeaderATxt");
@@ -88,7 +88,7 @@ var modelAnswerBlock = new function () {
         XTEnterInteraction(x_currentPage, x_getBlockNr(blockid), 'text', label, [], modelAnswerTxt, [], pageXML.getAttribute("grouping"), null);
         XTSetInteractionType(x_currentPage, x_getBlockNr(blockid), 'text', weighting);
         //XTSetLeavePage(x_currentPage, x_getBlockNr(blockid), this.leavePage);
-        XTSetInteractionPageXML(x_currentPage, x_getBlockNr(blockid), pageXML);
+        //XTSetInteractionPageXML(x_currentPage, x_getBlockNr(blockid), pageXML);
 
         // feedbackBtnWidth attribute not used as button will be sized automatically
         var panelWidth = pageXML.getAttribute("panelWidth"),

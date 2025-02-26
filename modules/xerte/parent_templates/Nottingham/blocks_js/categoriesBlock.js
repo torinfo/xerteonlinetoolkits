@@ -155,8 +155,8 @@ var categoriesBlock = new function() {
         var result = {
             success: (l_correct == state.totaloptions),
             score: (l_correct * 100.0)/state.totaloptions
-        }
-        ;
+        };
+				console.log(l_options, l_answers);
         XTExitInteraction(x_currentPage, x_getBlockNr(blockid), result, l_options, l_answers, l_feedback);
         //XTSetPageScore(x_currentPage, (l_correct * 100.0)/variables.totaloptions);
         state.checked = true;

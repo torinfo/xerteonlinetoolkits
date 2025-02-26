@@ -74,7 +74,7 @@ var hotSpotQuestionBlock= new function () {
 	};
 
 	this.init = function (blockid) {
-		const state = x_pushToPageDict({}, "state", blockid);
+		const state = x_pushToPageDict({}, "state", blockid, true);
 		let pageXML = x_getBlockXML(blockid);
 		let attempts = 0;
 		let highlightsIndexArray = [];

@@ -45,7 +45,7 @@ var gapFillBlock = new function() {
         if (XTGetMode() == "normal") { state.isTracked = true; };
 
         $pageContents.find("#hint").remove();
-        XTSetInteractionModelState(x_currentPage, x_getBlockNr(blockid), state);
+      //XTSetInteractionModelState(x_currentPage, x_getBlockNr(blockid), state);
 				this.sizeChanged(blockid);
     }
 
@@ -118,7 +118,7 @@ var gapFillBlock = new function() {
         let $targetHolder = jGetElement(blockid, ".targetHolder");
         let $feedbackTxt = jGetElement(blockid, ".feedbackTxt");
         let $audioHolder = jGetElement(blockid, ".audioHolder");
-        const state = x_pushToPageDict(this.resetModelState(), "state", blockid);
+        const state = x_pushToPageDict(this.resetModelState(), "state", blockid, true);
         let pageXML = x_getBlockXML(blockid);
 
         let weighting = 1.0;
@@ -320,9 +320,9 @@ var gapFillBlock = new function() {
                 correctAnswer = state.answerData[interactionNumber];
                 XTEnterInteraction(x_currentPage,  blocknr , 'fill-in', name, [], correctAnswer, "Correct", pageXML.getAttribute("grouping"), null, interactionNumber);
                 XTSetInteractionType(x_currentPage, x_getBlockNr(blockid), 'fill-in', weighting, interactionNumber);
-                XTSetLeavePage(x_currentPage, blocknr, this.leavePage);
-                XTSetInteractionPageXML(x_currentPage, blocknr, pageXML, interactionNumber);
-                XTSetInteractionModelState(x_currentPage, blocknr, state, interactionNumber);
+                //XTSetLeavePage(x_currentPage, blocknr, this.leavePage);
+                //XTSetInteractionPageXML(x_currentPage, blocknr, pageXML, interactionNumber);
+                //XTSetInteractionModelState(x_currentPage, blocknr, state, interactionNumber);
             }
         }
         else if(pageXML.getAttribute("interactivity") == "Drag Drop"){
@@ -343,9 +343,9 @@ var gapFillBlock = new function() {
             
             XTEnterInteraction(x_currentPage,  blocknr , 'match', name, correctOptions, correctAnswers, "", pageXML.getAttribute("grouping"), null);
             XTSetInteractionType(x_currentPage, x_getBlockNr(blockid), 'match', weighting);
-            XTSetLeavePage(x_currentPage, blocknr, this.leavePage);
-            XTSetInteractionPageXML(x_currentPage, blocknr, pageXML)
-            XTSetInteractionModelState(x_currentPage, blocknr, state)
+            //XTSetLeavePage(x_currentPage, blocknr, this.leavePage);
+            //XTSetInteractionPageXML(x_currentPage, blocknr, pageXML)
+            //XTSetInteractionModelState(x_currentPage, blocknr, state)
         }
         else{ // drop down menu
             for (interactionNumber=0;  interactionNumber<state.answerData.length;  interactionNumber++) {
@@ -372,9 +372,9 @@ var gapFillBlock = new function() {
                 }
                 XTEnterInteraction(x_currentPage,  blocknr , 'multiplechoice', name, correctOptions, correctAnswers, "Correct", pageXML.getAttribute("grouping"), null, interactionNumber);
                 XTSetInteractionType(x_currentPage, x_getBlockNr(blockid), 'multiplechoice', weighting, interactionNumber);
-                XTSetLeavePage(x_currentPage, blocknr, this.leavePage);
-                XTSetInteractionPageXML(x_currentPage, blocknr, pageXML, interactionNumber);
-                XTSetInteractionModelState(x_currentPage, blocknr, state, interactionNumber);
+                //XTSetLeavePage(x_currentPage, blocknr, this.leavePage);
+                //XTSetInteractionPageXML(x_currentPage, blocknr, pageXML, interactionNumber);
+                //XTSetInteractionModelState(x_currentPage, blocknr, state, interactionNumber);
             }
         }
 
@@ -500,7 +500,7 @@ var gapFillBlock = new function() {
                                 let answer = !state.casesensitive ? $this.val().trim().toLowerCase() : $this.val().trim();
 
                                 XTExitInteraction(x_currentPage, x_getBlockNr(blockid) , result, [], answer, "Correct", $this.data("index"), pageXML.getAttribute("trackinglabel"));
-                                XTSetInteractionModelState(x_currentPage, x_getBlockNr(blockid), state, $this.data("index"));
+                                //XTSetInteractionModelState(x_currentPage, x_getBlockNr(blockid), state, $this.data("index"));
                             } else { // wrong - start showing hint after 3 wrong characters entered - this only gives hint if there's only 1 possible correct answer for the gap
                                 if (pageXML.getAttribute("showHint") != "false") {
                                     var wrong = 0;
@@ -858,7 +858,7 @@ var gapFillBlock = new function() {
             gapFillBlock.dragDropSubmit(false, blockid);
             //reminder
         }
-        XTSetInteractionModelState(x_currentPage, x_getBlockNr(blockid), state)
+        //XTSetInteractionModelState(x_currentPage, x_getBlockNr(blockid), state)
     }
 
     // set up events used when keyboard rather than mouse is used

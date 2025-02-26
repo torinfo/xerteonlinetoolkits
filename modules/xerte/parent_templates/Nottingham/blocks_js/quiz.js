@@ -162,7 +162,8 @@ var quizBlock = new function() {
         } else {
             var $thisQ = null;
             if(next){
-                pageXML = xmlState;
+								console.log(pageXML == xmlState);
+                //pageXML = xmlState;
             }
 
             $thisQ = $(pageXML).children()[state.questions[state.currentQ]];
@@ -318,7 +319,7 @@ var quizBlock = new function() {
 										XTEnterInteraction(x_currentPage, blocknr , 'multiplechoice', name, correctOptions, correctAnswer, correctFeedback, pageXML.getAttribute("grouping"), null, state.questions[state.currentQ]);
 										XTSetInteractionType(x_currentPage, x_getBlockNr(blockid), 'multiplechoice', weighting, state.questions[state.currentQ]);
 								}
-								XTSetInteractionPageXML(x_currentPage, blocknr, pageXML, state.questions[state.currentQ]);
+								//XTSetInteractionPageXML(x_currentPage, blocknr, pageXML, state.questions[state.currentQ]);
 								state.checked = false;
 								//XTSetInteractionModelState(x_currentPage, blocknr, state, state.questions[state.currentQ]);
 
@@ -486,7 +487,7 @@ var quizBlock = new function() {
         }
 
 
-
+				
         // Track answer
         var result = {
             success: correct,
@@ -541,7 +542,7 @@ var quizBlock = new function() {
             // Continue to next question
             jGetElement(blockid, ".checkBtn").button("disable");
             state.currentQ++;
-            XTSetInteractionModelState(x_currentPage, blocknr, state, 0, true);
+            //XTSetInteractionModelState(x_currentPage, blocknr, state, 0, true);
             if (state.currentQ == state.questions.length) {
                 // last question answered - show results
                 quizBlock.showResults();
@@ -623,7 +624,7 @@ var quizBlock = new function() {
             $textHolder = jGetElement(blockid, ".textHolder");
 
         let state = this.generateQuizModel();
-        x_pushToPageDict(state, "state", blockid);
+        x_pushToPageDict(state, "state", blockid, true);
 
         state.resultsShown = false;
         if (panelWidth == "Full") {
@@ -760,7 +761,8 @@ var quizBlock = new function() {
             .click(function() {
 								const state = x_getPageDict("state", blockid)
                 var blocknr = parseFloat(blockid.split("block").pop()) - 1;
-                var xmlState = XTGetPageXML(x_currentPage, blocknr,state.questions[state.currentQ])
+                //var xmlState = XTGetPageXML(x_currentPage, blocknr,state.questions[state.currentQ])
+                let xmlState = pageXML;
                 $(this).button("disable");
                 jGetElement(blockid, ".feedbackGroup").find('.feedbackBlock').html("");
                 state.currentQ++;

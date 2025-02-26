@@ -61,7 +61,7 @@ var textCorrectionBlock = new function () {
 	};
 
 	this.init = function (blockid) {
-		const state = x_pushToPageDict({}, "state", blockid);
+		const state = x_pushToPageDict({}, "state", blockid, true);
 		let pageXML = x_getBlockXML(blockid);
 		state.hasExited = false
 

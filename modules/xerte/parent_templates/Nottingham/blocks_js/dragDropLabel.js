@@ -86,7 +86,7 @@ var dragDropLabelBlock = new function () {
 
     this.init = function (blockid) {
         let pageXML = x_getBlockXML(blockid);
-				const state = x_pushToPageDict({}, "state", blockid);
+				const state = x_pushToPageDict({}, "state", blockid, true);
         // store strings used to give titles to labels and targets when keyboard is being used (for screen readers)
         state.labelTxt1 = x_getLangInfo(x_languageData.find("interactions").find("draggableItem")[0], "name", "Draggable Item");
         state.labelTxt2 = x_getLangInfo(x_languageData.find("interactions").find("draggableItem")[0], "selected", "Item Selected");
@@ -222,9 +222,9 @@ var dragDropLabelBlock = new function () {
 								let weighting = (pageXML.getAttribute("trackingWeight") != undefined) ? pageXML.getAttribute("trackingWeight") : 1.0;
 								XTEnterInteraction(x_currentPage, x_getBlockNr(blockid), 'match', pageXML.getAttribute("name"), correctOptions, correctAnswer, correctFeedback, pageXML.getAttribute("grouping"), null);
 								XTSetInteractionType(x_currentPage, x_getBlockNr(blockid), 'match', weighting);
-								XTSetLeavePage(x_currentPage, x_getBlockNr(blockid), this.leavePage);
+								//XTSetLeavePage(x_currentPage, x_getBlockNr(blockid), this.leavePage);
 						}
-            XTSetInteractionPageXML(x_currentPage, x_getBlockNr(blockid), pageXML);
+            //XTSetInteractionPageXML(x_currentPage, x_getBlockNr(blockid), pageXML);
             jGetElement(blockid, ".labelHolder .label")
                 .draggable({
                     containment: "#" + blockid + " #x_pageHolder",

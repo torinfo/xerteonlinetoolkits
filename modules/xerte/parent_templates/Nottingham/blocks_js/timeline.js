@@ -122,7 +122,7 @@ var timelineBlock = new function () {
     this.init = function (blockid) {
 				let pageXML = x_getBlockXML(blockid);
 				let state = this.generateModelState();
-				x_pushToPageDict(state, "state", blockid);
+				x_pushToPageDict(state, "state", blockid, true);
         // store strings used to give titles to labels and targets when keyboard is being used (for screen readers)
         state.labelTxt1 = x_getLangInfo(x_languageData.find("interactions").find("draggableItem")[0], "name", "Draggable Item");
         state.labelTxt2 = x_getLangInfo(x_languageData.find("interactions").find("draggableItem")[0], "selected", "Item Selected");
@@ -389,9 +389,9 @@ var timelineBlock = new function () {
             label = pageXML.getAttribute("trackinglabel");
         }
         XTEnterInteraction(x_currentPage, x_getBlockNr(blockid), 'match', label, correctOptions, correctAnswers, correctFeedbacks, pageXML.getAttribute("grouping"), null);
-        XTSetLeavePage(x_currentPage, x_getBlockNr(blockid), this.leavePage);
+        //XTSetLeavePage(x_currentPage, x_getBlockNr(blockid), this.leavePage);
         XTSetInteractionType(x_currentPage, x_getBlockNr(blockid), 'match', weighting);
-        XTSetInteractionPageXML(x_currentPage, x_getBlockNr(blockid), pageXML);
+        //XTSetInteractionPageXML(x_currentPage, x_getBlockNr(blockid), pageXML);
     }
 
 

@@ -144,6 +144,7 @@ function XApiTrackingState() {
             // this.language = "en";
             // this.resume = false;
             // this.finished = jsonObj.finished;
+						/*
             this.interactions = new Array();
             var i=0;
             for (i=0; i<jsonObj.interactions.length; i++)
@@ -153,6 +154,7 @@ function XApiTrackingState() {
                 sit.setVars(jsonSit, restoreXerteState);
                 this.interactions.push(sit);
             }
+						*/
             if (restore) {
                 if (typeof jsonObj.pageHistory != "undefined") {
                     x_pageHistory = jsonObj.pageHistory;
@@ -1941,7 +1943,15 @@ function getStatements(q, one, callback)
     }
 }
 
-var state = new XApiTrackingState();
+var state_obj = new TrackingManager("xapi");
+var state;
+
+if(true){
+		state = new Proxy(state_obj, handler_proxy);
+}else {
+		state = state_obj;
+}
+
 // enable debug for now
 state.debug = true;
 
@@ -2281,7 +2291,7 @@ function XTLogin(login, passwd) {
 
         SaveStatement(statement);
     }
-    // TODO: Compare the login and the password with credentials from the LRS.
+     // TODO: Compare the login and the password with credentials from the LRS.
 
     return true;
 }
@@ -2305,7 +2315,7 @@ function XTStartPage() {
     if (state.mode == 'normal')
     {
         state.doResume();
-        if (state.resume)
+        if (state.resume && typeof state.currentpageid != "undefined")
         {
             var currentid = state.currentpageid;
             state.currentpageid = "";
@@ -2419,80 +2429,22 @@ function XTSetOption(option, value) {
 }
 
 function XTEnterPage(page_nr, page_name, grouping) {
-    var sitp = state.enterPage(page_nr, -1, "page", page_name);
-    this.pageStart = new Date();
-    var id = sitp.getPageId();
-    var description = sitp.getPageDescription();
-
-    if (!surf_mode) {
-        if (typeof grouping != "undefined" && grouping != "" && grouping !=
-            null) {
-            sitp.grouping = grouping;
-        } else {
-            sitp.grouping = "";
-        }
-
-        var statement = {
-            actor: actor,
-            context: {
-                extensions: {
-                    "http://xerte.org.uk/learningObjectLevel" : "page"
-                }
-            },
-            verb: {
-                id: "http://adlnet.gov/expapi/verbs/initialized",
-                display: {
-                    "en": "initialized"
-                }
-            },
-            object: {
-                objectType: "Activity",
-                id: id,
-                definition: {
-                    name: {
-                        "en": description
-                    }
-                }
-
-            },
-            timestamp: this.pageStart
-
-        };
-        statement.object.definition.name[state.language] = description;
-        if (sitp.grouping != "") {
-            var definition = {
-                name: {
-                    'en-US': sitp.grouping,
-                }
-            };
-            definition.name[state.language] = sitp.grouping;
-            statement.context.contextActivities = {
-                    grouping: [{
-                        id: baseUrl() + sitp.grouping.replace(/[\/ ]/g, "_"),
-                        definition: definition,
-                        objectType: "Activity"
-                    }]
-                };
-        }
-        SaveStatement(statement);
-    }
+    var sitp = state.enterPage(page_nr, -1, page_name, grouping); 
+		this.pageStart = sitp.start;
 }
 
 function XTExitPage(page_nr) {
-    var sit = state.findPage(page_nr);
-    if (sit != undefined && sit != null) {
-        state.exitInteraction(page_nr, -1, {
-            score: 0,
-            success: true
-        }, "", sit.score, "");
-    }
+    state.exitPage(page_nr);
 }
 
 function XTSetPageType(page_nr, page_type, nrinteractions, weighting) {
     state.setPageType(page_nr, page_type, nrinteractions, weighting);
-
 }
 
+function XTSetInteractionType(page_nr, ia_nr, page_type, weighting, sub_ia_nr)
+{
+		state.setInteractionType(page_nr, ia_nr, page_type, weighting, sub_ia_nr);
+}
 
 function XThelperConsolidateSegments(videostate) {
     // 1. Sort played segments on start time (first make a copy)
@@ -3136,15 +3088,15 @@ function XTSetPageScoreJSON(page_nr, score, JSONGraph) {
 }
 
 function XTEnterInteraction(page_nr, ia_nr, ia_type, ia_name, correctoptions,
-    correctanswer, feedback, grouping, context) {
+    correctanswer, feedback, grouping, context, sub_ia_nr = 0) {
     state.enterInteraction(page_nr, ia_nr, ia_type, ia_name, correctoptions,
-        correctanswer, feedback, grouping, context);
+        correctanswer, feedback, grouping, context, sub_ia_nr);
 }
 
 function XTExitInteraction(page_nr, ia_nr, result, learneroptions,
-    learneranswers, feedback) {
+    learneranswers, feedback, sub_ia_nr = 0) {
     state.exitInteraction(page_nr, ia_nr, result, learneroptions,
-        learneranswers, feedback);
+        learneranswers, feedback, sub_ia_nr);
 }
 
 function XTGetInteractionScore(page_nr, ia_nr, ia_type, ia_name, full_id,
@@ -3282,6 +3234,16 @@ function XTTerminate() {
         x_pageHistory.splice(x_pageHistory.length - 1, 1);
         state.pageHistory = x_pageHistory;
         state.pagesViewed = x_pagesViewed();
+				state.pageDicts = x_pageDicts;
+				let rawScore = state.getdRawScore();
+				let scaledScore = state.getdScaledScore();
+
+				if(!rawScore){
+						rawScore = 0;
+				}
+				if(!scaledScore){
+						scaledScore = 0;
+				}
 
         // Save completed when a learning object is completed
         if (state.getCompletionStatus() == "completed") {
@@ -3308,8 +3270,8 @@ function XTTerminate() {
                     score: {
                         min: 0.0,
                         max: 100.0,
-                        raw: state.getdRawScore(),
-                        scaled: state.getdScaledScore()
+                        raw: rawScore,
+                        scaled: scaledScore
                     },
                     duration: calcDuration(state.start, new Date()),
                     extensions: {
@@ -3345,8 +3307,8 @@ function XTTerminate() {
                         score: {
                             min: 0.0,
                             max: 100.0,
-                            raw: state.getdRawScore(),
-                            scaled: state.getdScaledScore()
+                            raw: rawScore,
+                            scaled: scaledScore
 
                         },
                         duration: calcDuration(state.start, new Date())
@@ -3380,8 +3342,8 @@ function XTTerminate() {
                         score: {
                             min: 0.0,
                             max: 100.0,
-                            raw: state.getdRawScore(),
-                            scaled: state.getdScaledScore()
+                            raw: rawScore,
+                            scaled: scaledScore
 
                         },
                         duration: calcDuration(state.start, new Date()),
@@ -3415,8 +3377,8 @@ function XTTerminate() {
                     score: {
                         min: 0.0,
                         max: 100.0,
-                        raw: state.getdRawScore(),
-                        scaled: state.getdScaledScore()
+                        raw: rawScore,
+                        scaled: scaledScore
 
                     },
                     duration: calcDuration(state.start, new Date())
@@ -3452,8 +3414,8 @@ function XTTerminate() {
                 score: {
                     min: 0.0,
                     max: 100.0,
-                    raw: state.getdRawScore(),
-                    scaled: state.getdScaledScore()
+                    raw: rawScore,
+                    scaled: scaledScore
                 },
                 extensions: {
                     "http://xerte.org.uk/xapi/trackingstate": JSON.stringify(
@@ -3488,7 +3450,10 @@ function XTTerminate() {
                     });
             }
         }
-    }
+    }else {
+    //if (!state.finished && state.initialised) {
+				console.log("XTTerminate didn't execute because " + (state.finished? "state was already finished ": "") + (state.initialised? "": "state was not initialised"))
+		}
 }
 
 function SaveStatement(statement, async) {
@@ -3637,6 +3602,7 @@ function SaveStatement(statement, async) {
 
 }
 
+/*
 function XTResults(fullcompletion) {
     var completion = 0;
     var nrcompleted = 0;
@@ -3821,4 +3787,213 @@ function XTResults(fullcompletion) {
     //});
 
     return results;
+}
+
+*/
+function XTResults(fullcompletion) {
+
+    var completion = 0;
+    var nrcompleted = 0;
+    var nrvisited = 0;
+    var completed;
+
+
+
+    $.each(state.completedPages, function (i, completed) {
+        // indices not defined will be visited anyway.
+        // In that case 'completed' will be undefined
+        if (completed) {
+            nrcompleted++;
+        }
+        if (typeof(completed) != "undefined") {
+            nrvisited++;
+        }
+    })
+    if (nrcompleted != 0) {
+        if (!fullcompletion) {
+            completion = Math.round((nrcompleted / nrvisited) * 100);
+        }
+        else {
+            completion = Math.round((nrcompleted / state.toCompletePages.length) * 100);
+        }
+    }
+    else {
+        completion = 0;
+    }
+
+    var results = {};
+    results.mode = x_currentPageXML.getAttribute("resultmode");
+
+    var score = 0,
+        nrofquestions = 0,
+        totalWeight = 0,
+        totalDuration = 0;
+    results.interactions = Array();
+
+    for (i = 0; i < state.pageStates.length; i++) {
+
+        if (state.pageStates[i].nrinteractions > 0) {
+            score += state.pageStates[i].score * state.pageStates[i].weighting;
+            var interaction = {};
+            interaction.score = Math.round(state.pageStates[i].score);
+            interaction.title = state.pageStates[i].ia_name;
+            interaction.type = state.pageStates[i].ia_type;
+            interaction.correct = state.pageStates[i].result;
+            interaction.duration = Math.round(state.pageStates[i].duration / 1000);
+            interaction.weighting = state.pageStates[i].weighting;
+            interaction.subinteractions = Array();
+
+
+            var j = 0;
+            for (j; j < state.toCompletePages.length; j++) {
+                var currentPageNr = state.toCompletePages[j];
+                if (currentPageNr == state.pageStates[i].page_nr) {
+                    if (state.completedPages[j]) {
+                        interaction.completed = "true";
+                    }
+                    else if (!state.completedPages[j]) {
+                        interaction.completed = "false";
+                    }
+                    else {
+                        interaction.completed = "unknown";
+                    }
+                }
+            }
+
+            results.interactions[nrofquestions] = interaction;
+            totalDuration += state.pageStates[i].duration;
+            nrofquestions++;
+            
+            totalWeight += state.pageStates[i].weighting;
+
+            function compare( a, b ) {
+                if ( a.ia_nr < b.ia_nr ){
+                    return -1;
+                }
+                if ( a.ia_nr > b.ia_nr ){
+                    return 1;
+                }
+                return 0;
+            }
+
+
+            state.pageStates[i].interactions.sort(compare);
+
+            if(results.mode == "full-results"){
+
+                for (var x = 0; x < state.pageStates[i].interactions.length; x++) {
+                    var subinteraction = {};
+
+                    var learnerAnswer, correctAnswer;
+                    switch (state.pageStates[i].interactions[x].ia_type) {
+                        case "match":
+                            for (var c = 0; c < state.pageStates[i].interactions[x].correctOptions.length; c++) {
+                                var matchSub = {}; //Create a subinteraction here for every match sub instead
+                                correctAnswer = state.pageStates[i].interactions[x].correctOptions[c].source + ' --> ' + state.pageStates[i].interactions[x].correctOptions[c].target;
+                                source = state.pageStates[i].interactions[x].correctOptions[c].source;
+                                if (state.pageStates[i].interactions[x].learnerOptions.length == 0) {
+                                    learnerAnswer = source + ' --> ' + ' ';
+                                }
+                                else {
+                                    for (var d = 0; d < state.pageStates[i].interactions[x].learnerOptions.length; d++) {
+                                        if (source == state.pageStates[i].interactions[x].learnerOptions[d].source) {
+                                            learnerAnswer = source + ' --> ' + state.pageStates[i].interactions[x].learnerOptions[d].target;
+                                            break;
+                                        }
+                                        else {
+                                            learnerAnswer = source + ' --> ' + ' ';
+                                        }
+                                    }
+                                }
+
+                                matchSub.question = state.pageStates[i].interactions[x].ia_name;
+                                matchSub.correct = (learnerAnswer === correctAnswer);
+                                matchSub.learnerAnswer = learnerAnswer;
+                                matchSub.correctAnswer = correctAnswer;
+                                results.interactions[nrofquestions - 1].subinteractions.push(matchSub);
+                            }
+
+                            break;
+                        case "text":
+                            learnerAnswer = state.pageStates[i].interactions[x].learnerAnswers;
+                            correctAnswer = state.pageStates[i].interactions[x].correctAnswers;
+                            break;
+                        case "multiplechoice":
+                            learnerAnswer = state.pageStates[i].interactions[x].learnerAnswers[0] != undefined ? state.pageStates[i].interactions[x].learnerAnswers[0] : "";
+                            for (var j = 1; j < state.pageStates[i].interactions[x].learnerAnswers.length; j++) {
+                                learnerAnswer += "\n" + state.pageStates[i].interactions[x].learnerAnswers[j];
+                            }
+                            correctAnswer = "";
+                            for (var j = 0; j < state.pageStates[i].interactions[x].correctAnswers.length; j++) {
+                                if (correctAnswer.length > 0)
+                                    correctAnswer += "\n";
+                                correctAnswer += state.pageStates[i].interactions[x].correctAnswers[j];
+                            }
+                            break;
+                        case "numeric":
+
+                            learnerAnswer = state.pageStates[i].interactions[x].learnerAnswers;
+                            correctAnswer = "-";  // Not applicable
+                            //TODO: We don't have a good example of an interactivity where the numeric type has a correctAnswer. Currently implemented for the survey page.
+                            break;
+                        case "fill-in":
+                            learnerAnswer = state.pageStates[i].interactions[x].learnerAnswers;
+                            correctAnswer = state.pageStates[i].interactions[x].correctAnswers;
+                            break;
+                    }
+										
+                    if (state.pageStates[i].interactions[x].ia_type != "match" && state.pageStates[i].interactions[x].result != undefined) {
+                        subinteraction.question = state.pageStates[i].interactions[x].ia_name;
+                        subinteraction.correct = state.pageStates[i].interactions[x].result.success;
+                        subinteraction.learnerAnswer = learnerAnswer;
+                        subinteraction.correctAnswer = correctAnswer;
+                        results.interactions[nrofquestions - 1].subinteractions.push(subinteraction);
+                    }
+                }
+
+            }
+        }
+    }
+    
+    results.completion = completion;
+    results.score = score;
+    results.nrofquestions = nrofquestions;
+    results.averageScore = Math.round(state.getdScaledScore() * 10000.0)/100.0;
+    results.totalDuration = Math.round(totalDuration / 1000);
+    results.start = state.start.toLocaleString();
+
+    //$.ajax({
+    //    type: "POST",
+    //    url: window.location.href,
+    //    data: {
+    //        grade: results.averageScore / 100
+    //    }
+    //});
+
+    return results;
+}
+
+function XTSetInteractionPageXML(page_nr, ia_nr, pageXML, ia_sub_nr = 0){
+//    trackingManager.setInteractionPageXML(page_nr, ia_nr, pageXML, ia_sub_nr);
+		console.log("called XTSetInteractionPageXML.", {page_nr, ia_nr, pageXML, ia_sub_nr});
+}
+
+function XTGetPageXML(page_nr, ia_nr, ia_sub_nr = 0){
+//    return trackingManager.getInteractionPageXML(page_nr, ia_nr, ia_sub_nr);
+		console.log("called XTGetPageXML.", {page_nr, ia_nr, ia_sub_nr});
+}
+
+function XTSetLeavePage(page_nr, ia_nr, leavePage, ia_sub_nr = 0){
+//   return trackingManager.setLeavePage(page_nr, ia_nr, ia_sub_nr,leavePage);
+		console.log("called XTSetLeavePage.", {page_nr, ia_nr, leavePage, ia_sub_nr});
+}
+
+function XTSetInteractionModelState(page_nr, ia_nr, modelState, ia_sub_nr = 0, toAll = true){
+//    trackingManager.setInteractionModelState(page_nr, ia_nr, modelState, ia_sub_nr, toAll);
+		console.log("called XTSetInteractionModelState.", {page_nr, ia_nr, modelState, ia_sub_nr, toAll});
+}
+
+function XTGetInteractionModelState(page_nr, ia_nr, ia_sub_nr = 0, ignoreSubId = true){
+//    return trackingManager.getInteractionModelState(page_nr, ia_nr, ia_sub_nr, ignoreSubId);
+		console.log("called XTGetInteractionModelState.", {page_nr, ia_nr, ia_sub_nr, ignoreSubId});
 }

@@ -174,7 +174,7 @@ var topXQBlock = new (function () {
 	this.init = function (blockid) {
 		let pageXML = x_getBlockXML(blockid);
 		let $pageContents = jGetElement(blockid, ".pageContents");
-		const state = x_pushToPageDict({}, "state", blockid);
+		const state = x_pushToPageDict({}, "state", blockid, true);
 
 		jGetElement(blockid, ".result, .mainFeedback, .correctAnswer").hide();
 
@@ -332,12 +332,12 @@ var topXQBlock = new (function () {
 				null,
 				i,
 			);
-			XTSetInteractionPageXML(
-				x_currentPage,
-				x_getBlockNr(blockid),
-				x_getBlockXML(blockid),
-				i,
-			);
+			//XTSetInteractionPageXML(
+			//	x_currentPage,
+			//	x_getBlockNr(blockid),
+			//	x_getBlockXML(blockid),
+			//	i,
+			//);
 			XTSetInteractionType(
 				x_currentPage,
 				x_getBlockNr(blockid),
