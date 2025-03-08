@@ -1,4 +1,4 @@
-function XAPI_InteractionState(id, page_nr, ia_nr, ia_type, ia_name, grouping, context, ia_sub_nr){
+function InteractionState(id, page_nr, ia_nr, ia_type, ia_name, grouping, context, ia_sub_nr){
     this.id = id;
     this.page_nr = page_nr;
     this.ia_nr = ia_nr;

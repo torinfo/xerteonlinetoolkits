@@ -570,7 +570,7 @@ var opinionBlock = new function()
         jGetElement(blockid, ".qHolder").hide();
         jGetElement(blockid, ".checkBtn").hide();
 
-        //XTSetPageScoreJSON(x_currentPage, myScore, JSON.stringify(JSONGraph), pageXML.getAttribute("trackinglabel"));
+        XTSetPageScoreJSON(x_currentPage, myScore, JSON.stringify(JSONGraph), pageXML.getAttribute("trackinglabel"));
         state.checked = true;
     };
 

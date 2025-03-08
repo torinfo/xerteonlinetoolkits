@@ -375,6 +375,7 @@ var dictationBlock = new function () {
 		let pageXML = x_getBlockXML(blockid);
 		// Track the dictation page
 		let weighting = 1.0;
+		debugger;
 		if (pageXML.getAttribute("trackingWeight") != undefined) {
 			weighting = pageXML.getAttribute("trackingWeight");
 		}

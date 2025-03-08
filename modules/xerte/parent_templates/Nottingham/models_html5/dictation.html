@@ -38,6 +38,7 @@
 			//window["categoriesBlock"].pageChanged("block1");
 		}
 		this.leavePage = function () {
+			debugger;
 			XTSetPageScore(x_currentPage, 100);
 			document.dispatchEvent(new Event('leavepage'));
 		};
