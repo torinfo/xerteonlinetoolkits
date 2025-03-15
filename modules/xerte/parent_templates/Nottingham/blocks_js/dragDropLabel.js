@@ -221,7 +221,7 @@ var dragDropLabelBlock = new function () {
 						if(state.firstload){
 								let weighting = (pageXML.getAttribute("trackingWeight") != undefined) ? pageXML.getAttribute("trackingWeight") : 1.0;
 								XTEnterInteraction(x_currentPage, x_getBlockNr(blockid), 'match', pageXML.getAttribute("name"), correctOptions, correctAnswer, correctFeedback, pageXML.getAttribute("grouping"), null);
-								XTSetInteractionType(x_currentPage, x_getBlockNr(blockid), 'match', weighting);
+								XTSetInteractionWeighting(x_currentPage, x_getBlockNr(blockid), weighting);
 								//XTSetLeavePage(x_currentPage, x_getBlockNr(blockid), this.leavePage);
 						}
             //XTSetInteractionPageXML(x_currentPage, x_getBlockNr(blockid), pageXML);

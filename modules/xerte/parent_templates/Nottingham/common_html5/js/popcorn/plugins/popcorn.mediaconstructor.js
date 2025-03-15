@@ -229,7 +229,7 @@ this.resizeEmbededMedia = function($video, {ratio = 16 / 9, width, height}) {
 this.addBasicTracking = function(popcornInstance, videoState) {
 
     // Broadcast initialized verb for loaded video to xAPI.
-    XTVideo(x_currentPage, getTrackingLabel()+videoState.trackinglabel, "", "initialized", videoState, x_currentPageXML.getAttribute("grouping"));
+    XTVideo(x_currentPage, getTrackingLabel()+videoState.trackinglabel, "initialized", videoState, x_currentPageXML.getAttribute("grouping"));
 
     // Add callbacks on events for tracking.
     popcornInstance.on( "timeupdate", function() {
@@ -271,7 +271,7 @@ this.addTrackingOnPlay = function(popcornInstance, videoState){
     videoState.segment = {start: time, end: -1};
     videoState.duration = popcornInstance.duration();
     videoState.time = time;
-    XTVideo(x_currentPage, getTrackingLabel()+videoState.trackinglabel, "", "played", videoState, x_currentPageXML.getAttribute("grouping"));
+    XTVideo(x_currentPage, getTrackingLabel()+videoState.trackinglabel, "played", videoState, x_currentPageXML.getAttribute("grouping"));
     return videoState;
 }
 
@@ -282,7 +282,7 @@ this.addTrackingOnPause = function(popcornInstance, videoState){
     addSegment(videoState);
     videoState.segment = {start: time, end: -1};
     videoState.duration = popcornInstance.duration();
-    XTVideo(x_currentPage, getTrackingLabel()+videoState.trackinglabel, "", "paused", videoState, x_currentPageXML.getAttribute("grouping"))
+    XTVideo(x_currentPage, getTrackingLabel()+videoState.trackinglabel, "paused", videoState, x_currentPageXML.getAttribute("grouping"))
     return videoState;
 }
 
@@ -293,7 +293,7 @@ this.addTrackingOnSeeked = function(popcornInstance, videoState){
     addSegment(videoState);
     videoState.segment = {start: time, end: -1};
     videoState.duration = popcornInstance.duration();
-    XTVideo(x_currentPage, getTrackingLabel()+videoState.trackinglabel, "", "seeked", videoState, x_currentPageXML.getAttribute("grouping"));
+    XTVideo(x_currentPage, getTrackingLabel()+videoState.trackinglabel, "seeked", videoState, x_currentPageXML.getAttribute("grouping"));
     return videoState;
 }
 
@@ -304,7 +304,7 @@ this.addTrackingOnEnded = function(popcornInstance, videoState){
     videoState.segment.end = time;
     addSegment(videoState);
     videoState.segment = {start: time, end: -1};
-    XTVideo(x_currentPage, getTrackingLabel()+videoState.trackinglabel+"/"+videoState.trackinglabel, "", "paused", videoState, x_currentPageXML.getAttribute("grouping"));
+    XTVideo(x_currentPage, getTrackingLabel()+videoState.trackinglabel+"/"+videoState.trackinglabel, "paused", videoState, x_currentPageXML.getAttribute("grouping"));
     return videoState;
 }
 
@@ -327,7 +327,7 @@ this.addTrackingOnLeavePage = function(popcornInstance, videoState) {
         XTSetPageScore(x_currentPage, progress);
     }
     // Send the exit verb to XAPI
-    XTVideo(x_currentPage, getTrackingLabel()+videoState.trackinglabel, "", "exit", videoState, x_currentPageXML.getAttribute("grouping"));
+    XTVideo(x_currentPage, getTrackingLabel()+videoState.trackinglabel, "exit", videoState, x_currentPageXML.getAttribute("grouping"));
 
     if (videoState.mediaData.doNotCloseTracking !== undefined && videoState.mediaData.doNotCloseTracking === true) {
         // Destroy this instance

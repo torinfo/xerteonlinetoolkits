@@ -129,7 +129,7 @@ var textCorrectionBlock = new function () {
 		}
 		var label = x_GetTrackingTextFromHTML(pageXML.getAttribute("introduction"), "");
 		XTEnterInteraction(x_currentPage, x_getBlockNr(blockid), "text", label, [state.answer], state.answer);
-		XTSetInteractionType(x_currentPage, x_getBlockNr(blockid), "text", weighting);
+		XTSetInteractionWeighting(x_currentPage, x_getBlockNr(blockid), weighting);
 
 		//Add aria-label to answer box
 		var answerFieldLabel = pageXML.getAttribute("answerLabel");

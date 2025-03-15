@@ -338,10 +338,9 @@ var topXQBlock = new (function () {
 			//	x_getBlockXML(blockid),
 			//	i,
 			//);
-			XTSetInteractionType(
+			XTSetInteractionWeighting(
 				x_currentPage,
 				x_getBlockNr(blockid),
-				"fill-in",
 				weighting,
 				i,
 			);

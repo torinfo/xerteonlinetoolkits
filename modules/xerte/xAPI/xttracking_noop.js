@@ -168,7 +168,7 @@ function XTSetPageType(page_nr, page_type, nrinteractions, weighting)
 	trackingManager.setPageType(page_nr, page_type, nrinteractions, weighting);
 }
 
-function XTSetInteractionType(page_nr, ia_nr, page_type, weighting, sub_ia_nr)
+function XTSetInteractionWeighting(page_nr, ia_nr, page_type, weighting, sub_ia_nr)
 {
     trackingManager.setInteractionType(page_nr, ia_nr, page_type, weighting, sub_ia_nr);
 }

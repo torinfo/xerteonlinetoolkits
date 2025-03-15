@@ -390,7 +390,7 @@ var timelineBlock = new function () {
         }
         XTEnterInteraction(x_currentPage, x_getBlockNr(blockid), 'match', label, correctOptions, correctAnswers, correctFeedbacks, pageXML.getAttribute("grouping"), null);
         //XTSetLeavePage(x_currentPage, x_getBlockNr(blockid), this.leavePage);
-        XTSetInteractionType(x_currentPage, x_getBlockNr(blockid), 'match', weighting);
+        XTSetInteractionWeighting(x_currentPage, x_getBlockNr(blockid), weighting);
         //XTSetInteractionPageXML(x_currentPage, x_getBlockNr(blockid), pageXML);
     }
 

@@ -102,7 +102,7 @@ var mcqBlock = new function() {
             label = x_GetTrackingTextFromHTML(pageXML.getAttribute("prompt"), label);
         }
         XTEnterInteraction(x_currentPage, blocknr, 'multiplechoice', label, correctOptions, correctAnswer, correctFeedback, pageXML.getAttribute("grouping"), null);
-        XTSetInteractionType(x_currentPage, blocknr, 'multiplechoice', weighting);
+        XTSetInteractionWeighting(x_currentPage, blocknr, weighting);
         //XTSetInteractionPageXML(x_currentPage, blocknr, pageXML);
     }
 

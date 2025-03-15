@@ -98,7 +98,7 @@ var textHighlightBlock = new function () {
 		//XTSetPageType(x_currentPage, 'numeric', 1, weighting);
 		var suggestedTxt = $('<div>').html(pageXML.getAttribute("suggestedText")).text();
 		XTEnterInteraction(x_currentPage, x_getBlockNr(blockid), 'text', label, [], suggestedTxt, [], pageXML.getAttribute("grouping"));
-		XTSetInteractionType(x_currentPage, x_getBlockNr(blockid), 'text', weighting);
+		XTSetInteractionWeighting(x_currentPage, x_getBlockNr(blockid), weighting);
 		//XTSetLeavePage(x_currentPage, x_getBlockNr(blockid), this.leavePage);
 
 		// get info about downloadable document if download is allowed

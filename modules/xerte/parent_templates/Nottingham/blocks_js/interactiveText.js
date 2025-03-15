@@ -1249,7 +1249,7 @@ var interactiveTextBlock = new function () {
 			if (pageXML.getAttribute("trackingWeight") != undefined) {
 				weighting = pageXML.getAttribute("trackingWeight");
 			}
-			XTSetInteractionType(x_currentPage, x_getBlockNr(blockid), "multiplechoice", weighting, group);
+		XTSetInteractionWeighting(x_currentPage, x_getBlockNr(blockid), weighting);
 			//XTSetLeavePage(x_currentPage, x_getBlockNr(blockid), interactiveTextBlock.leavePage);
 			XTExitInteraction(x_currentPage, x_getBlockNr(blockid), result, l_options[group], l_answers[group], [], group);
 		}
@@ -1529,7 +1529,7 @@ var interactiveTextBlock = new function () {
 		if (pageXML.getAttribute("trackingWeight") != undefined) {
 			weighting = pageXML.getAttribute("trackingWeight");
 		}
-		XTSetInteractionType(x_currentPage, x_getBlockNr(blockid), "multiplechoice", weighting, mcqCurrentQ);
+	XTSetInteractionWeighting(x_currentPage, x_getBlockNr(blockid), weighting);
 		//XTSetLeavePage(x_currentPage, x_getBlockNr(blockid), interactiveTextBlock.leavePage);
 		var $optionHolder = jGetElement(blockid, ".questionHolder .optionHolder")
 			.html('<div class="optionGroup"><input type="radio" name="option" /><label class="optionTxt"></label></div>')
@@ -1572,9 +1572,9 @@ var interactiveTextBlock = new function () {
 		var numQs = pageXML.getAttribute("mcqNumQs") == undefined || pageXML.getAttribute("mcqNumQs") == "*" ? mcqAnswers.length : isNaN(pageXML.getAttribute("mcqNumQs")) ? mcqAnswers.length : Number(pageXML.getAttribute("mcqNumQs")),
 			weighting = (pageXML.getAttribute("trackingWeight") != undefined) ? pageXML.getAttribute("trackingWeight") : 1.0;
 		//XTSetPageType(x_currentPage, 'numeric', numQs, weighting);
-		//XTSetInteractionType(x_currentPage, x_getBlockNr(blockid), "multiplechoice", weighting, 0);
+		//XTSetInteractionWeighting(x_currentPage, x_getBlockNr(blockid), weighting);
 		for(let i = 1; i < numQs;i++){
-				//XTSetInteractionType(x_currentPage, x_getBlockNr(blockid), "multiplechoice", weighting, i);
+				//XTSetInteractionWeighting(x_currentPage, x_getBlockNr(blockid), weighting);
 		}
 	};
 

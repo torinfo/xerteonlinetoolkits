@@ -1248,7 +1248,7 @@ var gridBlock = new function () {
 			label = pageXML.getAttribute("trackinglabel");
 		}
 		XTEnterInteraction(x_currentPage, x_getBlockNr(blockid), 'match', label, correctOptions, correctAnswer, correctFeedback, pageXML.getAttribute("grouping"));
-		XTSetInteractionType(x_currentPage, x_getBlockNr(blockid), "match", weighting);
+		XTSetInteractionWeighting(x_currentPage, x_getBlockNr(blockid), weighting);
 		/*
 		for(var i = 0; i < correctOptions.length; i++)
 		{

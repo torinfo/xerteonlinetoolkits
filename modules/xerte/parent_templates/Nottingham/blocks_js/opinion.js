@@ -400,7 +400,7 @@ var opinionBlock = new function()
                 }
                 var weighting =  pageXML.getAttribute("trackingWeight") != undefined ? pageXML.getAttribute("trackingWeight") : 1.0;
                 XTEnterInteraction(x_currentPage, x_getBlockNr(blockid), 'numeric', name, correctOptions, correctAnswer, null, pageXML.getAttribute("grouping"), null, questions[currentQuestion]);
-                XTSetInteractionType(x_currentPage, x_getBlockNr(blockid), 'numeric', weighting, questions[currentQuestion]);
+                XTSetInteractionWeighting(x_currentPage, x_getBlockNr(blockid), weighting, questions[currentQuestion]);
                 //XTSetInteractionPageXML(x_currentPage, x_getBlockNr(blockid), questions[currentQuestion]);
                 state.checked = false;
             }

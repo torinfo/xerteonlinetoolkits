@@ -38,7 +38,7 @@ function TrackingManager(tracking_type) {
 	this.getMinScore = getMinScore;
 	this.getMaxScore = getMaxScore;
 	this.setPageType = setPageType;
-	this.setInteractionType = setInteractionType;
+	this.setInteractionWeighting = setInteractionWeighting;
 	this.setPageScore = setPageScore;
 	this.setPageScoreJSON = setPageScoreJSON;
 	this.setInteractionPageXML = setInteractionPageXML;
@@ -56,145 +56,159 @@ function TrackingManager(tracking_type) {
 	this.setLeavePage = setLeavePage;
 	this.setInteractionModelState = setInteractionModelState;
 	this.getInteractionModelState = getInteractionModelState;
+	this.video = video;
 
 	this.resumedSessions = new Array();
 
 	function initialise(category) {
-			if(this.tracking_type == "xapi"){
+			if(this.tracking_type == "xapi") {
 					initialise_xapi(category);
 			}
 	}
 
 	function terminate() {
-			if(this.tracking_type == "xapi"){
+			if(this.tracking_type == "xapi") {
 					terminate_xapi();
 			}
 	}
 
 	function canResume() {
-		if (actor.objectType === 'Agent') {
-			// Try to fetch previous exit statement
-			var q = {};
-			q['agent'] = JSON.stringify(actor);
-			q['verb'] = ADL.verbs.exited.id;
-			q['activity'] = baseUrl() + state.templateId;
-			var suspend_str = "";
-			var result = getStatements(q, true);
-			if (result.length > 0
-				&& result[0].result != undefined
-				&& result[0].result.extensions != undefined
-				&& result[0].result.extensions["http://xerte.org.uk/xapi/trackingstate"] != undefined) {
-				suspend_str = result[0].result.extensions["http://xerte.org.uk/xapi/trackingstate"];
-			}
-			if (suspend_str.length > 0) {
-				var tmp = new XApiTrackingState();
-				tmp.setVars(suspend_str, false);
-				if (tmp.getCompletionStatus() != 'completed') {
-					return { canResume: true, date: result[0].timestamp };
+		if(this.tracking_type == "xapi") {
+				if (actor.objectType === 'Agent') {
+						// Try to fetch previous exit statement
+						var q = {};
+						q['agent'] = JSON.stringify(actor);
+						q['verb'] = ADL.verbs.exited.id;
+						q['activity'] = baseUrl() + state.templateId;
+						var suspend_str = "";
+						var result = getStatements(q, true);
+						if (result.length > 0
+								&& result[0].result != undefined
+								&& result[0].result.extensions != undefined
+								&& result[0].result.extensions["http://xerte.org.uk/xapi/trackingstate"] != undefined) {
+								suspend_str = result[0].result.extensions["http://xerte.org.uk/xapi/trackingstate"];
+						}
+						if (suspend_str.length > 0) {
+								var tmp = new InteractionState();
+								tmp.setVars(suspend_str, false);
+								if (tmp.getCompletionStatus() != 'completed') {
+										return { canResume: true, date: result[0].timestamp };
+								}
+								else {
+										return { canResume: false, date: "" };
+								}
+						}
+						else {
+								return { canResume: false, date: "" };
+						}
 				}
 				else {
-					return { canResume: false, date: "" };
+						return { canResume: false, date: "" };
 				}
-			}
-			else {
-				return { canResume: false, date: "" };
-			}
-		}
-		else {
-			return { canResume: false, date: "" };
+		}else {
+				console.log("\"canResume\" function is only supported for xapi. current tracking type: ", this.tracking_type);
+				return { canResume: false,  date: "" };
 		}
 	}
 
 	function doResume() {
-		if (this.resume) {
-			if (actor.objectType === 'Agent') {
-				// Try to fetch previous exit statement
-				var q = {};
-				q['agent'] = JSON.stringify(actor);
-				q['verb'] = ADL.verbs.exited.id;
-				q['activity'] = baseUrl() + state.templateId;
-				var suspend_str = "";
-				var result = getStatements(q, true);
-				if (result.length > 0
-					&& result[0].result != undefined
-					&& result[0].result.extensions != undefined
-					&& result[0].result.extensions["http://xerte.org.uk/xapi/trackingstate"] != undefined) {
-					var suspend_str = result[0].result.extensions["http://xerte.org.uk/xapi/trackingstate"];
-				}
-				if (suspend_str.length > 0) {
-					var tmp = new TrackingManager();
-					tmp.setVars(suspend_str, false);
-					if (tmp.getCompletionStatus() != 'completed') {
-						this.setVars(suspend_str);
+		if(this.tracking_type == "xapi") {
+				if (this.resume) {
+					if (actor.objectType === 'Agent') {
+							// Try to fetch previous exit statement
+							var q = {};
+							q['agent'] = JSON.stringify(actor);
+							q['verb'] = ADL.verbs.exited.id;
+							q['activity'] = baseUrl() + state.templateId;
+							var suspend_str = "";
+							var result = getStatements(q, true);
+							if (result.length > 0
+									&& result[0].result != undefined
+									&& result[0].result.extensions != undefined
+									&& result[0].result.extensions["http://xerte.org.uk/xapi/trackingstate"] != undefined) {
+									var suspend_str = result[0].result.extensions["http://xerte.org.uk/xapi/trackingstate"];
+							}
+							if (suspend_str.length > 0) {
+									var tmp = new TrackingManager();
+									tmp.setVars(suspend_str, false);
+									if (tmp.getCompletionStatus() != 'completed') {
+											this.setVars(suspend_str);
+									}
+							}
 					}
 				}
-			}
+		} else {
+			console.log("\"doResume\" function is only supported for xapi. current tracking type: ", this.tracking_type);
 		}
 	}
 
 	function setVars(jsonStr, restoreXerteState) {
-		var restore = true;
-		if (restoreXerteState != undefined) {
-			restore = restoreXerteState;
-		}
-		if (jsonStr.length > 0) {
-			var jsonObj = JSON.parse(jsonStr);
-			// Do NOT touch scormmode, don't touch start and don't touch finished
-			this.currentid = jsonObj.currentid;
-			this.currentpageid = jsonObj.currentpageid;
-			this.trackingmode = jsonObj.trackingmode;
-			this.forcetrackingmode = jsonObj.forcetrackingmode;
-			this.scoremode = jsonObj.scoremode;
-			this.nrpages = jsonObj.nrpages;
-			this.toCompletePages = jsonObj.toCompletePages;
-			this.completedPages = jsonObj.completedPages;
-			//            this.start = new Date(jsonObj.start);
-			this.lo_completed = jsonObj.lo_completed;
-			this.lo_type = jsonObj.lo_type;
-			this.lo_passed = jsonObj.lo_passed;
-			this.page_timeout = jsonObj.page_timeout;
-			this.templateId = jsonObj.templateId;
-			this.templateName = jsonObj.templateName;
-			this.debug = jsonObj.debug;
-			// this.sessionId = "";
-			this.category = jsonObj.category;
-			// this.language = "en";
-			// this.resume = false;
-			// this.finished = jsonObj.finished;
-			//this.pageStates = jsonObj.pageStates;
-			this.pageStates = new Array();
-			for (let i = 0; i < jsonObj.pageStates.length; i++) {
-				let jsonPage = jsonObj.pageStates[i];
-				let page = new pageState(jsonPage.id, jsonPage.page_nr, jsonPage.ia_type, jsonPage.ia_name);
-				page.setVars(jsonPage);
-				this.pageStates.push(page);
-			}
-			/*
-this.interactions = new Array();
-var i=0;
-for (i=0; i<jsonObj.interactions.length; i++)
-{
-	var jsonSit = jsonObj.interactions[i];
-	var sit = new XApiInteractionTracking(jsonSit.page_nr, jsonSit.ia_nr, jsonSit.ia_type, jsonSit.ia_name);
-	sit.setVars(jsonSit, restoreXerteState);
-	this.interactions.push(sit);
-}
-			*/
-			if (restore) {
-				if (typeof jsonObj.pageHistory != "undefined") {
-					x_pageHistory = jsonObj.pageHistory;
+		if(this.tracking_type == "xapi") {
+				var restore = true;
+				if (restoreXerteState != undefined) {
+						restore = restoreXerteState;
 				}
-				if (typeof jsonObj.pagesViewed != "undefined") {
-					x_restorePagesViewed(jsonObj.pagesViewed);
+				if (jsonStr.length > 0) {
+						var jsonObj = JSON.parse(jsonStr);
+						// Do NOT touch scormmode, don't touch start and don't touch finished
+						this.currentid = jsonObj.currentid;
+						this.currentpageid = jsonObj.currentpageid;
+						this.trackingmode = jsonObj.trackingmode;
+						this.forcetrackingmode = jsonObj.forcetrackingmode;
+						this.scoremode = jsonObj.scoremode;
+						this.nrpages = jsonObj.nrpages;
+						this.toCompletePages = jsonObj.toCompletePages;
+						this.completedPages = jsonObj.completedPages;
+						//            this.start = new Date(jsonObj.start);
+						this.lo_completed = jsonObj.lo_completed;
+						this.lo_type = jsonObj.lo_type;
+						this.lo_passed = jsonObj.lo_passed;
+						this.page_timeout = jsonObj.page_timeout;
+						this.templateId = jsonObj.templateId;
+						this.templateName = jsonObj.templateName;
+						this.debug = jsonObj.debug;
+						// this.sessionId = "";
+						this.category = jsonObj.category;
+						// this.language = "en";
+						// this.resume = false;
+						// this.finished = jsonObj.finished;
+						//this.pageStates = jsonObj.pageStates;
+						this.pageStates = new Array();
+						for (let i = 0; i < jsonObj.pageStates.length; i++) {
+								let jsonPage = jsonObj.pageStates[i];
+								let page = new pageState(jsonPage.id, jsonPage.page_nr, jsonPage.ia_type, jsonPage.ia_name);
+								page.setVars(jsonPage);
+								this.pageStates.push(page);
+						}
+						/*
+							this.interactions = new Array();
+							var i=0;
+							for (i=0; i<jsonObj.interactions.length; i++)
+							{
+							var jsonSit = jsonObj.interactions[i];
+							var sit = new XApiInteractionTracking(jsonSit.page_nr, jsonSit.ia_nr, jsonSit.ia_type, jsonSit.ia_name);
+							sit.setVars(jsonSit, restoreXerteState);
+							this.interactions.push(sit);
+							}
+						*/
+						if (restore) {
+								if (typeof jsonObj.pageHistory != "undefined") {
+										x_pageHistory = jsonObj.pageHistory;
+								}
+								if (typeof jsonObj.pagesViewed != "undefined") {
+										x_restorePagesViewed(jsonObj.pagesViewed);
+								}
+								if (typeof jsonObj.resumedSessions != "undefined") {
+										this.resumedSessions = jsonObj.resumedSessions;
+								}
+								if (typeof jsonObj.pageDicts != "undefined") {
+										x_pageDicts = jsonObj.pageDicts;
+								}
+								this.resumedSessions.push(jsonObj.sessionId);
+						}
 				}
-				if (typeof jsonObj.resumedSessions != "undefined") {
-					this.resumedSessions = jsonObj.resumedSessions;
-				}
-				if (typeof jsonObj.pageDicts != "undefined") {
-					x_pageDicts = jsonObj.pageDicts;
-				}
-				this.resumedSessions.push(jsonObj.sessionId);
-			}
+		} else {
+			console.log("\"setVars\" function is only supported for xapi. current tracking type: ", this.tracking_type);
 		}
 	}
 
@@ -479,12 +493,9 @@ for (i=0; i<jsonObj.interactions.length; i++)
 	}
 	// TODO: gebruik beide: setpagetype en interaction? het gaat nu mis omdat ia_type van de page niet t zelfde is als interaction ia_type.
 	// wsl moet op multinav altijd een numeric type
-	function setInteractionType(page_nr, ia_nr, page_type, weighting, sub_ia_nr = 0) {
-		;
+	function setInteractionWeighting(page_nr, ia_nr, weighting, sub_ia_nr = 0) {
 		var sit = this.findPage(page_nr);
 		if (sit != null) {
-			sit.ia_type = page_type;
-
 			sit.nrinteractions = sit.nrinteractions + 1;
 			sit.weighting += parseFloat(weighting);
 		}
@@ -492,7 +503,6 @@ for (i=0; i<jsonObj.interactions.length; i++)
 		var int = this.findInteraction(page_nr, ia_nr, sub_ia_nr);
 		if (int != null) {
 			int.weighting = parseFloat(weighting);
-			int.ia_type = page_type;
 		}
 	}
 
@@ -1080,6 +1090,12 @@ for (i=0; i<jsonObj.interactions.length; i++)
 			interaction.leavePage = leavepage;
 		}
 	}
+
+	function video(page_nr, name, verb, videostate, set_grouping) {
+			if(this.tracking_type == "xapi") {
+					video_xapi(page_nr, name, verb, videostate, set_grouping);
+			}
+	}
 }
 
 function initialise_xapi(category){
@@ -1615,4 +1631,390 @@ function terminate_xapi(){
 		//if (!state.finished && state.initialised) {
 		console.log("XTTerminate didn't execute because " + (state.finished ? "state was already finished " : "") + (state.initialised ? "" : "state was not initialised"))
 	}
+}
+
+function video_xapi(page_nr, name, verb, videostate, set_grouping) {
+	var id = baseUrl() + state.templateId + "/" + page_nr + "/video";
+	var pagename = "Page " + page_nr;
+	if (name != null && name != "") {
+		id = baseUrl() + state.templateId + "/" + name.replace(/[\/ ]/g, "_") + "/video";
+		pagename = name;
+	}
+
+	var grouping = "";
+	if (typeof set_grouping != "undefined" && set_grouping != "" && set_grouping !=
+		null) {
+		grouping = set_grouping;
+	}
+	if (grouping != "") {
+		var definition = {
+			name: {
+				'en-US': grouping,
+			}
+		};
+		definition.name[state.language] = grouping;
+		statementgrouping = {
+			grouping: [{
+				id: baseUrl() + grouping.replace(/[\/ ]/g, "_"),
+				definition: definition,
+				objectType: "Activity"
+			}]
+		};
+	}
+
+	switch (verb) {
+
+		case "initialized":
+			state.videostart = new Date();
+			var statement = {
+				"actor": actor,
+				"verb": {
+					"id": "http://adlnet.gov/expapi/verbs/initialized",
+					"display": {
+						"en-US": "initialized"
+					}
+				},
+				"object": {
+					"id": id,
+					"definition": {
+						"name": {
+							"en-US": "Video of " + pagename
+						},
+						"description": {
+							"en-US": "Watching video on " + pagename
+						},
+						"type": "https://w3id.org/xapi/video/activity-type/video"
+					},
+					"objectType": "Activity"
+				},
+				"context": {
+					"contextActivities": {
+						"category": [{
+							"id": "https://w3id.org/xapi/video"
+						}]
+					},
+					"extensions": {
+						"http://xerte.org.uk/learningObjectLevel": "video",
+						"https://w3id.org/xapi/video/extensions/session-id": state.sessionId
+					}
+				}
+			};
+			statement.object.definition.name[state.language] = pagename;
+			if (grouping != "") {
+				statement.context.contextActivities = statementgrouping;
+			}
+			SaveStatement(statement);
+			break;
+		case "played":
+			var statement = {
+				"actor": actor,
+				"verb": {
+					"id": "https://w3id.org/xapi/video/verbs/played",
+					"display": {
+						"en-US": "played"
+					}
+				},
+				"object": {
+					"id": id,
+					"definition": {
+						"name": {
+							"en-US": "Video of " + pagename
+						},
+						"description": {
+							"en-US": "Watching video on " + pagename
+						},
+						"type": "https://w3id.org/xapi/video/activity-type/video"
+					},
+					"objectType": "Activity"
+				},
+				"result": {
+					"extensions": {
+						"https://w3id.org/xapi/video/extensions/time": videostate.time
+					},
+					"duration": calcDuration(state.videostart, new Date())
+				},
+				"context": {
+					"contextActivities": {
+						"category": [{
+							"id": "https://w3id.org/xapi/video"
+						}]
+					},
+					"extensions": {
+						"http://xerte.org.uk/learningObjectLevel": "video",
+						"https://w3id.org/xapi/video/extensions/session-id": state.sessionId,
+						"https://w3id.org/xapi/video/extensions/length": Math.round(videostate.duration)
+					}
+				}
+			};
+			statement.object.definition.name[state.language] = pagename;
+			if (grouping != "") {
+				statement.context.contextActivities = statementgrouping;
+			}
+			SaveStatement(statement);
+			break;
+		case "paused":
+			var played_segments = "";
+			for (var i = 0; i < videostate.segments.length; i++) {
+				if (i > 0) {
+					played_segments += "[,]"
+				}
+				played_segments += videostate.segments[i].start + "[.]" + videostate.segments[i].end;
+			}
+			var statement = {
+				"actor": actor,
+				"verb": {
+					"id": "https://w3id.org/xapi/video/verbs/paused",
+					"display": {
+						"en-US": "paused"
+					}
+				},
+				"object": {
+					"id": id,
+					"definition": {
+						"name": {
+							"en-US": "Video of " + pagename
+						},
+						"description": {
+							"en-US": "Watching video on " + pagename
+						},
+						"type": "https://w3id.org/xapi/video/activity-type/video"
+					},
+					"objectType": "Activity"
+				},
+				"result": {
+					"extensions": {
+						"https://w3id.org/xapi/video/extensions/time": videostate.time,
+						"https://w3id.org/xapi/video/extensions/progress": XThelperDetermineProgress(videostate),
+						"https://w3id.org/xapi/video/extensions/played-segments": played_segments
+					},
+					"duration": calcDuration(state.videostart, new Date())
+				},
+				"context": {
+					"contextActivities": {
+						"category": [{
+							"id": "https://w3id.org/xapi/video"
+						}]
+					},
+					"extensions": {
+						"http://xerte.org.uk/learningObjectLevel": "video",
+						"https://w3id.org/xapi/video/extensions/session-id": state.sessionId,
+						"https://w3id.org/xapi/video/extensions/length": Math.round(videostate.duration)
+					}
+				}
+			};
+			statement.object.definition.name[state.language] = pagename;
+			if (grouping != "") {
+				statement.context.contextActivities = statementgrouping;
+			}
+			SaveStatement(statement);
+			break;
+		case "seeked":
+			var statement = {
+				"actor": actor,
+				"verb": {
+					"id": "https://w3id.org/xapi/video/verbs/seeked",
+					"display": {
+						"en-US": "seeked"
+					}
+				},
+				"object": {
+					"id": id,
+					"definition": {
+						"name": {
+							"en-US": "Video of " + pagename
+						},
+						"description": {
+							"en-US": "Watching video on " + pagename
+						},
+						"type": "https://w3id.org/xapi/video/activity-type/video"
+					},
+					"objectType": "Activity"
+				},
+				"result": {
+					"extensions": {
+						"https://w3id.org/xapi/video/extensions/time-from": videostate.prevTime,
+						"https://w3id.org/xapi/video/extensions/time-to": videostate.time
+					},
+					"duration": calcDuration(state.videostart, new Date())
+				},
+				"context": {
+					"contextActivities": {
+						"category": [{
+							"id": "https://w3id.org/xapi/video"
+						}]
+					},
+					"extensions": {
+						"http://xerte.org.uk/learningObjectLevel": "video",
+						"https://w3id.org/xapi/video/extensions/session-id": state.sessionId,
+						"https://w3id.org/xapi/video/extensions/length": Math.round(videostate.duration)
+					}
+				}
+			};
+			statement.object.definition.name[state.language] = pagename;
+			if (grouping != "") {
+				statement.context.contextActivities = statementgrouping;
+			}
+			SaveStatement(statement);
+			break;
+		case "interacted":
+			break;
+		case "exit": // Not really the verb. will send termintaed or completed depending on state
+			var played_segments = "";
+			for (var i = 0; i < videostate.segments.length; i++) {
+				if (i > 0) {
+					played_segments += "[,]"
+				}
+				played_segments += videostate.segments[i].start + "[.]" + videostate.segments[i].end;
+			}
+			var progress = XThelperDetermineProgress(videostate);
+			// 3. Determine whther to use completed or terminated
+			if (progress >= 99.9) {
+				// Use completed
+				var statement = {
+					"actor": actor,
+					"verb": {
+						"id": "http://adlnet.gov/expapi/verbs/completed",
+						"display": {
+							"en-US": "completed"
+						}
+					},
+					"object": {
+						"id": id,
+						"definition": {
+							"name": {
+								"en-US": "Video of " + pagename
+							},
+							"description": {
+								"en-US": "Watching video on " + pagename
+							},
+							"type": "https://w3id.org/xapi/video/activity-type/video"
+						},
+						"objectType": "Activity"
+					},
+					"result": {
+						"extensions": {
+							"https://w3id.org/xapi/video/extensions/time": videostate.time,
+							"https://w3id.org/xapi/video/extensions/progress": progress,
+							"https://w3id.org/xapi/video/extensions/played-segments": played_segments
+						},
+						"completion": true,
+						"duration": calcDuration(state.videostart, new Date())
+					},
+					"context": {
+						"contextActivities": {
+							"category": [{
+								"id": "https://w3id.org/xapi/video"
+							}]
+						},
+						"extensions": {
+							"http://xerte.org.uk/learningObjectLevel": "video",
+							"https://w3id.org/xapi/video/extensions/session-id": state.sessionId,
+							"https://w3id.org/xapi/video/extensions/length": Math.round(videostate.duration)
+						}
+					}
+				};
+				statement.object.definition.name[state.language] = pagename;
+			} else {
+				// use terminated, so first send paused as according to standards (if not already sent)
+				if (state.prevVerb != "paused") {
+					var statement = {
+						"actor": actor,
+						"verb": {
+							"id": "https://w3id.org/xapi/video/verbs/paused",
+							"display": {
+								"en-US": "paused"
+							}
+						},
+						"object": {
+							"id": id,
+							"definition": {
+								"name": {
+									"en-US": "Video of " + pagename
+								},
+								"description": {
+									"en-US": "Watching video on " + pagename
+								},
+								"type": "https://w3id.org/xapi/video/activity-type/video"
+							},
+							"objectType": "Activity"
+						},
+						"result": {
+							"extensions": {
+								"https://w3id.org/xapi/video/extensions/time": videostate.time,
+								"https://w3id.org/xapi/video/extensions/progress": XThelperDetermineProgress(videostate),
+								"https://w3id.org/xapi/video/extensions/played-segments": played_segments
+							},
+							"duration": calcDuration(state.videostart, new Date())
+						},
+						"context": {
+							"contextActivities": {
+								"category": [{
+									"id": "https://w3id.org/xapi/video"
+								}]
+							},
+							"extensions": {
+								"http://xerte.org.uk/learningObjectLevel": "video",
+								"https://w3id.org/xapi/video/extensions/session-id": state.sessionId,
+								"https://w3id.org/xapi/video/extensions/length": Math.round(videostate.duration)
+							}
+						}
+					};
+					statement.object.definition.name[state.language] = pagename;
+					if (grouping != "") {
+						statement.context.contextActivities = statementgrouping;
+					}
+					SaveStatement(statement);
+				}
+				var statement = {
+					"actor": actor,
+					"verb": {
+						"id": "http://adlnet.gov/expapi/verbs/terminated",
+						"display": {
+							"en-US": "terminated"
+						}
+					},
+					"object": {
+						"id": id,
+						"definition": {
+							"name": {
+								"en-US": "Video of " + pagename
+							},
+							"description": {
+								"en-US": "Watching video on " + pagename
+							},
+							"type": "https://w3id.org/xapi/video/activity-type/video"
+						},
+						"objectType": "Activity"
+					},
+					"result": {
+						"extensions": {
+							"https://w3id.org/xapi/video/extensions/time": videostate.time,
+							"https://w3id.org/xapi/video/extensions/progress": progress,
+							"https://w3id.org/xapi/video/extensions/played-segments": played_segments
+						},
+						"duration": calcDuration(state.videostart, new Date())
+					},
+					"context": {
+						"contextActivities": {
+							"category": [{
+								"id": "https://w3id.org/xapi/video"
+							}]
+						},
+						"extensions": {
+							"http://xerte.org.uk/learningObjectLevel": "video",
+							"https://w3id.org/xapi/video/extensions/session-id": state.sessionId,
+							"https://w3id.org/xapi/video/extensions/length": Math.round(videostate.duration)
+						}
+					}
+				};
+				statement.object.definition.name[state.language] = pagename;
+			}
+			if (grouping != "") {
+				statement.context.contextActivities = statementgrouping;
+			}
+			SaveStatement(statement);
+			break;
+
+	}
+	state.prevVerb = verb;
 }

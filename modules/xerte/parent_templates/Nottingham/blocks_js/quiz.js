@@ -317,7 +317,7 @@ var quizBlock = new function() {
 										}
 										state.initializedTracking.push(name);
 										XTEnterInteraction(x_currentPage, blocknr , 'multiplechoice', name, correctOptions, correctAnswer, correctFeedback, pageXML.getAttribute("grouping"), null, state.questions[state.currentQ]);
-										XTSetInteractionType(x_currentPage, x_getBlockNr(blockid), 'multiplechoice', weighting, state.questions[state.currentQ]);
+									XTSetInteractionWeighting(x_currentPage, x_getBlockNr(blockid), weighting);
 								}
 								//XTSetInteractionPageXML(x_currentPage, blocknr, pageXML, state.questions[state.currentQ]);
 								state.checked = false;

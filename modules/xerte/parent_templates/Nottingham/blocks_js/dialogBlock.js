@@ -127,7 +127,7 @@ var dialogBlock = new function () {
 				} else {
 					$thisQ = $question;
 					let answers = this.getAttribute("answer").split(answerDelimeter);
-					XTSetInteractionType(x_currentPage, x_getBlockNr(blockid), 'fill-in', 1, 0);
+					XTSetInteractionWeighting(x_currentPage, x_getBlockNr(blockid), 1, 0);
 					XTEnterInteraction(x_currentPage, x_getBlockNr(blockid), 'fill-in', this.getAttribute("question"), answers, answers, null /* never used*/, pageXML.getAttribute("grouping"), null, 0);
 				}
 
@@ -279,7 +279,7 @@ var dialogBlock = new function () {
 						let question = $(pageXML).children()[qNo+1];
 						let answers = question.getAttribute("answer").split(answerDelimeter);
 						XTEnterInteraction(x_currentPage, x_getBlockNr(blockid), 'fill-in', question.getAttribute("question"), answers, answers, null /* never used*/, pageXML.getAttribute("grouping"), null, qNo+1);
-						XTSetInteractionType(x_currentPage, x_getBlockNr(blockid), 'fill-in', 0, qNo+1);
+						XTSetInteractionWeighting(x_currentPage, x_getBlockNr(blockid), 0, qNo+1);
 						state.currentQ =  qNo + 1;
   					}
         }

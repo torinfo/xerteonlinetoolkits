@@ -530,7 +530,7 @@ var hotSpotQuestionBlock= new function () {
 				weighting = pageXML.getAttribute("trackingWeight");
 			}
 			XTEnterInteraction(x_currentPage, x_getBlockNr(blockid), 'multiplechoice', label, correctOptions, correctAnswer, correctFeedback, pageXML.getAttribute("grouping"));
-			XTSetInteractionType(x_currentPage, x_getBlockNr(blockid), "multiplechoice", weighting);
+			XTSetInteractionWeighting(x_currentPage, x_getBlockNr(blockid), weighting);
 		}
 		
 		var stroke = true;

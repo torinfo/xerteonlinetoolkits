@@ -320,7 +320,13 @@ var dictationBlock = new function () {
 		var trackedAnswer = $("<div/>").html(state.captionInfo[state.current].answer).text().replace(/(\r\n|\n|\r)/gm, "");
 		let isRestarted = state.isRestarted?? false;
 		if(!isRestarted){
-				XTEnterInteraction(x_currentPage, x_getBlockNr(blockid), 'fill-in', name, [], trackedAnswer, "Correct", pageXML.getAttribute("grouping"), null, state.current);
+                        XTEnterInteraction(x_currentPage, x_getBlockNr(blockid), 'fill-in', name, [], trackedAnswer, "Correct", pageXML.getAttribute("grouping"), null, state.current);
+                        let weighting = 1.0;
+                        debugger;
+                        if (pageXML.getAttribute("trackingWeight") != undefined) {
+                                weighting = pageXML.getAttribute("trackingWeight");
+                        }
+                        XTSetInteractionWeighting(x_currentPage, x_getBlockNr(blockid), weighting);
 		}
 	}
 
@@ -374,14 +380,14 @@ var dictationBlock = new function () {
 		const state = x_getPageDict("state", blockid);
 		let pageXML = x_getBlockXML(blockid);
 		// Track the dictation page
-		let weighting = 1.0;
-		debugger;
-		if (pageXML.getAttribute("trackingWeight") != undefined) {
-			weighting = pageXML.getAttribute("trackingWeight");
-		}
-		for(let i = 0; i < pageXML.children.length; i++){
-				XTSetInteractionType(x_currentPage, x_getBlockNr(blockid), "fill-in", weighting, i);
-		}
+		// let weighting = 1.0;
+		// debugger;
+		// if (pageXML.getAttribute("trackingWeight") != undefined) {
+		// 	weighting = pageXML.getAttribute("trackingWeight");
+		// }
+		// for(let i = 0; i < pageXML.children.length; i++){
+		// 	XTSetInteractionWeighting(x_currentPage, x_getBlockNr(blockid), weighting);
+		// }
 		// XTSetPageType(x_currentPage, 'numeric', state.captionInfo.length, weighting);
 	}
 }
