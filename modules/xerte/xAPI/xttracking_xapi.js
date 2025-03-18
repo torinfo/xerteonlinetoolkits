@@ -323,7 +323,7 @@ function XTExitInteraction(page_nr, ia_nr, result, learneroptions,
 }
 
 function XTGetStatements(q, one, callback) {
-	state.getStatements(q, one, callback);
+	return getStatements(q, one, callback);
 }
 
 function XTCanResume() {
