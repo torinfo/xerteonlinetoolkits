@@ -152,6 +152,8 @@ export class InteractionModal {
     const subInteractionBlocks = interaction.subInteractions
       .map((subInteraction) => this.getSubInteractionBlock(subInteraction)).join('');
 
+    console.log('modal interaction', this.#state.statements, interaction);
+
     const body = `
       <div class="interaction-block p-4 my-2 rounded" style="background-color: #fff;">
         <h5>${interaction.name}</h5>
@@ -168,15 +170,45 @@ export class InteractionModal {
    * @param {Object} subInteraction - The sub interaction object to add.
    */
   getSubInteractionBlock(subInteraction) {
+    const interactionAnswerOptions = subInteraction.getInteractionAnswerOptions(this.#state.statements);
+
+    let interactionAnswerOptionsHtml;
+    switch (interactionAnswerOptions.type) {
+      case 'choices':
+        interactionAnswerOptionsHtml = this.getChoiceAnswers(interactionAnswerOptions);
+        break;
+      default:
+        interactionAnswerOptionsHtml = '';
+    }
+
     const body = `
       <div class="sub-interaction-block">
         <h5>
           <i class="fa-solid fa-angle-right pr-2" />
           ${subInteraction.name}
         </h5>
+        ${interactionAnswerOptionsHtml}
       </div>
     `;
 
     return body;
+  }
+
+  /**
+   * Get sub interaction block
+   *
+   * @param {InteractionAnswer} interactionAnswerOptions - The interaction answers.
+   */
+  getChoiceAnswers(interactionAnswerOptions) {
+    return interactionAnswerOptions.choices.map((choice) => {
+      let icon = interactionAnswerOptions.correctResponsesPattern.includes(choice)
+        ? '<i class="fa-solid fa-check" />' : '<i class="fa-solid fa-xmark" />';
+
+      return `
+      <div>
+        ${icon}
+        ${choice}
+      </div>`;
+    }).join('');
   }
 }
