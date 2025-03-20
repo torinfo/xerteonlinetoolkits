@@ -200,15 +200,26 @@ export class InteractionModal {
    * @param {InteractionAnswer} interactionAnswerOptions - The interaction answers.
    */
   getChoiceAnswers(interactionAnswerOptions) {
-    return interactionAnswerOptions.choices.map((choice) => {
-      let icon = interactionAnswerOptions.correctResponsesPattern.includes(choice)
-        ? '<i class="fa-solid fa-check" />' : '<i class="fa-solid fa-xmark" />';
+    const rows = interactionAnswerOptions.answer.choices.map((choice) => {
+      let correct = interactionAnswerOptions.answer.correctResponsesPattern.includes(choice);
+
+      let icon = correct
+        ? '<i class="fa fa-x-tick" style="width: 1rem; height: 1rem;"/>'
+        : '<i class="fa fa-x-cross" style="width: 1rem; height: 1rem;"/>';
 
       return `
-      <div>
-        ${icon}
-        ${choice}
+      <div class="row">
+        <div class="col-auto rounded py-2 px-4" style="${correct ? 'background-color: rgba(40, 167, 69, 0.2)' : ''}">
+          ${icon}
+          ${choice} - ${interactionAnswerOptions.answer.choicesResponse.get(choice) || 0} (${(interactionAnswerOptions.answer.choicesResponse.get(choice) || 0) / interactionAnswerOptions.answer.nrOfAttempts * 100}%)
+        </div>
       </div>`;
     }).join('');
+
+    return `
+      <div class="container-fluid">
+        ${rows}
+      </div>
+    `
   }
 }

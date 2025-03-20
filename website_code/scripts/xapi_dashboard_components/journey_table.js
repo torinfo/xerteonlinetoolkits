@@ -1,5 +1,5 @@
 export class JourneyTable {
-  /** A tick icon */
+  /** A cross icon */
   #faCross = '<i class="status fa fa-x-cross" />';
 
   /** A in progress clock icon */
@@ -8,7 +8,7 @@ export class JourneyTable {
   /** A minus icon */
   #faMinus = '<i class="status fa fa-minus" />';
 
-  /** A cross icon */
+  /** A tick icon */
   #faTick = '<i class="status fa fa-x-tick" />';
 
   /** The canvas to draw on */
