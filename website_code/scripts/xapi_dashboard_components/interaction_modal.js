@@ -137,69 +137,85 @@ export class InteractionModal {
   async addModalInteractions(canvas) {
     const interactions = this.#state.interactions;
 
-    const interactionBlocks = interactions
-      .map((interaction) => this.getInteractionBlock(interaction)).join('');
-
-    canvas.append(interactionBlocks);
+    interactions
+      .forEach((interaction) => this.drawInteractionBlock(canvas, interaction));
   }
 
   /**
-   * Get interaction block
+   * Deaw interaction block
    *
+   * @param {jQuery} $parent - The parent element to append the interaction block to.
    * @param {Object} interaction - The interaction object to add.
    */
-  getInteractionBlock(interaction) {
-    const subInteractionBlocks = interaction.subInteractions
-      .map((subInteraction) => this.getSubInteractionBlock(subInteraction)).join('');
-
-    console.log('modal interaction', this.#state.statements, interaction);
-
+  drawInteractionBlock($parent, interaction) {
+    const selector = `modal-container-${$.escapeSelector(interaction.url)}`;
     const body = `
-      <div class="interaction-block p-4 my-2 rounded" style="background-color: #fff;">
+      <div
+        id="${selector}"
+        class="interaction-block p-4 my-2 rounded"
+        style="background-color: #fff;"
+      >
         <h5>${interaction.name}</h5>
-        ${subInteractionBlocks}
+        <div class="container-fluid">
+          <div id="detail-${selector}" class="row">
+          </div>
+        </div>
       </div>
     `;
 
-    return body;
+    $parent.append(body);
+
+    const answeredStatements = interaction.getAnsweredStatements(this.#state.statements);
+    this.drawChoiceGraph($(`#detail-${selector}`), selector, answeredStatements, 6);
+
+    interaction.subInteractions
+      .forEach((subInteraction) => this.drawSubInteractionBlock($(`#${selector}`),subInteraction));
   }
 
   /**
-   * Get sub interaction block
+   * Draw sub interaction block
    *
+   * @param {jQuery} $parent - The parent element to append the sub interaction block to.
    * @param {Object} subInteraction - The sub interaction object to add.
    */
-  getSubInteractionBlock(subInteraction) {
-    const interactionAnswerOptions = subInteraction.getInteractionAnswerOptions(this.#state.statements);
-
-    let interactionAnswerOptionsHtml;
-    switch (interactionAnswerOptions.type) {
-      case 'choices':
-        interactionAnswerOptionsHtml = this.getChoiceAnswers(interactionAnswerOptions);
-        break;
-      default:
-        interactionAnswerOptionsHtml = '';
-    }
-
+  drawSubInteractionBlock($parent, subInteraction) {
+    const selector = `modal-container-sub-${$.escapeSelector(subInteraction.url)}`;
     const body = `
-      <div class="sub-interaction-block">
+      <div id="${selector}" class="sub-interaction-block">
         <h5>
           <i class="fa-solid fa-angle-right pr-2" />
           ${subInteraction.name}
+          <div class="container-fluid">
+            <div id="detail-${selector}" class="row">
+            </div>
+          </div>
         </h5>
-        ${interactionAnswerOptionsHtml}
       </div>
     `;
 
-    return body;
+    $parent.append(body);
+
+    const interactionAnswerOptions = subInteraction.getInteractionAnswerOptions(this.#state.statements);
+    const answeredStatements = subInteraction.getAnsweredStatements(this.#state.statements);
+
+    console.log('answeredStatements', answeredStatements);
+
+    switch (interactionAnswerOptions.type) {
+      case 'choices':
+        this.drawChoiceGraph($(`#detail-${selector}`), selector, answeredStatements, 6);
+        this.drawChoiceAnswers($(`#detail-${selector}`), interactionAnswerOptions, 6);
+        break;
+    }
   }
 
   /**
-   * Get sub interaction block
+   * Draw a the choice answers
    *
+   * @param {jQuery} $parent - The parent element to append the answer block to.
    * @param {InteractionAnswer} interactionAnswerOptions - The interaction answers.
+   * @param {number} size - The size of the answer block (the number of columns).
    */
-  getChoiceAnswers(interactionAnswerOptions) {
+  drawChoiceAnswers($parent, interactionAnswerOptions, size) {
     const rows = interactionAnswerOptions.answer.choices.map((choice) => {
       let correct = interactionAnswerOptions.answer.correctResponsesPattern.includes(choice);
 
@@ -216,10 +232,38 @@ export class InteractionModal {
       </div>`;
     }).join('');
 
-    return `
-      <div class="container-fluid">
+    const body = `
+      <div class="col-${size}">
         ${rows}
       </div>
     `
+
+    $parent.append(body);
+  }
+
+  /**
+   * Draw a the choice graph
+   *
+   * @param {jQuery} $parent - The parent element to append the answer block to.
+   * @param {string} selector - The selector of the parent element.
+   * @param {Array} statements - The statements to be used in the graph.
+   * @param {number} size - The size of the answer block (the number of columns).
+   */
+  drawChoiceGraph($parent, selector, statements, size) {
+    const body = `
+      <div class="col-${size}" style="min-height: 400px;">
+        <canvas id="chart-${selector}" width="400" height="400"></canvas>
+      </div>
+    `
+
+    $parent.append(body);
+
+    const graph = new DashboardGraphs.BarGraphReceivedMarks({
+      statements: statements,
+      options: {
+        ctx: document.getElementById(`chart-${selector}`).getContext('2d'),
+      }
+    });
+    graph.draw();
   }
 }
