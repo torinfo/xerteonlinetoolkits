@@ -1441,7 +1441,6 @@
                 "</div><div class='score'></div><div class='message'></div>",
             );
             */
-        debugger
 
         //establish needed graphType from [graphType,answerGraphType,groupGraphType]
         // problem this breaks backwards compatibility.
@@ -1466,7 +1465,6 @@
                 interaction.setAttribute("actualGraphType", interaction.getAttribute("graphType"));
         }
 
-        debugger
         if (interactionType == "score") {
         var verb = "http://adlnet.gov/expapi/verbs/scored";
         if (interaction.data != null) {
@@ -1740,7 +1738,10 @@
       if (graphShowAvgLine == undefined) {
           graphShowAvgLine = false;
       }
-
+      var dashboardBlocks = x_currentPageXML.getAttribute("dashboardBlocks");
+      if (dashboardBlocks == undefined) {
+          dashboardBlocks = false;
+      }
       var barName = [];
       var barNameValue = [];
       var barRange = [];
@@ -1921,7 +1922,7 @@
             ).append("<li>" + txt + "%</li>");
           }
         }
-        if (adaptiveContent.dashboardMode == "false") {
+        if (adaptiveContent.dashboardMode == "false" || dashboardBlocks == "true") {
           for (
             blockIndex = 0;
             blockIndex < interaction.children.length;
@@ -3595,7 +3596,6 @@
                     }
                 }
             }
-            debugger
             if (!multipleAnswers) {
                 for (let i = 0; i < barData.length; i++) {
                     barData[i] = barData[i] / totalActualResponseCounter * 100;
@@ -4060,6 +4060,8 @@
     ) {
       // remove loader
       $("#interaction_load_" + interactionIndex).remove();
+      //empty advice block if needed
+      $("#" + escapeUrl(url, type, interactionIndex) + " .advice").text('');
 
       var scoreLabelText = interaction.getAttribute("scoreText");
       if (scoreLabelText == null) {
