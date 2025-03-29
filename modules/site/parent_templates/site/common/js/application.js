@@ -57,10 +57,93 @@ var $x_pageDiv;
 
 function init(){
 	loadContent();
-	$x_body = $("body");
-	$x_pageHolder = $("#mainContent");
-	$x_pageDiv = $($x_pageHolder.children()[1]);
-};
+	// Setup beforeunload
+	window.onbeforeunload = XTTerminate;
+
+	XTInitialise(x_params.category); // initialise here, because of XTStartPage in next function
+
+	if (x_params.course != undefined && x_params.course != "") {
+		XTSetOption('course', x_params.course);
+	}
+	if (x_params.module != undefined && x_params.module != "") {
+		XTSetOption('module', x_params.module);
+	}
+
+}
+
+// Create parameters needed by the popcorn library and coming from xenith.js
+const xot_offline = false;
+let x_params = new Object();
+x_params.language = "en-GB";
+
+function initMedia($media) {
+	for (let i = 0; i < $media.length; i++) {
+		let element = $media[i];
+		if (element.tagName == "VIDEO") {
+			initVideo(element);
+		} else if (element.tagName == "AUDIO") {
+			initAudio(element);
+		} else if (element.tagName == "IFRAME") {
+			iframeInit(element);
+		}
+	}
+}
+
+function initVideo(element) {
+	const id = $(element).attr('id');
+	const url = $(element).attr('src');
+	const iframeRatioAttr = $(element).attr('iframeRatio');
+	let div = $("<div>")
+		.attr('id', id)
+		.attr('class', 'x_videoContainer');
+	element = $(element).replaceWith(div);
+	let iframeRatioStr = iframeRatioAttr != "" && iframeRatioAttr != undefined ? iframeRatioAttr : '16:9';
+	let iframeRatio = iframeRatioStr.split(':');
+	// iframe ratio can be one entered in editor or fallback to 16:9
+	if (!$.isNumeric(iframeRatio[0]) || !$.isNumeric(iframeRatio[1])) {
+		iframeRatio = [16, 9];
+	}
+	let aspectRatio = iframeRatio[0] / iframeRatio[1];
+	let width = div.width();
+	if (div.parents('.navigator').length > 0) {
+		width = div.parents('.navigator').width();
+	}
+	let height = width / aspectRatio;
+
+	this.popcornInstance = loadMedia($('#' + id), "video",
+		{
+			// tip: $(data).find.attr("tip"),
+			width: width,
+			height: height,
+			media: url,
+			// autoplay: "false",
+			aspect: aspectRatio,
+			// transcript: x_currentPageXML.getAttribute("transcript"),
+			// transcriptBtnTxt: x_currentPageXML.getAttribute("transcriptTabTxt"),
+			// audioImage: undefined,
+			// audioImageTip: "",
+			// pageName: "textVideo",
+			trackMedia: false,
+		}, false);
+
+	$('#' + id)
+		.width(width)
+		.height(height);
+	//resizeEmbededMedia($('#' + id + ' .popcornMedia'), {ratio: aspectRatio});
+
+	var heightCalc = $('.popcornMedia').width();
+	var heightCalc2 = heightCalc / aspectRatio;
+
+	$('#'+ id + '.x_videoContainer').css('width', '99%');
+	$('#'+ id + ' .popcornMedia').css('width', '100%');
+	$('#'+ id + '.x_videoContainer').css('height', height);
+	$('#'+ id + ' .popcornMedia').css('height', height);
+	$(window).resize(function () {
+		setTimeout(function () {
+			//resizeEmbededMedia($('#' + id + ' .popcornMedia'), {ratio: aspectRatio});
+		}, 200);
+	});
+}
 
 // called after all content loaded to set up mediaelement.js players
 function initMedia($media){
