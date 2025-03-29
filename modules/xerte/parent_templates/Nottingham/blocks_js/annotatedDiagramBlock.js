@@ -558,7 +558,7 @@ var annotatedDiagramBlock = new function () {
         let infoHolder = jGetElement(blockid, ".infoHolder");
         jGetElement(blockid, ".listItem.highlight").removeClass("highlight");
         $(infoHolder).html("");
-        let pageContents = x_getPageDict("pageContents", blockid);;
+				const state = x_getPageDict("state", blockid);
         if (state.hsType == "flex") {
             $("area." + blockid).mapster('set', false);
 

@@ -80,6 +80,22 @@ if ($realpath !== false && $realpath === $full_unsafe_file_path) {
 			$toDeleteNodes[] = $page;
 		}
 	}
+        foreach($xml->xpath("//documentationBlock") as $documentation){
+		foreach($documentation->page as $page){
+			$newPage = duplicateNode($documentation, $page, "docpage");
+			foreach ($page as $item) {
+				if($item->getName() == "section"){
+					$newSection = duplicateNode($newPage, $item, "docsection");
+					foreach ($item as $subItem){
+						duplicateNode($newSection, $subItem, $subItem->getName(), $subItem);
+					}
+				} else {
+					duplicateNode($newPage, $item, $item->getName(), $item);
+				}
+			}
+			$toDeleteNodes[] = $page;
+		}
+	}
 	foreach ($toDeleteNodes as $node) {
 		unset($node[0]);
 	}

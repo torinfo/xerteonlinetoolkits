@@ -189,8 +189,14 @@ function show_preview_code2($row, $row_username){
         $page_content = str_replace("%OFFLINESCRIPTS%", "", $page_content);
         $page_content = str_replace("%OFFLINEINCLUDES%", "", $page_content);
         $page_content = str_replace("%MATHJAXPATH%", "https://cdn.jsdelivr.net/npm/mathjax@2/", $page_content);
-
-        $tracking = "<script type=\"text/javascript\" src=\"" . $template_path . "common_html5/js/xttracking_noop.js?version=" . $version . "\"></script>";
+		$blocks_dir = $flash_js_dir . "parent_templates/Nottingham/blocks_js/";
+    $tracking_js_file = array($blocks_dir . "js/trackingManager.js", $template_path . "common_html5/js/xttracking_noop.js", $blocks_dir . "js/NOOP_pageState.js", $blocks_dir . "js/NOOP_interactionState.js");
+		
+		$tracking = "";
+		
+		foreach($tracking_js_file as $file){
+			$tracking .= "<script type=\"text/javascript\" src=\"" . $file . "?version=" . $version . "\"></script>";
+		}
 
         $page_content = str_replace("%TRACKING_SUPPORT%", $tracking, $page_content);
         $page_content = str_replace("%YOUTUBEAPIKEY%", $youtube_api_key, $page_content);
