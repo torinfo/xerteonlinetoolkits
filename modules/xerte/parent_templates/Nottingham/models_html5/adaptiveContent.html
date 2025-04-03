@@ -872,7 +872,6 @@
       } else {
           q["filter_current_users"] = 'false';
       }
-      //debugger
     /*
         queryStatements(
             lrsEndpoint + '/api/connection/statement',
@@ -1861,7 +1860,6 @@
             }
           }
         }
-
         if (
           interaction.getAttribute("interactionType") === "groupings" ||
           interaction.getAttribute("interactionType") === "opinionclasses"
@@ -3142,9 +3140,9 @@
               backgroundColors = interaction.getAttribute("graphColorScale").split(",");
           } else if (interaction.getAttribute("graphColorScale") != undefined && interaction.getAttribute("graphColorScale") != ""){
               backgroundColors = [];
-              let groupColorPairs = interaction.getAttribute("graphColorScale").split(",")
+              let groupColorPairs = interaction.getAttribute("graphColorScale").split(",");
               for (key of groupColorPairs){
-                  let keyValue = key.split(":")
+                  let keyValue = key.split(":");
                   backgroundColors[keyValue[0]] = keyValue[1];
                   namedBackgroundColors = true;
               }
@@ -3180,6 +3178,7 @@
           }
           let labelCounter = 0;
           let legendLabels = [];
+          //todo check this.
           for (key in visitedGroups) {
             legendLabels.push({
               text: key,
@@ -3187,6 +3186,7 @@
             });
             labelCounter += 1;
           }
+            debugger
           labelCounter = 0;
           let questions = statements.map(
             (statement) => ({
@@ -3194,20 +3194,140 @@
                     "http://xerte.org.uk/result/grouping/scores"
                     ],
                 groupName : statement.context.contextActivities.grouping[0]
-                    .definition.name["en-US"]
+                    .definition.name["en-US"],
+                actor : statement.actor,
+                object_id : statement.object.id,
+                occurrences : 0
                     })
           );
-          // Arrange questions in the same order as visitedGroups
+
+            // Arrange questions in the same order as visitedGroups
           let newQuestions = [];
+          debugger
           for (key in visitedGroups) {
               for (let i = 0; i < questions.length; i++) {
                   if (questions[i].groupName == key) {
                       newQuestions.push(questions[i]);
-                      break;
                   }
               }
           }
           questions = newQuestions;
+
+          if (adaptiveContent.dashboardMode == "true"){
+              //todo robustness check
+              let groupname = questions[0].groupName;
+              let object_ids = {};
+              let latest_questions = [];
+              //keep only the most recent attempts
+              for (let i = 0;  i < questions.length; i++) {
+                  let user = "NaN";
+                  if (typeof questions[i].actor.name != "undefined") {
+                      user = questions[i].actor.name;
+                  } else if (typeof questions[i].actor.mbox != "undefined") {
+                      user = questions[i].actor.mbox.substr(7);
+                  } else if (typeof questions[i].actor.mbox_sha1 != "undefined") {
+                      user = questions[i].actor.mbox_sha1.substr(7);
+                  } else if (
+                      typeof questions[i].actor.account != "undefined" &&
+                      typeof questions[i].actor.account.name != "undefined"
+                  ) {
+                      user = questions[i].actor.account.name;
+                  }
+
+                  if (groupname == questions[i].groupName) {
+                      if (!object_ids.hasOwnProperty(questions[i].object_id)) {
+                          //first occurrence of object_id in this grouping
+                          object_ids[questions[i].object_id] = [user];
+                          latest_questions.push(questions[i]);
+                      } else {
+                          //we have seen object_id before in this grouping
+                          //check if user has been seen
+                          if (!object_ids[questions[i].object_id].includes(user)) {
+                              //new user so keep question
+                              object_ids[questions[i].object_id].push(user);
+                              latest_questions.push(questions[i]);
+                          }
+                      }
+                  } else {
+                      //next grouping starts
+                      groupname = questions[i].groupName;
+                      object_ids = {};
+                      //store latest result for next grouping
+                      object_ids[questions[i].object_id] = [user];
+                      latest_questions.push(questions[i]);
+                  }
+              }
+              //merge answers for the same questions
+              //todo robustness check
+              groupname = latest_questions[0].groupName;
+              object_ids = {};
+              let avg_questions = [];
+              let new_questions = [];
+              for (let i = 0;  i < latest_questions.length; i++) {
+                  let user = "NaN";
+                  if (typeof latest_questions[i].actor.name != "undefined") {
+                      user = latest_questions[i].actor.name;
+                  } else if (typeof latest_questions[i].actor.mbox != "undefined") {
+                      user = latest_questions[i].actor.mbox.substr(7);
+                  } else if (typeof latest_questions[i].actor.mbox_sha1 != "undefined") {
+                      user = latest_questions[i].actor.mbox_sha1.substr(7);
+                  } else if (
+                      typeof latest_questions[i].actor.account != "undefined" &&
+                      typeof latest_questions[i].actor.account.name != "undefined"
+                  ) {
+                      user = latest_questions[i].actor.account.name;
+                  }
+
+                  if (groupname == latest_questions[i].groupName) {
+                      if (!object_ids.hasOwnProperty(latest_questions[i].object_id)) {
+                          object_ids[latest_questions[i].object_id] = [[user], avg_questions.length];
+                          avg_questions.push(latest_questions[i]);
+                      } else {
+                          //todo prob dont need this check
+                          if (!object_ids[latest_questions[i].object_id][0].includes(user)) {
+                              //new user so keep question
+                              object_ids[latest_questions[i].object_id][0].push(user);
+                              //merge score with existing question
+                              let tmp_index = object_ids[latest_questions[i].object_id][1];
+                              for (let new_question in latest_questions[i].question){
+                                  for (let old_question in avg_questions[tmp_index].question){
+                                      if (latest_questions[i].question[new_question][0][0] == avg_questions[tmp_index].question[old_question][0][0]){
+                                          //question label matches
+                                          avg_questions[tmp_index].question[old_question][1] += latest_questions[i].question[new_question][1];
+                                      }
+                                  }
+                              }
+                          }
+                      }
+                  } else {
+                      //next group
+                      groupname = latest_questions[i].groupName;
+                      //todo use size object_ids[object_id] for avg calc
+                      let object_id_keys = Object.keys(object_ids);
+                      for (let key in object_id_keys){
+                          let divisor = Math.max(object_ids[object_id_keys[key]].length, 1);
+                          for (let question in avg_questions[key].question){
+                              avg_questions[key].question[question][1] = avg_questions[key].question[question][1]/divisor;
+                          }
+                      }
+                      object_ids = {};
+                      object_ids[latest_questions[i].object_id] = [[user], 0];
+
+                      new_questions = new_questions.concat(avg_questions);
+                      avg_questions = [latest_questions[i]];
+                  }
+              }
+              let object_id_keys = Object.keys(object_ids);
+              for (let key in object_id_keys){
+                  let divisor = Math.max(object_ids[object_id_keys[key]].length, 1);
+                  for (let question in avg_questions[key].question){
+                      avg_questions[key].question[question][1] = avg_questions[key].question[question][1]/divisor;
+                  }
+              }
+              new_questions = new_questions.concat(avg_questions);
+              questions = new_questions;
+          }
+
           let labels = [];
           let backgroundColor = [];
           let dataValues = [];
@@ -4295,7 +4415,7 @@
     ) {
       // remove loader
       $("#interaction_load_" + interactionIndex).remove();
-
+        //todo make object.id deterministic
       // reshuffle
       var groupingStatements = [];
       var userGrouping = [];
@@ -4347,6 +4467,7 @@
           var statement = JSON.parse(JSON.stringify(data[s[0]]));
           var sum = statement.result.score.raw;
           var duration = moment.duration(statement.result.duration);
+          var object_ids = [statement.object.id];
           if (statement.result.extensions === undefined) {
             statement.result.extensions = {};
           }
@@ -4360,6 +4481,7 @@
             data[s[0]].result.score.raw,
           ]);
           for (var k = 1; k < s.length; k++) {
+            object_ids.push(data[s[k]].object.id);
             statement.result.extensions[
               "http://xerte.org.uk/result/grouping/scores"
             ].push([
@@ -4378,6 +4500,10 @@
           statement.extensions = {
             "http://xerte.org.uk/grouping/num-grouped-statements": s.length,
           };
+          //ensure statement.object.id is deterministic
+          object_ids.sort();
+          statement.object.id = object_ids[0];
+
           groupingStatements.push(statement);
         }
       }
@@ -4394,6 +4520,7 @@
 
     this.drawGroupedScores = function (data) {
       // reshuffle
+        debugger
       var groupingStatements = [];
       var userGrouping = [];
       for (var i = 0; i < data.length; i++) {
@@ -4434,6 +4561,7 @@
 
       // Calculate averages and create groupingStatments, which are pseudo xAPI statements which are a combination of all the grouping statements
       // Hmm... tric to enumerate array elements
+        debugger
       var userGroupingKeys = Object.keys(userGrouping);
       for (var i = 0; i < userGroupingKeys.length; i++) {
         var sessions = userGrouping[userGroupingKeys[i]];
@@ -4444,6 +4572,7 @@
           var statement = JSON.parse(JSON.stringify(data[s[0]]));
           var sum = statement.result.score.raw;
           var duration = moment.duration(statement.result.duration);
+          var object_ids = [statement.object.id];
           if (statement.result.extensions === undefined) {
             statement.result.extensions = {};
           }
@@ -4457,6 +4586,7 @@
             data[s[0]].result.score.raw,
           ]);
           for (var k = 1; k < s.length; k++) {
+            object_ids.push(data[s[k]].object.id);
             statement.result.extensions[
               "http://xerte.org.uk/result/grouping/scores"
             ].push([
@@ -4492,6 +4622,10 @@
             };
             statement.context.contextActivities.grouping.push(groupingName); //[0].definition.name["en-US"] = statement.context.extensions['http://xerte.org.uk/opinionClass'];
           }
+          //ensure statement.object.id is deterministic
+          object_ids.sort();
+          statement.object.id = object_ids[0];
+
           groupingStatements.push(statement);
         }
       }
