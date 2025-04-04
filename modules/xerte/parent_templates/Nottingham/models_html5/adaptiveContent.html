@@ -3133,6 +3133,10 @@
             "#36A2EB",
             "#B284BE",
           ];
+          var polarLabel = interaction.getAttribute("polarLabel");
+          if (polarLabel == undefined)
+              polarLabel = "above";
+
             //quick check if we use simple colors or specific color/group pairs
             // under the assumption that only one of the systems is used
             let namedBackgroundColors = false;
@@ -3149,16 +3153,23 @@
           }
           let visitedGroups = [];
           for (let statement in statements) {
+              let group = "No group or class"
               if (typeof statements[statement].context.contextActivities.grouping !== 'undefined') {
-                  let group =
+                  group =
                       statements[statement].context.contextActivities.grouping[0]
                           .definition.name["en-US"];
-                  if (!(group in visitedGroups)) {
-                      visitedGroups[group] = [statements[statement].result.score.raw];
-                  } else {
-                      visitedGroups[group].push(statements[statement].result.score.raw);
-                  }
               }
+              if (interaction.getAttribute("interactionType") === "opinionclasses" && typeof
+                  statements[statement].context.extensions["http://xerte.org.uk/opinionClass"] !== 'undefined') {
+                  //use class if available and needed
+                  group = statements[statement].context.extensions["http://xerte.org.uk/opinionClass"];
+              }
+              if (!(group in visitedGroups)) {
+                  visitedGroups[group] = [statements[statement].result.score.raw];
+              } else {
+                  visitedGroups[group].push(statements[statement].result.score.raw);
+              }
+
           }
           if (namedBackgroundColors && Object.keys(visitedGroups).length == Object.keys(backgroundColors).length){
               // Order the keys in visitedGroups to match the order of backgroundColors
@@ -3178,7 +3189,6 @@
           }
           let labelCounter = 0;
           let legendLabels = [];
-          //todo check this.
           for (key in visitedGroups) {
             legendLabels.push({
               text: key,
@@ -3186,14 +3196,15 @@
             });
             labelCounter += 1;
           }
-            debugger
+
           labelCounter = 0;
           let questions = statements.map(
             (statement) => ({
                 question : statement.result.extensions[
                     "http://xerte.org.uk/result/grouping/scores"
                     ],
-                groupName : statement.context.contextActivities.grouping[0]
+                groupName : interaction.getAttribute("interactionType") === "opinionclasses" ? statement.context
+                    .extensions["http://xerte.org.uk/opinionClass"] : statement.context.contextActivities.grouping[0]
                     .definition.name["en-US"],
                 actor : statement.actor,
                 object_id : statement.object.id,
@@ -3203,7 +3214,6 @@
 
             // Arrange questions in the same order as visitedGroups
           let newQuestions = [];
-          debugger
           for (key in visitedGroups) {
               for (let i = 0; i < questions.length; i++) {
                   if (questions[i].groupName == key) {
@@ -3246,7 +3256,7 @@
                               //new user so keep question
                               object_ids[questions[i].object_id].push(user);
                               latest_questions.push(questions[i]);
-                          }
+                        }
                       }
                   } else {
                       //next grouping starts
@@ -3283,7 +3293,8 @@
                           object_ids[latest_questions[i].object_id] = [[user], avg_questions.length];
                           avg_questions.push(latest_questions[i]);
                       } else {
-                          //todo prob dont need this check
+                          //todo prob dont need this check, depends on what we do with the filtering loop.
+                          // currently a user has only one attempt per group.
                           if (!object_ids[latest_questions[i].object_id][0].includes(user)) {
                               //new user so keep question
                               object_ids[latest_questions[i].object_id][0].push(user);
@@ -3302,7 +3313,6 @@
                   } else {
                       //next group
                       groupname = latest_questions[i].groupName;
-                      //todo use size object_ids[object_id] for avg calc
                       let object_id_keys = Object.keys(object_ids);
                       for (let key in object_id_keys){
                           let divisor = Math.max(object_ids[object_id_keys[key]].length, 1);
@@ -3327,32 +3337,50 @@
               new_questions = new_questions.concat(avg_questions);
               questions = new_questions;
           }
-
           let labels = [];
           let backgroundColor = [];
           let dataValues = [];
-          for (let index in questions) {
-            let questionsGroup = questions[index]["question"];
-            let groupName = questions[index]["groupName"]
-            for (let index in questionsGroup) {
-              let singleQuestion = questionsGroup[index];
-              labels.push(singleQuestion[0][0]);
-              dataValues.push(singleQuestion[1]);
-              //again differentiate between simple colors and color/group pairs
-                if (!namedBackgroundColors) {
-                    if (labelCounter < backgroundColors.length) {
-                        backgroundColor.push(backgroundColors[labelCounter]);
-                    }
-                }else {
-                    if (labelCounter < Object.keys(backgroundColors).length){
-                        if (typeof(backgroundColors[groupName]) !== 'undefined'){
-                         backgroundColor.push(backgroundColors[groupName])
-                         }
+          let pointLables = [];
+          let aggregatedGroupSize = 0;
+          let oldGroupName = "";
+          let groupName = "";
+            for (let index in questions) {
+                oldGroupName = groupName;
+                let questionsGroup = questions[index]["question"];
+                groupName = questions[index]["groupName"]
+                if (oldGroupName !== "" && groupName !== oldGroupName){
+                    //next group starts here
+                    //build array for outer graph labels
+                    let tmp_pointLabel = new Array(aggregatedGroupSize).fill("");
+                    tmp_pointLabel[Math.floor((tmp_pointLabel.length - 1) / 2)] = oldGroupName;
+                    pointLables = pointLables.concat(tmp_pointLabel);
+                    aggregatedGroupSize = 0;
+                }
+                for (let index in questionsGroup) {
+                  aggregatedGroupSize += 1;
+                  let singleQuestion = questionsGroup[index];
+                  labels.push(singleQuestion[0][0]);
+                  dataValues.push(singleQuestion[1]);
+                  //again differentiate between simple colors and color/group pairs
+                    if (!namedBackgroundColors) {
+                        if (labelCounter < backgroundColors.length) {
+                            backgroundColor.push(backgroundColors[labelCounter]);
+                        }
+                    }else {
+                        if (labelCounter < Object.keys(backgroundColors).length){
+                            if (typeof(backgroundColors[groupName]) !== 'undefined'){
+                             backgroundColor.push(backgroundColors[groupName])
+                             }
+                        }
                     }
                 }
-            }
-            labelCounter += 1;
+                labelCounter += 1;
           }
+          //build array for outer graph labels
+          let tmp_pointLabel = new Array(aggregatedGroupSize).fill("");
+          tmp_pointLabel[Math.floor((tmp_pointLabel.length - 1) / 2)] = groupName;
+          pointLables = pointLables.concat(tmp_pointLabel);
+        debugger
           let ctx = escapeUrl(url, type, interactionIndex) + "-graph";
           let options = {
             maintainAspectRatio: false,
@@ -3367,15 +3395,35 @@
               },
             ],
           };
+
+          //
+          let pointLabelSetting = false;
+          if (polarLabel == "around"){
+              pointLabelSetting = true;
+          }
+
           var myChart = new Chart(ctx, {
             type: "polarArea",
             data: data,
             options: {
               responsive: true,
               maintainAspectRatio: false,
+              scales: {
+                  r: {
+                      pointLabels: {
+                          callback: function (label, index) {
+                              return pointLables[index];
+                          },
+                          display: pointLabelSetting,
+                          font: {
+                              size: 14
+                          },
+                      }
+                  },
+              },
               plugins: {
                 legend: {
-                  display: true,
+                  display: !pointLabelSetting,
                   labels: {
                     generateLabels: function (chart) {
                       return legendLabels;
@@ -4520,7 +4568,6 @@
 
     this.drawGroupedScores = function (data) {
       // reshuffle
-        debugger
       var groupingStatements = [];
       var userGrouping = [];
       for (var i = 0; i < data.length; i++) {
@@ -4561,7 +4608,6 @@
 
       // Calculate averages and create groupingStatments, which are pseudo xAPI statements which are a combination of all the grouping statements
       // Hmm... tric to enumerate array elements
-        debugger
       var userGroupingKeys = Object.keys(userGrouping);
       for (var i = 0; i < userGroupingKeys.length; i++) {
         var sessions = userGrouping[userGroupingKeys[i]];
