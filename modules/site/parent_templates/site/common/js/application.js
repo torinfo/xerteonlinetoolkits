@@ -43,37 +43,80 @@ var fullscreenBannerTitleMargin=10;
 
 //xenith for blocks
 var x_params = {};
+var x_urlParams = urlParams;
 var blockCount = 0;
 var loadedBlockCount = 0;
 var blocksXML = [];
 var blocksInfo = [];
-var pageDicts = [];
+var x_pageDicts = [];
 var x_mediaText = [];
+var x_pageHistory = pageHistory;
+var x_currentPage;
 var x_browserInfo = {iOS:false, Android:false, touchScreen:false, mobile:false, orientation:"portrait"}; // holds info about browser/device
 var $x_body;
 var $x_pageHolder;
 var $x_pageDiv;
+
+function x_endPageTracking(pagechange, x_gotoPage) {
+    if (pagechange == undefined) {
+		pagechange = false;
+	}
+	if (x_gotoPage == undefined) {
+		x_gotoPage = -1;
+	}
+	// End page tracking of x_currentPage
+    if (x_currentPage != -1 && (!pagechange || x_currentPage != x_gotoPage)) // data.children[0].children[1].getAttribute("password") for page password check 
+    {
+        XTExitPage(x_currentPage);
+				return;
+        var pageObj;
+        if (x_pageInfo[x_currentPage].type == "text") {
+            pageObj = simpleText;
+        } else {
+            pageObj = eval(x_pageInfo[x_currentPage].type);
+        }
+        if (typeof pageObj.leavePage === 'function')
+        {
+            pageObj.leavePage();
+        }
+        // calls function in any customHTML that's been loaded into page
+        if ($(".customHTMLHolder").length > 0)
+        {
+            if (typeof customHTML.leavePage() === 'function')
+            {
+                customHTML.leavePage();
+            }
+        } 
+    }
+}
+
+function x_pagesViewed(){
+		return [...new Set(pageHistory)];
+}
+
+// end xenith for blocks
 
 
 function init(){
 	loadContent();
 	// Setup beforeunload
 	window.onbeforeunload = XTTerminate;
-
+	XTSetOption("templateId", x_TemplateId);
+        
 	XTInitialise(x_params.category); // initialise here, because of XTStartPage in next function
-
+        
 	if (x_params.course != undefined && x_params.course != "") {
-		XTSetOption('course', x_params.course);
+                XTSetOption('course', x_params.course);
 	}
 	if (x_params.module != undefined && x_params.module != "") {
-		XTSetOption('module', x_params.module);
+                XTSetOption('module', x_params.module);
 	}
-
+	$x_body = $("body");
+	$x_pageHolder = $("#mainContent");
+	$x_pageDiv = $($x_pageHolder.children()[1]);
 }
 
 // Create parameters needed by the popcorn library and coming from xenith.js
-const xot_offline = false;
-let x_params = new Object();
 x_params.language = "en-GB";
 
 function initMedia($media) {
@@ -227,6 +270,7 @@ function initSidebar(){
 }
 
 function loadContent(){
+        debugger;
 	var now = new Date().getTime();
 	let url = "website_code/php/templates/get_template_xml.php?file=" + projectXML + "&time=" + now;
 	if (typeof use_url !== "undefined" && use_url)
@@ -244,6 +288,28 @@ function loadContent(){
 					let attrib = data.activeElement.attributes[i];
 					x_params[attrib.name] = attrib.value;
 			}
+                        let markedPages = [];
+                        for(let i = 0; i < data.children[0].children.length; i++){
+                                /**
+                                 * @type HTMLElement
+                                 */
+                                let page = data.children[0].children[i];
+                                let blockfound = false;
+                                for(let j = 0; j < page.children.length && !blockfound; j++){
+                                        let section = page.children[j];
+                                        for(let y = 0; y < section.children.length && !blockfound; y++){
+                                                let item = section.children[y];
+                                                if(item.nodeName == "blocks"){
+                                                        blockfound = true;
+                                                }
+                                        }
+                                }
+                                if(blockfound){
+                                        markedPages.push(i);
+                                }
+                
+                        }
+                        XTSetOption('toComplete', markedPages);
 			//step one - css
 			cssSetUp('theme');
 
@@ -1765,6 +1831,10 @@ function parseContent(pageRef, sectionNum, contentNum, addHistory) {
 			$('#mainContent').empty();
 			$('#toc').empty();
 
+                        if(currentPage != undefined){
+                                XTExitPage(x_currentPage);
+                        }
+
 			// store current page
 			currentPage = pageIndex;
 			x_currentPage = currentPage;
@@ -2984,14 +3054,14 @@ function jGetElement(blockid, element) {
 
 function x_pushToPageDict(object, name, blockid = -1){
     let key = blockid == -1 ? name : name + "_" + blockid;
-    pageDicts[key] = object;
+    x_pageDicts[key] = object;
     return object;
 }
 
 // Gets an object from x_pageDicts with optional blockid
 function x_getPageDict(name, blockid = -1){
     let key = blockid == -1 ? name : name + "_" + blockid;
-    let result = pageDicts[key];
+    let result = x_pageDicts[key];
 	return result;
 }
 

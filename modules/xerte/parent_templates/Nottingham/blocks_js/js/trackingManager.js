@@ -437,6 +437,10 @@ function TrackingManager(tracking_type) {
 
 
 		var page = this.findPage(page_nr);
+                if(page == null) {
+                        console.log("page is null");
+                        return;
+                }
 		var tempscore = 0;
 		for (i = 0; i < page.interactions.length; i++) {
 			if (page.interactions[i].result === undefined) {
