@@ -3129,12 +3129,20 @@ function loadInBlock(blockid, module){
 	if(container.length == 0){
 			console.log("Can't find container: #"+blockid);
 	}
-	container.load("modules/xerte/parent_templates/Nottingham/blocks_html5/" + name + ".html", function() { 
-		window[name].init(blockid);
-		loadedBlockCount += 1;
-		if(loadedBlockCount == blockCount){
-				allBlocksSizeChanged();
-		}
+	container.load("modules/xerte/parent_templates/Nottingham/blocks_html5/" + name + ".html", function() {
+		let overlay = $("<div class=\"overlay\"></div>")
+				.append("<span><i class='far fa-play-circle fa-2x'></i></span>")
+				.prependTo(container)
+				.click(function(){
+						overlay.remove();
+						window[name].init(blockid);
+						blockSizeChanged(blockid);
+				});
+		//window[name].init(blockid);
+		//loadedBlockCount += 1;
+		//if(loadedBlockCount == blockCount){
+		//		allBlocksSizeChanged();
+		//}
 	});
 }
 

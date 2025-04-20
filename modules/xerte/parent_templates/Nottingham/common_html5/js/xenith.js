@@ -2640,12 +2640,12 @@ function x_navigateToPage(force, pageInfo, addHistory) { // pageInfo = {type, ID
 
 // ---- Block code ----
 // blockid (string) is 1-based!
-function x_createBlock(container, module, modulePosition){
+function x_createBlock(container, module, modulePosition, standalone = false){
 	//Create the area for the block to be populated in. Then call the init of the block.
 	var blockid = "block" + modulePosition;
 	// var jsName = module.tagName; //.replace("Block", "")
 	container.append('<div id="block' + modulePosition +'" class="iblock x-card"></div>');
-	x_loadInBlock(blockid, module);
+	x_loadInBlock(blockid, module, standalone);
 	let name = module.tagName;
 	if (!module.tagName.includes("Block")){
 			name += "Block";
@@ -2658,7 +2658,7 @@ function x_setBlockCount(count){
 		x_blockCount = count;
 		x_loadedBlockCount = 0;
 }
-
+/*
 function x_loadAllBlocks(){
 	let counter = 1;
 	for (let module of x_blocksXML[x_currentPage]){
@@ -2666,8 +2666,9 @@ function x_loadAllBlocks(){
 		counter++;
 	}
 }
+*/
 
-function x_loadInBlock(blockid, module){
+function x_loadInBlock(blockid, module, standalone = false){
 	let name = module.tagName;
 	if (!module.tagName.includes("Block")){
 			name += "Block";
@@ -2677,10 +2678,18 @@ function x_loadInBlock(blockid, module){
 			console.log("Can't find container: #"+blockid);
 	}
 	container.load(x_templateLocation + "blocks_html5/" + name + ".html", function() {
-		window[name].init(blockid);
-		x_loadedBlockCount += 1;
-		if(x_loadedBlockCount == x_blockCount){
-				x_allBlocksSizeChanged();
+		if(!standalone){
+			 let overlay = $("<div class=\"overlay\"></div>")
+					.append("<span><i class='far fa-play-circle fa-2x'></i></span>")
+					.prependTo(container)
+					.click(function(){
+							overlay.remove();
+							window[name].init(blockid);
+							blockSizeChanged(blockid);
+					});
+		} else {
+			window[name].init(blockid);
+			blockSizeChanged(blockid);
 		}
 	});
 }

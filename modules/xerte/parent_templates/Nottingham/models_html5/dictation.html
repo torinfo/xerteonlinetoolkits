@@ -27,7 +27,7 @@
 		}
 		
 		this.setUp = function() {
-			x_createBlock($("#pageContents"), x_currentPageXML, 1)
+			x_createBlock($("#pageContents"), x_currentPageXML, 1, true)
 		}
 		
 		this.sizeChanged = function() {
@@ -427,7 +427,8 @@
 								$thisOptionGroup.removeClass("highlight");
 							});
 
-						$thisOptionTxt
+						$thisOptionTxt
+
 							.attr("for", "option" + i)
 							.data("option", $thisOption)
 							.html(thisOption.text);
