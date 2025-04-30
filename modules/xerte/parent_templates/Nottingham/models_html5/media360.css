@@ -256,4 +256,7 @@
 	.featherlight .featherlight-content.max.youTube iframe {
 		width: 100%;
 	}
+	#videoProgress {
+		width: 50%;
+	}
 	

@@ -3780,16 +3780,29 @@ var EDITOR = (function ($, parent) {
                         'yaw': Number(hsattrs.y)
                     })
                 } else{
-				// set up single image panorama
-				panorama = pannellum.viewer('panorama_' + id, {
-					'type': 'equirectangular',
-					'panorama': url,
-					'autoLoad': true,
-					'showFullscreenCtrl': false,
-					'compass': false,
-					'pitch': Number(hsattrs.p), // turn to look at existing hotspot (if there is one)
-					'yaw': Number(hsattrs.y)
-				})};
+										config = {
+												'type': 'equirectangular',
+												//'panorama': url,
+												'autoLoad': true,
+												'showFullscreenCtrl': false,
+												'compass': false,
+												'pitch': Number(hsattrs.p), // turn to look at existing hotspot (if there is one)
+												'yaw': Number(hsattrs.y)
+										};
+										if(url.endsWith(".mp4")){
+												let video = document.createElement("video");
+												$(video).append("<source src=\"" + url + "\" type=\"video/mp4\"/>")
+														.appendTo("#panoramaHolder")
+														.css("display", "none");
+												config.dynamicUpdate = true; 
+												config.dynamic = true; 
+												config.panorama =  video;
+										}else {
+												config.panorama =  url;
+										}
+										// set up single image panorama
+										panorama = pannellum.viewer('panorama_' + id, config)
+								};
 				
 				// add hotspot (if there is one!)
 				if (hsattrs.p != '' && hsattrs.y != '') {
@@ -3952,16 +3965,32 @@ var EDITOR = (function ($, parent) {
                         'yaw': Number(hsattrs.y)
                     })
                 } else{
-				// set up single image panorama
-				panorama = pannellum.viewer('panorama_' + id, {
-					'type': 'equirectangular',
-					'panorama': url,
-					'autoLoad': true,
-					'compass': false,
-					'showFullscreenCtrl': false,
-					'pitch': initPitch,
-					'yaw': initYaw
-				})};
+										// set up single image panorama
+										let config = {
+												'type': 'equirectangular',
+												//'panorama': url,
+												'autoLoad': true,
+												'showFullscreenCtrl': false,
+												'compass': false,
+												'pitch': initPitch,
+												'yaw': initYaw
+										};
+										if(url.endsWith(".mp4")){
+												let video = document.createElement("video");
+												console.log(url, video);
+												$(video).append("<source src=\"" + url + "\" type=\"video/mp4\"/>")
+														.appendTo("#panoramaHolder")
+														.css("display", "none");
+												config.dynamicUpdate = true; 
+												config.dynamic = true; 
+												config.panorama =  video;
+										}else {
+												config.panorama =  url;
+										}
+										// set up single image panorama
+										panorama = pannellum.viewer('panorama_' + id, config)
+
+								};
 				
 				// focus point on mouse up (attempt to disregard dragging by looking at position of mouse down & making sure it was quite close)
 				var downPos = [];

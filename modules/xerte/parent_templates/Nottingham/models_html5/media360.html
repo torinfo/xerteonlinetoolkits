@@ -29,7 +29,8 @@
 			lockedHs,
 			currentScene,
 			videoResize = true,
-			firstLoad;
+			firstLoad,
+			videoFrameCallbackId = null;		
 		
 		// function called every time the page is viewed after it has initially loaded
 		this.pageChanged = function() {
@@ -83,11 +84,11 @@
 			$panorama = $('#panorama');
 			
 			// Load in the required scripts before we begin
-			var filePath = x_templateLocation + 'common_html5/js/pannellum/';
+			var filePath = x_templateLocation + 'common_html5/js/';
 			
-			x_insertCSS(filePath + 'pannellum.css');
+			x_insertCSS(filePath + 'pannellum/pannellum.css');
 			loadjs.path(filePath);
-			loadjs(['pannellum.js'], {
+			loadjs(['pannellum/pannellum.js'], {
 				success: function() {
 					media360.begin();
 				}
@@ -178,7 +179,7 @@
 					var scene = {
 						'tip': this.getAttribute('tip'),
 						'type': 'equirectangular',
-						'panorama': this.getAttribute('file'),
+						//'panorama': this.getAttribute('file'),
 						'compass': this.getAttribute('compass') == 'true' ? true : false,
 						'autoRotate': this.getAttribute('rotate') == 'true' ? Number((this.getAttribute('direction') == 'right' ? '-' : '') + this.getAttribute('speed')) : 0,
 						'autoRotateInactivityDelay': this.getAttribute('continueRotate') != undefined && this.getAttribute('continueRotate') != '0' ? Number(this.getAttribute('continueRotate')) * 1000 : undefined,
@@ -186,6 +187,18 @@
 						'titleBg': this.getAttribute('titleBg'),
 						'hotSpots': []
 					};
+					let file = this.getAttribute('file');
+					if(file.endsWith(".mp4")){
+						scene.dynamic = true;
+						let video = $("<video></video>");
+						video.css("display", "none");
+						$("#pageContents").append(video); // maybe move to other element
+						$("<source src=\"" + file + "\" type=\"video/mp4\"/>").appendTo(video)
+						scene.panorama = video[0];
+						scene.dynamicUpdate = true; 
+					}else {
+						scene.panorama = file;
+					}
 				}
 				
 				if (this.getAttribute('title') == 'true' && this.getAttribute('name') != '') {
@@ -503,7 +516,7 @@
 					}
 					
 					currentScene = thisPannellum.getScene();
-					
+
 					$panorama.find('canvas').attr({
 						'role': 'img',
 						'aria-label': scenes[currentScene].tip
@@ -545,9 +558,11 @@
 				})
 				.on('scenechange', function(e) {
 					media360.applySceneStyles(e);
+					console.log(e, thisPannellum);
 				});
 				
 				media360.applySceneStyles(thisPannellum.getScene());
+				console.log(thisPannellum.getScene());
 			}
 			
 			this.sizeChanged();
@@ -1019,7 +1034,49 @@
 				
 				styleTag += '</style>';
 				
-				$("#pageContents").append(styleTag);
+				$("#pageContents").append(styleTag);	
+			}
+			let playPauseButton = $("#playPause");
+			let videoProgress = $("#videoProgress");
+			if(scenes[e].panorama.nodeName){
+				console.log(scenes[e].panorama);
+				playPauseButton.click(function(){
+					console.log("tt", scenes[e].panorama.paused);
+					if(scenes[e].panorama.paused == true) {
+						scenes[e].panorama.play()
+						playPauseButton.text("Pause");
+					}else {
+						scenes[e].panorama.pause();
+						playPauseButton.text("Play");
+					}
+				}).show();
+				videoProgress.on("mousedown", function(){
+					$(this).data("paused", scenes[e].panorama.paused);
+					scenes[e].panorama.pause();
+				});
+				videoProgress.on("change", function(event) {
+					let value = videoProgress[0].value;
+					if(isFinite(value)) {
+						scenes[e].panorama.currentTime = value;
+					}
+				});
+				videoProgress.on("mouseup", function(){
+					if(!$(this).data("paused")){
+						scenes[e].panorama.play()
+					}
+				});
+				videoProgress[0].min = 0;
+				videoProgress[0].value = scenes[e].panorama.currentTime;
+				videoProgress[0].max = scenes[e].panorama.duration;
+				videoProgress.show();
+				const videoFrameCallback = () => {
+					videoProgress[0].value = scenes[e].panorama.currentTime;
+					videoFrameCallbackId = scenes[e].panorama.requestVideoFrameCallback(videoFrameCallback);
+				}
+				videoFrameCallbackId = scenes[e].panorama.requestVideoFrameCallback(videoFrameCallback) 
+			}else {
+				playPauseButton.hide();
+				videoProgress.hide();
 			}
 		}
 		
@@ -1041,11 +1098,10 @@
 			}
 		}
 	}
-	
+
 	media360.init();
 	
 </script>
-
 
 <div id="pageContents">
 	
@@ -1057,6 +1113,10 @@
 			<div class="panel">
 				<div id="panoramaHolder">
 					<div id="panorama"></div>
+				</div>
+				<div id="videoControls">
+					<button id="playPause" type="button">Play</button>
+					<input id="videoProgress" type="range" step="any">
 				</div>
 			</div>
 		</div>
