@@ -256,7 +256,19 @@
 	.featherlight .featherlight-content.max.youTube iframe {
 		width: 100%;
 	}
+	#videoControls{
+		height: 1.5em;
+		display: flex;
+	}
+	#playPause {
+		height: 1.5em;
+	}
+	#videoProgressBar {
+		height: 1.5em;
+		flex-grow: 1;
+		margin: 0;
+	}
 	#videoProgress {
-		width: 50%;
+		line-height: 1.5em;
 	}
 	

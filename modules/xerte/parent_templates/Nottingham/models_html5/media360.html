@@ -72,6 +72,11 @@
 					thisPannellum.resize();
 				}
 				
+				$panorama.height('');
+				if($panorama.data("heightWithControl")) {
+					$panorama.height($panorama.height()-$("#videoControls").height());
+				}
+				
 			} else {
 				videoResize = true;
 				$('.featherlight-content').removeClass('max hidden');
@@ -1036,47 +1041,72 @@
 				
 				$("#pageContents").append(styleTag);	
 			}
-			let playPauseButton = $("#playPause");
-			let videoProgress = $("#videoProgress");
+			let videoControls = $("#videoControls")
+			let controlHeight = videoControls.height();
 			if(scenes[e].panorama.nodeName){
-				console.log(scenes[e].panorama);
+				if(!$panorama.data("heightWithControl")) {
+					$panorama.height($panorama.height()-controlHeight);
+					$panorama.data("heightWithControl", true);
+				}
+				let video = scenes[e].panorama;
+				$("#PageContents").data("activeVideo", video);
+				videoControls.show();
+				let playPauseButton = $("#playPause");
+				let videoProgress = $("#videoProgressBar");
+				let videoDurationText = $("#videoDurationText");
+				let videoProgressText = $("#videoProgressText");
 				playPauseButton.click(function(){
-					console.log("tt", scenes[e].panorama.paused);
-					if(scenes[e].panorama.paused == true) {
-						scenes[e].panorama.play()
+					if(video.paused == true) {
+						video.play()
 						playPauseButton.text("Pause");
 					}else {
-						scenes[e].panorama.pause();
+						video.pause();
 						playPauseButton.text("Play");
 					}
-				}).show();
+				});
 				videoProgress.on("mousedown", function(){
-					$(this).data("paused", scenes[e].panorama.paused);
-					scenes[e].panorama.pause();
+					$(this).data("paused", video.paused);
+					video.pause();
 				});
 				videoProgress.on("change", function(event) {
 					let value = videoProgress[0].value;
 					if(isFinite(value)) {
-						scenes[e].panorama.currentTime = value;
+						video.currentTime = value;
+						let minutes = Math.floor(video.currentTime/60);
+						let seconds = Math.floor(video.currentTime%60);
+						videoProgressText.text(minutes + ":" + seconds);
 					}
 				});
 				videoProgress.on("mouseup", function(){
 					if(!$(this).data("paused")){
-						scenes[e].panorama.play()
+						video.play()
 					}
 				});
 				videoProgress[0].min = 0;
-				videoProgress[0].value = scenes[e].panorama.currentTime;
-				videoProgress[0].max = scenes[e].panorama.duration;
-				videoProgress.show();
+				videoProgress[0].value = video.currentTime;
+				videoProgress[0].max = video.duration;
+				let minutes = Math.floor(video.duration/60);
+				let seconds = Math.floor(video.duration%60);
+				videoDurationText.text(minutes + ":" + seconds);
+				videoProgressText.text("0:0");
 				const videoFrameCallback = () => {
-					videoProgress[0].value = scenes[e].panorama.currentTime;
-					videoFrameCallbackId = scenes[e].panorama.requestVideoFrameCallback(videoFrameCallback);
+					videoProgress[0].value = video.currentTime;
+					let minutes = Math.floor(video.currentTime/60);
+					let seconds = Math.floor(video.currentTime%60);
+					videoProgressText.text(minutes + ":" + seconds);
+					videoFrameCallbackId = video.requestVideoFrameCallback(videoFrameCallback);
 				}
-				videoFrameCallbackId = scenes[e].panorama.requestVideoFrameCallback(videoFrameCallback) 
+				videoFrameCallbackId = video.requestVideoFrameCallback(videoFrameCallback) 
 			}else {
-				playPauseButton.hide();
-				videoProgress.hide();
+				if($panorama.data("heightWithControl")) {
+					$panorama.height('');
+					$panorama.data("heightWithControl", false);
+				}
+				videoControls.hide();
+				if($("Pagecontents").data("activeVideo") != null){
+					$("#PageContents").data("activeVideo").cancelVideoFrameCallback(videoFrameCallbackId);
+					$("#PageContents").data("activeVideo", null);
+				}
 			}
 		}
 		
@@ -1113,10 +1143,11 @@
 			<div class="panel">
 				<div id="panoramaHolder">
 					<div id="panorama"></div>
-				</div>
 				<div id="videoControls">
 					<button id="playPause" type="button">Play</button>
-					<input id="videoProgress" type="range" step="any">
+					<input id="videoProgressBar" type="range" step="any">
+					<span id="videoProgress"><span id="videoProgressText"></span>/<span id="videoDurationText"></span></span>
+				</div>
 				</div>
 			</div>
 		</div>
