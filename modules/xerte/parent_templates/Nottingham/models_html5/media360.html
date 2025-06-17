@@ -30,6 +30,8 @@
 			currentScene,
 			videoResize = true,
 			firstLoad,
+			videosCount = 0,
+			videosLoaded = 0,
 			videoFrameCallbackId = null;		
 		
 		// function called every time the page is viewed after it has initially loaded
@@ -196,9 +198,10 @@
 					if(file.endsWith(".mp4")){
 						scene.dynamic = true;
 						let video = $("<video></video>");
-						video.css("display", "none");
-						$("#pageContents").append(video); // maybe move to other element
 						$("<source src=\"" + file + "\" type=\"video/mp4\"/>").appendTo(video)
+						videosCount += 1;
+						$(document.body).append(video); // maybe move to other element
+						video.css("display", "none");
 						scene.panorama = video[0];
 						scene.dynamicUpdate = true; 
 					}else {
@@ -409,9 +412,33 @@
 			});
 			
 			// is there at least one scene?
+
+			let callback = function() {
+				videosLoaded = 0;
+				let keys = Object.keys(scenes);
+				for(let i = 0; i < keys.length; i++){
+					panorama = scenes[keys[i]].panorama;
+					if(panorama instanceof HTMLMediaElement) {
+						console.log(panorama.readyState);
+						if(panorama.readyState > 1) {
+							videosLoaded += 1;
+						}
+					}
+				}
+				if(videosCount > videosLoaded) {
+					setTimeout(callback, 500);
+				}else {
+					currentScene = undefined;
+					media360.doneLoading(scenes, firstScene);
+				}
+			}
+
+			setTimeout(callback, 500);
+		}
+		
+		this.doneLoading = function(scenes, firstScene) {
 			if (Object.keys(scenes).length > 0) {
-				
-				// set up panorama including all scenes & hotspots
+			   // set up panorama including all scenes & hotspots */
 				thisPannellum = pannellum.viewer('panorama', {
 					'default': {
 						'firstScene': firstScene,
@@ -572,6 +599,7 @@
 			
 			this.sizeChanged();
 			firstLoad = false;
+			this.sizeChanged();
 			x_pageLoaded();
 		}
 		
