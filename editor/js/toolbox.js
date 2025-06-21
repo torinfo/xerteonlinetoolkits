@@ -3758,7 +3758,6 @@ var EDITOR = (function ($, parent) {
 			closeOnEsc: true,
 			closeIcon: '',
 			afterOpen: function () {
-				
 				// scale panorama
 				var dimensions = [0.7 * $('body').width(), 0.7 * $('body').height() - $('#hsbutton_holder').height() - $('.hsinstructions').height()];
 				
@@ -3768,107 +3767,132 @@ var EDITOR = (function ($, parent) {
 				
 				$('#outer_img_' + id).width(dimensions[0]);
                 //check if cubemap
-                if (hspattrs.cubemapcb=="true") {
-                    // set up cubemap panorama
-                    panorama = pannellum.viewer('panorama_' + id, {
-                        'type': 'cubemap',
-                        'cubeMap': [makeAbsolute(hspattrs.front),makeAbsolute(hspattrs.right),makeAbsolute(hspattrs.back),makeAbsolute(hspattrs.left),makeAbsolute(hspattrs.top),makeAbsolute(hspattrs.bottom)],
-                        'autoLoad': true,
-                        'showFullscreenCtrl': false,
-                        'compass': false,
-                        'pitch': Number(hsattrs.p), // turn to look at existing hotspot (if there is one)
-                        'yaw': Number(hsattrs.y)
-                    })
-                } else{
-										config = {
-												'type': 'equirectangular',
-												//'panorama': url,
-												'autoLoad': true,
-												'showFullscreenCtrl': false,
-												'compass': false,
-												'pitch': Number(hsattrs.p), // turn to look at existing hotspot (if there is one)
-												'yaw': Number(hsattrs.y)
-										};
-										if(url.endsWith(".mp4")){
-												let video = document.createElement("video");
-												$(video).append("<source src=\"" + url + "\" type=\"video/mp4\"/>")
-														.appendTo("#panoramaHolder")
-														.css("display", "none");
-												config.dynamicUpdate = true; 
-												config.dynamic = true; 
-												config.panorama =  video;
-										}else {
-												config.panorama =  url;
-										}
-										// set up single image panorama
-										panorama = pannellum.viewer('panorama_' + id, config)
-								};
-				
-				// add hotspot (if there is one!)
-				if (hsattrs.p != '' && hsattrs.y != '') {
-					panorama.on('load', function(event) {
-						create360Hotspot(Number(hsattrs.p), Number(hsattrs.y),hspattrs);
-					});
-				}
-				
-				// move hotspot on mouse up (attempt to disregard dragging by looking at position of mouse down & making sure it was quite close)
-				var downPos = [];
-				
-				panorama.on('mousedown', function(event) {
-					downPos = panorama.mouseEventToCoords(event);
-				});
-				
-				panorama.on('mouseup', function(event) {
-					var coords = panorama.mouseEventToCoords(event);
-					
-					if (Math.abs(downPos[0]-coords[0]) < 0.01 && Math.abs(downPos[1]-coords[1]) < 0.01) {
-						create360Hotspot(coords[0], coords[1]);
+				let config = {};
+				let videosCount = 0;
+				if (hspattrs.cubemapcb == "true") {
+					// set up cubemap panorama
+					config = {
+						'type': 'cubemap',
+						'cubeMap': [makeAbsolute(hspattrs.front), makeAbsolute(hspattrs.right), makeAbsolute(hspattrs.back), makeAbsolute(hspattrs.left), makeAbsolute(hspattrs.top), makeAbsolute(hspattrs.bottom)],
+						'autoLoad': true,
+						'showFullscreenCtrl': false,
+						'compass': false,
+						'pitch': Number(hsattrs.p), // turn to look at existing hotspot (if there is one)
+						'yaw': Number(hsattrs.y)
+					};
+				} else {
+					config = {
+						'type': 'equirectangular',
+						//'panorama': url,
+						'autoLoad': true,
+						'showFullscreenCtrl': false,
+						'compass': false,
+						'pitch': Number(hsattrs.p), // turn to look at existing hotspot (if there is one)
+						'yaw': Number(hsattrs.y)
+					};
+					if (url.endsWith(".mp4")) {
+						let video = document.createElement("video");
+						$(video).append("<source src=\"" + url + "\" type=\"video/mp4\"/>")
+							.appendTo("#panoramaHolder");
+						videosCount += 1;
+						config.dynamicUpdate = true;
+						config.dynamic = true;
+						config.panorama = video;
+					} else {
+						config.panorama = url;
 					}
-				});
-				
-				// remove existing hotspot & draw a new one
-				function create360Hotspot(pitch, yaw) {
-					panorama.removeHotSpot('currentHs');
+					// set up single image panorama
+				}
+
 					
-					currentHsDetails.pitch = pitch;
-					currentHsDetails.yaw = yaw;
-					var borderWidth = Number(currentHsDetails.size)/4;
-					
-					panorama.addHotSpot({
-						'id': 'currentHs',
-						'pitch': pitch,
-						'yaw': yaw,
-						'cssClass': 'hotspot360Icon'
+				let doneLoading = function () {
+						console.log("done", config);
+					// add hotspot (if there is one!)
+					if (hsattrs.p != '' && hsattrs.y != '') {
+						panorama.on('load', function (event) {
+							create360Hotspot(Number(hsattrs.p), Number(hsattrs.y), hspattrs);
+						});
+					}
+
+					// move hotspot on mouse up (attempt to disregard dragging by looking at position of mouse down & making sure it was quite close)
+					var downPos = [];
+
+					panorama.on('mousedown', function (event) {
+						downPos = panorama.mouseEventToCoords(event);
 					});
-					
-					// hotspot styles
-					$('.hotspot360Icon')
-						.append('<span class="icon360Holder"><span class="icon360"></span></span>')
-						.css({
-							height: (Number(currentHsDetails.size)*2+2) + 'px',
-							width: (Number(currentHsDetails.size)*2+2) + 'px',
-							background: currentHsDetails.colour1,
-							'border-color': currentHsDetails.colour2,
-							'border-width': borderWidth + 'px'
-						})
-						.hover(
-							function() {
-								$(this).css('box-shadow', '0px 0px ' + (Number(currentHsDetails.size)/2) + 'px ' + currentHsDetails.colour2);
-							},
-							function() {
-								$(this).css('box-shadow', 'none');
+
+					panorama.on('mouseup', function (event) {
+						var coords = panorama.mouseEventToCoords(event);
+
+						if (Math.abs(downPos[0] - coords[0]) < 0.01 && Math.abs(downPos[1] - coords[1]) < 0.01) {
+							create360Hotspot(coords[0], coords[1]);
+						}
+					});
+
+					// remove existing hotspot & draw a new one
+					function create360Hotspot(pitch, yaw) {
+						panorama.removeHotSpot('currentHs');
+
+						currentHsDetails.pitch = pitch;
+						currentHsDetails.yaw = yaw;
+						var borderWidth = Number(currentHsDetails.size) / 4;
+
+						panorama.addHotSpot({
+							'id': 'currentHs',
+							'pitch': pitch,
+							'yaw': yaw,
+							'cssClass': 'hotspot360Icon'
+						});
+
+						// hotspot styles
+						$('.hotspot360Icon')
+							.append('<span class="icon360Holder"><span class="icon360"></span></span>')
+							.css({
+								height: (Number(currentHsDetails.size) * 2 + 2) + 'px',
+								width: (Number(currentHsDetails.size) * 2 + 2) + 'px',
+								background: currentHsDetails.colour1,
+								'border-color': currentHsDetails.colour2,
+								'border-width': borderWidth + 'px'
 							})
-						.find('.icon360')
+							.hover(
+								function () {
+									$(this).css('box-shadow', '0px 0px ' + (Number(currentHsDetails.size) / 2) + 'px ' + currentHsDetails.colour2);
+								},
+								function () {
+									$(this).css('box-shadow', 'none');
+								})
+							.find('.icon360')
 							.css({
 								transform: 'rotate(' + currentHsDetails.orientation + 'deg)',
 								'font-size': Number(currentHsDetails.size) + 'px',
 								color: currentHsDetails.colour2
 							})
 							.addClass(currentHsDetails.icon);
-				}
+					}
+				};
+
+				let callback = function () {
+					let videosLoaded = 0;
+						let panoramaVideo = config.panorama;
+						if (panoramaVideo instanceof HTMLMediaElement) {
+							if (panoramaVideo.readyState > 2) {
+								videosLoaded += 1;
+							}
+						}
+					if (videosCount > videosLoaded) {
+						setTimeout(callback, 500);
+					} else {
+						panorama = pannellum.viewer('panorama_' + id, config)
+						if(panoramaVideo instanceof HTMLMediaElement) {
+								$(panoramaVideo).css("display", "none");
+						}
+						doneLoading();
+					}
+				};
+
+				setTimeout(callback, 500);
 			}
 		});
-		
 		// set up buttons
 		var key = $('#inner_img_' + id).data('key');
 		
@@ -3953,59 +3977,83 @@ var EDITOR = (function ($, parent) {
 					initYaw = $.isNumeric(info[1]) ? Number(info[1]) : initYaw;
 				}
 
-                if (hspattrs.cubemapcb=="true") {
-                    // set up cubemap panorama
-                    panorama = pannellum.viewer('panorama_' + id, {
-                        'type': 'cubemap',
-                        'cubeMap': [makeAbsolute(hspattrs.front),makeAbsolute(hspattrs.right),makeAbsolute(hspattrs.back),makeAbsolute(hspattrs.left),makeAbsolute(hspattrs.top),makeAbsolute(hspattrs.bottom)],
-                        'autoLoad': true,
-                        'showFullscreenCtrl': false,
-                        'compass': false,
-                        'pitch': Number(hsattrs.p), // turn to look at existing hotspot (if there is one)
-                        'yaw': Number(hsattrs.y)
-                    })
-                } else{
-										// set up single image panorama
-										let config = {
-												'type': 'equirectangular',
-												//'panorama': url,
-												'autoLoad': true,
-												'showFullscreenCtrl': false,
-												'compass': false,
-												'pitch': initPitch,
-												'yaw': initYaw
-										};
-										if(url.endsWith(".mp4")){
-												let video = document.createElement("video");
-												console.log(url, video);
-												$(video).append("<source src=\"" + url + "\" type=\"video/mp4\"/>")
-														.appendTo("#panoramaHolder")
-														.css("display", "none");
-												config.dynamicUpdate = true; 
-												config.dynamic = true; 
-												config.panorama =  video;
-										}else {
-												config.panorama =  url;
-										}
-										// set up single image panorama
-										panorama = pannellum.viewer('panorama_' + id, config)
+				let config = {};
+				let videosCount = 0;
 
-								};
-				
-				// focus point on mouse up (attempt to disregard dragging by looking at position of mouse down & making sure it was quite close)
-				var downPos = [];
-				
-				panorama.on('mousedown', function(event) {
-					downPos = panorama.mouseEventToCoords(event);
-				});
-				
-				panorama.on('mouseup', function(event) {
-					var coords = panorama.mouseEventToCoords(event);
-					
-					if (Math.abs(downPos[0]-coords[0]) < 0.01 && Math.abs(downPos[1]-coords[1]) < 0.01) {
-						panorama.setPitch(coords[0]).setYaw(coords[1]);
+				if (hspattrs.cubemapcb == "true") {
+					// set up cubemap panorama
+					config = {
+						'type': 'cubemap',
+						'cubeMap': [makeAbsolute(hspattrs.front), makeAbsolute(hspattrs.right), makeAbsolute(hspattrs.back), makeAbsolute(hspattrs.left), makeAbsolute(hspattrs.top), makeAbsolute(hspattrs.bottom)],
+						'autoLoad': true,
+						'showFullscreenCtrl': false,
+						'compass': false,
+						'pitch': Number(hsattrs.p), // turn to look at existing hotspot (if there is one)
+						'yaw': Number(hsattrs.y)
+					};
+				} else {
+					// set up single image panorama
+					config = {
+						'type': 'equirectangular',
+						//'panorama': url,
+						'autoLoad': true,
+						'showFullscreenCtrl': false,
+						'compass': false,
+						'pitch': initPitch,
+						'yaw': initYaw
+					};
+					if (url.endsWith(".mp4")) {
+						let video = document.createElement("video");
+						console.log(url, video);
+						$(video).append("<source src=\"" + url + "\" type=\"video/mp4\"/>")
+							.appendTo("#panoramaHolder")
+						config.dynamicUpdate = true;
+						config.dynamic = true;
+						videosCount +=1;
+						config.panorama = video;
+					} else {
+						config.panorama = url;
 					}
-				});
+					// set up single image panorama
+
+				};
+
+				let doneLoading = function() {
+						// focus point on mouse up (attempt to disregard dragging by looking at position of mouse down & making sure it was quite close)
+						var downPos = [];
+						
+						panorama.on('mousedown', function(event) {
+								downPos = panorama.mouseEventToCoords(event);
+						});
+						
+						panorama.on('mouseup', function(event) {
+								var coords = panorama.mouseEventToCoords(event);
+								
+								if (Math.abs(downPos[0]-coords[0]) < 0.01 && Math.abs(downPos[1]-coords[1]) < 0.01) {
+										panorama.setPitch(coords[0]).setYaw(coords[1]);
+								}
+						});
+				};
+
+				let callback = function () {
+					let videosLoaded = 0;
+						let panoramaVideo = config.panorama;
+						if (panoramaVideo instanceof HTMLMediaElement) {
+							if (panoramaVideo.readyState > 2) {
+								videosLoaded += 1;
+							}
+						}
+					if (videosCount > videosLoaded) {
+						setTimeout(callback, 500);
+					} else {
+						panorama = pannellum.viewer('panorama_' + id, config)
+						if(panoramaVideo instanceof HTMLMediaElement) {
+								$(panoramaVideo).css("display", "none");
+						}
+						doneLoading();
+					}
+				};
+				setTimeout(callback, 500);
 			}
 		});
 		
