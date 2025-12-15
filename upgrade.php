@@ -1779,3 +1779,21 @@ function upgrade_55()
 
     return $message;
 }
+
+function upgrade_56(){
+    if (! _db_field_exists('logindetails', 'preference')) {
+        $error1 = _db_add_field('logindetails', 'preference', 'text', '', 'disabled');
+        $error1_returned = true;
+
+
+        if (($error1 === false)) {
+            $error1_returned = false;
+        }
+
+        return "Tsugi directory field - ok ? " . ($error1_returned ? 'true' : 'false'). "<br>";
+    }
+    else
+    {
+        return "Tsugi directory already exists - ok ? true". "<br>";
+    }
+}
