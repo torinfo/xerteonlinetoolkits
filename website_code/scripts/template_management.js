@@ -682,7 +682,56 @@ function refresh_workspace() {
         // Clear the project details
         $("#project_information").html("");
         init_workspace();
+        
+        // Save sort preference
+        save_user_preference('sort_type', document.sorting.type.value);
     });
+}
+
+/**
+ * Save a user preference to the database
+ * @param {string} key - The preference key
+ * @param {string} value - The preference value
+ */
+function save_user_preference(key, value) {
+    // Only save if user has preferences capability
+    if (typeof user_has_preferences !== 'undefined' && user_has_preferences) {
+        $.ajax({
+            type: "POST",
+            url: "website_code/php/save_user_preferences.php",
+            dataType: 'json',
+            data: {
+                key: key,
+                value: value
+            }
+        })
+        .done(function(response) {
+            if (response.success) {
+                console.log("Preference saved:", key, value);
+            } else {
+                console.error("Failed to save preference:", response.message);
+            }
+        })
+        .fail(function() {
+            console.error("Error saving preference");
+        });
+    }
+}
+
+/**
+ * Load user preferences and apply them
+ */
+function load_user_preferences() {
+    // This will be set from PHP session
+    if (typeof user_preferences !== 'undefined' && user_preferences) {
+        // Restore sort selector
+        if (user_preferences.sort_type) {
+            var sortSelector = document.getElementById('sort-selector');
+            if (sortSelector) {
+                sortSelector.value = user_preferences.sort_type;
+            }
+        }
+    }
 }
 
 function getProjectInformation(user_id, template_id) {

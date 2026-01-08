@@ -539,6 +539,22 @@ function login_processing2($firstname = false, $surname = false, $username = fal
 
           update_user_logon_time();
       }
+
+      /*
+       * Load user preferences from database if the authentication method supports it
+       */
+      if ($authmech->hasUserPrefrences() && isset($_SESSION['toolkits_logon_username'])) {
+          $row = db_query_one("SELECT preference FROM {$xerte_toolkits_site->database_table_prefix}logindetails WHERE username = ?", array($_SESSION['toolkits_logon_username']));
+          
+          if (!empty($row) && isset($row['preference']) && !empty($row['preference'])) {
+              // Parse JSON preferences
+              $preferences = json_decode($row['preference'], true);
+              $_SESSION['toolkits_preferences'] = $preferences !== null ? $preferences : array();
+          } else {
+              // Set to empty array if no preferences found
+              $_SESSION['toolkits_preferences'] = array();
+          }
+      }
   }
   $msg = "User " . $_SESSION['toolkits_logon_username'] . " logged in successfully from " . $_SERVER['REMOTE_ADDR'];
   receive_message($_SESSION['toolkits_logon_username'], "SYSTEM", "LOGINS", "Successful login", $msg);

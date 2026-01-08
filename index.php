@@ -161,6 +161,26 @@ $version = getVersion();
     {
         $languagecodevar = "var language_code = \"en-GB\"";
     }
+    // Check if authmech exists, if not create it
+    if (!isset($authmech)) {
+        $authmech = Xerte_Authentication_Factory::create($xerte_toolkits_site->authentication_method);
+    }
+    
+    // Prepare user preferences for JavaScript
+    $user_preferences_json = "{}";
+    $user_has_preferences = "false";
+    
+    if (isset($_SESSION['toolkits_preferences']) && is_array($_SESSION['toolkits_preferences'])) {
+        $user_preferences_json = json_encode($_SESSION['toolkits_preferences']);
+        if ($authmech->hasUserPrefrences()) {
+            $user_has_preferences = "true";
+        }
+    } else {
+        if (isset($authmech) && $authmech->hasUserPrefrences()) {
+            $user_has_preferences = "true";
+        }
+    }
+    
     echo "
         <script type=\"text/javascript\"> // JAVASCRIPT library for fixed variables\n // management of javascript is set up here\n // SITE SETTINGS
             var site_url = \"{$xerte_toolkits_site->site_url}\";
@@ -169,6 +189,8 @@ $version = getVersion();
             var management_ajax_php_path = \"website_code/php/management/\";
             var ajax_php_path = \"website_code/php/\";
             {$languagecodevar};
+            var user_preferences = {$user_preferences_json};
+            var user_has_preferences = {$user_has_preferences};
         </script>";
     ?>
     <script type="text/javascript" language="javascript" src="website_code/scripts/validation.js?version=<?php echo $version;?>"></script>
@@ -418,7 +440,7 @@ Folder popup is the div that appears when creating a new folder
 				<div class="sorter">
 					<form name="sorting" style="float:left;margin:7px 5px 5px 10px;">
 						<i class="fa  fa-sort xerte-icon"></i>&nbsp;<label for="sort-selector"><?PHP echo INDEX_SORT; ?></label>
-						<select id="sort-selector" name="type" onChange="refresh_workspace()">>
+						<select id="sort-selector" name="type" onChange="refresh_workspace(); save_user_preference('sort_type', this.value);">
 							<option value="alpha_up"><?PHP echo INDEX_SORT_A; ?></option>
 							<option value="alpha_down"><?PHP echo INDEX_SORT_Z; ?></option>
 							<option value="date_down" selected><?PHP echo INDEX_SORT_NEW; ?></option>
@@ -503,6 +525,7 @@ Folder popup is the div that appears when creating a new folder
 <script>
     $(document).ready(function () {
         setupMainLayout();
+        load_user_preferences(); // Load preferences before refreshing workspace
         refresh_workspace();
     });
 </script>
