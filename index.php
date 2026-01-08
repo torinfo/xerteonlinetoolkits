@@ -199,7 +199,7 @@ $version = getVersion();
     _include_javascript_file("website_code/scripts/screen_display.js?version=" . $version);
     _include_javascript_file("website_code/scripts/ajax_management.js?version=" . $version);
     _include_javascript_file("website_code/scripts/folders.js?version=" . $version);
-    _include_javascript_file("website_code/scripts/template_management.js?version" . $version);
+    _include_javascript_file("website_code/scripts/template_management.js?version=" . $version);
     _include_javascript_file("website_code/scripts/logout.js?version=" . $version);
     _include_javascript_file("website_code/scripts/import.js?version=" . $version);
     _include_javascript_file("website_code/scripts/functions.js?version=" . $version);
@@ -525,7 +525,9 @@ Folder popup is the div that appears when creating a new folder
 <script>
     $(document).ready(function () {
         setupMainLayout();
-        load_user_preferences(); // Load preferences before refreshing workspace
+        if (typeof load_user_preferences === 'function') {
+            load_user_preferences(); // Load preferences before refreshing workspace
+        }
         refresh_workspace();
     });
 </script>
