@@ -706,15 +706,18 @@ function save_user_preference(key, value) {
             }
         })
         .done(function(response) {
-            if (response.success) {
+            if (response && response.success) {
                 console.log("Preference saved:", key, value);
             } else {
-                console.error("Failed to save preference:", response.message);
+                console.error("Failed to save preference:", response ? response.message : "Unknown error");
             }
         })
-        .fail(function() {
-            console.error("Error saving preference");
+        .fail(function(xhr, status, error) {
+            console.error("Error saving preference:", status, error);
+            console.error("Response:", xhr.responseText);
         });
+    } else {
+        console.log("User preferences not available - skipping save");
     }
 }
 
