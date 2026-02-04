@@ -448,6 +448,29 @@ function output_editor_code($row_edit, $xerte_toolkits_site, $read_status, $vers
     echo "vendor_options=" . json_encode($vendors) . ";\n";
     echo "corpus_upload_types=" . json_encode($corpus_upload_types) . ";\n";
     echo "management_helper_table=" . json_encode($xerte_toolkits_site->management_helper_table) . ";\n";
+    
+    // Pass user preferences to JavaScript (similar to index.php)
+    require_once("library/Xerte/Authentication/Factory.php");
+    $authmech = Xerte_Authentication_Factory::create($xerte_toolkits_site->authentication_method);
+    
+    $user_preferences_json = "{}";
+    $user_has_preferences = "false";
+    
+    if (isset($_SESSION['toolkits_preferences']) && is_array($_SESSION['toolkits_preferences'])) {
+        $user_preferences_json = json_encode($_SESSION['toolkits_preferences']);
+        if ($authmech->hasUserPrefrences()) {
+            $user_has_preferences = "true";
+        }
+    } else {
+        if (isset($authmech) && $authmech->hasUserPrefrences()) {
+            $user_has_preferences = "true";
+        }
+    }
+    
+    echo "var user_preferences = {$user_preferences_json};\n";
+    echo "var user_has_preferences = {$user_has_preferences};\n";
+    echo "console.log('Editor: user_preferences loaded:', user_preferences);\n";
+    echo "console.log('Editor: user_has_preferences =', user_has_preferences);\n";
     ?>
 
     function bunload(){

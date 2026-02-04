@@ -694,11 +694,34 @@ function refresh_workspace() {
  * @param {string} value - The preference value
  */
 function save_user_preference(key, value) {
+    console.log("=== save_user_preference FUNCTION CALLED ===");
+    console.log("save_user_preference: key =", key);
+    console.log("save_user_preference: value =", value, "(type:", typeof value, ")");
+    console.log("save_user_preference: user_has_preferences =", typeof user_has_preferences !== 'undefined' ? user_has_preferences : 'undefined');
+    console.log("save_user_preference: user_preferences object =", typeof user_preferences !== 'undefined' ? user_preferences : 'undefined');
+    
     // Only save if user has preferences capability
     if (typeof user_has_preferences !== 'undefined' && user_has_preferences) {
+        console.log("save_user_preference: User has preferences enabled, proceeding with save...");
+        
+        // Use site_url if available, otherwise use relative path
+        var saveUrl = "website_code/php/save_user_preferences.php";
+        if (typeof site_url !== 'undefined' && site_url) {
+            // Remove trailing slash if present and construct full URL
+            var baseUrl = site_url.replace(/\/$/, '');
+            saveUrl = baseUrl + "/website_code/php/save_user_preferences.php";
+            console.log("save_user_preference: Using site_url to construct absolute URL");
+        } else {
+            console.log("save_user_preference: site_url not available, using relative path");
+        }
+        
+        console.log("save_user_preference: Final URL =", saveUrl);
+        console.log("save_user_preference: Making AJAX POST request...");
+        console.log("save_user_preference: Request data =", {key: key, value: value});
+        
         $.ajax({
             type: "POST",
-            url: "website_code/php/save_user_preferences.php",
+            url: saveUrl,
             dataType: 'json',
             data: {
                 key: key,
@@ -706,19 +729,38 @@ function save_user_preference(key, value) {
             }
         })
         .done(function(response) {
+            console.log("save_user_preference: AJAX request completed successfully");
+            console.log("save_user_preference: Response =", response);
             if (response && response.success) {
-                console.log("Preference saved:", key, value);
+                console.log("✓✓✓ Preference saved successfully:", key, "=", value);
+                // Update user_preferences object in memory
+                if (typeof user_preferences !== 'undefined') {
+                    user_preferences[key] = value;
+                    console.log("save_user_preference: Updated in-memory user_preferences object");
+                }
             } else {
-                console.error("Failed to save preference:", response ? response.message : "Unknown error");
+                console.error("✗✗✗ Failed to save preference. Response:", response);
+                console.error("save_user_preference: Error message:", response ? response.message : "Unknown error");
             }
         })
         .fail(function(xhr, status, error) {
-            console.error("Error saving preference:", status, error);
-            console.error("Response:", xhr.responseText);
+            console.error("✗✗✗ AJAX request FAILED");
+            console.error("save_user_preference: Status =", status);
+            console.error("save_user_preference: Error =", error);
+            console.error("save_user_preference: Response text =", xhr.responseText);
+            console.error("save_user_preference: Request URL =", saveUrl);
+            console.error("save_user_preference: Status code =", xhr.status);
+            console.error("save_user_preference: Full XHR object =", xhr);
         });
     } else {
-        console.log("User preferences not available - skipping save");
+        console.warn("save_user_preference: User preferences NOT available - skipping save");
+        console.warn("save_user_preference: user_has_preferences =", typeof user_has_preferences !== 'undefined' ? user_has_preferences : 'undefined');
+        console.warn("save_user_preference: typeof user_has_preferences =", typeof user_has_preferences);
+        if (typeof user_has_preferences !== 'undefined') {
+            console.warn("save_user_preference: user_has_preferences value =", user_has_preferences, "(type:", typeof user_has_preferences, ")");
+        }
     }
+    console.log("=== save_user_preference FUNCTION END ===");
 }
 
 /**
@@ -727,11 +769,35 @@ function save_user_preference(key, value) {
 function load_user_preferences() {
     // This will be set from PHP session
     if (typeof user_preferences !== 'undefined' && user_preferences) {
+        console.log("Loaded user_preferences:", user_preferences);
+
         // Restore sort selector
         if (user_preferences.sort_type) {
             var sortSelector = document.getElementById('sort-selector');
             if (sortSelector) {
                 sortSelector.value = user_preferences.sort_type;
+            }
+        }
+
+        // Restore east (right) panel state
+        if (typeof xerteinner_layout !== 'undefined' && user_preferences.hasOwnProperty('panel_east_open')) {
+            var eastOpen = user_preferences.panel_east_open;
+            console.log("Restoring panel_east_open:", eastOpen);
+            if (eastOpen === false || eastOpen === 'false' || eastOpen === 0 || eastOpen === '0') {
+                xerteinner_layout.close('east');
+            } else {
+                xerteinner_layout.open('east');
+            }
+        }
+
+        // Restore south (bottom) panel state
+        if (typeof xertemain_layout !== 'undefined' && user_preferences.hasOwnProperty('panel_south_open')) {
+            var southOpen = user_preferences.panel_south_open;
+            console.log("Restoring panel_south_open:", southOpen);
+            if (southOpen === false || southOpen === 'false' || southOpen === 0 || southOpen === '0') {
+                xertemain_layout.close('south');
+            } else {
+                xertemain_layout.open('south');
             }
         }
     }

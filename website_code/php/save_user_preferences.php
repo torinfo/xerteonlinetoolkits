@@ -18,22 +18,42 @@
  * limitations under the License.
  */
 
+// Start output buffering to catch any errors
+ob_start();
+
+// Enable error reporting
+error_reporting(E_ALL);
+ini_set('display_errors', 0);
+ini_set('log_errors', 1);
+
 require_once("../../config.php");
-require_once("../user_library.php");
+require_once("user_library.php");
 
 // Set content type for JSON response
 header('Content-Type: application/json');
 
 if(empty($_SESSION['toolkits_logon_id'])) {
+    error_log("save_user_preferences.php: User not logged in");
     echo json_encode(array("success" => false, "message" => "Please login"));
     exit;
 }
 
 // Check if user has preferences capability
-$authmech = Xerte_Authentication_Factory::create($xerte_toolkits_site->authentication_method);
+try {
+    $authmech = Xerte_Authentication_Factory::create($xerte_toolkits_site->authentication_method);
+    
+    if (!$authmech || !$authmech->hasUserPrefrences()) {
+        echo json_encode(array("success" => false, "message" => "User preferences not supported"));
+        exit;
+    }
+} catch (Exception $e) {
+    echo json_encode(array("success" => false, "message" => "Error creating auth mechanism: " . $e->getMessage()));
+    exit;
+}
 
-if (!$authmech->hasUserPrefrences()) {
-    echo json_encode(array("success" => false, "message" => "User preferences not supported"));
+// Check if username is set
+if (!isset($_SESSION['toolkits_logon_username']) || empty($_SESSION['toolkits_logon_username'])) {
+    echo json_encode(array("success" => false, "message" => "Username not found in session"));
     exit;
 }
 
@@ -78,8 +98,10 @@ $result = db_query($query, array($preferences_json, $_SESSION['toolkits_logon_us
 if ($result !== false) {
     // Update session with parsed array (not JSON string)
     $_SESSION['toolkits_preferences'] = $preferences;
+    ob_end_clean(); // Clear any output before sending JSON
     echo json_encode(array("success" => true, "message" => "Preferences saved"));
 } else {
+    ob_end_clean(); // Clear any output before sending JSON
     echo json_encode(array("success" => false, "message" => "Failed to save preferences to database"));
 }
 

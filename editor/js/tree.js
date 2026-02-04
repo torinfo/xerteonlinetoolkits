@@ -24,8 +24,45 @@ var EDITOR = (function ($, parent) {
     // Create the tree object and refer locally to it as 'my'
     var my = parent.tree = {},
         toolbox = parent.toolbox,
-        defaultLanguage = false,
+        // Initialize defaults from user preferences if available
+        defaultLanguage = (function() {
+            if (typeof user_preferences !== 'undefined' && user_preferences && typeof user_has_preferences !== 'undefined' && user_has_preferences) {
+                var editorShowLanguage = user_preferences.editor_show_language;
+                return (editorShowLanguage !== undefined && editorShowLanguage !== null && 
+                       editorShowLanguage !== false && editorShowLanguage !== 'false' && 
+                       editorShowLanguage !== 0 && editorShowLanguage !== '0');
+            }
+            return false;
+        })(),
         defaultAdvanced = false,
+        // Store toolbar and groups defaults for later use
+        defaultToolbar = (function() {
+            if (typeof user_preferences !== 'undefined' && user_preferences && typeof user_has_preferences !== 'undefined' && user_has_preferences) {
+                var editorShowToolbar = user_preferences.editor_show_toolbar;
+                return (editorShowToolbar !== undefined && editorShowToolbar !== null && 
+                       editorShowToolbar !== false && editorShowToolbar !== 'false' && 
+                       editorShowToolbar !== 0 && editorShowToolbar !== '0');
+            }
+            return false;
+        })(),
+        defaultExpandGroups = (function() {
+            if (typeof user_preferences !== 'undefined' && user_preferences && typeof user_has_preferences !== 'undefined' && user_has_preferences) {
+                var editorExpandGroups = user_preferences.editor_expand_groups;
+                return (editorExpandGroups !== undefined && editorExpandGroups !== null && 
+                       editorExpandGroups !== false && editorExpandGroups !== 'false' && 
+                       editorExpandGroups !== 0 && editorExpandGroups !== '0');
+            }
+            return false;
+        })(),
+        defaultExpandTree = (function() {
+            if (typeof user_preferences !== 'undefined' && user_preferences && typeof user_has_preferences !== 'undefined' && user_has_preferences) {
+                var editorExpandTree = user_preferences.editor_expand_tree;
+                return (editorExpandTree !== undefined && editorExpandTree !== null && 
+                       editorExpandTree !== false && editorExpandTree !== 'false' && 
+                       editorExpandTree !== 0 && editorExpandTree !== '0');
+            }
+            return false;
+        })()
 
 
     // Called once document is ready
@@ -286,7 +323,19 @@ var EDITOR = (function ($, parent) {
                 .attr('type',  'checkbox')
                 .attr('title', value.tooltip)
                 .prop('disabled', value.disabled)
-                .on('change', value.click)
+                .on('change', value.click);
+
+            // Initialize checkbox state from defaults set at module level
+            if (value.id === 'language_cb') {
+                checkbox.prop('checked', defaultLanguage);
+            } else if (value.id === 'toolbar_cb') {
+                checkbox.prop('checked', defaultToolbar);
+            } else if (value.id === 'groups_cb') {
+                checkbox.prop('checked', defaultExpandGroups);
+            } else {
+                // Default to false for other checkboxes
+                checkbox.prop('checked', false);
+            }
 
             checkboxes.append(checkbox);
             var span = $('<label>')
@@ -297,6 +346,39 @@ var EDITOR = (function ($, parent) {
             checkboxes.append(span);
         });
         $('#checkbox_holder').append(checkboxes);
+        
+        // Now trigger the handlers to apply the initial state
+        // Use setTimeout to ensure checkboxes are in DOM and handlers are attached, and after any code that might reset them
+        setTimeout(function() {
+            // Always trigger handlers to apply the state (they read the checkbox state)
+            var languageCb = $('#language_cb');
+            if (languageCb.length) {
+                // Re-apply preference in case it was reset by other code
+                languageCb.prop('checked', defaultLanguage);
+                showLanguage();
+            }
+            
+            var toolbarCb = $('#toolbar_cb');
+            if (toolbarCb.length) {
+                // Re-apply preference in case it was reset
+                toolbarCb.prop('checked', defaultToolbar);
+                showToolbar();
+            }
+            
+            var groupsCb = $('#groups_cb');
+            if (groupsCb.length) {
+                // Re-apply preference in case it was reset
+                groupsCb.prop('checked', defaultExpandGroups);
+                expandGroups();
+            }
+            
+            var expandTreeCb = $('#expand_tree');
+            if (expandTreeCb.length) {
+                // Re-apply preference in case it was reset
+                expandTreeCb.prop('checked', defaultExpandTree);
+                expandTree();
+            }
+        }, 500);
     },
 
 
@@ -2201,7 +2283,13 @@ img_search_and_help = function(query, api, url, interpretPrompt, overrideSetting
         $('.ui-layout-west .footer').append(buttons);
 
         // add a checkbox that expands / collapses all pages / nested items in the tree
-        $('<span id="tree_checks"><input id="expand_tree" type="checkbox" title="' + language.chkExpandTree.$tooltip + '"><label id="expand_tree_label" for="expand_tree" class="enabled">' + language.chkExpandTree.$label + '</label></span>').prependTo(buttons);
+        var expandTreeCheckbox = $('<input id="expand_tree" type="checkbox" title="' + language.chkExpandTree.$tooltip + '">');
+        // Initialize checkbox state from defaultExpandTree
+        expandTreeCheckbox.prop('checked', defaultExpandTree);
+        
+        var expandTreeLabel = $('<label id="expand_tree_label" for="expand_tree" class="enabled">' + language.chkExpandTree.$label + '</label>');
+        $('<span id="tree_checks"></span>').append(expandTreeCheckbox).append(expandTreeLabel).prependTo(buttons);
+        
         $('#expand_tree').on("change", function() {
             expandTree();
         });

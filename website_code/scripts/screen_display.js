@@ -560,7 +560,20 @@ function setupMainLayout()
                 slidable:               true,
                 initClosed:             false,
                 slidable:               false,
-                closable:               true
+                closable:               true,
+                // Save south pane (bottom) open/closed state in user preferences
+                onclose_end: function () {
+                    console.log("South pane closed via layout");
+                    if (typeof save_user_preference === 'function') {
+                        save_user_preference('panel_south_open', false);
+                    }
+                },
+                onopen_end: function () {
+                    console.log("South pane opened via layout");
+                    if (typeof save_user_preference === 'function') {
+                        save_user_preference('panel_south_open', true);
+                    }
+                }
                 /*
                  fxName:                 "drop",
                  fxSpeed:                "normal",
@@ -635,7 +648,20 @@ function setupMainLayout()
                 slideTrigger_open:      "click",
                 initClosed:             false,
                 closable:               true,
-                resizable:              true
+                resizable:              true,
+                // Save east pane (right) open/closed state in user preferences
+                onclose_end: function () {
+                    console.log("East pane closed via layout");
+                    if (typeof save_user_preference === 'function') {
+                        save_user_preference('panel_east_open', false);
+                    }
+                },
+                onopen_end: function () {
+                    console.log("East pane opened via layout");
+                    if (typeof save_user_preference === 'function') {
+                        save_user_preference('panel_east_open', true);
+                    }
+                }
                 /*
                 onclose: function()
                 {

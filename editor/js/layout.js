@@ -25,7 +25,6 @@ var EDITOR = (function ($, parent) {
     var my = parent.layout = {},
 
     setup = function () {
-        console.log("Setting up layout...");
         var opentooltip = "Open this pane",
             closetooltip = "Close this pane",
             resizetooltip = "Resize this pane",
@@ -115,7 +114,18 @@ var EDITOR = (function ($, parent) {
                     togglerAlign_closed:    "top",
                     togglerLength_open:     0,
                     slideTrigger_open:      "click",
-                    initClosed:             (screen.width < 1024)
+                    // Determine initial state: use editor_panel_east_open preference if available, otherwise use screen width
+                    initClosed:             (function() {
+                        if (typeof user_preferences !== 'undefined' && user_preferences && typeof user_has_preferences !== 'undefined' && user_has_preferences) {
+                            if (user_preferences.hasOwnProperty('editor_panel_east_open')) {
+                                var editorEastOpen = user_preferences.editor_panel_east_open;
+                                var shouldClose = (editorEastOpen === false || editorEastOpen === 'false' || editorEastOpen === 0 || editorEastOpen === '0');
+                                return shouldClose;
+                            }
+                        }
+                        var screenBased = (screen.width < 1024);
+                        return screenBased;
+                    })()
                     /*
                     fxName:                 "drop",
                     fxSpeed:                "normal",
@@ -131,6 +141,7 @@ var EDITOR = (function ($, parent) {
             };
 
         xerte_layout = $("body").layout( xerte_editor_layout_settings );
+        
         var left_column = "body > .ui-layout-west";
         var right_column = "body > .ui-layout-east";
 
