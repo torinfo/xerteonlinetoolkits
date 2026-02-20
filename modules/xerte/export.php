@@ -20,7 +20,7 @@
 
 /**
  * Export a LO - e.g. from properties.
- * Example call : /website_code/php/scorm/export.php?scorm=false&template_id=10&html5=false&flash=true
+ * Example call : /website_code/php/scorm/export.php?scorm=false&template_id=10&html5=true
  */
 
 global $dir_path, $delete_file_array, $zipfile, $folder_id_array, $file_array, $folder_array, $delete_folder_array, $parent_template_path;
@@ -76,7 +76,6 @@ $xAPI_language_relpath = $xerte_toolkits_site->module_path . $row['template_fram
 $js_path = $xerte_toolkits_site->basic_template_path . $row['template_framework'] . "/js/";
 
 $export_html5 = false;
-$export_flash = false;
 $export_offline = false;
 $xAPI = false;
 $offline_includes="";
@@ -89,19 +88,8 @@ if (!isset($tsugi))
 if (isset($_REQUEST['html5'])) {
     $export_html5 = (x_clean_input($_REQUEST['html5']) == 'true' ? true : false);
 }
-if (isset($_REQUEST['flash'])) {
-    $export_flash = (x_clean_input($_REQUEST['flash']) == 'true' ? true : false);
-}
-if (!$export_html5 && !$export_flash) {
-    if (isset($row['extra_flags'])) {
-        if (strpos($row['extra_flags'], 'flash') !== false) {
-            $export_flash = true;
-        } else {
-            $export_html5 = true;
-        }
-    } else {
-        $export_html5 = true;
-    }
+if (!$export_html5) {
+    $export_html5 = true;
 }
 
 if (isset($_REQUEST['offline']))
@@ -109,7 +97,6 @@ if (isset($_REQUEST['offline']))
     $export_offline = true;
     // offline is only supported by html5
     $export_html5 = true;
-    $export_flash = false;
     $fullArchive = false;
 }
 
@@ -154,20 +141,6 @@ if ($fullArchive) {
     copy_parent_files();
 } else /* Only copy used models and the common folder */ {
     _debug("Deployment archive");
-    if ($export_flash) {
-        _debug("  use flash");
-        $models = $xml->getUsedModels();
-        foreach ($models as $model) {
-            _debug("copy model " . $parent_template_path . "models/" . $model . ".rlm");
-            array_push($file_array, array($parent_template_path . "models/" . $model . ".rlm", ""));
-        }
-        /* Always add menu.rlm */
-        _debug("copy model " . $parent_template_path . "models/menu.rlm");
-        array_push($file_array, array($parent_template_path . "models/menu.rlm", ""));
-
-        export_folder_loop($parent_template_path . "common/");
-        array_push($file_array, array($parent_template_path . $row['template_name'] . ".rlt", ""));
-    }
     if ($export_html5) {
         _debug("  use html5");
         $models = $xml->getUsedModels();
@@ -352,27 +325,6 @@ export_folder_loop($xerte_toolkits_site->root_file_path . 'themes/' . $row['pare
 copy_extra_files();
 
 
-if ($export_flash) {
-    /*
-     * Javascript js folder
-     */
-    export_folder_loop($js_path, false, '.js', 'js/');
-    copy_extra_files();
-
-    /*
-     * Copy engine and support files
-     *
-     *  From root
-     */
-    copy($xerte_toolkits_site->root_file_path . "XMLEngine.swf", $dir_path . "XMLEngine.swf");
-    array_push($delete_file_array, $dir_path . "XMLEngine.swf");
-    copy($xerte_toolkits_site->root_file_path . "MainPreloader.swf", $dir_path . "MainPreloader.swf");
-    array_push($delete_file_array, $dir_path . "MainPreloader.swf");
-    copy($xerte_toolkits_site->root_file_path . "rloObject.js", $dir_path . "rloObject.js");
-    array_push($delete_file_array, $dir_path . "rloObject.js");
-    copy($xerte_toolkits_site->root_file_path . "resources.swf", $dir_path . "resources.swf");
-    array_push($delete_file_array, $dir_path . "resources.swf");
-}
 /*
  * If scorm copy the scorm files as well
  */
@@ -420,7 +372,6 @@ if($xAPI)
 copy($xerte_toolkits_site->root_file_path . "favicon.ico", $dir_path . "favicon.ico");
 array_push($delete_file_array, $dir_path . "favicon.ico");
 
-$rlo_file = $row['template_name'] . ".rlt";
 /*
  * if used copy extra folders
  */
@@ -509,7 +460,6 @@ if (file_exists($parent_template_path . "plugins")) {
  * Create scorm manifests or a basic HTML page
  */
 if ($scorm == "true") {
-    $useflash = ($export_flash && !$export_html5);
     if (isset($_GET['data'])) {
         if ($_GET['data'] == true) {
 
@@ -524,32 +474,20 @@ if ($scorm == "true") {
             $params = array($_GET['template_id']);
 
             $query_response_users = db_query($query, $params);
-            lmsmanifest_create_rich($row, $metadata, $query_response_users, $useflash, $lo_name);
+            lmsmanifest_create_rich($row, $metadata, $query_response_users, false, $lo_name);
         }
     } else {
-        lmsmanifest_create($row['zipname'], $useflash, $lo_name);
+        lmsmanifest_create($row['zipname'], false, $lo_name);
     }
-    if ($useflash) {
-        scorm_html_page_create($_GET['template_id'], $row['template_name'], $row['template_framework'], $rlo_file, $lo_name, $xml->getLanguage());
-    } else {
-            scorm_html5_page_create($_GET['template_id'], $row['template_framework'], $row['parent_template'], $lo_name, $xml->getLanguage(), $row['date_modified'], $row['date_created'], $need_download_url, $export_logo, $plugins);
-    }
+    scorm_html5_page_create($_GET['template_id'], $row['template_framework'], $row['parent_template'], $lo_name, $xml->getLanguage(), $row['date_modified'], $row['date_created'], $need_download_url, $export_logo, $plugins);
 } else if ($scorm == "2004") {
-    $useflash = ($export_flash && !$export_html5);
-    lmsmanifest_2004_create($row['zipname'], $useflash, $lo_name);
-    if ($export_flash && !$export_html5) {
-        scorm2004_html_page_create($_GET['template_id'], $row['template_name'], $row['template_framework'], $rlo_file, $lo_name, $xml->getLanguage());
-    } else {
-        scorm2004_html5_page_create($_GET['template_id'], $row['template_framework'], $row['parent_template'], $lo_name, $xml->getLanguage(), $row['date_modified'], $row['date_created'], $need_download_url, $export_logo, $plugins);
-    }
+    lmsmanifest_2004_create($row['zipname'], false, $lo_name);
+    scorm2004_html5_page_create($_GET['template_id'], $row['template_framework'], $row['parent_template'], $lo_name, $xml->getLanguage(), $row['date_modified'], $row['date_created'], $need_download_url, $export_logo, $plugins);
 } else if($xAPI)
 	{
 		xAPI_html_page_create($_GET['template_id'], $row['template_name'], $row['template_framework'], $row['parent_template'], $lo_name, $xml->getLanguage(), $row['date_modified'], $row['date_created'], $need_download_url, $export_logo, $plugins);
 	}
 else {
-    if ($export_flash) {
-        basic_html_page_create($_GET['template_id'], $row['template_name'], $row['template_framework'], $rlo_file, $lo_name);
-    }
     if ($export_html5) {
         basic_html5_page_create($_GET['template_id'], $row['template_framework'], $row['parent_template'],$lo_name,  $row['date_modified'], $row['date_created'], $tsugi, $export_offline, $offline_includes, $need_download_url, $export_logo, '', $plugins);
     }
@@ -560,10 +498,6 @@ else {
  */
 
 $export_engine = "";
-if ($export_flash && $export_html5)
-	$export_engine = "_flash_html5";
-elseif ($export_flash)
-	$export_engine = "_flashonly";
 	
 $export_type = "";
 if ($export_offline)
