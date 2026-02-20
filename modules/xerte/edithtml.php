@@ -506,11 +506,11 @@ function output_editor_code($row_edit, $xerte_toolkits_site, $read_status, $vers
     
     if (isset($_SESSION['toolkits_preferences']) && is_array($_SESSION['toolkits_preferences'])) {
         $user_preferences_json = json_encode($_SESSION['toolkits_preferences']);
-        if ($authmech->hasUserPrefrences()) {
+        if ($authmech->hasUserPreferences()) {
             $user_has_preferences = "true";
         }
     } else {
-        if (isset($authmech) && $authmech->hasUserPrefrences()) {
+        if (isset($authmech) && $authmech->hasUserPreferences()) {
             $user_has_preferences = "true";
         }
     }
