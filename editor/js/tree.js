@@ -290,11 +290,16 @@ var EDITOR = (function ($, parent) {
         $('.ui-layout-center .header').append($('<div>').attr('id', 'pagetype'));
         // Save buttons
         var buttons = $('<div />').attr('id', 'save_buttons');
-        $([
-            {name:language.btnPreview.$label, tooltip: language.btnPreview.$tooltip, icon:'fa-play', id:'preview_button', click:preview},
-            //{name:language.btnSaveXerte.$label, tooltip: language.btnSaveXerte.$tooltip, icon:'editor/img/publish.png', id:'save_button', click:savepreview},
-            {name:language.btnPublishXot.$label, tooltip: language.btnPublishXot.$tooltip, icon:'fa-globe', id:'publish_button', click:publish}
-        ])
+        //todo hide button in non lti
+
+        let buttons_content = [{name:language.btnPreview.$label, tooltip: language.btnPreview.$tooltip, icon:'fa-play', id:'preview_button', click:preview},
+            {name:language.btnPublishXot.$label, tooltip: language.btnPublishXot.$tooltip, icon:'fa-globe', id:'publish_button', click:publish}];
+
+        if (lti_session) {
+            buttons_content.push({name:'Save', tooltip: "Save project to Edlib", icon:'fas fa-save', id:'lti_save_button', click:lti_save});
+        }
+
+        $(buttons_content)
         .each(function(index, value) {
             var button = $('<button>')
                 .attr('id', value.id)
@@ -421,8 +426,9 @@ var EDITOR = (function ($, parent) {
             }
         }
         var new_tab = clickevent.ctrlKey;
+        upload_url ??= "editor/upload.php";
         var ajax_call = $.ajax({
-                url: "editor/upload.php",
+                url: upload_url,
                 data: {
                     fileupdate: 0, //0= preview->preview.xml
                     filename: previewxmlurl,
@@ -443,13 +449,14 @@ var EDITOR = (function ($, parent) {
         .done(function() {
             //alert( "success" );
             // We would also launch the preview window from here
+            preview_url ??= "preview.php?template_id="
             $('#loader').hide();
             if (new_tab)
             {
-                window.open(site_url + "preview.php?template_id=" + template_id + urlparam, "_blank");
+                window.open(preview_url + template_id + urlparam, "_blank");
             }
             else {
-                window.open(site_url + "preview.php?template_id=" + template_id + urlparam, "previewwindow" + template_id, "height=" + template_height + ", width=" + template_width + ", resizable=yes, scrollbars=1");
+                window.open(preview_url + template_id + urlparam, "previewwindow" + template_id, "height=" + template_height + ", width=" + template_width + ", resizable=yes, scrollbars=1");
             }
         })
         .fail(function(data, status, error) {
@@ -467,15 +474,16 @@ var EDITOR = (function ($, parent) {
     		return;
     	}
         var json = build_json("treeroot");
+        upload_url ??= "editor/upload.php";
         var ajax_call = $.ajax({
-                url: "editor/upload.php",
+                url: upload_url,
                 data: {
                     fileupdate: 1, // 1=publish -> data.xml
                     filename: dataxmlurl,
                     preview: previewxmlurl,
                     lo_data: encodeURIComponent(JSON.stringify(json)),
                     absmedia: rlourlvariable,
-                    template_id: template_id
+                    template_id: template_id,
                 },
 
                 dataType: "json",
@@ -484,6 +492,41 @@ var EDITOR = (function ($, parent) {
         ).done(function() {
             $('#loader').hide();
             //alert( "success" );
+        })
+        .fail(function() {
+            $('#loader').hide();
+			// alert from publish button click
+			var sessionError = language.Alert.sessionError;
+			var msg = sessionError != undefined ? sessionError.replace(/\\n/g, "\n") : "error";
+			alert(msg);
+        });
+    },
+
+    lti_save = function () {
+        if(typeof merged !== 'undefined' && merged == true){
+            return;
+        }
+        var json = build_json("treeroot");
+        upload_url ??= "editor/upload.php";
+        var ajax_call = $.ajax({
+                url: upload_url,
+                data: {
+                    fileupdate: 1, // 1=publish -> data.xml
+                    filename: dataxmlurl,
+                    preview: previewxmlurl,
+                    lo_data: encodeURIComponent(JSON.stringify(json)),
+                    absmedia: rlourlvariable,
+                    template_id: template_id,
+                    lti_save: "true"
+                },
+
+                dataType: "html",
+                type: "POST"
+            }
+        ).done(function(result) {
+            $('#loader').hide();
+            //alert( "success" );
+            $("body").html(result);
         })
         .fail(function() {
             $('#loader').hide();
@@ -504,8 +547,9 @@ var EDITOR = (function ($, parent) {
     		return;
     	}
         var json = build_json("treeroot");
+        upload_url ??= "editor/upload.php";
         var ajax_call = $.ajax({
-                url: "editor/upload.php",
+                url: upload_url,
                 data: {
                     fileupdate: 0, // 1=publish -> data.xml
                     filename: previewxmlurl,
@@ -598,6 +642,7 @@ var EDITOR = (function ($, parent) {
             defaultAdvanced = false;
         }
     },
+
 
     showToolbar = function(){
         parent.toolbox.showToolBar($('#toolbar_cb').prop('checked'));
@@ -954,7 +999,7 @@ var EDITOR = (function ($, parent) {
 			
             // If the main node has a label, display the node item second (unconditionaly)
             if (node_label.length > 0 && !node_options['cdata']) {
-                toolbox.displayParameter('#mainPanel .wizard', node_options['normal'], node_name, '', key, false, node_label);
+                toolbox.displayParameter('#mainPanel .wizard', node_options['normal'], node_name, '', key, "", "none", node_label);
             }
 
 			getGroups(node_options['normal']);
@@ -1172,20 +1217,23 @@ var EDITOR = (function ($, parent) {
                 }
             }
 
+            if (tableLightbox.find("tr").length > 0) {
+                var tablerow = $('<tr>')
+                    .append('<td class="optPropTitle">' + (language.optionalAssistantPropHTML && language.optionalAssistantPropHTML.$general ? language.optionalAssistantPropHTML.$general : "Assistants") + '</td>');
+                //tableLightbox.prepend(tablerow);
+                html.append(tableLightbox);
+            }
+
             if (table.find("tr").length > 0) {
+                var optionaltitlerow = $('<tr>')
+                    .append('<td class="optMainTitle">' + (language.optionalPropHTML ? language.optionalPropHTML.$label : "Optional Properties") + '</td>');
                 if (menu_options.menu != undefined) {
                     var tablerow = $('<tr>')
                         .append('<td class="optPropTitle">' + menu_options.menuItem + '</td>');
                     table.prepend(tablerow);
                 }
+                table.prepend(optionaltitlerow);
                 html.append(table);
-            }
-
-            if (tableLightbox.find("tr").length > 0) {
-                    var tablerow = $('<tr>')
-                        .append('<td class="optPropTitle">' + (language.optionalAssistantPropHTML && language.optionalAssistantPropHTML.$general ? language.optionalAssistantPropHTML.$general : "Assistant") + '</td>');
-                    tableLightbox.prepend(tablerow);
-                html.append(tableLightbox);
             }
 
             if (table2.find("tr").length > 0) {

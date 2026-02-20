@@ -59,7 +59,7 @@
         // function called every time the size of the LO is changed
         this.sizeChanged = function() {
             $panelHolder = $("#panelHolder");
-            var panels = $panelHolder.find(".panel");
+            var panels = $panelHolder.find(".videoPanel.panel");
             this.resizePanels();
         };
 
@@ -75,7 +75,7 @@
 			
 			$panelHolder.css("margin-top", infoHolderHeight);
 
-            $panelHolder.find(".panel").height(x_getAvailableHeight([$panelHolder.find(".panel")], [infoHolderHeight], true));
+            $panelHolder.find(".videoPanel.panel").height(x_getAvailableHeight([$panelHolder.find(".videoPanel.panel")], [infoHolderHeight], true));
 
             $x_pageHolder.css("overflow", curroverflow);
 
@@ -97,14 +97,14 @@
 
                 var tempW = $popcornMedia.data("max-width");
                 var tempH = $popcornMedia.data("max-height") - titleHeight - holderHeight;
-                if (tempW > $popcornMedia.closest(".panel").width()) {
-                    var scale = $popcornMedia.closest(".panel").width() / tempW;
-                    tempW = $popcornMedia.closest(".panel").width();
+                if (tempW > $popcornMedia.closest(".videoPanel.panel").width()) {
+                    var scale = $popcornMedia.closest(".videoPanel.panel").width() / tempW;
+                    tempW = $popcornMedia.closest(".videoPanel.panel").width();
                     tempH = Math.floor(tempH * scale);
                 }
-                if (tempH > $popcornMedia.closest(".panel").height() - titleHeight - holderHeight) {
-                    var scale = ($popcornMedia.closest(".panel").height() - titleHeight - holderHeight) / tempH;
-                    tempH = $popcornMedia.closest(".panel").height() - titleHeight - holderHeight;
+                if (tempH > $popcornMedia.closest(".videoPanel.panel").height() - titleHeight - holderHeight) {
+                    var scale = ($popcornMedia.closest(".videoPanel.panel").height() - titleHeight - holderHeight) / tempH;
+                    tempH = $popcornMedia.closest(".videoPanel.panel").height() - titleHeight - holderHeight;
                     tempW = Math.floor(tempW * scale);
                 }
 
@@ -183,7 +183,7 @@
                 $("#panelHolder").html("No media was loaded.");
             }
 
-            $panelHolder.find(".panel").each(function() {
+            $panelHolder.find(".videoPanel.panel").each(function() {
                 interactiveVideo.resizeContent($(this));
             });
 
@@ -194,7 +194,7 @@
 
         // function resizes contentBlocks that should fill available space
         this.resizeContent = function($holder) {
-            var $panel = $holder.parents(".panel");
+            var $panel = $holder.parents(".videoPanel.panel");
 
             // if content is overlay on media then use media for max sizes
             if ($holder.parents(".panelContent").length == 0) {
@@ -343,6 +343,7 @@
                     this.loadPopcorn();
                 } else {
                     this.setUp();
+                    x_pageLoaded();
                 }
 
             } else {
@@ -394,15 +395,19 @@
 
         this.loadPlugins = function() {
 			var i = 0;
+            // First load css files
+            css.forEach(function (plugin) {
+                var fileLocation = "common_html5/js/popcorn/plugins/popcorn." + plugin;
+                x_insertCSS(x_templateLocation + fileLocation + ".css");
+            });
 			plugins.forEach(function (plugin) {
 				var fileLocation = "common_html5/js/popcorn/plugins/popcorn." + plugin;
-				if (jQuery.inArray(plugin, css) != -1) {
-					x_insertCSS(x_templateLocation + fileLocation + ".css");
-				}
 				$.getScript(x_templateLocation + fileLocation + ".js")
 					.done(function(setttings, textStatus){
-						if (++i >= plugins.length)
-							interactiveVideo.setUp();
+						if (++i >= plugins.length) {
+                            interactiveVideo.setUp();
+                            x_pageLoaded();
+                        }
 					})
 					.fail(function( jqxhr, settings, exception ) {
 						console.log("Failed to load plugin:" + exception);
@@ -509,7 +514,7 @@
 					if (panelData[i].getAttribute("name") != "") {
 						title = '<h3 class="panelTitle">' + panelData[i].getAttribute("name") + '</h3>';
 					}
-                    $('<div class="panel">' + title + '</div>')
+                    $('<div class="videoPanel panel">' + title + '</div>')
                         .appendTo($panelHolder)
                         .attr("id", interactiveVideo.panelbaseid + i);
                 }
@@ -739,7 +744,7 @@
                 }
             });
 
-            $(".panel").each(function(i) {
+            $(".videoPanel.panel").each(function(i) {
                 if (i == 0)
                     $('<div id="panelContent' + 0 + '" class="panelContent" />').appendTo($(this));
                 else
@@ -768,7 +773,6 @@
                 this.addEvents();
             }
             this.initTracking();
-            x_pageLoaded();
         };
 
         this.addEvents = function() {
@@ -1013,7 +1017,7 @@
             // add pause points for mainMedia/mediaPlus
             for (var j=0; j<synchData.length; j++) {
                 if (synchData[j].nodeName == "synchCue") {
-                    interactiveVideo.setUpPopcornCue(popcornInstance, synchData[j]);
+                    interactiveVideo.setUpPopcornSynchCue(popcornInstance, synchData[j]);
                 }
             }
             // add all other synch events
@@ -1148,32 +1152,7 @@
                         // plugin is being called from popcorn-complete.min.js - need to call this too (gets holder in correct state with titles & visibility)
                         popcornInstance["sortholder"](pluginAttributes);
                     }
-
-                    popcornInstance.cue(thisContent.start, function() {
-                        // pauses media at synch point if needed
-                        if (thisContent.allInfo.getAttribute("pauseMedia") == "true") {
-                            this.pause();
-                            // Gray out the background and fix z-index if the media is paused on an overlay panel
-                            if (thisContent.allInfo.getAttribute("overlayPan") == "true" && thisContent.type == "ivSynchXot")
-                            {
-                                $("#overlayGray").show();
-                            }
-                            if (thisContent.allInfo.getAttribute("overlay") != "true") {
-                                interactiveVideo.exitFullScreen();
-                            }
-                        }
-
-                        // try to get screen readers to notify user of panel contents change
-                        if (thisContent.start != 0) {
-                            const contentChgTxt = x_getLangInfo(x_languageData.find("screenReaderInfo").find("interactiveVideo")[0], "prompt") != undefined ? x_getLangInfo(x_languageData.find("screenReaderInfo").find("interactiveVideo")[0], "prompt") : (x_params.language === "en-GB" ? "Content added" : undefined);
-                            if (contentChgTxt !== undefined) {
-                                $("#srInfo").html(contentChgTxt);
-                                setTimeout(function() { $("#srInfo").html(''); }, 50);
-                            }
-
-                            $(".contentBlock:visible").parents(".overlay").focus();
-                        }
-                    });
+                    interactiveVideo.setUpPopcornCue(popcornInstance, thisContent);
                 }
             }
 
@@ -1182,7 +1161,7 @@
 
         // function sets up the popcorn sync events for pausing and skipping the media
         // Also shows or hide streams for the mediasite API.
-        this.setUpPopcornCue = function(popcornInstance, synchData) {
+        this.setUpPopcornSynchCue = function(popcornInstance, synchData) {
             popcornInstance.cue(Number(synchData.getAttribute("synch")), function() {
                 // pause / play media
                 if (synchData.getAttribute("pauseMedia") == "true") { //TODO not here
@@ -1213,6 +1192,34 @@
                 // skip media
                 if (synchData.getAttribute("destination") != undefined && $.isNumeric(synchData.getAttribute("destination"))) {
                     this.currentTime(synchData.getAttribute("destination"));
+                }
+            });
+        }
+
+        this.setUpPopcornCue = function(popcornInstance, thisContent) {
+            popcornInstance.cue(thisContent.start, function() {
+                // pauses media at synch point if needed
+                if (thisContent.allInfo.getAttribute("pauseMedia") == "true") {
+                    this.pause();
+                    // Gray out the background and fix z-index if the media is paused on an overlay panel
+                    if (thisContent.allInfo.getAttribute("overlayPan") == "true" && thisContent.type == "ivSynchXot")
+                    {
+                        $("#overlayGray").show();
+                    }
+                    if (thisContent.allInfo.getAttribute("overlay") != "true") {
+                        interactiveVideo.exitFullScreen();
+                    }
+                }
+
+                // try to get screen readers to notify user of panel contents change
+                if (thisContent.start != 0) {
+                    const contentChgTxt = x_getLangInfo(x_languageData.find("screenReaderInfo").find("interactiveVideo")[0], "prompt") != undefined ? x_getLangInfo(x_languageData.find("screenReaderInfo").find("interactiveVideo")[0], "prompt") : (x_params.language === "en-GB" ? "Content added" : undefined);
+                    if (contentChgTxt !== undefined) {
+                        $("#srInfo").html(contentChgTxt);
+                        setTimeout(function() { $("#srInfo").html(''); }, 50);
+                    }
+
+                    $(".contentBlock:visible").parents(".overlay").focus();
                 }
             });
         }

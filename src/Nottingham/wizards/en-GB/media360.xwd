@@ -1,7 +1,8 @@
 <wizard menus="Media">
   <pageWizard remove="true" duplicate="false">
     <newNodes>
-      <media360><![CDATA[<media360 name="Enter Page Title" text="" size="large" position="right"
+      <media360><![CDATA[<media360 name="Enter Page Title" text=""
+      size="large" panelWidthCustom="50" position="right" panelStyle="false" removeTxt="false"
 	  zoomInTxt="Zoom in" zoomOutTxt="Zoom out" fullScreenTxt="Full screen toggle"  sceneMenuTxt="Scene menu"
 	  pageError="Destination page not found"
 	  lockLabel="Password:" lockSubmit="Submit" lockPswdWrong="Incorrect password"
@@ -13,11 +14,27 @@
   <media360 menu="Media" menuItem="360&#176; Image" hint="An interaction allowing you to mark up a 360&#176; image with hotspots. Can be used to create tours of linked images." icon="ic360" thumb="thumbs/image360.jpg" example="https://xot.xerte.org.uk/play_116?hide=bottom#image360" wiki="https://xerte.org.uk/wiki/doku.php?id=media_360_image_page" remove="true">
 
     <name label="Page Title" type="TextInput" wysiwyg="true"/>
-    <text label="Page Text" type="TextArea" height="250" placeholder="Enter text for the page here"/>
-	<size label="Image Size" options="Small,Medium,Large,Full" type="ComboBox"  data="small,medium,large,full" width="200"/>
-	<position label="Image Position" options="Left,Right" type="ComboBox" data="left,right" defaultValue="right" width="100"/>
-	
-	<sceneMenu label="Scene Menu" type="CheckBox" defaultValue="true" optional="true" tooltip="Show list of links to each scene at the top of the image viewer. Exclude scenes from this list by adding the 'Hide Scene' optional property."/>
+	<text label="Page Text" type="TextArea" height="150" placeholder="Enter text for the page here" condition="size!='full'||(removeTxt!='true'&amp;&amp;removeTxt!=undefined)"/>
+
+	<layoutGroup label="Page Layout" type="group">
+		<size label="Image Width" options="Small,Medium,Large,Full,Custom" type="ComboBox" data="small,medium,large,full,custom" defaultValue="medium" conditionTrigger="true"/>
+	  	<panelWidthCustom label="Custom Width (%)" type="NumericStepper" min="10" max="90" step="1" defaultValue="50" condition="size=='custom'"/>
+	  	<position label="Image Position" options="Right,Left" type="ComboBox" data="right,left" defaultValue="right" condition="size!='full'"/>
+	  	<panelStyle label="Remove Panel Style" type="CheckBox" defaultValue="false"/>
+	  	<removeTxt label="Remove Page Text" type="CheckBox" defaultValue="true" conditionTrigger="true" condition="size=='full'"/>
+  	</layoutGroup>
+
+  	<textTopGroup label="Text Above Panel" type="group" optional="true">
+	  	<textTop label="Text" type="TextArea" height="100" optional="true"/>
+	  	<textTopWidth label="Full Width" type="CheckBox" optional="true" defaultValue="false" condition="size!='full'"/>
+  	</textTopGroup>
+
+  	<textBelowGroup label="Text Below Panel" type="group" optional="true">
+	  	<textBottom label="Text" type="TextArea" height="100" optional="true"/>
+	  	<textBottomWidth label="Full Width" type="CheckBox" optional="true" defaultValue="false" condition="size!='full'"/>
+  	</textBelowGroup>
+
+  	<sceneMenu label="Scene Menu" type="CheckBox" defaultValue="true" optional="true" tooltip="Show list of links to each scene at the top of the image viewer. Exclude scenes from this list by adding the 'Hide Scene' optional property."/>
 	
 	<lockIcon label="Locked Hotspot Icon" type="FontAwesome" iconList="hotspot" defaultValue="fas fa-lock" optional="true" tooltip="The icon used on locked hotspots"/>
 	
@@ -35,10 +52,10 @@
 	<lockSubmit label="Password Submit" type="TextInput" wysiwyg="true" language="true"/>
 	<lockPswdWrong label="Wrong Password" type="TextInput" wysiwyg="true" language="true"/>
 
-	  <AIGroup type="group" label="AI" optional="true" lightbox="form" subgroup="assistant" condition="hasrole('aiuser')">
+	  <AIGroup type="group" label="AI" optional="true" lightbox="form" subgroup="assistant" condition="(vendor_is_available('ai', 'all')) &amp;&amp; (hasrole('aiuser'))">
 		  <subject verification="^.+$"  label="Subject" type="TextInput" placeholder="Enter a subject here..." tooltip = "This determines which area or subject the generated questions and possible answers will follow. More complex subjects may result in less consistent content. Examples: 'bird migration habits', 'migration habits of birds native to The Netherlands'." optional="true"/>
-		  <additionalInstructions label="Additional Instructions" type="text" tooltip="Provide any additional instructions here. For example: create a summary, generate content in the form of a list, use only chapter 3 from the uploaded file. It is also possible to ask questions. For example: 1. Write a summary of the final results of the experiment 2. Specify how they tested their findings. Finally, additional instructions can be targeted and interact with example content. For example, you can copy an interesting paragraph or point into the example content, and then ask to: make the example content more concise, expand on the example content, add more specific examples to the content, add points which are only relevant for teachers in the Netherlands/Flanders, and so on." wysiwyg="true" optional="true" height="50" defaultValue="Provide a brief summary on the given subject."/>
-		  <uploadPrompt label="Information Source" options="None (uses model base knowledge), All Context Resources,Learning Object (Limited Scope), Single File (Limited Scope)" type="comboBox" data="false,context,lo,true" defaultValue="false" tooltip="Select 'Submit Snippet' when you wish for the model to use the provided text as a source, 'Single File' when you wish to use only one uploaded file or when using a video or audio link as the only source (if you select a file which you haven't uploaded yet, you will be prompted to upload it!), 'Use All Context Resources' when you wish to use all of the sources in the context resources table as a source, and 'Learning Object' when you wish to use the latest preview of the learning object as the single source for generating this content. Please ensure the uploaded file or provided snippet corresponds to the requested subject. If relevant information is not found in the snippet or files, the AI will attempt to supplement with its own knowledge." conditionTrigger="true" optional="true"/>
+		  <additionalInstructions label="Additional Instructions" type="text" tooltip="Provide any additional instructions here. For example: create a summary, generate content in the form of a list, use only chapter 3 from the uploaded file. It is also possible to ask questions. For example: 1. Write a summary of the final results of the experiment 2. Specify how they tested their findings. Finally, additional instructions can be targeted and interact with example content. For example, you can copy an interesting paragraph or point into the example content, and then ask to: make the example content more concise, expand on the example content, add more specific examples to the content, add points which are only relevant for teachers in the Netherlands/Flanders, and so on." wysiwyg="true" optional="true" height="50" placeholder="Write your instructions here..."/>
+		  <uploadPrompt label="Information Source" options="None (uses model base knowledge), All Context Resources,Learning Object (Limited Scope), Single File (Limited Scope)" type="comboBox" data="false,context,lo,true" defaultValue="false" tooltip="Select ‘All Context Resources’ when you wish to use all of the sources in the context resources table.  Select  'Learning Object (limited Scope)’' when you wish to use the latest preview of the learning object as the single source for generating this content. Select ‘Single File (Limited Scope)’ when you wish to use one uploaded file, video or audio link, as the only source (you will be prompted to upload it if it has not already been added). Please ensure the source content corresponds to the requested subject. If relevant information is not found in the sources the AI will attempt to supplement with its own knowledge." conditionTrigger="true" optional="true"/>
 		  <textSnippet label="Text Snippet" type="text" tooltip="Provide the text snippet you wish the model to use as a source for generating the interactivity." placeholder="''" condition="uploadPrompt=='trueText'" optional="true"/>
 		  <file label="File / Video Link" type="mediaCorpus" defaultValue="Select a file or enter a video link here..." tooltip="Select a video, audio, powerpoint, PDF or other text file to be used for content generation. If you've selected a file or used a video link which has not yet been processed, you may have to wait up to a few minutes for processing to finish, especially for larger videos." condition="uploadPrompt=='true'" optional="true"/>
 		  <infoGenSettings advanced="true" label="For this page, the following settings will be used instead of those assigned on the learning-object level:" type="info" optional="true"/>

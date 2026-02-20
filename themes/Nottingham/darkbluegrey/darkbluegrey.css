@@ -314,9 +314,9 @@ div.infoHolder.ui-tabs.ui-widget.ui-widget-content.ui-corner-all {
 }
 
 .x_dragDropLabel_page #infoHolder {
-  padding: 20px;
-  margin-right: 20px;
-  background: #9A9A9A;
+  /*padding:20px;
+  margin-right:20px;
+  background:$contrastcolor;*/
 }
 
 .x_dragDropLabel_page .label.panel {
@@ -400,7 +400,7 @@ a.hotspot, a.hotspot.selected {
 }
 
 .hsinfo {
-  padding: 1%;
+  /*padding:1%;*/
 }
 
 .x_hotspotImage_page #infoHolder {
@@ -431,6 +431,11 @@ a.hotspot, a.hotspot.selected {
   border-radius: 0;
   background: #027ab3;
   color: #ffffff;
+}
+
+.x_mcq_page #pageContents .optionGroup.answerBtn.selected,
+.x_quiz_page #pageContents .optionGroup.answerBtn.selected {
+  background: #FCBC2B;
 }
 
 .x_opinion_page #pageContents input {
@@ -601,6 +606,23 @@ table.headerCol.shaded td.header {
   color: #ffffff;
   background: #3F4957;
   border-color: #9A9A9A;
+}
+
+.x_nav_page #pageContents.tab #infoHolder {
+  border-radius: 0;
+  background: #9A9A9A;
+}
+
+.x_imageCompare_page #slider {
+  background-color: #9A9A9A;
+}
+
+.x_imageCompare_page #slider_handle {
+  background-color: #3F4957;
+}
+
+.x_imageCompare_page #slider_handle i {
+  color: #ffffff;
 }
 
 #x_footerBlock {
@@ -1524,8 +1546,8 @@ a:hover {
 }
 
 #infoHolder {
-  border-radius: 0;
-  background: #9A9A9A;
+  /*border-radius:$mediumroundedcorners;
+  background: $contrastcolor;*/
 }
 
 .panel {
@@ -1534,6 +1556,11 @@ a:hover {
   background: #9A9A9A;
   box-shadow: none;
   color: #ffffff;
+}
+
+.panel .panel.editorStyle {
+  background: #3F4957;
+  border-color: #3F4957;
 }
 
 .panelPage {

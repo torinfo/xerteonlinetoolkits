@@ -61,13 +61,18 @@ if (is_user_admin()) {
     } else {
         die("Failed to retrieve helper table");
     }
+    echo '<div class="admin_guide_ref">';
+    echo MANAGEMENT_AI_ADMIN_GUIDE_MESSAGE . ' <p><a href="' . MANAGEMENT_AI_ADMIN_GUIDE_URL . '" target="_blank" rel="noopener noreferrer">' . MANAGEMENT_AI_ADMIN_GUIDE_URL . '</a></p>';
+    echo '<div>';
 
     foreach ($blocks_groups as $group) {
-        echo "<h2>" . $group . MANAGEMENT_VENDOR . "</h2>";
+        $groupHeader = 'MANAGEMENT_VENDOR_GROUP_'.strtoupper($group);
+        echo "<h2>" . constant($groupHeader) . MANAGEMENT_VENDOR . "</h2>";
         echo "<div class=\"admin_block\">";
         //generate vendor html
         foreach ($blocks[$group] as $vendor) {
-            echo "<h3>" . $vendor->vendor . MANAGEMENT_SETTINGS . "</h3>";
+            $vendorHeader = 'MANAGEMENT_VENDOR_' . strtoupper($group) . '_' . strtoupper($vendor->vendor);
+            echo "<h3>" . constant($vendorHeader) . MANAGEMENT_SETTINGS . "</h3>";
 
             //verify an api key is installed
             if ($vendor->needs_key && !$vendor->has_key) {
@@ -75,17 +80,20 @@ if (is_user_admin()) {
                 continue;
             }
 
-            echo "<p>" . MANAGEMENT_ENABLE_VENDOR . $vendor->vendor . "<form><input type=\"checkbox\" id=\"" . $vendor->vendor . "_enabled\" name=\"" . $vendor->vendor . "_enabled\" " . ($vendor->enabled ? " checked" : "") . "/></form></p>";
+            $id = $vendor->type . "_" . $vendor->vendor . "_enabled";
+            echo "<p>" . MANAGEMENT_ENABLE_VENDOR . constant($vendorHeader) .
+                "<form><input type=\"checkbox\" id=\"" . $id . "\" name=\"" . $id . "\" " . ($vendor->enabled ? " checked" : "") . "/></form></p>";
 
             //next vendor if current has no sub options
             if ($vendor->has_no_sub_options() ) { continue; }
 
-            echo "<p>" . MANAGEMENT_ENABLE_SUBOPTIONS . $vendor->vendor . "<form>";
+            echo "<p>" . MANAGEMENT_ENABLE_SUBOPTIONS . constant($vendorHeader). "<form>";
 
             //generate sub options html
             foreach ($vendor->sub_options as $sub_option=>$value) {
-                $id_string = $vendor->vendor . "_" . str_replace(' ', '_', $sub_option);
-                echo "<input type=\"checkbox\" id=\"" . $id_string . "\" name=\"" . $id_string . "\" " . ($value == "true" ? " checked" : "") . "/><label for=\"" . $id_string . "\">" . $sub_option . "</label>";
+                $id_string = $vendor->type . "_" . $vendor->vendor . "_" . str_replace(' ', '_', $sub_option);
+                echo "<input type=\"checkbox\" id=\"" . $id_string . "\" name=\"" . $id_string . "\" " .
+                    ($value == "true" ? " checked" : "") . "/><label for=\"" . $id_string . "\">" . $sub_option . "</label>";
             }
 
             echo "</form></p>";
