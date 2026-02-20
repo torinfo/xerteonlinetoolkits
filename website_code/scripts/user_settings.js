@@ -96,7 +96,7 @@ function changepasswordPopup() {
             width: 450,
             height: 'auto',
             resizable: false,
-            title: "Change Password",
+            title: "Edit preferences",
             dialogClass: "workspace-dialog",
             close: function() {
                 // Clear form on close
