@@ -122,6 +122,10 @@ Hidden Iframe to allow for ajax file uploads
 						<button id="tabImport" type="button" role="tab" aria-controls="panelImport" aria-selected="false" onclick="javascript:import_templates_template(<?PHP echo $_SESSION['toolkits_logon_id']; ?>); tabClicked('tabImport');">
 							<i class="fa fa-file-import fa-fw xerte-icon"></i>&nbsp;<?PHP echo WORKSPACE_PROPERTIES_TAB_IMPORT; ?>
 						</button>
+
+                        <button id="tabImportQTI" type="button" role="tab" aria-controls="panelImport" aria-selected="false" onclick="javascript:import_qti3_template(<?PHP echo $_SESSION['toolkits_logon_id']; ?>); tabClicked('tabImportQTI');">
+                            <i class="fa fa-file-import fa-fw xerte-icon"></i>&nbsp;<?PHP echo WORKSPACE_PROPERTIES_TAB_IMPORTQTI; ?>
+                        </button>
 						
 						<button id="tabApi" type="button" role="tab" aria-controls="panelApi" aria-selected="false" onclick="javascript:api_template(); tabClicked('tabApi');">
 							<i class="fa fa-layer-group fa-fw xerte-icon"></i>&nbsp;<?PHP echo WORKSPACE_PROPERTIES_TAB_API; ?>

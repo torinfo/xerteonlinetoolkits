@@ -14,3 +14,5 @@
     var WORKSPACE_NEW_PROJECTNAME = "New project name";
     var WORKSPACE_API = "API";
 	var WORKSPACE_INSTRUCTIONS = "Import a project that has been exported from another Xerte installation. Enter a name for the imported project, then click the 'Choose File' button to select a zip file to upload.";
+	var WORKSPACE_INSTRUCTIONS_QTI = "Import a QTI 3.0 package. Enter a name for the imported project, then click the 'Choose File' button to select a zip file to upload.";
+	var WORKSPACE_IMPORT_QTI = "Import QTI 3.0"

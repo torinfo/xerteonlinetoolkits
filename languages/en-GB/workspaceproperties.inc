@@ -17,6 +17,7 @@
 	define("WORKSPACE_PROPERTIES_TAB_PROJECTS","My projects");
 	define("WORKSPACE_PROPERTIES_TAB_FEEDS","My feeds");
 	define("WORKSPACE_PROPERTIES_TAB_IMPORT","Import projects");
+    define("WORKSPACE_PROPERTIES_TAB_IMPORTQTI","Import QTI3.0 Package");
 	define("WORKSPACE_PROPERTIES_TAB_API","API");
 	
 ?>

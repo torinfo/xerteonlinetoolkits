@@ -1,5 +1,12 @@
 {
+    "repositories": [
+        {
+            "type": "vcs",
+            "url": "https://github.com/kennisnet/php-qti3"
+        }
+    ],
     "require": {
-        "smalot/pdfparser": "^2.12"
+        "smalot/pdfparser": "^2.12",
+        "wikiwijs/php-qti3": "dev-first-setup-new-qti-package"
     }
 }
