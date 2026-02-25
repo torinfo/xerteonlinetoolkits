@@ -60,20 +60,24 @@ export class InteractionModal {
         </div>
       </div>`;
 
-    // Add the modal to the body
-    $('body').append(modal);
+    // Add the modal to the body, guarding against duplicate IDs on re-initialisation
+    if ($(`#${this.#id}`).length === 0) {
+      $('body').append(modal);
+    }
 
     // Register the click event for the button that opens the modal
-    $(`#${this.#buttonId}`).on('click', async () => {
-      // Open the modal
-      $(`#${this.#id}`).modal();
+    if (this.#buttonId) {
+      $(`#${this.#buttonId}`).on('click', async () => {
+        // Open the modal
+        $(`#${this.#id}`).modal();
 
-      // Add the header to the modal
-      this.addModalHeader();
+        // Add the header to the modal
+        this.addModalHeader();
 
-      // Add the body to the modal
-      await this.addModalBody();
-    });
+        // Add the body to the modal
+        await this.addModalBody();
+      });
+    }
 
     // Clean the modal header and body when it is closed
     $(`#${this.#id}`).on('hidden.bs.modal', () => {
@@ -115,6 +119,20 @@ export class InteractionModal {
     if (this.#options.overviewModal) {
       await this.addModalOverview(canvas);
       await this.addModalInteractions(canvas);
+    } else if (this.#options.singleInteraction) {
+      await this.drawInteractionBlock(canvas, this.#options.singleInteraction);
+    } else if (this.#options.singleSubInteraction) {
+      const subInteraction = this.#options.singleSubInteraction;
+      const wrapperId = `modal-container-${$.escapeSelector(subInteraction.url)}`;
+      canvas.append(`
+        <div
+          id="${wrapperId}"
+          class="interaction-block p-4 my-2 rounded"
+          style="background-color: #fff;"
+        >
+        </div>
+      `);
+      await this.drawSubInteractionBlock($(`#${wrapperId}`), subInteraction);
     }
 
     const body = `

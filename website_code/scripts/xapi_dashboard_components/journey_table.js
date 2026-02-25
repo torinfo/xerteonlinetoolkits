@@ -17,6 +17,9 @@ export class JourneyTable {
   /** The dashboard */
   #dashboard;
 
+  /** Cache of InteractionModal instances, keyed by interaction URL */
+  #modalCache = new Map();
+
   /** The dashboard state */
   #state;
 
@@ -34,6 +37,69 @@ export class JourneyTable {
 
   async init() {
     this.createJourneyTableContainer();
+    this.setupModalHandlers();
+  }
+
+  /**
+   * Register click handlers on each interaction / sub-interaction name span.
+   * No modals are created here — only lightweight click handlers.
+   */
+  setupModalHandlers() {
+    this.#state.interactions.forEach((interaction) => {
+      const selector = $.escapeSelector(interaction.url);
+
+      $(`#journey-name-${selector}`).on('click', async () => {
+        await this.openInteractionModal(interaction, false);
+      });
+
+      interaction.subInteractions.forEach((subInteraction) => {
+        const subSelector = $.escapeSelector(subInteraction.url);
+
+        $(`#journey-name-sub-${subSelector}`).on('click', async () => {
+          await this.openInteractionModal(subInteraction, true);
+        });
+      });
+    });
+  }
+
+  /**
+   * Lazy-create (and cache) an InteractionModal for the given item, then show it.
+   *
+   * @param {Object} item - The interaction or sub-interaction object.
+   * @param {boolean} isSub - Whether this is a sub-interaction.
+   */
+  async openInteractionModal(item, isSub) {
+    if (!this.#modalCache.has(item.url)) {
+      const { InteractionModal } = await import('./interaction_modal.js');
+      const selector = $.escapeSelector(item.url);
+      const modalId = isSub
+        ? `journey-modal-sub-${selector}`
+        : `journey-modal-${selector}`;
+
+      const modal = new InteractionModal(
+        this.#dashboard,
+        this.#state,
+        modalId,
+        null,
+        item.name,
+        isSub ? { singleSubInteraction: item } : { singleInteraction: item },
+      );
+      await modal.init();
+      this.#modalCache.set(item.url, { modal, modalId });
+    }
+
+    const { modal, modalId } = this.#modalCache.get(item.url);
+
+    // Explicitly clear before repopulating to avoid a race condition where
+    // rapid open/close causes the hidden.bs.modal handler to fire after we
+    // have already added new content, leaving the modal blank.
+    $(`#${modalId} .modal-header`).empty();
+    $(`#${modalId} .modal-body`).empty();
+
+    modal.addModalHeader();
+    await modal.addModalBody();
+
+    $(`#${modalId}`).modal('show');
   }
 
   /**
@@ -136,13 +202,21 @@ export class JourneyTable {
       (interaction) => {
         const selector = $.escapeSelector(interaction.url);
         const subInteractionHeaders = interaction.subInteractions.map(
-          (subInteraction) => `
-            <th
-              class="journey-sub-${selector}"
-              style="display: none;"
-            >
-              ${subInteraction.name}
-            </th>`
+          (subInteraction) => {
+            const subSelector = $.escapeSelector(subInteraction.url);
+            return `
+              <th
+                class="journey-sub-${selector}"
+                style="display: none;"
+              >
+                <span
+                  id="journey-name-sub-${subSelector}"
+                  style="cursor: pointer; text-decoration: underline;"
+                >
+                  ${subInteraction.name}
+                </span>
+              </th>`;
+          }
         )
         $(document).off(`click.journey-${selector}`);
         $(document).on(`click.journey-${selector}`, `#journey-${selector}-icon`, () => {
@@ -151,7 +225,12 @@ export class JourneyTable {
         });
         return `
           <th id="journey-${selector}">
-            ${interaction.name}
+            <span
+              id="journey-name-${selector}"
+              style="cursor: pointer; text-decoration: underline;"
+            >
+              ${interaction.name}
+            </span>
             <i
               id="journey-${selector}-icon"
               class="fa-solid fa-angles-right"
