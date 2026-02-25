@@ -64,8 +64,8 @@ export class JourneyTable {
    *
    * @returns The html for the paging header
    */
-   createPagingHeader() {
-     return `
+  createPagingHeader() {
+    return `
       <div class="col-4">
         ${this.createPagingPrevButton()}
       </div>
@@ -75,7 +75,7 @@ export class JourneyTable {
       <div class="col-4 text-right">
         ${this.createPagingNextButton()}
       </div>`;
-   }
+  }
 
   /**
    * Create the paging prev button
@@ -144,11 +144,10 @@ export class JourneyTable {
               ${subInteraction.name}
             </th>`
         )
-        $(document).on('click', `#journey-${selector}`, () => {
+        $(document).off(`click.journey-${selector}`);
+        $(document).on(`click.journey-${selector}`, `#journey-${selector}-icon`, () => {
           $(`.journey-sub-${selector}`).toggle();
-          $(`#joruney-${selector}-icon`).hasClass('fa-angles-right')
-            ? $(`#journey-${selector}-icon`).toggleClass('fa-angles-down')
-            : $(`#journey-${selector}-icon`).toggleClass('fa-angles-left');
+          $(`#journey-${selector}-icon`).toggleClass('fa-angles-left').toggleClass('fa-angles-right');
         });
         return `
           <th id="journey-${selector}">
@@ -294,15 +293,15 @@ export class JourneyTable {
           ${block}
         </td>
         ${subBlocks.map((subBlock) => {
-          return `
-            <td
-              class="journey-sub-${selector}"
-              style="display: none; background: #f4f4f4"
-            >
-              ${subBlock}
-            </td>
-          `;
-        }).join('')}
+        return `
+          <td
+            class="journey-sub-${selector}"
+            style="display: none; background: #f4f4f4"
+          >
+            ${subBlock}
+          </td>
+        `;
+      }).join('')}
         `;
     });
   }
@@ -316,7 +315,7 @@ export class JourneyTable {
   createDataPopoverDiv(interaction) {
     let popoverStatus = '';
 
-    switch(interaction.successStatus) {
+    switch (interaction.successStatus) {
       case 'passed':
         popoverStatus = XAPI_DASHBOARD_STATUS_COMPLETED_PASSED;
         break;

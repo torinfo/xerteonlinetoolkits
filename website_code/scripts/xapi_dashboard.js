@@ -61,16 +61,16 @@ function xAPIDashboard(info) {
   // Define the escapeSelector function if it does not exist, this is added
   // in jQuery 3.0, but as of now we are using an older version.
   if (!$.escapeSelector) {
-      $.escapeSelector = (selector) => {
-        return selector.replaceAll(':', '-').replaceAll('/', '-');
-        //return selector.replace(/([!"#$%&'()*+,.\/:;<=>?@[\\\]^`{|}~])/g, "\\$1");
-      };
+    $.escapeSelector = (selector) => {
+      return selector.replaceAll(':', '-').replaceAll('/', '-');
+      //return selector.replace(/([!"#$%&'()*+,.\/:;<=>?@[\\\]^`{|}~])/g, "\\$1");
+    };
   }
 
   this.data = new DashboardState(info);
 }
 
-xAPIDashboard.prototype.getStatements = function (q, one, callback, force_xapi=true) {
+xAPIDashboard.prototype.getStatements = function (q, one, callback, force_xapi = true) {
   this.data.getStatements(q, one, callback, force_xapi);
 };
 xAPIDashboard.prototype.escapeId = function (id) {
@@ -177,7 +177,7 @@ xAPIDashboard.prototype.setStatisticsValues = function (
     if (
       this.data.currentGroup.group_id == "all-groups" ||
       this.data.currentGroup.group_id ==
-        dashboard.getGroupFromStatements(data[user].statementidxs)
+      dashboard.getGroupFromStatements(data[user].statementidxs)
     ) {
       numberOfUsers++;
       var curUser = this.data.groupedData[user];
@@ -332,8 +332,7 @@ xAPIDashboard.prototype.drawInteraction = function (
     contentDiv
       .find("#" + localJcId)
       .append(
-        `<div id='interaction-container' class='${
-          showPageInteraction ? "offset-1 " : ""
+        `<div id='interaction-container' class='${showPageInteraction ? "offset-1 " : ""
         }w-100 container row'><div class='col-6 panel main-information'></div></div>`
       );
     var interactionDetails = pageState.data.selectInteractionById(
@@ -396,10 +395,10 @@ xAPIDashboard.prototype.drawInteraction = function (
         .find("#" + localJcId + " .main-information")
         .append(
           '<svg class="graph" id="model-svg-' +
-            learningObjectIndex +
-            "-" +
-            interactionIndex +
-            '"></svg><div class="page-info panel"></div>'
+          learningObjectIndex +
+          "-" +
+          interactionIndex +
+          '"></svg><div class="page-info panel"></div>'
         );
       pageState.createPieChartInteraction(
         statements,
@@ -463,7 +462,7 @@ xAPIDashboard.prototype.drawDashboard = async function (canvas) {
     this.data.state,
     'interaction-overview-modal',
     'testtest',
-    'Interaction overview',
+    'Interaction Overview',
     {
       showPrintButton: true,
       overviewModal: true,
@@ -492,7 +491,7 @@ xAPIDashboard.prototype.createJourneyTableSession = async function (div) {
   await this.drawDashboard(containerCanvas);
 
   // Enable popovers
-  $(document).ready(function(){
+  $(document).ready(function () {
     $('[data-toggle="popover"]').popover();
   });
 
@@ -523,15 +522,15 @@ xAPIDashboard.prototype.createJourneyTableSession = async function (div) {
     }
     titlediv.html(
       '<h3 class="header">' +
-        learningObjects[learningObjectIndex].name +
-        "</h3>"
+      learningObjects[learningObjectIndex].name +
+      "</h3>"
     );
 
     // Add statistics above the table.
     div.append(
       '<div id="journeyOverviewOld" class="journeyOverview"><div class="journeyOverviewHeader row"><h3>' +
-        XAPI_DASHBOARD_OVERVIEW +
-        '</h3></div><div id="journeyOverviewActivityGraph" class="journeyOverviewActivity row"></div><div class="journeyOverviewStats row"></div></div>'
+      XAPI_DASHBOARD_OVERVIEW +
+      '</h3></div><div id="journeyOverviewActivityGraph" class="journeyOverviewActivity row"></div><div class="journeyOverviewStats row"></div></div>'
     );
     this.setStatisticsValues("#journeyOverviewOld ", learningObjectIndex);
 
@@ -553,10 +552,10 @@ xAPIDashboard.prototype.createJourneyTableSession = async function (div) {
     // Add table with specific overview.
     div.append(
       '<div class="row journeyTable">' +
-        pageOptions +
-        '<table class="table table-hover table-bordered table-responsive" id="' +
-        learningObjectIndex +
-        '"><thead></thead><tbody id="journeyTableBody"></tbody></table></div>'
+      pageOptions +
+      '<table class="table table-hover table-bordered table-responsive" id="' +
+      learningObjectIndex +
+      '"><thead></thead><tbody id="journeyTableBody"></tbody></table></div>'
     );
     /*
         if(this.data.pageIndex > 0)
@@ -577,18 +576,18 @@ xAPIDashboard.prototype.createJourneyTableSession = async function (div) {
       .find("#" + learningObjectIndex + " thead")
       .append(
         "<tr><th>" +
-          XAPI_DASHBOARD_COMPLETED +
-          "</th><th>" +
-          XAPI_DASHBOARD_COMPLETION +
-          "</th><th>" +
-          XAPI_DASHBOARD_SCORE +
-          "</th><th>" +
-          XAPI_DASHBOARD_PASSED +
-          "</th><th>" +
-          XAPI_DASHBOARD_STARTCOL +
-          "</th><th>" +
-          XAPI_DASHBOARD_DURATIONCOL +
-          "</th></tr>"
+        XAPI_DASHBOARD_COMPLETED +
+        "</th><th>" +
+        XAPI_DASHBOARD_COMPLETION +
+        "</th><th>" +
+        XAPI_DASHBOARD_SCORE +
+        "</th><th>" +
+        XAPI_DASHBOARD_PASSED +
+        "</th><th>" +
+        XAPI_DASHBOARD_STARTCOL +
+        "</th><th>" +
+        XAPI_DASHBOARD_DURATIONCOL +
+        "</th></tr>"
       );
     if (
       this.data.info.dashboard.enable_nonanonymous &&
@@ -737,19 +736,19 @@ xAPIDashboard.prototype.createJourneyTableSession = async function (div) {
           var interaction = interactions[interactionIndex];
           var learningObject = learningObjects[learningObjectIndex];
           var tr = div.find("#" + rowid);
-					if (
-						this.data.hasCompletedNotJudgedInteraction(
-							summaryStatementidxs,
-							interaction.url
-						)
-					) {
-						this.insertInteractionData(
-							tr,
-							blueDiv,
-							summaryUserData,
-							learningObjectIndex,
-							interactionIndex
-						);
+          if (
+            this.data.hasCompletedNotJudgedInteraction(
+              summaryStatementidxs,
+              interaction.url
+            )
+          ) {
+            this.insertInteractionData(
+              tr,
+              blueDiv,
+              summaryUserData,
+              learningObjectIndex,
+              interactionIndex
+            );
           } else if (
             this.data.hasPassedInteraction(
               summaryStatementidxs,
@@ -935,19 +934,19 @@ xAPIDashboard.prototype.createJourneyTableSession = async function (div) {
               var learningObject = learningObjects[learningObjectIndex];
               var tr = div.find("#" + attemptrowid);
               if (
-								this.data.hasCompletedNotJudgedInteraction(
-									summaryStatementidxs,
-									interaction.url
-								)
-							) {
-								this.insertInteractionData(
-									tr,
-									blueDiv,
-									summaryUserData,
-									learningObjectIndex,
-									interactionIndex
-								);
-							} else if (
+                this.data.hasCompletedNotJudgedInteraction(
+                  summaryStatementidxs,
+                  interaction.url
+                )
+              ) {
+                this.insertInteractionData(
+                  tr,
+                  blueDiv,
+                  summaryUserData,
+                  learningObjectIndex,
+                  interactionIndex
+                );
+              } else if (
                 this.data.hasPassedInteraction(
                   attemptStatementidxs,
                   interaction.url
@@ -1063,7 +1062,7 @@ xAPIDashboard.prototype.createJourneyTableSession = async function (div) {
         if (
           $this.data.currentGroup.group_id == "all-groups" ||
           $this.data.currentGroup.group_id ==
-            pageState.getGroupFromStatements($val.statementidxs)
+          pageState.getGroupFromStatements($val.statementidxs)
         ) {
           groupedData[$key] = $val;
         }
@@ -1132,17 +1131,17 @@ xAPIDashboard.prototype.createJourneyTableSession = async function (div) {
     if ($("body").find(`#${modelQuestionOverviewName}`).length === 0) {
       $("body").append(
         `<div id="${modelQuestionOverviewName}" class="modal fade" role="dialog" >` +
-          '<div class="modal-dialog">' +
-          '<div class="modal-content">' +
-          '<div class="modal-header">' +
-          '<h4 class="modal-title">Interaction overview</h4>' +
-          '<button id="interaction-overview-print" type="button" class="xerte_button_c_no_width">Print</button><button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>' +
-          "</div>" +
-          '<div class="modal-body col-md-12" style="overflow-x: hidden;">' +
-          "</div>" +
-          "</div>" +
-          "</div>" +
-          "</div>"
+        '<div class="modal-dialog">' +
+        '<div class="modal-content">' +
+        '<div class="modal-header">' +
+        '<h4 class="modal-title">Interaction overview</h4>' +
+        '<button id="interaction-overview-print" type="button" class="xerte_button_c_no_width">Print</button><button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>' +
+        "</div>" +
+        '<div class="modal-body col-md-12" style="overflow-x: hidden;">' +
+        "</div>" +
+        "</div>" +
+        "</div>" +
+        "</div>"
       );
     }
 
@@ -1161,8 +1160,8 @@ xAPIDashboard.prototype.createJourneyTableSession = async function (div) {
       $(w.document.body).parent().find("head").html(htmlHead);
       $(w.document.body).html(
         "<button id='doprint' type='button' class='xerte_button_c_no_width noprint' onclick='window.print();'>Do print</button><div id='print-overview' class='dashboard'>" +
-          htmlBody +
-          "</div>"
+        htmlBody +
+        "</div>"
       );
 
       $(w.document.body)
@@ -1199,8 +1198,8 @@ xAPIDashboard.prototype.createJourneyTableSession = async function (div) {
       if (drawOverview) {
         $("#model-question-overview .modal-body").html(
           '<div class="journeyOverviewModal"><div class="journeyOverviewHeader row"><h3>' +
-            XAPI_DASHBOARD_OVERVIEW +
-            '</h3></div><div class="journeyOverviewActivityModal row"></div><div class="journeyOverviewStats row"></div></div>'
+          XAPI_DASHBOARD_OVERVIEW +
+          '</h3></div><div class="journeyOverviewActivityModal row"></div><div class="journeyOverviewStats row"></div></div>'
         );
       } else {
         $("#model-question-overview .modal-body").html("");
@@ -1273,12 +1272,11 @@ xAPIDashboard.prototype.createJourneyTableSession = async function (div) {
                 //  (interaction) => interaction.type === "page"
                 //)[0].name
                 interaction.name
-              }</h4></div>`;
+                }</h4></div>`;
             }
             block += `<div class="class-overview-box" id="${jcId}"></div>`;
-            block += `${
-              !showPageInteraction && interaction.type === "page" ? "" : "<hr>"
-            }</div>`;
+            block += `${!showPageInteraction && interaction.type === "page" ? "" : "<hr>"
+              }</div>`;
             contentDiv.append(block);
             pageState.drawInteraction(
               interaction,
@@ -1319,8 +1317,8 @@ xAPIDashboard.prototype.createJourneyTableSession = async function (div) {
       $(w.document.body).parent().find("head").html(htmlHead);
       $(w.document.body).html(
         "<button id='doprint' type='button' class='xerte_button_c_no_width noprint' onclick='window.print();'>Do print</button><div id='print-overview' class='dashboard'>" +
-          htmlBody +
-          "</div>"
+        htmlBody +
+        "</div>"
       );
 
       $(w.document.body)
@@ -1375,12 +1373,12 @@ xAPIDashboard.prototype.createJourneyTableSession = async function (div) {
               .find("ul")
               .append(
                 "<li><input class='hide-show-column-checkbox' type='checkbox' " +
-                  checked +
-                  " data-target='" +
-                  i.interactionObjectIndex +
-                  "'>" +
-                  i.name +
-                  "</li>"
+                checked +
+                " data-target='" +
+                i.interactionObjectIndex +
+                "'>" +
+                i.name +
+                "</li>"
               );
           }
         });
@@ -1388,18 +1386,18 @@ xAPIDashboard.prototype.createJourneyTableSession = async function (div) {
         menu.append("<h5>" + XAPI_DASHBOARD_DISPLAY_OVERVIEW + "</h5>");
         menu.append(
           "<div><label>" +
-            XAPI_DASHBOARD_DISPLAY_OVERVIEW +
-            "</label><input class='hide-show-overview' type='checkbox' checked></div>"
+          XAPI_DASHBOARD_DISPLAY_OVERVIEW +
+          "</label><input class='hide-show-overview' type='checkbox' checked></div>"
         );
         menu.append(
           "<div><label>" +
-            XAPI_DASHBOARD_DISPLAY_INTERACTION_OVERVIEW +
-            "</label><input class='hide-show-overview-interaction-overview' type='checkbox' checked></div>"
+          XAPI_DASHBOARD_DISPLAY_INTERACTION_OVERVIEW +
+          "</label><input class='hide-show-overview-interaction-overview' type='checkbox' checked></div>"
         );
         menu.append(
           "<div><label>" +
-            XAPI_DASHBOARD_PAGE_SIZE +
-            "</label><select id='pageSize'></select></div>"
+          XAPI_DASHBOARD_PAGE_SIZE +
+          "</label><select id='pageSize'></select></div>"
         );
         var pagesizes = [5, 10, 20, 50, 100, XAPI_DASHBOARD_PAGE_SIZE_ALL];
         var defaultSize = $this.data.pageSize;
@@ -1412,12 +1410,12 @@ xAPIDashboard.prototype.createJourneyTableSession = async function (div) {
             .find("select")
             .append(
               "<option " +
-                selected +
-                " value='" +
-                size +
-                "'>" +
-                size +
-                "</option>"
+              selected +
+              " value='" +
+              size +
+              "'>" +
+              size +
+              "</option>"
             );
         });
 
@@ -1449,10 +1447,10 @@ xAPIDashboard.prototype.createJourneyTableSession = async function (div) {
           var targetIndex = targetHeader.index() + 1;
           var column = $(
             ".journeyData td:nth-child(" +
-              targetIndex +
-              "),.journeyData th:nth-child(" +
-              targetIndex +
-              ")"
+            targetIndex +
+            "),.journeyData th:nth-child(" +
+            targetIndex +
+            ")"
           );
           var subQuestionToggle = targetHeader.find("div");
           if (checked) {
@@ -1478,7 +1476,7 @@ xAPIDashboard.prototype.createJourneyTableSession = async function (div) {
               id: $this.data.info.template_id,
               properties: $this.data.info.dashboard.display_options,
             },
-            function (data) {}
+            function (data) { }
           );
         });
 
@@ -1503,7 +1501,7 @@ xAPIDashboard.prototype.createJourneyTableSession = async function (div) {
               id: $this.data.info.template_id,
               properties: $this.data.info.dashboard.display_options,
             },
-            function (data) {}
+            function (data) { }
           );
         });
       } else {
@@ -1520,10 +1518,10 @@ xAPIDashboard.prototype.applyDisplayOptions = function (interactions) {
     var targetIndex = targetHeader.index() + 1;
     var column = $(
       ".journeyData td:nth-child(" +
-        targetIndex +
-        "),.journeyData th:nth-child(" +
-        targetIndex +
-        ")"
+      targetIndex +
+      "),.journeyData th:nth-child(" +
+      targetIndex +
+      ")"
     );
     if (
       typeof display_options.columns != "undefined" &&
@@ -1719,7 +1717,7 @@ xAPIDashboard.prototype.getExtraUserData = function (
     statement.result == undefined ||
     statement.result.extensions == undefined ||
     statement.result.extensions["http://xerte.org.uk/xapi/trackingstate"] ==
-      undefined
+    undefined
   ) {
     rows = "";
     rows +=
@@ -1805,7 +1803,7 @@ xAPIDashboard.prototype.insertInteractionData = function (
   if (
     interactionObject.type == "page" ||
     this.data.selectInteractionById(interactions, interactionObject.parent) ==
-      undefined
+    undefined
   ) {
     if (interactionObject.children.length > 0) {
       showHide = "column-show";
@@ -1848,11 +1846,11 @@ xAPIDashboard.prototype.insertInteractionData = function (
   }
   sessionDiv = tr.find(
     "#session-" +
-      learningObjectIndex +
-      "-" +
-      this.escapeId(userdata["key"]) +
-      "-interaction-" +
-      interactionObjectIndex
+    learningObjectIndex +
+    "-" +
+    this.escapeId(userdata["key"]) +
+    "-interaction-" +
+    interactionObjectIndex
   );
   sessionDiv.popover({
     content:
@@ -1869,11 +1867,11 @@ xAPIDashboard.prototype.insertInteractionData = function (
   sessionDiv.on("inserted.bs.popover", function (e) {
     elem = $(
       "#popover-" +
-        learningObjectIndex +
-        "-session-" +
-        $this.escapeId(userdata["key"]) +
-        "-interaction-" +
-        interactionObjectIndex
+      learningObjectIndex +
+      "-session-" +
+      $this.escapeId(userdata["key"]) +
+      "-interaction-" +
+      interactionObjectIndex
     );
     if (elem.html() == "") {
       elem.append(
@@ -1932,10 +1930,10 @@ xAPIDashboard.prototype.popoverData = function (
       " " +
       Math.round(
         100 *
-          (scores.reduce(function (a, b) {
-            return a + b;
-          }) /
-            scores.length),
+        (scores.reduce(function (a, b) {
+          return a + b;
+        }) /
+          scores.length),
         2
       ) +
       "%<br>";
@@ -2074,7 +2072,7 @@ xAPIDashboard.prototype.insertInteractionModal = function (
   if (
     interaction.parent == "" ||
     this.data.selectInteractionById(interactions, interaction.parent) ==
-      undefined
+    undefined
   ) {
     parentIndex = "-1";
     if (interaction.children.length > 0) {
@@ -2123,23 +2121,23 @@ xAPIDashboard.prototype.insertInteractionModal = function (
   if ($(`#model-${learningObjectIndex}-${interactionIndex}`).length === 0) {
     $("body").append(
       '<div id="model-' +
-        learningObjectIndex +
-        "-" +
-        interactionIndex +
-        '" class="modal fade dashboard-modal" role="dialog" >' +
-        '<div class="modal-dialog">' +
-        '<div class="modal-content">' +
-        '<div class="modal-header">' +
-        '<h4 class="modal-title">' +
-        interactionTitle +
-        "</h4>" +
-        '<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>' +
-        "</div>" +
-        '<div class="modal-body col-md-12">' +
-        "</div>" +
-        "</div>" +
-        "</div>" +
-        "</div>"
+      learningObjectIndex +
+      "-" +
+      interactionIndex +
+      '" class="modal fade dashboard-modal" role="dialog" >' +
+      '<div class="modal-dialog">' +
+      '<div class="modal-content">' +
+      '<div class="modal-header">' +
+      '<h4 class="modal-title">' +
+      interactionTitle +
+      "</h4>" +
+      '<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>' +
+      "</div>" +
+      '<div class="modal-body col-md-12">' +
+      "</div>" +
+      "</div>" +
+      "</div>" +
+      "</div>"
     );
   }
   div.find("#" + learningObjectIndex + " thead tr").append(interactionHeader);
@@ -2150,10 +2148,10 @@ xAPIDashboard.prototype.insertInteractionModal = function (
   );
   var column = $(
     ".journeyData td:nth-child(" +
-      index +
-      "),.journeyData th:nth-child(" +
-      index +
-      ")"
+    index +
+    "),.journeyData th:nth-child(" +
+    index +
+    ")"
   );
   var subQuestionToggle = targetHeader.find("div");
   if (
@@ -2172,10 +2170,10 @@ xAPIDashboard.prototype.insertInteractionModal = function (
     function () {
       var contentDiv = $(
         "#model-" +
-          learningObjectIndex +
-          "-" +
-          interactionIndex +
-          " .modal-body"
+        learningObjectIndex +
+        "-" +
+        interactionIndex +
+        " .modal-body"
       );
       $(".modal-body > div").remove();
       contentDiv.html("");
@@ -2192,9 +2190,8 @@ xAPIDashboard.prototype.insertInteractionModal = function (
       let localJcId = `block-detail-journey-container-${learningObjectIndex}-${interactionIndex}`;
       $(`#${localJcId}`).remove();
       let block = `<div class="class-overview-box" id="${localJcId}"></div>`;
-      block += `${
-        !showPageInteraction && interaction.type === "page" ? "" : "<hr>"
-      }</div>`;
+      block += `${!showPageInteraction && interaction.type === "page" ? "" : "<hr>"
+        }</div>`;
       contentDiv.append(block);
       childInteractions = interactions.filter(
         (inter) => inter.parent === interaction.url
@@ -2219,44 +2216,43 @@ xAPIDashboard.prototype.insertInteractionModal = function (
   );
 };
 
-xAPIDashboard.prototype.consolidateSegments = function(stringRanges)
-{
-    let csegments = stringRanges.map(function(s) {
-        var segments = s.split("[,]");
-        if (segments[0] == "") {
-            return [];
-        }
-        return segments.map(function(segment) {
-            return {
-                start: parseFloat(segment.split("[.]")[0]),
-                end: parseFloat(segment.split("[.]")[1])
-            };
-        });
-    });
-    var segments = [];
-    csegments.forEach(function(segment) {
-        segment.forEach(function(seg) {
-            segments.push(seg);
-        });
-    });
-    segments.sort(function(a, b) {
-        return (a.start > b.start) ? 1 : ((b.start > a.start) ? -1 : a.end - b.end);
-    });
-    // 2. Combine the segments
-    csegments = [];
-    var i = 0;
-    while (i < segments.length) {
-        var segment = $.extend(true, {}, segments[i]);
-        i++;
-        while (i < segments.length && segments[i].start >= segment.start && segments[i].start <= segment.end) {
-            if (segment.end <= segments[i].end) {
-                segment.end = segments[i].end;
-            }
-            i++;
-        }
-        csegments.push(segment);
+xAPIDashboard.prototype.consolidateSegments = function (stringRanges) {
+  let csegments = stringRanges.map(function (s) {
+    var segments = s.split("[,]");
+    if (segments[0] == "") {
+      return [];
     }
-    return csegments;
+    return segments.map(function (segment) {
+      return {
+        start: parseFloat(segment.split("[.]")[0]),
+        end: parseFloat(segment.split("[.]")[1])
+      };
+    });
+  });
+  var segments = [];
+  csegments.forEach(function (segment) {
+    segment.forEach(function (seg) {
+      segments.push(seg);
+    });
+  });
+  segments.sort(function (a, b) {
+    return (a.start > b.start) ? 1 : ((b.start > a.start) ? -1 : a.end - b.end);
+  });
+  // 2. Combine the segments
+  csegments = [];
+  var i = 0;
+  while (i < segments.length) {
+    var segment = $.extend(true, {}, segments[i]);
+    i++;
+    while (i < segments.length && segments[i].start >= segment.start && segments[i].start <= segment.end) {
+      if (segment.end <= segments[i].end) {
+        segment.end = segments[i].end;
+      }
+      i++;
+    }
+    csegments.push(segment);
+  }
+  return csegments;
 };
 
 /**
@@ -2294,18 +2290,18 @@ xAPIDashboard.prototype.displayOverviewRetention = function (
   for (var i = 0; i < pausedStatements.length; i++) {
     var session =
       pausedStatements[i].context.extensions[
-        "https://w3id.org/xapi/video/extensions/session-id"
+      "https://w3id.org/xapi/video/extensions/session-id"
       ];
     if (stringRanges[session] != undefined) {
       stringRanges[session].push(
         pausedStatements[i].result.extensions[
-          "https://w3id.org/xapi/video/extensions/played-segments"
+        "https://w3id.org/xapi/video/extensions/played-segments"
         ]
       );
     } else {
       stringRanges[session] = [
         pausedStatements[i].result.extensions[
-          "https://w3id.org/xapi/video/extensions/played-segments"
+        "https://w3id.org/xapi/video/extensions/played-segments"
         ],
       ];
     }
@@ -2445,7 +2441,7 @@ xAPIDashboard.prototype.displayHeatmap = function (
   if (pausedstatements.length == 1) {
     videoLength =
       pausedstatements[0].result.extensions[
-        "https://w3id.org/xapi/video/extensions/time"
+      "https://w3id.org/xapi/video/extensions/time"
       ];
   } else {
     videoLength = pausedstatements
@@ -2628,7 +2624,7 @@ xAPIDashboard.prototype.displayPageInfo = function (
     if (
       $this.data.currentGroup.group_id == "all-groups" ||
       $this.data.currentGroup.group_id ==
-        $this.getGroupFromStatements($val.statementidxs)
+      $this.getGroupFromStatements($val.statementidxs)
     ) {
       groupedData[$key] = $val;
     }
@@ -2682,9 +2678,8 @@ xAPIDashboard.prototype.displayPageInfo = function (
   if (avgTime < 120) {
     avgTime = `${Math.round(avgTime)} ${XAPI_DASHBOARD_COMPLETED_UNIT_SECONDS}`;
   } else {
-    avgTime = `${
-      Math.round(avgTime / 6) / 10
-    } ${XAPI_DASHBOARD_COMPLETED_UNIT_MINUTES}`;
+    avgTime = `${Math.round(avgTime / 6) / 10
+      } ${XAPI_DASHBOARD_COMPLETED_UNIT_MINUTES}`;
   }
   contentDiv
     .find(jqLocation)
@@ -2808,14 +2803,14 @@ xAPIDashboard.prototype.displayMatchingQuestionInformation = function (
   pairs = pairs.map(function (x) {
     return x.split("[.]").join(' <i class="fa fa-long-arrow-right"></i> ');
   });
-	if(question.judge){
-		options += XAPI_DASHBOARD_CORRECTANSWERS;
-		options += "<ul>";
-		pairs.forEach(function (p) {
-			options += "<li>" + p + "</li>";
-		});
-		options += "</ul>";
-	}
+  if (question.judge) {
+    options += XAPI_DASHBOARD_CORRECTANSWERS;
+    options += "<ul>";
+    pairs.forEach(function (p) {
+      options += "<li>" + p + "</li>";
+    });
+    options += "</ul>";
+  }
 
   const dash = new ADL.XAPIDashboard();
   const statements = this.data.getQuestionResponses(interactionObjectUrl);
@@ -2893,13 +2888,13 @@ xAPIDashboard.prototype.displayMCQQuestionInformation = function (
   );
   question.choices.forEach((option) => {
     let correct = "";
-		if(question.judge) {
-			if (correctResponsesSplitted.indexOf(option.id) != -1) {
-				correct = '<i class="fa fa-x-tick"></i>';
-			} else {
-				correct = '<i class="fa fa-x-cross"></i>';
-			}
-		}
+    if (question.judge) {
+      if (correctResponsesSplitted.indexOf(option.id) != -1) {
+        correct = '<i class="fa fa-x-tick"></i>';
+      } else {
+        correct = '<i class="fa fa-x-cross"></i>';
+      }
+    }
 
     let percentage =
       Math.round(
@@ -2909,7 +2904,7 @@ xAPIDashboard.prototype.displayMCQQuestionInformation = function (
               s.result != undefined &&
               s.result.response.split("[,]").includes(option.id)
           ).length) /
-          numberOfAnswers
+        numberOfAnswers
       ) / 10;
 
     if (isNaN(percentage)) {
@@ -2931,7 +2926,7 @@ xAPIDashboard.prototype.displayMCQQuestionInformation = function (
     container: "#answers-" + learningObjectIndex + "-" + interactionIndex,
     groupBy: "result.response",
     aggregate: ADL.count(),
-    post: function (data) {},
+    post: function (data) { },
     customize: function (chart) {
       chart.xAxis.axisLabel(XAPI_DASHBOARD_GRAPH_CHOICE_XAXIS);
       chart.yAxis.axisLabel(XAPI_DASHBOARD_GRAPH_CHOICE_YAXIS);
@@ -3084,7 +3079,7 @@ xAPIDashboard.prototype.getResultPage = function (
   if (
     statement.result != undefined &&
     statement.result.extensions["http://xerte.org.uk/xapi/trackingstate"] !=
-      undefined
+    undefined
   ) {
     var trackingState = JSON.parse(
       statement.result.extensions["http://xerte.org.uk/xapi/trackingstate"]
@@ -3402,41 +3397,41 @@ xAPIDashboard.prototype.drawActivityChart = function (
         )
       );
 
-            chart.height(300);
-            chart.tooltips(true);
-            chart.interpolate("monotone");
-            chart.yAxis.axisLabel(XAPI_ACTIVITY_CHART_YAXIS);
+      chart.height(300);
+      chart.tooltips(true);
+      chart.interpolate("monotone");
+      chart.yAxis.axisLabel(XAPI_ACTIVITY_CHART_YAXIS);
 
-            chart.xAxis.tickFormat(function(label) {
-                var date = new Date(label);
-                var options = {
-                    month: 'short',
-                    day: 'numeric'
-                };
-                var intllabel;
-                try {
-                    intllabel = new Intl.DateTimeFormat(language_code, options).format(date);
-                } catch (e) {
-                    intllabel = d3.time.format('%b %d')(date);
-                }
-                return intllabel;
-            });
-            chart.xAxis.tickValues(vals);
-            chart.color(['#f86718']);
-            chart.tooltipContent(function(key, x, y, e, graph) {
-                //console.log("key=" + key + ", x=" + x + ", y=" + y + ", e=" + e + "graph=" + graph);
-                return x + ': ' + y;
-            });
-
-                //.headerFormatter(function(d) { return ""; });
-        },
-        post: function(data) {
-            data.contents.map(function(el) {
-                el.in = Date.parse(el.in);
-            });
+      chart.xAxis.tickFormat(function (label) {
+        var date = new Date(label);
+        var options = {
+          month: 'short',
+          day: 'numeric'
+        };
+        var intllabel;
+        try {
+          intllabel = new Intl.DateTimeFormat(language_code, options).format(date);
+        } catch (e) {
+          intllabel = d3.time.format('%b %d')(date);
         }
-    });
-    chart.draw();
+        return intllabel;
+      });
+      chart.xAxis.tickValues(vals);
+      chart.color(['#f86718']);
+      chart.tooltipContent(function (key, x, y, e, graph) {
+        //console.log("key=" + key + ", x=" + x + ", y=" + y + ", e=" + e + "graph=" + graph);
+        return x + ': ' + y;
+      });
+
+      //.headerFormatter(function(d) { return ""; });
+    },
+    post: function (data) {
+      data.contents.map(function (el) {
+        el.in = Date.parse(el.in);
+      });
+    }
+  });
+  chart.draw();
 };
 
 function close_dashboard() {
@@ -3588,8 +3583,8 @@ xAPIDashboard.prototype.helperGetDate = function (datetimepicker) {
 xAPIDashboard.prototype.regenerate_dashboard = function () {
   $("#journeyData").html(
     '<div id="loader"><img id="loader_image" class="loading_gif" src="' +
-      site_url +
-      '/editor/img/loading16.gif" /><p id="loader_text"></p>'
+    site_url +
+    '/editor/img/loading16.gif" /><p id="loader_text"></p>'
   );
   $("#group-select option:not(:first-child)").remove();
   this.data.currentGroup.group_id = "all-groups";

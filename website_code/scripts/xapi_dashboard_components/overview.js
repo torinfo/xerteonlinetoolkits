@@ -49,17 +49,17 @@ export class Overview {
    * @param {string} title - The title of the column
    * @param {string} value - The content of the column
    */
-   static makeColumnDiv(title, value) {
-     return `
-      <div class="col-lg-2 col-md-4">
-        <div class="bg-white rounded w-100 h-100 text-center">
+  static makeColumnDiv(title, value) {
+    return `
+      <div class="col-lg col-md-6">
+        <div class="bg-white rounded w-100 h-100 text-center pt-4 pb-2">
           <dl>
             <div class="h6 font-weight-normal">${title}</div>
             <div class="h2" style="color: #f86718;">${value}</div>
           </dl>
         </div>
       </div>`;
-   }
+  }
 
   /**
       * Create the overview container
@@ -123,8 +123,8 @@ export class Overview {
    */
   createOverviewStatistics() {
     return `
-      <div class="row mt-4">${this.createUserStats()}</div>
-      <div class="row mt-4">${this.createSessionStats()}</div>`;
+      <div class="container-fluid px-0 mt-4">${this.createUserStats()}</div>
+      <div class="container-fluid px-0 mt-4">${this.createSessionStats()}</div>`;
   }
 
   /**
@@ -134,16 +134,21 @@ export class Overview {
    */
   createUserStats() {
     const userStatsTitle = `
-    <div class="h6 font-weight-normal">&nbsp;</div>
-    <div class="h2" style="color: #f86718;">${XAPI_DASHBOARD_USERSTATS}</div>`;
+      <div class="col text-lg-left text-sm-center">
+        <h3>${XAPI_DASHBOARD_USERSTATS}</h3>
+      </div>`;
 
     return `
-      ${Overview.makeColumnDiv('&nbsp', XAPI_DASHBOARD_USERSTATS)}
-      ${this.widgetNumberOfUsers()}
-      ${this.widgetNumberOfUsersCompleted()}
-      ${this.widgetAverageUsersCompleted()}
-      ${this.widgetNumberOfUsersPassed()}
-      ${this.widgetUserScore()}
+      <div class="row">
+        ${userStatsTitle}
+      </div>
+      <div class="row">
+        ${this.widgetNumberOfUsers()}
+        ${this.widgetNumberOfUsersCompleted()}
+        ${this.widgetAverageUsersCompleted()}
+        ${this.widgetNumberOfUsersPassed()}
+        ${this.widgetUserScore()}
+      </div>
     `;
   }
 
@@ -164,8 +169,8 @@ export class Overview {
   widgetNumberOfUsersCompleted() {
     const numberCompleted = this.#state.users.reduce(
       (acc, user) => acc + (user.attempts[0].completedStatus === 'completed'
-      ? 1
-      : 0),
+        ? 1
+        : 0),
       0
     );
 
@@ -197,8 +202,8 @@ export class Overview {
   widgetNumberOfUsersPassed() {
     const numberPassed = this.#state.users.reduce(
       (acc, user) => acc + (user.attempts[0].successStatus === 'passed'
-      ? 1
-      : 0),
+        ? 1
+        : 0),
       0
     );
 
@@ -222,114 +227,119 @@ export class Overview {
     return Overview.makeColumnDiv(XAPI_DASHBOARD_AVERAGE_USER_SCORE, (averageScore / 10).toFixed(1));
   }
 
-   /**
-    * Create the session statistics
-    *
-    * @returns The html for the session statistics
-    */
-   createSessionStats() {
-     const sessionStatsTitle = `
-     <div class="h6">&nbsp;</div>
-     <div class="h2" style="color: #f86718;">${XAPI_DASHBOARD_SESSIONSTATS}</div>`;
+  /**
+   * Create the session statistics
+   *
+   * @returns The html for the session statistics
+   */
+  createSessionStats() {
+    const sessionStatsTitle = `
+      <div class="col text-lg-left text-sm-center">
+        <h3>${XAPI_DASHBOARD_SESSIONSTATS}</h3>
+      </div>`;
 
-     return `
-       ${Overview.makeColumnDiv('&nbsp;', XAPI_DASHBOARD_SESSIONSTATS)}
-       ${this.widgetNumberOfSessions()}
-       ${this.widgetNumberOfCompletedSessions()}
-       ${this.widgetAverageSessionsCompleted()}
-       ${this.widgetNumberOfSessionsPassed()}
-       ${this.widgetSessionScore()}`;
-   }
+    return `
+      <div class="row">
+        ${sessionStatsTitle}
+      </div>
+      <div class="row">
+        ${this.widgetNumberOfSessions()}
+        ${this.widgetNumberOfCompletedSessions()}
+        ${this.widgetAverageSessionsCompleted()}
+        ${this.widgetNumberOfSessionsPassed()}
+        ${this.widgetSessionScore()}
+      </div>`;
+  }
 
-   /**
-    * Create the number of sessions widget
-    *
-    * @returns The html for the number of sessions widget
-    */
-   widgetNumberOfSessions() {
-     const numberOfSessions = this.#state.users.reduce(
-        (acc, user) => acc + user.attempts.length,
-        0
-     )
+  /**
+   * Create the number of sessions widget
+   *
+   * @returns The html for the number of sessions widget
+   */
+  widgetNumberOfSessions() {
+    const numberOfSessions = this.#state.users.reduce(
+      (acc, user) => acc + user.attempts.length,
+      0
+    )
 
-     return Overview.makeColumnDiv(XAPI_DASHBOARD_NUMBER_OF_SESSIONS, numberOfSessions);
-   }
+    return Overview.makeColumnDiv(XAPI_DASHBOARD_NUMBER_OF_SESSIONS, numberOfSessions);
+  }
 
-   /**
-    * Create the number of sessions completed widget
-    *
-    * @returns The html for the number of sessions completed widget
-    */
-   widgetNumberOfCompletedSessions() {
-     const numberCompleted = this.#state.users.reduce(
-       (acc, user) => acc + user.attempts.reduce(
-         (acc2, attempt) => acc2 + (attempt.completedStatus === 'completed'
-         ? 1
-         : 0),
-         0
-       ),
-       0
-     );
-
-     return Overview.makeColumnDiv(XAPI_DASHBOARD_COMPLETED_SESSIONS, numberCompleted);
-   }
-
-   /**
-    * Create the average completed sessions widget
-    *
-    * @returns The html for the average completed sessions widget
-    */
-   widgetAverageSessionsCompleted() {
-     // If there are no sessions, return 0, otherwise the average the completion of
-     // the attempts of the sessions
-     const averageCompletion = this.#state.users.length <= 0
-       ? 0
-       : this.#state.users.reduce(
-         (acc, user) => acc + user.attempts.reduce(
-            (acc2, attempt) => acc2 + attempt.completedPercentage, 0
-          ) / user.attempts.length,
-          0
-       ) / this.#state.users.length;
-
-     return Overview.makeColumnDiv(XAPI_DASHBOARD_AVERAGE_SESSION_COMPLETION, `${averageCompletion.toFixed(1)}%`);
-   }
-
-   /**
-    * Create the number of sessions passed widget
-    *
-    * @returns The html for the number of sessions passed widget
-    */
-   widgetNumberOfSessionsPassed() {
-     const numberPassed = this.#state.users.reduce(
-       (acc, user) => acc + user.attempts.reduce(
-          (acc2, attempt) => acc2 + (attempt.successStatus === 'passed'
+  /**
+   * Create the number of sessions completed widget
+   *
+   * @returns The html for the number of sessions completed widget
+   */
+  widgetNumberOfCompletedSessions() {
+    const numberCompleted = this.#state.users.reduce(
+      (acc, user) => acc + user.attempts.reduce(
+        (acc2, attempt) => acc2 + (attempt.completedStatus === 'completed'
           ? 1
           : 0),
-          0
-        ),
-       0
-     );
+        0
+      ),
+      0
+    );
 
-     return Overview.makeColumnDiv(XAPI_DASHBOARD_NUMBER_SESSIONS_PASSED, numberPassed);
-   }
+    return Overview.makeColumnDiv(XAPI_DASHBOARD_COMPLETED_SESSIONS, numberCompleted);
+  }
 
-   /**
-    * Create the session score widget
-    *
-    * @returns The html for the session score widget
-    */
-   widgetSessionScore() {
-     // If there are no sessions, return 0, otherwise the average the score of
-     // the of the sessions
-     const averageScore = this.#state.users.length <= 0
-       ? 0
-       : this.#state.users.reduce(
-         (acc, user) => acc + user.attempts.reduce(
-            (acc2, attempt) => acc2 + attempt.score, 0
-          ) / user.attempts.length,
-          0
-       ) / this.#state.users.length;
+  /**
+   * Create the average completed sessions widget
+   *
+   * @returns The html for the average completed sessions widget
+   */
+  widgetAverageSessionsCompleted() {
+    // If there are no sessions, return 0, otherwise the average the completion of
+    // the attempts of the sessions
+    const averageCompletion = this.#state.users.length <= 0
+      ? 0
+      : this.#state.users.reduce(
+        (acc, user) => acc + user.attempts.reduce(
+          (acc2, attempt) => acc2 + attempt.completedPercentage, 0
+        ) / user.attempts.length,
+        0
+      ) / this.#state.users.length;
 
-     return Overview.makeColumnDiv(XAPI_DASHBOARD_AVERAGE_SESSION_SCORE, (averageScore / 10).toFixed(1));
-   }
+    return Overview.makeColumnDiv(XAPI_DASHBOARD_AVERAGE_SESSION_COMPLETION, `${averageCompletion.toFixed(1)}%`);
+  }
+
+  /**
+   * Create the number of sessions passed widget
+   *
+   * @returns The html for the number of sessions passed widget
+   */
+  widgetNumberOfSessionsPassed() {
+    const numberPassed = this.#state.users.reduce(
+      (acc, user) => acc + user.attempts.reduce(
+        (acc2, attempt) => acc2 + (attempt.successStatus === 'passed'
+          ? 1
+          : 0),
+        0
+      ),
+      0
+    );
+
+    return Overview.makeColumnDiv(XAPI_DASHBOARD_NUMBER_SESSIONS_PASSED, numberPassed);
+  }
+
+  /**
+   * Create the session score widget
+   *
+   * @returns The html for the session score widget
+   */
+  widgetSessionScore() {
+    // If there are no sessions, return 0, otherwise the average the score of
+    // the of the sessions
+    const averageScore = this.#state.users.length <= 0
+      ? 0
+      : this.#state.users.reduce(
+        (acc, user) => acc + user.attempts.reduce(
+          (acc2, attempt) => acc2 + attempt.score, 0
+        ) / user.attempts.length,
+        0
+      ) / this.#state.users.length;
+
+    return Overview.makeColumnDiv(XAPI_DASHBOARD_AVERAGE_SESSION_SCORE, (averageScore / 10).toFixed(1));
+  }
 }
