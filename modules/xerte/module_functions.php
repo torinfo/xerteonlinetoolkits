@@ -75,8 +75,8 @@ function process_logos($LO_icon_path, $theme_path, $template_path, $page_content
 
     // Lastly check the default location
     foreach($extensions as $ext) {
-        if (file_exists($template_path . 'common_html5/logo.' . $ext)) {
-            return str_replace("%LOGO%", '<img class="x_icon" src="%TEMPLATEPATH%common_html5/logo.'. $ext . '" alt="" />' , $page_content);
+        if (file_exists($template_path . 'common/logo.' . $ext)) {
+            return str_replace("%LOGO%", '<img class="x_icon" src="%TEMPLATEPATH%common/logo.'. $ext . '" alt="" />' , $page_content);
         }
     }
 

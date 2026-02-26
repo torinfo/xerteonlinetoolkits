@@ -809,7 +809,7 @@
 				if (x_currentPageXML.getAttribute('view') == 'true' && x_currentPageXML.getAttribute('viewNum') > 1 && x_browserInfo.mobile != true) {
 					var menuHtml = '<fieldset><legend>' + x_currentPageXML.getAttribute('viewLabel') + ':</legend><span id="viewOption">';
 					for (var i=0; i<x_currentPageXML.getAttribute('viewNum'); i++) {
-						menuHtml += '<span class="viewBtn"><input type="radio" id="view' + (i+1) + '" name="view" value="' + (i+1) + '" ' + (i===0 ? 'checked' : '') + '/><label for="view' + (i+1) + '"><span class="sr-only">' + (i+1) + '</span><img class="x_noLightBox" src="' + x_templateLocation + 'common_html5/view_' + (i+1) + '.png" alt="' + (i+1) + '" aria-hidden="true"/></label></span>';
+						menuHtml += '<span class="viewBtn"><input type="radio" id="view' + (i+1) + '" name="view" value="' + (i+1) + '" ' + (i===0 ? 'checked' : '') + '/><label for="view' + (i+1) + '"><span class="sr-only">' + (i+1) + '</span><img class="x_noLightBox" src="' + x_templateLocation + 'common/view_' + (i+1) + '.png" alt="' + (i+1) + '" aria-hidden="true"/></label></span>';
 					}
 					menuHtml += '</span></fieldset>';
 

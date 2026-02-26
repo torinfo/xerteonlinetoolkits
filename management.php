@@ -53,7 +53,7 @@ function mgt_page($xerte_toolkits_site, $extra)
 
             <link href="website_code/styles/frontpage.css" media="screen" type="text/css" rel="stylesheet" />
             <link href="website_code/styles/xerte_buttons.css" media="screen" type="text/css" rel="stylesheet" />
-			<!--link rel="stylesheet" type="text/css" href="modules/xerte/parent_templates/Nottingham/common_html5/font-awesome-4.3.0/css/font-awesome.min.css" -->
+			<!--link rel="stylesheet" type="text/css" href="modules/xerte/parent_templates/Nottingham/common/font-awesome-4.3.0/css/font-awesome.min.css" -->
 
             <!--
 
@@ -206,9 +206,9 @@ if(isset($_SESSION['toolkits_logon_id'])) {
         <link href="website_code/styles/frontpage.css?version=<?php echo $version;?>" media="screen" type="text/css" rel="stylesheet" />
         <link href="website_code/styles/xerte_buttons.css?version=<?php echo $version;?>" media="screen" type="text/css" rel="stylesheet" />
         <link href="website_code/styles/management.css?version=<?php echo $version;?>" media="screen" type="text/css" rel="stylesheet" />
-        <link rel="stylesheet" type="text/css" href="modules/xerte/parent_templates/Nottingham/common_html5/fontawesome-6.6.0/css/all.min.css">
-        <link rel="stylesheet" type="text/css" href="modules/xerte/parent_templates/Nottingham/common_html5/fontawesome-6.6.0/css/v4-shims.min.css">
-        <link rel="stylesheet" type="text/css" href="modules/xerte/parent_templates/Nottingham/common_html5/fontawesome-6.6.0/css/v5-font-face.min.css">
+        <link rel="stylesheet" type="text/css" href="modules/common/fontawesome-6.6.0/css/all.min.css">
+        <link rel="stylesheet" type="text/css" href="modules/common/fontawesome-6.6.0/css/v4-shims.min.css">
+        <link rel="stylesheet" type="text/css" href="modules/common/fontawesome-6.6.0/css/v5-font-face.min.css">
 
         <link rel="stylesheet" type="text/css" href="website_code/styles/selectize.css?version=<?php echo $version;?>">
         <?php

@@ -1179,10 +1179,10 @@ function x_setUp() {
 		if (x_browserInfo.mobile) {
 		    x_fillWindow = true;
 			$x_mainHolder.addClass("x_mobile");
-			x_insertCSS(x_templateLocation + "common_html5/css/mobileStyles.css", function() {x_cssSetUp()});
+			x_insertCSS(x_templateLocation + "common/css/mobileStyles.css", function() {x_cssSetUp()});
 		} else {
 			$x_mainHolder.addClass("x_desktop");
-			x_insertCSS(x_templateLocation + "common_html5/css/desktopStyles.css", x_desktopSetUp);
+			x_insertCSS(x_templateLocation + "common/css/desktopStyles.css", x_desktopSetUp);
 		}
 	}
 }
@@ -1277,28 +1277,28 @@ function x_cssSetUp(param) {
 	switch(param) {
         case "language":
 			if (x_params.kblanguage != undefined) {
-				x_insertCSS(x_templateLocation + "models_html5/language.css", function() {x_cssSetUp("glossary")});
+				x_insertCSS(x_templateLocation + "models/language.css", function() {x_cssSetUp("glossary")});
 			} else {
 				x_cssSetUp("glossary");
 			}
             break;
         case "glossary":
 			if (x_params.glossary != undefined) {
-				x_insertCSS(x_templateLocation + "models_html5/glossary.css", function() {x_cssSetUp("saveSession")});
+				x_insertCSS(x_templateLocation + "models/glossary.css", function() {x_cssSetUp("saveSession")});
 			} else {
 				x_cssSetUp("saveSession");
 			}
             break;
 		case "saveSession":
-			x_insertCSS(x_templateLocation + "models_html5/saveSession.css", function() {x_cssSetUp("responsive")});
+			x_insertCSS(x_templateLocation + "models/saveSession.css", function() {x_cssSetUp("responsive")});
 			break;
 		case "responsive":
             if (x_params.responsive == "true") {
 				// adds default responsiveText.css - in some circumstances this will be immediately disabled
 				if (x_params.displayMode == "default" || $.isArray(x_params.displayMode)) { // immediately disable responsivetext.css after loaded
-					x_insertCSS(x_templateLocation + "common_html5/css/responsivetext.css", function () {x_cssSetUp("theme")}, true);
+					x_insertCSS(x_templateLocation + "common/css/responsivetext.css", function () {x_cssSetUp("theme")}, true);
 				} else {
-					x_insertCSS(x_templateLocation + "common_html5/css/responsivetext.css", function () {x_cssSetUp("theme")});
+					x_insertCSS(x_templateLocation + "common/css/responsivetext.css", function () {x_cssSetUp("theme")});
                 }
 			} else {
 				x_cssSetUp("theme");
@@ -1727,7 +1727,7 @@ function x_continueSetUp1() {
 				});
 		}
 
-		// default logo used is logo.png in modules/xerte/parent_templates/Nottingham/common_html5/
+		// default logo used is logo.png in modules/xerte/parent_templates/Nottingham/common/
 		// it's overridden by logo in theme folder
 		// default & theme logos can also be overridden by images uploaded via Icon optional property
 		// Also make sure that the logo is set up before the progress bar is initialised
@@ -2052,7 +2052,7 @@ function x_continueSetUp1() {
 			else {
 				$.ajax({
 					type: "GET",
-					url: x_templateLocation + "common_html5/charPad.xml",
+					url: x_templateLocation + "common/charPad.xml",
 					dataType: "xml",
 					success: function (xml) {
 						x_charmapLoaded(xml);
@@ -2126,7 +2126,7 @@ function x_continueSetUp1() {
 					}
 					if (x_params.backgroundGrey == "true") {
 						// uses a jquery plugin as just css way won't work in all browsers
-						x_insertCSS(x_templateLocation + "common_html5/js/gray-gh-pages/css/gray.css", function() {
+						x_insertCSS(x_templateLocation + "common/js/gray-gh-pages/css/gray.css", function() {
 							$x_background.append('<img id="x_mainBg" class="grayscale" alt="" src="' + x_evalURL(x_params.background) + '"/>');
 							$("#x_mainBg").css({
 								"opacity"	:Number(alpha/100),
@@ -2622,7 +2622,7 @@ function x_changePageApproved(x_gotoPage, addHistory) {
 
 			$x_mainHolder.addClass("x_" + modelfile + "_page");
 
-			x_insertCSS(x_templateLocation + "models_html5/" + modelfile + ".css", function () {
+			x_insertCSS(x_templateLocation + "models/" + modelfile + ".css", function () {
 				x_changePageStep2(x_gotoPage);
 			}, false, "page_model_css");
 		}
@@ -3142,7 +3142,7 @@ function x_changePageStep3() {
 				x_loadPage("", "success", "");
 			}
 			else {
-				$("#x_page" + x_currentPage).load(x_templateLocation + "models_html5/" + modelfile + ".html", x_loadPage);
+				$("#x_page" + x_currentPage).load(x_templateLocation + "models/" + modelfile + ".html", x_loadPage);
 			}
 		}
 
@@ -3152,8 +3152,8 @@ function x_changePageStep3() {
 				if (mediaExists) {
 					if (x_currentPageXML.getAttribute("bgImageGrey") == "true") {
 						// load css for jquery greyscale plugin if not already loaded
-						if (!$("link[href='" + x_templateLocation + "common_html5/js/gray-gh-pages/css/gray.css']").length) {
-							x_insertCSS(x_templateLocation + "common_html5/js/gray-gh-pages/css/gray.css", x_loadPageBg(loadModel));
+						if (!$("link[href='" + x_templateLocation + "common/js/gray-gh-pages/css/gray.css']").length) {
+							x_insertCSS(x_templateLocation + "common/js/gray-gh-pages/css/gray.css", x_loadPageBg(loadModel));
 						} else {
 							// css required will already be loaded (either already loaded for this title page or already loaded for LO bg image)
 							x_loadPageBg(loadModel);
@@ -3866,7 +3866,7 @@ function x_openDialog(type, title, close, position, load, onclose) {
                         })
                     .parent().hide();
 
-                if (load == undefined) { // load dialog contents from a file in the models_html5 folder called [type].html
+                if (load == undefined) { // load dialog contents from a file in the models folder called [type].html
                     if (typeof modelfilestrs[type] != 'undefined')
                     {
                         load = modelfilestrs[type];
@@ -3875,7 +3875,7 @@ function x_openDialog(type, title, close, position, load, onclose) {
                     }
                     else
                     {
-                        $x_popupDialog.load(x_templateLocation + "models_html5/" + type + ".html", function () {
+                        $x_popupDialog.load(x_templateLocation + "models/" + type + ".html", function () {
                             x_setDialogSize($x_popupDialog, position);
                         });
                     }
@@ -5255,7 +5255,7 @@ var XENITH = (function ($, parent) { var self = parent.GLOSSARY = {};
 
 						$.featherlight($(), {
 							contentFilters: 'ajax',
-							ajax: x_templateLocation + 'models_html5/glossary.html',
+							ajax: x_templateLocation + 'models/glossary.html',
 							variant: 'lightbox' + (x_browserInfo.mobile != true ? 'Medium' : 'Auto' )
 						});
 						
@@ -6961,7 +6961,7 @@ var XENITH = (function ($, parent) { var self = parent.ACCESSIBILITY = {};
 
 		// add wcag logo and link if not hidden
 		if (x_params.wcagHide !== 'true') {
-			$p1.before("<a class='wcagLink' target='_blank' href='https://xot.xerte.org.uk/play.php?template_id=214#home'><img class='wcagLogo' src='" + x_templateLocation + "common_html5/wcag2.2AA-blue.png' alt='" + x_getLangInfo(x_languageData.find("colourChanger").find("wcagLogo")[0], "label", "WCAG WAI-AA logo") + "' title='" + x_getLangInfo(x_languageData.find("colourChanger").find("wcagTxt")[0], "label", "View the Xerte accessibility statement") + "'> </a>");
+			$p1.before("<a class='wcagLink' target='_blank' href='https://xot.xerte.org.uk/play.php?template_id=214#home'><img class='wcagLogo' src='" + x_templateLocation + "common/wcag2.2AA-blue.png' alt='" + x_getLangInfo(x_languageData.find("colourChanger").find("wcagLogo")[0], "label", "WCAG WAI-AA logo") + "' title='" + x_getLangInfo(x_languageData.find("colourChanger").find("wcagTxt")[0], "label", "View the Xerte accessibility statement") + "'> </a>");
 
 			if (x_params.wcagAlt !== undefined) {
 				$(".wcagLogo").attr("alt",x_params.wcagAlt);

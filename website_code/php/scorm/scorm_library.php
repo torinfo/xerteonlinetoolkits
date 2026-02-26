@@ -219,7 +219,7 @@ function basic_html5_page_create($id, $type, $parent_name, $lo_name, $date_modif
 
     if ($parent_name == "Nottingham")
     {
-        $common_folder = "common_html5";
+        $common_folder = "common";
     }
     else
     {
@@ -313,7 +313,7 @@ function scorm_html5_page_create($id, $type, $parent_name, $lo_name, $language, 
 
     if ($parent_name == "Nottingham")
     {
-        $common_folder = "common_html5";
+        $common_folder = "common";
     }
     else
     {

@@ -42,7 +42,7 @@
                 id: 'SictTimelineCss',
                 rel: 'stylesheet',
                 type: 'text/css',
-                href:  x_templateLocation + 'common_html5/js/timeline/timeline3.css'
+                href:  x_templateLocation + 'common/js/timeline/timeline3.css'
             }).appendTo('head');
         }
 
@@ -51,8 +51,8 @@
                 this.loadCss();
 			}
 
-			const popLocation = "common_html5/js/popcorn/"
-            const scriptsToLoad = ["common_html5/js/timeline/timeline3.js", popLocation + "popcorn-complete.js", popLocation + "plugins/popcorn.mediaconstructor.js"];
+			const popLocation = "common/js/popcorn/"
+            const scriptsToLoad = ["common/js/timeline/timeline3.js", popLocation + "popcorn-complete.js", popLocation + "plugins/popcorn.mediaconstructor.js"];
 			if (xot_offline) {
 				numLoaded = scriptsToLoad.length;
 			}

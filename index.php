@@ -127,14 +127,14 @@ $version = getVersion();
     <script type="text/javascript" src="editor/js/vendor/modernizr-latest.js"></script>
     <script type="text/javascript" src="editor/js/vendor/jstree.js?version=<?php echo $version;?>"></script>
     <script type="text/javascript" src="website_code/scripts/plotly-latest.min.js?version=<?php echo $version;?>"></script>
-    <script type="text/javascript" src="modules/xerte/parent_templates/Nottingham/common_html5/js/featherlight/featherlight.min.js?version=<?php echo $version;?>"></script>
-    <script type="text/javascript" src="modules/xerte/parent_templates/Nottingham/common_html5/js/featherlight/featherlight.gallery.min.js?version=<?php echo $version;?>"></script>
+    <script type="text/javascript" src="modules/common/js/featherlight/featherlight.min.js?version=<?php echo $version;?>"></script>
+    <script type="text/javascript" src="modules/common/js/featherlight/featherlight.gallery.min.js?version=<?php echo $version;?>"></script>
     <link rel="icon" href="favicon.ico" type="image/x-icon"/>
     <link rel="shortcut icon" href="favicon.ico" type="image/x-icon"/>
-    <!-- link rel="stylesheet" type="text/css" href="modules/xerte/parent_templates/Nottingham/common_html5/font-awesome/css/font-awesome.min.css?version=<?php echo $version;?>" -->
-    <link rel="stylesheet" type="text/css" href="modules/xerte/parent_templates/Nottingham/common_html5/fontawesome-6.6.0/css/all.min.css">
-    <link rel="stylesheet" type="text/css" href="modules/xerte/parent_templates/Nottingham/common_html5/fontawesome-6.6.0/css/v4-shims.min.css">
-    <link rel="stylesheet" type="text/css" href="modules/xerte/parent_templates/Nottingham/common_html5/fontawesome-6.6.0/css/v5-font-face.min.css">
+    <!-- link rel="stylesheet" type="text/css" href="modules/xerte/parent_templates/Nottingham/common/font-awesome/css/font-awesome.min.css?version=<?php echo $version;?>" -->
+    <link rel="stylesheet" type="text/css" href="modules/common/fontawesome-6.6.0/css/all.min.css">
+    <link rel="stylesheet" type="text/css" href="modules/common/fontawesome-6.6.0/css/v4-shims.min.css">
+    <link rel="stylesheet" type="text/css" href="modules/common/fontawesome-6.6.0/css/v5-font-face.min.css">
 
     <link href="website_code/styles/bootstrap.css?version=<?php echo $version;?>" media="all" type="text/css" rel="stylesheet"/>
     <link href="website_code/styles/nv.d3.css?version=<?php echo $version;?>" media="all" type="text/css" rel="stylesheet"/>
@@ -143,8 +143,8 @@ $version = getVersion();
     <link href="website_code/styles/jquery-ui-layout.css?version=<?php echo $version;?>" media="all" type="text/css" rel="stylesheet"/>
     <link href="website_code/styles/xerte_buttons.css?version=<?php echo $version;?>" media="screen" type="text/css" rel="stylesheet"/>
     <link href="website_code/styles/frontpage.css?version=<?php echo $version;?>" media="all" type="text/css" rel="stylesheet"/>
-    <link rel="stylesheet" href="modules/xerte/parent_templates/Nottingham/common_html5/js/featherlight/featherlight.min.css?version=<?php echo $version;?>" />
-    <link rel="stylesheet" href="modules/xerte/parent_templates/Nottingham/common_html5/js/featherlight/featherlight.gallery.min.css?version=<?php echo $version;?>" />
+    <link rel="stylesheet" href="modules/common/js/featherlight/featherlight.min.css?version=<?php echo $version;?>" />
+    <link rel="stylesheet" href="modules/common/js/featherlight/featherlight.gallery.min.css?version=<?php echo $version;?>" />
 
     <?php
     if (file_exists($xerte_toolkits_site->root_file_path . "branding/branding.css"))

@@ -116,13 +116,13 @@ function show_template_page($row, $datafile="", $xapi_enabled = false)
             $engine = $_REQUEST['engine'];
         }
     }
-    $tracking_js_file = array($template_path . "common_html5/js/xttracking_noop.js");
+    $tracking_js_file = array($template_path . "common/js/xttracking_noop.js");
     if($xapi_enabled) {
         if ($pedit_enabled) {
             if ($row["tsugi_xapi_enabled"] == 1) {
                 $tracking_js_file = array($flash_js_dir . "pedit/ALOConnection.js", $flash_js_dir . "xAPI/xttracking_xapi.js");
             } else {
-                $tracking_js_file = array($flash_js_dir . "pedit/ALOConnection.js", $template_path . "common_html5/js/xttracking_noop.js");
+                $tracking_js_file = array($flash_js_dir . "pedit/ALOConnection.js", $template_path . "common/js/xttracking_noop.js");
             }
         } else {
             if ($row["tsugi_xapi_enabled"] == 1) {
@@ -463,7 +463,7 @@ function show_template_page($row, $datafile="", $xapi_enabled = false)
         $page_content = str_replace("%EMBED_SUPPORT%", $embedsupport, $page_content);
 
         // Check popcorn mediasite and peertube config files
-        $popcorn_config = popcorn_config($template_path . "common_html5/", $version);
+        $popcorn_config = popcorn_config($template_path . "common/", $version);
         $page_content = str_replace("%POPCORN_CONFIG%", $popcorn_config, $page_content);
         $page_content = str_replace("%TOKEN%", $_SESSION['token'], $page_content);
 

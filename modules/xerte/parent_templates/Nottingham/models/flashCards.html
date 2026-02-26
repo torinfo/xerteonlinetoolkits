@@ -244,7 +244,7 @@
 		this.init = function () {
 			// Load in the required scripts before we can begin
 			// Uses new loadjs with experimental .path() method
-			loadjs.path(x_templateLocation + 'common_html5/js/');
+			loadjs.path(x_templateLocation + 'common/js/');
 			loadjs(['jquery.flip.min.js'], {
 				success: function() {
 					flashCards.setUp();

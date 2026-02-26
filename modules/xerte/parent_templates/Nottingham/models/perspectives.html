@@ -83,7 +83,7 @@
 
 		this.init = function()
 		{
-			var popLocation = "common_html5/js/popcorn/"
+			var popLocation = "common/js/popcorn/"
 			var scriptsToLoad = ["popcorn-complete", "plugins/popcorn.mediaconstructor"];
 			var i = 0;
 			if (!xot_offline) {
@@ -429,7 +429,7 @@
 								perspectives.loadImage($mediaPanel.find("#pageImage"), [maxW, maxH], x_evalURL(thisData.getAttribute("src")), playAll);
 
 							} else if (thisData.nodeName == "sound") {
-								var src = x_templateLocation + "common_html5/sound.jpg",
+								var src = x_templateLocation + "common/sound.jpg",
 										alt = thisData.getAttribute("tooltip") != undefined ? thisData.getAttribute("tooltip") : x_currentPageXML.getAttribute("soundTip") == undefined ? "Sound Clip" : x_currentPageXML.getAttribute("soundTip");
 
 								if (thisData.getAttribute("img") != undefined && thisData.getAttribute("img") != "") {

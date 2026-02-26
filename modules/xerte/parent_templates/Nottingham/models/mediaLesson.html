@@ -374,7 +374,7 @@
 				
 		// function loads the popcorn files
 		this.loadPopcorn = function() {
-			$.getScript(x_templateLocation + "common_html5/js/popcorn/popcorn-complete.js")
+			$.getScript(x_templateLocation + "common/js/popcorn/popcorn-complete.js")
 				.done(function() {
 					mediaLesson.loadPlugins();
 				})
@@ -385,7 +385,7 @@
 		this.loadPlugins = function() {
 			var i = 0;
 			plugins.forEach(function (plugin) {
-				var fileLocation = "common_html5/js/popcorn/plugins/popcorn." + plugin;
+				var fileLocation = "common/js/popcorn/plugins/popcorn." + plugin;
 				if (jQuery.inArray(plugin, css) != -1) {
 					x_insertCSS(x_templateLocation + fileLocation + ".css");
 				}
@@ -459,7 +459,7 @@
 			if (x_currentPageXML.getAttribute("intro") != "" && x_currentPageXML.getAttribute("intro") != undefined) {
 				var $contentCover = $("#contentCover");
 				$contentCover
-					.css("background-image", 'url("' + x_templateLocation + 'common_html5/highlight.png")')
+					.css("background-image", 'url("' + x_templateLocation + 'common/highlight.png")')
 					.hide();
 				
 				var $infoHolder = $("#infoHolder"),

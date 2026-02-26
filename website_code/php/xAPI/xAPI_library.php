@@ -67,7 +67,7 @@ global $xerte_toolkits_site, $dir_path, $delete_file_array, $zipfile, $youtube_a
     $language_ISO639_1code = substr($language, 0, 2);
     if ($parent_name == "Nottingham")
     {
-        $common_folder = "common_html5/";
+        $common_folder = "common/";
     }
     else
     {

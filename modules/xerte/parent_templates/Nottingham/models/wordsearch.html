@@ -93,7 +93,7 @@
 
 			// Load in the required scripts before we can begin
 			// Uses new loadjs with experimental .path() method
-			loadjs.path(x_templateLocation + 'common_html5/js/wordfind/');
+			loadjs.path(x_templateLocation + 'common/js/wordfind/');
 			loadjs(['wordfind.js', 'style.css', 'wordfindgame.js'], {
 				success: function() {
 					wordsearch.begin();

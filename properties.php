@@ -48,14 +48,14 @@ if ($xerte_toolkits_site->rights == 'elevated')
         <link href="website_code/styles/frontpage.css" media="screen" type="text/css" rel="stylesheet" />
         <link href="website_code/styles/properties_tab.css" media="screen" type="text/css" rel="stylesheet" />
         <link href="website_code/styles/xerte_buttons.css" media="screen" type="text/css" rel="stylesheet" />
-        <link href="modules/xerte/parent_templates/Nottingham/common_html5/js/featherlight/featherlight.min.css" type="text/css" rel="stylesheet" />
+        <link href="modules/xerte/parent_templates/Nottingham/common/js/featherlight/featherlight.min.css" type="text/css" rel="stylesheet" />
         <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
         <script>window.jQuery || document.write('<script src="editor/js/vendor/jquery-1.9.1.min.js"><\/script>')</script>
         <script type="text/javascript" src="editor/js/vendor/jquery.ui-1.10.4.js"></script>
         <script type="text/javascript" src="editor/js/vendor/jquery.layout-1.3.0-rc30.79.min.js"></script>
         <script type="text/javascript" src="editor/js/vendor/jquery.ui.touch-punch.min.js"></script>
         <script type="text/javascript" language="javascript" src="website_code/scripts/ajax_management.js"></script>
-		<script type="text/javascript" language="Javascript" src="modules/xerte/parent_templates/Nottingham/common_html5/js/featherlight/featherlight.min.js"></script>
+		<script type="text/javascript" language="Javascript" src="modules/xerte/parent_templates/Nottingham/common/js/featherlight/featherlight.min.js"></script>
 
         <script type="text/javascript" language="javascript">
 
@@ -79,11 +79,11 @@ if ($xerte_toolkits_site->rights == 'elevated')
             $template_supports = array();
         }
         ?>
-		<!-- link rel="stylesheet" type="text/css" href="modules/xerte/parent_templates/Nottingham/common_html5/font-awesome/css/font-awesome.min.css" -->
-        <!-- link rel="stylesheet" type="text/css" href="modules/xerte/parent_templates/Nottingham/common_html5/font-awesome-4.3.0/css/font-awesome.min.css" -->
-        <link rel="stylesheet" type="text/css" href="modules/xerte/parent_templates/Nottingham/common_html5/fontawesome-6.6.0/css/all.min.css">
-        <link rel="stylesheet" type="text/css" href="modules/xerte/parent_templates/Nottingham/common_html5/fontawesome-6.6.0/css/v4-shims.min.css">
-        <link rel="stylesheet" type="text/css" href="modules/xerte/parent_templates/Nottingham/common_html5/fontawesome-6.6.0/css/v5-font-face.min.css">
+		<!-- link rel="stylesheet" type="text/css" href="modules/xerte/parent_templates/Nottingham/common/font-awesome/css/font-awesome.min.css" -->
+        <!-- link rel="stylesheet" type="text/css" href="modules/xerte/parent_templates/Nottingham/common/font-awesome-4.3.0/css/font-awesome.min.css" -->
+        <link rel="stylesheet" type="text/css" href="modules/common/fontawesome-6.6.0/css/all.min.css">
+        <link rel="stylesheet" type="text/css" href="modules/common/fontawesome-6.6.0/css/v4-shims.min.css">
+        <link rel="stylesheet" type="text/css" href="modules/common/fontawesome-6.6.0/css/v5-font-face.min.css">
 
         <?php
         if (file_exists($xerte_toolkits_site->root_file_path . "branding/branding.css"))

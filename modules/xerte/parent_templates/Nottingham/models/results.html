@@ -90,7 +90,7 @@
 
     this.loadJS = function() {
       if (numLoaded < filesToLoad.length) {
-        $.getScript(x_templateLocation + 'common_html5/js/jsPDF/' + filesToLoad[numLoaded])
+        $.getScript(x_templateLocation + 'common/js/jsPDF/' + filesToLoad[numLoaded])
           .done(function() {
             numLoaded++;
             results.loadJS();

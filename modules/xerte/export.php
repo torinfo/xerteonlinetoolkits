@@ -175,27 +175,27 @@ if ($fullArchive) {
             $offline_includes .= "   <script type=\"text/javascript\" src=\"offline/offline_template.js\"></script>\n\n";
 
             // Offline dialogs
-            create_offline_file("modelfilestrs['colourChanger']", $parent_template_path . "models_html5/colourChanger.html", "offline/offline_colourChanger.js");
-            array_push($file_array, array($parent_template_path . "models_html5/colourChanger.css", ""));
+            create_offline_file("modelfilestrs['colourChanger']", $parent_template_path . "models/colourChanger.html", "offline/offline_colourChanger.js");
+            array_push($file_array, array($parent_template_path . "models/colourChanger.css", ""));
             $offline_includes .= "   <!-- Offline dialogs -->\n";
             $offline_includes .= "   <script type=\"text/javascript\" src=\"offline/offline_colourChanger.js\"></script>\n";
-            create_offline_file("modelfilestrs['menu']", $parent_template_path . "models_html5/menu.html", "offline/offline_menu.js");
-            array_push($file_array, array($parent_template_path . "models_html5/menu.css", ""));
+            create_offline_file("modelfilestrs['menu']", $parent_template_path . "models/menu.html", "offline/offline_menu.js");
+            array_push($file_array, array($parent_template_path . "models/menu.css", ""));
             $offline_includes .= "   <script type=\"text/javascript\" src=\"offline/offline_menu.js\"></script>\n";
-            create_offline_file("modelfilestrs['language']", $parent_template_path . "models_html5/language.html", "offline/offline_language.js");
-            array_push($file_array, array($parent_template_path . "models_html5/language.css", ""));
+            create_offline_file("modelfilestrs['language']", $parent_template_path . "models/language.html", "offline/offline_language.js");
+            array_push($file_array, array($parent_template_path . "models/language.css", ""));
             $offline_includes .= "   <script type=\"text/javascript\" src=\"offline/offline_language.js\"></script>\n";
             if ($xml->glossaryUsed()) {
-                create_offline_file("modelfilestrs['glossary']", $parent_template_path . "models_html5/glossary.html", "offline/offline_glossary.js");
-                array_push($file_array, array($parent_template_path . "models_html5/glossary.css", ""));
+                create_offline_file("modelfilestrs['glossary']", $parent_template_path . "models/glossary.html", "offline/offline_glossary.js");
+                array_push($file_array, array($parent_template_path . "models/glossary.css", ""));
                 $offline_includes .= "   <script type=\"text/javascript\" src=\"offline/offline_glossary.js\"></script>\n";
             }
-            create_offline_file("modelfilestrs['saveSession']", $parent_template_path . "models_html5/saveSession.html", "offline/offline_saveSession.js");
-            array_push($file_array, array($parent_template_path . "models_html5/saveSession.css", ""));
+            create_offline_file("modelfilestrs['saveSession']", $parent_template_path . "models/saveSession.html", "offline/offline_saveSession.js");
+            array_push($file_array, array($parent_template_path . "models/saveSession.css", ""));
             $offline_includes .= "   <!-- Offline dialogs -->\n";
             $offline_includes .= "   <script type=\"text/javascript\" src=\"offline/offline_saveSession.js\"></script>\n";
-            create_offline_file("modelfilestrs['resumeSession']", $parent_template_path . "models_html5/resumeSession.html", "offline/offline_resumeSession.js");
-            array_push($file_array, array($parent_template_path . "models_html5/resumeSession.css", ""));
+            create_offline_file("modelfilestrs['resumeSession']", $parent_template_path . "models/resumeSession.html", "offline/offline_resumeSession.js");
+            array_push($file_array, array($parent_template_path . "models/resumeSession.css", ""));
             $offline_includes .= "   <!-- Offline dialogs -->\n";
             $offline_includes .= "   <script type=\"text/javascript\" src=\"offline/offline_resumeSession.js\"></script>\n";
             $offline_includes .= "\n";
@@ -204,27 +204,27 @@ if ($fullArchive) {
             $offline_includes .= "   <!-- Offline models -->\n";
             foreach($models as $model)
             {
-                create_offline_file("modelfilestrs['" . $model . "']", $parent_template_path . "models_html5/" . $model . ".html", "offline/" . $model . ".js");
-                array_push($file_array, array($parent_template_path . "models_html5/" .$model . ".css", ""));
+                create_offline_file("modelfilestrs['" . $model . "']", $parent_template_path . "models/" . $model . ".html", "offline/" . $model . ".js");
+                array_push($file_array, array($parent_template_path . "models/" .$model . ".css", ""));
                 $offline_includes .= "   <script type=\"text/javascript\" src=\"offline/" . $model . ".js\"></script>\n";
             }
 
             // Extra include files normally loaded dynamically
             $offline_includes .= "   <!-- extra files, normally loaded dynamically -->\n";
-            $offline_includes .= "   <script type=\"text/javascript\" src=\"common_html5/js/script.js\"></script>\n";
-            $offline_includes .= "   <script type=\"text/javascript\" src=\"common_html5/js/popcorn/popcorn-complete.js\"></script>\n";
-            $offline_includes .= "   <script type=\"text/javascript\" src=\"common_html5/js/popcorn/plugins/popcorn.textplus.js\"></script>\n";
-            $offline_includes .= "   <script type=\"text/javascript\" src=\"common_html5/js/popcorn/plugins/popcorn.subtitleplus.js\"></script>\n";
-            $offline_includes .= "   <script type=\"text/javascript\" src=\"common_html5/js/popcorn/plugins/popcorn.xot.js\"></script>\n";
-            $offline_includes .= "   <script type=\"text/javascript\" src=\"common_html5/js/popcorn/plugins/popcorn.mediaplus.js\"></script>\n";
-            $offline_includes .= "   <script type=\"text/javascript\" src=\"common_html5/js/popcorn/plugins/popcorn.mcq.js\"></script>\n";
-            $offline_includes .= "   <script type=\"text/javascript\" src=\"common_html5/js/popcorn/plugins/MediasitePlayerIFrameAPI.js\"></script>\n";
-            $offline_includes .= "   <script type=\"text/javascript\" src=\"common_html5/js/popcorn/plugins/MediasitePlayerControls.js\"></script>\n";
-            $offline_includes .= "   <script type=\"text/javascript\" src=\"common_html5/js/popcorn/plugins/popcorn.slides.js\"></script>\n";
-            $offline_includes .= "   <script type=\"text/javascript\" src=\"common_html5/js/popcorn/plugins/popcorn.sortholder.js\"></script>\n";
-            $offline_includes .= "   <script type=\"text/javascript\" src=\"common_html5/js/popcorn/plugins/popcorn.mediaconstructor.js\"></script>\n";
+            $offline_includes .= "   <script type=\"text/javascript\" src=\"common/js/script.js\"></script>\n";
+            $offline_includes .= "   <script type=\"text/javascript\" src=\"common/js/popcorn/popcorn-complete.js\"></script>\n";
+            $offline_includes .= "   <script type=\"text/javascript\" src=\"common/js/popcorn/plugins/popcorn.textplus.js\"></script>\n";
+            $offline_includes .= "   <script type=\"text/javascript\" src=\"common/js/popcorn/plugins/popcorn.subtitleplus.js\"></script>\n";
+            $offline_includes .= "   <script type=\"text/javascript\" src=\"common/js/popcorn/plugins/popcorn.xot.js\"></script>\n";
+            $offline_includes .= "   <script type=\"text/javascript\" src=\"common/js/popcorn/plugins/popcorn.mediaplus.js\"></script>\n";
+            $offline_includes .= "   <script type=\"text/javascript\" src=\"common/js/popcorn/plugins/popcorn.mcq.js\"></script>\n";
+            $offline_includes .= "   <script type=\"text/javascript\" src=\"common/js/popcorn/plugins/MediasitePlayerIFrameAPI.js\"></script>\n";
+            $offline_includes .= "   <script type=\"text/javascript\" src=\"common/js/popcorn/plugins/MediasitePlayerControls.js\"></script>\n";
+            $offline_includes .= "   <script type=\"text/javascript\" src=\"common/js/popcorn/plugins/popcorn.slides.js\"></script>\n";
+            $offline_includes .= "   <script type=\"text/javascript\" src=\"common/js/popcorn/plugins/popcorn.sortholder.js\"></script>\n";
+            $offline_includes .= "   <script type=\"text/javascript\" src=\"common/js/popcorn/plugins/popcorn.mediaconstructor.js\"></script>\n";
             $offline_includes .= "   <script type=\"text/javascript\" src=\"https://unpkg.com/@peertube/embed-api/build/player.min.js\"></script>\n";
-            $offline_includes .= "   <script type=\"text/javascript\" src=\"common_html5/js/timeline/timeline3.js\"></script>\n";
+            $offline_includes .= "   <script type=\"text/javascript\" src=\"common/js/timeline/timeline3.js\"></script>\n";
 
 
             // Offline theme
@@ -238,38 +238,38 @@ if ($fullArchive) {
         }
         else {
             foreach ($models as $model) {
-                _debug("copy model " . $parent_template_path . "models_html5/" . $model . ".html");
-                array_push($file_array, array($parent_template_path . "models_html5/" . $model . ".html", ""));
-                array_push($file_array, array($parent_template_path . "models_html5/" . $model . ".css", ""));
+                _debug("copy model " . $parent_template_path . "models/" . $model . ".html");
+                array_push($file_array, array($parent_template_path . "models/" . $model . ".html", ""));
+                array_push($file_array, array($parent_template_path . "models/" . $model . ".css", ""));
             }
             /* Always add menu.html */
-            _debug("copy model " . $parent_template_path . "models_html5/menu.html");
-            array_push($file_array, array($parent_template_path . "models_html5/menu.html", ""));
-            array_push($file_array, array($parent_template_path . "models_html5/menu.css", ""));
+            _debug("copy model " . $parent_template_path . "models/menu.html");
+            array_push($file_array, array($parent_template_path . "models/menu.html", ""));
+            array_push($file_array, array($parent_template_path . "models/menu.css", ""));
             /* Always add colourChanger.html */
-            _debug("copy model " . $parent_template_path . "models_html5/colourChanger.html");
-            array_push($file_array, array($parent_template_path . "models_html5/colourChanger.html", ""));
-            array_push($file_array, array($parent_template_path . "models_html5/colourChanger.css", ""));
+            _debug("copy model " . $parent_template_path . "models/colourChanger.html");
+            array_push($file_array, array($parent_template_path . "models/colourChanger.html", ""));
+            array_push($file_array, array($parent_template_path . "models/colourChanger.css", ""));
             /* Always add language.html */
-            _debug("copy model " . $parent_template_path . "models_html5/language.html");
-            array_push($file_array, array($parent_template_path . "models_html5/language.html", ""));
-            array_push($file_array, array($parent_template_path . "models_html5/language.css", ""));
+            _debug("copy model " . $parent_template_path . "models/language.html");
+            array_push($file_array, array($parent_template_path . "models/language.html", ""));
+            array_push($file_array, array($parent_template_path . "models/language.css", ""));
             /* Add glossary if used */
             if ($xml->glossaryUsed()) {
-                _debug("copy model " . $parent_template_path . "models_html5/glossary.html");
-                array_push($file_array, array($parent_template_path . "models_html5/glossary.html", ""));
-                array_push($file_array, array($parent_template_path . "models_html5/glossary.css", ""));
+                _debug("copy model " . $parent_template_path . "models/glossary.html");
+                array_push($file_array, array($parent_template_path . "models/glossary.html", ""));
+                array_push($file_array, array($parent_template_path . "models/glossary.css", ""));
             }
             /* Always add saveSession.html */
-            _debug("copy model " . $parent_template_path . "models_html5/saveSession.html");
-            array_push($file_array, array($parent_template_path . "models_html5/saveSession.html", ""));
-            array_push($file_array, array($parent_template_path . "models_html5/saveSession.css", ""));
+            _debug("copy model " . $parent_template_path . "models/saveSession.html");
+            array_push($file_array, array($parent_template_path . "models/saveSession.html", ""));
+            array_push($file_array, array($parent_template_path . "models/saveSession.css", ""));
             /* Always add resumeSession.html */
-            _debug("copy model " . $parent_template_path . "models_html5/resumeSession.html");
-            array_push($file_array, array($parent_template_path . "models_html5/resumeSession.html", ""));
-            array_push($file_array, array($parent_template_path . "models_html5/resumeSession.css", ""));
+            _debug("copy model " . $parent_template_path . "models/resumeSession.html");
+            array_push($file_array, array($parent_template_path . "models/resumeSession.html", ""));
+            array_push($file_array, array($parent_template_path . "models/resumeSession.css", ""));
         }
-        export_folder_loop($parent_template_path . "common_html5/");
+        export_folder_loop($parent_template_path . "common/");
         copy_parent_files();
     }
 

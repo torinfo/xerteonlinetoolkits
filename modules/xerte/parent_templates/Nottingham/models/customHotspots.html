@@ -505,7 +505,7 @@
 					}
 					
 					// label tabindex leaves space for dropped pins
-					$('<div class="label panel" tabindex="' + ((i*2)+2) + '" title="' + labelTxt1 + '"><img class="pinImg visible" alt="' + (x_currentPageXML.getAttribute("pinAlt") != undefined ? x_currentPageXML.getAttribute("pinAlt") : 'Draggable pin icon') + '" src="' + x_templateLocation + 'common_html5/pin_blue.png"/>' + (i + 1) + ". " + $this.data("label") + '</div>')
+					$('<div class="label panel" tabindex="' + ((i*2)+2) + '" title="' + labelTxt1 + '"><img class="pinImg visible" alt="' + (x_currentPageXML.getAttribute("pinAlt") != undefined ? x_currentPageXML.getAttribute("pinAlt") : 'Draggable pin icon') + '" src="' + x_templateLocation + 'common/pin_blue.png"/>' + (i + 1) + ". " + $this.data("label") + '</div>')
 						.appendTo($labelHolder)
 						.data("correct", correct);
 					
@@ -518,7 +518,7 @@
 					.draggable({
 						containment:	$x_pageHolder,
 						helper:			function() {
-							var thisHelper = $('<div class="helper"><img class="pinImg visible" src="' + x_templateLocation + 'common_html5/pin_blue.png"/>' + ($(this).index() + 1) + '</div>').appendTo($labelHolder);
+							var thisHelper = $('<div class="helper"><img class="pinImg visible" src="' + x_templateLocation + 'common/pin_blue.png"/>' + ($(this).index() + 1) + '</div>').appendTo($labelHolder);
 							return thisHelper;
 						},
 						cursor:			"none",
@@ -1019,7 +1019,7 @@
 				$pin = $helper.clone();
 			} else {
 				// create new pin
-				$pin = $('<div class="helper"><img class="pinImg" src="' + x_templateLocation + 'common_html5/pin_blue.png"/>' + ($target.index() + 1) + '</div>');
+				$pin = $('<div class="helper"><img class="pinImg" src="' + x_templateLocation + 'common/pin_blue.png"/>' + ($target.index() + 1) + '</div>');
 				
 				// position $pin on 1st non-transparent pixel on canvas
 				var $thisHSCanvas = $target,

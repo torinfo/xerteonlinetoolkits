@@ -1370,23 +1370,23 @@
       if (numLoaded < 6) {
         var fileToLoad;
         if (numLoaded == 0) {
-          fileToLoad = x_templateLocation + "common_html5/js/chart.min.js";
+          fileToLoad = x_templateLocation + "common/js/chart.min.js";
         } else if (numLoaded == 1) {
         /*
                 else if (numLoaded == 1) {
-                    fileToLoad = 'common_html5/js/xapidashboard/dist/xapidashboard.min.js';
+                    fileToLoad = 'common/js/xapidashboard/dist/xapidashboard.min.js';
                 }
                 */
           fileToLoad = "modules/xerte/xAPI/xapicollection.min.js";
         } else if (numLoaded == 2) {
           fileToLoad =
-            x_templateLocation + "common_html5/js/moment-with-locales.min.js";
+            x_templateLocation + "common/js/moment-with-locales.min.js";
         } else if (numLoaded == 3) {
-          fileToLoad = x_templateLocation + "common_html5/js/apexcharts.min.js";
+          fileToLoad = x_templateLocation + "common/js/apexcharts.min.js";
         } else if (numLoaded == 4) {
-          fileToLoad = x_templateLocation + "common_html5/js/jsPDF/jspdf.umd.min.js";
+          fileToLoad = x_templateLocation + "common/js/jsPDF/jspdf.umd.min.js";
         } else if (numLoaded == 5) {
-            fileToLoad = x_templateLocation + "common_html5/js/chartjs-adapter-moment.js";
+            fileToLoad = x_templateLocation + "common/js/chartjs-adapter-moment.js";
         }
 
         $.getScript(fileToLoad)
@@ -5218,7 +5218,7 @@
       $("#listPanel").append(
         '<div id="introductionText"></div><div id="loader"><div><img class="loading-gif" src="' +
           x_templateLocation +
-          'common_html5/loading16.gif"/></div><div><p id="loader_text"></p></div></div><div id="adaptiveContentList"></div>'
+          'common/loading16.gif"/></div><div><p id="loader_text"></p></div></div><div id="adaptiveContentList"></div>'
       );
       //$("#infoPanel").append("<h3>Current block</h3>");
 
@@ -5343,7 +5343,7 @@
                     label: 'print'
                 })
                 .click(async function () {
-                    $("#adaptiveContentMain").prepend("<div id='print-overlay'><img id='print-overlay-spinner' src='" + x_templateLocation + "common_html5/loading16.gif'></div>");
+                    $("#adaptiveContentMain").prepend("<div id='print-overlay'><img id='print-overlay-spinner' src='" + x_templateLocation + "common/loading16.gif'></div>");
                     let filename = 'xerte-adaptive-content.pdf';
                     if (x_currentPageXML.getAttribute('name') != null) {
                         filename = $("<div>").html(x_currentPageXML.getAttribute('name')).text().replace('\/ ', '_') + '.pdf';

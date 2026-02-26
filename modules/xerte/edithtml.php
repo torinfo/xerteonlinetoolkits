@@ -261,7 +261,7 @@ function output_editor_code($row_edit, $xerte_toolkits_site, $read_status, $vers
     <link rel="stylesheet" type="text/css" href="website_code/styles/xerte_buttons.css?version=<?php echo $version;?>" />
     <link rel="stylesheet" type="text/css" href="editor/css/complex.css?version=<?php echo $version;?>" />
     <link rel="stylesheet" type="text/css" href="editor/css/fonts.css?version=<?php echo $version;?>" />
-    <link rel="stylesheet" type="text/css" href="modules/xerte/parent_templates/Nottingham/common_html5/js/featherlight/featherlight.min.css?version=<?php echo $version;?>" />
+    <link rel="stylesheet" type="text/css" href="modules/common/js/featherlight/featherlight.min.css?version=<?php echo $version;?>" />
     <link rel="stylesheet" type="text/css" href="editor/js/vendor/imgareaselect/imgareaselect-default.css?version=<?php echo $version;?>" />
     <link rel="stylesheet" type="text/css" href="editor/js/vendor/jqgrid/css/ui.jqgrid.css?version=<?php echo $version;?>" />
     <link rel="stylesheet" type="text/css" href="editor/js/vendor/ckeditor/plugins/codemirror/css/codemirror.min.css?version=<?php echo $version;?>" />
@@ -377,7 +377,7 @@ function output_editor_code($row_edit, $xerte_toolkits_site, $read_status, $vers
 <script type="text/javascript" src="editor/js/vendor/ckeditor/adapters/jquery.js?version=<?php echo $version;?>"></script>
 <script type="text/javascript" src="editor/js/vendor/jscolor.js?version=<?php echo $version;?>"></script>
 <script type="text/javascript" src="editor/js/vendor/xml2json.min.js?version=<?php echo $version;?>"></script>
-<script type="text/javascript" src="modules/xerte/parent_templates/Nottingham/common_html5/js/featherlight/featherlight.min.js?version=<?php echo $version;?>"></script>
+<script type="text/javascript" src="modules/xerte/parent_templates/Nottingham/common/js/featherlight/featherlight.min.js?version=<?php echo $version;?>"></script>
 <script type="text/javascript" src="editor/js/vendor/imgareaselect/jquery.imgareaselect.js?version=<?php echo $version;?>"></script>
 <script type="text/javascript" src="editor/js/vendor/fabric.min.js?version=<?php echo $version;?>"></script>
 <script type="text/javascript" src="editor/js/vendor/jqgrid/js/jquery-migrate-1.2.1.js"></script>
@@ -397,11 +397,11 @@ function output_editor_code($row_edit, $xerte_toolkits_site, $read_status, $vers
 <script type="text/javascript" src="editor/js/vendor/ckeditor/plugins/codemirror/js/codemirror.addons.search.min.js?version=<?php echo $version;?>"></script>
 
 <!-- load js ai master file -->
-<script type="text/javascript" src="modules/xerte/parent_templates/Nottingham/common_html5/js/ai-master.js"></script>
+<script type="text/javascript" src="modules/xerte/parent_templates/Nottingham/common/js/ai-master.js"></script>
 <!-- Load latest font awesome after ckeditor, other wise the latest fontawesome is overruled by the fontawsome plugin of ckeditor -->
-<link rel="stylesheet" type="text/css" href="modules/xerte/parent_templates/Nottingham/common_html5/fontawesome-6.6.0/css/all.min.css">
-<link rel="stylesheet" type="text/css" href="modules/xerte/parent_templates/Nottingham/common_html5/fontawesome-6.6.0/css/v4-shims.min.css">
-<link rel="stylesheet" type="text/css" href="modules/xerte/parent_templates/Nottingham/common_html5/fontawesome-6.6.0/css/v5-font-face.min.css">
+<link rel="stylesheet" type="text/css" href="modules/common/fontawesome-6.6.0/css/all.min.css">
+<link rel="stylesheet" type="text/css" href="modules/common/fontawesome-6.6.0/css/v4-shims.min.css">
+<link rel="stylesheet" type="text/css" href="modules/common/fontawesome-6.6.0/css/v5-font-face.min.css">
 
 <script>
     <?php

@@ -1010,7 +1010,7 @@
 				});
 
 			// Uses new loadjs with experimental .path() method
-			loadjs.path(x_templateLocation + 'common_html5/js/');
+			loadjs.path(x_templateLocation + 'common/js/');
 			loadjs(['html2pdf.bundle.min.js'], {
 				success: function() {
     				printAvailable = true;
@@ -1029,7 +1029,7 @@
 					label: x_currentPageXML.getAttribute("downloadBtnText") == undefined ? 'Download' : x_currentPageXML.getAttribute("downloadBtnText")
 				})
 				.click(async function() {
-					$("#pageContents").prepend("<div id='print-overlay'><img id='print-overlay-spinner' src='" + x_templateLocation + "common_html5/loading16.gif'></div>");
+					$("#pageContents").prepend("<div id='print-overlay'><img id='print-overlay-spinner' src='" + x_templateLocation + "common/loading16.gif'></div>");
 					$("#mainPanel").prepend(
 						'<div id="print-title" style="font-size: 30px"><h1>' + x_currentPageXML.getAttribute("name") + '</h1></div>'
 					);

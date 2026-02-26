@@ -54,7 +54,7 @@
 		this.init = function() {
 			// Load in the required scripts before we can begin
 			// Uses new loadjs
-			loadjs.path(x_templateLocation + 'common_html5/js/qrcode/');
+			loadjs.path(x_templateLocation + 'common/js/qrcode/');
 			loadjs(['qrcode.min.js'], {
 				success: function() {
 					QRcode.begin();
