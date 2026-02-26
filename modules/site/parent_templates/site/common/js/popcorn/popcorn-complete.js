@@ -4743,7 +4743,7 @@
             elem.sandbox="allow-same-origin allow-scripts allow-popups";
 
             if (!xot_offline && typeof PeerTubePlayer !== undefined) {
-              $.getScript("https://unpkg.com/@peertube/embed-api/build/player.min.js")
+              $.getScript("modules/common/js/peertube/player.min.js")
                   .done(function () {
                         onReady();
                       }

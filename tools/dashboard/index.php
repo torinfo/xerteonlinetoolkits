@@ -218,13 +218,13 @@ if(is_numeric($id) || $id == null) {
     <title>Xerte Dashboard</title>
     <link rel="stylesheet" href="../../editor/css/jquery-ui.css">
     <link rel="stylesheet" href="../../editor/js/vendor/themes/default/style.css?version=<?php echo $version;?>" />
-    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
-    <script>window.jQuery || document.write('<script src="../../editor/js/vendor/jquery-1.9.1.min.js"><\/script>')</script>
+    <script src="../../modules/common/js/jquery-1.9.1.min.js"></script>
+    <script>window.jQuery || document.write('<script src=\"../../editor/js/vendor/jquery-1.9.1.min.js\"><\/script>')</script>
     <script type="text/javascript" src="../../editor/js/vendor/jquery.ui-1.10.4.js"></script>
     <script type="text/javascript" src="../../editor/js/vendor/jquery.layout-1.3.0-rc30.79.min.js"></script>
     <script type="text/javascript" src="../../editor/js/vendor/jquery.ui.touch-punch.min.js"></script>
     <script type="text/javascript" src="../../editor/js/vendor/modernizr-latest.js"></script>
-    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+    <script type="text/javascript" src="../../website_code/scripts/plotly-latest.min.js?version=<?php echo $version;?>"></script>
     <script type="text/javascript" src="../../modules/common/js/featherlight/featherlight.min.js?version=<?php echo $version;?>"></script>
     <script type="text/javascript" src="../../modules/common/js/featherlight/featherlight.gallery.min.js?version=<?php echo $version;?>"></script>
     <link rel="icon" href="../../favicon.ico" type="image/x-icon"/>

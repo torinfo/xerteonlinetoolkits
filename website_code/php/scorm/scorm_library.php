@@ -256,7 +256,7 @@ function basic_html5_page_create($id, $type, $parent_name, $lo_name, $date_modif
         $buffer = str_replace("%OFFLINESCRIPTS%", "", $buffer);
         if ($need_download_url) $offline_includes .= "   <script type=\"text/javascript\">var x_downloadURL = \"" . $xerte_toolkits_site->site_url . "download.php\";</script>\n";
         $buffer = str_replace("%OFFLINEINCLUDES%", $offline_includes, $buffer);
-        $buffer = str_replace("%MATHJAXPATH%", "https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/", $buffer);
+        $buffer = str_replace("%MATHJAXPATH%", "offline/js/mathjax/", $buffer);
     }
     $buffer = str_replace("%TRACKING_SUPPORT%", "<script type=\"text/javascript\" src=\"{$common_folder}/js/xttracking_noop.js\"></script>", $buffer);
     $buffer = str_replace("%EMBED_SUPPORT%", "", $buffer);
@@ -336,7 +336,7 @@ function scorm_html5_page_create($id, $type, $parent_name, $lo_name, $language, 
     $scorm_html_page_content = str_replace("%THEMEPATH%", "themes/" . $parent_name . "/",$scorm_html_page_content);
     $scorm_html_page_content = str_replace("%OFFLINESCRIPTS%", "",$scorm_html_page_content);
     $scorm_html_page_content = str_replace("%OFFLINEINCLUDES%", "",$scorm_html_page_content);
-    $scorm_html_page_content = str_replace("%MATHJAXPATH%", "https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/", $scorm_html_page_content);
+    $scorm_html_page_content = str_replace("%MATHJAXPATH%", "offline/js/mathjax/", $scorm_html_page_content);
     $scorm_html_page_content = str_replace("%LASTUPDATED%", $date_modified, $scorm_html_page_content);
     $scorm_html_page_content = str_replace("%DATECREATED%", $date_created, $scorm_html_page_content);
     $scorm_html_page_content = str_replace("%NUMPLAYS%", 0, $scorm_html_page_content);

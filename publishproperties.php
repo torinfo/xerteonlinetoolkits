@@ -35,7 +35,7 @@ Properties HTML page
 Version 1.0
 
 -->
-    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+    <script src="modules/common/js/jquery-1.9.1.min.js"></script>
     <script>window.jQuery || document.write('<script src="editor/js/vendor/jquery-1.9.1.min.js"><\/script>')</script>
 
     <link href="website_code/styles/frontpage.css" media="screen" type="text/css" rel="stylesheet" />

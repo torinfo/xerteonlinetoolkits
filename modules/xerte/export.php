@@ -223,7 +223,7 @@ if ($fullArchive) {
             $offline_includes .= "   <script type=\"text/javascript\" src=\"common/js/popcorn/plugins/popcorn.slides.js\"></script>\n";
             $offline_includes .= "   <script type=\"text/javascript\" src=\"common/js/popcorn/plugins/popcorn.sortholder.js\"></script>\n";
             $offline_includes .= "   <script type=\"text/javascript\" src=\"common/js/popcorn/plugins/popcorn.mediaconstructor.js\"></script>\n";
-            $offline_includes .= "   <script type=\"text/javascript\" src=\"https://unpkg.com/@peertube/embed-api/build/player.min.js\"></script>\n";
+            $offline_includes .= "   <script type=\"text/javascript\" src=\"common/js/peertube/player.min.js\"></script>\n";
             $offline_includes .= "   <script type=\"text/javascript\" src=\"common/js/timeline/timeline3.js\"></script>\n";
 
 

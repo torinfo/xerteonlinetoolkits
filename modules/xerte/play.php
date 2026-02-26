@@ -310,7 +310,7 @@ function show_template_page($row, $datafile="", $xapi_enabled = false)
         // Handle offline variables
         $page_content = str_replace("%OFFLINESCRIPTS%", "", $page_content);
         $page_content = str_replace("%OFFLINEINCLUDES%", "", $page_content);
-        $page_content = str_replace("%MATHJAXPATH%", "https://cdn.jsdelivr.net/npm/mathjax@2/", $page_content);
+        $page_content = str_replace("%MATHJAXPATH%", "offline/js/mathjax/", $page_content);
 
         $tracking = "";
         foreach($tracking_js_file as $jsfile)

@@ -46,7 +46,7 @@ Version 1.0
 <link rel="stylesheet" type="text/css" href="modules/common/fontawesome-6.6.0/css/v5-font-face.min.css">
 
 <script type="text/javascript" language="javascript" src="website_code/scripts/validation.js"></script>
-<script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+<script src="modules/common/js/jquery-1.9.1.min.js"></script>
 <script>window.jQuery || document.write('<script src="editor/js/vendor/jquery-1.9.1.min.js"><\/script>')</script>
 
 <?php
