@@ -377,7 +377,7 @@ function output_editor_code($row_edit, $xerte_toolkits_site, $read_status, $vers
 <script type="text/javascript" src="editor/js/vendor/ckeditor/adapters/jquery.js?version=<?php echo $version;?>"></script>
 <script type="text/javascript" src="editor/js/vendor/jscolor.js?version=<?php echo $version;?>"></script>
 <script type="text/javascript" src="editor/js/vendor/xml2json.min.js?version=<?php echo $version;?>"></script>
-<script type="text/javascript" src="modules/xerte/parent_templates/Nottingham/common/js/featherlight/featherlight.min.js?version=<?php echo $version;?>"></script>
+<script type="text/javascript" src="modules/common/js/featherlight/featherlight.min.js?version=<?php echo $version;?>"></script>
 <script type="text/javascript" src="editor/js/vendor/imgareaselect/jquery.imgareaselect.js?version=<?php echo $version;?>"></script>
 <script type="text/javascript" src="editor/js/vendor/fabric.min.js?version=<?php echo $version;?>"></script>
 <script type="text/javascript" src="editor/js/vendor/jqgrid/js/jquery-migrate-1.2.1.js"></script>
