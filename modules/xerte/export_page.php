@@ -45,6 +45,7 @@
     echo "<li><button type=\"button\" class=\"xerte_button\" onclick=\"property_tab_download('download_frame', 'html5', 'flash', '" . $xerte_toolkits_site->site_url . url_return("scorm2004" , $_POST['template_id']) . "')\"><i class=\"fa fa-download\"></i> " . XERTE_EXPORT_SCORM_2004_LINK . "</button></li></ol></li>";
     echo "<li>" . XERTE_EXPORT_ZIP_ARCHIVE_TITLE . "<br/>" . XERTE_EXPORT_ZIP_ARCHIVE . "<br/><button type=\"button\" class=\"xerte_button\" onclick=\"property_tab_download('download_frame', 'html5', 'flash', '" . $xerte_toolkits_site->site_url . url_return("export_full" , $_POST['template_id']) . "')\"><i class=\"fa fa-download\"></i> " . XERTE_EXPORT_ZIP_ARCHIVE_LINK . "</button></li>";
     echo "<li>" . XERTE_EXPORT_ZIP_OFFLINE_TITLE . "<br/>" . XERTE_EXPORT_ZIP_OFFLINE . "<br/><button type=\"button\" class=\"xerte_button\" onclick=\"property_tab_download('download_frame', 'html5', 'flash', '" . $xerte_toolkits_site->site_url . url_return("export_offline" , $_POST['template_id']) . "')\"><i class=\"fa fa-download\"></i> " . XERTE_EXPORT_ZIP_OFFLINE_LINK . "</button></li>";
+    echo "<li>" . XERTE_EXPORT_ZIP_QTI_TITLE . "<br/>" . XERTE_EXPORT_ZIP_QTI . "<br/><button type=\"button\" class=\"xerte_button\" onclick=\"property_tab_download('download_frame', 'html5', 'flash', '" . $xerte_toolkits_site->site_url . url_return("export_qti" , $_POST['template_id']) . "')\"><i class=\"fa fa-download\"></i> " . XERTE_EXPORT_ZIP_QTI_LINK . "</button></li>";
     echo "</ol>";
 
 ?>

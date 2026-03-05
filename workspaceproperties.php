@@ -123,7 +123,7 @@ Hidden Iframe to allow for ajax file uploads
 							<i class="fa fa-file-import fa-fw xerte-icon"></i>&nbsp;<?PHP echo WORKSPACE_PROPERTIES_TAB_IMPORT; ?>
 						</button>
 
-                        <button id="tabImportQTI" type="button" role="tab" aria-controls="panelImport" aria-selected="false" onclick="javascript:import_qti3_template(<?PHP echo $_SESSION['toolkits_logon_id']; ?>); tabClicked('tabImportQTI');">
+                        <button id="tabImportQTI" type="button" role="tab" aria-controls="panelImportQTI" aria-selected="false" onclick="javascript:import_qti3_template(<?PHP echo $_SESSION['toolkits_logon_id']; ?>); tabClicked('tabImportQTI');">
                             <i class="fa fa-file-import fa-fw xerte-icon"></i>&nbsp;<?PHP echo WORKSPACE_PROPERTIES_TAB_IMPORTQTI; ?>
                         </button>
 						
@@ -139,6 +139,7 @@ Hidden Iframe to allow for ajax file uploads
 						<div id="panelProjects" class="tabPanel" role="tabpanel" aria-labelledby="tabProjects"></div>
 						<div id="panelRss" class="tabPanel" role="tabpanel" aria-labelledby="tabRss"></div>
 						<div id="panelImport" class="tabPanel" role="tabpanel" aria-labelledby="tabImport"></div>
+                        <div id="panelImportQTI" class="tabPanel" role="tabpanel" aria-labelledby="tabImportQTI"></div>
 						<div id="panelApi" class="tabPanel" role="tabpanel" aria-labelledby="tabApi"></div>
 						
 					</div>

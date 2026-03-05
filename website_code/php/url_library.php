@@ -84,7 +84,12 @@
 							return $xerte_toolkits_site->php_library_path . "scorm/export.php?scorm=false&template_id=" . $template_number;
 						}
 						break;
-
+			case "export_qti":	if($xerte_toolkits_site->apache=="true"){
+				return $string . "_" . $template_number;
+						}else{
+							return $xerte_toolkits_site->php_library_path . "QTI3/exportQTI.php?scorm=false&template_id=" . $template_number;
+						}
+						break;
 			case "export_full":	if($xerte_toolkits_site->apache=="true"){
 							return $string . "_" . $template_number;
 						}else{

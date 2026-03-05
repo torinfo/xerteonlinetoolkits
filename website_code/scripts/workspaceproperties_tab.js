@@ -328,12 +328,12 @@ function import_qti3_template(toolkits_logon_id){
 
 	var panelHtml;
 	if (toolkits_logon_id) {
-		panelHtml = '<h2 class="header">' + WORKSPACE_IMPORT_QTI + '</h2><div id="mainContent"><p>' + WORKSPACE_INSTRUCTIONS_QTI + '</p><form target="upload_iframe" method="post" onsubmit="javascript:iframe_check_initialise(1);" enctype="multipart/form-data" id="importpopup" name="importform" action="website_code/php/import/import.php" ><label class="block" for="templatename">' + WORKSPACE_NEW_PROJECTNAME + ':</label><input id="templatename" name="templatename" type="text" onkeyup="new_template_name()" /><div id="namewrong"></div><div><div id="filenameuploaded_container"><input name="filenameuploaded" id="filenameuploaded" type="file" /></div><button id="submitbutton" type="submit" name="submitBtn" onclick="javascript:load_button_spinner(this);" class="xerte_button"><i class="fa fa-upload"></i> ' + WORKSPACE_UPLOAD + '</button></div></form></div>';
+		panelHtml = '<h2 class="header">' + WORKSPACE_IMPORT_QTI + '</h2><div id="mainContent"><p>' + WORKSPACE_INSTRUCTIONS_QTI + '</p><form target="upload_iframe" method="post" onsubmit="javascript:iframe_check_initialise(1);" enctype="multipart/form-data" id="importpopup" name="importform" action="website_code/php/QTI3/importQTI.php" ><label class="block" for="templatename">' + WORKSPACE_NEW_PROJECTNAME + ':</label><input id="templatename" name="templatename" type="text" onkeyup="new_template_name()" /><div id="namewrong"></div><div><div id="filenameuploaded_container"><input name="filenameuploaded" id="filenameuploaded" type="file" /></div><button id="submitbutton" type="submit" name="submitBtn" onclick="javascript:load_button_spinner(this);" class="xerte_button"><i class="fa fa-upload"></i> ' + WORKSPACE_UPLOAD + '</button></div></form></div>';
 	} else {
 		panelHtml = '<h2 class="header">' + WORKSPACE_IMPORT + '</h2><div id="mainContent"><p>' + WORKSPACE_ERROR + '</p></div>';
 	}
 
-	workspace_properties_stateChanged(panelHtml, 'panelImport');
+	workspace_properties_stateChanged(panelHtml, 'panelImportQTI');
 
 }
 

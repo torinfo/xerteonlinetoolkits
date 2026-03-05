@@ -36,6 +36,10 @@
 	define("XERTE_EXPORT_XAPI", "Export for xAPI (TinCan) deployment");
 	define("XERTE_EXPORT_XAPI_LINK","Get xAPI (TinCan) package");
 
+    define("XERTE_EXPORT_ZIP_QTI_TITLE", "QTI 3.0 export");
+    define("XERTE_EXPORT_ZIP_QTI", "Export to a QTI 3.0 package.");
+    define("XERTE_EXPORT_ZIP_QTI_LINK","Get QTI package zip");
+
 	
 	
 
