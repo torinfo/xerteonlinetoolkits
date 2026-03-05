@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<qti-assessment-item xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://www.imsglobal.org/xsd/imsqtiasi_v3p0" xsi:schemaLocation="http://www.imsglobal.org/xsd/imsqtiasi_v3p0 https://purl.imsglobal.org/spec/qti/v3p0/schema/xsd/imsqti_asiv3p0_v1p0.xsd" title="Meer opties" time-dependent="false" identifier="QUE_12_1">
+    <qti-response-declaration identifier="RESPONSE" base-type="identifier" cardinality="multiple">
+        <qti-correct-response>
+            <qti-value>choice1</qti-value>
+            <qti-value>choice2</qti-value>
+            <qti-value>choice3</qti-value>
+        </qti-correct-response>
+        <qti-mapping default-value="-1" lower-bound="0" upper-bound="2">
+            <qti-map-entry map-key="choice1" mapped-value=" 0.666666666666667"/>
+            <qti-map-entry map-key="choice2" mapped-value=" 0.666666666666667"/>
+            <qti-map-entry map-key="choice3" mapped-value=" 0.666666666666667"/>
+        </qti-mapping>
+    </qti-response-declaration>
+    <qti-outcome-declaration identifier="SCORE" base-type="float" cardinality="single" normal-minimum="0" normal-maximum="2">
+        <qti-default-value>
+            <qti-value>0</qti-value>
+        </qti-default-value>
+    </qti-outcome-declaration>
+    <qti-outcome-declaration identifier="MAXSCORE" base-type="float" cardinality="single">
+        <qti-default-value>
+            <qti-value>2</qti-value>
+        </qti-default-value>
+    </qti-outcome-declaration>
+    <qti-outcome-declaration identifier="FEEDBACK" base-type="identifier" cardinality="multiple">
+    </qti-outcome-declaration>
+    <qti-item-body>
+        <qti-choice-interaction response-identifier="RESPONSE" shuffle="true" min-choices="0" max-choices="3">
+            <qti-simple-choice identifier="choice1" fixed="false" show-hide="show">
+                Robin
+            </qti-simple-choice>
+            <qti-simple-choice identifier="choice2" fixed="false" show-hide="show">
+                Paula
+            </qti-simple-choice>
+            <qti-simple-choice identifier="choice3" fixed="false" show-hide="show">
+                Rik
+            </qti-simple-choice>
+        </qti-choice-interaction>
+    </qti-item-body>
+    <qti-response-processing><qti-response-condition><qti-response-if><qti-is-null><qti-variable identifier="RESPONSE"/></qti-is-null><qti-set-outcome-value identifier="SCORE"><qti-base-value base-type="float">0.0</qti-base-value></qti-set-outcome-value></qti-response-if><qti-response-else><qti-set-outcome-value identifier="SCORE"><qti-map-response identifier="RESPONSE"/></qti-set-outcome-value></qti-response-else></qti-response-condition></qti-response-processing></qti-assessment-item>

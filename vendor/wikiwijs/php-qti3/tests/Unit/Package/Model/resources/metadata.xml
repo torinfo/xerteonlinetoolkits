@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<lom xmlns="http://ltsc.ieee.org/xsd/LOM"
+     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+     xsi:schemaLocation="http://ltsc.ieee.org/xsd/LOM https://purl.imsglobal.org/spec/md/v1p3/schema/xsd/imsmd_loose_v1p3p2.xsd">
+    
+    <general>
+        <identifier>
+            <catalog>Catalog</catalog>
+            <entry>qti_v2_item_01</entry>
+        </identifier>
+        <title>
+            <string language="en">Metadata Example Item #1</string>
+        </title>
+        <description>
+            <string language="en">This is a dummy item</string>
+        </description>
+        <keyword>
+            <string language="nl">keyword1</string>
+        </keyword>
+        <keyword>
+            <string language="nl">keyword2</string>
+        </keyword>
+        <keyword>
+            <string language="nl">keyword3</string>
+        </keyword>
+    </general>
+    <lifeCycle>
+        <version>
+            <string language="en">1.0.1</string>
+        </version>
+        <status>
+            <source>LOMv1.0</source>
+            <value>Draft</value>
+        </status>
+        <contribute>
+            <role>
+                <source>http://download.edustandaard.nl/vdex/vdex_lifecycle_contribute_role_lomv1p0_20060628.xml</source>
+                <value>publisher</value>
+            </role>
+            <entity>BEGIN:VCARD FN:Wikiwijs END:VCARD</entity>
+            <date>
+                <dateTime>2024-01-01</dateTime>
+            </date>
+        </contribute>
+    </lifeCycle>
+    <metaMetadata>
+        <metadataschema>LOMv1.0</metadataschema>
+        <metadataschema>QTIv3.0</metadataschema>
+        <language>en</language>
+    </metaMetadata>
+    <technical>
+        <format>text/x-imsqti-item-xml</format>
+        <format>image/png</format>
+    </technical>
+    <classification>
+        <purpose>
+            <source>LOMv1.0</source>
+            <value>discipline</value>
+        </purpose>
+        <taxonPath>
+            <source>
+                <string language="x-none">http://purl.edustandaard.nl/begrippenkader</string>
+            </source>
+            <taxon>
+                <id>2b363227-8633-4652-ad57-c61f1efc02c8</id>
+                <entry>
+                    <string language="nl">Biologie</string>
+                </entry>
+            </taxon>
+        </taxonPath>
+    </classification>
+    <classification>
+        <purpose>
+            <source>LOMv1.0</source>
+            <value>educational level</value>
+        </purpose>
+        <taxonPath>
+            <source>
+                <string language="x-none">http://purl.edustandaard.nl/begrippenkader</string>
+            </source>
+            <taxon>
+                <id>2a1401e9-c223-493b-9b86-78f6993b1a8d</id>
+                <entry>
+                    <string language="nl">VO</string>
+                </entry>
+            </taxon>
+        </taxonPath>
+    </classification>
+    <classification>
+        <purpose>
+            <source>LOMv1.0</source>
+            <value>Educational Objective</value>
+        </purpose>
+        <taxonPath>
+            <source>
+                <string language="x-none">http://purl.edustandaard.nl/begrippenkader</string>
+            </source>
+            <taxon>
+                <id>d357271b-3cfd-40c4-881d-084b71ca05c8</id>
+                <entry>
+                    <string language="nl">VO Kerndoel 31: Processen in de natuur</string>
+                </entry>
+            </taxon>
+        </taxonPath>
+    </classification>
+</lom>

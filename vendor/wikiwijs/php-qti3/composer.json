@@ -1,0 +1,42 @@
+{
+    "name": "wikiwijs/php-qti3",
+    "description": "PHP library for reading, writing and manipulating QTI 3.0 packages, assessment tests and assessment items",
+    "type": "library",
+    "license": "MIT",
+    "keywords": ["qti", "qti3", "assessment", "testing", "ims", "education"],
+    "require": {
+        "php": ">=8.4",
+        "ext-dom": "*",
+        "ext-libxml": "*",
+        "ext-zip": "*",
+        "psr/http-client": "^1.0",
+        "psr/http-factory": "^1.0",
+        "symfony/uid": "^7.0"
+    },
+    "require-dev": {
+        "league/flysystem": "^3.0",
+        "phpstan/phpstan": "^2.0",
+        "phpunit/phpunit": "^11.0"
+    },
+    "suggest": {
+        "league/flysystem": "Required for FlysystemPackageReader and FlysystemPackageWriter (^3.0)",
+        "symfony/http-client": "Required for PsrHttpClientResourceValidator and PsrHttpClientResourceDownloader (^7.0)"
+    },
+    "autoload": {
+        "psr-4": {
+            "Qti3\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Qti3\\Tests\\": "tests/"
+        }
+    },
+    "config": {
+        "sort-packages": true
+    },
+    "scripts": {
+        "test": "vendor/bin/phpunit"
+    },
+    "minimum-stability": "stable"
+}

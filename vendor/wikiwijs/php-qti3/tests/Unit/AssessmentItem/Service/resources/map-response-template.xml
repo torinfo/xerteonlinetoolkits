@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<qti-assessment-item xmlns="http://www.imsglobal.org/xsd/imsqtiasi_v3p0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" title="Combinatie" identifier="_9114e11e-4b0c-5c19-8fcd-ab6094c14a0b" adaptive="false" time-dependent="false" xml:lang="nl-NL" xsi:schemaLocation="http://www.imsglobal.org/xsd/imsqtiasi_v3p0 https://purl.imsglobal.org/spec/qti/v3p0/schema/xsd/imsqti_asiv3p0_v1p0.xsd http://www.w3.org/1998/Math/MathML https://purl.imsglobal.org/spec/mathml/v3p0/schema/xsd/mathml3.xsd">
+  <qti-response-declaration identifier="RESPONSE" cardinality="multiple" base-type="identifier">
+    <qti-correct-response>
+      <qti-value>A1 B1</qti-value>
+      <qti-value>A2 B2</qti-value>
+    </qti-correct-response>
+    <qti-mapping>
+      <qti-map-entry map-key="A1 B1" mapped-value="1"/>
+      <qti-map-entry map-key="A2 B2" mapped-value="1"/>
+    </qti-mapping>
+  </qti-response-declaration>
+  <qti-outcome-declaration identifier="SCORE" base-type="float" cardinality="single" normal-minimum="0.0" normal-maximum="1.0">
+    <qti-default-value>
+      <qti-value>0</qti-value>
+    </qti-default-value>
+  </qti-outcome-declaration>
+  <qti-outcome-declaration identifier="MAXSCORE" base-type="float" cardinality="single">
+    <qti-default-value>
+      <qti-value>2</qti-value>
+    </qti-default-value>
+  </qti-outcome-declaration>
+  <qti-stylesheet href="resources/438b8916f099176a03e12d8943267cb3.css" type="text/css"/>
+  <qti-item-body>
+    <qti-match-interaction response-identifier="RESPONSE" shuffle="true" max-associations="2" class="qti-choices-bottom">
+      <qti-prompt>Zet de teksten bij de juist afbeelingen</qti-prompt>
+      <qti-simple-match-set>
+        <qti-simple-associable-choice identifier="A1" match-max="1">Kennisnet</qti-simple-associable-choice>
+        <qti-simple-associable-choice identifier="A2" match-max="1">Wikiwijs</qti-simple-associable-choice>
+      </qti-simple-match-set>
+      <qti-simple-match-set>
+        <qti-simple-associable-choice identifier="B1" match-max="1">
+          <img src="resources/38235d2e8e686e7b0cee9a3e716d339b.jpg" alt=""/>
+        </qti-simple-associable-choice>
+        <qti-simple-associable-choice identifier="B2" match-max="1">
+          <img src="resources/ec2645308fe7bc038ac2c3093e66cbf9.png" alt=""/>
+        </qti-simple-associable-choice>
+      </qti-simple-match-set>
+    </qti-match-interaction>
+    <qti-feedback-block identifier="correct" outcome-identifier="FEEDBACK" show-hide="show">
+      <qti-content-body>Je hebt de correcte antwoorden gegeven.</qti-content-body>
+    </qti-feedback-block>
+    <qti-feedback-block identifier="incorrect" outcome-identifier="FEEDBACK" show-hide="show">
+      <qti-content-body>Helaas je hebt de verkeerde antwoorden gegeven.</qti-content-body>
+    </qti-feedback-block>
+  </qti-item-body>
+  <qti-response-processing template="https://purl.imsglobal.org/spec/qti/v3p0/rptemplates/map_response.xml">
+  </qti-response-processing>
+</qti-assessment-item>

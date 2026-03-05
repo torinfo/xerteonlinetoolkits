@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<qti-assessment-item xmlns="http://www.imsglobal.org/xsd/imsqtiasi_v3p0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" title="Combinatie" identifier="_9114e11e-4b0c-5c19-8fcd-ab6094c14a0b" adaptive="false" time-dependent="false" xml:lang="nl-NL" xsi:schemaLocation="http://www.imsglobal.org/xsd/imsqtiasi_v3p0 https://purl.imsglobal.org/spec/qti/v3p0/schema/xsd/imsqti_asiv3p0_v1p0.xsd http://www.w3.org/1998/Math/MathML https://purl.imsglobal.org/spec/mathml/v3p0/schema/xsd/mathml3.xsd">
+  <qti-response-declaration identifier="RESPONSE" cardinality="multiple" base-type="float">
+    <qti-correct-response>
+      <qti-value>0.5</qti-value>
+    </qti-correct-response>
+  </qti-response-declaration>
+  <qti-outcome-declaration identifier="SCORE" base-type="float" cardinality="single" normal-minimum="0.0" normal-maximum="1.0">
+    <qti-default-value>
+      <qti-value>0</qti-value>
+    </qti-default-value>
+  </qti-outcome-declaration>
+  <qti-outcome-declaration identifier="MAXSCORE" base-type="float" cardinality="single">
+    <qti-default-value>
+      <qti-value>1</qti-value>
+    </qti-default-value>
+  </qti-outcome-declaration>
+  <qti-stylesheet href="resources/438b8916f099176a03e12d8943267cb3.css" type="text/css"/>
+  <qti-item-body>
+    <qti-text-entry-interaction response-identifier="RESPONSE">
+      <qti-prompt>Kies het juiste cijfer</qti-prompt>
+    </qti-text-entry-interaction>
+  </qti-item-body>
+  <qti-response-processing>
+    <qti-response-condition>
+      <qti-response-if>
+        <qti-gte>
+          <qti-variable identifier="RESPONSE"/>
+          <qti-base-value base-type="float">1</qti-base-value>
+        </qti-gte>
+        <qti-set-outcome-value identifier="SCORE">
+          <qti-base-value base-type="float">1</qti-base-value>
+        </qti-set-outcome-value>
+      </qti-response-if>
+      <qti-response-else-if>
+        <qti-gt>
+          <qti-variable identifier="RESPONSE"/>
+          <qti-base-value base-type="float">0.4</qti-base-value>
+        </qti-gt>
+        <qti-set-outcome-value identifier="SCORE">
+          <qti-base-value base-type="float">0.7</qti-base-value>
+        </qti-set-outcome-value>
+      </qti-response-else-if>
+      <qti-response-else-if>
+        <qti-lte>
+          <qti-variable identifier="RESPONSE"/>
+          <qti-base-value base-type="float">0</qti-base-value>
+        </qti-lte>
+        <qti-set-outcome-value identifier="SCORE">
+          <qti-base-value base-type="float">0</qti-base-value>
+        </qti-set-outcome-value>
+      </qti-response-else-if>
+      <qti-response-else-if>
+        <qti-lt>
+          <qti-variable identifier="RESPONSE"/>
+          <qti-base-value base-type="float">0.5</qti-base-value>
+        </qti-lt>
+        <qti-set-outcome-value identifier="SCORE">
+          <qti-base-value base-type="float">0.3</qti-base-value>
+        </qti-set-outcome-value>
+      </qti-response-else-if>
+    </qti-response-condition>
+  </qti-response-processing>
+</qti-assessment-item>

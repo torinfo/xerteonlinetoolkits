@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<qti-assessment-item xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://www.imsglobal.org/xsd/imsqtiasi_v3p0" xsi:schemaLocation="http://www.imsglobal.org/xsd/imsqtiasi_v3p0 https://purl.imsglobal.org/spec/qti/v3p0/schema/xsd/imsqti_asiv3p0_v1p0.xsd" title="Celleer" time-dependent="false" identifier="QUE_18_1">
+    <qti-response-declaration identifier="RESPONSE" base-type="directedPair" cardinality="multiple">
+        <qti-correct-response>
+            <qti-value>A1 B1</qti-value>
+            <qti-value>A2 B2</qti-value>
+            <qti-value>A3 B3</qti-value>
+            <qti-value>A4 B4</qti-value>
+            <qti-value>A5 B5</qti-value>
+            <qti-value>A6 B6</qti-value>
+            <qti-value>A7 B7</qti-value>
+        </qti-correct-response>
+        <qti-mapping default-value="0">
+            <qti-map-entry map-key="A1 B1" mapped-value="1"/>
+            <qti-map-entry map-key="A2 B2" mapped-value="1"/>
+            <qti-map-entry map-key="A3 B3" mapped-value="1"/>
+            <qti-map-entry map-key="A4 B4" mapped-value="1"/>
+            <qti-map-entry map-key="A5 B5" mapped-value="1"/>
+            <qti-map-entry map-key="A6 B6" mapped-value="1"/>
+            <qti-map-entry map-key="A7 B7" mapped-value="1"/>
+        </qti-mapping>
+    </qti-response-declaration>
+    <qti-outcome-declaration identifier="SCORE" base-type="float" cardinality="single" normal-minimum="0" normal-maximum="4">
+        <qti-default-value>
+            <qti-value>0</qti-value>
+        </qti-default-value>
+    </qti-outcome-declaration>
+    <qti-outcome-declaration identifier="MAXSCORE" base-type="float" cardinality="single">
+        <qti-default-value>
+            <qti-value>4</qti-value>
+        </qti-default-value>
+    </qti-outcome-declaration>
+    <qti-outcome-declaration identifier="FEEDBACK" base-type="identifier" cardinality="single">
+    </qti-outcome-declaration>
+    <qti-item-body>
+        <div>
+            <p>
+                <strong>Organellen en hun functies.</strong>
+                <br/>
+                <br/>Geef in het overzicht van de verschillende organellen in cellen hun functies.
+            </p>
+        </div>
+        <qti-match-interaction response-identifier="RESPONSE" shuffle="true" max-associations="7">
+            <qti-simple-match-set>
+                <qti-simple-associable-choice identifier="A1" fixed="false" match-max="1" match-min="0">
+                    endoplasmatisch reticulum
+                </qti-simple-associable-choice>
+                <qti-simple-associable-choice identifier="A2" fixed="false" match-max="1" match-min="0">
+                    ribosomen
+                </qti-simple-associable-choice>
+                <qti-simple-associable-choice identifier="A3" fixed="false" match-max="1" match-min="0">
+                    mitochondriën
+                </qti-simple-associable-choice>
+                <qti-simple-associable-choice identifier="A4" fixed="false" match-max="1" match-min="0">
+                    lysosomen
+                </qti-simple-associable-choice>
+                <qti-simple-associable-choice identifier="A5" fixed="false" match-max="1" match-min="0">
+                    golgi-apparaat
+                </qti-simple-associable-choice>
+                <qti-simple-associable-choice identifier="A6" fixed="false" match-max="1" match-min="0">
+                    kern
+                </qti-simple-associable-choice>
+                <qti-simple-associable-choice identifier="A7" fixed="false" match-max="1" match-min="0">
+                    centrosomen
+
+                </qti-simple-associable-choice>
+            </qti-simple-match-set>
+            <qti-simple-match-set>
+                <qti-simple-associable-choice identifier="B1" fixed="false" match-max="1" match-min="0">
+                    isolatie en vervoer van eiwitten
+                </qti-simple-associable-choice>
+                <qti-simple-associable-choice identifier="B2" fixed="false" match-max="1" match-min="0">
+                    aanmaak van eiwitten
+                </qti-simple-associable-choice>
+                <qti-simple-associable-choice identifier="B3" fixed="false" match-max="1" match-min="0">
+                    energieproductie
+                </qti-simple-associable-choice>
+                <qti-simple-associable-choice identifier="B4" fixed="false" match-max="1" match-min="0">
+                    afbreken en/of uitstoten van afval uit de cel
+                </qti-simple-associable-choice>
+                <qti-simple-associable-choice identifier="B5" fixed="false" match-max="1" match-min="0">
+                    opslag van celproducten
+                </qti-simple-associable-choice>
+                <qti-simple-associable-choice identifier="B6" fixed="false" match-max="1" match-min="0">
+                    besturing en voortplanting van de cel
+                </qti-simple-associable-choice>
+                <qti-simple-associable-choice identifier="B7" fixed="false" match-max="1" match-min="0">
+                    vorming van draden bij de kerndeling
+
+                </qti-simple-associable-choice>
+            </qti-simple-match-set>
+        </qti-match-interaction>
+    </qti-item-body>
+    <qti-response-processing>
+        <qti-response-condition>
+            <qti-response-if>
+                <qti-base-value base-type="boolean">true</qti-base-value>
+            </qti-response-if>
+        </qti-response-condition>
+    </qti-response-processing>
+    <qti-modal-feedback show-hide="show" outcome-identifier="FEEDBACK" identifier="correct">
+        <qti-content-body>Het antwoord is goed</qti-content-body>
+    </qti-modal-feedback>
+    <qti-modal-feedback show-hide="show" outcome-identifier="FEEDBACK" identifier="incorrect">
+        <qti-content-body>Het antwoord is fout</qti-content-body>
+    </qti-modal-feedback>
+    <qti-modal-feedback show-hide="show" outcome-identifier="FEEDBACK" identifier="partly">
+        <qti-content-body>Het antwoord is gedeeltelijk goed</qti-content-body>
+    </qti-modal-feedback>
+</qti-assessment-item>
