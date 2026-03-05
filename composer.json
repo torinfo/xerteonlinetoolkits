@@ -1,4 +1,7 @@
 {
+    "minimum-stability": "dev",
+    "prefer-stable": true,
+
     "repositories": [
         {
             "type": "vcs",
@@ -7,6 +10,10 @@
     ],
     "require": {
         "smalot/pdfparser": "^2.12",
-        "wikiwijs/php-qti3": "dev-first-setup-new-qti-package"
+        "wikiwijs/php-qti3": "^0.1.0",
+        "league/flysystem": "^3.31",
+        "symfony/http-client": "^8.0",
+        "nyholm/psr7": "^1.8",
+        "psr/http-client": "^1.0"
     }
 }
