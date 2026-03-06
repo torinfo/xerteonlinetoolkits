@@ -2,25 +2,14 @@ name: "CI"
 
 on: [push, pull_request]
 
-env:
-  fail-fast: true
-
 jobs:
   phpunit:
     name: "PHPUnit (PHP ${{ matrix.php }})"
-    runs-on: "ubuntu-20.04"
+    runs-on: ubuntu-latest
 
     strategy:
       matrix:
-        php:
-          - "7.2"
-          - "7.3"
-          - "7.4"
-          - "8.0"
-          - "8.1"
-          - "8.2"
-          - "8.3"
-          - "8.4"
+        php: ['7.1', '7.2', '7.3', '7.4', '8.0', '8.1', '8.2', '8.3', '8.4', '8.5']
 
     steps:
       - name: "Checkout"
@@ -46,12 +35,11 @@ jobs:
 
   phpunit-lower-php:
     name: "PHPUnit (PHP ${{ matrix.php }})"
-    runs-on: "ubuntu-20.04"
+    runs-on: ubuntu-latest
 
     strategy:
       matrix:
-        php:
-          - "7.1"
+        php: ['7.1']
 
     steps:
       - name: "Checkout"
@@ -77,12 +65,11 @@ jobs:
 
   phpunit-coverage:
     name: "PHPUnit coverage (PHP ${{ matrix.php }})"
-    runs-on: "ubuntu-20.04"
+    runs-on: ubuntu-latest
 
     strategy:
       matrix:
-        php:
-          - "7.4"
+        php: ['7.4']
 
     steps:
       - name: "Checkout"
@@ -108,12 +95,11 @@ jobs:
 
   phpunit-composerv2:
     name: "PHPUnit Composer v2 (PHP ${{ matrix.php }})"
-    runs-on: "ubuntu-20.04"
+    runs-on: ubuntu-latest
 
     strategy:
       matrix:
-        php:
-          - "7.4"
+        php: ['7.4']
 
     steps:
       - name: "Checkout"
@@ -139,20 +125,11 @@ jobs:
 
   alt-autoload:
     name: "Tests alternative autoloader (PHP ${{ matrix.php }})"
-    runs-on: "ubuntu-20.04"
+    runs-on: ubuntu-latest
 
     strategy:
       matrix:
-        php:
-          - "7.1"
-          - "7.2"
-          - "7.3"
-          - "7.4"
-          - "8.0"
-          - "8.1"
-          - "8.2"
-          - "8.3"
-          - "8.4"
+        php: ['7.1', '7.2', '7.3', '7.4', '8.0', '8.1', '8.2', '8.3', '8.4', '8.5']
 
     steps:
       - name: "Checkout"
@@ -169,13 +146,11 @@ jobs:
 
   phpunit-lowest:
     name: "PHPUnit lowest deps (PHP ${{ matrix.php }})"
-    runs-on: "ubuntu-20.04"
+    runs-on: ubuntu-latest
 
     strategy:
       matrix:
-        php:
-          - "7.3"
-
+        php: ['7.3']
     steps:
       - name: "Checkout"
         uses: "actions/checkout@v3"
@@ -201,13 +176,13 @@ jobs:
         run: "make run-phpunit"
 
   windows-tests:
-    name: Windows-Tests with PHP ${{ matrix.php-versions }}
-    runs-on: windows-2019
+    name: Windows-Tests with PHP ${{ matrix.php }}
+    runs-on: windows-latest
 
     strategy:
-      fail-fast: true
+      fail-fast: false
       matrix:
-        php-versions: ['7.1', '7.2', '7.3', '7.4', '8.0', '8.1', '8.2', '8.3', '8.4']
+        php: ['7.1', '7.2', '7.3', '7.4', '8.0', '8.1', '8.2', '8.3', '8.4', '8.5']
 
     steps:
       - name: Checkout
@@ -216,7 +191,7 @@ jobs:
       - name: Install PHP
         uses: shivammathur/setup-php@v2
         with:
-          php-version: ${{ matrix.php-versions }}
+          php-version: ${{ matrix.php }}
           ini-values: memory_limit=1G
 
       - name: Install Composer dependencies (root)

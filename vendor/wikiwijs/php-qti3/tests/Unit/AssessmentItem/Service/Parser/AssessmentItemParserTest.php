@@ -22,6 +22,7 @@ use Qti3\AssessmentItem\Service\Parser\QtiExpressionParser;
 use Qti3\AssessmentItem\Service\Parser\ResponseDeclarationParser;
 use Qti3\AssessmentItem\Service\Parser\ResponseProcessingParser;
 use Qti3\AssessmentItem\Service\Parser\RubricBlockParser;
+use Qti3\AssessmentItem\Service\Parser\ModalFeedbackParser;
 use Qti3\AssessmentItem\Service\Parser\StylesheetParser;
 use Qti3\Shared\Model\BaseType;
 use Qti3\Shared\Model\Cardinality;
@@ -46,6 +47,7 @@ class AssessmentItemParserTest extends TestCase
                 ),
             ),
             new StylesheetParser(),
+            new ModalFeedbackParser(new StylesheetParser()),
         );
     }
 

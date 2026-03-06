@@ -2,17 +2,17 @@
     "packages": [
         {
             "name": "league/flysystem",
-            "version": "3.31.0",
-            "version_normalized": "3.31.0.0",
+            "version": "3.32.0",
+            "version_normalized": "3.32.0.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/thephpleague/flysystem.git",
-                "reference": "1717e0b3642b0df65ecb0cc89cdd99fa840672ff"
+                "reference": "254b1595b16b22dbddaaef9ed6ca9fdac4956725"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/thephpleague/flysystem/zipball/1717e0b3642b0df65ecb0cc89cdd99fa840672ff",
-                "reference": "1717e0b3642b0df65ecb0cc89cdd99fa840672ff",
+                "url": "https://api.github.com/repos/thephpleague/flysystem/zipball/254b1595b16b22dbddaaef9ed6ca9fdac4956725",
+                "reference": "254b1595b16b22dbddaaef9ed6ca9fdac4956725",
                 "shasum": ""
             },
             "require": {
@@ -48,7 +48,7 @@
                 "phpunit/phpunit": "^9.5.11|^10.0",
                 "sabre/dav": "^4.6.0"
             },
-            "time": "2026-01-23T15:38:47+00:00",
+            "time": "2026-02-25T17:01:41+00:00",
             "type": "library",
             "installation-source": "dist",
             "autoload": {
@@ -82,7 +82,7 @@
             ],
             "support": {
                 "issues": "https://github.com/thephpleague/flysystem/issues",
-                "source": "https://github.com/thephpleague/flysystem/tree/3.31.0"
+                "source": "https://github.com/thephpleague/flysystem/tree/3.32.0"
             },
             "install-path": "../league/flysystem"
         },
@@ -558,17 +558,17 @@
         },
         {
             "name": "smalot/pdfparser",
-            "version": "v2.12.0",
-            "version_normalized": "2.12.0.0",
+            "version": "v2.12.3",
+            "version_normalized": "2.12.3.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/smalot/pdfparser.git",
-                "reference": "8440edbf58c8596074e78ada38dcb0bd041a5948"
+                "reference": "61c9bcafcb92899b76d8ebda6508267bae77e264"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/smalot/pdfparser/zipball/8440edbf58c8596074e78ada38dcb0bd041a5948",
-                "reference": "8440edbf58c8596074e78ada38dcb0bd041a5948",
+                "url": "https://api.github.com/repos/smalot/pdfparser/zipball/61c9bcafcb92899b76d8ebda6508267bae77e264",
+                "reference": "61c9bcafcb92899b76d8ebda6508267bae77e264",
                 "shasum": ""
             },
             "require": {
@@ -577,7 +577,7 @@
                 "php": ">=7.1",
                 "symfony/polyfill-mbstring": "^1.18"
             },
-            "time": "2025-03-31T13:16:09+00:00",
+            "time": "2026-01-08T08:04:04+00:00",
             "type": "library",
             "installation-source": "dist",
             "autoload": {
@@ -606,7 +606,7 @@
             ],
             "support": {
                 "issues": "https://github.com/smalot/pdfparser/issues",
-                "source": "https://github.com/smalot/pdfparser/tree/v2.12.0"
+                "source": "https://github.com/smalot/pdfparser/tree/v2.12.3"
             },
             "install-path": "../smalot/pdfparser"
         },
@@ -682,17 +682,17 @@
         },
         {
             "name": "symfony/http-client",
-            "version": "v8.0.5",
-            "version_normalized": "8.0.5.0",
+            "version": "v8.0.6",
+            "version_normalized": "8.0.6.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/http-client.git",
-                "reference": "f9fdd372473e66469c6d32a4ed12efcffdea38c4"
+                "reference": "f425139487f904e198f99e3c416c79ed08cef3c3"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/http-client/zipball/f9fdd372473e66469c6d32a4ed12efcffdea38c4",
-                "reference": "f9fdd372473e66469c6d32a4ed12efcffdea38c4",
+                "url": "https://api.github.com/repos/symfony/http-client/zipball/f425139487f904e198f99e3c416c79ed08cef3c3",
+                "reference": "f425139487f904e198f99e3c416c79ed08cef3c3",
                 "shasum": ""
             },
             "require": {
@@ -726,7 +726,7 @@
                 "symfony/rate-limiter": "^7.4|^8.0",
                 "symfony/stopwatch": "^7.4|^8.0"
             },
-            "time": "2026-01-27T16:18:07+00:00",
+            "time": "2026-02-20T07:51:53+00:00",
             "type": "library",
             "installation-source": "dist",
             "autoload": {
@@ -757,7 +757,7 @@
                 "http"
             ],
             "support": {
-                "source": "https://github.com/symfony/http-client/tree/v8.0.5"
+                "source": "https://github.com/symfony/http-client/tree/v8.0.6"
             },
             "funding": [
                 {
@@ -862,20 +862,21 @@
         },
         {
             "name": "symfony/polyfill-mbstring",
-            "version": "v1.31.0",
-            "version_normalized": "1.31.0.0",
+            "version": "v1.33.0",
+            "version_normalized": "1.33.0.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/polyfill-mbstring.git",
-                "reference": "85181ba99b2345b0ef10ce42ecac37612d9fd341"
+                "reference": "6d857f4d76bd4b343eac26d6b539585d2bc56493"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/polyfill-mbstring/zipball/85181ba99b2345b0ef10ce42ecac37612d9fd341",
-                "reference": "85181ba99b2345b0ef10ce42ecac37612d9fd341",
+                "url": "https://api.github.com/repos/symfony/polyfill-mbstring/zipball/6d857f4d76bd4b343eac26d6b539585d2bc56493",
+                "reference": "6d857f4d76bd4b343eac26d6b539585d2bc56493",
                 "shasum": ""
             },
             "require": {
+                "ext-iconv": "*",
                 "php": ">=7.2"
             },
             "provide": {
@@ -884,7 +885,7 @@
             "suggest": {
                 "ext-mbstring": "For best performance"
             },
-            "time": "2024-09-09T11:45:10+00:00",
+            "time": "2024-12-23T08:48:59+00:00",
             "type": "library",
             "extra": {
                 "thanks": {
@@ -925,7 +926,7 @@
                 "shim"
             ],
             "support": {
-                "source": "https://github.com/symfony/polyfill-mbstring/tree/v1.31.0"
+                "source": "https://github.com/symfony/polyfill-mbstring/tree/v1.33.0"
             },
             "funding": [
                 {
@@ -934,6 +935,10 @@
                 },
                 {
                     "url": "https://github.com/fabpot",
+                    "type": "github"
+                },
+                {
+                    "url": "https://github.com/nicolas-grekas",
                     "type": "github"
                 },
                 {
@@ -1202,17 +1207,17 @@
         },
         {
             "name": "wikiwijs/php-qti3",
-            "version": "0.1",
-            "version_normalized": "0.1.0.0",
+            "version": "0.1.1",
+            "version_normalized": "0.1.1.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/kennisnet/php-qti3.git",
-                "reference": "b8af765baa6304a963b788bfdd8e725fa23fe5af"
+                "reference": "34eb2adc5cb1d0c49357a933613f2fea971b2280"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/kennisnet/php-qti3/zipball/b8af765baa6304a963b788bfdd8e725fa23fe5af",
-                "reference": "b8af765baa6304a963b788bfdd8e725fa23fe5af",
+                "url": "https://api.github.com/repos/kennisnet/php-qti3/zipball/34eb2adc5cb1d0c49357a933613f2fea971b2280",
+                "reference": "34eb2adc5cb1d0c49357a933613f2fea971b2280",
                 "shasum": ""
             },
             "require": {
@@ -1233,7 +1238,7 @@
                 "league/flysystem": "Required for FlysystemPackageReader and FlysystemPackageWriter (^3.0)",
                 "symfony/http-client": "Required for PsrHttpClientResourceValidator and PsrHttpClientResourceDownloader (^7.0)"
             },
-            "time": "2026-03-04T13:16:45+00:00",
+            "time": "2026-03-06T08:18:07+00:00",
             "type": "library",
             "installation-source": "dist",
             "autoload": {
@@ -1264,7 +1269,7 @@
                 "testing"
             ],
             "support": {
-                "source": "https://github.com/kennisnet/php-qti3/tree/0.1",
+                "source": "https://github.com/kennisnet/php-qti3/tree/0.1.1",
                 "issues": "https://github.com/kennisnet/php-qti3/issues"
             },
             "install-path": "../wikiwijs/php-qti3"

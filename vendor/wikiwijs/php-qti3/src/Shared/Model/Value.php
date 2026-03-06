@@ -17,11 +17,19 @@ final class Value extends QtiElement implements Stringable
      */
     public function children(): array
     {
-        return [new TextNode((string) $this->value)];
+        return [new TextNode($this->serialize())];
     }
 
     public function __toString(): string
     {
-        return (string) $this->value;
+        return $this->serialize();
+    }
+
+    private function serialize(): string
+    {
+        return match(true) {
+            is_bool($this->value) => $this->value ? 'true' : 'false',
+            default               => (string) $this->value,
+        };
     }
 }

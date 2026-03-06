@@ -179,10 +179,12 @@ class ResponseProcessorTest extends TestCase
     #[Test]
     public function defaultValueWithEmptyValueTagThrowsException(): void
     {
+        // An empty <qti-value> is treated as "no default value" during parsing.
+        // The ResponseProcessor then throws because the required default is missing.
         $this->assertExceptionThrown(
             __DIR__ . '/resources/default-value-empty-value.xml',
             ['RESPONSE' => 'A'],
-            'Empty default value',
+            'Missing default value for MAXSCORE outcome declaration',
         );
     }
 

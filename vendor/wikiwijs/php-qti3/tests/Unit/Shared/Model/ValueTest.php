@@ -12,37 +12,59 @@ use PHPUnit\Framework\TestCase;
 
 class ValueTest extends TestCase
 {
-    private Value $stringValue;
-    private Value $intValue;
-    private Value $floatValue;
-    private Value $boolValue;
-
-    protected function setUp(): void
+    #[Test]
+    public function stringValueSerializesCorrectly(): void
     {
-        $this->stringValue = new Value('test');
-        $this->intValue = new Value(123);
-        $this->floatValue = new Value(123.45);
-        $this->boolValue = new Value(true);
+        $value = new Value('test');
+
+        $this->assertSame('test', (string) $value);
+        $this->assertSame('test', (string) $value->children()[0]);
     }
 
     #[Test]
-    public function valueIsConvertedToStringCorrectly(): void
+    public function intValueSerializesCorrectly(): void
     {
-        $this->assertEquals('test', (string) $this->stringValue);
-        $this->assertEquals('123', (string) $this->intValue);
-        $this->assertEquals('123.45', (string) $this->floatValue);
-        $this->assertEquals('1', (string) $this->boolValue);
+        $value = new Value(123);
+
+        $this->assertSame('123', (string) $value);
+        $this->assertSame('123', (string) $value->children()[0]);
     }
 
     #[Test]
-    public function childrenReturnsArrayWithTextNode(): void
+    public function floatValueSerializesCorrectly(): void
     {
-        $children = $this->stringValue->children();
+        $value = new Value(123.45);
 
-        $this->assertIsArray($children);
+        $this->assertSame('123.45', (string) $value);
+        $this->assertSame('123.45', (string) $value->children()[0]);
+    }
+
+    #[Test]
+    public function boolTrueSerializesAsTrue(): void
+    {
+        $value = new Value(true);
+
+        $this->assertSame('true', (string) $value);
+        $this->assertSame('true', (string) $value->children()[0]);
+    }
+
+    #[Test]
+    public function boolFalseSerializesAsFalse(): void
+    {
+        $value = new Value(false);
+
+        $this->assertSame('false', (string) $value);
+        $this->assertSame('false', (string) $value->children()[0]);
+    }
+
+    #[Test]
+    public function childrenReturnsArrayWithSingleTextNode(): void
+    {
+        $value = new Value('hello');
+        $children = $value->children();
+
         $this->assertCount(1, $children);
         $this->assertInstanceOf(IContentNode::class, $children[0]);
         $this->assertInstanceOf(TextNode::class, $children[0]);
-        $this->assertEquals('test', (string) $children[0]);
     }
 }
