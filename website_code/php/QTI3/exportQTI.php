@@ -93,16 +93,15 @@ if (!is_file($dataXmlPath)) {
 }
 
 // Build package in temp dir + zip it
-//$workDir = make_temp_dir('qtiExport_');
 
-// (NEW) Base temp dir for both package folder and client workspace
+// Base temp dir for both package folder and client workspace
 $baseDir = make_temp_dir('qtiExport_');
 
-// (NEW) QTI package folder we generate
+// QTI package folder we generate
 $pkgDir = $baseDir . DIRECTORY_SEPARATOR . 'pkg';
 mkdir($pkgDir, 0700, true);
 
-// (NEW) Client workspace folder (Flysystem root + downloader dir)
+// Client workspace folder (Flysystem root + downloader dir)
 $clientDir = $baseDir . DIRECTORY_SEPARATOR . 'client';
 mkdir($clientDir, 0700, true);
 
@@ -115,7 +114,7 @@ if ($zipPath === false) {
 @unlink($zipPath); // tempnam creates an empty file; ZipArchive wants to create/overwrite
 
 try {
-    // (NEW) Build QTI folder structure only
+    // Build QTI folder structure only
     export_xerte_lo_to_qti_folder_mcq_only(
         $dataXmlPath,
         $loMediaDir,
@@ -124,21 +123,21 @@ try {
         'nl-NL'
     );
 
-// (NEW) Use library to read (validate) folder
-    $qtiClient = qti_get_client($baseDir); // (NEW) client root is the base dir
+// Use library to read (validate) folder
+    $qtiClient = qti_get_client($baseDir); // client root is the base dir
 
     $qtiPackageReader = $qtiClient->getQtiPackageReader();
 
-    // (NEW) Sanity check: required files exist
+    // Sanity check: required files exist, else something went wrong
     if (!file_exists($pkgDir . '/imsmanifest.xml')) throw new Exception("Missing imsmanifest.xml");
     if (!file_exists($pkgDir . '/assessmentTest.xml')) throw new Exception("Missing assessmentTest.xml");
 
     $qtiPackage = $qtiPackageReader->fromFilesystem('pkg'); // (NEW) read folder inside client root
 
-// (NEW) Optional: ensure test is buildable from package
+// ensure test is buildable from package
     $qtiClient->getTestBuilder()->buildFromPackage($qtiPackage);
 
-// (NEW) Use library to write zip from package
+// Use library to write zip from package
     $writer = $qtiClient->getZipPackageFactory()->getWriter($zipPath);
     $writer->write($qtiPackage);
 
