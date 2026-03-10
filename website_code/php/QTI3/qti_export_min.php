@@ -400,6 +400,7 @@ function qti_write_imsmanifest(string $path, array $itemIds, array $mediaFiles, 
  * @param string $outZipPath  where to write the QTI zip
  * @param string $workDir     temp folder to build package (will be created)
  */
+/*
 function export_xerte_lo_to_qti_zip_mcq_only(
     string $dataXmlPath,
     string $loMediaDir,
@@ -468,7 +469,7 @@ function export_xerte_lo_to_qti_zip_mcq_only(
 
     // Zip
     qti_export_zip_folder($workDir, $outZipPath);
-}
+}*/
 
 function qti_append_xerte_prompt_html(DOMDocument $doc, DOMElement $qtiPrompt, string $xertePromptAttr): void
 {
@@ -506,4 +507,88 @@ function qti_append_xerte_prompt_html(DOMDocument $doc, DOMElement $qtiPrompt, s
             $qtiPrompt->appendChild($doc->createTextNode($line));
         }
     }
+}
+
+// (NEW) Build QTI folder only (no zip). Used for library validation + library zip writing.
+function export_xerte_lo_to_qti_folder_mcq_only(
+    string $dataXmlPath,
+    string $loMediaDir,
+    string $workDir,
+    string $title = 'Exported Test',
+    string $lang = 'en'
+): void {
+    qti_export_mkdir($workDir);
+    qti_export_mkdir($workDir . DIRECTORY_SEPARATOR . 'resources');
+
+    $mcqs = xerte_read_mcqs_from_data_xml($dataXmlPath);
+
+    $itemIds = [];
+    $allMedia = [];
+
+    $i = 1;
+    foreach ($mcqs as $mcq) {
+        $itemId = sprintf('ITEM%03d', $i++);
+        $itemIds[] = $itemId;
+
+        // Build choices + correct ids
+        $choices = [];
+        $correctIds = [];
+        $n = 1;
+        foreach ($mcq['choices'] as $opt) {
+            $cid = 'CHOICE' . $n++;
+            $choices[] = ['id' => $cid, 'text' => (string)$opt['text']];
+            if (!empty($opt['correct'])) $correctIds[] = $cid;
+        }
+
+        // Media: copy LO/media/FN into package/resources/FN
+        $mediaFiles = $mcq['media'] ?? [];
+        if (is_array($mediaFiles)) {
+            foreach ($mediaFiles as $fn) {
+                $fn = basename(str_replace('\\', '/', (string)$fn));
+                if ($fn === '') continue;
+
+                $src = rtrim($loMediaDir, "/\\") . DIRECTORY_SEPARATOR . $fn;
+                $dst = $workDir . DIRECTORY_SEPARATOR . 'resources' . DIRECTORY_SEPARATOR . $fn;
+
+                if (is_file($src) && !is_file($dst)) {
+                    if (!copy($src, $dst)) {
+                        throw new RuntimeException("Failed copying media: $src -> $dst");
+                    }
+                }
+                $allMedia[$fn] = true;
+            }
+        }
+
+        // Write item
+        qti_write_item_mcq(
+            $workDir . DIRECTORY_SEPARATOR . $itemId . '.xml',
+            $itemId,
+            (string)($mcq['prompt_html'] ?? ''),
+            $choices,
+            $correctIds,
+            $lang,
+            is_array($mediaFiles) ? $mediaFiles : []
+        );
+    }
+
+    // Write test + manifest
+    qti_write_assessment_test($workDir . DIRECTORY_SEPARATOR . 'assessmentTest.xml', $itemIds, $title, $lang);
+    qti_write_imsmanifest($workDir . DIRECTORY_SEPARATOR . 'imsmanifest.xml', $itemIds, array_keys($allMedia), 'assessmentTest.xml');
+}
+
+// Keep old function (optional): still produces a zip using ZipArchive.
+// Now it just delegates folder creation to the new function above.
+function export_xerte_lo_to_qti_zip_mcq_only(
+    string $dataXmlPath,
+    string $loMediaDir,
+    string $outZipPath,
+    string $workDir,
+    string $title = 'Exported Test',
+    string $lang = 'en'
+): void {
+    // (NEW) Build folder first, then zip.
+    export_xerte_lo_to_qti_folder_mcq_only($dataXmlPath, $loMediaDir, $workDir, $title, $lang);
+
+    // Zip
+    qti_export_zip_folder($workDir, $outZipPath);
 }
