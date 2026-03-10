@@ -165,6 +165,9 @@
 
 					// mark exercise now - either because it's complete or it doesn't matter that it's not complete as tracking & mark at end are both off
 					if((XTGetMode() != "normal" && x_currentPageXML.getAttribute('markEnd') != 'true' && labelOffTarget != $("#labelHolder .label").length) || labelOffTarget == 0){
+						// Capture answer state before incorrect labels get their currentTarget reset below
+						textMatch.finishTracking();
+
 						let correctShownTxt = "";
 
 						$("#labelHolder .label").each(function() {
@@ -270,8 +273,6 @@
 						if (allCorrect == true || numAttempts >= maxAttempts || XTGetMode() == "normal") {
 							$("#feedback").append("<div class='mainFb'>" + x_addLineBreaks(x_currentPageXML.getAttribute("feedback")) + "</div>");
 						}
-
-						textMatch.finishTracking();
 
 						// everything's disabled - remove the submit button
 						if ($("#labelHolder .label:not(.ui-draggable-disabled)").length == 0) {

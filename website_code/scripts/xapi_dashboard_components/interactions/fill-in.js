@@ -1,6 +1,6 @@
 import { escapeHtml } from '../utils/escape.js';
 
-export class ChoicesInteraction {
+export class FillInInteraction {
   /** The answers given chart lib */
   #answersGivenChartLib;
 
@@ -17,11 +17,10 @@ export class ChoicesInteraction {
   #state;
 
   /**
-  *
-  * @param canvas - The html element to draw on
-  * @param state - The dashboard state
-  * @param interaction - The interaction object containing the interaction details and answers
-  */
+   * @param canvas - The html element to draw on
+   * @param state - The dashboard state
+   * @param interaction - The interaction object containing the interaction details and answers
+   */
   constructor(canvas, state, interaction) {
     this.#canvas = canvas;
     this.#state = state;
@@ -33,13 +32,13 @@ export class ChoicesInteraction {
     this.#answersGivenChartLib = await import('../graphs/answers-given.js');
     this.#marksChartLib = await import('../graphs/marks.js');
 
-    await this.createChoicesInteraction();
+    await this.createFillInInteraction();
   }
 
   /**
-   * Create the choices interaction
+   * Create the fill-in interaction
    */
-  async createChoicesInteraction() {
+  async createFillInInteraction() {
     const interactionAnswerOptions = this.#interaction
       .getInteractionAnswerOptions(this.#state.statements);
     const answeredStatements = this.#interaction
@@ -49,10 +48,10 @@ export class ChoicesInteraction {
       $(`#detail-${this.#canvas}`),
       this.#canvas,
       answeredStatements,
-      6
+      6,
     );
 
-    this.drawChoiceAnswers(
+    this.drawFillInAnswers(
       $(`#detail-${this.#canvas}`),
       this.#canvas,
       interactionAnswerOptions,
@@ -62,49 +61,66 @@ export class ChoicesInteraction {
   }
 
   /**
-   * Draw a the choice answers
+   * Draw the fill-in answers
    *
    * @param {jQuery} $parent - The parent element to append the answer block to.
    * @param {string} selector - The selector of the parent element.
    * @param {InteractionAnswer} interactionAnswerOptions - The interaction answers.
-   * @param {Array} statements - The statements to be used in the graph.
+   * @param {Array} answeredStatements - The answered statements.
    * @param {number} size - The size of the answer block (the number of columns).
    */
-  drawChoiceAnswers($parent, selector, interactionAnswerOptions, answeredStatements, size) {
-    const { nrOfAttempts } = interactionAnswerOptions.answer;
-    const toPercent = (count) => (nrOfAttempts > 0 ? Math.round(count / nrOfAttempts * 100) : 0);
+  drawFillInAnswers($parent, selector, interactionAnswerOptions, answeredStatements, size) {
+    const { correctResponsesPattern, responses, responsesMap, nrOfAttempts } = interactionAnswerOptions.answer;
+    const toPercent = (count) => (nrOfAttempts > 0 ? Math.round((count / nrOfAttempts) * 100) : 0);
+
+    const normalise = (str) => str.trim().toLowerCase();
+    const correctPatterns = (correctResponsesPattern ?? []).map(normalise);
+    const isCorrectResponse = (response) => correctPatterns.includes(normalise(response));
+
+    const correctPatternsHtml = correctResponsesPattern && correctResponsesPattern.length > 0
+      ? `
+        <div class="py-2 w-100">
+          <div
+            class="rounded py-2 px-3 w-100 d-flex align-items-baseline flex-wrap"
+            style="background-color: #f8f9fa; border-left: 3px solid #28a745; gap: 0.25rem;"
+          >
+            <strong class="mr-2 text-nowrap">${XAPI_DASHBOARD_CORRECTANSWERS}:</strong>
+            ${correctResponsesPattern.map((p) => `<span class="d-inline-flex align-items-center mr-1"><span class="sr-only">Correct answer:</span><span class="badge" style="background-color: transparent; border: 1px solid #28a745; color: #212529; font-weight: 600; font-size: 0.85em; padding: 0.3em 0.6em;">${escapeHtml(p)}</span></span>`).join('')}
+          </div>
+        </div>`
+      : '';
+
     const colors = [];
 
-    const rows = interactionAnswerOptions.answer.choices.map((choice) => {
-      const correct = interactionAnswerOptions.answer.correctResponsesPattern.includes(choice);
+    const rows = (responses ?? []).map((response) => {
+      const correct = isCorrectResponse(response);
+      const count = responsesMap.get(response) ?? 0;
 
-      // Map each answer choice to its color: green for correct, red for incorrect
-      colors.push({ key: choice, color: correct ? '#62c562' : '#ff0000' });
+      colors.push({ key: response, color: correct ? '#62c562' : '#ff0000' });
 
       const icon = correct
         ? '<i class="fa fa-x-tick" style="width: 1rem; height: 1rem;"/>'
         : '<i class="fa fa-x-cross" style="width: 1rem; height: 1rem;"/>';
 
-      const answerResponse = interactionAnswerOptions.answer.choicesResponse.get(choice) ?? 0;
       return `
       <div class="py-2 w-100">
         <div class="col-auto rounded py-2 px-4 w-100" style="${correct ? 'background-color: rgba(40, 167, 69, 0.2)' : ''}">
           <div class="row">
             <div class="col-9">
-              ${icon} ${escapeHtml(choice)}
+              ${icon} ${escapeHtml(response)}
             </div>
             <div class="col-1">
-              ${answerResponse}
+              ${count}
             </div>
             <div class="col-2">
-              (${toPercent(answerResponse)}%)
+              (${toPercent(count)}%)
             </div>
           </div>
         </div>
       </div>`;
     }).join('');
 
-    const unansweredCount = interactionAnswerOptions.answer.choicesResponse.get('') ?? 0;
+    const unansweredCount = responsesMap.get('') ?? 0;
     let unansweredRow = '';
     if (unansweredCount > 0) {
       colors.push({ key: '', color: '#aaaaaa' });
@@ -121,7 +137,8 @@ export class ChoicesInteraction {
     }
 
     const body = `
-      <div class="col-${size}" id="choices-answers-${selector}">
+      <div class="col-${size}" id="fill-in-answers-${selector}">
+        ${correctPatternsHtml}
         ${rows}
         ${unansweredRow}
       </div>
@@ -130,11 +147,11 @@ export class ChoicesInteraction {
     $parent.append(body);
 
     this.#answersGivenChartLib.drawAnswersGivenGraph(
-      $(`#choices-answers-${selector}`),
+      $(`#fill-in-answers-${selector}`),
       selector,
       answeredStatements,
       colors,
-      12
+      12,
     );
   }
 }

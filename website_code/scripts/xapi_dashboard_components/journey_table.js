@@ -1,3 +1,5 @@
+import { escapeHtml, escapeHtmlAttr } from './utils/escape.js';
+
 export class JourneyTable {
   /** A cross icon */
   #faCross = '<i class="status fa fa-x-cross" />';
@@ -213,7 +215,7 @@ export class JourneyTable {
                   id="journey-name-sub-${subSelector}"
                   style="cursor: pointer; text-decoration: underline;"
                 >
-                  ${subInteraction.name}
+                  ${escapeHtml(subInteraction.name)}
                 </span>
               </th>`;
           }
@@ -229,7 +231,7 @@ export class JourneyTable {
               id="journey-name-${selector}"
               style="cursor: pointer; text-decoration: underline;"
             >
-              ${interaction.name}
+              ${escapeHtml(interaction.name)}
             </span>
             <i
               id="journey-${selector}-icon"
@@ -328,8 +330,8 @@ export class JourneyTable {
    */
   createJourneyTableInteractionCompletionBlock(interaction) {
     const popoverContent = `
-      title="${interaction.name}"
-      data-content="${this.createDataPopoverDiv(interaction)}"
+      title="${escapeHtmlAttr(interaction.name)}"
+      data-content="${escapeHtmlAttr(this.createDataPopoverDiv(interaction))}"
       data-toggle="popover"
       data-trigger="hover"
       data-html="true"
@@ -345,7 +347,7 @@ export class JourneyTable {
     } else if (interaction.successStatus === 'failed') {
       // Unsuccessfully completed
       return redDiv;
-    } else if (interaction.successStatus === 'incomplete') {
+    } else if (interaction.completedStatus === 'incomplete') {
       // Started, but not completed
       return orangeDiv;
     }
@@ -392,20 +394,16 @@ export class JourneyTable {
    * @returns The html for the data popover div
    */
   createDataPopoverDiv(interaction) {
-    let popoverStatus = '';
+    let popoverStatus;
 
-    switch (interaction.successStatus) {
-      case 'passed':
-        popoverStatus = XAPI_DASHBOARD_STATUS_COMPLETED_PASSED;
-        break;
-      case 'failed':
-        popoverStatus = XAPI_DASHBOARD_STATUS_COMPLETED_NOTPASSED;
-        break;
-      case 'incomplete':
-        popoverStatus = XAPI_DASHBOARD_STATUS_STARTED_NOTCOMPLETED;
-        break;
-      default:
-        popoverStatus = XAPI_DASHBOARD_STATUS_NOTSTARTED;
+    if (interaction.successStatus === 'passed') {
+      popoverStatus = XAPI_DASHBOARD_STATUS_COMPLETED_PASSED;
+    } else if (interaction.successStatus === 'failed') {
+      popoverStatus = XAPI_DASHBOARD_STATUS_COMPLETED_NOTPASSED;
+    } else if (interaction.completedStatus === 'incomplete') {
+      popoverStatus = XAPI_DASHBOARD_STATUS_STARTED_NOTCOMPLETED;
+    } else {
+      popoverStatus = XAPI_DASHBOARD_STATUS_NOTSTARTED;
     }
 
     return `

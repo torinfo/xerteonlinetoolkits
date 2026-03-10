@@ -1566,7 +1566,8 @@ function XApiInteractionTracking(page_nr, ia_nr, ia_type, ia_name) {
                                 description: {
                                     "en-US": "Model answer interaction " +
                                         this.ia_name + " of " + pageref
-                                }
+                                },
+                                interactionType: "other",
                             };
                             statement.object.definition.name[state.language] = this.ia_name;
                         } else {
@@ -1663,7 +1664,9 @@ function XApiInteractionTracking(page_nr, ia_nr, ia_type, ia_name) {
                             definition: {
                                 name: statement.object.definition.name,
                                 description: statement.object.definition
-                                    .description
+                                    .description,
+                                interactionType: statement.object.definition.interactionType,
+                                
                             },
                             id: id
                         },

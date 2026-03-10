@@ -1,3 +1,5 @@
+import { escapeHtml, toSafeId } from './utils/escape.js';
+
 export class InteractionModal {
   /** The id of the button that opens the modal */
   #buttonId;
@@ -91,7 +93,7 @@ export class InteractionModal {
    */
   addModalHeader() {
     const header = `
-      <h4 class="modal-title">${this.#modalTitle}</h4>
+      <h4 class="modal-title">${escapeHtml(this.#modalTitle)}</h4>
       ${this.#options.showPrintButton ? `
         <button
           id="interaction-overview-print"
@@ -123,7 +125,7 @@ export class InteractionModal {
       await this.drawInteractionBlock(canvas, this.#options.singleInteraction);
     } else if (this.#options.singleSubInteraction) {
       const subInteraction = this.#options.singleSubInteraction;
-      const wrapperId = `modal-container-${$.escapeSelector(subInteraction.url)}`;
+      const wrapperId = toSafeId('modal-container', subInteraction.url);
       canvas.append(`
         <div
           id="${wrapperId}"
@@ -135,10 +137,6 @@ export class InteractionModal {
       await this.drawSubInteractionBlock($(`#${wrapperId}`), subInteraction);
     }
 
-    const body = `
-      `;
-
-    $(`#${this.#id} .modal-body`).append(body);
   }
 
   /**
@@ -162,26 +160,64 @@ export class InteractionModal {
 
     await Promise.all(
       interactions.map(
-        async (interaction) => await this.drawInteractionBlock(canvas, interaction),
-      )
+        (interaction) => this.drawInteractionBlock(canvas, interaction),
+      ),
     );
   }
 
   /**
-   * Deaw interaction block
+   * Draw interaction block
    *
    * @param {jQuery} $parent - The parent element to append the interaction block to.
    * @param {Object} interaction - The interaction object to add.
    */
   async drawInteractionBlock($parent, interaction) {
-    const selector = `modal-container-${$.escapeSelector(interaction.url)}`;
+    // For matching interactions, skip the outer wrapper (marks graph + title)
+    // and render sub-interactions directly — same presentation as clicking
+    // the sub-interaction header. Matching sub-interactions render their own
+    // marks graph, so the parent-level wrapper is redundant and unwanted.
+    if (interaction.subInteractions.length > 0) {
+      try {
+        // Checking the first sub-interaction is sufficient: within a single
+        // Xerte interaction, all sub-interactions are always the same type.
+        const firstSubType = interaction.subInteractions[0]
+          .getInteractionAnswerOptions(this.#state.statements).type;
+        if (
+          firstSubType === 'matching'
+          || firstSubType === 'text'
+        ) {
+          await Promise.all(
+            interaction.subInteractions.map(async (subInteraction) => {
+              const wrapperId = toSafeId('modal-container', subInteraction.url);
+              $parent.append(`
+                <div
+                  id="${wrapperId}"
+                  class="interaction-block p-4 my-2 rounded"
+                  style="background-color: #fff;"
+                >
+                </div>
+              `);
+              await this.drawSubInteractionBlock($(`#${wrapperId}`), subInteraction);
+            }),
+          );
+          return;
+        }
+      } catch (typeDetectionError) {
+        // If type detection fails (e.g. no statements yet), fall through to
+        // normal rendering. Log a warning for debuggability — consistent with
+        // the error handling pattern in drawSubInteractionBlock().
+        console.warn('Failed to detect sub-interaction type; using default rendering:', typeDetectionError);
+      }
+    }
+
+    const selector = toSafeId('modal-container', interaction.url);
     const body = `
       <div
         id="${selector}"
         class="interaction-block p-4 my-2 rounded"
         style="background-color: #fff;"
       >
-        <h5>${interaction.name}</h5>
+        <h6 style="font-weight: 600; margin-bottom: 12px;">${escapeHtml(interaction.name)}</h6>
         <div class="container-fluid">
           <div id="detail-${selector}" class="row">
           </div>
@@ -193,12 +229,12 @@ export class InteractionModal {
 
     const scoredStatements = interaction.getScoredStatements(this.#state.statements);
 
-    this.#marksChartLib.drawMarksGraph($(`#detail-${selector}`), selector, scoredStatements, 6);
+    this.#marksChartLib.drawMarksGraph($(`#detail-${selector}`), selector, scoredStatements, 12);
 
     await Promise.all(
       interaction.subInteractions.map(
-        async (subInteraction) => await this.drawSubInteractionBlock($(`#${selector}`), subInteraction),
-      )
+        (subInteraction) => this.drawSubInteractionBlock($(`#${selector}`), subInteraction),
+      ),
     );
   }
 
@@ -209,98 +245,105 @@ export class InteractionModal {
    * @param {Object} subInteraction - The sub interaction object to add.
    */
   async drawSubInteractionBlock($parent, subInteraction) {
-    const selector = `modal-container-sub-${$.escapeSelector(subInteraction.url)}`;
+    const selector = toSafeId('modal-container-sub', subInteraction.url);
     const body = `
-      <div id="${selector}" class="sub-interaction-block">
-        <h5>
-          <i class="fa-solid fa-angle-right pr-2" />
-          ${subInteraction.name}
-          <div class="container-fluid">
-            <div id="detail-${selector}" class="row">
-            </div>
+      <div
+        id="${selector}"
+        class="sub-interaction-block"
+        style="border-left: 3px solid #ccc; padding-left: 12px; margin-top: 12px;"
+      >
+        <p style="font-weight: 500; margin-bottom: 8px; color: #555;">
+          <i class="fa-solid fa-angle-right" style="margin-right: 6px;"></i>${escapeHtml(subInteraction.name)}
+        </p>
+        <div class="container-fluid">
+          <div id="detail-${selector}" class="row">
           </div>
-        </h5>
+        </div>
       </div>
     `;
 
     $parent.append(body);
 
-    const interactionAnswerOptions = subInteraction.getInteractionAnswerOptions(this.#state.statements);
-    const answeredStatements = subInteraction.getAnsweredStatements(this.#state.statements);
-
-    switch (interactionAnswerOptions.type) {
-      case 'choices':
-        const libChoicesInteraction = await import('./interactions/choices.js');
-        const choicesInteraction = new libChoicesInteraction.ChoicesInteraction(
-          selector,
-          this.#state,
-          subInteraction,
-        );
-        await choicesInteraction.init();
-
-        // this.drawMarksGraph($(`#detail-${selector}`), selector, answeredStatements, 6);
-        // this.drawChoiceAnswers(
-        //   $(`#detail-${selector}`),
-        //   selector,
-        //   interactionAnswerOptions,
-        //   answeredStatements,
-        //   6,
-        // );
-        break;
+    try {
+      const interactionAnswerOptions = subInteraction.getInteractionAnswerOptions(this.#state.statements);
+      switch (interactionAnswerOptions.type) {
+        case 'choices': {
+          const libChoicesInteraction = await import('./interactions/choices.js');
+          const choicesInteraction = new libChoicesInteraction.ChoicesInteraction(
+            selector,
+            this.#state,
+            subInteraction,
+          );
+          await choicesInteraction.init();
+          break;
+        }
+        case 'matching': {
+          const libMatchingInteraction = await import('./interactions/matching.js');
+          const matchingInteraction = new libMatchingInteraction.MatchingInteraction(
+            selector,
+            this.#state,
+            subInteraction,
+          );
+          await matchingInteraction.init();
+          break;
+        }
+        case 'fill-in': {
+          const libFillInInteraction = await import('./interactions/fill-in.js');
+          const fillInInteraction = new libFillInInteraction.FillInInteraction(
+            selector,
+            this.#state,
+            subInteraction,
+          );
+          await fillInInteraction.init();
+          break;
+        }
+        case 'text': {
+          const libTextInteraction = await import('./interactions/text.js');
+          const textInteraction = new libTextInteraction.TextInteraction(
+            selector,
+            this.#state,
+            subInteraction,
+          );
+          await textInteraction.init();
+          break;
+        }
+        case 'numeric': {
+          const libNumericInteraction = await import('./interactions/numeric.js');
+          const numericInteraction = new libNumericInteraction.NumericInteraction(
+            selector,
+            this.#state,
+            subInteraction,
+          );
+          await numericInteraction.init();
+          break;
+        }
+        case 'video': {
+          const libVideoInteraction = await import('./interactions/video.js');
+          const videoInteraction = new libVideoInteraction.VideoInteraction(
+            selector,
+            this.#state,
+            subInteraction,
+          );
+          await videoInteraction.init();
+          break;
+        }
+        default: {
+          $(`#detail-${selector}`).append(`
+            <div class="col-12 p-2 text-muted">
+              <em>Unsupported interaction type: ${escapeHtml(interactionAnswerOptions.type)}</em>
+            </div>
+          `);
+          break;
+        }
+      }
+    } catch (err) {
+      console.error('Failed to render sub-interaction:', err);
+      $(`#detail-${selector}`).append(`
+        <div class="col-12 p-2 text-danger">
+          <em>Failed to load interaction</em>
+        </div>
+      `);
     }
   }
 
-  /**
-   * Draw the marks graph
-   *
-   * @param {jQuery} $parent - The parent element to append the answer block to.
-   * @param {string} selector - The selector of the parent element.
-   * @param {Array} statements - The statements to be used in the graph.
-   * @param {number} size - The size of the answer block (the number of columns).
-   */
-  drawMarksGraph($parent, selector, statements, size) {
-    const body = `
-      <div class="col-${size}" style="min-height: 400px;">
-        <canvas id="choices-chart-${selector}" width="400" height="400"></canvas>
-      </div>
-    `
-
-    $parent.append(body);
-
-    const graph = new DashboardGraphs.BarGraphReceivedMarks({
-      statements: statements,
-      options: {
-        ctx: document.getElementById(`choices-chart-${selector}`).getContext('2d'),
-      }
-    });
-    graph.draw();
-  }
-
-  /**
-   * Draw a the answers given graph
-   *
-   * @param {jQuery} $parent - The parent element to append the answer block to.
-   * @param {string} selector - The selector of the parent element.
-   * @param {Array} statements - The statements to be used in the graph.
-   * @param {Array<{key: string, color: string}>} colors - Array of ColorDefinition objects (colorDefinitions) mapping answer choices to hex colors.
-   * @param {number} size - The size of the answer block (the number of columns).
-   */
-  drawAnswersGivenGraph($parent, selector, statements, colors, size) {
-    const body = `
-      <div class="col-${size}" style="min-height: 400px;">
-        <canvas id="answers-chart-${selector}" width="400" height="400"></canvas>
-      </div>
-    `
-
-    $parent.append(body);
-
-    const graph = new DashboardGraphs.BarGraphGivenAnswers({
-      statements: statements,
-      options: {
-        ctx: document.getElementById(`answers-chart-${selector}`).getContext('2d'),
-        colorDefinitions: colors,
-      }
-    });
-    graph.draw();
-  }
 }

@@ -9,17 +9,18 @@
 export function drawMarksGraph($parent, selector, statements, size) {
   const body = `
     <div class="col-${size}" style="min-height: 400px; max-height: 400px;">
-      <canvas id="choices-chart-${selector}" width="400" height="400"></canvas>
+      <canvas id="marks-chart-${selector}" width="400" height="400"></canvas>
     </div>
-  `
+  `;
 
   $parent.append(body);
 
   const graph = new DashboardGraphs.BarGraphReceivedMarks({
-    statements: statements,
+    statements,
     options: {
-      ctx: document.getElementById(`choices-chart-${selector}`).getContext('2d'),
-    }
+      ctx: document.getElementById(`marks-chart-${selector}`).getContext('2d'),
+      barColors: ['#f86718'],
+    },
   });
   graph.draw();
 }
