@@ -92,7 +92,7 @@ abstract class openaiImageApi extends BaseApi
         return (object)['status' => 'success'];
     }
 
-    public function sh_request($query, $target, $interpretPrompt, $overrideSettings, $settings, $size = '1024x1024')
+    public function sh_request($query, $target, $interpretPrompt, $overrideSettings, $settings, $language, $size = '1024x1024')
     {
         $downloadedPaths = [];
         // Build exact save path style per subclass
