@@ -105,6 +105,16 @@ ob_end_clean();
                     Expand Tree (Editor)
                 </label>
             </div>
+            <div class="panel-setting-item" style="margin-top: 10px;">
+                <label for="editor_open_mode" style="display: block; margin-bottom: 5px;">
+                    <?php echo USER_SETTINGS_EDITOR_OPEN_MODE; ?>
+                </label>
+                <select id="editor_open_mode" name="editor_open_mode" style="cursor: pointer;">
+                    <option value="popup"><?php echo USER_SETTINGS_EDITOR_OPEN_MODE_POPUP; ?></option>
+                    <option value="_blank"><?php echo USER_SETTINGS_EDITOR_OPEN_MODE_BLANK; ?></option>
+                    <option value="lightbox"><?php echo USER_SETTINGS_EDITOR_OPEN_MODE_LIGHTBOX; ?></option>
+                </select>
+            </div>
         </div>
     </div>
 </div>

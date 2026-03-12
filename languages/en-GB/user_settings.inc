@@ -18,4 +18,9 @@
 	define("USER_SETTINGS_PASSWORD_NEW_REPEAT", "Repeat new Password");
     define("USER_SETTINGS_PASSWORD_SUBMIT", "Submit");
 
+    define("USER_SETTINGS_EDITOR_OPEN_MODE", "Open editor in");
+    define("USER_SETTINGS_EDITOR_OPEN_MODE_POPUP", "Popup window");
+    define("USER_SETTINGS_EDITOR_OPEN_MODE_BLANK", "New tab");
+    define("USER_SETTINGS_EDITOR_OPEN_MODE_LIGHTBOX", "Lightbox (in page)");
+
 ?>

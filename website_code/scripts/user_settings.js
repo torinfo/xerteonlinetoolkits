@@ -198,6 +198,17 @@ function changepasswordPopup() {
                         editorExpandTreeCheckbox.prop('checked', editorExpandTree !== false && editorExpandTree !== 'false' && editorExpandTree !== 0 && editorExpandTree !== '0');
                     }
                 }
+                
+                // Set editor open mode dropdown (default popup)
+                var editorOpenModeSelect = $("#change-password-dialog #editor_open_mode");
+                if (editorOpenModeSelect.length) {
+                    var editorOpenMode = user_preferences.editor_open_mode;
+                    if (editorOpenMode === 'popup' || editorOpenMode === '_blank' || editorOpenMode === 'lightbox') {
+                        editorOpenModeSelect.val(editorOpenMode);
+                    } else {
+                        editorOpenModeSelect.val('popup');
+                    }
+                }
             }
             
             // Add change handlers for panel checkboxes
@@ -268,6 +279,13 @@ function changepasswordPopup() {
                         // Trigger change event to call expandTree()
                         expandTreeCb.trigger('change');
                     }
+                }
+            });
+            
+            // Editor open mode dropdown handler
+            $("#change-password-dialog #editor_open_mode").on('change', function() {
+                if (typeof save_user_preference === 'function') {
+                    save_user_preference('editor_open_mode', $(this).val());
                 }
             });
             

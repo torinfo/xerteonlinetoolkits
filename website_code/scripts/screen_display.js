@@ -435,18 +435,23 @@ function button_check(){
                 editbtn.removeAttribute("disabled");
                 editbtn.className = "xerte_workspace_button";
                 editbtn.onclick = function (e) {
+                    var locationParam;
                     if (e.shiftKey) {
-                        edit_window(false, "edithtml");
+                        locationParam = undefined;
+                    } else if (e.ctrlKey) {
+                        locationParam = "_blank";
+                    } else if (e.altKey) {
+                        locationParam = "lightbox";
+                    } else {
+                        var mode = (typeof user_preferences !== 'undefined' && user_preferences && user_preferences.editor_open_mode) ? user_preferences.editor_open_mode : 'popup';
+                        locationParam = (mode === '_blank' || mode === 'lightbox') ? mode : undefined;
                     }
-                    else if (e.ctrlKey) {
+                    if (locationParam === "_blank") {
                         win = edit_window(false, "edithtml", "_blank");
-                        win.focus();
-                    }
-                    else if (e.altKey) {
-                        win = edit_window(false, "edithtml", "lightbox");
-                    }
-                    else
-                    {
+                        if (win) win.focus();
+                    } else if (locationParam === "lightbox") {
+                        edit_window(false, "edithtml", "lightbox");
+                    } else {
                         edit_window(false, "edithtml");
                     }
                 };
@@ -974,11 +979,18 @@ function init_workspace()
                     break;
                 default:
 
-
                     tree.deselect_all();
                     tree.select_node(id);
 
-                    edit_window(false, "edithtml");
+                    var editorMode = (typeof user_preferences !== 'undefined' && user_preferences && user_preferences.editor_open_mode) ? user_preferences.editor_open_mode : 'popup';
+                    if (editorMode === '_blank') {
+                        var win = edit_window(false, "edithtml", "_blank");
+                        if (win) win.focus();
+                    } else if (editorMode === 'lightbox') {
+                        edit_window(false, "edithtml", "lightbox");
+                    } else {
+                        edit_window(false, "edithtml");
+                    }
 
             }
         });
