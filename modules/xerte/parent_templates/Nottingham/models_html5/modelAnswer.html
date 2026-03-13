@@ -204,6 +204,13 @@
 					// add text area
 					string += '<textarea id="response' + i + '" name="response' + i + '" class="answerTxt" ' + (prompt === false ? 'aria-label="' + answerFieldLabel + ' ' + (i+1) + '" ' : '') + 'rows="' + rows[i] + '"></textarea>';
 
+
+					// AI UI (button + hidden output region)
+					string += '<div class="aiActions">';
+					string += '  <button type="button" class="aiFeedbackBtn" aria-controls="aiFb' + i + '" aria-expanded="false">AI Feedback</button>';
+					string += '</div>';
+					string += '<div id="aiFb' + i + '" class="aiFeedbackOut" aria-live="polite" style="display:none;"></div>';
+
 					// add feedback
 					if (feedback[i] != undefined && feedback[i] !== "") {
 						string += '<div class="answer"><div class="fbTxt" aria-live="polite"/></div>';
@@ -214,6 +221,123 @@
 					// keep track of the feedback associated with this text area
 					const $item = $(string);
 					$item.find(".fbTxt").data("feedback", feedback[i]);
+
+					// AI feedback button handler (player-side)
+					$item.find(".aiFeedbackBtn").on("click", function () {
+						const $btn = $(this);
+						const targetId = $btn.attr("aria-controls");
+						const $out = $item.find("#" + targetId);
+
+						// Gather inputs
+						const studentAnswer = ($item.find("textarea.answerTxt").val() || "").trim();
+						const questionText = ($item.find(".promptTxt").text() || "").trim();
+
+						// This is the authored per-field feedback (already stored on .fbTxt via .data())
+						const authoredFieldFeedback = ($item.find(".fbTxt").data("feedback") || "").toString().trim();
+
+						// Page-level feedback (authored)
+						const authoredPageFeedback = (x_currentPageXML.getAttribute("pageFeedback") || "").toString().trim();
+
+						//no point in getting AI to evaluate an empty answer
+						if (studentAnswer === "") {
+							$out.html("<p><em>Please enter an answer first.</em></p>").show();
+							$btn.attr("aria-expanded", "true");
+							return;
+						}
+
+						// Build the prompt payload
+
+						const constructorObject = {
+							questionPrompt: questionText,
+							individualQuestionFeedback: authoredFieldFeedback,
+							generalFeedback: authoredPageFeedback,
+							givenAnswer: studentAnswer
+						};
+
+
+						// Minimal aiSettings + defaults
+						const aiSettings = {
+							type: "modelanswerinpage",
+							prompt: constructorObject,
+							language: (x_params && x_params.language ? x_params.language : "en"),
+							modelSelection: "mistral"
+						};
+
+						// UI state
+						$('body').css("cursor", "wait");
+						$btn.prop("disabled", true);
+						$out.html("<p><em>Generating AI feedback…</em></p>").show();
+						$btn.attr("aria-expanded", "true");
+
+						function decodeHtmlEntities(str) {
+							const txt = document.createElement("textarea");
+							txt.innerHTML = str;
+							return txt.value;
+						}
+
+						function stripHtml(html) {
+							const div = document.createElement("div");
+							div.innerHTML = html;
+							return div.textContent || div.innerText || "";
+						}
+
+						// Call aiAPI
+						$.ajax({
+							url: "editor/ai/aiAPI.php",
+							type: "POST",
+							dataType: "json",
+							data: {
+								type: aiSettings.type,
+								language: aiSettings.language,
+								prompt: constructorObject,
+								api: aiSettings.modelSelection,
+								url: aiSettings.fullUrl,
+
+								textSnippet: aiSettings.textSnippet || null,
+								context: aiSettings.sourceContext || null,
+								assistantPrompt: aiSettings.assisstantPrompt || null,
+								baseUrl: aiSettings.baseUrl || null,
+								useCorpus: aiSettings.useCorpus || null,
+								contextScope: aiSettings.contextScope || null,
+								modelTemplate: aiSettings.modelTemplate || null,
+								fileList: aiSettings.fileList || null,
+								useLoInCorpus: aiSettings.loSettings?.useLoInCorpus || null,
+								restrictCorpusToLo: aiSettings.loSettings?.restrictCorpusToLo || null
+							},
+							success: function (data) {
+								// expected: { status: "success", result: "..." }
+								if (data && data.status === "success") {
+									// Superficial display only (no persistence)
+									const decoded = decodeHtmlEntities(data.result || "");
+									const aiText = stripHtml(decoded);
+									$out.html("<strong>AI feedback</strong>");
+									$out.append(
+											$("<div></div>")
+													.css({
+														"background-color": "#f7f7f7",
+														"border": "1px solid #ddd",
+														"padding": "10px",
+														"margin": "8px 0",
+														"border-radius": "4px"
+													})
+													.text(aiText)
+									);
+									$out.append("<hr>");
+								} else {
+									$out.html("<p><em>AI feedback failed.</em></p>");
+								}
+							},
+							error: function (jqXHR, textStatus, errorThrown) {
+								console.error("AI AJAX failed:", textStatus, errorThrown);
+								$out.html("<p><em>AI feedback is unavailable right now.</em></p>");
+							},
+							complete: function () {
+								$('body').css("cursor", "");
+								$btn.prop("disabled", false);
+							}
+						});
+					});
+
 
 					$prompt.append($item);
 
