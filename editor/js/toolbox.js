@@ -4728,26 +4728,77 @@ var EDITOR = (function ($, parent) {
                 const inheritFieldRaw = groupChildren[input]?.value?.inheritField;
                 const inheritFieldClean = groupChildren[input]?.value?.inheritFieldClean;
 
-                // pick which key to inherit from, and remember whether we must clean
-                let inheritKey;
+                // pick which key/spec to inherit from, and remember whether we must clean
+                let inheritSpec;
                 let shouldClean = false;
 
                 if (inheritFieldRaw !== undefined && inheritFieldRaw !== "") {
-                    inheritKey = inheritFieldRaw;
+                    inheritSpec = inheritFieldRaw;
                 } else if (inheritFieldClean !== undefined && inheritFieldClean !== "") {
-                    inheritKey = inheritFieldClean;
+                    inheritSpec = inheritFieldClean;
                     shouldClean = true;
                 }
 
-                if (inheritKey) {
+                if (inheritSpec) {
                     const groupName = groupChildren[input]?.name;
-
-                    // determine candidate value
                     let value;
-                    if (attributes[inheritKey] !== undefined && attributes[inheritKey] !== null) {
-                        value = attributes[inheritKey];
-                    } else if (lo_attributes[inheritKey] !== undefined && lo_attributes[inheritKey] !== null) {
-                        value = lo_attributes[inheritKey];
+                    const tree = $.jstree.reference("#treeview");
+                    const parts = inheritSpec.split("|").map(p => p.trim()).filter(Boolean);
+
+                    //simple mode: inherit from current context of event
+                    if (parts.length === 1) {
+                        const inheritKey = parts[0];
+
+                        if (attributes[inheritKey] !== undefined && attributes[inheritKey] !== null) {
+                            value = attributes[inheritKey];
+                        } else if (lo_attributes[inheritKey] !== undefined && lo_attributes[inheritKey] !== null) {
+                            value = lo_attributes[inheritKey];
+                        }
+                    }
+
+                    // parent|fieldName (inherit this field from the parent node)
+                    else if (parts[0] === "parent" && parts.length === 2) {
+                        const inheritKey = parts[1];
+                        const parentKey = tree.get_parent(key);
+
+                        if (parentKey && parentKey !== "#" && parentKey !== "treeroot") {
+                            const parentAttrs = lo_data[parentKey]?.attributes;
+                            if (parentAttrs && parentAttrs[inheritKey] !== undefined && parentAttrs[inheritKey] !== null) {
+                                value = parentAttrs[inheritKey];
+                            }
+                        }
+                    }
+
+                    // sibling|nodeType|fieldName (inherit this field from another node under the same parent)
+                    else if (parts[0] === "sibling" && parts.length === 3) {
+                        const siblingType = parts[1];
+                        const inheritKey = parts[2];
+                        const parentKey = tree.get_parent(key);
+
+                        if (parentKey && parentKey !== "#" && parentKey !== "treeroot") {
+                            const parentNode = tree.get_node(parentKey);
+
+                            if (parentNode && parentNode.children) {
+                                for (let i = 0; i < parentNode.children.length; i++) {
+                                    const childKey = parentNode.children[i];
+                                    if (childKey === key) continue;
+
+                                    const childNode = tree.get_node(childKey);
+                                    const childAttrs = lo_data[childKey]?.attributes;
+
+                                    const matchesType =
+                                        (childNode && childNode.type === siblingType) ||
+                                        (childAttrs && childAttrs.nodeName === siblingType);
+
+                                    if (matchesType) {
+                                        if (childAttrs && childAttrs[inheritKey] !== undefined && childAttrs[inheritKey] !== null) {
+                                            value = childAttrs[inheritKey];
+                                            break;
+                                        }
+                                    }
+                                }
+                            }
+                        }
                     }
 
                     // clean if requested by inheritFieldClean mode
