@@ -6,7 +6,7 @@ class mistral_model {
 	protected $learning_prompt;
     protected $object;
     protected $defaultPrompt;
-	private $max_tokens = 4096;
+	private $max_tokens = 8096;
 	private $temperature = 0.2;
 
 	public function __construct($type, $model = null, $context = "standard", $sub_type = null){
