@@ -4,13 +4,13 @@ This folder centralises third-party libraries that were previously served from C
 
 ## Libraries
 
-- **Font Awesome 6.6.0**
+- **Font Awesome 6.x** (folder name `fontawesome-6.6.0/`, contents updated to 6.7.2)
   - CSS/JS under `fontawesome-6.6.0/`
   - Used by the main UI, editors and players.
 
-- **jQuery 1.9.1**
-  - `js/jquery-1.9.1.min.js`
-  - Now used instead of `//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js` in:
+- **jQuery 3.7.1**
+  - `js/jquery-3.7.1.min.js`
+  - Used (with jQuery Migrate 3.4.1 on key pages) in:
     - `properties.php`
     - `user_settings.php`
     - `publishproperties.php`

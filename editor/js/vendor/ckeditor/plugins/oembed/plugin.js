@@ -153,7 +153,7 @@
 
                     function loadjQueryLibaries() {
                     if (typeof(jQuery) === 'undefined') {
-                            CKEDITOR.scriptLoader.load('../../modules/common/js/jquery-1.9.1.min.js',
+                            CKEDITOR.scriptLoader.load('../../modules/common/js/jquery-3.7.1.min.js',
                                 function() {
                                     jQuery.noConflict();
                                     if (typeof(jQuery.fn.oembed) === 'undefined') {
