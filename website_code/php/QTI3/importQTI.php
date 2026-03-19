@@ -45,6 +45,60 @@ function importqti_build_upload_filter_array(string $rootPath): array
     return $check_file_array;
 }
 
+function delete_recursive(string $targetPath, string $allowedRoot): bool
+{
+    $allowedRootReal = realpath($allowedRoot);
+    $targetReal = realpath($targetPath);
+
+    if ($allowedRootReal === false || $targetReal === false) {
+        return false;
+    }
+
+    $allowedRootReal = rtrim(str_replace('\\', '/', $allowedRootReal), '/') . '/';
+    $targetRealNormalized = str_replace('\\', '/', $targetReal);
+
+    if (strpos($targetRealNormalized . '/', $allowedRootReal) !== 0) {
+        return false;
+    }
+
+    if (is_link($targetPath)) {
+        return unlink($targetPath);
+    }
+
+    if (is_file($targetPath)) {
+        return unlink($targetPath);
+    }
+
+    if (!is_dir($targetPath)) {
+        return false;
+    }
+
+    $items = scandir($targetPath);
+    if ($items === false) {
+        return false;
+    }
+
+    foreach ($items as $item) {
+        if ($item === '.' || $item === '..') {
+            continue;
+        }
+
+        $child = rtrim($targetPath, '/\\') . DIRECTORY_SEPARATOR . $item;
+
+        if (is_link($child) || is_file($child)) {
+            if (!unlink($child)) {
+                return false;
+            }
+        } elseif (is_dir($child)) {
+            if (!delete_recursive($child, $allowedRoot)) {
+                return false;
+            }
+        }
+    }
+
+    return rmdir($targetPath);
+}
+
 /**
  * Create a new blank LO
  *
@@ -290,18 +344,16 @@ try {
         xerte_append_nodes_to_data_xml($dataXmlPath, $xerteMcqs);
 
     // 9) Return id + editor size (similar endpoint as new_template.php)
-    echo "QTI 3.0 object has been imported sucessfully. LO ID:" . trim((string)$created['template_id']);
+    echo "QTI 3.0 object has been imported sucessfully. LO ID:" . trim((string)$created['template_id']) . "****";
 
 } catch (Exception $e) {
     echo "FAILED-" . $e->getMessage();
 } finally {
     // Cleanup best-effort, reverse order
     foreach (array_reverse($cleanup_paths) as $p) {
-        if (is_file($p)) {
-            @unlink($p);
-        } elseif (is_dir($p)) {
-            delete_loop($p);
-            @rmdir($p);
+        $result = delete_recursive($p, $work_root);
+        if (!$result) {
+            echo 'Delete failed';
         }
     }
 }
