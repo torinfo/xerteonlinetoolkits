@@ -75,6 +75,9 @@ if (is_user_admin()) {
     echo '<div class="admin_guide_ref">';
     echo MANAGEMENT_AI_ADMIN_GUIDE_MESSAGE . ' <p><a href="' . MANAGEMENT_AI_ADMIN_GUIDE_URL . '" target="_blank" rel="noopener noreferrer">' . MANAGEMENT_AI_ADMIN_GUIDE_URL . '</a></p>';
     echo '<div>';
+    echo '<div class="ethical_statement_ref">';
+    echo MANAGEMENT_AI_ETHICAL_STATEMENT_MESSAGE . ' <p><a href="' . MANAGEMENT_AI_ETHICAL_STATEMENT_URL . '" target="_blank" rel="noopener noreferrer">' . MANAGEMENT_AI_ETHICAL_STATEMENT_URL . '</a></p>';
+    echo '<div>';
 
     $lister = new ModelLister(20);
 

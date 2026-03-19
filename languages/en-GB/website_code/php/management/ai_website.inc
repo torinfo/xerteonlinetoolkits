@@ -43,6 +43,10 @@
 
     define("MANAGEMENT_ENABLE_SUBOPTIONS", "Select the desired suboptions for ");
 
+    define("MANAGEMENT_AI_ETHICAL_STATEMENT_URL", "https://xot.xerte.org.uk/play_653");
+
+    define("MANAGEMENT_AI_ETHICAL_STATEMENT_MESSAGE", "<h3>Ethical Statement</h3><p>The Xerte AI Ethical Use and Transparency Statement, as well as an AI form relevant for the use of Xerte's AI functioanlities in an organization, can be found here: </p>");
+
     define("MANAGEMENT_AI_ADMIN_GUIDE_URL", "https://xot.xerte.org.uk/play_651");
 
     define("MANAGEMENT_AI_ADMIN_GUIDE_MESSAGE", "<h3>Manual & Advice</h3><p>For detailed and up-to-date instructions, including recommended vendor combinations, suggestions and advice, please refer to the Xerte Assistant & AI Admin Guide: </p>");
