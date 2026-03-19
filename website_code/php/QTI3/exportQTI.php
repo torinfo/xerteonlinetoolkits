@@ -132,7 +132,7 @@ try {
     if (!file_exists($pkgDir . '/imsmanifest.xml')) throw new Exception("Missing imsmanifest.xml");
     if (!file_exists($pkgDir . '/assessmentTest.xml')) throw new Exception("Missing assessmentTest.xml");
 
-    $qtiPackage = $qtiPackageReader->fromFilesystem('pkg'); // (NEW) read folder inside client root
+    $qtiPackage = $qtiPackageReader->fromFilesystem('pkg'); // read folder inside client root
 
 // ensure test is buildable from package
     $qtiClient->getTestBuilder()->buildFromPackage($qtiPackage);

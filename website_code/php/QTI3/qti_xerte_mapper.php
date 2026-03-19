@@ -14,22 +14,6 @@ function xerte_link_id(string $prefix = 'PG'): string
 }
 
 /**
- * Xerte stores instruction HTML inside an attribute, with < > " escaped.
- * Your example also includes a trailing newline entity &#10;.
- */
-function xerte_encode_instruction_html(string $html): string
-{
-    $enc = htmlspecialchars($html, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
-    // Match your sample style: newline as entity
-    $enc = str_replace("\n", "&#10;", $enc);
-    // Many Xerte exports end with "&#10;" even if only one line
-    if (!str_ends_with($enc, "&#10;")) {
-        $enc .= "&#10;";
-    }
-    return $enc;
-}
-
-/**
  * Build instruction HTML that displays a single image
  * We put the image into mcq/@instruction; Xerte expects FileLocation concatenation syntax in the attribute.
  */
