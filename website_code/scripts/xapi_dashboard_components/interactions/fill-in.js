@@ -137,7 +137,7 @@ export class FillInInteraction {
     }
 
     const body = `
-      <div class="col-${size}" id="fill-in-answers-${selector}">
+      <div class="col-12 col-md-${size}" id="fill-in-answers-${selector}">
         ${correctPatternsHtml}
         ${rows}
         ${unansweredRow}

@@ -175,13 +175,16 @@ export class JourneyTable {
    * @returns The html for the table
    */
   createJourneyTable() {
-    const header = this.createJourneyTableHeader();
+    const isNonAnonymous = this.#dashboard.data.info.dashboard.enable_nonanonymous
+      && $('#dp-unanonymous-view').prop('checked');
+
+    const header = this.createJourneyTableHeader(isNonAnonymous);
     const rows = this.#state.users.map(
-      (user) => this.createJourneyTableRow(user),
+      (user) => this.createJourneyTableRow(user, isNonAnonymous),
     );
 
     return `
-      <table class="table table-hover table-bordered table-responsive border-0">
+      <table class="table table-sm table-hover table-bordered table-responsive border-0">
         ${header}
         ${rows.join('')}
       </table>`;
@@ -192,13 +195,16 @@ export class JourneyTable {
    *
    * @returns The html for the header row
    */
-  createJourneyTableHeader() {
-    const completed = `<th>${XAPI_DASHBOARD_COMPLETED}</th>`;
-    const completion = `<th>${XAPI_DASHBOARD_COMPLETION}</th>`;
-    const score = `<th>${XAPI_DASHBOARD_SCORE}</th>`;
-    const passed = `<th>${XAPI_DASHBOARD_PASSED}</th>`;
-    const start = `<th>${XAPI_DASHBOARD_STARTCOL}</th>`;
-    const duration = `<th>${XAPI_DASHBOARD_DURATIONCOL}</th>`;
+  createJourneyTableHeader(isNonAnonymous) {
+    const name = isNonAnonymous
+      ? `<th class="text-center align-middle font-weight-normal small">${XAPI_DASHBOARD_USERS}</th>`
+      : '';
+    const completed = `<th class="text-center align-middle font-weight-normal small">${XAPI_DASHBOARD_COMPLETED}</th>`;
+    const completion = `<th class="text-center align-middle font-weight-normal small">${XAPI_DASHBOARD_COMPLETION}</th>`;
+    const score = `<th class="text-center align-middle font-weight-normal small">${XAPI_DASHBOARD_SCORE}</th>`;
+    const passed = `<th class="text-center align-middle font-weight-normal small">${XAPI_DASHBOARD_PASSED}</th>`;
+    const start = `<th class="text-center align-middle font-weight-normal small">${XAPI_DASHBOARD_STARTCOL}</th>`;
+    const duration = `<th class="text-center align-middle font-weight-normal small">${XAPI_DASHBOARD_DURATIONCOL}</th>`;
 
     const interactions = this.#state.interactions.map(
       (interaction) => {
@@ -208,7 +214,7 @@ export class JourneyTable {
             const subSelector = $.escapeSelector(subInteraction.url);
             return `
               <th
-                class="journey-sub-${selector}"
+                class="journey-sub-${selector} text-center align-middle font-weight-normal small"
                 style="display: none;"
               >
                 <span
@@ -226,7 +232,7 @@ export class JourneyTable {
           $(`#journey-${selector}-icon`).toggleClass('fa-angles-left').toggleClass('fa-angles-right');
         });
         return `
-          <th id="journey-${selector}">
+          <th id="journey-${selector}" class="text-center align-middle font-weight-normal small">
             <span
               id="journey-name-${selector}"
               style="cursor: pointer; text-decoration: underline;"
@@ -246,6 +252,7 @@ export class JourneyTable {
     return `
       <thead>
         <tr>
+          ${name}
           ${completed}
           ${completion}
           ${score}
@@ -263,19 +270,30 @@ export class JourneyTable {
    * @param user - The user to create a row for
    * @returns The html for the row
    */
-  createJourneyTableRow(user) {
+  createJourneyTableRow(user, isNonAnonymous) {
+    if (!user.attempts.length) {
+      return '';
+    }
+
     const attempt = user.attempts[0];
 
-    const completed = `<td>${this.createJourneyTableCompletedTick(attempt)}</td>`;
-    const completion = `<td>${Math.round(attempt.completedPercentage)}%</td>`;
-    const score = `<td>${Math.round(attempt.score)}%</td>`;
-    const passed = `<td>${this.createJourneyTablePassedTick(attempt)}</td>`;
-    const start = `<td>${this.#dashboard.formatStart(attempt.start)}</td>`;
-    const duration = `<td>${this.#dashboard.formatDuration(attempt.duration)}</td>`;
+    const nameParts = [user.displayName, user.attemptKeys[0]].filter(Boolean);
+    const name = isNonAnonymous
+      ? `<td class="text-left align-middle small">${escapeHtml(nameParts.join(' '))}</td>`
+      : '';
+    const completed = `<td class="text-center align-middle small">${this.createJourneyTableCompletedTick(attempt)}</td>`;
+    const completion = `<td class="text-center align-middle small">${attempt.completedPercentage !== undefined ? `${Math.round(attempt.completedPercentage)}%` : this.#faMinus
+      }</td>`;
+    const score = `<td class="text-center align-middle small">${attempt.score !== undefined ? `${Math.round(attempt.score)}%` : this.#faMinus
+      }</td>`;
+    const passed = `<td class="text-center align-middle small">${this.createJourneyTablePassedTick(attempt)}</td>`;
+    const start = `<td class="text-center align-middle small">${this.#dashboard.formatStart(attempt.start)}</td>`;
+    const duration = `<td class="text-center align-middle small">${this.#dashboard.formatDuration(attempt.duration)}</td>`;
     const interactions = this.createJourneyTableInteractionColumns(user.interactions);
 
     return `
       <tr class="session-row">
+        ${name}
         ${completed}
         ${completion}
         ${score}
@@ -370,13 +388,13 @@ export class JourneyTable {
       });
 
       return `
-        <td>
+        <td class="text-center align-middle small">
           ${block}
         </td>
         ${subBlocks.map((subBlock) => {
         return `
           <td
-            class="journey-sub-${selector}"
+            class="journey-sub-${selector} text-center align-middle small"
             style="display: none; background: #f4f4f4"
           >
             ${subBlock}
@@ -406,11 +424,15 @@ export class JourneyTable {
       popoverStatus = XAPI_DASHBOARD_STATUS_NOTSTARTED;
     }
 
+    const interactionScore = interaction.getScore(this.#state.statements);
     return `
       <div>
         ${XAPI_JOURNEY_POPOVER_STATUS} ${popoverStatus}<br />
         ${XAPI_JOURNEY_POPOVER_NRTRIES} ${interaction.getInitializations(this.#state.statements)}<br />
-        ${XAPI_JOURNEY_POPOVER_GRADE} ${(interaction.getScore(this.#state.statements) * 100).toFixed(2)}%<br />
+        ${XAPI_JOURNEY_POPOVER_GRADE} ${interactionScore !== undefined
+        ? `${(interactionScore * 100).toFixed(2)}%`
+        : this.#faMinus
+      }<br />
         ${XAPI_JOURNEY_POPOVER_DURATION} ${interaction.getDuration(this.#state.statements)}<br />
         ${XAPI_JOURNEY_POPOVER_AVGGRADE}
       </div>`;

@@ -348,7 +348,7 @@ th.x-dashboard-interaction {
   border-radius: 4px;
 }
 
-.dashboard .table th {
+.dashboard .dashboard-table th {
   font-size: 0.8rem;
   font-weight: normal;
   padding: 5px;
@@ -357,23 +357,23 @@ th.x-dashboard-interaction {
   z-index: 10;
 }
 
-.dashboard .table td {
+.dashboard .dashboard-table td {
   padding: 2px;
 }
 
-.dashboard .table tr.session-row.hide {
+.journeyTable tr.session-row.hide {
   display: none;
 }
 
-.dashboard .table .session-row td.align-right, .td-right {
+.dashboard .dashboard-table .session-row td.align-right, .td-right {
   text-align: right;
 }
 
-.dashboard .table .session-row td.showresult {
+.dashboard .dashboard-table .session-row td.showresult {
   cursor: pointer;
 }
 
-.dashboard .table .session-row td.align-left, .td-left {
+.dashboard .dashboard-table .session-row td.align-left, .td-left {
   text-align: left;
 }
 
@@ -381,7 +381,7 @@ tr.attempt td:first-child {
   padding-left: 15px;
 }
 
-.dashboard .table .session-row td {
+.dashboard .dashboard-table .session-row td {
   text-align: center;
   vertical-align: middle;
 }
@@ -540,6 +540,62 @@ td.x-dashboard-interaction
   .noprint {
     display: none !important;
   }
+
+  /* Interaction overview modal print styles */
+  html.printing-interaction-overview-modal body { overflow: visible !important; }
+  html.printing-interaction-overview-modal body > *:not(#interaction-overview-modal) { display: none !important; }
+  html.printing-interaction-overview-modal .modal-backdrop { display: none !important; }
+  html.printing-interaction-overview-modal #interaction-overview-modal {
+    position: static !important;
+    display: block !important;
+    overflow: visible !important;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+  html.printing-interaction-overview-modal #interaction-overview-modal .modal-dialog {
+    max-width: 100% !important;
+    margin: 0 !important;
+  }
+  html.printing-interaction-overview-modal #interaction-overview-modal .modal-content {
+    border: none !important;
+    box-shadow: none !important;
+  }
+  html.printing-interaction-overview-modal #interaction-overview-modal .close,
+  html.printing-interaction-overview-modal #interaction-overview-modal #interaction-overview-modal-print-btn {
+    display: none !important;
+  }
+  html.printing-interaction-overview-modal #interaction-overview-modal .modal-body {
+    overflow: visible !important;
+    background-color: #fff !important;
+  }
+  html.printing-interaction-overview-modal #interaction-overview-modal [id^="detail-"] {
+    display: block !important;
+  }
+  html.printing-interaction-overview-modal #interaction-overview-modal .journeyOverview {
+    page-break-after: always;
+    break-after: page;
+  }
+  html.printing-interaction-overview-modal #interaction-overview-modal .journeyOverview .row {
+    display: flex !important;
+    flex-wrap: wrap !important;
+  }
+  html.printing-interaction-overview-modal #interaction-overview-modal .journeyOverview [class*="col-lg"] {
+    flex: 1 1 0% !important;
+    min-width: 0 !important;
+    max-width: none !important;
+  }
+  html.printing-interaction-overview-modal #interaction-overview-modal [id^="detail-"] [class*="col-md-"] {
+    width: 100% !important;
+    max-width: 100% !important;
+    flex: 0 0 100% !important;
+  }
+  html.printing-interaction-overview-modal #interaction-overview-modal [style*="max-height"] {
+    max-height: none !important;
+  }
+  html.printing-interaction-overview-modal #interaction-overview-modal canvas {
+    width: 100% !important;
+    height: auto !important;
+  }
 }
 
 .print_block {
@@ -569,7 +625,7 @@ td.td-center {
   text-align: center;
 }
 
-.dashboard .table td.duration, .dashboard .table td.start, .dashboard .table td.score, .dashboard .table td.completion {
+.dashboard .dashboard-table td.duration, .dashboard .dashboard-table td.start, .dashboard .dashboard-table td.score, .dashboard .dashboard-table td.completion {
   padding-left: 0.5em;
   padding-right: 0.5em;
 }

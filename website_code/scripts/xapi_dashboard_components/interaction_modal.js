@@ -65,6 +65,19 @@ export class InteractionModal {
     // Add the modal to the body, guarding against duplicate IDs on re-initialisation
     if ($(`#${this.#id}`).length === 0) {
       $('body').append(modal);
+
+      if (this.#options.showPrintButton) {
+        $(`#${this.#id}`).on('click', `#${this.#id}-print-btn`, () => {
+          const printClass = `printing-${this.#id}`;
+          document.documentElement.classList.add(printClass);
+          window.print();
+          const cleanupPrintClass = () => document.documentElement.classList.remove(printClass);
+          window.addEventListener('afterprint', cleanupPrintClass, { once: true });
+          // Safety fallback: remove class after 30s if afterprint never fires
+          // (e.g. popup blocked or mobile browser quirks)
+          setTimeout(cleanupPrintClass, 30000);
+        });
+      }
     }
 
     // Register the click event for the button that opens the modal
@@ -96,9 +109,9 @@ export class InteractionModal {
       <h4 class="modal-title">${escapeHtml(this.#modalTitle)}</h4>
       ${this.#options.showPrintButton ? `
         <button
-          id="interaction-overview-print"
+          id="${this.#id}-print-btn"
           type="button"
-          class="xerte_button_c_no_width"
+          class="xerte_button_c_no_width mx-auto"
         >
           Print
         </button>
@@ -114,7 +127,7 @@ export class InteractionModal {
    * Add modal body
    */
   async addModalBody() {
-    let canvas = $(`#${this.#id} .modal-body`);
+    const canvas = $(`#${this.#id} .modal-body`);
 
     // If this is the overview modal, add the overview component and
     // list all the interactions.

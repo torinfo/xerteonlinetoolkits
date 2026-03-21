@@ -121,7 +121,7 @@ export class ChoicesInteraction {
     }
 
     const body = `
-      <div class="col-${size}" id="choices-answers-${selector}">
+      <div class="col-12 col-md-${size}" id="choices-answers-${selector}">
         ${rows}
         ${unansweredRow}
       </div>

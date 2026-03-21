@@ -188,7 +188,7 @@ export class Overview {
     const averageCompletion = this.#state.users.length <= 0
       ? 0
       : this.#state.users.reduce(
-        (acc, user) => acc + user.attempts[0].completedPercentage, 0
+        (acc, user) => acc + (user.attempts[0].completedPercentage ?? 0), 0
       ) / this.#state.users.length;
 
     return Overview.makeColumnDiv(XAPI_DASHBOARD_AVERAGE_USER_COMPLETION, `${averageCompletion.toFixed(1)}%`);
@@ -221,7 +221,7 @@ export class Overview {
     const averageScore = this.#state.users.length <= 0
       ? 0
       : this.#state.users.reduce(
-        (acc, user) => acc + user.attempts[0].score, 0
+        (acc, user) => acc + (user.attempts[0].score ?? 0), 0
       ) / this.#state.users.length;
 
     return Overview.makeColumnDiv(XAPI_DASHBOARD_AVERAGE_USER_SCORE, (averageScore / 10).toFixed(1));
@@ -296,7 +296,7 @@ export class Overview {
       ? 0
       : this.#state.users.reduce(
         (acc, user) => acc + user.attempts.reduce(
-          (acc2, attempt) => acc2 + attempt.completedPercentage, 0
+          (acc2, attempt) => acc2 + (attempt.completedPercentage ?? 0), 0
         ) / user.attempts.length,
         0
       ) / this.#state.users.length;
@@ -335,7 +335,7 @@ export class Overview {
       ? 0
       : this.#state.users.reduce(
         (acc, user) => acc + user.attempts.reduce(
-          (acc2, attempt) => acc2 + attempt.score, 0
+          (acc2, attempt) => acc2 + (attempt.score ?? 0), 0
         ) / user.attempts.length,
         0
       ) / this.#state.users.length;

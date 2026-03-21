@@ -8,7 +8,7 @@
  */
 export function drawMarksGraph($parent, selector, statements, size) {
   const body = `
-    <div class="col-${size}" style="min-height: 400px; max-height: 400px;">
+    <div class="col-12 col-md-${size}" style="min-height: 400px; max-height: 400px;">
       <canvas id="marks-chart-${selector}" width="400" height="400"></canvas>
     </div>
   `;

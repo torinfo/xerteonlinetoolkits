@@ -17,7 +17,7 @@ export function drawAnswersGivenGraph(
   options = {},
 ) {
   const body = `
-    <div class="col-${size}" style="min-height: 400px;">
+    <div class="col-12 col-md-${size}" style="min-height: 400px;">
       <canvas id="answers-chart-${selector}" width="400" height="400"></canvas>
     </div>
   `;

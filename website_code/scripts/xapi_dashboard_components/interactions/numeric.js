@@ -133,7 +133,7 @@ export class NumericInteraction {
     const hasResponses = responses && responses.length > 0;
 
     const body = `
-      <div class="col-${size}" id="numeric-answers-${selector}">
+      <div class="col-12 col-md-${size}" id="numeric-answers-${selector}">
         <div class="py-2 w-100">
           <div class="col-auto rounded py-2 px-4 w-100" style="background-color: rgba(40, 167, 69, 0.1); border: 1px solid rgba(40, 167, 69, 0.3)">
             <div class="row">

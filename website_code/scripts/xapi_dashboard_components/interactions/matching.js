@@ -139,7 +139,7 @@ export class MatchingInteraction {
     }
 
     const body = `
-      <div class="col-${size}" id="matching-answers-${selector}">
+      <div class="col-12 col-md-${size}" id="matching-answers-${selector}">
         ${content}
       </div>
     `;

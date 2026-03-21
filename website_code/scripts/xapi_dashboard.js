@@ -553,7 +553,7 @@ xAPIDashboard.prototype.createJourneyTableSession = async function (div) {
     div.append(
       '<div class="row journeyTable">' +
       pageOptions +
-      '<table class="table table-hover table-bordered table-responsive" id="' +
+      '<table class="table dashboard-table table-hover table-bordered table-responsive" id="' +
       learningObjectIndex +
       '"><thead></thead><tbody id="journeyTableBody"></tbody></table></div>'
     );
