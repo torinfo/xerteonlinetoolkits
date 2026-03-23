@@ -22,6 +22,21 @@ export class JourneyTable {
   /** Cache of InteractionModal instances, keyed by interaction URL */
   #modalCache = new Map();
 
+  /** Cached DOM references for pagination (set in init) */
+  #$pageInfo;
+
+  #$pageLeft;
+
+  #$pageRight;
+
+  #$rows;
+
+  /** Zero-based current page index */
+  #pageIndex = 0;
+
+  /** Number of users per page (-1 means all) */
+  #pageSize = 5;
+
   /** The dashboard state */
   #state;
 
@@ -35,11 +50,24 @@ export class JourneyTable {
     this.#canvas = canvas;
     this.#dashboard = dashboard;
     this.#state = state;
+
+    const displayOptions = JSON.parse(
+      dashboard.data.info.dashboard.display_options || '{}',
+    );
+    if (displayOptions.pageSize !== undefined) {
+      this.#pageSize = displayOptions.pageSize;
+    }
   }
 
   async init() {
     this.createJourneyTableContainer();
+    this.#$pageInfo = $('#jt-page-info');
+    this.#$pageLeft = $('#jt-page-left');
+    this.#$pageRight = $('#jt-page-right');
+    this.#$rows = $('#jt-body .session-row');
     this.setupModalHandlers();
+    this.#setupPaginationHandlers();
+    this.#updatePagination();
   }
 
   /**
@@ -134,13 +162,17 @@ export class JourneyTable {
    */
   createPagingHeader() {
     return `
-      <div class="col-4">
+      <div class="col-3">
         ${this.createPagingPrevButton()}
       </div>
-      <div class="col-4 text-center align-content-center">
-        page 1 of 1
+      <div class="col-6 text-center align-content-center">
+        <span id="jt-page-info"></span>
+        <span class="ml-3">
+          ${XAPI_DASHBOARD_PAGE_SIZE}
+          ${this.#createPageSizeSelect()}
+        </span>
       </div>
-      <div class="col-4 text-right">
+      <div class="col-3 text-right">
         ${this.createPagingNextButton()}
       </div>`;
   }
@@ -152,7 +184,7 @@ export class JourneyTable {
    */
   createPagingPrevButton() {
     return `
-      <button class='xerte_button_c_no_width mx-0 border-0' id='pageButtonLeft'>
+      <button class='xerte_button_c_no_width mx-0 border-0' id='jt-page-left'>
         ${XAPI_DASHBOARD_PAGE_PREV}
       </button>`;
   }
@@ -164,7 +196,7 @@ export class JourneyTable {
    */
   createPagingNextButton() {
     return `
-      <button class='xerte_button_c_no_width mx-0 border-0' id='pageButtonRight'>
+      <button class='xerte_button_c_no_width mx-0 border-0' id='jt-page-right'>
         ${XAPI_DASHBOARD_PAGE_NEXT}
       </button>`;
   }
@@ -179,14 +211,19 @@ export class JourneyTable {
       && $('#dp-unanonymous-view').prop('checked');
 
     const header = this.createJourneyTableHeader(isNonAnonymous);
-    const rows = this.#state.users.map(
-      (user) => this.createJourneyTableRow(user, isNonAnonymous),
+    const filteredUsers = this.#state.users.filter(
+      (user) => user.attempts.length > 0,
+    );
+    const rows = filteredUsers.map(
+      (user, rowIndex) => this.createJourneyTableRow(user, isNonAnonymous, rowIndex),
     );
 
     return `
-      <table class="table table-sm table-hover table-bordered table-responsive border-0">
+      <table class="table table-sm table-hover table-bordered jt-table border-0">
         ${header}
-        ${rows.join('')}
+        <tbody id="jt-body">
+          ${rows.join('')}
+        </tbody>
       </table>`;
   }
 
@@ -270,11 +307,7 @@ export class JourneyTable {
    * @param user - The user to create a row for
    * @returns The html for the row
    */
-  createJourneyTableRow(user, isNonAnonymous) {
-    if (!user.attempts.length) {
-      return '';
-    }
-
+  createJourneyTableRow(user, isNonAnonymous, rowIndex) {
     const attempt = user.attempts[0];
 
     const nameParts = [user.displayName, user.attemptKeys[0]].filter(Boolean);
@@ -292,7 +325,7 @@ export class JourneyTable {
     const interactions = this.createJourneyTableInteractionColumns(user.interactions);
 
     return `
-      <tr class="session-row">
+      <tr class="session-row" data-index="${rowIndex}">
         ${name}
         ${completed}
         ${completion}
@@ -436,5 +469,132 @@ export class JourneyTable {
         ${XAPI_JOURNEY_POPOVER_DURATION} ${interaction.getDuration(this.#state.statements)}<br />
         ${XAPI_JOURNEY_POPOVER_AVGGRADE}
       </div>`;
+  }
+
+  /**
+   * @returns The count of users that have at least one attempt
+   */
+  #getFilteredUserCount() {
+    return this.#$rows.length;
+  }
+
+  /**
+   * @param {number} filteredCount - The number of filtered users
+   * @returns The effective page size (user count when "All" is selected)
+   */
+  #getEffectivePageSize(filteredCount) {
+    if (this.#pageSize === -1) {
+      return filteredCount || 1;
+    }
+    return this.#pageSize;
+  }
+
+  /**
+   * @param {number} filteredCount - The number of filtered users
+   * @returns The maximum number of pages
+   */
+  #getMaxPage(filteredCount) {
+    const effectiveSize = this.#getEffectivePageSize(filteredCount);
+    return Math.max(1, Math.ceil(filteredCount / effectiveSize));
+  }
+
+  /**
+   * @returns The HTML for the page size select dropdown
+   */
+  #createPageSizeSelect() {
+    const sizes = [5, 10, 20, 50, 100];
+    const options = sizes.map((size) => {
+      const selected = size === this.#pageSize ? 'selected' : '';
+      return `<option value="${size}" ${selected}>${size}</option>`;
+    }).join('');
+    const allSelected = this.#pageSize === -1 ? 'selected' : '';
+    return `
+      <select id="jt-page-size">
+        ${options}
+        <option value="-1" ${allSelected}>${XAPI_DASHBOARD_PAGE_SIZE_ALL}</option>
+      </select>`;
+  }
+
+  /**
+   * Update pagination: show/hide rows, update page info, enable/disable buttons
+   */
+  #updatePagination() {
+    const filteredCount = this.#getFilteredUserCount();
+    const effectiveSize = this.#getEffectivePageSize(filteredCount);
+    const maxPage = this.#getMaxPage(filteredCount);
+
+    if (this.#pageIndex >= maxPage) {
+      this.#pageIndex = Math.max(0, maxPage - 1);
+    }
+
+    const from = this.#pageIndex * effectiveSize;
+    const to = from + effectiveSize;
+
+    this.#$rows.each((idx, row) => {
+      if (idx >= from && idx < to) {
+        row.classList.remove('hide');
+      } else {
+        row.classList.add('hide');
+      }
+    });
+
+    let pageInfo = XAPI_DASHBOARD_PAGE_OF_PAGE;
+    pageInfo = pageInfo.replace('{i}', this.#pageIndex + 1);
+    pageInfo = pageInfo.replace('{n}', maxPage);
+    this.#$pageInfo.text(pageInfo);
+
+    if (this.#pageIndex <= 0) {
+      this.#$pageLeft.prop('disabled', true).addClass('disabled');
+    } else {
+      this.#$pageLeft.prop('disabled', false).removeClass('disabled');
+    }
+    if (this.#pageIndex >= maxPage - 1) {
+      this.#$pageRight.prop('disabled', true).addClass('disabled');
+    } else {
+      this.#$pageRight.prop('disabled', false).removeClass('disabled');
+    }
+  }
+
+  /**
+   * Set up click handlers for pagination buttons and page size select
+   */
+  #setupPaginationHandlers() {
+    this.#$pageLeft.on('click', () => {
+      this.#pageIndex -= 1;
+      this.#updatePagination();
+    });
+
+    this.#$pageRight.on('click', () => {
+      this.#pageIndex += 1;
+      this.#updatePagination();
+    });
+
+    const allowedSizes = new Set([5, 10, 20, 50, 100, -1]);
+    $('#jt-page-size').on('change', (e) => {
+      const val = Number($(e.target).val());
+      if (!allowedSizes.has(val)) return;
+      this.#pageSize = val;
+      this.#pageIndex = 0;
+      this.#updatePagination();
+      this.#persistPageSize();
+    });
+  }
+
+  /**
+   * Persist the current page size to the server
+   */
+  #persistPageSize() {
+    const displayOptions = JSON.parse(
+      this.#dashboard.data.info.dashboard.display_options || '{}',
+    );
+    displayOptions.pageSize = this.#pageSize;
+    this.#dashboard.data.info.dashboard.display_options = JSON.stringify(displayOptions);
+    $.post(
+      'website_code/php/xAPI/update_dashboard_display_properties.php',
+      {
+        id: this.#dashboard.data.info.template_id,
+        properties: this.#dashboard.data.info.dashboard.display_options,
+      },
+    );
   }
 }

@@ -498,9 +498,9 @@ xAPIDashboard.prototype.createJourneyTableSession = async function (div) {
   var learningObjects = this.data.getLearningObjects();
   var data = this.data.groupStatements();
   this.data.getAllInteractions(this.data.rawDatamap);
-  this.data.groups.forEach(function (group) {
+  DS.extractGroups(this.data.rawData).forEach(function (group) {
     $("#group-select").append(
-      '<option value="' + group + '">' + group + "</option>"
+      $("<option>").val(group).text(group)
     );
   });
   for (
@@ -3516,27 +3516,44 @@ xAPIDashboard.prototype.show_dashboard = function (begin, end) {
     $this.regenerate_dashboard();
   });
 
-  $("#group-select").change(function () {
-    var group = $(this).val();
-    $this.data.currentGroup.group_id = group;
+  var groupSwitchInFlight = false;
 
-    $this.data.pageIndex = 0;
-    if (group == "all-groups") {
-      $(".session-row").data("group-selected", true);
-    } else {
-      $('.session-row:not([data-group="' + group + '"])').data(
-        "group-selected",
-        false
-      );
-      $('.session-row[data-group="' + group + '"]').data(
-        "group-selected",
-        true
-      );
+  $("#group-select").change(async function () {
+    if (groupSwitchInFlight) return;
+    groupSwitchInFlight = true;
+
+    try {
+      var group = String($(this).val());
+      $this.data.currentGroup.group_id = group;
+      $this.data.pageIndex = 0;
+
+      // Always construct a fresh GroupedData — the object is mutated during
+      // rendering (prepareStatistics), so cached instances become stale.
+      var filteredStatements = group === 'all-groups'
+        ? $this.data.rawData
+        : DS.filterByGroup($this.data.rawData, group);
+      $this.data.state = new DS.GroupedData(filteredStatements);
+
+      // Clean up orphaned journey event handlers, then re-draw
+      $(document).off('click.journey');
+      $('#journeyDataNew').empty();
+      await $this.drawDashboard($('#journeyDataNew'));
+
+      // Legacy: toggle old table rows (keep until old table is fully removed)
+      $(".session-row").each(function () {
+        var isSelected = group === 'all-groups'
+          || $(this).attr('data-group') === group;
+        $(this).data('group-selected', isSelected);
+      });
+      $(".page-button").eq(0).trigger("click", [false]);
+
+      $(".journeyOverviewStats").html("");
+      $this.setStatisticsValues(".journeyOverview ", 0);
+    } catch (err) {
+      console.error('Group filter failed:', err);
+    } finally {
+      groupSwitchInFlight = false;
     }
-    $(".page-button").eq(0).trigger("click", [false]);
-
-    $(".journeyOverviewStats").html("");
-    $this.setStatisticsValues(".journeyOverview ", 0);
   });
 
   if (this.data.info.dashboard.enable_nonanonymous == "true") {

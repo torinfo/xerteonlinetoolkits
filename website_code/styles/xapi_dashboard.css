@@ -629,3 +629,18 @@ td.td-center {
   padding-left: 0.5em;
   padding-right: 0.5em;
 }
+
+/* New journey table component styles */
+.jt-table th {
+  font-size: 0.8rem;
+  font-weight: normal;
+  padding: 5px;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+/* Hide rows outside the current page */
+.session-row.hide {
+  display: none;
+}
