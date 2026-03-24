@@ -119,10 +119,9 @@ $version = getVersion();
     <link rel="stylesheet" href="editor/css/jquery-ui.css">
     <link rel="stylesheet" href="editor/js/vendor/themes/default/style.css?version=<?php echo $version;?>" />
     <!-- <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script> -->
-    <!-- <script>window.jQuery || document.write('<script src="editor/js/vendor/jquery-3.7.1.min.js"><\/script>')</script> -->
-    <script src="editor/js/vendor/jquery-3.7.1.min.js"></script>
-    <script type="text/javascript" src="editor/js/vendor/jquery-migrate-3.4.1.min.js"></script>
-    <script type="text/javascript" src="editor/js/vendor/jquery.ui-1.13.2.min.js"></script>
+    <!-- <script>window.jQuery || document.write('<script src="editor/js/vendor/jquery-1.9.1.min.js"><\/script>')</script> -->
+    <script src="editor/js/vendor/jquery-1.9.1.min.js"></script>
+    <script type="text/javascript" src="editor/js/vendor/jquery.ui-1.10.4.js"></script>
     <script type="text/javascript" src="editor/js/vendor/jquery.layout-1.3.0-rc30.79.min.js"></script>
     <script type="text/javascript" src="editor/js/vendor/jquery.ui.touch-punch.min.js"></script>
     <script type="text/javascript" src="editor/js/vendor/modernizr-latest.js"></script>

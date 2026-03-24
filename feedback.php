@@ -42,7 +42,7 @@ function show_peer_form($row, $retouremail)
 		<title><?php echo XERTE_FEEDBACK_DESCRIPTION; ?></title>
         <script type="text/javascript" language="Javascript" src="website_code/scripts/peer.js"></script>
         <script type="text/javascript" language="Javascript" src="website_code/scripts/ajax_management.js"></script>
-        <script type="text/javascript" src="modules/common/js/jquery-3.7.1.min.js"></script>
+        <script type="text/javascript" src="modules/common/js/jquery-1.9.1.min.js"></script>
         <script type="text/javascript" language="Javascript" src="modules/common/js/featherlight/featherlight.min.js"></script>
         <link rel="stylesheet" href="modules/common/js/featherlight/featherlight.min.css" type="text/css" />
 

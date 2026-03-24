@@ -505,7 +505,7 @@ span.button-close-east			{ background: url(../img/chevron-right_444444_15.png) n
 }
 
 
-/* INSERT MENU STYLES – UI/UX */
+/* INSERT MENU STYLES */
 .ui-menu {
     width: 250px;
 }
@@ -529,113 +529,35 @@ span.button-close-east			{ background: url(../img/chevron-right_444444_15.png) n
 
 #insert_menu {
 	position: absolute;
-	z-index: 5;
-	min-width: 180px;
-	box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-	border-radius: 4px;
-	border: 1px solid #ccc;
-	overflow: hidden;
+    z-index: 5;
+    width: 150px;
 }
 
-#insert_menu #menu,
-#insert_menu #menu > li > ul > li {
-	width: auto;
-	font-size: 1em;
+#insert_menu #menu, #insert_menu #menu > li > ul > li  {
+	width:		auto;
+	font-size:	1em;
 }
 
 #insert_menu .ui-menu {
 	overflow-x: hidden;
 	overflow-y: auto;
-	direction: rtl;
-	margin: 0;
-	padding: 6px 0;
-	background: #fff;
-	list-style: none;
+	direction:	rtl;
 }
 
 #insert_menu .ui-menu-item {
 	direction: ltr;
 	text-align: left;
-	z-index: 6;
+    z-index: 6;
+
+}
+
+#insert_menu .ui-menu .ui-menu-item {
 	display: block;
-	margin: 0;
-	padding: 0;
-	list-style: none;
-}
-
-/* Menu item link/wrapper – no underlines, clear tap target */
-#insert_menu .ui-menu .ui-menu-item a,
-#insert_menu .ui-menu .ui-menu-item .ui-menu-item-wrapper {
-	text-decoration: none !important;
-	display: flex !important;
-	align-items: center;
-	min-height: 28px;
-	padding: 6px 12px;
-	line-height: 1.4;
-	color: #333;
-	background: transparent;
-	border: none;
-	outline: none;
-	cursor: pointer;
-	box-sizing: border-box;
-}
-
-#insert_menu .ui-menu .ui-menu-item a:hover,
-#insert_menu .ui-menu .ui-menu-item a:focus,
-#insert_menu .ui-menu .ui-menu-item a.ui-state-focus,
-#insert_menu .ui-menu .ui-menu-item a.ui-state-active,
-#insert_menu .ui-menu .ui-menu-item .ui-menu-item-wrapper:hover,
-#insert_menu .ui-menu .ui-menu-item .ui-menu-item-wrapper.ui-state-focus {
-	text-decoration: none !important;
-	background-color: #f0f0f2;
-	color: #222;
-	outline: none;
-	border: none;
-}
-
-/* Icon (left) – align with text */
-#insert_menu .ui-menu .ui-menu-item .icon,
-#insert_menu .ui-menu .ui-menu-item a .icon {
-	flex-shrink: 0;
-	margin-right: 8px;
-	vertical-align: middle;
-}
-
-/* Right-pointing arrow (chevron) – aligned with text */
-#insert_menu .ui-menu .ui-menu-item .ui-menu-icon,
-#insert_menu .ui-menu .ui-menu-item a .ui-menu-icon {
-	position: absolute !important;
-	right: 8px;
-	top: 50% !important;
-	margin-top: -8px !important;
-	left: auto !important;
-	vertical-align: middle;
-	flex-shrink: 0;
-}
-
-/* Ensure the anchor is the flex container so text + arrow align */
-#insert_menu .ui-menu .ui-menu-item a {
-	position: relative;
-	padding-right: 28px;
 }
 
 #insert_menu .icon {
-	padding: 0 0.4em 0 0;
-	border: none;
-}
-
-/* Submenu panel – same look as main menu */
-#insert_menu .ui-menu .ui-menu {
-	margin-top: 0;
-	padding: 6px 0;
-	border-radius: 4px;
-	box-shadow: 0 2px 8px rgba(0,0,0,0.12);
-}
-
-#insert_menu .ui-menu .ui-menu .ui-menu-item a,
-#insert_menu .ui-menu .ui-menu .ui-menu-item .ui-menu-item-wrapper {
-	padding: 6px 12px;
-	padding-right: 28px;
+	padding:	0 0.4em 0 0;
+	border:	none;
 }
 
 #insert_menu .ui-menu.details {
@@ -1168,13 +1090,11 @@ button .flash-icon {padding-left: 4px;}
 
 button:hover {background: #f86718; color: #000000;}
 
-#menu.ui-menu .ui-state-focus,
-#insert_menu .ui-menu .ui-state-focus {
+#menu.ui-menu .ui-state-focus {
 	background: none;
-	background-color: #f0f0f2;
+	background-color:#f0f0f2;
 }
 
-/* Menu icon alignment (overridden for #insert_menu by rules above) */
 .ui-menu-item a .ui-menu-icon {
 	margin-top: 2px;
 }

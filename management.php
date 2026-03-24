@@ -241,8 +241,8 @@ if(isset($_SESSION['toolkits_logon_id'])) {
 
         -->
 		<?php
-        echo "<script type=\"text/javascript\" language=\"javascript\" src=\"" . $xerte_toolkits_site->site_url . "editor/js/vendor/jquery-3.7.1.min.js\"></script>";
-        _include_javascript_file("editor/js/vendor/jquery-3.7.1.min.js");
+        echo "<script type=\"text/javascript\" language=\"javascript\" src=\"" . $xerte_toolkits_site->site_url . "editor/js/vendor/jquery-1.9.1.min.js\"></script>";
+        _include_javascript_file("editor/js/vendor/jquery-1.9.1.min.js");
         _include_javascript_file("website_code/scripts/file_system.js?version=" . $version);
         _include_javascript_file("website_code/scripts/screen_display.js?version=" . $version);
         _include_javascript_file("website_code/scripts/ajax_management.js?version=" . $version);

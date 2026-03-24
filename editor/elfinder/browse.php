@@ -98,12 +98,12 @@ if (isset($_REQUEST['loc'])) {
 		<!-- jQuery and jQuery UI (REQUIRED) -->
         <link rel="stylesheet" type="text/css" href="../../editor/css/jquery-ui.css">
 
-        <script src="../../modules/common/js/jquery-3.7.1.min.js"></script>
-        <script>window.jQuery || document.write('<script src=\"../../editor/js/vendor/jquery-3.7.1.min.js\"><\/script>')</script>
+        <script src="../../modules/common/js/jquery-1.9.1.min.js"></script>
+        <script>window.jQuery || document.write('<script src=\"../../editor/js/vendor/jquery-1.9.1.min.js\"><\/script>')</script>
         <?php if (preg_match('~MSIE|Internet Explorer~i', $_SERVER['HTTP_USER_AGENT']) || (strpos($_SERVER['HTTP_USER_AGENT'], 'Trident/7.0; rv:11.0') !== false)) { ?>
-            <script type="text/javascript" src="../../editor/js/vendor/jquery.ui-1.13.2.min.js"></script>
+            <script type="text/javascript" src="../../editor/js/vendor/jquery.ui-1.10.4.js"></script>
         <?php }else{ ?>
-            <script type="text/javascript" src="../../editor/js/vendor/jquery.ui-1.13.2.min.js"></script>
+            <script type="text/javascript" src="../../editor/js/vendor/jquery.ui-1.10.4.js"></script>
         <?php } ?>
 
 		<!-- elFinder CSS (REQUIRED) -->
