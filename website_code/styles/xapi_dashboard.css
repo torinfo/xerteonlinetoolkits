@@ -532,6 +532,19 @@ td.x-dashboard-interaction
   overflow-x: unset;
 }
 
+#print-overview .jt-scroll-wrapper {
+  overflow-x: unset;
+}
+
+#print-overview .jt-sticky-header {
+  display: none !important;
+}
+
+#print-overview .jt-table th,
+#print-overview .jt-table td {
+  white-space: normal;
+}
+
 #print-overview .journeyOverviewStats div, #print-overview .journeyOverviewActivity {
   border: solid 1px;
 }
@@ -631,16 +644,33 @@ td.td-center {
 }
 
 /* New journey table component styles */
+.jt-scroll-wrapper {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
 .jt-table th {
   font-size: 0.8rem;
   font-weight: normal;
   padding: 5px;
-  position: sticky;
-  top: 0;
-  z-index: 10;
+  white-space: nowrap;
+  background-color: #eee;
+}
+
+.jt-table td {
+  white-space: nowrap;
 }
 
 /* Hide rows outside the current page */
 .session-row.hide {
   display: none;
+}
+
+.jt-sticky-header {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  overflow: hidden;
+  display: none;
+  background-color: #fff;
 }

@@ -37,6 +37,27 @@ export class JourneyTable {
   /** Number of users per page (-1 means all) */
   #pageSize = 5;
 
+  /** Cached reference to the cloned table element inside .jt-sticky-header */
+  #clonedTable = null;
+
+  /** IntersectionObserver watching the original thead */
+  #observer = null;
+
+  /** Pending requestAnimationFrame ID for scroll sync */
+  #scrollRaf = null;
+
+  /** Cached reference to the .jt-scroll-wrapper element */
+  #scrollWrapper = null;
+
+  /** jQuery reference to the .jt-sticky-header container */
+  #$stickyHeader = null;
+
+  /** Bound resize handler for sticky clone refresh */
+  #resizeHandler = null;
+
+  /** Bound scroll handler for horizontal sync */
+  #scrollHandler = null;
+
   /** The dashboard state */
   #state;
 
@@ -68,6 +89,7 @@ export class JourneyTable {
     this.setupModalHandlers();
     this.#setupPaginationHandlers();
     this.#updatePagination();
+    this.#setupStickyHeader();
   }
 
   /**
@@ -143,10 +165,9 @@ export class JourneyTable {
             <div class="row mb-2">
               ${this.createPagingHeader()}
             </div>
-            <div class="row">
-              <div class="col-12">
-                ${this.createJourneyTable()}
-              </div>
+            <div class="jt-sticky-header"></div>
+            <div class="jt-scroll-wrapper">
+              ${this.createJourneyTable()}
             </div>
           </div>
         </div>
@@ -267,6 +288,7 @@ export class JourneyTable {
         $(document).on(`click.journey-${selector}`, `#journey-${selector}-icon`, () => {
           $(`.journey-sub-${selector}`).toggle();
           $(`#journey-${selector}-icon`).toggleClass('fa-angles-left').toggleClass('fa-angles-right');
+          this.#refreshStickyClone();
         });
         return `
           <th id="journey-${selector}" class="text-center align-middle font-weight-normal small">
@@ -596,5 +618,121 @@ export class JourneyTable {
         properties: this.#dashboard.data.info.dashboard.display_options,
       },
     );
+  }
+
+  /**
+   * Set up the sticky header clone that appears when the original
+   * thead scrolls out of view in #journeyData.
+   */
+  #setupStickyHeader() {
+    this.#$stickyHeader = this.#canvas.find('.jt-sticky-header');
+    this.#scrollWrapper = this.#canvas[0].querySelector('.jt-scroll-wrapper');
+    const thead = this.#canvas[0].querySelector('.jt-table thead');
+    const scrollRoot = document.querySelector('#journeyData');
+
+    if (!this.#scrollWrapper || !thead || !scrollRoot) return;
+
+    this.#observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            if (this.#$stickyHeader.is(':visible')) {
+              this.#destroyStickyClone();
+            }
+          } else if (!this.#$stickyHeader.is(':visible')) {
+            this.#createStickyClone();
+          }
+        });
+      },
+      { root: scrollRoot, threshold: 0 },
+    );
+
+    this.#observer.observe(thead);
+
+    this.#scrollHandler = () => {
+      if (!this.#scrollRaf) {
+        this.#scrollRaf = requestAnimationFrame(() => {
+          this.#syncStickyScroll();
+          this.#scrollRaf = null;
+        });
+      }
+    };
+    this.#scrollWrapper.addEventListener('scroll', this.#scrollHandler, { passive: true });
+
+    let resizeTimer = null;
+    this.#resizeHandler = () => {
+      clearTimeout(resizeTimer);
+      resizeTimer = setTimeout(() => this.#refreshStickyClone(), 150);
+    };
+    window.addEventListener('resize', this.#resizeHandler, { passive: true });
+  }
+
+  /**
+   * Create a cloned thead table inside .jt-sticky-header with matched column widths.
+   */
+  #createStickyClone() {
+    if (!this.#$stickyHeader) return;
+
+    this.#$stickyHeader.empty();
+    this.#clonedTable = null;
+
+    const originalTable = this.#canvas[0].querySelector('.jt-table');
+    const originalThead = originalTable?.querySelector('thead');
+    if (!originalTable || !originalThead) return;
+
+    const clonedTable = originalTable.cloneNode(false);
+    const clonedThead = originalThead.cloneNode(true);
+    clonedThead.querySelectorAll('[id]').forEach((el) => el.removeAttribute('id'));
+    clonedTable.appendChild(clonedThead);
+
+    // Batch reads: collect all widths first
+    const originalThs = originalThead.querySelectorAll('th');
+    const widths = Array.from(originalThs).map((th) => th.getBoundingClientRect().width);
+    const tableWidth = originalTable.getBoundingClientRect().width;
+
+    // Batch writes: apply widths to cloned elements
+    const clonedThs = clonedThead.querySelectorAll('th');
+    clonedThs.forEach((clonedTh, index) => {
+      const w = `${widths[index]}px`;
+      clonedTh.style.width = w;
+      clonedTh.style.minWidth = w;
+      clonedTh.style.maxWidth = w;
+    });
+
+    clonedTable.style.width = `${tableWidth}px`;
+    clonedTable.style.minWidth = `${tableWidth}px`;
+    clonedTable.style.tableLayout = 'fixed';
+
+    this.#$stickyHeader[0].appendChild(clonedTable);
+    this.#clonedTable = clonedTable;
+
+    this.#syncStickyScroll();
+    this.#$stickyHeader.show();
+  }
+
+  /**
+   * Remove the sticky clone and hide the container.
+   */
+  #destroyStickyClone() {
+    if (!this.#$stickyHeader) return;
+    this.#clonedTable = null;
+    this.#$stickyHeader.hide().empty();
+  }
+
+  /**
+   * Sync the cloned header's horizontal position with the scroll wrapper.
+   */
+  #syncStickyScroll() {
+    if (!this.#clonedTable || !this.#scrollWrapper) return;
+    this.#clonedTable.style.transform = `translateX(-${this.#scrollWrapper.scrollLeft}px)`;
+  }
+
+  /**
+   * Re-create the sticky clone if it is currently visible (e.g. after column toggle or resize).
+   */
+  #refreshStickyClone() {
+    if (this.#$stickyHeader && this.#$stickyHeader.is(':visible')) {
+      this.#createStickyClone();
+    }
   }
 }
