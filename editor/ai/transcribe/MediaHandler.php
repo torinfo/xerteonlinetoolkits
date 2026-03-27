@@ -224,7 +224,8 @@ class MediaHandler {
         //Get the correct paths for the yt-dlp/ffmpeg combo
         global $xerte_toolkits_site;
 
-        $ytDlpPath = $xerte_toolkits_site->root_file_path . "yt-dlp/yt-dlp.exe";
+        $ytDlpExe = (stripos(php_uname('s'), 'Windows') === 0) ? 'yt-dlp.exe' : 'yt-dlp';
+        $ytDlpPath = $xerte_toolkits_site->root_file_path . "yt-dlp/" . $ytDlpExe;
         $ffmpegPath = $xerte_toolkits_site->root_file_path . "yt-dlp/bin";
 
         $ytDlpCmd = escapeshellarg($ytDlpPath);
