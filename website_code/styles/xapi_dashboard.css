@@ -89,6 +89,18 @@ button#pageButtonLeft {
   height: 100%;
 }
 
+#print-overview.dashboard {
+  position: static;
+  width: auto !important;
+  height: auto !important;
+  display: block;
+}
+
+#print-overview #journeyData {
+  height: auto;
+  overflow: visible;
+}
+
 .status-indicator{
   height: 100%;
   width: 21px;
@@ -135,17 +147,6 @@ td a{
 .col-widget h5{
   margin-top: .5rem;
   font-size: 0.8rem;
-}
-
-#options-div label{
-  margin-right: 5px;
-  margin-bottom: 0px;
-}
-
-#options-div {
-  width: 100%;
-  background-color: #ededed;
-  border-radius: 5px;
 }
 
 .status-gray{
@@ -325,13 +326,9 @@ th.x-dashboard-interaction {
 }
 
 #journeyData {
-  position: absolute;
-  top: 68px;
-  bottom: 5px;
-  left: 5px;
-  right: 5px;
-  overflow-y: scroll !important;
-  overflow-x: hidden !important;
+  height: 100%;
+  overflow-y: scroll;
+  overflow-x: hidden;
   padding: 0px 30px 20px 25px;
 }
 
@@ -401,6 +398,19 @@ tr.attempt td:first-child {
   height: -moz-calc(100% - 100px) !important;
   height: -webkit-calc(100% - 100px) !important;
   height: calc(100% - 10px) !important;
+  display: flex;
+  flex-direction: column;
+}
+
+.dashboard-header {
+  flex-shrink: 0;
+}
+
+.dashboard-body {
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+  padding: 0;
 }
 
 .dashboard-wrapper{
@@ -503,10 +513,6 @@ td.x-dashboard-interaction
 
 .fa-x-inprogress { content: "\f017"; color: orange; }
 
-.jorneyData-container1{
-  overflow-x: scroll;
-}
-
 #pageButtonRight{
   float:right;
 }
@@ -537,6 +543,10 @@ td.x-dashboard-interaction
 }
 
 #print-overview .jt-sticky-header {
+  display: none !important;
+}
+
+#print-overview .jt-scroll-btn {
   display: none !important;
 }
 
@@ -661,6 +671,60 @@ td.td-center {
   white-space: nowrap;
 }
 
+.jt-table .jt-caret-col {
+  width: 30px;
+  min-width: 30px;
+  max-width: 30px;
+}
+
+.jt-caret {
+  cursor: pointer;
+  background: none;
+  border: none;
+  padding: 0;
+  color: inherit;
+}
+
+.jt-caret:focus {
+  outline: 2px solid #007bff;
+  outline-offset: 2px;
+}
+
+.jt-caret-icon.disabled {
+  color: lightgray;
+  cursor: default;
+}
+
+.jt-table tr.attempt-row {
+  display: none;
+}
+
+.jt-table tr.attempt-row.expanded {
+  display: table-row;
+}
+
+.jt-table tr.attempt-row td {
+  background-color: #f9f9f9;
+  color: #555;
+  font-size: 0.75rem;
+}
+
+.jt-table tr.attempt-row td:first-child {
+  border-left: 3px solid #dee2e6;
+}
+
+.jt-table tr.attempt-row.used-attempt td {
+  background-color: rgba(248, 103, 24, 0.08);
+}
+
+.jt-table tr.attempt-row.used-attempt td:first-child {
+  border-left: 3px solid #f86718;
+}
+
+.jt-table tr.attempt-row.hide {
+  display: none !important;
+}
+
 /* Hide rows outside the current page */
 .session-row.hide {
   display: none;
@@ -673,4 +737,56 @@ td.td-center {
   overflow: hidden;
   display: none;
   background-color: #fff;
+}
+
+.jt-sticky-header table {
+  margin-bottom: 0;
+}
+
+/* Scroll arrow button container */
+.jt-table-container {
+  position: relative;
+}
+
+/* Scroll arrow buttons */
+.jt-scroll-btn {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 5;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  border: none;
+  background-color: #007bff;
+  color: #fff;
+  font-size: 14px;
+  line-height: 32px;
+  text-align: center;
+  padding: 0;
+  cursor: pointer;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+  opacity: 0.85;
+}
+
+.jt-scroll-btn:hover {
+  background-color: #0056b3;
+  opacity: 1;
+}
+
+.jt-scroll-btn:focus {
+  outline: 2px solid #80bdff;
+  outline-offset: 2px;
+}
+
+.jt-scroll-btn-left {
+  left: 4px;
+}
+
+.jt-scroll-btn-right {
+  right: 4px;
+}
+
+.jt-scroll-btn[hidden] {
+  display: none;
 }

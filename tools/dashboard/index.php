@@ -302,6 +302,7 @@ body_scroll handles the calculation of the documents actual height in IE.
 <div class="dashboard-wrapper" id="dashboard-wrapper">
 
     <div class="dashboard" id="dashboard">
+        <div class="dashboard-header">
         <div id="options-div">
             <div class="row dash-row">
                 <div class="dash-col unanonymous-view" >
@@ -332,22 +333,23 @@ body_scroll handles the calculation of the documents actual height in IE.
                     </select>
                 </div>
                 <div class="show-display-options-button">
-                    <button type="button" class="xerte_button_c_no_width"><?php echo INDEX_XAPI_DASHBOARD_DISPLAY_OPTIONS; ?>
+                    <button type="button" class="xerte_button_c_no_width_small"><?php echo INDEX_XAPI_DASHBOARD_DISPLAY_OPTIONS; ?>
                     </button>
                 </div>
                 <div class="show-question-overview-button">
-                    <button type="button" class="xerte_button_c_no_width"><?php echo INDEX_XAPI_DASHBOARD_QUESTION_OVERVIEW; ?>
+                    <button type="button" class="xerte_button_c_no_width_small"><?php echo INDEX_XAPI_DASHBOARD_QUESTION_OVERVIEW; ?>
                     </button>
                 </div>
                 <div class="dashboard-print-button">
-                    <button type="button" class="xerte_button_c_no_width"><?php echo INDEX_XAPI_DASHBOARD_PRINT; ?>
+                    <button type="button" class="xerte_button_c_no_width_small"><?php echo INDEX_XAPI_DASHBOARD_PRINT; ?>
                     </button>
                 </div>
             </div>
         </div>
         <div id="dashboard-title"></div>
-        <div class="jorneyData-container">
-            <div id="journeyData" class="journeyData journey-container"></div>
+        </div>
+        <div class="container-fluid dashboard-body">
+            <div id="journeyData" class="journeyDatas journey-containers"></div>
         </div>
     </div>
 </div>

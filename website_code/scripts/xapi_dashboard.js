@@ -521,7 +521,7 @@ xAPIDashboard.prototype.createJourneyTableSession = async function (div) {
       titlediv = div;
     }
     titlediv.html(
-      '<h3 class="header">' +
+      '<h3 class="my-1">' +
       learningObjects[learningObjectIndex].name +
       "</h3>"
     );
@@ -1313,7 +1313,7 @@ xAPIDashboard.prototype.createJourneyTableSession = async function (div) {
       }
       var w = window.open();
       var htmlHead = $("head").html();
-      var htmlBody = $(".jorneyData-container").html();
+      var htmlBody = $(".dashboard-body").html();
       $(w.document.body).parent().find("head").html(htmlHead);
       $(w.document.body).html(
         "<button id='doprint' type='button' class='xerte_button_c_no_width noprint' onclick='window.print();'>Do print</button><div id='print-overview' class='dashboard'>" +
@@ -1345,7 +1345,10 @@ xAPIDashboard.prototype.createJourneyTableSession = async function (div) {
           $(this).show();
         });
 
-      $(w.document.body).find("#journeyData").css("position", "unset");
+      $(w.document.body).find('#journeyData').css({
+        height: 'auto',
+        overflow: 'visible',
+      });
     });
 
     $(".show-display-options-button").unbind("click");
