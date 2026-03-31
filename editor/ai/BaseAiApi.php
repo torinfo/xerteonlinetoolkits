@@ -399,6 +399,26 @@ abstract class BaseAiApi
 
     public function ai_request($p, $type, $subtype, $context, $baseUrl, $selectedCode, $useCorpus = false, $fileList = null, $restrictCorpusToLo = false){
         $p = $this->cleanArray($p);
+
+        //Add placeholder image; this is only relevant for full LO creation but doesn't interfere with other pages.
+        global $xerte_toolkits_site;
+
+        $placeholderImageChoice = $xerte_toolkits_site->root_file_path . "website_code/images/BackgroundLogin.gif";
+        $placeholderImgTarget = $xerte_toolkits_site->root_file_path . $baseUrl. "media/XertePlaceholder.gif";
+
+        $targetDir = dirname($placeholderImgTarget);
+        if (!is_dir($targetDir)) {
+            mkdir($targetDir, 0777, true);
+        }
+
+        if (!copy($placeholderImageChoice, $placeholderImgTarget)) {
+            throw new Exception("Failed to copy placeholder image to " . $placeholderImgTarget);
+        }
+
+        $placeholderImage = "FileLocation + 'media/XertePlaceholder.gif'";
+
+
+        $p['placeholderImage'] = $placeholderImage;
         try {
             $this->setupLanguageInstructions($selectedCode);
             $managementSettings = get_block_indicators();
@@ -415,7 +435,6 @@ abstract class BaseAiApi
             $payload = $model->get_payload();
 
             if ($useCorpus || $fileList != null || $restrictCorpusToLo) {
-                global $xerte_toolkits_site;
                 $encodingApiKey = $xerte_toolkits_site->{$managementSettings['encoding']['key_name']};
                 $encodingDirectory = $this->prepareURL($baseUrl);
                 $provider = $managementSettings['encoding']['active_vendor'];
@@ -469,13 +488,22 @@ abstract class BaseAiApi
             }
 
             $results = array();
+            //check for any var indicators in response sample and substitute with desired values i.e. placeholder img
+            $responseSample = "";
+            foreach ($model->get_prompt_response_sample() as $prompt_part) {
+                if ($p[$prompt_part] == null) {
+                    $responseSample .= $prompt_part;
+                } else {
+                    $responseSample .= $p[$prompt_part];
+                }
+            }
+            $payload['messages'][1]['content'] = $responseSample;
 
             $results[] = $this->POST_request($prompt, $payload, $model->get_chat_url(), $type);
 
             $answer = $this->parseResponse($results);
 
             $clean_answer = $this->total_clean_machine($answer);
-
             return $clean_answer;
         }
         catch (\Exception $e) {

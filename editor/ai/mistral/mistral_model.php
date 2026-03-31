@@ -58,4 +58,8 @@ class mistral_model {
 	public function get_prompt_list() {
 		return explode(",", $this->defaultPrompt);
 	}
+
+    public function get_prompt_response_sample() {
+        return explode(",", $this->object);
+    }
 }
