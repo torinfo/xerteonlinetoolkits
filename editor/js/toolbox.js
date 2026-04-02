@@ -5964,19 +5964,20 @@ var EDITOR = (function ($, parent) {
 						previewFile(options.label, $(this).closest('tr').find('input')[0].value);
 					})
 					.append($('<i>').addClass('fa').addClass('fa-lg').addClass('fa-search').addClass('xerte-icon')));
-
-                if (vendor_is_available('image','all') || (vendor_is_available('imagegen','all') && hasrole('aiuser'))){
-                    btnHolder.append($('<button>')
-                        .attr('id', 'lightboxbutton_' + options.group)
-                        .attr('title', language.compai.$tooltip)
-                        .attr('type', 'button')
-                        .addClass("xerte_button")
-                        .click({id:id, key:key, name:name, group: options.group}, function(event)
-                        {
-                            triggerRedrawForm("imgSearchAndHelpGroup", key, "", "initialize", event.data.name);
-                        })
-                        .append($('<i>').addClass('fa').addClass('fa-lg').addClass('fa-wand-magic').addClass('xerte-icon')));
-                };
+                if(options?.enableImgSHTool!=="false") {
+                    if (vendor_is_available('image', 'all') || (vendor_is_available('imagegen', 'all') && hasrole('aiuser'))) {
+                        btnHolder.append($('<button>')
+                            .attr('id', 'lightboxbutton_' + options.group)
+                            .attr('title', language.compai.$tooltip)
+                            .attr('type', 'button')
+                            .addClass("xerte_button")
+                            .click({id: id, key: key, name: name, group: options.group}, function (event) {
+                                triggerRedrawForm("imgSearchAndHelpGroup", key, "", "initialize", event.data.name);
+                            })
+                            .append($('<i>').addClass('fa').addClass('fa-lg').addClass('fa-wand-magic').addClass('xerte-icon')));
+                    }
+                    ;
+                }
 
 				html = $('<div>')
 					.attr('id', 'container_' + id)

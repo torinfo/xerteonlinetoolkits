@@ -90,7 +90,7 @@
         <explanation label="This content is generated using AI. Make sure to double-check and adjust!" type="info" optional="true"/>
     </AIGroup>
 	<audioGroup type="group" label="Audio Feedback" optional="true" tooltip="Include an audio player below the written feedback">
-		<audioFeedback label="File" type="media" optional="true" placeholder="Select an audio file"/>
+		<audioFeedback label="File" type="media" optional="true" placeholder="Select an audio file" enableImgSHTool="false"/>
 		<audioTranscript label="Transcript" type="textArea" height="100" defaultValue="" optional="true" tooltip="A transcript button will appear on the audio player when text is added here"/>
 	</audioGroup>
 

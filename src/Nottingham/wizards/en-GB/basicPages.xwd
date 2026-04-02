@@ -3,7 +3,7 @@
 	<resources label="Resource files / links" type="DataGrid" gridTxt="Resources can be URLs, uploaded files or other pages within this resource.&lt;br/&gt;Either enter a URL / upload a file to the resource field or select a page from the Xerte page link drop down menu." columns="4" colWidths="20,15,15,50" editable="1,1,1,1" cellType="textInput,media,pageList,textArea" wysiwyg="false,false,false,true" controls="1" headers="Title,Resource,Xerte Page Link,Description" newRow=",,," defaultValue="|" optional="true" tooltip="A list of additional resources related to the page content"/>
 
 	<narrate type="group" label="Narration" optional="true" tooltip="Add an audio player to the bottom of the page">
-		<narration label="Audio File" type="media" defaultValue="" placeholder="Select an audio file" optional="true"/>
+		<narration label="Audio File" type="media" defaultValue="" placeholder="Select an audio file" optional="true" enableImgSHTool="false"/>
 		<narrationTranscript label="Transcript" type="textArea" height="100" defaultValue="" optional="true" tooltip="A transcript button will be added to the audio bar when transcript text is included"/>    
 		<playNarration label="Auto-Play" type="CheckBox" defaultValue="false" optional="true" tooltip="Automatically play the audio when the page is viewed. Note: some browsers prevent media from auto-playing"/>
 		<narrationNavigate label="Navigate at End" type="CheckBox" defaultValue="false" optional="true" tooltip="Automatically move to the next page when the audio is played to the end"/>
@@ -77,11 +77,11 @@
 		<introType type="ComboBox" label="Content Type" defaultValue="text" options="Text,Image,Video,URL,File" data="text,image,video,url,file" conditionTrigger="true" optional="true" tooltip="The type of content used as an introduction for this page"/>
 		<pageIntro label="Text" type="TextArea" height="100" defaultValue="" condition="introType=='text'||introType==undefined" optional="true"/>
 		<introImg label="Image" type="media" height="100" defaultValue="" condition="introType=='image'" optional="true" placeholder="Select an image"/>
-		<introVideo label="Video" type="media" height="100" defaultValue="" condition="introType=='video'" optional="true" placeholder="Select a video file or enter a URL/embed code"/>
+		<introVideo label="Video" type="media" height="100" defaultValue="" condition="introType=='video'" optional="true" placeholder="Select a video file or enter a URL/embed code" enableImgSHTool="false"/>
 		<introTip label="Description" type="TextInput" defaultValue="" placeholder="Enter a description for accessibility" condition="introType=='image'||introType=='video'" optional="true"/>
 		<introCaption label="Caption" type="TextInput" defaultValue="" wysiwyg="true" placeholder="Enter the caption text" condition="introType=='image'" optional="true" tooltip="Optional: add a caption below the image"/>
 		<introURL label="URL" type="TextInput" defaultValue="" condition="introType=='url'" optional="true" placeholder="Enter a URL"/>
-		<introFile label="File" type="media" height="100" defaultValue="" condition="introType=='file'" optional="true" placeholder="Select a file (e.g. PDF)"/>
+		<introFile label="File" type="media" height="100" defaultValue="" condition="introType=='file'" optional="true" placeholder="Select a file (e.g. PDF)" enableImgSHTool="false"/>
 		<introTitle type="CheckBox" label="Include Title" defaultValue="true" condition="introType=='text'||introType==undefined||introType=='image'" optional="true" tooltip="Include the page title above the introduction"/>
 		<introBtn type="CheckBox" label="Start Button" defaultValue="true" conditionTrigger="true" condition="introType=='text'||introType==undefined||introType=='image'" optional="true" tooltip="Include a 'start' button below the introduction that closes the lightbox when clicked"/>
 		<introBtnTxt label="Start Button Text" type="TextInput" defaultValue="Start" condition="introBtn=='true'&amp;&amp;(introType=='text'||introType==undefined||introType=='image')" wysiwyg="true" optional="true"/>
