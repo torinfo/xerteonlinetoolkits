@@ -12,12 +12,55 @@ table {
   empty-cells: show;
 }
 
-.popover {
-    /* set to 276px in bootstrap.css so override here */
-    max-width: none;
-    max-height: 80vh;
-    /* overflow-y:auto; */
-    overfow: none;
+/* Display options modal */
+.modal .display-options-dialog {
+  max-width: 520px;
+  width: 100%;
+  margin: 6% auto;
+}
+
+.display-options-body {
+  background-color: #eee;
+  padding: 0.75rem;
+}
+
+.display-options-section {
+  background-color: #fff;
+}
+
+.display-options-section-heading {
+  font-size: 0.8rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: #555;
+  margin-bottom: 0.6rem;
+  border-bottom: 1px solid #eee;
+  padding-bottom: 0.35rem;
+}
+
+.display-options-columns-list {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.25rem 1rem;
+  max-height: 220px;
+  overflow-y: auto;
+  border: 1px solid #dee2e6;
+  border-radius: 4px;
+  padding: 0.5rem 0.75rem 0.5rem 1.75rem;
+  background-color: #fafafa;
+}
+
+.display-options-column-item {
+  padding: 2px 0;
+}
+
+.display-options-header {
+  border-left: 3px solid #f86718;
+}
+
+#display-options-modal-page-size {
+  max-width: 120px;
 }
 
 .journeyOverview, .journeyOverviewModal{
@@ -618,6 +661,85 @@ td.x-dashboard-interaction
   html.printing-interaction-overview-modal #interaction-overview-modal canvas {
     width: 100% !important;
     height: auto !important;
+  }
+
+  /* ── Dashboard print styles ──
+   * DOM: body > #dashboard-wrapper > #dashboard > .dashboard-body > #journeyData > #journeyDataNew
+   * Strategy: hide siblings at each level, make ancestors visible/unstyled.
+   */
+  html.printing-dashboard body {
+    overflow: visible !important;
+    background-color: #fff !important;
+  }
+
+  html.printing-dashboard body > *:not(#dashboard-wrapper) {
+    display: none !important;
+  }
+
+  html.printing-dashboard #dashboard-wrapper,
+  html.printing-dashboard #dashboard,
+  html.printing-dashboard .dashboard-body {
+    overflow: visible !important;
+    height: auto !important;
+  }
+
+  html.printing-dashboard #dashboard > *:not(.dashboard-body) {
+    display: none !important;
+  }
+
+  html.printing-dashboard #journeyData {
+    height: auto !important;
+    overflow: visible !important;
+    padding: 0 !important;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+
+  html.printing-dashboard #journeyData > *:not(#journeyDataNew) {
+    display: none !important;
+  }
+
+  /* Show all paginated rows (pagination uses .hide class, not inline styles) */
+  html.printing-dashboard .session-row.summary.hide {
+    display: table-row !important;
+  }
+
+  /* Hide UI-only elements */
+  html.printing-dashboard .jt-sticky-header,
+  html.printing-dashboard .jt-scroll-btn,
+  html.printing-dashboard #jt-page-left,
+  html.printing-dashboard #jt-page-right,
+  html.printing-dashboard #jt-page-info,
+  html.printing-dashboard #testtest,
+  html.printing-dashboard #print-dashboard {
+    display: none !important;
+  }
+
+  /* Remove scroll constraints on journey table */
+  html.printing-dashboard .jt-scroll-wrapper {
+    overflow: visible !important;
+  }
+
+  /* Clean up table appearance */
+  html.printing-dashboard .jt-table-container {
+    box-shadow: none !important;
+  }
+
+  html.printing-dashboard .jt-table th,
+  html.printing-dashboard .jt-table td {
+    white-space: normal;
+  }
+
+  /* Overview statistics: side-by-side layout (reuse modal pattern) */
+  html.printing-dashboard .journeyOverview .row {
+    display: flex !important;
+    flex-wrap: wrap !important;
+  }
+
+  html.printing-dashboard .journeyOverview [class*="col-lg"] {
+    flex: 1 1 0% !important;
+    min-width: 0 !important;
+    max-width: none !important;
   }
 }
 

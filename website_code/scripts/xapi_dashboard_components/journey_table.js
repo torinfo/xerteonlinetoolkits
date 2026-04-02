@@ -110,9 +110,56 @@ export class JourneyTable {
     this.setupModalHandlers();
     this.#setupPaginationHandlers();
     this.#setupAttemptToggleHandlers();
+    this.#applyInitialColumnVisibility();
     this.#updatePagination();
     this.#setupStickyHeader();
     this.#setupScrollButtons();
+    $(document).off('dashboard:pageSizeChanged.journeyTable')
+      .on('dashboard:pageSizeChanged.journeyTable', (e, newPageSize) => {
+        this.updatePageSize(newPageSize);
+      });
+  }
+
+  /**
+   * Update the page size and reset to the first page.
+   *
+   * @param {number} newPageSize - The new page size (-1 means all)
+   */
+  updatePageSize(newPageSize) {
+    this.#pageSize = newPageSize;
+    this.#pageIndex = 0;
+    this.#updatePagination();
+  }
+
+  /**
+   * Apply initial column visibility from saved display options.
+   * Hides columns whose URL is recorded as visible=false in display_options.columns.
+   */
+  #applyInitialColumnVisibility() {
+    let displayOptions;
+    try {
+      displayOptions = JSON.parse(
+        this.#dashboard.data.info.dashboard.display_options || '{}',
+      );
+    } catch (e) {
+      return;
+    }
+    if (!displayOptions.columns || typeof displayOptions.columns !== 'object') return;
+
+    const hiddenSelectors = [];
+    Object.entries(displayOptions.columns).forEach(([url, visible]) => {
+      if (visible !== false) return;
+      const header = $(`.jt-table th[data-interaction-url="${CSS.escape(url)}"]`);
+      if (!header.length) return;
+      const colIndex = header.index() + 1;
+      hiddenSelectors.push(
+        `.jt-table td:nth-child(${colIndex})`,
+        `.jt-table th:nth-child(${colIndex})`,
+      );
+    });
+    if (hiddenSelectors.length > 0) {
+      $(hiddenSelectors.join(',')).hide();
+    }
   }
 
   /**
@@ -211,10 +258,6 @@ export class JourneyTable {
       </div>
       <div class="col-6 text-center align-content-center">
         <span id="jt-page-info"></span>
-        <span class="ml-3">
-          ${XAPI_DASHBOARD_PAGE_SIZE}
-          ${this.#createPageSizeSelect()}
-        </span>
       </div>
       <div class="col-3 text-right">
         ${this.createPagingNextButton()}
@@ -314,7 +357,7 @@ export class JourneyTable {
                 </span>
               </th>`;
           }
-        )
+        );
         $(document).off(`click.journey-${selector}`);
         $(document).on(`click.journey-${selector}`, `#journey-${selector}-icon`, () => {
           $(`.journey-sub-${selector}`).toggle();
@@ -322,7 +365,7 @@ export class JourneyTable {
           this.#refreshStickyClone();
         });
         return `
-          <th id="journey-${selector}" class="text-center align-middle font-weight-normal small">
+          <th id="journey-${selector}" data-interaction-url="${escapeHtmlAttr(interaction.url)}" class="text-center align-middle font-weight-normal small">
             <span
               id="journey-name-${selector}"
               style="cursor: pointer; text-decoration: underline;"
@@ -663,23 +706,6 @@ export class JourneyTable {
   }
 
   /**
-   * @returns The HTML for the page size select dropdown
-   */
-  #createPageSizeSelect() {
-    const sizes = [5, 10, 20, 50, 100];
-    const options = sizes.map((size) => {
-      const selected = size === this.#pageSize ? 'selected' : '';
-      return `<option value="${size}" ${selected}>${size}</option>`;
-    }).join('');
-    const allSelected = this.#pageSize === -1 ? 'selected' : '';
-    return `
-      <select id="jt-page-size">
-        ${options}
-        <option value="-1" ${allSelected}>${XAPI_DASHBOARD_PAGE_SIZE_ALL}</option>
-      </select>`;
-  }
-
-  /**
    * Update pagination: show/hide rows, update page info, enable/disable buttons
    */
   #updatePagination() {
@@ -747,33 +773,6 @@ export class JourneyTable {
       this.#updatePagination();
     });
 
-    const allowedSizes = new Set([5, 10, 20, 50, 100, -1]);
-    $('#jt-page-size').on('change', (e) => {
-      const val = Number($(e.target).val());
-      if (!allowedSizes.has(val)) return;
-      this.#pageSize = val;
-      this.#pageIndex = 0;
-      this.#updatePagination();
-      this.#persistPageSize();
-    });
-  }
-
-  /**
-   * Persist the current page size to the server
-   */
-  #persistPageSize() {
-    const displayOptions = JSON.parse(
-      this.#dashboard.data.info.dashboard.display_options || '{}',
-    );
-    displayOptions.pageSize = this.#pageSize;
-    this.#dashboard.data.info.dashboard.display_options = JSON.stringify(displayOptions);
-    $.post(
-      'website_code/php/xAPI/update_dashboard_display_properties.php',
-      {
-        id: this.#dashboard.data.info.template_id,
-        properties: this.#dashboard.data.info.dashboard.display_options,
-      },
-    );
   }
 
   /**

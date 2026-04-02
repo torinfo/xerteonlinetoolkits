@@ -486,6 +486,25 @@ xAPIDashboard.prototype.createJourneyTableSession = async function (div) {
   // TODO: remove
   containerCanvas.append('<button id="testtest">aaaaaaaa</button>');
 
+  // TODO: remove — temporary print button
+  containerCanvas.append('<button id="print-dashboard">Print Dashboard</button>');
+
+  $('#print-dashboard').on('click', () => {
+    const printClass = 'printing-dashboard';
+    document.documentElement.classList.add(printClass);
+
+    const cleanup = () => {
+      document.documentElement.classList.remove(printClass);
+      clearTimeout(fallbackTimer);
+    };
+
+    // Register listener BEFORE print() — some browsers fire afterprint
+    // synchronously when the dialog closes, so the listener must exist first.
+    window.addEventListener('afterprint', cleanup, { once: true });
+    const fallbackTimer = setTimeout(cleanup, 30000);
+    window.print();
+  });
+
   this.data.state = new DS.GroupedData(this.data.rawData);
 
   await this.drawDashboard(containerCanvas);
@@ -1351,166 +1370,21 @@ xAPIDashboard.prototype.createJourneyTableSession = async function (div) {
       });
     });
 
-    $(".show-display-options-button").unbind("click");
-    $(".show-display-options-button").popover("dispose");
-    $(".show-display-options-button").on("click", function () {
-      if (
-        typeof $(this).data("bs.popover") == "undefined" ||
-        $(this).data("bs.popover") == undefined
-      ) {
-        // Init the popover and show immediately
-        var menu = $(
-          "<div><h5>" + XAPI_DASHBOARD_DISPLAY_COLUMNS + "</h5><ul></ul></div>"
-        );
-        interactions.forEach(function (i) {
-          if (i.type == "page") {
-            header = $(
-              "th[data-interaction-index=" + i.interactionObjectIndex + "]"
-            );
-            isVisible = header.is(":visible");
-            checked = "";
-            if (isVisible) {
-              checked = "checked";
-            }
-            menu
-              .find("ul")
-              .append(
-                "<li><input class='hide-show-column-checkbox' type='checkbox' " +
-                checked +
-                " data-target='" +
-                i.interactionObjectIndex +
-                "'>" +
-                i.name +
-                "</li>"
-              );
-          }
-        });
-
-        menu.append("<h5>" + XAPI_DASHBOARD_DISPLAY_OVERVIEW + "</h5>");
-        menu.append(
-          "<div><label>" +
-          XAPI_DASHBOARD_DISPLAY_OVERVIEW +
-          "</label><input class='hide-show-overview' type='checkbox' checked></div>"
-        );
-        menu.append(
-          "<div><label>" +
-          XAPI_DASHBOARD_DISPLAY_INTERACTION_OVERVIEW +
-          "</label><input class='hide-show-overview-interaction-overview' type='checkbox' checked></div>"
-        );
-        menu.append(
-          "<div><label>" +
-          XAPI_DASHBOARD_PAGE_SIZE +
-          "</label><select id='pageSize'></select></div>"
-        );
-        var pagesizes = [5, 10, 20, 50, 100, XAPI_DASHBOARD_PAGE_SIZE_ALL];
-        var defaultSize = $this.data.pageSize;
-        pagesizes.forEach(function (size) {
-          var selected = "";
-          if (defaultSize == size || (size == "All" && defaultSize == -1)) {
-            selected = "selected";
-          }
-          menu
-            .find("select")
-            .append(
-              "<option " +
-              selected +
-              " value='" +
-              size +
-              "'>" +
-              size +
-              "</option>"
-            );
-        });
-
-        $(".show-display-options-button")
-          .popover({
-            content: menu.html(),
-            html: true,
-            placement: "bottom",
-            trigger: "click",
-            container: $(".show-display-options-button").parent(),
-          })
-          .popover("show");
-
-        $(".show-display-options-button").on("show.bs.popover", function () {
-          return false;
-        });
-
-        // Same for hide, don't let parent execute
-        $(".show-display-options-button").on("hide.bs.popover", function () {
-          return false;
-        });
-
-        //$(".hide-show-column-checkbox").unbind("click");
-        $(".hide-show-column-checkbox").change(function () {
-          var checkbox = $(this);
-          var target = checkbox.data("target");
-          var checked = checkbox.is(":checked");
-          var targetHeader = $("th[data-interaction-index=" + target + "]");
-          var targetIndex = targetHeader.index() + 1;
-          var column = $(
-            ".journeyData td:nth-child(" +
-            targetIndex +
-            "),.journeyData th:nth-child(" +
-            targetIndex +
-            ")"
-          );
-          var subQuestionToggle = targetHeader.find("div");
-          if (checked) {
-            column.show();
-          } else {
-            column.hide();
-          }
-          if (subQuestionToggle.hasClass("icon-show")) {
-            subQuestionToggle.click();
-          }
-          var display_options = JSON.parse(
-            $this.data.info.dashboard.display_options
-          );
-          if (typeof display_options.columns == "undefined") {
-            display_options.columns = [];
-          }
-          display_options.columns[targetIndex - 1] = checked;
-          $this.data.info.dashboard.display_options =
-            JSON.stringify(display_options);
-          $.post(
-            "website_code/php/xAPI/update_dashboard_display_properties.php",
-            {
-              id: $this.data.info.template_id,
-              properties: $this.data.info.dashboard.display_options,
-            },
-            function (data) { }
-          );
-        });
-
-        $(".hide-show-overview").change(function () {
-          $(".journeyOverview").toggle();
-        });
-        $("#pageSize").change(function () {
-          $this.data.pageSize = Number($("#pageSize").val());
-          if (isNaN($this.data.pageSize)) {
-            $this.data.pageSize = -1;
-          }
-          $(".page-button").trigger("click", [true]);
-          var display_options = JSON.parse(
-            $this.data.info.dashboard.display_options
-          );
-          display_options.pageSize = $this.data.pageSize;
-          $this.data.info.dashboard.display_options =
-            JSON.stringify(display_options);
-          $.post(
-            "website_code/php/xAPI/update_dashboard_display_properties.php",
-            {
-              id: $this.data.info.template_id,
-              properties: $this.data.info.dashboard.display_options,
-            },
-            function (data) { }
-          );
-        });
-      } else {
-        $(this).parent().find(".popover").toggle();
-      }
-    });
+    // Display options modal
+    const libDisplayOptionsModal = await import('./xapi_dashboard_components/display_options_modal.js');
+    const displayOptionsModal = new libDisplayOptionsModal.DisplayOptionsModal(
+      $this,
+      interactions,
+      {
+        title: XAPI_DASHBOARD_DISPLAY_OPTIONS,
+        columns: XAPI_DASHBOARD_DISPLAY_COLUMNS,
+        overview: XAPI_DASHBOARD_DISPLAY_OVERVIEW,
+        interactionOverview: XAPI_DASHBOARD_DISPLAY_INTERACTION_OVERVIEW,
+        pageSize: XAPI_DASHBOARD_PAGE_SIZE,
+        pageSizeAll: XAPI_DASHBOARD_PAGE_SIZE_ALL,
+      },
+    );
+    await displayOptionsModal.init();
   }
 };
 

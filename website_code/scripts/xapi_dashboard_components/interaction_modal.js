@@ -124,6 +124,23 @@ export class InteractionModal {
   }
 
   /**
+   * Returns true if the interaction overview section should be shown,
+   * based on the persisted display_options setting.
+   *
+   * @returns {boolean}
+   */
+  #shouldShowInteractionOverview() {
+    try {
+      const displayOptions = JSON.parse(
+        this.#dashboard.data.info.dashboard.display_options || '{}',
+      );
+      return displayOptions.interactionOverview !== false;
+    } catch (e) {
+      return true;
+    }
+  }
+
+  /**
    * Add modal body
    */
   async addModalBody() {
@@ -132,7 +149,9 @@ export class InteractionModal {
     // If this is the overview modal, add the overview component and
     // list all the interactions.
     if (this.#options.overviewModal) {
-      await this.addModalOverview(canvas);
+      if (this.#shouldShowInteractionOverview()) {
+        await this.addModalOverview(canvas);
+      }
       await this.addModalInteractions(canvas);
     } else if (this.#options.singleInteraction) {
       await this.drawInteractionBlock(canvas, this.#options.singleInteraction);
