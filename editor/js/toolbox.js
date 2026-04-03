@@ -3002,15 +3002,20 @@ var EDITOR = (function ($, parent) {
     getComboboxOptionsForVendor = function (type){
         let labels = [];
         let option = [];
+
         if (vendor_options.hasOwnProperty(type)){
             for (let vendor in vendor_options[type]) {
+                if (!vendorHasApiKey(type, vendor)) {
+                    continue;
+                }
+
                 option.push(vendor);
                 labels.push(vendor_options[type][vendor].label);
             }
         } else {
             //type is not in management helper table
             labels.push("No options available");
-            option.push("NaN")
+            option.push("NaN");
         }
         return [labels,option];
     }
