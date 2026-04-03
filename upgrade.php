@@ -1768,3 +1768,73 @@ function upgrade_55()
 
     return $message;
 }
+
+function upgrade_56()
+{
+    $message = "";
+    if (!_table_exists("ai_settings")) {
+        $table = table_by_key('ai_settings');
+
+        $ok = _upgrade_db_query("CREATE TABLE IF NOT EXISTS $table (
+  `id` BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
+  `scope_type` ENUM('global','user') NOT NULL DEFAULT 'global',
+  `scope_id` BIGINT UNSIGNED NOT NULL DEFAULT 0,
+
+  `ai_model` VARCHAR(255) DEFAULT NULL,
+  `reading_level` VARCHAR(255) DEFAULT NULL,
+  `education_level` VARCHAR(255) DEFAULT NULL,
+  `tone_and_style` VARCHAR(255) DEFAULT NULL,
+
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `uniq_scope` (`scope_type`, `scope_id`)
+);");
+
+        $message .= "Creating ai_settings table - ok ? " . ($ok ? 'true' : 'false') . "<br>";
+
+        if ($ok) {
+            $insert_ok = _upgrade_db_query("INSERT INTO $table
+  (`scope_type`, `scope_id`, `ai_model`, `reading_level`, `education_level`, `tone_and_style`)
+VALUES
+  ('global', 0, 'Mistral AI', 'intermediate_b1', 'vocational', 'semi_formal');");
+
+            $message .= "Inserting default global ai_settings row - ok ? " . ($insert_ok ? 'true' : 'false') . "<br>";
+        }
+    } else {
+        $message .= "Table ai_settings already exists - ok ? true<br>";
+    }
+
+    return $message;
+}
+
+function upgrade_57()
+{
+    $message = "";
+    if (!_table_exists("ai_settings_options")) {
+        $table = table_by_key('ai_settings_options');
+
+        $ok = _upgrade_db_query("CREATE TABLE IF NOT EXISTS $table (
+  `id` BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
+  `setting_key` VARCHAR(64) NOT NULL,
+  `option_values` TEXT DEFAULT NULL,
+
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `uniq_setting_key` (`setting_key`)
+);");
+
+        $message .= "Creating ai_settings_options table - ok ? " . ($ok ? 'true' : 'false') . "<br>";
+
+        if ($ok) {
+            $insert_ok = _upgrade_db_query("INSERT INTO $table
+  (`setting_key`, `option_values`) VALUES
+  ('reading_level', 'beginner_a1,beginner_a2,intermediate_b1,intermediate_b2,advanced_c1,advanced_c2'),
+  ('education_level', 'middle_school,high_school,vocational,bachelors,university,masters,phd'),
+  ('tone_and_style', 'formal,semi_formal,informal,active,passive');");
+
+            $message .= "Inserting default ai_settings_options rows - ok ? " . ($insert_ok ? 'true' : 'false') . "<br>";
+        }
+    } else {
+        $message .= "Table ai_settings_options already exists - ok ? true<br>";
+    }
+
+    return $message;
+}

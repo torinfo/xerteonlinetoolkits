@@ -2912,6 +2912,93 @@ var EDITOR = (function ($, parent) {
         setAttributeValue(key, [name], [theme.name]);
     }
 
+    getComboboxOptionsForBaseSetting = function (setting_key){
+        let labels = [];
+        let option = [];
+        let default_value = "";
+
+        if (base_ai_options.hasOwnProperty(setting_key)){
+            for (let i = 0; i < base_ai_options[setting_key].length; i++) {
+                let value = base_ai_options[setting_key][i];
+                let label = value;
+                let section = "";
+                let option_key = value.toUpperCase();
+
+                if (setting_key === "reading_level") {
+                    section = "ReadingLevel";
+                } else if (setting_key === "education_level") {
+                    section = "EducationLevel";
+                } else if (setting_key === "tone_and_style") {
+                    section = "ToneAndStyle";
+                }
+
+                try {
+                    if (
+                        section !== "" &&
+                        language &&
+                        language.assistents &&
+                        language.assistents.AIBaseSettingOptions &&
+                        language.assistents.AIBaseSettingOptions[section] &&
+                        language.assistents.AIBaseSettingOptions[section][option_key] &&
+                        language.assistents.AIBaseSettingOptions[section][option_key].$label
+                    ) {
+                        label = language.assistents.AIBaseSettingOptions[section][option_key].$label;
+                    }
+                } catch (e) {
+                    // fall back to raw db value
+                }
+
+                option.push(value);
+                labels.push(label);
+            }
+
+            // append custom option to preserve existing behaviour
+            option.push("custom");
+
+            try {
+                if (
+                    language &&
+                    language.assistents &&
+                    language.assistents.AIBaseSettingOptions &&
+                    language.assistents.AIBaseSettingOptions.Common &&
+                    language.assistents.AIBaseSettingOptions.Common.CUSTOM &&
+                    language.assistents.AIBaseSettingOptions.Common.CUSTOM.$label
+                ) {
+                    labels.push(language.assistents.AIBaseSettingOptions.Common.CUSTOM.$label);
+                } else {
+                    labels.push("custom");
+                }
+            } catch (e) {
+                labels.push("custom");
+            }
+        } else {
+            option.push("NaN");
+
+            try {
+                if (
+                    language &&
+                    language.assistents &&
+                    language.assistents.AIBaseSettingOptions &&
+                    language.assistents.AIBaseSettingOptions.Common &&
+                    language.assistents.AIBaseSettingOptions.Common.NO_OPTIONS_AVAILABLE &&
+                    language.assistents.AIBaseSettingOptions.Common.NO_OPTIONS_AVAILABLE.$label
+                ) {
+                    labels.push(language.assistents.AIBaseSettingOptions.Common.NO_OPTIONS_AVAILABLE.$label);
+                } else {
+                    labels.push("No options available");
+                }
+            } catch (e) {
+                labels.push("No options available");
+            }
+        }
+
+        if (base_ai_defaults.hasOwnProperty(setting_key)) {
+            default_value = base_ai_defaults[setting_key];
+        }
+
+        return [labels, option, default_value];
+    }
+
     getComboboxOptionsForVendor = function (type){
         let labels = [];
         let option = [];
@@ -5090,9 +5177,13 @@ var EDITOR = (function ($, parent) {
             case 'combobox_image':
             case 'combobox_imagegen':
             case 'combobox_ai':
+            case 'combobox_base_settings_rl': //ai base settings, reading level
+            case 'combobox_base_settings_el': //education level and
+            case 'combobox_base_settings_ts': //tone and style.
             case 'combobox':
-				var id = 'select_' + form_id_offset;
-				form_id_offset++;
+                var id = 'select_' + form_id_offset;
+                form_id_offset++;
+
                 if (options.type.toLowerCase() === 'combobox') {
                     var s_options = options.options.split(',');
                     for (var i = 0; i < s_options.length; i++) {
@@ -5104,6 +5195,30 @@ var EDITOR = (function ($, parent) {
                     } else {
                         s_data = s_options;
                     }
+                } else if (options.type.toLowerCase() === 'combobox_base_settings_rl') {
+                    let base_setting_options = getComboboxOptionsForBaseSetting('reading_level');
+                    s_options = base_setting_options[0];
+                    s_data = base_setting_options[1];
+
+                    if (value === '' && base_setting_options[2] !== '') {
+                        value = base_setting_options[2];
+                    }
+                } else if (options.type.toLowerCase() === 'combobox_base_settings_el') {
+                    let base_setting_options = getComboboxOptionsForBaseSetting('education_level');
+                    s_options = base_setting_options[0];
+                    s_data = base_setting_options[1];
+
+                    if (value === '' && base_setting_options[2] !== '') {
+                        value = base_setting_options[2];
+                    }
+                } else if (options.type.toLowerCase() === 'combobox_base_settings_ts') {
+                    let base_setting_options = getComboboxOptionsForBaseSetting('tone_and_style');
+                    s_options = base_setting_options[0];
+                    s_data = base_setting_options[1];
+
+                    if (value === '' && base_setting_options[2] !== '') {
+                        value = base_setting_options[2];
+                    }
                 } else {
                     let vendor = options.type.split("_");
                     let vendor_options = getComboboxOptionsForVendor(vendor.length >= 2 ? vendor[1] : "");
@@ -5111,11 +5226,11 @@ var EDITOR = (function ($, parent) {
                     s_data = vendor_options[1];
                 }
 
-				html = $('<select>')
-					.attr('id', id)
+                html = $('<select>')
+                    .attr('id', id)
                     .attr('name', name)
-					.change({id:id, key:key, name:name, group:options.group ,trigger:conditionTrigger}, function(event)
-					{
+                    .change({id:id, key:key, name:name, group:options.group ,trigger:conditionTrigger}, function(event)
+                    {
                         //store data in xml
                         selectChanged(event.data.id, event.data.key, event.data.name, this.value, this);
                         if (event.data.trigger)
@@ -5128,24 +5243,24 @@ var EDITOR = (function ($, parent) {
                                 triggerRedrawForm(event.data.group, event.data.key, "", "redraw");
                             }
                         }
-					});
+                    });
 
                 if (value == '') {
-					html.append($('<option>').attr('value', '').prop('selected', true));
-				}
-				for (var i=0; i<s_options.length; i++) {
-					var option = $('<option>')
-						.attr('value', s_data[i]);
-					if (s_data[i]==value) {
-						option.prop('selected', true);
-					}
-					option.append(s_options[i]);
-					html.append(option);
-					if (value == '' && html.find('option:selected').index() > 0) {
-						html.find(option).eq(0).remove();
-					}
-				}
-				break;
+                    html.append($('<option>').attr('value', '').prop('selected', true));
+                }
+                for (var i=0; i<s_options.length; i++) {
+                    var option = $('<option>')
+                        .attr('value', s_data[i]);
+                    if (s_data[i]==value) {
+                        option.prop('selected', true);
+                    }
+                    option.append(s_options[i]);
+                    html.append(option);
+                    if (value == '' && html.find('option:selected').index() > 0) {
+                        html.find(option).eq(0).remove();
+                    }
+                }
+                break;
 			case 'text':
 			case 'script':
 			case 'html':

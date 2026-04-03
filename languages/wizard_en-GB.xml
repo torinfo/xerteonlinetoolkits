@@ -252,7 +252,7 @@
 		<Info label = "Warning: This will overwrite the current table, are you sure?"> </Info>
 		<Info2 label = "Warning: This will add the new table to the current table, are you sure? Please note that there might be duplicate entries after merge."> </Info2>
 		<mergeOld label = "Keep the old table when importing a CSV file:"/>
-	</UploadCSV>>
+	</UploadCSV>
 	<imageSelection>
 	    <title>Select every image you wish to keep, then press 'keep'. </title>
 		<keepButtonText>Keep</keepButtonText>
@@ -314,6 +314,40 @@
 			<QFConfirmRequest>The specified nodes will be automatically generated with their default values. Proceed with request?</QFConfirmRequest>
 			<QFError>Something went wrong. Please try using the quick fill feature again.</QFError>
 		</quickfill>
+		<AIBaseSettingOptions>
+			<ReadingLevel>
+				<BEGINNER_A1 label="Beginner A1"/>
+				<BEGINNER_A2 label="Beginner A2"/>
+				<INTERMEDIATE_B1 label="Intermediate B1"/>
+				<INTERMEDIATE_B2 label="Intermediate B2"/>
+				<ADVANCED_C1 label="Advanced C1"/>
+				<ADVANCED_C2 label="Advanced C2"/>
+			</ReadingLevel>
+
+			<EducationLevel>
+				<MIDDLE_SCHOOL label="Middle School"/>
+				<HIGH_SCHOOL label="High School"/>
+				<VOCATIONAL label="Vocational"/>
+				<BACHELORS label="Bachelors"/>
+				<UNIVERSITY label="University"/>
+				<MASTERS label="Masters"/>
+				<PHD label="PhD"/>
+			</EducationLevel>
+
+			<ToneAndStyle>
+				<FORMAL label="Formal"/>
+				<SEMI_FORMAL label="Semi-formal"/>
+				<INFORMAL label="Informal"/>
+				<ACTIVE label="Active"/>
+				<PASSIVE label="Passive"/>
+				<CUSTOM label="Custom"/>
+			</ToneAndStyle>
+
+			<Common>
+				<CUSTOM label="Custom"/>
+				<NO_OPTIONS_AVAILABLE label="No options available"/>
+			</Common>
+		</AIBaseSettingOptions>
 	</assistents>
 	<lightbox>
 		<settingsButton>Open Settings</settingsButton>
