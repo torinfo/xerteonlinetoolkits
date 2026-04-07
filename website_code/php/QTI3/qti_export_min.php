@@ -519,7 +519,11 @@ function export_xerte_lo_to_qti_folder_mcq_only(
                 }
 
                 $src = rtrim($loMediaDir, "/\\") . DIRECTORY_SEPARATOR . $fn;
-                $itemMediaSourcePaths[] = $src;
+                $realSrc = realpath($src);
+                if ($realSrc === false || !is_readable($realSrc)) {
+                    throw new RuntimeException("Referenced media file not readable for builder: $src");
+                }
+                $itemMediaSourcePaths[] = $realSrc;
                 $dst = $workDir . DIRECTORY_SEPARATOR . 'resources' . DIRECTORY_SEPARATOR . $fn;
 
                 if (!is_file($src)) {
