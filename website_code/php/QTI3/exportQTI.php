@@ -8,6 +8,8 @@ require_once(__DIR__ . "/qti_service.php"); // (NEW) QTI client for validation +
 
 require_once(__DIR__ . "/../template_status.php");
 
+global $xerte_toolkits_site;
+
 $prefix = $xerte_toolkits_site->database_table_prefix;
 
 // Input and permission check wrappers
@@ -181,12 +183,12 @@ try {
     //$qtiPackage = $qtiClient->getQtiPackageBuilder()->buildForTest($test, $items);
 
     $oldCwd = getcwd();
-    chdir($baseDir);
+    //chdir($baseDir);
 
     try {
         $qtiPackage = $qtiClient->getQtiPackageBuilder()->buildForTest($test, $items);
     } finally {
-        chdir($oldCwd);
+        //chdir($oldCwd);
     }
 
 // Optional: still check test is buildable from package

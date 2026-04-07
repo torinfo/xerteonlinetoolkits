@@ -182,7 +182,8 @@ function qti_write_item_mcq(
     array $choices,
     array $correctIds,
     string $lang = 'en',
-    array $mediaFilenames = []
+    //array $mediaFilenames = []
+    array $itemMediaSourcePaths = []
 ): void {
     $doc = new DOMDocument('1.0', 'UTF-8');
     $doc->formatOutput = true;
@@ -253,9 +254,11 @@ function qti_write_item_mcq(
     qti_append_xerte_prompt_html($doc, $prompt, $promptHtml);
 
     // If there are images, append <img src="resources/FILENAME" />
-    foreach ($mediaFilenames as $fn) {
+    //foreach ($mediaFilenames as $fn) {
+    foreach ($itemMediaSourcePaths as $srcPath) {
         $img = $doc->createElement('img');
-        $img->setAttribute('src', 'resources/' . $fn);
+        //$img->setAttribute('src', 'resources/' . $fn);
+        $img->setAttribute('src', $srcPath);
         $img->setAttribute('alt', '');
         $prompt->appendChild($doc->createTextNode(' '));
         $prompt->appendChild($img);
@@ -479,6 +482,7 @@ function export_xerte_lo_to_qti_folder_mcq_only(
 
     $itemIds = [];
     $itemMediaMap = [];
+    $itemMediaSourcePaths = [];
 
     $i = 1;
     foreach ($mcqs as $mcq) {
@@ -515,6 +519,7 @@ function export_xerte_lo_to_qti_folder_mcq_only(
                 }
 
                 $src = rtrim($loMediaDir, "/\\") . DIRECTORY_SEPARATOR . $fn;
+                $itemMediaSourcePaths[] = $src;
                 $dst = $workDir . DIRECTORY_SEPARATOR . 'resources' . DIRECTORY_SEPARATOR . $fn;
 
                 if (!is_file($src)) {
@@ -541,7 +546,8 @@ function export_xerte_lo_to_qti_folder_mcq_only(
             $choices,
             $correctIds,
             $lang,
-            $itemMediaMap[$itemId]
+            //$itemMediaMap[$itemId],
+            $itemMediaSourcePaths
         );
     }
 
