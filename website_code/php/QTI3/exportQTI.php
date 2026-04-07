@@ -32,6 +32,15 @@ function require_export_permission(int $template_id): void {
     }
 }
 
+function collect_generated_item_ids(string $pkgDir): array {
+    $itemIds = [];
+    foreach (glob($pkgDir . DIRECTORY_SEPARATOR . 'ITEM*.xml') as $path) {
+        $itemIds[] = basename($path, '.xml');
+    }
+    sort($itemIds, SORT_NATURAL);
+    return $itemIds;
+}
+
 //Loading a template for processing
 function load_template_row_or_404(int $template_id, string $prefix): array {
     $query = "select {$prefix}templatedetails.template_name, {$prefix}templaterights.template_id,
@@ -123,6 +132,78 @@ try {
         'nl-NL'
     );
 
+    $qtiClient = qti_get_client($baseDir);
+
+    if (!file_exists($pkgDir . '/assessmentTest.xml')) {
+        throw new Exception("Missing assessmentTest.xml");
+    }
+
+    $itemIds = collect_generated_item_ids($pkgDir);
+    if (count($itemIds) === 0) {
+        throw new Exception("No generated item XML files found");
+    }
+
+// Parse test XML into library model
+    $testDoc = new DOMDocument();
+    $testDoc->preserveWhiteSpace = false;
+    if (!$testDoc->load($pkgDir . '/assessmentTest.xml')) {
+        throw new Exception("Failed to load assessmentTest.xml");
+    }
+    $test = $qtiClient->getAssessmentTestParser()->parse($testDoc->documentElement);
+
+// Parse item XMLs into library models
+    $items = [];
+    foreach ($itemIds as $itemId) {
+        $itemPath = $pkgDir . DIRECTORY_SEPARATOR . $itemId . '.xml';
+
+        $itemDoc = new DOMDocument();
+        $itemDoc->preserveWhiteSpace = false;
+        if (!$itemDoc->load($itemPath)) {
+            throw new Exception("Failed to load {$itemId}.xml");
+        }
+
+        $items[] = $qtiClient->getAssessmentItemParser()->parse($itemDoc->documentElement);;
+    }
+
+    $rootResourcesDir = $baseDir . DIRECTORY_SEPARATOR . 'resources';
+    if (!is_dir($rootResourcesDir)) {
+        mkdir($rootResourcesDir, 0700, true);
+    }
+
+    foreach (glob($pkgDir . DIRECTORY_SEPARATOR . 'resources' . DIRECTORY_SEPARATOR . '*') as $src) {
+        $dst = $rootResourcesDir . DIRECTORY_SEPARATOR . basename($src);
+        if (!is_file($dst)) {
+            copy($src, $dst);
+        }
+    }
+
+// Build package from parsed models
+    //$qtiPackage = $qtiClient->getQtiPackageBuilder()->buildForTest($test, $items);
+
+    $oldCwd = getcwd();
+    chdir($baseDir);
+
+    try {
+        $qtiPackage = $qtiClient->getQtiPackageBuilder()->buildForTest($test, $items);
+    } finally {
+        chdir($oldCwd);
+    }
+
+// Optional: still check test is buildable from package
+    $qtiClient->getTestBuilder()->buildFromPackage($qtiPackage);
+
+    $validator = $qtiClient->getQtiPackageValidator();
+    $errors = $validator->validate($qtiPackage);
+
+// You may want to fail fast here during development
+    if ($errors->count() > 0) {
+        throw new Exception("QTI validation errors:\n" . implode("\n", iterator_to_array($errors)));
+    }
+
+    $writer = $qtiClient->getZipPackageFactory()->getWriter($zipPath);
+    $writer->write($qtiPackage);
+
+    /*
 // Use library to read (validate) folder
     $qtiClient = qti_get_client($baseDir); // client root is the base dir
 
@@ -141,8 +222,8 @@ try {
     $errors = $validator->validate($qtiPackage);
 
 // Use library to write zip from package
-    $writer = $qtiClient->getZipPackageFactory()->getWriter($zipPath);
-    $writer->write($qtiPackage);
+    $writer = $qtiClient->getZipPackageFactory()->getWriter($zipPath);*/
+    //$writer->write($qtiPackage);
 
     $downloadName = safe_download_name((string)$row['template_name'], $template_id);
 
