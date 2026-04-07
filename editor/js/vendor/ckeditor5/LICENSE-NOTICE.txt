@@ -1,0 +1,17 @@
+CKEditor 5 third-party notice
+=============================
+
+The file xerte-editor.bundle.js in this directory is produced from CKEditor 5
+open-source packages published by CKSource. Those packages are licensed under
+the GNU General Public License, version 2 or later (GPL-2.0+).
+
+Xerte Online Toolkits as a whole is licensed under the Apache License, Version
+2.0. Combining and distributing GPL-licensed CKEditor 5 with Apache-2.0 code
+may have licensing implications for your deployment.
+
+Organisations should:
+  - Review GPL compatibility with their distribution model, or
+  - Obtain a commercial CKEditor 5 license from CKSource if required.
+
+Source for the bundle build lives under editor/ckeditor5-build/ (see package.json
+for exact package versions and the GPL applies to those dependencies).

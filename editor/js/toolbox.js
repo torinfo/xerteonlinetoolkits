@@ -1,4 +1,4 @@
-/**
+    /**
  * Licensed to The Apereo Foundation under one or more contributor license
  * agreements. See the NOTICE file distributed with this work for
  * additional information regarding copyright ownership.
@@ -2159,6 +2159,7 @@ var EDITOR = (function ($, parent) {
 						[ 'RemoveFormat'],
                         [ 'Sourcedialog' ]
                     ],
+                    inlineEditor: true,
                     filebrowserBrowseUrl : 'editor/elfinder/browse.php?mode=cke&type=media&uploadDir='+rlopathvariable+'&uploadURL='+rlourlvariable.substr(0, rlourlvariable.length-1),
                     filebrowserImageBrowseUrl : 'editor/elfinder/browse.php?mode=cke&type=image&uploadDir='+rlopathvariable+'&uploadURL='+rlourlvariable.substr(0, rlourlvariable.length-1),
                     filebrowserFlashBrowseUrl : 'editor/elfinder/browse.php?mode=cke&type=flash&uploadDir='+rlopathvariable+'&uploadURL='+rlourlvariable.substr(0, rlourlvariable.length-1),
@@ -6920,17 +6921,19 @@ var EDITOR = (function ($, parent) {
 	};
 
 
-	CKEDITOR.on('dialogDefinition', function(event) {
-		try {
-			var dialogName = event.data.name;
-			var dialogDefinition = event.data.definition;
-			if (dialogName == 'link') {
-				var informationTab = dialogDefinition.getContents('target');
-				var targetField = informationTab.get('linkTargetType');
-				targetField['default'] = '_blank';
-			}
-		} catch(e) {};
-	});
+	if (typeof CKEDITOR !== 'undefined' && CKEDITOR && typeof CKEDITOR.on === 'function') {
+		CKEDITOR.on('dialogDefinition', function(event) {
+			try {
+				var dialogName = event.data.name;
+				var dialogDefinition = event.data.definition;
+				if (dialogName == 'link') {
+					var informationTab = dialogDefinition.getContents('target');
+					var targetField = informationTab.get('linkTargetType');
+					targetField['default'] = '_blank';
+				}
+			} catch(e) {};
+		});
+	}
 
     // Add the functions that need to be public
     my.getExtraTreeIcon = getExtraTreeIcon;

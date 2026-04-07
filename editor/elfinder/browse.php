@@ -65,6 +65,8 @@ $mode = 'standalone';
 if (isset($_REQUEST['mode']) && x_clean_input($_REQUEST['mode'])=='cke') {
     $mode = 'cke';
     $funcNum = x_clean_input($_REQUEST['CKEditorFuncNum']);
+} else if (isset($_REQUEST['mode']) && x_clean_input($_REQUEST['mode'])=='cke5') {
+    $mode = 'cke5';
 }
 
 $lang = "en";
@@ -202,6 +204,18 @@ if (isset($_REQUEST['loc'])) {
                 ?>
                     getFileCallback : function(file) {
                         window.opener.CKEDITOR.tools.callFunction(funcNum, file.url);
+                        window.close();
+                    }
+                <?php
+                }
+                else if ($mode=='cke5')
+                {
+                ?>
+                    getFileCallback : function(file) {
+                        if (window.opener && typeof window.opener.__xerteCke5FilePickerResolve === 'function') {
+                            window.opener.__xerteCke5FilePickerResolve(file.url);
+                            window.opener.__xerteCke5FilePickerResolve = null;
+                        }
                         window.close();
                     }
                 <?php
