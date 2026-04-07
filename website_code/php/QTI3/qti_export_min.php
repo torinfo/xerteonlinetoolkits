@@ -119,7 +119,7 @@ function qti_write_assessment_test(string $path, array $itemIds, string $title =
     $doc = new DOMDocument('1.0', 'UTF-8');
     $doc->formatOutput = true;
 
-    $ns = "http://www.imsglobal.org/xsd/imsqti_assessmenttest_v3p0";
+    $ns = "http://www.imsglobal.org/xsd/imsqtiasi_v3p0";
     $xsi = "http://www.w3.org/2001/XMLSchema-instance";
 
     $root = $doc->createElementNS($ns, 'qti-assessment-test');
@@ -128,7 +128,7 @@ function qti_write_assessment_test(string $path, array $itemIds, string $title =
     $root->setAttribute('xml:lang', $lang);
     $root->setAttributeNS('http://www.w3.org/2000/xmlns/' ,'xmlns:xsi', $xsi);
     $root->setAttributeNS($xsi, 'xsi:schemaLocation',
-        $ns . ' https://purl.imsglobal.org/spec/qti/v3p0/schema/xsd/imsqti_asst_v3p0_v1p0.xsd'
+        $ns . ' https://purl.imsglobal.org/spec/qti/v3p0/schema/xsd/imsqti_asiv3p0_v1p0.xsd'
     );
 
     // Minimal SCORE/MAXSCORE declarations which are nominally optional but common enough
@@ -242,7 +242,8 @@ function qti_write_item_mcq(
     $ci = $doc->createElement('qti-choice-interaction');
     $ci->setAttribute('response-identifier', 'RESPONSE');
     $ci->setAttribute('shuffle', 'false');
-    $ci->setAttribute('max-choices', $isMultiple ? (string)count($choices) : '1');
+    $maxChoices = $isMultiple ? max(1, count($correctIds)) : 1;
+    $ci->setAttribute('max-choices', (string)$maxChoices);
 
     $prompt = $doc->createElement('qti-prompt');
 
@@ -275,8 +276,8 @@ function qti_write_item_mcq(
 
     // response processing:
     // - include the simple "match correct" processing for single-answer items
-    // - for multiple-answer items, we skip processing (still exports correctness via correctResponse)
-    if (!$isMultiple) {
+    // - for multiple-answer items, we skip processing (still exports correctness via correctResponse) //TODO: skipping this for now
+    //if (!$isMultiple) {
         $rp = $doc->createElement('qti-response-processing');
         $cond = $doc->createElement('qti-response-condition');
 
@@ -309,80 +310,115 @@ function qti_write_item_mcq(
         $cond->appendChild($rel);
         $rp->appendChild($cond);
         $root->appendChild($rp);
-    }
+    //}
 
     $doc->appendChild($root);
     qti_export_write_file($path, $doc->saveXML());
 }
 
-function qti_write_imsmanifest(string $path, array $itemIds, array $mediaFiles, string $testHref = 'assessmentTest.xml'): void
-{
+function qti_write_imsmanifest(
+    string $path,
+    array $itemIds,
+    array $itemMediaMap,
+    string $testHref = 'assessmentTest.xml'
+): void {
     $doc = new DOMDocument('1.0', 'UTF-8');
     $doc->formatOutput = true;
 
-    $ns = "http://www.imsglobal.org/xsd/imscp_v1p1";
-    $xsi = "http://www.w3.org/2001/XMLSchema-instance";
+    $ns  = 'http://www.imsglobal.org/xsd/qti/qtiv3p0/imscp_v1p1';
+    $xsi = 'http://www.w3.org/2001/XMLSchema-instance';
 
     $root = $doc->createElementNS($ns, 'manifest');
     $root->setAttribute('identifier', 'MANIFEST1');
     $root->setAttributeNS('http://www.w3.org/2000/xmlns/', 'xmlns:xsi', $xsi);
-    $root->setAttributeNS($xsi, 'xsi:schemaLocation',
-        $ns . ' http://www.imsglobal.org/xsd/imscp_v1p1.xsd'
+    $root->setAttributeNS(
+        $xsi,
+        'xsi:schemaLocation',
+        'https://purl.imsglobal.org/spec/qti/v3p0/schema/xsd/imsqti_asiv3p0_v1p0.xsd ' .
+        'https://purl.imsglobal.org/spec/md/v1p3/schema/xsd/imsmd_loose_v1p3p2.xsd ' .
+        $ns . ' ' .
+        'https://purl.imsglobal.org/spec/qti/v3p0/schema/xsd/imsqtiv3p0_imscpv1p2_v1p0.xsd'
     );
 
-    $orgs = $doc->createElement('organizations');
-    $orgs->setAttribute('default', 'ORG1');
-    $org = $doc->createElement('organization');
-    $org->setAttribute('identifier', 'ORG1');
+    $metadata = $doc->createElement('metadata');
+    $metadata->appendChild($doc->createElement('schema', 'QTI Package'));
+    $metadata->appendChild($doc->createElement('schemaversion', '3.0.0'));
+    $root->appendChild($metadata);
 
-    $item = $doc->createElement('item');
-    $item->setAttribute('identifier', 'TEST_ITEM');
-    $item->setAttribute('identifierref', 'RES_TEST');
-    $title = $doc->createElement('title', 'Exported Test');
-
-    $item->appendChild($title);
-    $org->appendChild($item);
-    $orgs->appendChild($org);
-    $root->appendChild($orgs);
+    $root->appendChild($doc->createElement('organizations'));
 
     $resources = $doc->createElement('resources');
 
-    // Test resource
+    // assign RESOURCE001, RESOURCE002, ... per distinct media file
+    $mediaResourceIds = [];
+    $mediaCounter = 1;
+
+    foreach ($itemMediaMap as $itemId => $mediaFiles) {
+        foreach ($mediaFiles as $fn) {
+            if (!isset($mediaResourceIds[$fn])) {
+                $mediaResourceIds[$fn] = 'RESOURCE' . str_pad((string)$mediaCounter, 3, '0', STR_PAD_LEFT);
+                $mediaCounter++;
+            }
+        }
+    }
+
+    // TEST resource
     $resTest = $doc->createElement('resource');
-    $resTest->setAttribute('identifier', 'RES_TEST');
+    $resTest->setAttribute('identifier', 'TEST');
     $resTest->setAttribute('type', 'imsqti_test_xmlv3p0');
     $resTest->setAttribute('href', $testHref);
-    $resTest->appendChild($doc->createElement('file'))->setAttribute('href', $testHref);
+    $resTest->appendChild($doc->createElement('metadata'));
+
+    $file = $doc->createElement('file');
+    $file->setAttribute('href', $testHref);
+    $resTest->appendChild($file);
+
+    foreach ($itemIds as $itemId) {
+        $dep = $doc->createElement('dependency');
+        $dep->setAttribute('identifierref', $itemId);
+        $resTest->appendChild($dep);
+    }
+
     $resources->appendChild($resTest);
 
-    // Item resources
-    foreach ($itemIds as $id) {
-        $href = $id . '.xml';
+    // item resources
+    foreach ($itemIds as $itemId) {
+        $href = $itemId . '.xml';
+
         $res = $doc->createElement('resource');
-        $res->setAttribute('identifier', 'RES_' . $id);
+        $res->setAttribute('identifier', $itemId);
         $res->setAttribute('type', 'imsqti_item_xmlv3p0');
         $res->setAttribute('href', $href);
+        $res->appendChild($doc->createElement('metadata'));
+
+        $file = $doc->createElement('file');
+        $file->setAttribute('href', $href);
+        $res->appendChild($file);
+
+        foreach (($itemMediaMap[$itemId] ?? []) as $fn) {
+            $dep = $doc->createElement('dependency');
+            $dep->setAttribute('identifierref', $mediaResourceIds[$fn]);
+            $res->appendChild($dep);
+        }
+
+        $resources->appendChild($res);
+    }
+
+    // media resources
+    foreach ($mediaResourceIds as $fn => $resourceId) {
+        $href = 'resources/' . $fn;
+
+        $res = $doc->createElement('resource');
+        $res->setAttribute('identifier', $resourceId);
+        $res->setAttribute('type', 'webcontent');
+        $res->setAttribute('href', $href);
+        $res->appendChild($doc->createElement('metadata'));
 
         $file = $doc->createElement('file');
         $file->setAttribute('href', $href);
         $res->appendChild($file);
 
         $resources->appendChild($res);
-    }
-
-    // Media resource (simple: one bucket)
-    if (count($mediaFiles) > 0) {
-        $resMedia = $doc->createElement('resource');
-        $resMedia->setAttribute('identifier', 'RES_MEDIA');
-        $resMedia->setAttribute('type', 'webcontent');
-
-        foreach ($mediaFiles as $fn) {
-            $file = $doc->createElement('file');
-            $file->setAttribute('href', 'resources/' . $fn);
-            $resMedia->appendChild($file);
-        }
-
-        $resources->appendChild($resMedia);
     }
 
     $root->appendChild($resources);
@@ -429,7 +465,6 @@ function qti_append_xerte_prompt_html(DOMDocument $doc, DOMElement $qtiPrompt, s
     }
 }
 
-// Build QTI folder only and don't zip yet - Used for library validation + writing the final zip via the QTI library
 function export_xerte_lo_to_qti_folder_mcq_only(
     string $dataXmlPath,
     string $loMediaDir,
@@ -443,7 +478,7 @@ function export_xerte_lo_to_qti_folder_mcq_only(
     $mcqs = xerte_read_mcqs_from_data_xml($dataXmlPath);
 
     $itemIds = [];
-    $allMedia = [];
+    $itemMediaMap = [];
 
     $i = 1;
     foreach ($mcqs as $mcq) {
@@ -454,32 +489,51 @@ function export_xerte_lo_to_qti_folder_mcq_only(
         $choices = [];
         $correctIds = [];
         $n = 1;
-        foreach ($mcq['choices'] as $opt) {
-            $cid = 'CHOICE' . $n++;
-            $choices[] = ['id' => $cid, 'text' => (string)$opt['text']];
-            if (!empty($opt['correct'])) $correctIds[] = $cid;
+
+        foreach (($mcq['choices'] ?? []) as $opt) {
+            $choiceId = 'CHOICE' . $n++;
+
+            $choices[] = [
+                'id'   => $choiceId,
+                'text' => (string)($opt['text'] ?? ''),
+            ];
+
+            if (!empty($opt['correct'])) {
+                $correctIds[] = $choiceId;
+            }
         }
 
-        // Media: copy LO/media/FN into package/resources/FN
+        // Media used by this specific item
+        $itemMedia = [];
         $mediaFiles = $mcq['media'] ?? [];
+
         if (is_array($mediaFiles)) {
             foreach ($mediaFiles as $fn) {
                 $fn = basename(str_replace('\\', '/', (string)$fn));
-                if ($fn === '') continue;
+                if ($fn === '') {
+                    continue;
+                }
 
                 $src = rtrim($loMediaDir, "/\\") . DIRECTORY_SEPARATOR . $fn;
                 $dst = $workDir . DIRECTORY_SEPARATOR . 'resources' . DIRECTORY_SEPARATOR . $fn;
 
-                if (is_file($src) && !is_file($dst)) {
+                if (!is_file($src)) {
+                    throw new RuntimeException("Referenced media file not found: $src");
+                }
+
+                if (!is_file($dst)) {
                     if (!copy($src, $dst)) {
                         throw new RuntimeException("Failed copying media: $src -> $dst");
                     }
                 }
-                $allMedia[$fn] = true;
+
+                $itemMedia[$fn] = true;
             }
         }
 
-        // Write item
+        $itemMediaMap[$itemId] = array_keys($itemMedia);
+
+        // Write item XML
         qti_write_item_mcq(
             $workDir . DIRECTORY_SEPARATOR . $itemId . '.xml',
             $itemId,
@@ -487,11 +541,23 @@ function export_xerte_lo_to_qti_folder_mcq_only(
             $choices,
             $correctIds,
             $lang,
-            is_array($mediaFiles) ? $mediaFiles : []
+            $itemMediaMap[$itemId]
         );
     }
 
-    // Write test + manifest
-    qti_write_assessment_test($workDir . DIRECTORY_SEPARATOR . 'assessmentTest.xml', $itemIds, $title, $lang);
-    qti_write_imsmanifest($workDir . DIRECTORY_SEPARATOR . 'imsmanifest.xml', $itemIds, array_keys($allMedia), 'assessmentTest.xml');
+    // Write test XML
+    qti_write_assessment_test(
+        $workDir . DIRECTORY_SEPARATOR . 'assessmentTest.xml',
+        $itemIds,
+        $title,
+        $lang
+    );
+
+    // Write manifest XML using item -> media dependency map
+    qti_write_imsmanifest(
+        $workDir . DIRECTORY_SEPARATOR . 'imsmanifest.xml',
+        $itemIds,
+        $itemMediaMap,
+        'assessmentTest.xml'
+    );
 }

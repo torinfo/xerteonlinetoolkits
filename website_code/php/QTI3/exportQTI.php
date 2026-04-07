@@ -137,6 +137,9 @@ try {
 // ensure test is buildable from package
     $qtiClient->getTestBuilder()->buildFromPackage($qtiPackage);
 
+    $validator = $qtiClient->getQtiPackageValidator();
+    $errors = $validator->validate($qtiPackage);
+
 // Use library to write zip from package
     $writer = $qtiClient->getZipPackageFactory()->getWriter($zipPath);
     $writer->write($qtiPackage);
