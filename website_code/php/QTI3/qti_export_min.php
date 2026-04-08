@@ -270,7 +270,8 @@ function qti_write_item_mcq(
     foreach ($choices as $choice) {
         $sc = $doc->createElement('qti-simple-choice');
         $sc->setAttribute('identifier', $choice['id']);
-        $sc->appendChild($doc->createTextNode((string)$choice['text']));
+        $choiceText = strip_tags(html_entity_decode((string)$choice['text'], ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8'));
+        $sc->appendChild($doc->createTextNode(trim($choiceText)));
         $ci->appendChild($sc);
     }
 
