@@ -483,10 +483,11 @@ function export_xerte_lo_to_qti_folder_mcq_only(
 
     $itemIds = [];
     $itemMediaMap = [];
-    $itemMediaSourcePaths = [];
+
 
     $i = 1;
     foreach ($mcqs as $mcq) {
+        $itemMediaSourcePaths = [];
         $itemId = sprintf('ITEM%03d', $i++);
         $itemIds[] = $itemId;
 
