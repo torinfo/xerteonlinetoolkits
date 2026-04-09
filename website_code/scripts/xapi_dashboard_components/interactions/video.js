@@ -31,111 +31,95 @@ export class VideoInteraction {
     const interactionAnswerOptions = this.#interaction
       .getVideoAnswerOptions(this.#state.statements);
 
-    this.drawHeatmap(
-      $(`#detail-${this.#canvas}`),
-      this.#canvas,
-      interactionAnswerOptions,
-    );
+    const { answer } = interactionAnswerOptions;
+    // pauseEvents is intentionally not used — the DashboardGraphs video charts
+    // do not visualize individual pause markers.
+    const { durationBlocks, videoDuration, nrOfLearners } = answer;
+
+    const $parent = $(`#detail-${this.#canvas}`);
+
+    if (!durationBlocks || durationBlocks.length === 0) {
+      $parent.append('<p class="text-muted p-3"><em>No video data available.</em></p>');
+      return;
+    }
+
+    const sessions = durationBlocks.map((b) => [b]);
+
+    const resolvedDuration = videoDuration
+      ?? durationBlocks.reduce((max, b) => (b.end > max ? b.end : max), 0);
+
+    if (resolvedDuration <= 0) {
+      $parent.append('<p class="text-muted p-3"><em>No video data available.</em></p>');
+      return;
+    }
+
+    const learnerCount = nrOfLearners ?? 0;
+
+    this.drawRetentionGraph($parent, this.#canvas, sessions, resolvedDuration, learnerCount);
+    this.drawHeatmapGraph($parent, this.#canvas, sessions, resolvedDuration, learnerCount);
   }
 
   /**
-   * Draw the video heatmap using Plotly
+   * Draw the video retention area chart using DashboardGraphs
    *
    * @param {jQuery} $parent - The parent element to append the chart to.
    * @param {string} selector - The selector of the parent element.
-   * @param {InteractionAnswer} interactionAnswerOptions - The interaction answers.
+   * @param {Array<Array<{start: number, end: number}>>} sessions - The session segments.
+   * @param {number} videoDuration - The total video duration in seconds.
+   * @param {number} nrOfLearners - The number of unique learners.
    */
-  drawHeatmap($parent, selector, interactionAnswerOptions) {
-    const { answer } = interactionAnswerOptions;
-    const { durationBlocks, pauseEvents, videoDuration, nrOfLearners } = answer;
-
-    const containerId = `video-heatmap-${selector}`;
+  drawRetentionGraph($parent, selector, sessions, videoDuration, nrOfLearners) {
+    const canvasId = `video-retention-${selector}`;
+    const title = `Video retention \u2014 ${nrOfLearners} learner${nrOfLearners !== 1 ? 's' : ''}`;
 
     const body = `
-      <div class="col-12" id="${containerId}" style="min-height: 400px;">
+      <div class="col-12 col-md-6" style="min-height: 400px;">
+        <canvas id="${canvasId}" width="400" height="400"></canvas>
       </div>
     `;
 
     $parent.append(body);
 
-    const container = document.getElementById(containerId);
-
-    if (!durationBlocks || durationBlocks.length === 0) {
-      container.innerHTML = '<p class="text-muted p-3"><em>No video data available.</em></p>';
-      return;
-    }
-
-    const maxDuration = videoDuration ?? Math.max(
-      ...durationBlocks.map((b) => b.end),
-      ...pauseEvents.map((e) => e.position),
-      0,
-    );
-
-    const traces = [{
-      type: 'bar',
-      orientation: 'h',
-      name: 'Sessions',
-      y: durationBlocks.map((_, i) => `Session ${i + 1}`),
-      x: durationBlocks.map((b) => b.end - b.start),
-      base: durationBlocks.map((b) => b.start),
-      customdata: durationBlocks.map((b) => b.end),
-      marker: {
-        color: 'rgba(54, 162, 235, 0.7)',
-        line: {
-          color: 'rgba(54, 162, 235, 1)',
-          width: 1,
-        },
+    const graph = new DashboardGraphs.AreaChartVideoRetention({
+      options: {
+        ctx: document.getElementById(canvasId).getContext('2d'),
+        sessions,
+        videoDuration,
+        title,
       },
-      showlegend: false,
-      hovertemplate: '%{y}<br>Start: %{base}s<br>End: %{customdata}s<extra></extra>',
-    }];
+    });
+    graph.draw();
+  }
 
-    const pauseTrace = pauseEvents && pauseEvents.length > 0
-      ? [{
-        type: 'scatter',
-        mode: 'markers',
-        name: 'Pause events',
-        x: pauseEvents.map((e) => e.position),
-        y: pauseEvents.map((_, i) => `Session ${i % durationBlocks.length + 1}`),
-        marker: {
-          color: 'rgba(255, 99, 132, 0.9)',
-          symbol: 'line-ns',
-          size: 12,
-          line: {
-            color: 'rgba(255, 99, 132, 1)',
-            width: 2,
-          },
-        },
-        hovertemplate: 'Pause at %{x}s<extra></extra>',
-        showlegend: true,
-      }]
-      : [];
+  /**
+   * Draw the video viewing heatmap using DashboardGraphs
+   *
+   * @param {jQuery} $parent - The parent element to append the chart to.
+   * @param {string} selector - The selector of the parent element.
+   * @param {Array<Array<{start: number, end: number}>>} sessions - The session segments.
+   * @param {number} videoDuration - The total video duration in seconds.
+   * @param {number} nrOfLearners - The number of unique learners.
+   */
+  drawHeatmapGraph($parent, selector, sessions, videoDuration, nrOfLearners) {
+    const canvasId = `video-heatmap-${selector}`;
+    const title = `Video viewing heatmap \u2014 ${nrOfLearners} learner${nrOfLearners !== 1 ? 's' : ''}`;
 
-    const layout = {
-      title: {
-        text: `Video engagement \u2014 ${nrOfLearners} learner${nrOfLearners !== 1 ? 's' : ''}`,
-        font: { size: 14 },
+    const body = `
+      <div class="col-12 col-md-6" style="min-height: 400px;">
+        <canvas id="${canvasId}" width="400" height="400"></canvas>
+      </div>
+    `;
+
+    $parent.append(body);
+
+    const graph = new DashboardGraphs.HeatmapVideoViewing({
+      options: {
+        ctx: document.getElementById(canvasId).getContext('2d'),
+        sessions,
+        videoDuration,
+        title,
       },
-      xaxis: {
-        title: 'Time (seconds)',
-        range: [0, maxDuration > 0 ? maxDuration : 1],
-        zeroline: true,
-      },
-      yaxis: {
-        title: 'Session',
-        automargin: true,
-      },
-      barmode: 'overlay',
-      margin: { t: 50, l: 100, r: 20, b: 60 },
-      plot_bgcolor: 'rgba(0,0,0,0)',
-      paper_bgcolor: 'rgba(0,0,0,0)',
-    };
-
-    const config = {
-      responsive: true,
-      displayModeBar: false,
-    };
-
-    Plotly.newPlot(container, [...traces, ...pauseTrace], layout, config);
+    });
+    graph.draw();
   }
 }
