@@ -57,10 +57,9 @@ for($i = 0; $i < count($result->paths); $i++){
             $credits = $result->creditPaths[$i];
         }
 
-        $_SESSION["paths_img_search"][] = $full_path;
-
         $result->credits[] = file_get_contents($credits);
     }
+    $_SESSION["paths_img_search"][] = $full_path;
 }
 ob_end_clean();
 echo json_encode($result);

@@ -1,7 +1,7 @@
 <?php
 require_once __DIR__ . '/openaiImageApi.php';
 
-class gptimage1Api extends openaiImageApi
+class gpt1Api extends openaiImageApi
 {
     protected $imageModel = 'gpt-image-1';
     protected $saveSubdir = '/media';
@@ -12,9 +12,9 @@ class gptimage1Api extends openaiImageApi
     protected function generateAndSave($prompt, array $settings, $baseDir, $size, array &$downloadedPaths)
     {
             $payload = [
-                'model' => $this->imageModel,
+                'model' => $settings['imgmodelver'] ?? $this->imageModel,
                 'prompt' => $prompt,
-                'n' => 1,
+                'n' => intval($settings['nri']) ?? 1,
                 'size' => $size,
             ];
             $res = $this->postImagesGenerations($payload);
@@ -45,7 +45,7 @@ class gptimage1Api extends openaiImageApi
         foreach ($data as $img) {
             if (!empty($img->b64_json)) {
                 $bin  = base64_decode($img->b64_json);
-                $file = rtrim($baseDir, '/') . '/img_' . ($i++) . '.png';
+                $file = rtrim($baseDir, '/') . '/img_' . uniqid() . '.png';
 
                 if (file_put_contents($file, $bin) === false) {
                     return (object) array(
