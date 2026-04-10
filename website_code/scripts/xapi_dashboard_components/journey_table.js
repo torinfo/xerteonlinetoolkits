@@ -594,12 +594,16 @@ export class JourneyTable {
       data-trigger="hover"
       data-html="true"
       `;
+    const blueDiv = `<i class="status-indicator status-blue fa fa-square" ${popoverContent}></i>`;
     const redDiv = `<i class="status-indicator status-red fa fa-square" ${popoverContent}></i>`;
     const greenDiv = `<i class="status-indicator status-green fa fa-square" ${popoverContent}></i>`;
     const orangeDiv = `<i class="status-indicator status-orange fa fa-square" ${popoverContent}></i>`;
     const greyDiv = `<i class="status-indicator status-gray fa fa-square" ${popoverContent}></i>`;
 
-    if (interaction.successStatus === 'passed') {
+    if (interaction.successStatus === 'completedNotJudged') {
+      // Completed but not judged (e.g. survey question)
+      return blueDiv;
+    } else if (interaction.successStatus === 'passed') {
       // Successfully completed
       return greenDiv;
     } else if (interaction.successStatus === 'failed') {
@@ -654,7 +658,9 @@ export class JourneyTable {
   createDataPopoverDiv(interaction) {
     let popoverStatus;
 
-    if (interaction.successStatus === 'passed') {
+    if (interaction.successStatus === 'completedNotJudged') {
+      popoverStatus = XAPI_DASHBOARD_STATUS_COMPLETED_NOTJUDGED;
+    } else if (interaction.successStatus === 'passed') {
       popoverStatus = XAPI_DASHBOARD_STATUS_COMPLETED_PASSED;
     } else if (interaction.successStatus === 'failed') {
       popoverStatus = XAPI_DASHBOARD_STATUS_COMPLETED_NOTPASSED;
