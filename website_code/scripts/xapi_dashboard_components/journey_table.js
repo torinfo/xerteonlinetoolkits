@@ -531,6 +531,7 @@ export class JourneyTable {
         $attemptRows = $(`#jt-body .attempt-row[data-index="${index}"]`);
         // Initialize popovers on new rows
         $attemptRows.find('[data-toggle="popover"]').popover();
+        this.#syncExpandedInteractions($attemptRows);
       }
 
       // Toggle expanded state
@@ -541,6 +542,22 @@ export class JourneyTable {
 
       // Refresh sticky header clone (column widths may change)
       this.#refreshStickyClone();
+    });
+  }
+
+  /**
+   * Show sub-interaction columns in the given rows for any interaction
+   * that is currently expanded in the header.
+   *
+   * @param {jQuery} $rows - The attempt rows to sync
+   */
+  #syncExpandedInteractions($rows) {
+    this.#state.interactions.forEach((interaction) => {
+      const selector = $.escapeSelector(interaction.url);
+      const isExpanded = $(`#journey-${selector}-icon`).hasClass('fa-angles-left');
+      if (isExpanded) {
+        $rows.find(`.journey-sub-${selector}`).show();
+      }
     });
   }
 
@@ -656,8 +673,20 @@ export class JourneyTable {
    * @returns The html for the data popover div
    */
   createDataPopoverDiv(interaction) {
-    let popoverStatus;
+    const statements = this.#state.statements;
+    const { scores, durations } = interaction.getScoresAndDurations(statements);
+    return `<div>${[
+      this.#createPopoverStatusHtml(interaction),
+      this.#createPopoverTriesHtml(interaction, statements),
+      this.#createPopoverGradeHtml(scores),
+      this.#createPopoverDurationHtml(durations),
+      this.#createPopoverVideoIntervalsHtml(interaction, statements),
+      this.#createPopoverLastAnswerHtml(interaction, statements),
+    ].filter(Boolean).join('')}</div>`;
+  }
 
+  #createPopoverStatusHtml(interaction) {
+    let popoverStatus;
     if (interaction.successStatus === 'completedNotJudged') {
       popoverStatus = XAPI_DASHBOARD_STATUS_COMPLETED_NOTJUDGED;
     } else if (interaction.successStatus === 'passed') {
@@ -669,19 +698,78 @@ export class JourneyTable {
     } else {
       popoverStatus = XAPI_DASHBOARD_STATUS_NOTSTARTED;
     }
+    return `${XAPI_JOURNEY_POPOVER_STATUS} ${popoverStatus}<br />`;
+  }
 
-    const interactionScore = interaction.getScore(this.#state.statements);
-    return `
-      <div>
-        ${XAPI_JOURNEY_POPOVER_STATUS} ${popoverStatus}<br />
-        ${XAPI_JOURNEY_POPOVER_NRTRIES} ${interaction.getInitializations(this.#state.statements)}<br />
-        ${XAPI_JOURNEY_POPOVER_GRADE} ${interactionScore !== undefined
-        ? `${(interactionScore * 100).toFixed(2)}%`
-        : this.#faMinus
-      }<br />
-        ${XAPI_JOURNEY_POPOVER_DURATION} ${interaction.getDuration(this.#state.statements)}<br />
-        ${XAPI_JOURNEY_POPOVER_AVGGRADE}
-      </div>`;
+  #createPopoverTriesHtml(interaction, statements) {
+    return `${XAPI_JOURNEY_POPOVER_NRTRIES} ${interaction.getInitializations(statements)}<br />`;
+  }
+
+  #createPopoverGradeHtml(scores) {
+    if (scores.length === 1) {
+      return `${XAPI_JOURNEY_POPOVER_GRADE} ${(scores[0] * 100).toFixed(2)}%<br />`;
+    }
+    if (scores.length > 1) {
+      const avgScore = scores.reduce((a, b) => a + b, 0) / scores.length;
+      return `${XAPI_JOURNEY_POPOVER_AVGGRADE} ${(avgScore * 100).toFixed(2)}%<br />`
+        + `${XAPI_JOURNEY_POPOVER_LAST_GRADE} ${(scores[0] * 100).toFixed(2)}%<br />`;
+    }
+    return `${XAPI_JOURNEY_POPOVER_GRADE} ${this.#faMinus}<br />`;
+  }
+
+  #createPopoverDurationHtml(durations) {
+    const unit = XAPI_JOURNEY_POPOVER_DURATION_UNIT;
+    if (durations.length === 1) {
+      return `${XAPI_JOURNEY_POPOVER_DURATION} ${Math.round(durations[0] * 100) / 100}${unit}<br />`;
+    }
+    if (durations.length > 1) {
+      const avgDuration = durations.reduce((a, b) => a + b, 0) / durations.length;
+      return `${XAPI_JOURNEY_POPOVER_AVGDURATION} ${Math.round(avgDuration * 100) / 100}${unit}<br />`
+        + `${XAPI_JOURNEY_POPOVER_LAST_DURATION} ${Math.round(durations[0] * 100) / 100}${unit}<br />`;
+    }
+    return '';
+  }
+
+  #createPopoverVideoIntervalsHtml(interaction, statements) {
+    if (!interaction.url.endsWith('/video')) {
+      return '';
+    }
+    const videoAnswer = interaction.getVideoAnswerOptions(statements);
+    if (videoAnswer.type !== 'video' || videoAnswer.answer.durationBlocks.length === 0) {
+      return '';
+    }
+    const unit = XAPI_JOURNEY_POPOVER_DURATION_UNIT;
+    const items = videoAnswer.answer.durationBlocks.map((block) => {
+      const start = escapeHtml(String(Math.round(block.start * 100) / 100));
+      const end = escapeHtml(String(Math.round(block.end * 100) / 100));
+      return `<li>${start}${unit} - ${end}${unit}</li>`;
+    }).join('');
+    return `${XAPI_JOURNEY_POPOVER_VIDEO_INTERVALS}<ul>${items}</ul>`;
+  }
+
+  #createPopoverLastAnswerHtml(interaction, statements) {
+    const lastAnswer = interaction.getLastAnswer(statements);
+    if (lastAnswer === undefined) {
+      return '';
+    }
+    const maxChars = 20;
+    let charsLeft = maxChars;
+    const rendered = [];
+    for (const part of lastAnswer.parts) {
+      if (part.type === 'text') {
+        if (charsLeft <= 0) break;
+        const text = charsLeft < part.value.length
+          ? `${part.value.substring(0, charsLeft)}...`
+          : part.value;
+        charsLeft -= part.value.length;
+        rendered.push(escapeHtml(text));
+      } else if (part.type === 'pair-separator') {
+        rendered.push(' <i class="fa fa-long-arrow-right"></i> ');
+      } else {
+        rendered.push('<br>&nbsp;    ');
+      }
+    }
+    return `${XAPI_JOURNEY_POPOVER_LASTANSWER} <br>&nbsp;    ${rendered.join('')}`;
   }
 
   /**
