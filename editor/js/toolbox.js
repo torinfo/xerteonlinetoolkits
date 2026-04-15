@@ -653,51 +653,61 @@ var EDITOR = (function ($, parent) {
         return false;
     },
 
-        //Required for resolving xml conditionals for AI or other API-based services, please do not remove
-    vendor_is_available = function (vendorType, vendor = "all") {
-        // Helper: is a single row active?
-        const isRowActive = function (row) {
-            // Must match the type/category
-            if (row.type !== vendorType) {
-                return false;
-            }
+        // Required for resolving xml conditionals for AI or other API-based services, please do not remove
+        vendor_is_available = function (vendorType, vendor = "all") {
+            // Helper: is a single row active?
+            const isRowActive = function (row) {
+                // If vendorType is not "all", the row must match the type/category
+                if (vendorType !== "all" && row.type !== vendorType) {
+                    return false;
+                }
 
-            // Must be enabled
-            if (row.enabled != "1") {
-                return false;
-            }
+                // Must be enabled
+                if (row.enabled != "1") {
+                    return false;
+                }
 
-            // If this vendor doesn't require a key, it's active as-is
-            if (row.needs_key == "0") {
-                return true;
-            }
+                // If this vendor doesn't require a key, it's active as-is
+                if (row.needs_key == "0") {
+                    return true;
+                }
 
-            // If it *does* require a key, check via vendor_options
-            return vendorHasApiKey(vendorType, row.vendor);
-        };
+                // If it does require a key, check via vendor_options
+                return vendorHasApiKey(row.type, row.vendor);
+            };
 
-        // If we're checking a specific vendor in this category
-        if (vendor !== "all") {
-            for (let i = 0; i < management_helper_table.length; i++) {
-                const row = management_helper_table[i];
-                if (row.type === vendorType && row.vendor === vendor) {
+            // If we're checking a specific vendor
+            if (vendor !== "all") {
+                for (let i = 0; i < management_helper_table.length; i++) {
+                    const row = management_helper_table[i];
+
+                    // Match vendor name
+                    if (row.vendor !== vendor) {
+                        continue;
+                    }
+
+                    // If vendorType is specific, row must also match that type
+                    if (vendorType !== "all" && row.type !== vendorType) {
+                        continue;
+                    }
+
                     return isRowActive(row);
                 }
+
+                return false; // no matching row
             }
-            return false; // no matching row
-        }
 
-        // vendor === "all": is there at least one active vendor in this category?
-        for (let i = 0; i < management_helper_table.length; i++) {
-            const row = management_helper_table[i];
+            // vendor === "all": is there at least one active vendor in scope?
+            for (let i = 0; i < management_helper_table.length; i++) {
+                const row = management_helper_table[i];
 
-            if (isRowActive(row)) {
-                return true; // found at least one active vendor
+                if (isRowActive(row)) {
+                    return true; // found at least one active vendor
+                }
             }
-        }
 
-        return false; // none active
-    },
+            return false; // none active
+        },
 
     vendor_has_option = function(option, vendor = "all") {
         if(vendor == "all") {
@@ -3018,6 +3028,14 @@ var EDITOR = (function ($, parent) {
             option.push("NaN");
         }
         return [labels,option];
+    }
+
+    //Helper for determining whether a) a user has the ai user role and b) any of the assistant options are available,
+    checkAssistantFeatureStatus = function (){
+        if (vendor_is_available('all', 'all') && hasrole('aiuser')){
+            return true;
+        }
+        return false;
     }
 
     selectChanged = function (id, key, name, value, obj)

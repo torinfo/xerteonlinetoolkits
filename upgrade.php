@@ -1838,3 +1838,18 @@ function upgrade_57()
 
     return $message;
 }
+
+function upgrade_58()
+{
+    $table = table_by_key("management_helper");
+
+    $ok = db_query("
+        UPDATE $table
+        SET `label` = 'GPT Image'
+        WHERE `vendor` = 'gpt1'
+    ");
+
+    $message = "Updating gpt1 label to GPT Image - ok ? " . ($ok ? 'true' : 'false') . "<br>";
+
+    return $message;
+}

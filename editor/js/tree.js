@@ -1135,22 +1135,31 @@ var EDITOR = (function ($, parent) {
                 }
             }
 
+            //Used to make layout optional properties panel top-level title dynamic, since it switches depending on which table(s) are present
+            var optionaltitle = language.optionalPropHTML ? language.optionalPropHTML.$label : "Optional Properties";
+            var assistantTitle = language.optionalAssistantPropHTML && language.optionalAssistantPropHTML.$general ? language.optionalAssistantPropHTML.$general : "Assistants"
+
             if (tableLightbox.find("tr").length > 0) {
-                var tablerow = $('<tr>')
-                    .append('<td class="optPropTitle">' + (language.optionalAssistantPropHTML && language.optionalAssistantPropHTML.$general ? language.optionalAssistantPropHTML.$general : "Assistants") + '</td>');
-                //tableLightbox.prepend(tablerow);
+                $("#optional_title").html(assistantTitle);
                 html.append(tableLightbox);
+            } else {
+                $("#optional_title").html(optionaltitle);
             }
 
             if (table.find("tr").length > 0) {
-                var optionaltitlerow = $('<tr>')
-                    .append('<td class="optMainTitle">' + (language.optionalPropHTML ? language.optionalPropHTML.$label : "Optional Properties") + '</td>');
-                if (menu_options.menu != undefined) {
-                    var tablerow = $('<tr>')
-                        .append('<td class="optPropTitle">' + menu_options.menuItem + '</td>');
-                    table.prepend(tablerow);
+                if (tableLightbox.find("tr").length > 0) {
+                    var optionaltitlerow = $('<tr>')
+                        .append('<td class="optMainTitle">' + (language.optionalPropHTML ? language.optionalPropHTML.$label : "Optional Properties") + '</td>');
+
+                    if (menu_options.menu != undefined) {
+                        var tablerow = $('<tr>')
+                            .append('<td class="optPropTitle">' + menu_options.menuItem + '</td>');
+                        table.prepend(tablerow);
+                    }
+
+                    table.prepend(optionaltitlerow);
                 }
-                table.prepend(optionaltitlerow);
+
                 html.append(table);
             }
 
