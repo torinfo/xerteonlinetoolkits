@@ -31,6 +31,19 @@ if (typeof(String.prototype.trim) === "undefined") {
         return String(this).replace(/^\s+|\s+$/g, '');
     };
 }
+
+function apiV1Url(route) {
+    var base = (typeof rest_api_url !== 'undefined' && rest_api_url) ? rest_api_url : ((typeof site_url !== 'undefined' && site_url) ? (site_url.replace(/\/$/, '') + '/website_code/api/v1/index.php') : 'website_code/api/v1/index.php');
+    return base + '?route=' + encodeURIComponent(route);
+}
+
+function apiUnpack(response) {
+    if (response && response.ok === true && typeof response.data !== 'undefined') {
+        return response.data;
+    }
+    return response;
+}
+
 var active_div = "";
 
 var edit_window_open = new Array();
@@ -671,14 +684,14 @@ function refresh_workspace() {
     // }
     $.ajax({
         type: "POST",
-        url: "website_code/php/templates/get_templates_sorted.php",
+        url: apiV1Url('workspace/projects-sorted'),
         dataType: 'json',
         data: {
             sort_type: document.sorting.type.value
         }
     })
     .done(function(response){
-        workspace = response;
+        workspace = apiUnpack(response);
         // Clear the project details
         $("#project_information").html("");
         init_workspace();
@@ -704,16 +717,7 @@ function save_user_preference(key, value) {
     if (typeof user_has_preferences !== 'undefined' && user_has_preferences) {
         console.log("save_user_preference: User has preferences enabled, proceeding with save...");
         
-        // Use site_url if available, otherwise use relative path
-        var saveUrl = "website_code/php/save_user_preferences.php";
-        if (typeof site_url !== 'undefined' && site_url) {
-            // Remove trailing slash if present and construct full URL
-            var baseUrl = site_url.replace(/\/$/, '');
-            saveUrl = baseUrl + "/website_code/php/save_user_preferences.php";
-            console.log("save_user_preference: Using site_url to construct absolute URL");
-        } else {
-            console.log("save_user_preference: site_url not available, using relative path");
-        }
+        var saveUrl = apiV1Url('user/preferences');
         
         console.log("save_user_preference: Final URL =", saveUrl);
         console.log("save_user_preference: Making AJAX POST request...");
@@ -731,7 +735,8 @@ function save_user_preference(key, value) {
         .done(function(response) {
             console.log("save_user_preference: AJAX request completed successfully");
             console.log("save_user_preference: Response =", response);
-            if (response && response.success) {
+            var r = apiUnpack(response);
+            if (r && r.success) {
                 console.log("✓✓✓ Preference saved successfully:", key, "=", value);
                 // Update user_preferences object in memory
                 if (typeof user_preferences !== 'undefined') {
@@ -814,11 +819,12 @@ function getProjectInformation(user_id, template_id) {
     // }
     $.ajax({
         type: "POST",
-        url: "website_code/php/templates/get_template_info.php",
+        url: apiV1Url('templates/info'),
         dataType: 'json',
         data: {user_id: user_id, template_id: template_id},
     })
-    .done(function(info) {
+    .done(function(response) {
+        var info = apiUnpack(response);
         document.getElementById('project_information').innerHTML = info.properties;
         disableReadOnlyButtons(info);
         if (info.fetch_statistics) {
@@ -890,10 +896,11 @@ function disableReadOnlyButtons(info){
 function getFolderInformation(user_id, folder_id) {
     $.ajax({
         type: "POST",
-        url: "website_code/php/folders/get_folder_info.php",
+        url: apiV1Url('folders/info'),
         data: {folder_id: folder_id},
         dataType: "json",
-        success: function (info) {
+        success: function (response) {
+            var info = apiUnpack(response);
             document.getElementById('project_information').innerHTML = info.properties;
             disableReadOnlyButtons(info);
 
@@ -905,13 +912,14 @@ function getGroupInformation(user_id, group_name, group_id)
 {
     $.ajax({
         type: "POST",
-        url: "website_code/php/groups/get_group_info.php",
+        url: apiV1Url('groups/info'),
         data: {
             group_name: group_name,
             group_id: group_id
         },
         dataType: "json",
-        success: function (info) {
+        success: function (response) {
+            var info = apiUnpack(response);
             document.getElementById('project_information').innerHTML = info.properties;
             disableReadOnlyButtons(info);
         }

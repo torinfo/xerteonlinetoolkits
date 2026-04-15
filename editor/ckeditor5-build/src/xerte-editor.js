@@ -151,7 +151,7 @@ const xerteDefaultConfig = {
 	},
 	toolbar: {
 		items: toolbarItems,
-		shouldNotGroupWhenFull: false
+		shouldNotGroupWhenFull: true
 	},
 	image: {
 		toolbar: imageToolbar

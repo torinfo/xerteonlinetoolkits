@@ -1,25 +1,8 @@
 <?php
 /**
  * Licensed to The Apereo Foundation under one or more contributor license
- * agreements. See the NOTICE file distributed with this work for
- * additional information regarding copyright ownership.
-
- * The Apereo Foundation licenses this file to you under the Apache License,
- * Version 2.0 (the "License"); you may not use this file except in
- * compliance with the License. You may obtain a copy of the License at:
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- * 
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-/**
- * User: NoudL
- * Date: 03-11-20
+ * agreements. See the NOTICE file distributed with this work for additional
+ * information regarding copyright ownership.
  */
 
 require_once("../../../config.php");
@@ -30,38 +13,34 @@ _load_language_file("/website_code/php/management/users.inc");
 require_once("../user_library.php");
 require("../url_library.php");
 require_once("management_library.php");
+require_once(__DIR__ . "/GroupMembersData.php");
 
-function get_group_members($group_id){
+function get_group_members($group_id)
+{
     global $xerte_toolkits_site;
 
-    $prefix = $xerte_toolkits_site->database_table_prefix;
-
-    if (is_null($group_id) or $group_id=="") {
+    $data = management_get_group_members_data($group_id);
+    if ($data === null) {
         return false;
     }
-    $database_id = database_connect("member list connected","member list failed");
 
-    $query="select * from {$prefix}logindetails ld, {$prefix}user_group_members ugm WHERE ld.login_id=ugm.login_id AND ugm.group_id=? ORDER BY ld.surname";
+    echo "<h3>" . USER_GROUPS_MANAGEMENT_GROUP_MEMBERS . $data['group_name'] . "</h3>";
 
-    $query_response = db_query($query, array($group_id));
+    $membercount = $data['member_count'];
+    $query_response = $data['members'];
 
-    //get selected group name:
-    $group = db_query_one("SELECT * FROM {$prefix}user_groups WHERE group_id=?", array($group_id));
-    echo "<h3>" . USER_GROUPS_MANAGEMENT_GROUP_MEMBERS . $group['group_name'] . "</h3>";
-
-    $membercount = count($query_response);
-    if (empty($query_response)){
+    if (empty($query_response)) {
         echo "<p>" . USER_GROUPS_MANAGEMENT_NO_MEMBERS . "</p>";
-    }else{
-        if ($membercount == 1){
+    } else {
+        if ($membercount == 1) {
             echo "<p>" . USER_GROUPS_MANAGEMENT_ONE_MEMBER . "</p>";
-        }else{
+        } else {
             echo "<p>" . str_replace("{n}", $membercount, USER_GROUPS_MANAGEMENT_MEMBERS_COUNT) . "</p>";
         }
-		
-		echo "<div class=\"indented\">";
-		
-        foreach($query_response as $row) {
+
+        echo "<div class=\"indented\">";
+
+        foreach ($query_response as $row) {
 
             echo "<div class=\"template\" id=\"" . $row['username'] . "\" savevalue=\"" . $row['login_id'] .  "\"><p>" . $row['firstname'] . " " . $row['surname'] . " <button type=\"button\" class=\"xerte_button\" id=\"" . $row['username'] . "_btn\" onclick=\"javascript:templates_display('" . $row['username'] . "')\">" . USERS_TOGGLE . "</button> <button type=\"button\" class=\"xerte_button\" id=\"" . $row['username'] . "_btn\" onclick=\"javascript:delete_member('" . $row['login_id'] . "', 'group')\"><i class=\"fa fa-minus-circle\"></i> " . USER_GROUPS_MANAGEMENT_REMOVE_MEMBER . "</button></p></div><div class=\"template_details\" id=\"" . $row['username']  . "_child\">";
 
@@ -72,20 +51,18 @@ function get_group_members($group_id){
             echo "</div>";
 
         }
-		
-		echo "</div>";
+
+        echo "</div>";
     }
 }
 
-if(is_user_permitted("useradmin")){
+if (is_user_permitted("useradmin")) {
 
     $group_id = $_POST['group_id'];
     get_group_members($group_id);
 
-
-}else{
+} else {
 
     management_fail();
 
 }
-

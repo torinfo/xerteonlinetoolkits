@@ -80,11 +80,12 @@ var EDITOR = (function ($, parent) {
     {
         var now = new Date().getTime();
         setTimeout(function(){
+            var apiBase = (typeof rest_api_url !== 'undefined' && rest_api_url) ? rest_api_url : 'website_code/api/v1/index.php';
             $.ajax({
                 type: "GET",
-                url: "website_code/php/keepalive.php" + "?t=" + now,
+                url: apiBase + "?route=session/keepalive&t=" + now,
                 dataType: "json",
-                success: function (data) {
+                success: function (resp) {
                     keepalive();
                 }
             })
@@ -421,8 +422,9 @@ var EDITOR = (function ($, parent) {
             }
         }
         var new_tab = clickevent.ctrlKey;
+        var apiBase = (typeof rest_api_url !== 'undefined' && rest_api_url) ? rest_api_url : 'website_code/api/v1/index.php';
         var ajax_call = $.ajax({
-                url: "editor/upload.php",
+                url: apiBase + "?route=learning-objects/save",
                 data: {
                     fileupdate: 0, //0= preview->preview.xml
                     filename: previewxmlurl,
@@ -467,8 +469,9 @@ var EDITOR = (function ($, parent) {
     		return;
     	}
         var json = build_json("treeroot");
+        var apiBase = (typeof rest_api_url !== 'undefined' && rest_api_url) ? rest_api_url : 'website_code/api/v1/index.php';
         var ajax_call = $.ajax({
-                url: "editor/upload.php",
+                url: apiBase + "?route=learning-objects/save",
                 data: {
                     fileupdate: 1, // 1=publish -> data.xml
                     filename: dataxmlurl,
@@ -504,8 +507,9 @@ var EDITOR = (function ($, parent) {
     		return;
     	}
         var json = build_json("treeroot");
+        var apiBase = (typeof rest_api_url !== 'undefined' && rest_api_url) ? rest_api_url : 'website_code/api/v1/index.php';
         var ajax_call = $.ajax({
-                url: "editor/upload.php",
+                url: apiBase + "?route=learning-objects/save",
                 data: {
                     fileupdate: 0, // 1=publish -> data.xml
                     filename: previewxmlurl,
@@ -1860,14 +1864,17 @@ var EDITOR = (function ($, parent) {
                 // Show wait icon
                 $('body').css("cursor", "wait");
                 console.log("Start Quick Fill process, please wait...");
+                var apiBase = (typeof rest_api_url !== 'undefined' && rest_api_url) ? rest_api_url : 'website_code/api/v1/index.php';
                 $.ajax({
-                    url: "editor/quickfill/quickfillAPI.php",
+                    url: apiBase + "?route=editor/quickfill",
                     type: "POST",
+                    dataType: "json",
                     data: {
                         type: node_type,
                         parameters: parameters,
                     },
-                    success: function(data) {
+                    success: function(resp) {
+                        var data = (resp && resp.ok === true && resp.data) ? resp.data : resp;
                         try {
                             xml_to_xerte_content(data, event.data.key, 'last', tree, parent);
                         } catch (error) {

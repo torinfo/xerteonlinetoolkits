@@ -189,7 +189,8 @@ $(document).ready(function() {
     }
     else {
 		var now = new Date().getTime();
-    	let url = "website_code/php/templates/get_template_xml.php?file=" + x_projectXML + "&time=" + now;
+    	var apiBase = (typeof rest_api_url !== 'undefined' && rest_api_url) ? rest_api_url : 'website_code/api/v1/index.php';
+    	let url = apiBase + "?route=preview-xml&file=" + encodeURIComponent(x_projectXML) + "&time=" + now;
     	if (typeof use_url !== "undefined" && use_url)
 		{
 			url = x_projectXML + "?time=" + now;
@@ -197,8 +198,12 @@ $(document).ready(function() {
         $.ajax({
             type: "GET",
             url: url,
-            dataType: "text",
-            success: function (text) {
+            dataType: (typeof use_url !== "undefined" && use_url) ? "text" : "json",
+            success: function (resp) {
+                var text = resp;
+                if (resp && resp.ok === true && resp.data && resp.data.xml !== undefined) {
+                    text = resp.data.xml;
+                }
                 var newString = x_makeAbsolute(x_fixLineBreaks(text)),
                     xmlData = $($.parseXML(newString)).find("learningObject");
                 x_projectDataLoaded(xmlData);
@@ -1369,10 +1374,12 @@ function x_cssSetUp(param) {
 function x_KeepAlive()
 {
 	const now = new Date().getTime();
-	let url = "website_code/php/keepalive.php" + "?t=" + now;
+	var apiBase = (typeof rest_api_url !== 'undefined' && rest_api_url) ? rest_api_url : 'website_code/api/v1/index.php';
+	let url = apiBase + "?route=session/keepalive&t=" + now;
 	if (typeof sessionParam !== 'undefined')
 	{
-		url = "website_code/php/keepalive.php" + sessionParam + "&t=" + now;
+		var sp = (sessionParam.charAt(0) === '?') ? '&' + sessionParam.slice(1) : sessionParam;
+		url = apiBase + "?route=session/keepalive" + sp + "&t=" + now;
 	}
 
 	setTimeout(function(){
@@ -1380,7 +1387,7 @@ function x_KeepAlive()
 			type: "GET",
 			url: url,
 			dataType: "json",
-			success: function (data) {
+			success: function (resp) {
 				x_KeepAlive();
 			}
 		})

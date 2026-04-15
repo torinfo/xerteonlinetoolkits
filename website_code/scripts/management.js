@@ -31,6 +31,50 @@ if(typeof(String.prototype.trim) === "undefined")
     };
 }
 
+function apiV1Url(route) {
+    var base = (typeof rest_api_url !== 'undefined' && rest_api_url) ? rest_api_url : ((typeof site_url !== 'undefined' && site_url) ? (site_url.replace(/\/$/, '') + '/website_code/api/v1/index.php') : 'website_code/api/v1/index.php');
+    return base + '?route=' + encodeURIComponent(route);
+}
+
+function apiUnpack(response) {
+    if (response && response.ok === true && typeof response.data !== 'undefined') {
+        return response.data;
+    }
+    return response;
+}
+
+function renderGroupMembersFromApi(d) {
+    var i18n = d.i18n || {};
+    var members = d.members || [];
+    var h = '<h3>' + (i18n.headingPrefix || '') + (d.group_name || '') + '</h3>';
+    if (members.length === 0) {
+        h += '<p>' + (i18n.noMembers || '') + '</p>';
+        return h;
+    }
+    var cnt = members.length;
+    if (cnt === 1) {
+        h += '<p>' + (i18n.oneMember || '') + '</p>';
+    } else {
+        h += '<p>' + ((i18n.membersCount || '').replace('{n}', String(cnt))) + '</p>';
+    }
+    h += '<div class="indented">';
+    for (var i = 0; i < members.length; i++) {
+        var row = members[i];
+        var lid = row.login_id;
+        h += '<div class="template" id="' + row.username + '" savevalue="' + lid + '"><p>' + row.firstname + ' ' + row.surname +
+            ' <button type="button" class="xerte_button" id="' + row.username + '_btn" onclick="javascript:templates_display(\'' + row.username + '\')">' + (i18n.toggle || '') + '</button> ' +
+            '<button type="button" class="xerte_button" onclick="javascript:delete_member(\'' + lid + '\', \'group\')"><i class="fa fa-minus-circle"></i> ' + (i18n.removeMember || '') + '</button></p></div>';
+        h += '<div class="template_details" id="' + row.username + '_child">';
+        h += '<p>' + (i18n.usersId || '') + '<form><textarea id="user_id' + lid + '">' + lid + '</textarea></form></p>';
+        h += '<p>' + (i18n.usersFirst || '') + '<form><textarea id="firstname' + lid + '">' + row.firstname + '</textarea></form></p>';
+        h += '<p>' + (i18n.usersKnown || '') + '<form><textarea id="surname' + lid + '">' + row.surname + '</textarea></form></p>';
+        h += '<p>' + (i18n.usersUsername || '') + '<form><textarea id="username' + lid + '">' + row.username + '</textarea></form></p>';
+        h += '</div>';
+    }
+    h += '</div>';
+    return h;
+}
+
 // Function properties ajax send prepare
 //
 // Generic ajax sender for this script
@@ -1437,13 +1481,15 @@ function list_group_members(tag, id=-1){
 	if (group != "") {
 		$.ajax({
 			type: "POST",
-			url: "website_code/php/management/get_group_members.php",
+			url: apiV1Url('management/group-members'),
+			dataType: 'json',
 			data: {
 				group_id: group
 			},
 		})
 		.done(function (response) {
-			list_group_members_stateChanged(response);
+			var data = apiUnpack(response);
+			list_group_members_stateChanged(renderGroupMembersFromApi(data));
 		})
 		.fail(function(){
 			alert(USER_LIST_FAIL);

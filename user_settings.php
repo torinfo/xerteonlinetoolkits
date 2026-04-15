@@ -50,6 +50,7 @@ _load_language_file("/user_settings.inc");
         <script type="text/javascript" language="javascript">
 
             var site_url = "<?php echo $xerte_toolkits_site->site_url; ?>";
+            var rest_api_url = "<?php echo $xerte_toolkits_site->site_url; ?>website_code/api/v1/index.php";
             var ajax_php_path = "website_code/php/";
 
         </script>

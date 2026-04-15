@@ -227,6 +227,7 @@ if(isset($_SESSION['toolkits_logon_id'])) {
         <script type="text/javascript">
          <?PHP
          echo "var site_url = \"" . $xerte_toolkits_site->site_url . "\";\n";
+         echo "var rest_api_url = \"" . $xerte_toolkits_site->site_url . "website_code/api/v1/index.php\";\n";
 
          echo "var site_apache = \"" . $xerte_toolkits_site->apache . "\";\n";
          echo "var properties_ajax_php_path = \"website_code/php/properties/\";\n var management_ajax_php_path = \"website_code/php/management/\";\n var ajax_php_path = \"website_code/php/\";\n";

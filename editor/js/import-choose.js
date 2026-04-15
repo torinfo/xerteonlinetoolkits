@@ -403,8 +403,9 @@ function init()
                 // 1. Save preview
                 $('#loader').show();
                 var json = EDITOR.tree.build_json("treeroot");
+                var apiBase = (typeof rest_api_url !== 'undefined' && rest_api_url) ? rest_api_url : 'website_code/api/v1/index.php';
                 var ajax_call = $.ajax({
-                        url: "editor/upload.php",
+                        url: apiBase + "?route=learning-objects/save",
                         data: {
                             fileupdate: 0, //0= preview->preview.xml
                             filename: previewxmlurl,

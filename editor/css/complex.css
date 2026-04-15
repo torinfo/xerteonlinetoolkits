@@ -768,6 +768,11 @@ table.wizard, table.wizardgroup_table{
     width: 100%;
 }
 
+/* Let the value column use remaining width instead of growing with CKEditor chrome min-content. */
+table.wizard {
+	table-layout: fixed;
+}
+
 td.wizardparameter{
     width:20px;
 }
@@ -785,6 +790,8 @@ td.wizardlabel {
 }
 
 td.wizardvalue {
+	/* Allow cell to shrink below CKEditor/menu intrinsic width (avoids full-pane horizontal scroll). */
+	min-width: 0;
 }
 
 fieldset.wizardgroup {
@@ -1203,6 +1210,8 @@ div#bottom_buttons .xerte-icon,  div#top_buttons .xerte-icon {cursor: pointer;}
 div.wizardvalue_inner {
 /*	width: 95%*/
 	margin-right: 2em;
+	min-width: 0;
+	max-width: 100%;
 }
 
 .wizardgroup_table div.wizardvalue_inner {

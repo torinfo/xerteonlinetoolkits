@@ -109,10 +109,19 @@
 			return null;
 		}
 		if (!Array.isArray(toolbar) && toolbar.items && Array.isArray(toolbar.items)) {
-			return toolbar;
+			var tbObj = {};
+			for (var key in toolbar) {
+				if (toolbar.hasOwnProperty(key)) {
+					tbObj[key] = toolbar[key];
+				}
+			}
+			if (tbObj.shouldNotGroupWhenFull === undefined) {
+				tbObj.shouldNotGroupWhenFull = true;
+			}
+			return tbObj;
 		}
 		if (Array.isArray(toolbar) && toolbar.length && typeof toolbar[0] === 'string') {
-			return toolbar;
+			return { items: toolbar, shouldNotGroupWhenFull: true };
 		}
 		var flat = [];
 		function pushMapped(raw) {
@@ -141,7 +150,7 @@
 		while (flat.length && flat[flat.length - 1] === '|') {
 			flat.pop();
 		}
-		return flat.length ? { items: flat, shouldNotGroupWhenFull: false } : null;
+		return flat.length ? { items: flat, shouldNotGroupWhenFull: true } : null;
 	}
 
 	function mergeEditorConfig(user) {
@@ -230,8 +239,9 @@
 			editable.style.height = sourceHeight + 'px';
 			editable.style.overflowY = 'auto';
 		}
-		if (initialMetrics && initialMetrics.width && root) {
-			root.style.minWidth = parseInt(initialMetrics.width, 10) + 'px';
+		// Avoid minWidth from initial create-time width — it caused page-wide horizontal scroll.
+		if (root) {
+			root.style.minWidth = '0';
 		}
 	}
 
@@ -280,9 +290,13 @@
 		}
 		// Keep CKEditor 5 UI constrained to container width (prevents toolbar going off-screen).
 		var css = ''
-			+ '.ck.ck-editor{max-width:100%!important;}'
+			+ '.ck.ck-editor{max-width:100%!important;min-width:0!important;}'
 			+ '.ck.ck-editor__top,.ck.ck-editor__top *{box-sizing:border-box;}'
-			+ '.ck.ck-editor__top .ck-sticky-panel__content{width:100%!important;max-width:100%!important;}';
+			+ '.ck.ck-editor__top{max-width:100%!important;min-width:0!important;}'
+			+ '.ck.ck-editor__top .ck-sticky-panel__content{width:100%!important;max-width:100%!important;min-width:0!important;'
+			+ 'overflow-x:auto!important;overflow-y:visible!important;-webkit-overflow-scrolling:touch;}'
+			+ '.ck.ck-toolbar{max-width:100%!important;min-width:0!important;}'
+			+ '.ck.ck-toolbar .ck-toolbar__items{min-width:0!important;max-width:100%!important;}';
 		var style = document.createElement('style');
 		style.type = 'text/css';
 		style.appendChild(document.createTextNode(css));
