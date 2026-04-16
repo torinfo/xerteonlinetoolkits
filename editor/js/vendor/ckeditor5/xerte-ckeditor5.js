@@ -1,0 +1,493 @@
+/**
+ * @license Apache-2.0
+ * jQuery bridge and config helpers for CKEditor 5 (GPL-2.0+ — see LICENSE-NOTICE.txt).
+ */
+(function (window, $) {
+	'use strict';
+
+	window.__xerteCke5Instances = window.__xerteCke5Instances || {};
+	window.__xerteCke5Shims = window.__xerteCke5Shims || {};
+	window.__xerteCke5InlineCssInjected = window.__xerteCke5InlineCssInjected || false;
+	window.__xerteCke5UiCssInjected = window.__xerteCke5UiCssInjected || false;
+
+	function ensureLegacyCkeditorGlobal() {
+		if (window.CKEDITOR && window.CKEDITOR.instances) {
+			return;
+		}
+		var cke = window.CKEDITOR || {};
+		cke.instances = window.__xerteCke5Shims;
+		cke.on = cke.on || function () {
+			// CKEditor 4 global events are not available in CKEditor 5.
+		};
+		cke.remove = cke.remove || function (id) {
+			var shim = window.__xerteCke5Shims[id];
+			if (shim && shim.destroy) {
+				return shim.destroy();
+			}
+			var nativeEd = window.__xerteCke5Instances[id];
+			if (nativeEd && nativeEd.destroy) {
+				return nativeEd.destroy().then(function () {
+					delete window.__xerteCke5Instances[id];
+					delete window.__xerteCke5Shims[id];
+				});
+			}
+			delete window.__xerteCke5Instances[id];
+			delete window.__xerteCke5Shims[id];
+		};
+		window.CKEDITOR = cke;
+	}
+	ensureLegacyCkeditorGlobal();
+
+	function browseUrl(type) {
+		var u = typeof rlourlvariable !== 'undefined' ? rlourlvariable : '';
+		if (u.length > 0 && u.charAt(u.length - 1) === '/') {
+			u = u.substr(0, u.length - 1);
+		}
+		return 'editor/elfinder/browse.php?mode=cke5&type=' + type +
+			'&uploadDir=' + encodeURIComponent(typeof rlopathvariable !== 'undefined' ? rlopathvariable : '') +
+			'&uploadURL=' + encodeURIComponent(u);
+	}
+
+	/** CKEditor 4 browse URLs use mode=cke; CKEditor 5 needs mode=cke5 (__xerteCke5FilePickerResolve). */
+	function browseUrlForCke5(url) {
+		if (!url || typeof url !== 'string') {
+			return url;
+		}
+		return url.replace(/([?&])mode=cke\b(?=&|$)/gi, '$1mode=cke5');
+	}
+
+	function defaultUploadUrl() {
+		var u = typeof rlourlvariable !== 'undefined' ? rlourlvariable : '';
+		if (u.length > 0 && u.charAt(u.length - 1) === '/') {
+			u = u.substr(0, u.length - 1);
+		}
+		return 'editor/uploadImage.php?mode=dragdrop&uploadPath=' +
+			encodeURIComponent(typeof rlopathvariable !== 'undefined' ? rlopathvariable : '') +
+			'&uploadURL=' + encodeURIComponent(u);
+	}
+
+	function mapLegacyToolbarItem(item) {
+		var map = {
+			Undo: 'undo',
+			Redo: 'redo',
+			Find: 'findAndReplace',
+			Replace: 'findAndReplace',
+			Sourcedialog: 'sourceEditing',
+			Source: 'sourceEditing',
+			Format: 'heading',
+			Font: 'fontFamily',
+			FontSize: 'fontSize',
+			TextColor: 'fontColor',
+			BGColor: 'fontBackgroundColor',
+			Bold: 'bold',
+			Italic: 'italic',
+			Underline: 'underline',
+			Strike: 'strikethrough',
+			Subscript: 'subscript',
+			Superscript: 'superscript',
+			RemoveFormat: 'removeFormat',
+			SpecialChar: 'specialCharacters',
+			HorizontalRule: 'horizontalLine',
+			Mathjax: 'xerteMathJax',
+			Link: 'link',
+			xotlink: 'xotlink',
+			Image: 'insertImage',
+			Table: 'insertTable',
+			MediaEmbed: 'mediaEmbed',
+			NumberedList: 'numberedList',
+			BulletedList: 'bulletedList',
+			Outdent: 'outdent',
+			Indent: 'indent',
+			xotMarkWord: 'xotMarkWord',
+			Mark: 'xotMarkWord'
+		};
+		return map[item] || null;
+	}
+
+	function normalizeToolbar(toolbar) {
+		if (!toolbar) {
+			return null;
+		}
+		if (!Array.isArray(toolbar) && toolbar.items && Array.isArray(toolbar.items)) {
+			return toolbar;
+		}
+		if (Array.isArray(toolbar) && toolbar.length && typeof toolbar[0] === 'string') {
+			return toolbar;
+		}
+		var flat = [];
+		function pushMapped(raw) {
+			var mapped = mapLegacyToolbarItem(String(raw));
+			if (mapped && flat.indexOf(mapped) === -1) {
+				flat.push(mapped);
+			}
+		}
+		if (Array.isArray(toolbar)) {
+			for (var i = 0; i < toolbar.length; i++) {
+				var group = toolbar[i];
+				if (Array.isArray(group)) {
+					for (var j = 0; j < group.length; j++) {
+						pushMapped(group[j]);
+					}
+					if (i < toolbar.length - 1 && flat.length && flat[flat.length - 1] !== '|') {
+						flat.push('|');
+					}
+				} else if (group && group.items && Array.isArray(group.items)) {
+					for (var k = 0; k < group.items.length; k++) {
+						pushMapped(group.items[k]);
+					}
+				}
+			}
+		}
+		while (flat.length && flat[flat.length - 1] === '|') {
+			flat.pop();
+		}
+		return flat.length ? { items: flat, shouldNotGroupWhenFull: false } : null;
+	}
+
+	function mergeEditorConfig(user) {
+		user = user || {};
+		var lang = 'en';
+		if (typeof language !== 'undefined' && language && language.$code) {
+			lang = String(language.$code).substr(0, 2);
+		}
+		var base = {
+			language: { ui: lang, content: lang },
+			xerteUploadUrl: user.uploadUrl || defaultUploadUrl(),
+			xerteBrowseMediaUrl: user.browseMediaUrl || browseUrlForCke5(user.filebrowserBrowseUrl) || browseUrl('media')
+		};
+		if (user.toolbar) {
+			var toolbar = normalizeToolbar(user.toolbar);
+			if (toolbar) {
+				base.toolbar = toolbar;
+			}
+		}
+		if (user.height) {
+			base.height = user.height;
+		}
+		if (user.editorplaceholder) {
+			base.placeholder = user.editorplaceholder;
+		}
+		if (user.inlineEditor) {
+			base.menuBar = { isVisible: false };
+		}
+		var skip = { uploadUrl: 1, uploadAudioUrl: 1, filebrowserBrowseUrl: 1, filebrowserImageBrowseUrl: 1,
+			filebrowserFlashBrowseUrl: 1, browseMediaUrl: 1, browseImageUrl: 1, toolbar: 1, height: 1,
+			startupMode: 1, codemirror: 1, extraAllowedContent: 1, editorplaceholder: 1, toolbarStartupExpanded: 1,
+			mathJaxClass: 1, mathJaxLib: 1, toolbarGroups: 1, autoUpdateElement: 1, removePlugins: 1, extraPlugins: 1,
+			inlineEditor: 1 };
+		for (var k in user) {
+			if (user.hasOwnProperty(k) && !skip[k]) {
+				base[k] = user[k];
+			}
+		}
+		return base;
+	}
+
+	function applyEditableHeight(editor, px) {
+		if (!px || !editor || !editor.ui) {
+			return;
+		}
+		var v = editor.ui.view;
+		var el = v && v.editable && v.editable.element;
+		if (el) {
+			el.style.minHeight = parseInt(px, 10) + 'px';
+		}
+	}
+
+	function stabilizeEditorLayout(editor, domEl, userConfig, initialMetrics) {
+		if (!editor || !editor.ui || !editor.ui.view) {
+			return;
+		}
+		var root = editor.ui.view.element;
+		var editable = editor.ui.view.editable && editor.ui.view.editable.element;
+		if (root) {
+			root.style.display = 'block';
+			root.style.width = '100%';
+			root.style.maxWidth = '100%';
+			root.style.boxSizing = 'border-box';
+		}
+		if (editable) {
+			editable.style.width = '100%';
+			editable.style.boxSizing = 'border-box';
+		}
+		var sourceHeight = 0;
+		if (userConfig && userConfig.height) {
+			sourceHeight = parseInt(userConfig.height, 10) || 0;
+		}
+		if (!sourceHeight && initialMetrics && initialMetrics.height) {
+			sourceHeight = parseInt(initialMetrics.height, 10) || 0;
+		}
+		if (!sourceHeight) {
+			if (domEl && domEl.style && domEl.style.height) {
+				sourceHeight = parseInt(domEl.style.height, 10) || 0;
+			}
+			if (!sourceHeight && $ && domEl) {
+				sourceHeight = parseInt($(domEl).height(), 10) || 0;
+			}
+		}
+		if (sourceHeight > 0 && editable) {
+			editable.style.minHeight = sourceHeight + 'px';
+			editable.style.height = sourceHeight + 'px';
+			editable.style.overflowY = 'auto';
+		}
+		if (initialMetrics && initialMetrics.width && root) {
+			root.style.minWidth = parseInt(initialMetrics.width, 10) + 'px';
+		}
+	}
+
+	function setupInlineToolbarVisibility(editor) {
+		if (!editor || !editor.ui || !editor.ui.view) {
+			return;
+		}
+		var toolbarEl = editor.ui.view.toolbar && editor.ui.view.toolbar.element;
+		var menuBarEl = editor.ui.view.menuBarView && editor.ui.view.menuBarView.element;
+		if (menuBarEl) {
+			menuBarEl.style.display = 'none';
+		}
+		if (!toolbarEl) {
+			return;
+		}
+		toolbarEl.style.display = 'none';
+		toolbarEl.style.position = 'relative';
+		toolbarEl.style.zIndex = '2';
+
+		var tracker = editor.ui.focusTracker;
+		if (tracker && typeof tracker.on === 'function') {
+			tracker.on('change:isFocused', function (evt, name, isFocused) {
+				toolbarEl.style.display = isFocused ? '' : 'none';
+			});
+		}
+	}
+
+	function ensureInlineEditorCssOverrides() {
+		if (window.__xerteCke5InlineCssInjected) {
+			return;
+		}
+		var css = ''
+			+ '.ck.ck-editor__editable_inline > :first-child{margin-top:0!important;}'
+			+ '.ck.ck-editor__editable_inline > :last-child{margin-bottom:0!important;}'
+			+ '.ck.ck-editor__editable_inline{padding:0!important;}';
+		var style = document.createElement('style');
+		style.type = 'text/css';
+		style.appendChild(document.createTextNode(css));
+		document.head.appendChild(style);
+		window.__xerteCke5InlineCssInjected = true;
+	}
+
+	function ensureEditorUiCssOverrides() {
+		if (window.__xerteCke5UiCssInjected) {
+			return;
+		}
+		// Keep CKEditor 5 UI constrained to container width (prevents toolbar going off-screen).
+		var css = ''
+			+ '.ck.ck-editor{max-width:100%!important;}'
+			+ '.ck.ck-editor__top,.ck.ck-editor__top *{box-sizing:border-box;}'
+			+ '.ck.ck-editor__top .ck-sticky-panel__content{width:100%!important;max-width:100%!important;}';
+		var style = document.createElement('style');
+		style.type = 'text/css';
+		style.appendChild(document.createTextNode(css));
+		document.head.appendChild(style);
+		window.__xerteCke5UiCssInjected = true;
+	}
+
+	function apiShim(editor, domEl) {
+		var self = {
+			getData: function () {
+				return editor.getData();
+			},
+			setData: function (html) {
+				editor.setData(html == null ? '' : String(html));
+			},
+			on: function (ev, fn) {
+				if (ev === 'change') {
+					editor.model.document.on('change:data', function () {
+						fn.call(self);
+					});
+				} else if (ev === 'fileUploadResponse') {
+					// Drag-drop uploads update the document; change:data covers content updates.
+				} else if (ev === 'focus') {
+					editor.editing.view.document.on('focus', function () {
+						fn.call(self);
+					});
+				}
+			},
+			fire: function (ev) {
+				if (ev === 'change') {
+					editor.model.document.fire('change:data');
+				}
+			},
+			setReadOnly: function (ro) {
+				if (ro) {
+					editor.enableReadOnlyMode('xerte');
+				} else {
+					editor.disableReadOnlyMode('xerte');
+				}
+			},
+			destroy: function () {
+				var id = domEl.id;
+				return editor.destroy().then(function () {
+					delete window.__xerteCke5Instances[id];
+					delete window.__xerteCke5Shims[id];
+					if ($ && $(domEl).removeData) {
+						$(domEl).removeData('xerteCke5Instance');
+					}
+				});
+			},
+			_native: editor
+		};
+		return self;
+	}
+
+	function createInstance(domEl, userConfig, callback) {
+		var bundle = window.XerteCKEditor5;
+		if (!bundle) {
+			throw new Error('XerteCKEditor5 bundle not loaded');
+		}
+		var Editor = bundle;
+		var wantsInline = !!(userConfig && userConfig.inlineEditor);
+		if (typeof bundle.create !== 'function') {
+			Editor = wantsInline && bundle.Inline ? bundle.Inline : (bundle.Classic || bundle.Inline);
+		}
+		if (!Editor || typeof Editor.create !== 'function') {
+			throw new Error('XerteCKEditor5 editor class not available');
+		}
+		var cfg = mergeEditorConfig(userConfig || {});
+		var initialMetrics = {
+			width: domEl && domEl.getBoundingClientRect ? domEl.getBoundingClientRect().width : 0,
+			height: domEl && domEl.getBoundingClientRect ? domEl.getBoundingClientRect().height : 0
+		};
+		return Editor.create(domEl, cfg).then(function (editor) {
+			var id = domEl.id;
+			window.__xerteCke5Instances[id] = editor;
+			if ($ && $(domEl).data) {
+				$(domEl).data('xerteCke5Instance', editor);
+			}
+			if (userConfig && userConfig.height) {
+				applyEditableHeight(editor, userConfig.height);
+			}
+			stabilizeEditorLayout(editor, domEl, userConfig || {}, initialMetrics);
+			if (userConfig && userConfig.inlineEditor) {
+				ensureInlineEditorCssOverrides();
+				if (editor.ui && editor.ui.view && editor.ui.view.editable && editor.ui.view.editable.element) {
+					var inlineEditable = editor.ui.view.editable.element;
+					inlineEditable.style.width = '100%';
+					inlineEditable.style.boxSizing = '';
+					inlineEditable.style.minHeight = '40px';
+					inlineEditable.style.height = '40px';
+					inlineEditable.style.overflowY = 'auto';
+				}
+				setupInlineToolbarVisibility(editor);
+			}
+			if (userConfig && userConfig.startupMode === 'source') {
+				try {
+					editor.execute('sourceEditing');
+				} catch (e) { /* ignore */ }
+			}
+			var shim = apiShim(editor, domEl);
+			window.__xerteCke5Shims[id] = shim;
+			ensureEditorUiCssOverrides();
+			if (typeof callback === 'function') {
+				callback.call(shim, domEl);
+			}
+			return editor;
+		});
+	}
+
+	window.XerteCKEditor5Facade = {
+		mergeEditorConfig: mergeEditorConfig,
+		create: createInstance,
+		getInstance: function (id) {
+			return window.__xerteCke5Instances[id] || null;
+		},
+		destroyById: function (id) {
+			var shim = window.__xerteCke5Shims[id];
+			if (shim && shim.destroy) {
+				return shim.destroy();
+			}
+			var ed = window.__xerteCke5Instances[id];
+			if (ed) {
+				return ed.destroy().then(function () {
+					delete window.__xerteCke5Instances[id];
+					delete window.__xerteCke5Shims[id];
+				});
+			}
+			return Promise.resolve();
+		}
+	};
+
+	if (!$ || !$.fn) {
+		return;
+	}
+
+	$.fn.ckeditor = function (callback, config) {
+		if (!$.isFunction(callback)) {
+			var tmp = config;
+			config = callback;
+			callback = tmp;
+		}
+		config = config || {};
+		var promises = [];
+		this.each(function () {
+			var el = this;
+			var id = el.id;
+			var deferred = $.Deferred();
+			promises.push(deferred.promise());
+			var existing = window.__xerteCke5Instances[id];
+			if (existing) {
+				var shim = apiShim(existing, el);
+				if (callback) {
+					callback.call(shim, el);
+				}
+				deferred.resolve();
+				return;
+			}
+			createInstance(el, config, callback)
+				.then(function () {
+					deferred.resolve();
+				})
+				.catch(function (err) {
+					console.error('[XerteCKEditor5]', err);
+					deferred.reject(err);
+				});
+		});
+		var all = $.when.apply($, promises);
+		this.promise = function () {
+			return all;
+		};
+		return this;
+	};
+
+	$.fn.ckeditorGet = function () {
+		var id = this.eq(0).attr('id');
+		var ed = window.__xerteCke5Instances[id];
+		if (!ed) {
+			throw 'CKEditor 5 is not initialized yet, use ckeditor() with a callback.';
+		}
+		return apiShim(ed, this[0]);
+	};
+
+	var _val = $.fn.val;
+	$.fn.val = function (value) {
+		if (arguments.length && this.is('textarea')) {
+			var self = this;
+			var id = self.attr('id');
+			var ed = id && window.__xerteCke5Instances[id];
+			if (ed) {
+				var d = $.Deferred();
+				ed.setData(value == null ? '' : String(value)).then(function () {
+					d.resolveWith(self);
+				});
+				return d.promise();
+			}
+		}
+		if (!arguments.length && this.eq(0).is('textarea')) {
+			var id0 = this.eq(0).attr('id');
+			var ed0 = id0 && window.__xerteCke5Instances[id0];
+			if (ed0) {
+				return ed0.getData();
+			}
+		}
+		return _val.apply(this, arguments);
+	};
+
+})(window, window.jQuery);

@@ -300,8 +300,8 @@ function output_editor_code($row_edit, $xerte_toolkits_site, $read_status, $vers
 <script type="text/javascript" src="editor/js/vendor/jquery.ui.touch-punch.min.js?version=<?php echo $version;?>"></script>
 <script type="text/javascript" src="editor/js/vendor/modernizr-latest.js?version=<?php echo $version;?>"></script>
 <script type="text/javascript" src="editor/js/vendor/jstree.js?version=<?php echo $version;?>"></script>
-<script type="text/javascript" src="editor/js/vendor/ckeditor/ckeditor.js?version=<?php echo $version;?>"></script>
-<script type="text/javascript" src="editor/js/vendor/ckeditor/adapters/jquery.js?version=<?php echo $version;?>"></script>
+<script type="text/javascript" src="editor/js/vendor/ckeditor5/xerte-editor.bundle.js?version=<?php echo $version;?>"></script>
+<script type="text/javascript" src="editor/js/vendor/ckeditor5/xerte-ckeditor5.js?version=<?php echo $version;?>"></script>
 <script type="text/javascript" src="editor/js/vendor/jscolor.js?version=<?php echo $version;?>"></script>
 <script type="text/javascript" src="editor/js/vendor/xml2json.min.js?version=<?php echo $version;?>"></script>
 <script type="text/javascript" src="modules/xerte/parent_templates/Nottingham/common/js/featherlight/featherlight.min.js?version=<?php echo $version;?>"></script>
