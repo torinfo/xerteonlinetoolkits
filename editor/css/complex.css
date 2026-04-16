@@ -788,6 +788,7 @@ form.csvUpload input[name=merge] {
 table.wizard, table.wizardgroup_table{
     vertical-align: middle;
     width: 100%;
+	table-layout: fixed;
 }
 
 td.wizardparameter{
