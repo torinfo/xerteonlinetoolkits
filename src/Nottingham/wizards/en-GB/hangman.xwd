@@ -2,7 +2,8 @@
   <pageWizard remove="true" duplicate="false">
     <newNodes>
       <hangman><![CDATA[<hangman name="Enter Page Title" text="" words="" restrict="letter"
-	  nextBtnTxt="Next"
+      panelWidth="Medium" panelWidthCustom="50" align="Right" panelStyle="false" removeTxt="false"
+	  nextBtnTxt="Next" resetBtnTxt="Reset"
 	  quesCount="Exercise {i} of {n}"
 	  />]]></hangman>
     </newNodes>
@@ -11,31 +12,50 @@
   <!-- HANGMAN============================== -->
   <hangman menu="Games" menuItem="Hangman" hint="A hangman game. Create a list of words for the user to work out." icon="icHangman" thumb="thumbs/hangman.jpg" example="https://xot.xerte.org.uk/play_116?hide=bottom#hangman" wiki="https://xerte.org.uk/wiki/doku.php?id=games_hangman_page" remove="true">
     <name label="Page Title" type="TextInput" wysiwyg="true"/>
-    <text label="Instructions" type="TextArea" height="100" placeholder="Enter text for the page here"/>
+    <text label="Page Text" type="TextArea" height="100" placeholder="Enter text for the page here" condition="panelWidth!='Full'||(removeTxt!='true'&amp;&amp;removeTxt!=undefined)"/>
     <words label="Words" type="script" height="100" placeholder="Enter words here, placing each on a new line" tooltip="to add an other word you have to place it on a new line"/>
     <restrict label="Restrict Guesses" type="Combobox" options="Letters,Letters &amp; numbers,Allow all characters" data="letter,letterNumber,all" defaultValue="all" mandatory="true" tooltip="Use this option to restrict the characters that can be used as guesses"/>
 
-	<AIGroup type="group" label="AI" tooltip ="Generate content automatically with the help of AI." optional="true" lightbox="form" subgroup="assistant" condition="hasrole('aiuser')">
+    <layoutGroup label="Page Layout" type="group">
+      <panelWidth label="Panel Width" options="Small,Medium,Large,Full,Custom" type="ComboBox" data="Small,Medium,Large,Full,Custom" defaultValue="Large" conditionTrigger="true" mandatory="true"/>
+      <panelWidthCustom label="Custom Width (%)" type="NumericStepper" min="10" max="90" step="1" defaultValue="50" condition="panelWidth=='Custom'"/>
+      <align label="Panel Position" options="Right,Left" type="ComboBox" data="Right,Left" defaultValue="Right" condition="panelWidth!='Full'"/>
+      <panelStyle label="Remove Panel Style" type="CheckBox" defaultValue="false"/>
+      <removeTxt label="Remove Page Text" type="CheckBox" defaultValue="true" conditionTrigger="true" condition="panelWidth=='Full'"/>
+    </layoutGroup>
+
+    <textTopGroup label="Text Above Panel" type="group" optional="true">
+      <textTop label="Text" type="TextArea" height="100" optional="true"/>
+      <textTopWidth label="Full Width" type="CheckBox" optional="true" defaultValue="false" condition="panelWidth!='Full'"/>
+    </textTopGroup>
+
+    <textBelowGroup label="Text Below Panel" type="group" optional="true">
+      <textBottom label="Text" type="TextArea" height="100" optional="true"/>
+      <textBottomWidth label="Full Width" type="CheckBox" optional="true" defaultValue="false" condition="panelWidth!='Full'"/>
+    </textBelowGroup>
+
+    <AIGroup type="group" label="AI" tooltip ="Generate content automatically with the help of AI." optional="true" lightbox="form" subgroup="assistant" condition="(vendor_is_available('ai', 'all')) &amp;&amp; (hasrole('aiuser'))">
         <subject label="Subject" verification="^.+$" type="TextInput" defaultValue="" placeholder="Enter a subject here..." optional="true" tooltip="This determines which area or subject the generated content will follow. More complex subjects may result in less consistent content. Examples: 'bird migration habits', 'migration habits of birds native to The Netherlands'."/>
-        <additionalInstructions label="Additional Instructions" type="text" tooltip="Provide any additional instructions or requests on how the generated result should look like here. Please note that certain instructions may break the structure of the generated response. If this occurs, alter the way the instructions are worded and attempt to generate this page again; or leave this field blank." wysiwyg="true" height="50" placeholder="Write your instructions here..." optional="true"/>
-        <uploadPrompt label="Information Source" options="None (uses model base knowledge), All Context Resources,Learning Object (Limited Scope), Single File (Limited Scope)" type="comboBox" data="false,context,lo,true" defaultValue="false" tooltip="Select 'Submit Snippet' when you wish for the model to use the provided text as a source, 'Single File' when you wish to use only one uploaded file or when using a video or audio link as the only source (if you select a file which you haven't uploaded yet, you will be prompted to upload it!), 'Use All Context Resources' when you wish to use all of the sources in the context resources table as a source, and 'Learning Object' when you wish to use the latest preview of the learning object as the single source for generating this content. Please ensure the uploaded file or provided snippet corresponds to the requested subject. If relevant information is not found in the snippet or files, the AI will attempt to supplement with its own knowledge." conditionTrigger="true" optional="true"/>
+        <additionalInstructions label="Additional Instructions" type="text" tooltip="You can leave this blank or provide additional instructions or requests on how the generated result should look. Please note that certain instructions may break the structure of the generated response. If this occurs, change the wording and attempt to generate again." wysiwyg="true" height="50" placeholder="Write your instructions here..." optional="true"/>
+        <uploadPrompt label="Information Source" options="None (uses model base knowledge), All Context Resources,Learning Object (Limited Scope), Single File (Limited Scope)" type="comboBox" data="false,context,lo,true" defaultValue="false" tooltip="Select ‘All Context Resources’ when you wish to use all of the sources in the context resources table.  Select  'Learning Object (Limited Scope)' when you wish to use the latest preview of the learning object as the single source for generating this content. Select ‘Single File (Limited Scope)’ when you wish to use one uploaded file, video or audio link, as the only source (you will be prompted to upload it if it has not already been added). Please ensure the source content corresponds to the requested subject. If relevant information is not found in the sources the AI will attempt to supplement with its own knowledge." conditionTrigger="true" optional="true"/>
         <textSnippet label="Text Snippet" type="text" tooltip="Provide the text snippet you wish the model to use as a source for generating the interactivity." placeholder="''" condition="uploadPrompt=='trueText'" optional="true"/>
         <file label="File / Video Link" type="mediaCorpus" defaultValue="Select a file or enter a video link here..." tooltip="Select a video, audio, powerpoint, PDF or other text file to be used for content generation. If you've selected a file or used a video link which has not yet been processed, you may have to wait up to a few minutes for processing to finish, especially for larger videos." condition="uploadPrompt=='true'" optional="true"/>
         <nrw label="Number of Words" verification="^\d+$" type="TextInput" wysiwyg="true" defaultValue = "10" optional="true" tooltip="The number of words and definitions to be generated. For example, '8' would result in the generation of 8 words and accompanying definitions."/>
         <infoGenSettings advanced="true" label="For this page, the following settings will be used instead of those assigned on the learning-object level:" type="info" optional="true"/>
         <aiSelector advanced="true" label="AI model" type="comboBox_ai" defaultValue="mistral" width="120" overrideField="baseAiSettings" conditionTrigger="true" optional="true"/>
-        <range advanced="true" label="Reading Level" type="TextInput" tooltip="The estimated age, grade, education or other qualifier for which the AI will attempt to curate the complexity of the language. Examples: students aged 12-16, grade 7 students in the Netherlands, university graduates, office workers in the education field, A2 level Dutch speakers, etc." defaultValuePH="Intermediate English B2" overrideField="baseRange" placeholder="Enter reading level. Defaults to 'Intermediate English, B2'" optional="true"/>
-        <eduLevel advanced="true" label="Education Level" type="TextInput" tooltip="The education level for which the content is intended. Examples: University students, HBO students in the Netherlands, Middle school students who already have learned the basics, etc." defaultValuePH="University" placeholder="Enter educational level. Defaults to 'University.'" overrideField="baseEduLevel" optional="true"/>
+        <range advanced="true" label="Reading Level" type="TextInput" tooltip="The estimated age, grade, education, or other qualifier used by the AI to determine the appropriate reading level and linguistic complexity of the generated language. Examples include students aged 12-16, grade 7 students in the Netherlands, university graduates, office workers in the education field, or A2 level Dutch speakers, etc." defaultValuePH="Intermediate B2" overrideField="baseRange" placeholder="Enter reading level. Defaults to 'Intermediate, B2'" optional="true"/>
+        <eduLevel advanced="true" label="Education Level" type="TextInput" tooltip="The education level for which the content is intended. Examples: University students, Bachelors students in the Netherlands, Middle school students who have already learned the basics, etc." defaultValuePH="Vocational" placeholder="Enter educational level. Defaults to 'Vocational.'" overrideField="baseEduLevel" optional="true"/>
         <aiButton type="aibutton" optional="true"/>
         <explanation label="This content is generated using AI. Make sure to double-check and adjust!" type="info" optional="true"/>
     </AIGroup>
 
-	<nextBtnTxt label="Next Button Label" type="TextInput" wysiwyg="true" divider="true" language="true" />
-    <nextBtnTip label="Next Button Tip" type="textInput" language="true" deprecated="This property is no longer required" />		
+    <nextBtnTxt label="Next Button Label" type="TextInput" wysiwyg="true" divider="true" language="true" />
+    <resetBtnTxt label="Reset Button Label" type="TextInput" wysiwyg="true" language="true" mandatory="true" defaultValue="Reset"/>
+    <nextBtnTip label="Next Button Tip" type="textInput" language="true" deprecated="This property is no longer required" />
     <nextBtnWidth label="Next Button Width" type="NumericStepper" min="100" max="250" step="10" width="100" defaultValue="100" language="true" deprecated="Width is now set automatically" />
     <quesCount label="{i} of {n} words" type="TextInput" wysiwyg="true" language="true" />
 
-  </hangman>K
+  </hangman>
 
 
 </wizard>

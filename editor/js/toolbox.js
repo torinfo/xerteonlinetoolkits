@@ -653,6 +653,52 @@ var EDITOR = (function ($, parent) {
         return false;
     },
 
+        //Required for resolving xml conditionals for AI or other API-based services, please do not remove
+    vendor_is_available = function (vendorType, vendor = "all") {
+        // Helper: is a single row active?
+        const isRowActive = function (row) {
+            // Must match the type/category
+            if (row.type !== vendorType) {
+                return false;
+            }
+
+            // Must be enabled
+            if (row.enabled != "1") {
+                return false;
+            }
+
+            // If this vendor doesn't require a key, it's active as-is
+            if (row.needs_key == "0") {
+                return true;
+            }
+
+            // If it *does* require a key, check via vendor_options
+            return vendorHasApiKey(vendorType, row.vendor);
+        };
+
+        // If we're checking a specific vendor in this category
+        if (vendor !== "all") {
+            for (let i = 0; i < management_helper_table.length; i++) {
+                const row = management_helper_table[i];
+                if (row.type === vendorType && row.vendor === vendor) {
+                    return isRowActive(row);
+                }
+            }
+            return false; // no matching row
+        }
+
+        // vendor === "all": is there at least one active vendor in this category?
+        for (let i = 0; i < management_helper_table.length; i++) {
+            const row = management_helper_table[i];
+
+            if (isRowActive(row)) {
+                return true; // found at least one active vendor
+            }
+        }
+
+        return false; // none active
+    },
+
     vendor_has_option = function(option, vendor = "all") {
         if(vendor == "all") {
             for(let i = 0; i < management_helper_table.length; i++){
@@ -740,30 +786,26 @@ var EDITOR = (function ($, parent) {
             }
 
             var tr = $('<tr>');
-                        //todo move to footer of lightbos (footer does not yet exists)
-						if(options.advanced == "true" && lightboxMode == "form"){
-								if(window?.showAdvanced?.[key] == undefined) {
-                                    if (!all_options.some(opt => opt.name === "toggleAdvanced")){
-										window.showAdvanced = {};
-										console.log(arguments);
-										all_options.push({
-												name: "toggleAdvanced",
-												value: {
-														type: "toggleAdvanced",
-														label: "Show advanced options",
-														optional: "true",
-														group: options.group,
-												}
-										});
-								    }
-                                }
-								if(window.showAdvanced[key] == undefined) {
-										showAdvanced[key] = false;
-								}
-								if(!window.showAdvanced[key]) {
-										tr.css("display", "none");
-								}
-						}
+            //todo move to footer of lightbos (footer does not yet exists)
+            if(options.advanced == "true" && lightboxMode == "form"){
+                    if(window?.showAdvanced?.[key] == undefined) {
+                        if (window.showAdvanced == undefined){
+                            window.showAdvanced = {};
+                        }
+                    }
+                    setTimeout(function() {
+                        $("#lb_advanced_cb, #lb_advanced_cb_span")
+                            .switchClass("disabled", "enabled")
+                            .prop("disabled", false);
+                    }, 250);
+
+                    if(window.showAdvanced[key] == undefined) {
+                            showAdvanced[key] = { 'enabled' : false, 'group': options.group };
+                    }
+                    if(!window.showAdvanced[key]['enabled']) {
+                            tr.css("display", "none");
+                    }
+            }
 
             if (options.deprecated) {
                 var td = $('<td>')
@@ -1221,9 +1263,13 @@ var EDITOR = (function ($, parent) {
                     return raw.slice(idxAny).replace(/^['"]+|['"]+$/g, '');
                 }
                 if (idxPreviewAny !== -1) {
+                    let lolang = loLanguage;
                     // slice and strip quotes again just in case
                     //When normalizing in the corpus, if we see preview.xml, we update the LO in corpus.
-                    updateCorpusSingle(false, true);
+                    let completion_info = updateCorpusSingle(false, true, false, lolang);
+                    const first = completion_info.results?.[0] || {};
+                    const displaymsg = first.rag_status || first.transcription_status || completion_info?.error || 'No status available';
+                    alert(displaymsg);
                     return raw.slice(idxPreviewAny).replace(/^['"]+|['"]+$/g, '');
                 }
 
@@ -1232,14 +1278,14 @@ var EDITOR = (function ($, parent) {
                 throw new Error(`Unrecognized path: ${raw}`);
             }
             //Upload a single file to the corpus
-            async function updateCorpusSingle(postData, corpusGrid = false, useLoInCorpus) {
-                //  Show wait cursor
+            async function updateCorpusSingle(postData, corpusGrid = false, useLoInCorpus = false, language) {
+                // Show wait cursor
                 $('body, .featherlight, .featherlight-content').css("cursor", "wait");
 
                 const baseURL = rlopathvariable.substr(rlopathvariable.indexOf("USER-FILES"));
-                try {
+
                 // Build grid row
-                let singleRow = {};
+                let singleRow;
                 if (!useLoInCorpus) {
                     singleRow = {
                         col_1: postData['col_1'],
@@ -1256,38 +1302,81 @@ var EDITOR = (function ($, parent) {
                     };
                 }
 
-                const payload = { name, baseURL, gridData: [singleRow], corpusGrid, useLoInCorpus };
+                const payload = { name, baseURL, gridData: [singleRow], corpusGrid, useLoInCorpus, language };
 
-                // Return Promise and reset cursor in finally
-
-                    return await new Promise((resolve, reject) => {
+                try {
+                    // 1) Start the job and wait for the start response (job_id)
+                    const resp = await new Promise((resolve, reject) => {
                         $.ajax({
-                            url: 'editor/ai/rag/syncCorpus.php',
+                            url: 'editor/ai/rag/syncCorpus_start.php',
                             method: 'POST',
                             contentType: 'application/json',
                             data: JSON.stringify(payload),
-                            success: function(resp) {
-                                console.log('Corpus sync succeeded:', resp);
-                                const first = resp.results?.[0] || {};
-                                const displaymsg =
-                                    first.rag_status ||
-                                    first.transcription_status ||
-                                    resp?.error ||
-                                    'No status available';
-                                alert(displaymsg);
-                                resolve(resp);
+
+                            success: function (resp) {
+                                console.log('Corpus sync started:', resp);
+
+                                resolve(resp); // just resolve the start response
                             },
-                            error: function(xhr, status, err) {
+
+                            error: function (xhr, status, err) {
                                 console.error('Corpus sync failed:', err);
                                 alert(`${language.vendorApi.contextAlerts.syncErrorGenericMsg}`);
                                 reject(err);
                             }
                         });
                     });
+
+                    // 2) Now poll until the job is actually finished
+                    const finalStatus = await pollJobStatus(resp.job_id, baseURL);
+
+                    // 3) Return final status / completion info
+                    return finalStatus;
+
                 } finally {
                     // Reset cursor no matter what
                     $('body, .featherlight, .featherlight-content').css("cursor", "default");
                 }
+            }
+
+            async function pollJobStatus(jobId, baseURL) {
+                return new Promise((resolve, reject) => {
+
+                    const statusUrl = "editor/ai/rag/syncCorpus_status.php?job_id=" +
+                        encodeURIComponent(jobId) + "&baseURL=" +
+                        encodeURIComponent(baseURL);
+
+                    function checkStatus() {
+                        $.ajax({
+                            url: statusUrl,
+                            method: "GET",
+                            cache: false,
+                            success: function (data) {
+                                if (data.status === "processed") {
+                                    const first = data['completion_info'].results?.[0] || {};
+                                    resolve(data['completion_info']);
+                                    return;
+                                }
+
+                                if (data.status === "error") {
+                                    reject(data['completion_info']);
+                                    return;
+                                }
+
+                                setTimeout(checkStatus, 3000);
+                            },
+                            error: function (xhr, status, err) {
+                                console.log("Polling error:", err);
+
+                                // Fail after a set time, assuming polling fails (not that the job resulted in an error)
+                                setTimeout(checkStatus, 5000);
+                            }
+                        });
+                    }
+
+                    // start polling
+                    checkStatus();
+                });
             }
 
             function updateGrid(name, id) {
@@ -1333,24 +1422,28 @@ var EDITOR = (function ($, parent) {
             }
             (async () => {
                 try {
-                    await updateCorpusSingle(postdata, false, false);
+                    let completion_info = await updateCorpusSingle(postdata, false, false, loLanguage);
+                    const first = completion_info.results?.[0] || {};
+                    const displaymsg = first.rag_status || first.transcription_status || completion_info?.error || 'No status available';
+                    alert(displaymsg);
+
                 } catch (e) {
                     console.error(e);
                 }
+
+                //There is no need to continue with the rest, because updateGrid and updateCorpusSingle already handle the data to and from the backend
+                if ((addMode && options.closeAfterAdd) || (!addMode && options.closeAfterEdit)) {
+                    // close the edit/add dialog
+                    $.jgrid.hideModal("#editmod"+grid_id,
+                        {gb:"#gbox_"+grid_id,jqm:options.jqModal,onClose:options.onClose});
+                }
+
+                //Always update the grid so that it matches the actual corpus
+                updateGrid(name, id);
+
+                this.processing = true;
+                return {};
             })();
-
-            //There is no need to continue with the rest, because updateGrid and updateCorpusSingle already handle the data to and from the backend
-            if ((addMode && options.closeAfterAdd) || (!addMode && options.closeAfterEdit)) {
-                // close the edit/add dialog
-                $.jgrid.hideModal("#editmod"+grid_id,
-                    {gb:"#gbox_"+grid_id,jqm:options.jqModal,onClose:options.onClose});
-            }
-
-            //Always update the grid so that it matches the actual corpus
-            updateGrid(name, id);
-
-            this.processing = true;
-            return {};
         }
 
         if (postdata[id_in_postdata])
@@ -1520,8 +1613,8 @@ var EDITOR = (function ($, parent) {
                 alert(`${raw} ${language.vendorApi.contextAlerts.unrecognisedContextPathMsg}`);
                 throw new Error(`Unrecognized path: ${raw}`);
             }
-
-            function corpusUpdate(grid, name, id) {
+            //Start a sync job
+            async function corpusUpdate(grid, name, id) {
                 const baseURL = rlopathvariable.substr(rlopathvariable.indexOf("USER-FILES"));
 
                 const allRows = grid.map(row => {
@@ -1534,26 +1627,74 @@ var EDITOR = (function ($, parent) {
 
                 //  Show wait cursor
                 $('body, .featherlight, .featherlight-content').css("cursor", "wait");
-
-                //  Return a Promise so this can be awaited
-                return new Promise((resolve, reject) => {
-                    $.ajax({
-                        url: 'editor/ai/rag/syncCorpus.php',
-                        method: 'POST',
-                        contentType: 'application/json',
-                        data: JSON.stringify(payload),
-                        success: function(resp) {
-                            resolve(resp);
-                        },
-                        error: function(xhr, status, err) {
-                            alert(`${language.vendorApi.contextAlerts.syncErrorGenericMsg}`);
-                            reject(err);
-                        },
-                        complete: function() {
-                            //  Reset cursor no matter what
-                            $('body, .featherlight, .featherlight-content').css("cursor", "default");
-                        }
+                try {
+                    let resp = await new Promise((resolve, reject) => {
+                        $.ajax({
+                            url: 'editor/ai/rag/syncCorpus_start.php',
+                            method: 'POST',
+                            contentType: 'application/json',
+                            data: JSON.stringify(payload),
+                            success: function(resp) {
+                                resolve(resp);
+                            },
+                            error: function(xhr, status, err) {
+                                alert(`${language.vendorApi.contextAlerts.syncErrorGenericMsg}`);
+                                reject(err);
+                            },
+                            complete: function() {
+                                //  Reset cursor no matter what
+                                $('body, .featherlight, .featherlight-content').css("cursor", "default");
+                            }
+                        });
                     });
+
+                    // 2) Now poll until the job is actually finished
+                    const finalStatus = await pollJobStatus(resp.job_id, baseURL);
+
+                    // 3) Return final status / completion info
+                    return finalStatus;
+                } finally {
+                    // Reset cursor no matter what
+                    $('body, .featherlight, .featherlight-content').css("cursor", "default");
+                }
+            }
+
+            async function pollJobStatus(jobId, baseURL) {
+                return new Promise((resolve, reject) => {
+
+                    const statusUrl = "editor/ai/rag/syncCorpus_status.php?job_id=" +
+                        encodeURIComponent(jobId) + "&baseURL=" +
+                        encodeURIComponent(baseURL);
+
+                    function checkStatus() {
+                        $.ajax({
+                            url: statusUrl,
+                            method: "GET",
+                            cache: false,
+                            success: function (data) {
+
+                                if (data.status === "processed") {
+                                    const first = data['completion_info'].results?.[0] || {};
+                                    resolve(data['completion_info']);
+                                    return;
+                                }
+
+                                if (data.status === "error") {
+                                    reject(data['completion_info']);
+                                    return;
+                                }
+
+                                setTimeout(checkStatus, 3000);
+                            },
+                            error: function (xhr, status, err) {
+                                console.log("Polling error:", err);
+                                setTimeout(checkStatus, 5000);
+                            }
+                        });
+                    }
+
+                    // start polling
+                    checkStatus();
                 });
             }
 
@@ -1716,13 +1857,13 @@ var EDITOR = (function ($, parent) {
                 }
             }
         }
-
+        lti_session = lti_session !== "" ? "&" + lti_session : "";
         var ckoptions = {
-            filebrowserBrowseUrl : 'editor/elfinder/browse.php?mode=cke&type=media&uploadDir='+rlopathvariable+'&uploadURL='+rlourlvariable.substr(0, rlourlvariable.length-1),
-            filebrowserImageBrowseUrl : 'editor/elfinder/browse.php?mode=cke&type=image&uploadDir='+rlopathvariable+'&uploadURL='+rlourlvariable.substr(0, rlourlvariable.length-1),
-            filebrowserFlashBrowseUrl : 'editor/elfinder/browse.php?mode=cke&type=flash&uploadDir='+rlopathvariable+'&uploadURL='+rlourlvariable.substr(0, rlourlvariable.length-1),
-            uploadUrl : 'editor/uploadImage.php?mode=dragdrop&uploadPath='+rlopathvariable+'&uploadURL='+rlourlvariable.substr(0, rlourlvariable.length-1),
-            uploadAudioUrl : 'editor/uploadAudio.php?mode=record&uploadPath='+rlopathvariable+'&uploadURL='+rlourlvariable.substr(0, rlourlvariable.length-1),
+            filebrowserBrowseUrl : 'editor/elfinder/browse.php?mode=cke' + lti_session + '&type=media&uploadDir='+rlopathvariable+'&uploadURL='+rlourlvariable.substr(0, rlourlvariable.length-1) ,
+            filebrowserImageBrowseUrl : 'editor/elfinder/browse.php?mode=cke' + lti_session + '&type=image&uploadDir='+rlopathvariable+'&uploadURL='+rlourlvariable.substr(0, rlourlvariable.length-1) ,
+            filebrowserFlashBrowseUrl : 'editor/elfinder/browse.php?mode=cke' + lti_session + '&type=flash&uploadDir='+rlopathvariable+'&uploadURL='+rlourlvariable.substr(0, rlourlvariable.length-1) ,
+            uploadUrl : 'editor/uploadImage.php?mode=dragdrop' + lti_session + '&uploadPath='+rlopathvariable+'&uploadURL='+rlourlvariable.substr(0, rlourlvariable.length-1) ,
+            uploadAudioUrl : 'editor/uploadAudio.php?mode=record' + lti_session + '&uploadPath='+rlopathvariable+'&uploadURL='+rlourlvariable.substr(0, rlourlvariable.length-1),
             mathJaxClass :  'mathjax',
             mathJaxLib :    'offline/js/mathjax/MathJax.js?config=TeX-MML-AM_HTMLorMML-full',
             toolbarStartupExpanded : false,
@@ -2013,12 +2154,13 @@ var EDITOR = (function ($, parent) {
                 autoRefresh: true
 
             };
+            lti_session = lti_session !== "" ? "&" + lti_session : "";
             var ckoptions = {
-                filebrowserBrowseUrl : 'editor/elfinder/browse.php?mode=cke&type=media&uploadDir='+rlopathvariable+'&uploadURL='+rlourlvariable.substr(0, rlourlvariable.length-1),
-                filebrowserImageBrowseUrl : 'editor/elfinder/browse.php?mode=cke&type=image&uploadDir='+rlopathvariable+'&uploadURL='+rlourlvariable.substr(0, rlourlvariable.length-1),
-                filebrowserFlashBrowseUrl : 'editor/elfinder/browse.php?mode=cke&type=flash&uploadDir='+rlopathvariable+'&uploadURL='+rlourlvariable.substr(0, rlourlvariable.length-1),
-                uploadUrl : 'editor/uploadImage.php?mode=dragdrop&uploadPath='+rlopathvariable+'&uploadURL='+rlourlvariable.substr(0, rlourlvariable.length-1),
-                uploadAudioUrl : 'editor/uploadAudio.php?mode=record&uploadPath='+rlopathvariable+'&uploadURL='+rlourlvariable.substr(0, rlourlvariable.length-1),
+                filebrowserBrowseUrl : 'editor/elfinder/browse.php?mode=cke' + lti_session + '&type=media&uploadDir='+rlopathvariable+'&uploadURL='+rlourlvariable.substr(0, rlourlvariable.length-1),
+                filebrowserImageBrowseUrl : 'editor/elfinder/browse.php?mode=cke' + lti_session + '&type=image&uploadDir='+rlopathvariable+'&uploadURL='+rlourlvariable.substr(0, rlourlvariable.length-1) ,
+                filebrowserFlashBrowseUrl : 'editor/elfinder/browse.php?mode=cke' + lti_session + '&type=flash&uploadDir='+rlopathvariable+'&uploadURL='+rlourlvariable.substr(0, rlourlvariable.length-1),
+                uploadUrl : 'editor/uploadImage.php?mode=dragdrop' + lti_session + '&uploadPath='+rlopathvariable+'&uploadURL='+rlourlvariable.substr(0, rlourlvariable.length-1) ,
+                uploadAudioUrl : 'editor/uploadAudio.php?mode=record' + lti_session + '&uploadPath='+rlopathvariable+'&uploadURL='+rlourlvariable.substr(0, rlourlvariable.length-1) ,
                 mathJaxClass :  'mathjax',
                 mathJaxLib :    'offline/js/mathjax/MathJax.js?config=TeX-MML-AM_HTMLorMML-full',
                 toolbarStartupExpanded : defaultToolBar,
@@ -2109,6 +2251,7 @@ var EDITOR = (function ($, parent) {
     },
 
     convertTextInputs = function () {
+        lti_session = lti_session !== "" ? "&" + lti_session : "";
         $.each(textinputs_options, function (i, options) {
             if (options) {
                 $('#'+options.id).ckeditor(function(){
@@ -2159,11 +2302,11 @@ var EDITOR = (function ($, parent) {
 						[ 'RemoveFormat'],
                         [ 'Sourcedialog' ]
                     ],
-                    filebrowserBrowseUrl : 'editor/elfinder/browse.php?mode=cke&type=media&uploadDir='+rlopathvariable+'&uploadURL='+rlourlvariable.substr(0, rlourlvariable.length-1),
-                    filebrowserImageBrowseUrl : 'editor/elfinder/browse.php?mode=cke&type=image&uploadDir='+rlopathvariable+'&uploadURL='+rlourlvariable.substr(0, rlourlvariable.length-1),
-                    filebrowserFlashBrowseUrl : 'editor/elfinder/browse.php?mode=cke&type=flash&uploadDir='+rlopathvariable+'&uploadURL='+rlourlvariable.substr(0, rlourlvariable.length-1),
-                    uploadUrl : 'editor/uploadImage.php?mode=dragdrop&uploadPath='+rlopathvariable+'&uploadURL='+rlourlvariable.substr(0, rlourlvariable.length-1),
-                    uploadAudioUrl : 'editor/uploadAudio.php?mode=record&uploadPath='+rlopathvariable+'&uploadURL='+rlourlvariable.substr(0, rlourlvariable.length-1),
+                    filebrowserBrowseUrl : 'editor/elfinder/browse.php?mode=cke' + lti_session + '&type=media&uploadDir='+rlopathvariable+'&uploadURL='+rlourlvariable.substr(0, rlourlvariable.length-1) ,
+                    filebrowserImageBrowseUrl : 'editor/elfinder/browse.php?mode=cke' + lti_session + '&type=image&uploadDir='+rlopathvariable+'&uploadURL='+rlourlvariable.substr(0, rlourlvariable.length-1) ,
+                    filebrowserFlashBrowseUrl : 'editor/elfinder/browse.php?mode=cke' + lti_session + '&type=flash&uploadDir='+rlopathvariable+'&uploadURL='+rlourlvariable.substr(0, rlourlvariable.length-1) ,
+                    uploadUrl : 'editor/uploadImage.php?mode=dragdrop' + lti_session + '&uploadPath='+rlopathvariable+'&uploadURL='+rlourlvariable.substr(0, rlourlvariable.length-1) ,
+                    uploadAudioUrl : 'editor/uploadAudio.php?mode=record' + lti_session + '&uploadPath='+rlopathvariable+'&uploadURL='+rlourlvariable.substr(0, rlourlvariable.length-1) ,
                     mathJaxClass :  'mathjax',
                     mathJaxLib :    'offline/js/mathjax/MathJax.js?config=TeX-MML-AM_HTMLorMML-full',
                     //extraPlugins : 'sourcedialog,image3,fontawesome,rubytext,editorplaceholder',
@@ -2463,7 +2606,7 @@ var EDITOR = (function ($, parent) {
                 rowList: [5,10,15,20,30],
                 viewrecords: true,
                 pager: '#' + id + '_nav',
-                editurl: 'editor/js/vendor/jqgrid/jqgrid_dummy.php',
+                editurl: 'editor/js/vendor/jqgrid/jqgrid_dummy.php' + '?' + lti_session,
                 rownumbers:true,
                 gridview:true,
                 ondblClickRow: function(rowid, ri, ci) {
@@ -2577,6 +2720,10 @@ var EDITOR = (function ($, parent) {
 
     readyLocalJgGridData = function(key, name){
         var data_lo = lo_data[key].attributes[name];
+        // For lightboxes, on the very first load the attribute might not yet be there. We treat it as a empty table as a work-around.
+        if (typeof data_lo === 'undefined' || data_lo === '') {
+            data_lo = '|';
+        }
         var rows = [];
         $.each(data_lo.split('||'), function(j, row){
             var records = row.split('|');
@@ -2890,7 +3037,7 @@ var EDITOR = (function ($, parent) {
                 }
                 window.elFinder = null;
             };
-            window.open('editor/elfinder/browse.php?type=media&lang=' + languagecodevariable.substr(0, 2) + '&uploadDir=' + rlopathvariable + '&uploadURL=' + rlourlvariable + '&loc=' + tmp_loc, 'Browse file', "height=600, width=800");
+            window.open('editor/elfinder/browse.php?type=media' + lti_session + '&lang=' + languagecodevariable.substr(0, 2) + '&uploadDir=' + rlopathvariable + '&uploadURL=' + rlourlvariable + '&loc=' + tmp_loc, 'Browse file', "height=600, width=800");
         },
 
         previewFile = function (alt, src, title) {
@@ -3008,7 +3155,10 @@ var EDITOR = (function ($, parent) {
 			}
 			
 			var level = Number(thisTarget);
-			var lo_node = tree.get_node(tree.get_node(thisKey, false).parents[level], false);
+            var lo_node = tree.get_node(tree.get_node(thisKey, false).parents[level], false);
+            if (thisTarget < 0) {
+                lo_node = tree.get_node(thisKey, false);
+            }
 			
 			$.each(lo_node.children, function(i, key){
                 // list pages of specified types only if pageType set, or all page types if not specified
@@ -4461,15 +4611,35 @@ var EDITOR = (function ($, parent) {
     {
         parent.tree.showNodeData(key, true);
     };
+    lbShowAdvanced = function(key)
+    {
+        window.showAdvanced[key]['enabled'] = !window.showAdvanced[key]['enabled'];
+        triggerRedrawForm(window.showAdvanced[key]['group'], key, "", "initialize");
+    }
 
     lightboxSetUp = function(group, attributes, node_options, key, formState="") {
 
         let groupChildren = group.value.children;
-        var lightboxHtml = $("<form id='lightbox_" + group.name + "' style='width: 50vw' ></form>");
+        let title  = wizard_data[lo_data[key]['attributes'].nodeName].menu_options.menuItem;
+        let lightboxHtml = $("<div></div>");
+        let lightboxHeader = $("<div id=\"lb_header\" class=\"header\"></div>");
+        lightboxHeader.append($("<div>").text(title));
+        let lightboxBody = $("<form id='lightbox_" + group.name + "' class='lightbox-form'></form>");
+        let lightboxAdvancedCbChecked = "";
+        if (window.showAdvanced && window.showAdvanced[key] && window.showAdvanced[key]['enabled'])
+        {
+            lightboxAdvancedCbChecked = "checked";
+        }
+        let lightboxFooter = $("<div id=\"lb_footer\" class=\"footer\">\n" +
+            "            <div id=\"checkbox_outer\"><table><tr><td id=\"checkbox_holder\">" +
+            "            <input type=\"checkbox\" id=\"lb_advanced_cb\" title='" + language.chkShowAdvanced.$tooltip + "' " + lightboxAdvancedCbChecked + " disabled class='disabled' onchange='lbShowAdvanced(\"" + key + "\")'> <label id=\"lb_advanced_cb_span\" for=\"lb_advanced_cb\" class=\"disabled\">" + language.chkShowAdvanced.$label + "</label>" +
+            "</td></tr></table></div>\n" +
+            "        </div>");
+
         let lightboxTable = $("<table id='lightboxPanel' class='content'></table>");
         let lightboxId = "#lightbox_" + group.name;
-				let name = wizard_data[lo_data[key]['attributes'].nodeName].menu_options.menuItem;
-				lightboxHtml.append($("<div>").text(name));
+        //let name = wizard_data[lo_data[key]['attributes'].nodeName].menu_options.menuItem;
+        //lightboxHtml.append($("<div>").text(name));
 
         //build lightbox form content input by input
         for (var j = 0; j < groupChildren.length; j++) {
@@ -4485,7 +4655,10 @@ var EDITOR = (function ($, parent) {
                 group.value.lightbox
             );
         }
-        lightboxHtml.append(lightboxTable);
+        lightboxBody.append(lightboxTable);
+        lightboxHtml.append(lightboxHeader);
+        lightboxHtml.append(lightboxBody);
+        lightboxHtml.append(lightboxFooter);
 
         // ensure global is always present
         window.lightboxCKEditorIds = window.lightboxCKEditorIds || [];
@@ -4525,6 +4698,12 @@ var EDITOR = (function ($, parent) {
     }
 
     triggerRedrawForm = function (group, key, groupChildren="", mode, alternative_button = "") {
+        let currentNodeType = lo_data[key]['attributes'].nodeName;
+        const fallbackChildren =
+            wizard_data[currentNodeType].node_options.all
+                .find(option => option.name === group).value.children;
+
+        groupChildren = (groupChildren === "" ? fallbackChildren : groupChildren);
         //store current form state for rebuild
         let formState = {};
         let formInputValues = $('#lightbox_' + group + ' :input').add($('#lightbox_' + group + ' .inlinewysiwyg'));
@@ -4546,16 +4725,85 @@ var EDITOR = (function ($, parent) {
                 }
 
                 // inherit any fields.
-                const inheritField = groupChildren[input]?.value?.inheritField;
-                if (inheritField !== undefined && inheritField !== "") {
-                    const groupName = groupChildren[input]?.name;
+                const inheritFieldRaw = groupChildren[input]?.value?.inheritField;
+                const inheritFieldClean = groupChildren[input]?.value?.inheritFieldClean;
 
-                    // determine candidate value
+                // pick which key/spec to inherit from, and remember whether we must clean
+                let inheritSpec;
+                let shouldClean = false;
+
+                if (inheritFieldRaw !== undefined && inheritFieldRaw !== "") {
+                    inheritSpec = inheritFieldRaw;
+                } else if (inheritFieldClean !== undefined && inheritFieldClean !== "") {
+                    inheritSpec = inheritFieldClean;
+                    shouldClean = true;
+                }
+
+                if (inheritSpec) {
+                    const groupName = groupChildren[input]?.name;
                     let value;
-                    if (attributes[inheritField] !== undefined && attributes[inheritField] !== null) {
-                        value = attributes[inheritField];
-                    } else if (lo_attributes[inheritField] !== undefined && lo_attributes[inheritField] !== null) {
-                        value = lo_attributes[inheritField];
+                    const tree = $.jstree.reference("#treeview");
+                    const parts = inheritSpec.split("|").map(p => p.trim()).filter(Boolean);
+
+                    //simple mode: inherit from current context of event
+                    if (parts.length === 1) {
+                        const inheritKey = parts[0];
+
+                        if (attributes[inheritKey] !== undefined && attributes[inheritKey] !== null) {
+                            value = attributes[inheritKey];
+                        } else if (lo_attributes[inheritKey] !== undefined && lo_attributes[inheritKey] !== null) {
+                            value = lo_attributes[inheritKey];
+                        }
+                    }
+
+                    // parent|fieldName (inherit this field from the parent node)
+                    else if (parts[0] === "parent" && parts.length === 2) {
+                        const inheritKey = parts[1];
+                        const parentKey = tree.get_parent(key);
+
+                        if (parentKey && parentKey !== "#" && parentKey !== "treeroot") {
+                            const parentAttrs = lo_data[parentKey]?.attributes;
+                            if (parentAttrs && parentAttrs[inheritKey] !== undefined && parentAttrs[inheritKey] !== null) {
+                                value = parentAttrs[inheritKey];
+                            }
+                        }
+                    }
+
+                    // sibling|nodeType|fieldName (inherit this field from another node under the same parent)
+                    else if (parts[0] === "sibling" && parts.length === 3) {
+                        const siblingType = parts[1];
+                        const inheritKey = parts[2];
+                        const parentKey = tree.get_parent(key);
+
+                        if (parentKey && parentKey !== "#" && parentKey !== "treeroot") {
+                            const parentNode = tree.get_node(parentKey);
+
+                            if (parentNode && parentNode.children) {
+                                for (let i = 0; i < parentNode.children.length; i++) {
+                                    const childKey = parentNode.children[i];
+                                    if (childKey === key) continue;
+
+                                    const childNode = tree.get_node(childKey);
+                                    const childAttrs = lo_data[childKey]?.attributes;
+
+                                    const matchesType =
+                                        (childNode && childNode.type === siblingType) ||
+                                        (childAttrs && childAttrs.nodeName === siblingType);
+
+                                    if (matchesType) {
+                                        if (childAttrs && childAttrs[inheritKey] !== undefined && childAttrs[inheritKey] !== null) {
+                                            value = childAttrs[inheritKey];
+                                            break;
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+
+                    // clean if requested by inheritFieldClean mode
+                    if (shouldClean) {
+                        value = toPlainText(value);
                     }
 
                     // assign only if the value is not empty ("", null, or undefined)
@@ -4570,7 +4818,12 @@ var EDITOR = (function ($, parent) {
             for (let input = 0; input < formInputValues.length ; input++) {
                 if (formInputValues[input].getAttribute('type') === 'wysiwyg') {
                     formState[formInputValues[input].getAttribute('name')] = formInputValues[input].textContent;
-                } else {
+                }
+                if(formInputValues[input].className === 'ckeditor'){
+                    formInputValues[input].value = formState[formInputValues[input].name];
+                    //formState[formInputValues[input].name] = formState[formInputValues[input].name];
+                }
+                else {
                     formState[formInputValues[input].name] = formInputValues[input].type !== 'checkbox' ? formInputValues[input].value : String(formInputValues[input].checked);
                 }
             }
@@ -4583,40 +4836,98 @@ var EDITOR = (function ($, parent) {
         //remove current form and button handler
         $('#lightbox_' + group).remove();
         $('#lightboxbutton_' + group).off("click");
-        let currentNodeType = lo_data[key]['attributes'].nodeName;
         let groupId = wizard_data[currentNodeType].node_options.all.find((option) => option.name == group);
         $.featherlight.close();
         lightboxSetUp(groupId, "", "", key, formState);
     };
+
+    // helper: convert rich text / html-ish strings to plain text
+    toPlainText = function (input) {
+        if (input === undefined || input === null) return input;
+
+        // Non-strings: keep as-is
+        if (typeof input !== "string") return input;
+
+        const s = input.trim();
+        if (s === "") return "";
+
+        // If it doesn't look like HTML, just normalize whitespace a bit
+        if (!/[<>]/.test(s)) {
+            return s.replace(/\s+/g, " ").trim();
+        }
+
+        // Browser env: safest plain-text extraction
+        if (typeof document !== "undefined") {
+            const el = document.createElement("div");
+            el.innerHTML = s;
+
+            // textContent drops tags and formatting; keeps readable text
+            const text = (el.textContent || "").replace(/\u00A0/g, " "); // nbsp -> space
+            return text.replace(/\s+/g, " ").trim();
+        }
+
+        // Non-browser fallback: strip tags + decode a few common entities
+        return s
+            .replace(/<\/p>\s*<p[^>]*>/gi, "\n")      // preserve paragraph breaks
+            .replace(/<br\s*\/?>/gi, "\n")            // preserve line breaks
+            .replace(/<[^>]+>/g, "")                  // strip remaining tags
+            .replace(/&nbsp;/gi, " ")
+            .replace(/&amp;/gi, "&")
+            .replace(/&lt;/gi, "<")
+            .replace(/&gt;/gi, ">")
+            .replace(/&quot;/gi, '"')
+            .replace(/&#39;/gi, "'")
+            .replace(/\u00A0/g, " ")
+            .replace(/[ \t]+\n/g, "\n")
+            .replace(/\n{3,}/g, "\n\n")
+            .replace(/[ \t]{2,}/g, " ")
+            .trim();
+    }
 
     validateFormInput = function (regexCondition, inputValue, name, fieldlabel) {
         let regex = new RegExp(regexCondition);
         const fieldReference = fieldlabel || name;
         if (!regex.test(inputValue.trim())) {
                 const regexString = regexCondition.toString();
-                //todo alek make languiage dynamic
-                let errorMsg=`Please fill in the ${fieldReference} field correctly.`;
+                let errorMsg= language.vendorApi.inputValidations.fieldFilledIncorrectlyMsg +` ${fieldReference}.`;
 
                 if (regexString === '^\\d+$') {
-                     errorMsg = `Please enter a valid numeral in the ${fieldReference} field. For example: '60', not 'sixty'.`;
+                     errorMsg = language.vendorApi.inputValidations.fieldInvalidNumeralMsg + ` ${fieldReference}. ` + language.vendorApi.inputValidations.fieldInvalidNumeralExampleMsg;
 
                 } else if (regexString === '^.+$') {
-                    errorMsg = `${fieldReference} is a mandatory field! Please fill it in.`;
+                    errorMsg = `${fieldReference} ` + language.vendorApi.inputValidations.mandatoryFieldMissingMsg;
 
                 } else if (regexString === '^(\\s*[^,]+\\s*,\\s*)+[^,]+\\s*$') {
-                    errorMsg = `Please make sure to enter at least two valid items separated by a comma in ${fieldReference} field. For example: 'Apples, Oranges, Berries'.`;
+                    errorMsg = language.vendorApi.inputValidations.fieldInvalidCommaListMsg + ` ${fieldReference}. ` + language.vendorApi.inputValidations.fieldInvalidCommaListExampleMsg;
                 }
             alert(errorMsg);
             return false;
         }
         return true;
     }
-    //verifies if an API key is needed and if it exists.
-    hasApiKeyInstalled = function (vendorGroup, vendor) {
-        if (vendor_options[vendorGroup] !== undefined && vendor_options[vendorGroup][vendor] !== undefined && (vendor_options[vendorGroup][vendor].has_key === true || vendor_options[vendorGroup][vendor].needs_key === false)) {
-            return true;
+    vendorHasApiKey = function (vendorGroup, vendor) {
+        function toBool(v) {
+            if (typeof v === 'boolean') return v;
+            if (typeof v === 'number') return v !== 0;
+            if (typeof v === 'string') return v === '1' || v.toLowerCase() === 'true';
+            return Boolean(v);
         }
 
+        const v = vendor_options?.[vendorGroup]?.[vendor];
+        if (!v) return false;
+
+        const hasKey = toBool(v.has_key);
+        const needsKey = toBool(v.needs_key);
+
+        // If it doesn't need a key, it's always OK. If it needs a key, must have one.
+        return !needsKey || hasKey;
+    };
+
+    //verifies if an API key is needed and if it exists.
+    hasApiKeyInstalled = function (vendorGroup, vendor) {
+        if (vendorHasApiKey(vendorGroup, vendor)) {
+            return true;
+        }
         alert(language.vendorApi.missingKey);
         return false;
     }
@@ -4634,7 +4945,7 @@ var EDITOR = (function ($, parent) {
 
                 let formFieldValue = "";
 
-                if (this.getAttribute('type') === 'wysiwyg') {
+                if ((this.getAttribute('type') === 'wysiwyg') || (this.getAttribute('class') === 'ckeditor')){
                     formFieldValue = this.textContent ;
                 } else {
                     formFieldValue = this.value;
@@ -4731,7 +5042,7 @@ var EDITOR = (function ($, parent) {
 
         //if form validation failed do not make request
         if (!formValidation) {
-            html.prop('disabled', false);
+            $(this).prop('disabled', false);
             return false;
         }
         return constructorObject;
@@ -5654,16 +5965,18 @@ var EDITOR = (function ($, parent) {
 					})
 					.append($('<i>').addClass('fa').addClass('fa-lg').addClass('fa-search').addClass('xerte-icon')));
 
-				btnHolder.append($('<button>')
-					.attr('id', 'lightboxbutton_' + options.group)
-					.attr('title', language.compai.$tooltip)
-                    .attr('type', 'button')
-					.addClass("xerte_button")
-					.click({id:id, key:key, name:name, group: options.group}, function(event)
-					{
-						triggerRedrawForm("imgSearchAndHelpGroup", key, "", "initialize", event.data.name);
-					})
-					.append($('<i>').addClass('fa').addClass('fa-lg').addClass('fa-wand-magic').addClass('xerte-icon')));
+                if (vendor_is_available('image','all') || (vendor_is_available('imagegen','all') && hasrole('aiuser'))){
+                    btnHolder.append($('<button>')
+                        .attr('id', 'lightboxbutton_' + options.group)
+                        .attr('title', language.compai.$tooltip)
+                        .attr('type', 'button')
+                        .addClass("xerte_button")
+                        .click({id:id, key:key, name:name, group: options.group}, function(event)
+                        {
+                            triggerRedrawForm("imgSearchAndHelpGroup", key, "", "initialize", event.data.name);
+                        })
+                        .append($('<i>').addClass('fa').addClass('fa-lg').addClass('fa-wand-magic').addClass('xerte-icon')));
+                };
 
 				html = $('<div>')
 					.attr('id', 'container_' + id)
@@ -5738,7 +6051,7 @@ var EDITOR = (function ($, parent) {
                         $.ajax({
                             type: 'POST',
                             dataType: 'text',
-                            url: 'editor/upload_file_to_jqgrid_template.php',
+                            url: 'editor/upload_file_to_jqgrid_template.php' + '?' + lti_session,
                             data: form_data,
                             contentType: false,
                             processData: false,
@@ -5884,9 +6197,11 @@ var EDITOR = (function ($, parent) {
                 form_id_offset++;
                 html = $('<button>')
                     .attr('id', qf_button_id)
-                    .attr('class', 'quickfill_button')
-                    .text('Quick Fill')
+                    .attr('class', 'quickfill_button xerte_button_c')
+                    .attr('type', 'button')
+                    .html('<i class="fa fa-arrows-rotate"></i> ' + language.assistents.QuickFillBtn.$label)
                     .click({key: key}, async function(event) {
+                        const $btn = $(this);          // the button that was clicked
                         $(this).prop('disabled', true);
                         // Build the parameters object based on type. The nodes must match the actual node names of the xml in question.
                         var parameters;
@@ -6153,24 +6468,16 @@ var EDITOR = (function ($, parent) {
                                 break;
                         }
                         // Show a confirm dialog with a custom message
-                        if (confirm("The specified nodes will be automatically generated with their default values. Proceed?")) {
+                        if (confirm(language.assistents.quickfill.QFConfirmRequest)) {
                             // User clicked "OK"
                             try {
                                 await quick_fill(event, type, parameters);
                             } catch (error) {
                                 console.log('Error occurred:', error);
-                                alert("Something went wrong. Please try using the quick fill feature again.");
-                                html.prop('disabled', false);
-                            } finally {
-                                // Re-enable the button after the function completes (success or failure)
-                                html.prop('disabled', false);
+                                alert(language.assistents.quickfill.QFError);
                             }
-                        } else {
-                            // User clicked "Cancel"
-                            console.log("Quick fill canceled by the user.");
-                            html.prop('disabled', false);
                         }
-
+                        $btn.prop('disabled', false);
                     });
                 break;
             case 'autotranslatebutton':
@@ -6178,10 +6485,11 @@ var EDITOR = (function ($, parent) {
                 form_id_offset++;
                 html = $('<button>')
                     .attr('id', atr_button_id)
-                    .attr('class', 'autotranslate_button')
-                    .text('translate')
+                    .attr('class', 'autotranslate_button xerte_button_c')
+                    .html('<i class="fa fa-language"></i> ' + language.assistents.AutoTranslateBtn.$label)
                     .click({key: key}, async function(event) {
-                        $(this).prop('disabled', true);
+                        const $btn = $(this);          // the button that was clicked
+                        $btn.prop('disabled', true);
                         var api = lo_data[key].attributes['translateApi'] || 'openai';
                         var baseUrl = rlopathvariable.substr(rlopathvariable.indexOf("USER-FILES"));
                         var targetLanguage = lo_data[key].attributes["targetLanguage"];
@@ -6195,12 +6503,12 @@ var EDITOR = (function ($, parent) {
                                 alert("Something went wrong. Please try using the translate feature again.");
                             } finally {
                                 // Re-enable the button after the function completes (success or failure)
-                                html.prop('disabled', false);
+                                $btn.prop('disabled', false);
                             }
                         } else {
                             // User clicked "Cancel"
                             console.log("Translation canceled by the user.");
-                            html.prop('disabled', false);
+                            $btn.prop('disabled', false);
                         }
 
                     });
@@ -6210,13 +6518,42 @@ var EDITOR = (function ($, parent) {
                 form_id_offset++;
                 html = $('<button>')
                     .attr('id', ish_id)
-                    .attr('class', 'imgsh_button')
+                    .attr('class', 'imgsh_button xerte_button_c')
                     .attr('value', value)
                     .attr('name', name)
-                    .text('Query')
+                    .html('<i class="fa fa-arrows-rotate"></i> ' + language.assistents.ImgSearchBtn.$label)
                     .click({key: key, group: options.group, value: value}, function(event) {
-                        html.prop('disabled', true);
+                        const $btn = $(this);          // the button that was clicked
+                        $btn.prop('disabled', true);
                         event.preventDefault();
+
+                        triggerRedrawForm(options.group, key, "", "redraw");
+
+                        function cleanTextField(input) {
+                            if (typeof input !== "string") return input;
+
+                            // 1. Decode HTML entities (&lt;p&gt; to <p>, etc)
+                            const txt = document.createElement("textarea");
+                            txt.innerHTML = input;
+                            input = txt.value;
+
+                            // 2. Strip HTML tags (<p>...</p>)
+                            input = input.replace(/<[^>]*>/g, "");
+
+                            // 3. Replace non-breaking spaces (decoded &nbsp;)
+                            input = input.replace(/\u00A0/g, " ");
+
+                            // 4. Replace literal "&nbsp;" if still present
+                            input = input.replace(/&nbsp;/g, " ");
+
+                            // 5. Normalize whitespace (remove extra spaces, tabs, newlines)
+                            input = input.replace(/\s+/g, " ");
+
+                            // 6. Trim leading/trailing whitespace
+                            input = input.trim();
+
+                            return input;
+                        }
 
                         let constructorObject = getConstructorFromLightbox(html, event.data.group);
                         if (constructorObject === false) {return}
@@ -6270,26 +6607,38 @@ var EDITOR = (function ($, parent) {
                         let aiSettingsOverride = constructorObject['overrideAiSettings'] !== undefined ? constructorObject['overrideAiSettings'] : "true";
                         delete constructorObject.overrideAiSettings;
 
+                        //'pixabayColors' is the expected field, so we create and let it inherit the dropdown value
+                        if (constructorObject['pixabayColorsDropdown']!=='custom'){
+                            constructorObject['pixabayColors'] = constructorObject['pixabayColorsDropdown'];
+                        }
+
+                        // pixabayColors inherits the dropdown value, so we have no need of it further
+                        delete constructorObject['pixabayColorsDropdown'];
+
                         if (serviceType==='generate'){
                             if(!hasApiKeyInstalled('imagegen', api)){
-                                html.prop('disabled', false);
+                                $btn.prop('disabled', false);
                                 return;
                             }
                         } else if (serviceType==='retrieve'){
                             if(!hasApiKeyInstalled('image', api)){
-                                html.prop('disabled', false);
+                                $btn.prop('disabled', false);
                                 return;
                             }
 
                         } else {
                             if ((!hasApiKeyInstalled('image', api))&&(!hasApiKeyInstalled('imagegen', api))) {
-                                html.prop('disabled', false);
+                                $btn.prop('disabled', false);
                                 return;
                             }
                         }
 
-                        img_search_and_help(query, api, rlopathvariable, interpretPrompt, aiSettingsOverride, constructorObject, event.data.key, event.data.value);
-                        html.prop('disabled', false);
+                        query = cleanTextField(query);
+
+                        let loLang= lo_data['treeroot']['attributes']['language'];
+
+                        img_search_and_help(query, api, rlopathvariable, interpretPrompt, aiSettingsOverride, constructorObject, event.data.key, event.data.value, loLang);
+                        $btn.prop('disabled', false);
                     });
                 break;
             case 'generatesuggestionbutton':
@@ -6297,11 +6646,12 @@ var EDITOR = (function ($, parent) {
                 form_id_offset++;
                 html = $('<button>')
                     .attr('id', id)
-                    .attr('class', 'generate_suggestion_button')
-                    .text('Suggest')
+                    .attr('class', 'generate_suggestion_button xerte_button_c')
+                    .html('<i class="fa fa-arrows-rotate"></i> ' + language.assistents.GenerateSuggestion.$btnlabel)
                     .click({key: key}, async function(event) {
+                        const $btn = $(this);          // the button that was clicked
                         // Disable the button to prevent multiple clicks
-                        html.prop('disabled', true);
+                        $btn.prop('disabled', true);
                         var type = lo_data[key].attributes.nodeName; //get the node-type
                         var baseUrl = rlopathvariable.substr(rlopathvariable.indexOf("USER-FILES"));
                         var contextScope = lo_data[key].attributes.linkID; //ensures suggestions are made based on the active node where suggestion request comes from
@@ -6310,7 +6660,8 @@ var EDITOR = (function ($, parent) {
                             (moduleurlvariable === "modules/xerte/") ? "standard" : "standard";
                         // Build the constructor object based on the type
                         var constructorObject = {
-                            "additionalInstructions": "Regarding what kind of suggestions I'm looking for, see: " + lo_data[key].attributes["additionalInstructions"],
+                            // "additionalInstructions": "Regarding what kind of suggestions I'm looking for, see: " + lo_data[key].attributes["additionalInstructions"],
+                            "additionalInstructions": language.assistents.GenerateSuggestion.$instructionprompt + lo_data[key].attributes["additionalInstructions"],
                         };
                         if (confirm(language.vendorApi.overideSuggestionMsg)){
                             try {
@@ -6320,10 +6671,10 @@ var EDITOR = (function ($, parent) {
                                 alert(language.vendorApi.genericAiAPiError);
                             } finally {
                                 // Re-enable the button after the function completes (success or failure)
-                                html.prop('disabled', false);
+                                $btn.prop('disabled', false);
                             }
                         } else {
-                            html.prop('disabled', false);
+                            $btn.prop('disabled', false);
                         }
 
                     });
@@ -6336,8 +6687,9 @@ var EDITOR = (function ($, parent) {
                     .attr('class', 'apply_suggestion_button')
                     .text('Apply suggestion')
                     .click({key: key}, async function(event) {
+                        const $btn = $(this);          // the button that was clicked
                         // Disable the button to prevent multiple clicks
-                        html.prop('disabled', true);
+                        $btn.prop('disabled', true);
                         var type = lo_data[key].attributes.nodeName; //get the node-type
                         var baseUrl = rlopathvariable.substr(rlopathvariable.indexOf("USER-FILES"));
                         var contextScope = "local";
@@ -6365,10 +6717,10 @@ var EDITOR = (function ($, parent) {
                                 alert(language.vendorApi.genericAiAPiError);
                             } finally {
                                 // Re-enable the button after the function completes (success or failure)
-                                html.prop('disabled', false);
+                            $btn.prop('disabled', false);
                             }
                         } else {
-                            html.prop('disabled', false);
+                            $btn.prop('disabled', false);
                         }
 
                     });
@@ -6378,12 +6730,27 @@ var EDITOR = (function ($, parent) {
                 form_id_offset++;
                 html = $('<button>')
                     .attr('id', id)
-                    .attr('class', 'ai_button')
-                    .text('Generate')
+                    .attr('class', 'ai_button xerte_button_c')
+                    .html('<i class="fa fa-wand-magic"></i> ' + language.assistents.AIBtn.$label)
                     .click({key: key, group: options.group}, async function(event) {
+                        const $btn = $(this);          // the button that was clicke
                         // Disable the button to prevent multiple clicks
-                        html.prop('disabled', true);
+                        $btn.prop('disabled', true);
                         event.preventDefault();
+
+                        if ($("#job-ui").length === 0) {
+                            const jobUI = `
+                              <div id="job-ui" style="margin-top:1em;">
+                                <div id="job-starting" style="display:none;">
+                                    <div id="job-spinner">⏳</div>
+                                    <div id="job-status">${language.assistents.AIGenerationStatus.LLMStarting}</div>
+                                    <div id="job-progress-container" style="width:100%;background:#eee;height:4px;">
+                                      <div id="job-progress" style="width:0%;height:4px;background:#4caf50;"></div>
+                                    </div>
+                                </div>
+                              </div>`;
+                            $(this).after(jobUI);
+                        }
 
                         let constructorObject = getConstructorFromLightbox(html, event.data.group);
 
@@ -6424,8 +6791,9 @@ var EDITOR = (function ($, parent) {
                         aiSettings['updateLoOnRequest'] = constructorObject['updateLoOnRequest'] !== undefined ? constructorObject['updateLoOnRequest'] : null;
                         delete constructorObject.updateLoOnRequest;
 
+                        //TODO: this needs to handle defaults in all languages, not just English!
                         // Check if fileUrl is "Upload a file", empty, or just whitespace
-                        if (aiSettings['fileUrl'] === "Upload a file or enter a video link here..." || !aiSettings['fileUrl'] || aiSettings['fileUrl'].trim() === "") {
+                        if (aiSettings['fileUrl'] === "Upload a file or enter a video link here..." || aiSettings['fileUrl'] === "Select a file or enter a video link here..." || !aiSettings['fileUrl'] || aiSettings['fileUrl'].trim() === "") {
                             aiSettings['fileUrl'] = null;
                         }
 
@@ -6436,6 +6804,52 @@ var EDITOR = (function ($, parent) {
                         delete constructorObject.textSnippet;
                         if (aiSettings['textSnippet'] === "Paste or write your snippet here..." || !aiSettings['textSnippet'] || aiSettings['textSnippet'].trim() === "") {
                             aiSettings['textSnippet'] = null;
+                        }
+
+                        // Update bar helpers
+
+                        function addLLMJobBar() {
+                            const $jobUI = $('#job-ui');
+                            if (!$jobUI.length) return;
+
+                            // Avoid duplicates if the user triggers multiple times
+                            if ($('#llm-ui').length) return;
+
+                            const llmUI = `
+                            <div id="llm-ui" style="margin-top:.75em;">
+                              <div id="llm-status">${language.assistents.AIGenerationStatus.LLMInProgress}</div>
+                              <div id="llm-progress-container" style="width:100%;background:#eee;height:4px;">
+                                <div id="llm-progress" style="width:25%;height:4px;background:#4caf50;"></div>
+                              </div>
+                            </div>`;
+                            $jobUI.append(llmUI);
+                        }
+
+                        function startLLMFakeProgress() {
+                            let pct = 25;
+                            const $bar = $('#llm-progress');
+                            const $status = $('#llm-status');
+
+                            if (!$bar.length) return () => {};
+
+                            $status.text(language.assistents.AIGenerationStatus.LLMInProgress);
+                            $bar.css('width', pct + '%');
+
+                            // creep up to a cap (don’t hit 100% until the await finishes)
+                            const cap = 92;
+                            const timer = setInterval(() => {
+                                const remaining = cap - pct;
+                                const step = Math.max(0.4, remaining * 0.08); // slows down near cap
+                                pct = Math.min(cap, pct + step);
+                                $bar.css('width', pct.toFixed(1) + '%');
+                            }, 450);
+
+                            return () => clearInterval(timer);
+                        }
+
+                        function finishLLMOk() {
+                            $('#llm-progress').css('width', '100%');
+                            $('#llm-status').text(language.assistents.AIGenerationStatus.LLMOk);
                         }
 
                         // Corpus sync and update functions:
@@ -6499,11 +6913,10 @@ var EDITOR = (function ($, parent) {
                         * and pass useLoInCorpus to the final requests which signals that we intend to use the latest preview.xml.
                         *
                         */
-                        async function updateCorpus(fileUrl, corpusGrid = false, useLoInCorpus) {
+                        async function updateCorpus(fileUrl, corpusGrid = false, useLoInCorpus, LOlanguage) {
                             const baseURL = rlopathvariable.substr(rlopathvariable.indexOf("USER-FILES"));
 
-                            // 1. Construct a grid row with only fileUrl in col_2, others as empty strings
-                            let singleRow = {};
+                            let singleRow;
                             if (!useLoInCorpus) {
                                 singleRow = {
                                     col_1: "",
@@ -6520,36 +6933,104 @@ var EDITOR = (function ($, parent) {
                                 };
                             }
 
-                            const payload = { name, baseURL, gridData: [singleRow], corpusGrid, useLoInCorpus };
+                            const payload = { name, baseURL, gridData: [singleRow], corpusGrid, useLoInCorpus, LOlanguage};
+
                             $('body, .featherlight, .featherlight-content').css("cursor", "wait");
 
-                            // 2. Send it off
-                            // Return a Promise that resolves or rejects with the AJAX result
-                            return new Promise((resolve, reject) => {
-                                $.ajax({
-                                    url: 'editor/ai/rag/syncCorpus.php',
-                                    method: 'POST',
-                                    contentType: 'application/json',
-                                    data: JSON.stringify(payload),
-                                    success: function(resp) {
-                                        const first = resp.results?.[0] || {};
-                                        const displaymsg =
-                                            first.rag_status ||
-                                            first.transcription_status ||
-                                            resp?.error ||
-                                            'No status available';
-                                        alert(displaymsg);
-                                        resolve(resp);
-                                    },
-                                    error: function(xhr, status, err) {
-                                        console.error('Corpus sync failed:', err);
-                                        alert(`${language.vendorApi.contextAlerts.syncErrorGenericMsg}`);
-                                        reject(err);
-                                    }, complete: function() {
-                                        // Always reset cursor
-                                        $('body, .featherlight, .featherlight-content').css("cursor", "default");
-                                    }
+                            try {
+                                // 1) Start the job and wait for the "start" response (job_id)
+                                const resp = await new Promise((resolve, reject) => {
+                                    $.ajax({
+                                        url: 'editor/ai/rag/syncCorpus_start.php',
+                                        method: 'POST',
+                                        contentType: 'application/json',
+                                        data: JSON.stringify(payload),
+
+                                        success: function (resp) {
+                                            $("#job-ui").show();
+                                            $("#job-status").text(`${language.assistents.AIGenerationStatus.LLMSyncQueued}`);
+                                            $("#job-progress").css("width", "0%");
+                                            resolve(resp);
+                                        },
+
+                                        error: function (xhr, status, err) {
+                                            console.error('Corpus sync failed:', err);
+                                            alert(`${language.vendorApi.contextAlerts.syncErrorGenericMsg}`);
+                                            reject(err);
+                                        }
+                                    });
                                 });
+
+                                // 2) Now poll until the job is really done
+                                const finalStatus = await pollJobStatus(resp.job_id, baseURL);
+
+                                // 3) Return the final completion info / status
+                                return finalStatus;
+
+                            } finally {
+                                // always reset cursor
+                                $('body, .featherlight, .featherlight-content').css("cursor", "default");
+                            }
+                        }
+
+                        async function pollJobStatus(jobId, baseURL) {
+                            return new Promise((resolve, reject) => {
+
+                                const statusUrl = "editor/ai/rag/syncCorpus_status.php?job_id=" +
+                                    encodeURIComponent(jobId) + "&baseURL=" +
+                                    encodeURIComponent(baseURL);
+
+                                $("#job-starting").show();
+                                const statusEl = $("#job-status");
+                                const spinner = $("#job-spinner");
+
+                                function checkStatus() {
+                                    $.ajax({
+                                        url: statusUrl,
+                                        method: "GET",
+                                        cache: false,
+                                        success: function (data) {
+
+                                            // Update UI
+                                            statusEl.text((data.stage || data.status || language.assistents.AIGenerationStatus.LLMLoaded) +
+                                                " — " + (data.message || ""));
+
+                                            if (data.progress !== undefined) {
+                                                $("#job-progress").css("width", data.progress + "%");
+                                            }
+
+                                            if (data.status === "processed") {
+                                                spinner.hide();
+                                                const first = data['completion_info'].results?.[0] || {};
+                                                const displaymsg =
+                                                    first.rag_status ||
+                                                    first.transcription_status ||
+                                                    data['completion_info']?.error ||
+                                                    'No status available';
+                                                //alert(displaymsg);
+                                                statusEl.text(`✅ ${language.assistents.AIGenerationStatus.LLMSyncComplete}`);
+                                                resolve(data['completion_info']);
+                                                return;
+                                            }
+
+                                            if (data.status === "error") {
+                                                spinner.hide();
+                                                statusEl.text(`❌ ${language.assistents.AIGenerationStatus.LLMSyncFailed} ` + (data.error || "unknown"));
+                                                reject(data['completion_info']);
+                                                return;
+                                            }
+
+                                            setTimeout(checkStatus, 3000);
+                                        },
+                                        error: function (xhr, status, err) {
+                                            console.log("Polling error:", err);
+                                            setTimeout(checkStatus, 5000);
+                                        }
+                                    });
+                                }
+
+                                // start polling
+                                checkStatus();
                             });
                         }
 
@@ -6611,10 +7092,18 @@ var EDITOR = (function ($, parent) {
                         *
                          */
                         async function doCorpusCheck(fileUrl, loSettings) {
+                            const statusEl = $("#job-status");
                             if (loSettings['useLoInCorpus'] === true){
                                 alert(`${language.vendorApi.contextAlerts.contextUpdatePreviewMsg}`);
                                 await savepreviewPromise();
-                                const data = await updateCorpus(fileUrl, false, true);
+                                const data = await updateCorpus(fileUrl, false, true, loSettings['language']);
+                                const first = data.results?.[0] || {};
+                                const displaymsg =
+                                    first.rag_status ||
+                                    first.transcription_status ||
+                                    resp?.error ||
+                                    'No status available';
+                                alert(displaymsg);
                                 if ((data?.results?.[0]?.continue_request === 'false')|| (data.success === false)){
                                     return false;
                                 }else{
@@ -6630,10 +7119,18 @@ var EDITOR = (function ($, parent) {
 
                                     if (match) {
                                         alert(`${language.vendorApi.contextAlerts.contextFileFoundProceedMsg}`);
+                                        statusEl.text(`✅ ${language.assistents.AIGenerationStatus.LLMSyncAlreadySynced}`);
                                         return match.metaData.source;  // file found
                                     } else {
                                         if (confirm(`${language.vendorApi.contextAlerts.contextInPageProcessPromptMsg}`)){
-                                            let fileStatus = await updateCorpus(fileUrl, false);
+                                            let fileStatus = await updateCorpus(fileUrl, false, loSettings['useLoInCorpus'], loSettings['language']);
+                                            const first = fileStatus.results?.[0] || {};
+                                            const displaymsg =
+                                                first.rag_status ||
+                                                first.transcription_status ||
+                                                resp?.error ||
+                                                'No status available';
+                                            alert(displaymsg);
                                             if ((fileStatus?.results?.[0]?.continue_request === 'false') || (fileStatus.success === false)) {
                                                 return false;
                                             } else {
@@ -6663,6 +7160,7 @@ var EDITOR = (function ($, parent) {
                         if (uploadPrompt == 'context'){
                             aiSettings['useCorpus'] = true;
                         }
+                        loSettings['language'] = lo_data['treeroot']['attributes']['language'];
 
                         const requiredLoTypes = ['summary', 'orient'];
                         //useLoInCorpus->add the current learning object preview to corpus
@@ -6701,9 +7199,10 @@ var EDITOR = (function ($, parent) {
                                     aiSettings['fileUrl'] !== null){
                                     const fileUrl = aiSettings['fileUrl'];
                                     let fileStatus = null;
+                                    $("#job-starting").show();
                                     fileStatus = await doCorpusCheck(fileUrl, loSettings);
                                     if (fileStatus === false){
-                                        html.prop('disabled', false);
+                                        $btn.prop('disabled', false);
                                         return;
                                     } else if (loSettings['restrictCorpusToLo'] === true){
                                         aiSettings['fileList'] = [];
@@ -6716,20 +7215,28 @@ var EDITOR = (function ($, parent) {
                                 aiSettings['loSettings'] = loSettings;
 
                                 aiSettings['fullUrl'] = fullUrl;
+                                // Add a visual loading indicator to existing job sync bar, if any
+                                addLLMJobBar();
+                                const stopFake = startLLMFakeProgress();
 
                                 await ai_content_generator(aiSettings, constructorObject);
+                                stopFake();
+                                finishLLMOk();
                             }
                             catch (error) {
                                 console.log('Error occurred:', error);
+                                //stopFake();
                                 alert(language.vendorApi.genericAiAPiError);
                             } finally {
                                 // Re-enable the button after the function completes (success or failure)
-                                html.prop('disabled', false);
+                                $btn.prop('disabled', false);
                             }
                         } else {
-                            html.prop('disabled', false);
+                            $btn.prop('disabled', false);
                         }
-
+                        // Disable the job-ui as its no longer necessary sine the job finished
+                        $("#job-ui").remove();
+                        $btn.prop('disabled', false);
                     });
                 break;
         case 'toggleadvanced':
@@ -6746,7 +7253,7 @@ var EDITOR = (function ($, parent) {
 					.addClass('toggleAdvanced')
 					.click(() => {
 						window.showAdvanced[key] = !window.showAdvanced[key];
-						triggerRedrawForm(options.group, key, "", "redraw");
+						triggerRedrawForm(options.group, key, "", "initialize");
 					});
 				if(window.showAdvanced[key]){
 						html.attr("checked", "true");
@@ -6785,11 +7292,6 @@ var EDITOR = (function ($, parent) {
                         format: "csv"
                     }),
                     success: function(resp) {
-                        if (!resp?.corpus) {
-                            //alert('No corpus data found!');
-                            setAttributeValue(key, [name], ['|']);
-                            return;
-                        }
                         var gridId = '#' + resp.gridId + '_jqgrid';
                         $(gridId).jqGrid('clearGridData');
                         setAttributeValue(key, [resp.type], [resp.corpus]);
@@ -6802,7 +7304,6 @@ var EDITOR = (function ($, parent) {
                         if (resp.corpus && typeof resp.corpus === "string") {
                             // Remove leading/trailing whitespace, split on newlines, filter out empty lines
                             totalFiles = resp.corpus.trim().split('\n').filter(line => line.trim() !== '').length;
-                            //alert(`✅ AI context resources are up to date!`);
                         }
                     },
                     error: function(xhr, status, err) {
@@ -6893,7 +7394,7 @@ var EDITOR = (function ($, parent) {
                                     triggerRedrawPage(event.data.key);
                                 } else {
                                     //lightbox so redraw only the lightbox form.
-                                    triggerRedrawForm(event.data.group, event.data.key, "", "redraw");
+                                    triggerRedrawForm(event.data.group, event.data.key, "", "initialize");
                                 }
                             }
 						})

@@ -6,9 +6,10 @@ class TranscriptManager {
     private $registry;
     private $mediaHandler;
 
-    public function __construct(RegistryHandler $registry, MediaHandler $mediaHandler) {
+    public function __construct(RegistryHandler $registry, MediaHandler $mediaHandler, $lang) {
         $this->registry = $registry;
         $this->mediaHandler = $mediaHandler;
+        $this->lang = $lang;
     }
 
     public function appendBase($uploadPath) {
@@ -26,7 +27,7 @@ class TranscriptManager {
         return $finalPath;
     }
 
-    private function normalize_path(string $path): string
+    private function normalize_path($path)
     {
         // 1) turn backslashes into forward-slashes
         $p = str_replace('\\', '/', $path);
@@ -35,6 +36,24 @@ class TranscriptManager {
         $p = preg_replace('#/+#', '/', $p);
 
         return $p;
+    }
+
+    private function toRelativeRagPath($fullPath)
+    {
+        // Normalize all separators to forward slashes for storage
+        $normalized = str_replace(['\\', '/'], '/', $fullPath);
+
+        $anchor = 'RAG/transcripts';
+
+        $pos = stripos($normalized, $anchor);
+
+        if ($pos !== false) {
+            $relative = substr($normalized, $pos);
+            return $relative;
+        }
+
+        // Fallback: if RAG is not found, return the full path
+        return basename($fullPath);
     }
 
     public function process($fileSource) {
@@ -54,12 +73,17 @@ class TranscriptManager {
         }
 
         echo "Processing: $source\n";
-        $transcript = $this->mediaHandler->getTranscript($fileSource);
+        $transcript = $this->mediaHandler->getTranscript($fileSource, $this->lang);
+
+        if (!isset($transcript) || trim((string)$transcript) === '') {
+            throw new Exception("Transcription failed: transcript is empty or not set!");
+        }
+
         $transcriptPath = $this->mediaHandler->saveAsTextFile($transcript, $mediaDir);
 
         $entry = [
             'source' => $source,
-            'transcript_path' => $transcriptPath,
+            'transcript_path' => $this->toRelativeRagPath($transcriptPath),
             'processed_at' => date('c')
         ];
         $this->registry->set($id, $entry);

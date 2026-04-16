@@ -3,36 +3,37 @@ use function rag\makeRag;
 
 require_once __DIR__.'/logging/log_ai_request.php';
 require_once(dirname(__FILE__) . "/../../config.php");
+_load_language_file("/editor/ai_internal/ai_language_internal.inc");
 
 
 global $xerte_toolkits_site;
 
 abstract class BaseAiApi
 {
-//constructor must be like this when adding new api
-    private string $api;
+    //constructor must be like this when adding new api
+    private $api;
 
-    private string $languageName;
+    private $languageName;
 
-    protected string $languageMessage;
+    protected $languageMessage;
 
-     protected $globalInstructions = [];
+     protected $globalInstructions = ["Output must be plain text only. Do not use Markdown (no *, _, backticks, or Markdown headings/lists). Use HTML only, and escape it for XML (e.g., &lt;em&gt;...&lt;/em&gt;)."];
 
-    private const DEFAULT_MSG = 'An unexpected error occurred. If this persists, please inform your administrator.';
+    const DEFAULT_MSG = AI_INTERNAL_BASEREQUEST_ERROR_DEFAULT;
 
     //List of error messages which can explicitly be sent to the frontend.
-    private const ALLOWED_USER_MESSAGES = [
+    const ALLOWED_USER_MESSAGES = [
         // API
-        'There was an error with the API response. If this persists, please inform your administrator.',
+        AI_INTERNAL_BASEREQUEST_ERROR_API,
         // Network
-        'There was an unexpected network error. Please wait a few minutes, then try again. If this persists, please inform your administrator.',
+        AI_INTERNAL_BASEREQUEST_ERROR_NETWORK,
         //JSON/Parse
-        'There was an unexpected error while processing your request. If this persists, please inform your administrator.',
+        AI_INTERNAL_BASEREQUEST_ERROR_JSONPARSE,
         // Generic
         self::DEFAULT_MSG,
     ];
 
-    function __construct(string $api) {
+    function __construct($api) {
 
         $this->api = $api;
         require_once (str_replace('\\', '/', __DIR__) . "/../../config.php");
@@ -51,7 +52,7 @@ abstract class BaseAiApi
 
     abstract protected function POST_request($prompt, $payload, $url, $type);
 
-    abstract protected function buildQueries(array $inputs): array;
+    abstract protected function buildQueries(array $inputs);
 
     abstract protected function parseResponse($results);
 
@@ -62,32 +63,59 @@ abstract class BaseAiApi
      * @param Throwable $e        The caught exception (for internal logging)
      * @param string    $context  Optional short context label, e.g. 'buildQueries'
      */
-    protected function handleError(string $type, Throwable $e, string $context = 'General'): string
+    protected function handleError($type, $e, $context = 'General')
     {
         // Log full internal detail
         error_log(sprintf('[%s] %s', $context, $e->getMessage()));
 
         $messages = [
-            'api'    => 'There was an error with the API response. If this persists, please inform your administrator.',
-            'json'   => 'There was an unexpected error while processing your request. If this persists, please inform your administrator.',
-            'curl'   => 'There was an unexpected network error. Please wait a few minutes, then try again. If this persists, please inform your administrator.',
-            'default'=> 'An unexpected error occurred. If this persists, please inform your administrator.'
+            'api'    => AI_INTERNAL_BASEREQUEST_ERROR_API,
+            'json'   => AI_INTERNAL_BASEREQUEST_ERROR_JSONPARSE,
+            'curl'   => AI_INTERNAL_BASEREQUEST_ERROR_NETWORK,
+            'default'=> AI_INTERNAL_BASEREQUEST_ERROR_DEFAULT,
         ];
 
-        return $messages[$type] ?? $messages['default'];
+        return isset($messages[$type]) ? $messages[$type] : $messages['default'];
+    }
+
+    // Helper to recursively replace invalid UTF-8 sequences in strings
+    protected function json_utf8_substitute($value)
+    {
+        if (is_array($value)) {
+            foreach ($value as $k => $v) {
+                $value[$k] = $this->json_utf8_substitute($v);
+            }
+        } elseif (is_object($value)) {
+            foreach ($value as $k => $v) {
+                $value->$k = $this->json_utf8_substitute($v);
+            }
+        } elseif (is_string($value)) {
+            if (function_exists('mb_convert_encoding')) {
+                // Replaces invalid UTF-8 with U+FFFD (�), similar to JSON_INVALID_UTF8_SUBSTITUTE
+                $value = mb_convert_encoding($value, 'UTF-8', 'UTF-8');
+            } elseif (function_exists('iconv')) {
+                // Fallback: drop invalid bytes (closer to *_IGNORE than *_SUBSTITUTE)
+                $converted = @iconv('UTF-8', 'UTF-8//IGNORE', $value);
+                if ($converted !== false) {
+                    $value = $converted;
+                }
+            }
+        }
+
+        return $value;
     }
 
 //todo remove this from all files, security risk
-
-    protected function safeExecute(callable $fn, string $context = 'General')
+    protected function safeExecute(callable $fn, $context = 'General')
     {
         try {
             return $fn();
-        } catch (Throwable $e) {
+        } catch (\Exception $e) {
             $message = $e->getMessage();
             $msgType = 'default';
 
-            if ($e instanceof JsonException) {
+            // Avoid direct \JsonException reference so IDE doesn't complain
+            if (class_exists('JsonException') && is_a($e, 'JsonException')) {
                 $msgType = 'json';
             } elseif (strpos($message, 'cURL') === 0) {
                 $msgType = 'curl';
@@ -99,8 +127,9 @@ abstract class BaseAiApi
         }
     }
 
+
     // Check if error message should make it to the front end
-    protected function toUserMessage(\Throwable $e, string $context = 'General'): string
+    protected function toUserMessage($e, $context = 'General')
     {
         // Log raw message
         error_log(sprintf('[%s boundary] %s', $context, $e->getMessage()));
@@ -114,7 +143,7 @@ abstract class BaseAiApi
     /**
      * Remove characters that are illegal in XML 1.0.
      */
-    protected function stripInvalidXmlChars(string $s): string {
+    protected function stripInvalidXmlChars($s) {
         // Allowed: #x9 | #xA | #xD | #x20-#xD7FF | #xE000-#xFFFD
         return preg_replace('/[^\x09\x0A\x0D\x20-\x{D7FF}\x{E000}-\x{FFFD}]/u', '', $s);
     }
@@ -125,11 +154,11 @@ abstract class BaseAiApi
      * - Handles namespaced/dashed attr names.
      * - Escapes bare &, <, >, and the delimiting quote.
      */
-    protected function fixXmlAttributeValues(string $xml): string {
+    protected function fixXmlAttributeValues($xml) {
         $pattern = '/([A-Za-z_:][A-Za-z0-9_.:-]*)\s*=\s*(["\'])(.*?)\2/s';
 
         $cleaned_xml = preg_replace_callback($pattern, function ($m) {
-            [$all, $name, $q, $val] = $m;
+            list($all, $name, $q, $val) = $m;
 
             // Remove illegal XML chars inside attribute values
             $val = $this->stripInvalidXmlChars($val);
@@ -160,7 +189,7 @@ abstract class BaseAiApi
     /**
      * Validate XML and return libxml errors (empty array == OK).
      */
-    protected function lintXml(string $xml): array {
+    protected function lintXml($xml) {
         libxml_use_internal_errors(true);
         $dom = new DOMDocument('1.0', 'UTF-8');
         $ok  = $dom->loadXML($xml, LIBXML_NONET | LIBXML_COMPACT | LIBXML_BIGLINES);
@@ -184,7 +213,7 @@ abstract class BaseAiApi
      * One-shot interceptor you can run on every model response.
      * Returns ['xml' => sanitizedXml, 'errors' => []] — errors non-empty if still broken.
      */
-    protected function sanitizeModelXml(string $rawXml) {
+    protected function sanitizeModelXml($rawXml) {
 
         $xml = $this->stripInvalidXmlChars($rawXml);
         $xml = $this->fixXmlAttributeValues($xml);
@@ -197,7 +226,7 @@ abstract class BaseAiApi
 
     protected function setupLanguageInstructions ($selectedCode){
         $languages = [
-            'en-GB' => ['English', 'IMPORTANT: All non-structural output within the XML should be in English!'],
+            'en-GB' => ['English', 'IMPORTANT: All non-structural output within the XML should be in British English!'],
             'nl-NL' => ['Nederlands', 'BELANGRIJK: Alle niet-structurele output binnen de XML moet in het Nederlands zijn!'],
             'nl-BE' => ['Vlaams', 'BELANGRIJK: Alle niet-structurele output binnen de XML moet in het Vlaams zijn!'],
             'fr-FR' => ['Français', 'IMPORTANT : Toute sortie non structurelle dans le XML doit être en français !'],
@@ -222,7 +251,7 @@ abstract class BaseAiApi
         }
     }
 
-    protected function generatePrompt($p, $model): string {
+    protected function generatePrompt($p, $model){
         $prompt = $this->languageMessage. " ";
         foreach ($model->get_prompt_list() as $prompt_part) {
             if ($p[$prompt_part] == null) {
@@ -352,8 +381,24 @@ abstract class BaseAiApi
         return $payload;
     }
 
-    public function ai_request($p, $type, $subtype, $context, $baseUrl, $selectedCode, $useCorpus = false, $fileList = null, $restrictCorpusToLo = false){
+    //Strips the input array from html entities, paragraph tags and the like; it only confuses the model if left.
+    function cleanArray($arr) {
+        return array_map(function ($v) {
+            if (!is_string($v)) return $v;
 
+            // 1. Convert &lt;p&gt; to <p>
+            $v = html_entity_decode($v, ENT_QUOTES, 'UTF-8');
+
+            // 2. Strip HTML tags
+            $v = strip_tags($v);
+
+            // 3. Trim whitespace
+            return trim($v);
+        }, $arr);
+    }
+
+    public function ai_request($p, $type, $subtype, $context, $baseUrl, $selectedCode, $useCorpus = false, $fileList = null, $restrictCorpusToLo = false){
+        $p = $this->cleanArray($p);
         try {
             $this->setupLanguageInstructions($selectedCode);
             $managementSettings = get_block_indicators();
@@ -362,7 +407,9 @@ abstract class BaseAiApi
             //When making any prompt, the stand-in for the language must therefore be 'responseLanguage'
             $p['responseLanguage'] = $this->languageName;
 
-            $model = load_model($type, $this->api, null, $context, $subtype);
+            $model_ver = $managementSettings['ai']['preferred_model'];
+
+            $model = load_model($type, $this->api, $model_ver, $context, $subtype);
 
             $prompt = $this->generatePrompt($p, $model);
             $payload = $model->get_payload();
@@ -372,10 +419,12 @@ abstract class BaseAiApi
                 $encodingApiKey = $xerte_toolkits_site->{$managementSettings['encoding']['key_name']};
                 $encodingDirectory = $this->prepareURL($baseUrl);
                 $provider = $managementSettings['encoding']['active_vendor'];
+                $preferredEncodingModel = $managementSettings['encoding']['preferred_model'];
                 $cfg = [
                     'api_key' => $encodingApiKey,
                     'encoding_directory' => $encodingDirectory,
-                    'provider' => $provider
+                    'provider' => $provider,
+                    'preferredModel' => $preferredEncodingModel
                 ];
                 $rag = makeRag($cfg);
                 if ($rag->isCorpusValid()) {
@@ -429,8 +478,11 @@ abstract class BaseAiApi
 
             return $clean_answer;
         }
-        catch (Throwable $e){
-            return (object) ["status" => "error", "message" => $this->toUserMessage($e)];
+        catch (\Exception $e) {
+            return (object) array(
+                'status'  => 'error',
+                'message' => $this->toUserMessage($e),
+            );
         }
     }
 }
