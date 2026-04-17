@@ -2170,10 +2170,10 @@ var EDITOR = (function ($, parent) {
 				editorplaceholder: options.options.placeholder
             };
 
+            let height = -1;
             if (options.options.height)
             {
-                var height = parseInt(options.options.height) + 20;
-                ckoptions['height'] = height;
+                height = parseInt(options.options.height) + 20;
             }
             if (options.options.type == 'html')
             {
@@ -2184,23 +2184,33 @@ var EDITOR = (function ($, parent) {
             {
                 var ckeditorcontents = $('#'+options.id).data('afterckeditor');
                 $('#'+options.id).ckeditor(function(){
-                		var self = this;
+                	var self = this;
 
                     if (ckeditorcontents) this.setData(ckeditorcontents);
+
+                    if (height > 0)
+                    {
+                        const e = $('#' + options.id).next().find('.ck-editor__editable_inline');
+                        const editor = e[0].ckeditorInstance;
+                        $('#' + options.id).next().find('.ck-editor__editable_inline').css("min-height", height + "px").css("max-height", height + "px");
+                        editor.editing.view.change(writer=>{
+                            writer.setStyle('height', height + 'px', editor.editing.view.document.getRoot());
+                        });
+                    }
 
                     // Editor is ready, attach change event
                     this.on('change', function(){
                         inputChanged(options.id, options.key, options.name, self.getData(), self);
                     });
-										this.on('fileUploadResponse', function(e) {
-											/*self.on('NO-EVENT-WORKS-HERE', function(e) {
-												e.removeListener();
-												inputChanged(options.id, options.key, options.name, self.getData(), self);
-											});*/
-											setTimeout(function () {
-														self.fire('change');
-													}, 1500);
-										});
+                    this.on('fileUploadResponse', function(e) {
+                        /*self.on('NO-EVENT-WORKS-HERE', function(e) {
+                            e.removeListener();
+                            inputChanged(options.id, options.key, options.name, self.getData(), self);
+                        });*/
+                        setTimeout(function () {
+                                    self.fire('change');
+                                }, 1500);
+                    });
                 }, ckoptions);
             }
             else
@@ -2214,7 +2224,7 @@ var EDITOR = (function ($, parent) {
                 });
                 if (options.options.height)
                 {
-                    var height = parseInt(options.options.height) + 20;
+                    height = parseInt(options.options.height) + 20;
                     codemirror.setSize(null,height);
                 }
                 $('.CodeMirror').resizable({
