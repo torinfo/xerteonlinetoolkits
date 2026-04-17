@@ -22,6 +22,9 @@ export class JourneyTable {
   /** Cache of InteractionModal instances, keyed by interaction URL */
   #modalCache = new Map();
 
+  /** Cache of results data (XTResults or null + attempt), keyed by `${rowIndex}-${attemptKey}` */
+  #resultsCache = new Map();
+
   /** Cached DOM references for pagination (set in init) */
   #$pageInfo;
 
@@ -102,6 +105,7 @@ export class JourneyTable {
   }
 
   async init() {
+    this.#resultsCache.clear();
     this.createJourneyTableContainer();
     this.#$pageInfo = $('#jt-page-info');
     this.#$pageLeft = $('#jt-page-left');
@@ -110,6 +114,7 @@ export class JourneyTable {
     this.setupModalHandlers();
     this.#setupPaginationHandlers();
     this.#setupAttemptToggleHandlers();
+    this.#setupResultsPanelHandlers();
     this.#applyInitialColumnVisibility();
     this.#updatePagination();
     this.#setupStickyHeader();
@@ -418,13 +423,11 @@ export class JourneyTable {
         </td>`
       : '<td></td>';
 
-    const nameParts = [user.displayName, user.ifi.identifier || user.attemptKeys[0]]
-      .filter(Boolean)
-      .filter((v, i, a) => a.indexOf(v) === i);
+    const displayName = user.displayName || user.ifi.identifier || user.attemptKeys[0];
     const name = isNonAnonymous
-      ? `<td class="text-left align-middle small">${escapeHtml(nameParts.join(' '))}</td>`
+      ? `<td class="text-left align-middle small">${escapeHtml(displayName)}</td>`
       : '';
-    const completed = `<td class="text-center align-middle small">${this.createJourneyTableCompletedTick(attempt)}</td>`;
+    const completed = `<td class="text-center align-middle small jt-completed-cell" data-row-index="${rowIndex}" data-attempt-key="${escapeHtmlAttr(attempt.key)}">${this.createJourneyTableCompletedTick(attempt)}</td>`;
     const completion = `<td class="text-center align-middle small">${attempt.completedPercentage !== undefined ? `${Math.round(attempt.completedPercentage)}%` : this.#faMinus
       }</td>`;
     const score = `<td class="text-center align-middle small">${attempt.score !== undefined ? `${Math.round(attempt.score)}%` : this.#faMinus
@@ -461,7 +464,7 @@ export class JourneyTable {
       const isBest = attempt.key === user.bestAttempt.key;
       const rowClass = `attempt-row${isBest ? ' used-attempt' : ''}`;
       const nameCell = isNonAnonymous ? '<td></td>' : '';
-      const completed = `<td class="text-center align-middle small">${this.createJourneyTableCompletedTick(attempt)}</td>`;
+      const completed = `<td class="text-center align-middle small jt-completed-cell" data-row-index="${rowIndex}" data-attempt-key="${escapeHtmlAttr(attempt.key)}">${this.createJourneyTableCompletedTick(attempt)}</td>`;
       const completion = `<td class="text-center align-middle small">${attempt.completedPercentage !== undefined ? `${Math.round(attempt.completedPercentage)}%` : this.#faMinus}</td>`;
       const score = `<td class="text-center align-middle small">${attempt.score !== undefined ? `${Math.round(attempt.score)}%` : this.#faMinus}</td>`;
       const passed = `<td class="text-center align-middle small">${this.createJourneyTablePassedTick(attempt)}</td>`;
@@ -539,6 +542,11 @@ export class JourneyTable {
       $attemptRows.toggleClass('expanded');
       $caret.toggleClass('fa-caret-right fa-caret-down');
       $btn.attr('aria-expanded', expanding ? 'true' : 'false');
+
+      // Collapse results panels when collapsing attempt rows
+      if (!expanding) {
+        $(`#jt-body .jt-results-row[data-row-index="${index}"]`).removeClass('expanded');
+      }
 
       // Refresh sticky header clone (column widths may change)
       this.#refreshStickyClone();
@@ -838,16 +846,18 @@ export class JourneyTable {
       this.#$pageRight.prop('disabled', false).removeClass('disabled');
     }
 
-    // Collapse all expanded attempt rows and reset carets
+    // Collapse all expanded attempt rows, results panels, and reset carets
     $('#jt-body .attempt-row.expanded').removeClass('expanded');
+    $('#jt-body .jt-results-row.expanded').removeClass('expanded');
     $('#jt-body .jt-caret-icon').removeClass('fa-caret-down').addClass('fa-caret-right');
     $('#jt-body .jt-caret').attr('aria-expanded', 'false');
 
-    // Sync attempt row visibility with their parent summary row
+    // Sync attempt row and results row visibility with their parent summary row
     this.#$rows.each((_, row) => {
       const rowIndex = $(row).data('index');
       const hidden = row.classList.contains('hide');
       $(`#jt-body .attempt-row[data-index="${rowIndex}"]`).toggleClass('hide', hidden);
+      $(`#jt-body .jt-results-row[data-row-index="${rowIndex}"]`).toggleClass('hide', hidden);
     });
 
     this.#updateScrollButtons();
@@ -1041,6 +1051,292 @@ export class JourneyTable {
     });
 
     requestAnimationFrame(() => this.#updateScrollButtons());
+  }
+
+  // ---------------------------------------------------------------------------
+  // Results Panel — "General Results" detail panel
+  // ---------------------------------------------------------------------------
+
+  /**
+   * Set up event delegation for clicks on the Completed column cells.
+   * Opens/closes a results detail panel below the clicked row.
+   */
+  #setupResultsPanelHandlers() {
+    $('#jt-body').on('click', '.jt-completed-cell', (e) => {
+      const $cell = $(e.currentTarget);
+      const $row = $cell.closest('tr');
+      const rowIndex = Number($cell.data('row-index'));
+      const attemptKey = String($cell.data('attempt-key'));
+      if (!Number.isFinite(rowIndex)) return;
+
+      // Toggle if panel already exists in DOM (use nextAll to skip attempt rows)
+      const $existing = $row.nextAll('.jt-results-row').first();
+      if ($existing.length > 0
+        && $existing.data('row-index') === rowIndex
+        && String($existing.data('attempt-key')) === attemptKey) {
+        $existing.toggleClass('expanded');
+        this.#refreshStickyClone();
+        return;
+      }
+
+      const cacheKey = `${rowIndex}-${attemptKey}`;
+
+      if (!this.#resultsCache.has(cacheKey)) {
+        const user = this.#getFilteredUsers()[rowIndex];
+        if (!user) return;
+
+        const attempt = $row.hasClass('attempt-row')
+          ? user.attempts.find((a) => a.key === attemptKey)
+          : (user.bestAttempt || user.attempts[0]);
+        if (!attempt) return;
+
+        const attemptStatements = attempt.statementIdxs.map(
+          (idx) => this.#state.statements[idx],
+        );
+
+        // Find tracking state statement directly
+        const stmtWithTracking = attemptStatements.find(
+          (s) => s.result?.extensions?.[DS.EXTENSION_URL_TRACKING_STATE] !== undefined,
+        );
+
+        let xtResults = null;
+        if (stmtWithTracking) {
+          try {
+            xtResults = new DS.XTResults(stmtWithTracking);
+          } catch (err) {
+            // eslint-disable-next-line no-console
+            console.error('Failed to parse tracking state:', err);
+          }
+        }
+
+        this.#resultsCache.set(cacheKey, { xtResults, attempt });
+      }
+
+      const cached = this.#resultsCache.get(cacheKey);
+      const panelHtml = this.#createResultsPanelHtml(
+        cached.xtResults, cached.attempt, rowIndex, attemptKey,
+      );
+      $row.after(panelHtml);
+      this.#refreshStickyClone();
+    });
+  }
+
+  /**
+   * Build the full results panel row HTML.
+   *
+   * @param {Object|null} xtResults - XTResults instance, or null if no tracking state
+   * @param {Object} attempt - The attempt object
+   * @param {number} rowIndex - The row index
+   * @param {string} attemptKey - The attempt key
+   * @returns {string} HTML for the results <tr>
+   */
+  #createResultsPanelHtml(xtResults, attempt, rowIndex, attemptKey) {
+    const colCount = $('.jt-table thead tr th').length || 1;
+    const summary = this.#createResultsSummaryHtml(xtResults, attempt);
+    const interactions = xtResults
+      ? this.#createResultsInteractionsHtml(xtResults)
+      : '';
+    const details = xtResults && xtResults.mode === 'full-results'
+      ? this.#createResultsDetailsHtml(xtResults)
+      : '';
+
+    return `
+      <tr class="jt-results-row expanded"
+          data-row-index="${rowIndex}"
+          data-attempt-key="${escapeHtmlAttr(attemptKey)}">
+        <td colspan="${colCount}" class="jt-results-cell">
+          <div class="jt-results-panel">
+            ${summary}
+            ${interactions}
+            ${details}
+          </div>
+        </td>
+      </tr>`;
+  }
+
+  /**
+   * Build the General Results summary section HTML.
+   *
+   * @param {Object|null} xtResults - XTResults instance, or null
+   * @param {Object} attempt - The attempt object (fallback for basic timing)
+   * @returns {string} HTML for the summary section
+   */
+  #createResultsSummaryHtml(xtResults, attempt) {
+    const rows = [];
+
+    if (xtResults) {
+      const weightedScore = Math.round(
+        xtResults.averageScore * xtResults.completion / 100,
+      );
+      rows.push(
+        this.#summaryRow(XAPI_RESULTS_AVERAGE, `${escapeHtml(String(Math.round(xtResults.averageScore)))}%`),
+        this.#summaryRow(XAPI_RESULTS_COMPLETION, `${escapeHtml(String(Math.round(xtResults.completion)))}%`),
+        this.#summaryRow(XAPI_RESULTS_SCORE, `${escapeHtml(String(weightedScore))}%`),
+        this.#summaryRow(XAPI_RESULTS_START_TIME, escapeHtml(this.#dashboard.formatStart(xtResults.start))),
+        this.#summaryRow(XAPI_RESULTS_DURATION, escapeHtml(this.#dashboard.formatDuration(xtResults.totalDuration))),
+      );
+    } else {
+      rows.push(
+        this.#summaryRow(XAPI_RESULTS_START_TIME, escapeHtml(this.#dashboard.formatStart(attempt.start))),
+        this.#summaryRow(XAPI_RESULTS_DURATION, escapeHtml(this.#dashboard.formatDuration(attempt.duration))),
+      );
+    }
+
+    return `
+      <section class="jt-results-summary">
+        <h6 class="jt-results-heading">${escapeHtml(XAPI_RESULTS_GENERAL)}</h6>
+        <table class="jt-results-summary-table">
+          <tbody>${rows.join('')}</tbody>
+        </table>
+      </section>`;
+  }
+
+  /**
+   * Build a single summary table row.
+   *
+   * @param {string} label - The label text
+   * @param {string} value - The pre-escaped value HTML
+   * @returns {string} HTML <tr>
+   */
+  #summaryRow(label, value) {
+    return `<tr><td class="jt-results-label">${escapeHtml(label)}</td><td class="jt-results-value">${value}</td></tr>`;
+  }
+
+  /**
+   * Build the Interactivity Results table HTML.
+   *
+   * @param {Object} xtResults - XTResults instance
+   * @returns {string} HTML for the interactions section
+   */
+  #createResultsInteractionsHtml(xtResults) {
+    const isFullResults = xtResults.mode === 'full-results';
+    const detailsHeader = isFullResults
+      ? `<th>${escapeHtml(XAPI_RESULTS_DETAILS)}</th>`
+      : '';
+
+    const bodyRows = xtResults.interactions.map((interaction) => {
+      const scoreCell = interaction.type !== 'page'
+        ? `${Math.round(interaction.score)}%`
+        : '-';
+      const durationCell = `${interaction.duration}s`;
+
+      let completedIcon;
+      if (interaction.completed === 'completed') {
+        completedIcon = this.#faTick;
+      } else if (interaction.completed === 'incomplete') {
+        completedIcon = this.#faCross;
+      } else {
+        completedIcon = this.#faMinus;
+      }
+
+      let detailsCell = '';
+      if (isFullResults) {
+        const hasDetails = interaction.subinteractions
+          && interaction.subinteractions.length > 0
+          && interaction.type !== 'page';
+        const detailsIcon = hasDetails
+          ? '<i class="fa fa-circle jt-results-details-icon"></i>'
+          : '<i class="fa fa-circle-o jt-results-details-icon"></i>';
+        detailsCell = `<td class="text-center">${detailsIcon}</td>`;
+      }
+
+      return `
+        <tr>
+          <td>${escapeHtml(interaction.title)}</td>
+          <td class="text-right">${escapeHtml(scoreCell)}</td>
+          <td class="text-right">${escapeHtml(durationCell)}</td>
+          <td class="text-center">${escapeHtml(String(interaction.weighting))}</td>
+          <td class="text-center">${completedIcon}</td>
+          ${detailsCell}
+        </tr>`;
+    }).join('');
+
+    return `
+      <section class="jt-results-interactions">
+        <h6 class="jt-results-heading">${escapeHtml(XAPI_RESULTS_INTERACTIVITY)}</h6>
+        <table class="jt-results-interaction-table">
+          <thead>
+            <tr>
+              <th>${escapeHtml(XAPI_RESULTS_NAME)}</th>
+              <th>${escapeHtml(XAPI_RESULTS_SCORE_COL)}</th>
+              <th>${escapeHtml(XAPI_RESULTS_DURATION_COL)}</th>
+              <th>${escapeHtml(XAPI_RESULTS_WEIGHTING)}</th>
+              <th>${escapeHtml(XAPI_RESULTS_COMPLETED)}</th>
+              ${detailsHeader}
+            </tr>
+          </thead>
+          <tbody>${bodyRows}</tbody>
+        </table>
+      </section>`;
+  }
+
+  /**
+   * Build the Specific Results detail tables HTML.
+   *
+   * @param {Object} xtResults - XTResults instance
+   * @returns {string} HTML for the details section
+   */
+  #createResultsDetailsHtml(xtResults) {
+    const groups = xtResults.interactions
+      .filter((interaction) => interaction.subinteractions
+        && interaction.subinteractions.length > 0
+        && interaction.type !== 'page');
+
+    if (groups.length === 0) return '';
+
+    const tables = groups.map((interaction) => {
+      const rows = interaction.subinteractions.map((sub) => {
+        const correctIcon = sub.correct === true
+          ? this.#faTick
+          : this.#faCross;
+
+        const learnerHtml = JourneyTable.#replaceArrows(escapeHtml(String(sub.learnerAnswer ?? '')));
+        const correctHtml = Array.isArray(sub.correctAnswer)
+          ? sub.correctAnswer.map((a) => JourneyTable.#replaceArrows(escapeHtml(String(a)))).join('<br>')
+          : JourneyTable.#replaceArrows(escapeHtml(String(sub.correctAnswer ?? '')));
+
+        return `
+          <tr>
+            <td class="text-center">${correctIcon}</td>
+            <td>${escapeHtml(String(sub.question ?? ''))}</td>
+            <td>${learnerHtml}</td>
+            <td>${correctHtml}</td>
+          </tr>`;
+      }).join('');
+
+      return `
+        <div class="jt-results-details-group">
+          <h6 class="jt-results-details-title">${escapeHtml(interaction.title)}</h6>
+          <table class="jt-results-details-table">
+            <thead>
+              <tr>
+                <th></th>
+                <th>${escapeHtml(XAPI_RESULTS_NAME)}</th>
+                <th>${escapeHtml(XAPI_RESULTS_YOUR_ANSWER)}</th>
+                <th>${escapeHtml(XAPI_RESULTS_CORRECT_ANSWER)}</th>
+              </tr>
+            </thead>
+            <tbody>${rows}</tbody>
+          </table>
+        </div>`;
+    }).join('');
+
+    return `
+      <section class="jt-results-details">
+        <h6 class="jt-results-heading">${escapeHtml(XAPI_RESULTS_SPECIFIC)}</h6>
+        ${tables}
+      </section>`;
+  }
+
+  /**
+   * Replace escaped arrow sequences (--&gt;) with a font-awesome arrow icon.
+   * Must be called AFTER escapeHtml() to prevent XSS.
+   *
+   * @param {string} html - The already-escaped HTML string
+   * @returns {string} HTML with arrow icons
+   */
+  static #replaceArrows(html) {
+    return html.replace(/--&gt;/g, '<i class="fa fa-long-arrow-right"></i>');
   }
 
   /**

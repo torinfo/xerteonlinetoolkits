@@ -847,6 +847,260 @@ td.td-center {
   display: none !important;
 }
 
+/* ── Results panel (General Results detail) ──────────────────────────────── */
+
+/* Row visibility — toggled by JS adding/removing .expanded */
+.jt-results-row {
+  display: none;
+}
+
+.jt-results-row.expanded {
+  display: table-row;
+}
+
+.jt-results-row.hide {
+  display: none !important;
+}
+
+/* Cell resets — panel handles its own spacing */
+.jt-results-cell {
+  padding: 0 !important;
+  border-top: none !important;
+}
+
+/* Panel container
+ *
+ * Smooth open/close animation via max-height + padding transition.
+ * Collapsed state: max-height 0, padding 0, overflow hidden — visually
+ * disappears completely.  Expanded state: large max-height ceiling and
+ * restored padding transition in tandem.
+ *
+ * The max-height ceiling (2400px) is intentionally large so the content
+ * is never clipped; in practice the ease timing makes the easing feel
+ * natural for realistic panel heights.
+ */
+.jt-results-panel {
+  overflow: hidden;
+  max-height: 0;
+  padding: 0 24px;
+  /* Close: fast ease-out */
+  transition:
+    max-height 0.22s ease-out,
+    padding 0.22s ease-out;
+  background-color: #fef7f3;
+  border-left: 3px solid #f86718;
+  border-top: 1px solid #f0ddd3;
+  border-bottom: 1px solid #f0ddd3;
+}
+
+.jt-results-row.expanded .jt-results-panel {
+  max-height: 2400px;
+  padding: 16px 24px 20px;
+  /* Open: slightly slower ease-in so content feels like it unfolds */
+  transition:
+    max-height 0.32s ease-in,
+    padding 0.22s ease-in;
+}
+
+/* Completed cell — click affordance */
+.jt-completed-cell {
+  cursor: pointer;
+  user-select: none;
+  transition: background-color 0.15s ease;
+}
+
+.jt-completed-cell:hover {
+  background-color: rgba(248, 103, 24, 0.1) !important;
+}
+
+/* Active feedback on mousedown */
+.jt-completed-cell:active {
+  background-color: rgba(248, 103, 24, 0.18) !important;
+}
+
+/* ── Section headings ────────────────────────────────────────────────────── */
+
+.jt-results-heading {
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: #f86718;
+  margin: 0 0 8px;
+  padding-bottom: 5px;
+  border-bottom: 1px solid #f0ddd3;
+}
+
+/* Subsequent sections get extra top spacing */
+.jt-results-interactions,
+.jt-results-details {
+  margin-top: 18px;
+}
+
+/* ── General Results summary table ───────────────────────────────────────── */
+
+.jt-results-summary-table {
+  font-size: 0.8125rem;
+  border-collapse: collapse;
+  margin-bottom: 0;
+}
+
+.jt-results-summary-table tr:not(:last-child) td {
+  border-bottom: 1px solid #f0e4dc;
+}
+
+.jt-results-label {
+  font-weight: 500;
+  padding: 4px 20px 4px 0;
+  color: #5a6472;
+  white-space: nowrap;
+}
+
+.jt-results-value {
+  padding: 4px 0;
+  color: #1d2733;
+  font-weight: 500;
+}
+
+/* ── Interactivity Results table ─────────────────────────────────────────── */
+
+.jt-results-interaction-table,
+.jt-results-details-table {
+  width: 100%;
+  font-size: 0.8rem;
+  border-collapse: collapse;
+  margin-bottom: 0;
+  background-color: #fff;
+  border: 1px solid #f0ddd3;
+  border-radius: 4px;
+  /* Clip the border-radius on the table itself */
+  overflow: hidden;
+}
+
+/* thead */
+.jt-results-interaction-table thead,
+.jt-results-details-table thead {
+  background-color: #fdf0e8;
+}
+
+.jt-results-interaction-table th,
+.jt-results-details-table th {
+  font-weight: 700;
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: #5a6472;
+  border-bottom: 2px solid #e6cbb8;
+  padding: 6px 10px;
+  white-space: nowrap;
+}
+
+/* tbody cells */
+.jt-results-interaction-table td,
+.jt-results-details-table td {
+  padding: 6px 10px;
+  border-bottom: 1px solid #edf0f4;
+  color: #2d3641;
+  vertical-align: middle;
+}
+
+/* Last row has no bottom border to avoid double-border with the table outline */
+.jt-results-interaction-table tbody tr:last-child td,
+.jt-results-details-table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+/* Row hover highlight */
+.jt-results-interaction-table tbody tr:hover td,
+.jt-results-details-table tbody tr:hover td {
+  background-color: #fef3ec;
+}
+
+/* Zebra striping — subtle, helps scannability on longer lists */
+.jt-results-interaction-table tbody tr:nth-child(even) td {
+  background-color: #fffaf7;
+}
+
+.jt-results-interaction-table tbody tr:nth-child(even):hover td,
+.jt-results-details-table tbody tr:nth-child(even):hover td {
+  background-color: #fef3ec;
+}
+
+/* Name column gets more room; numeric/icon columns shrink-wrap */
+.jt-results-interaction-table td:first-child,
+.jt-results-interaction-table th:first-child {
+  width: auto;
+  min-width: 120px;
+}
+
+/* ── Specific Results: per-interaction detail groups ─────────────────────── */
+
+.jt-results-details-group {
+  margin-bottom: 14px;
+}
+
+.jt-results-details-group:last-child {
+  margin-bottom: 0;
+}
+
+.jt-results-details-title {
+  font-size: 0.8rem;
+  font-weight: 600;
+  margin: 0 0 5px;
+  color: #2d3641;
+  padding-left: 2px;
+}
+
+/* ── Details indicator icon (filled = has data, empty = no data) ─────────── */
+
+.jt-results-details-icon {
+  font-size: 0.55rem;
+  vertical-align: middle;
+  line-height: 1;
+  /* filled circle = has details */
+  color: #f86718;
+}
+
+/* Empty circle — de-emphasised, data-absent state */
+.fa-circle-o.jt-results-details-icon {
+  color: #bfcad6;
+}
+
+/* ── Correctness icons in details rows ───────────────────────────────────── */
+
+/* Icon column: fixed narrow width, centred */
+.jt-results-details-table td:first-child,
+.jt-results-details-table th:first-child {
+  width: 28px;
+  min-width: 28px;
+  max-width: 28px;
+  text-align: center;
+  padding-left: 8px;
+  padding-right: 4px;
+}
+
+/* ── Print overrides: remove animation constraints, flatten backgrounds ───── */
+
+@media print {
+  .jt-results-panel {
+    max-height: none !important;
+    overflow: visible !important;
+    padding: 8px 0 !important;
+    background-color: #fff !important;
+    border-color: #ccc !important;
+  }
+
+  .jt-results-interaction-table,
+  .jt-results-details-table {
+    border: 1px solid #ccc !important;
+  }
+
+  .jt-results-interaction-table thead,
+  .jt-results-details-table thead {
+    background-color: #f0f0f0 !important;
+  }
+}
+
 /* Hide rows outside the current page */
 .session-row.hide {
   display: none;
