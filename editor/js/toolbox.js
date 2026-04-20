@@ -6945,6 +6945,10 @@ var EDITOR = (function ($, parent) {
                             aiSettings['textSnippet'] = null;
                         }
 
+                        if (uploadPrompt==='select'){
+                            aiSettings['fileUrl'] =constructorObject['fileSelection'] ? constructorObject['fileSelection'] : null;
+                        }
+
                         // Update bar helpers
 
                         function addLLMJobBar() {
@@ -7466,6 +7470,204 @@ var EDITOR = (function ($, parent) {
                     .attr('class', 'lightboxbutton')
                     //.text('language.lightbox.settingsButton');
                     .text('Open AI Settings');
+
+                break;
+            case 'aicontextselector':
+                var id = 'select_' + form_id_offset;
+                form_id_offset++;
+
+                html = $('<select>')
+                    .attr('id', id)
+                    .attr('name', name)
+                    .change({id:id, key:key, name:name, group:options.group, trigger:conditionTrigger}, function(event)
+                    {
+                        // store data in xml
+                        selectChanged(event.data.id, event.data.key, event.data.name, this.value, this);
+
+                        if (event.data.trigger)
+                        {
+                            // no lightbox so redraw entire page
+                            if (mode === "none") {
+                                triggerRedrawPage(event.data.key);
+                            } else {
+                                // lightbox so redraw only the lightbox form
+                                triggerRedrawForm(event.data.group, event.data.key, "", "redraw");
+                            }
+                        }
+                    });
+
+                html.append(
+                    $('<option>')
+                        .attr('value', '')
+                        .prop('selected', value === '')
+                        .text('Loading available files...')
+                );
+
+                (function(selectEl, currentValue) {
+
+                    function fetchAiCorpusForField() {
+                        const baseURL = rlopathvariable.substr(rlopathvariable.indexOf("USER-FILES"));
+                        $('body, .featherlight, .featherlight-content').css("cursor", "wait");
+
+                        return new Promise((resolve, reject) => {
+                            $.ajax({
+                                url: 'editor/ai/rag/getCorpus.php',
+                                method: 'POST',
+                                contentType: 'application/json',
+                                dataType: 'json',
+                                data: JSON.stringify({
+                                    name: "",
+                                    baseURL: baseURL,
+                                    type: "",
+                                    gridId: "",
+                                    format: "json"
+                                }),
+                                success: function(resp) {
+                                    if (!resp || !resp.corpus || !resp.corpus.hashes) {
+                                        reject(new Error('No corpus hashes returned'));
+                                        return;
+                                    }
+                                    resolve(resp.corpus.hashes);
+                                },
+                                error: function(xhr, status, err) {
+                                    console.error('Failed to fetch corpus:', err);
+                                    reject(err);
+                                },
+                                complete: function() {
+                                    $('body, .featherlight, .featherlight-content').css("cursor", "default");
+                                }
+                            });
+                        });
+                    }
+
+                    function normaliseToFileLocation(val) {
+                        if (!val) return '';
+
+                        val = String(val).trim();
+
+                        // already in FileLocation form
+                        if (val.indexOf("FileLocation + '") === 0) {
+                            return val;
+                        }
+
+                        // absolute/local URL -> FileLocation form
+                        if (typeof rlourlvariable !== 'undefined' && val.indexOf(rlourlvariable) === 0) {
+                            var relativePath = val.substring(rlourlvariable.length);
+
+                            // remove leading slash only if present
+                            if (relativePath.charAt(0) === '/') {
+                                relativePath = relativePath.substring(1);
+                            }
+
+                            return "FileLocation + '" + relativePath + "'";
+                        }
+
+                        // fallback if the value already contains the corpus path somewhere
+                        var ragMatch = val.match(/RAG\/corpus\/.+$/);
+                        if (ragMatch && ragMatch[0]) {
+                            return "FileLocation + '" + ragMatch[0] + "'";
+                        }
+
+                        return val;
+                    }
+
+                    function getOptionLabel(hash) {
+                        var metaName = (hash && hash.metaData && hash.metaData.name) ? hash.metaData.name.trim() : '';
+                        var fileName = (hash && hash.files && hash.files.length > 0 && hash.files[0]) ? hash.files[0].trim() : '';
+                        var source = (hash && hash.metaData && hash.metaData.source) ? hash.metaData.source : '';
+
+                        if (metaName !== '') return metaName;
+                        if (fileName !== '') return fileName;
+                        return source;
+                    }
+
+                    function getFallbackLabel(val) {
+                        var normalised = normaliseToFileLocation(val);
+                        var match = normalised.match(/RAG\/corpus\/([^']+)$/);
+
+                        if (match && match[1]) {
+                            return match[1].split('/').pop();
+                        }
+
+                        return normalised;
+                    }
+
+                    fetchAiCorpusForField()
+                        .then(function(hashes) {
+                            selectEl.empty();
+
+                            var seen = {};
+                            var foundCurrentValue = false;
+                            var firstValidValue = '';
+                            var currentValueNormalised = normaliseToFileLocation(currentValue);
+
+                            for (var i = 0; i < hashes.length; i++) {
+                                var hash = hashes[i];
+                                var source = (hash && hash.metaData && hash.metaData.source) ? hash.metaData.source : '';
+
+                                if (!source) {
+                                    continue;
+                                }
+
+                                source = normaliseToFileLocation(source);
+
+                                if (seen[source]) {
+                                    continue;
+                                }
+                                seen[source] = true;
+
+                                var label = getOptionLabel(hash);
+
+                                if (firstValidValue === '') {
+                                    firstValidValue = source;
+                                }
+
+                                var option = $('<option>')
+                                    .attr('value', source)
+                                    .text(label);
+
+                                if (source === currentValueNormalised) {
+                                    option.prop('selected', true);
+                                    foundCurrentValue = true;
+                                }
+
+                                selectEl.append(option);
+                            }
+
+                            if (currentValueNormalised !== '' && !foundCurrentValue) {
+                                selectEl.append(
+                                    $('<option>')
+                                        .attr('value', currentValueNormalised)
+                                        .prop('selected', true)
+                                        .text(getFallbackLabel(currentValueNormalised))
+                                );
+                            } else if (currentValueNormalised === '' && firstValidValue !== '') {
+                                selectEl.val(firstValidValue);
+
+                                // persist the default immediately
+                                selectChanged(id, key, name, firstValidValue, selectEl[0]);
+                            }
+
+                            if (selectEl.children().length === 0) {
+                                selectEl.append(
+                                    $('<option>')
+                                        .attr('value', '')
+                                        .prop('selected', true)
+                                        .text('No files could be returned')
+                                );
+                            }
+                        })
+                        .catch(function(err) {
+                            console.error('Failed to populate aiContextSelector:', err);
+                            selectEl.empty().append(
+                                $('<option>')
+                                    .attr('value', '')
+                                    .prop('selected', true)
+                                    .text('No files could be returned')
+                            );
+                        });
+
+                })(html, value);
 
                 break;
             case 'webpage':  //Not used??
