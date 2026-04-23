@@ -800,12 +800,25 @@ var EDITOR = (function ($, parent) {
 
     // Refresh the page when a new node is selected
     buildPage = function (key, scrollPos, scrollToId, expandedGroups) {
-        // Cleanup all current CKEDITOR instances!
-        for(name in CKEDITOR.instances)
-        {
-            CKEDITOR.instances[name].destroy(true);
+        // Cleanup all current CKEDITOR instances. CKEditor 5 destroy is async; wait before
+        // replacing #mainPanel or a late callback can clear __xerteCke5Instances for reused ids (e.g. textarea_1).
+        var destroyPromises = [];
+        var ckeIds = [];
+        for (var ckeName in CKEDITOR.instances) {
+            if (CKEDITOR.instances.hasOwnProperty(ckeName)) {
+                ckeIds.push(ckeName);
+            }
         }
-
+        for (var ci = 0; ci < ckeIds.length; ci++) {
+            var ckeInst = CKEDITOR.instances[ckeIds[ci]];
+            if (ckeInst && typeof ckeInst.destroy === 'function') {
+                var ckeDestroy = ckeInst.destroy(true);
+                if (ckeDestroy && typeof ckeDestroy.then === 'function') {
+                    destroyPromises.push(ckeDestroy);
+                }
+            }
+        }
+        var runBuildPageBody = function () {
         var attributes = lo_data[key]['attributes'];
 
         // Get the node name
@@ -1452,6 +1465,12 @@ var EDITOR = (function ($, parent) {
 				$(this).parents('.wizardattribute')[0].remove();
 			}
 		});
+        };
+        if (destroyPromises.length) {
+            Promise.all(destroyPromises).then(runBuildPageBody, runBuildPageBody);
+        } else {
+            runBuildPageBody();
+        }
     },
 
 	groupSetUp = function(group, attributes, node_options, key) {

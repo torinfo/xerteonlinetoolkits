@@ -7,6 +7,8 @@
 
 	window.__xerteCke5Instances = window.__xerteCke5Instances || {};
 	window.__xerteCke5Shims = window.__xerteCke5Shims || {};
+	/** Maps editor id → textarea element the instance was created on (detect stale reuse after wizard DOM rebuild). */
+	window.__xerteCke5SourceElements = window.__xerteCke5SourceElements || {};
 	window.__xerteCke5InlineCssInjected = window.__xerteCke5InlineCssInjected || false;
 	window.__xerteCke5UiCssInjected = window.__xerteCke5UiCssInjected || false;
 
@@ -19,21 +21,26 @@
 		cke.on = cke.on || function () {
 			// CKEditor 4 global events are not available in CKEditor 5.
 		};
-		cke.remove = cke.remove || function (id) {
-			var shim = window.__xerteCke5Shims[id];
-			if (shim && shim.destroy) {
-				return shim.destroy();
-			}
-			var nativeEd = window.__xerteCke5Instances[id];
-			if (nativeEd && nativeEd.destroy) {
-				return nativeEd.destroy().then(function () {
-					delete window.__xerteCke5Instances[id];
-					delete window.__xerteCke5Shims[id];
-				});
-			}
-			delete window.__xerteCke5Instances[id];
-			delete window.__xerteCke5Shims[id];
-		};
+			cke.remove = cke.remove || function (id) {
+				var shim = window.__xerteCke5Shims[id];
+				if (shim && shim.destroy) {
+					return shim.destroy();
+				}
+				var nativeEd = window.__xerteCke5Instances[id];
+				if (nativeEd && nativeEd.destroy) {
+					return nativeEd.destroy().then(function () {
+						if (window.__xerteCke5Instances[id] !== nativeEd) {
+							return;
+						}
+						delete window.__xerteCke5Instances[id];
+						delete window.__xerteCke5Shims[id];
+						delete window.__xerteCke5SourceElements[id];
+					});
+				}
+				delete window.__xerteCke5Instances[id];
+				delete window.__xerteCke5Shims[id];
+				delete window.__xerteCke5SourceElements[id];
+			};
 		window.CKEDITOR = cke;
 	}
 	ensureLegacyCkeditorGlobal();
@@ -325,9 +332,15 @@
 			},
 			destroy: function () {
 				var id = domEl.id;
+				var nativeEditor = editor;
 				return editor.destroy().then(function () {
+					// A newer editor may already own this id (wizard rebuilt before this async finish).
+					if (window.__xerteCke5Instances[id] !== nativeEditor) {
+						return;
+					}
 					delete window.__xerteCke5Instances[id];
 					delete window.__xerteCke5Shims[id];
+					delete window.__xerteCke5SourceElements[id];
 					if ($ && $(domEl).removeData) {
 						$(domEl).removeData('xerteCke5Instance');
 					}
@@ -359,6 +372,7 @@
 		return Editor.create(domEl, cfg).then(function (editor) {
 			var id = domEl.id;
 			window.__xerteCke5Instances[id] = editor;
+			window.__xerteCke5SourceElements[id] = domEl;
 			if ($ && $(domEl).data) {
 				$(domEl).data('xerteCke5Instance', editor);
 			}
@@ -407,10 +421,15 @@
 			var ed = window.__xerteCke5Instances[id];
 			if (ed) {
 				return ed.destroy().then(function () {
+					if (window.__xerteCke5Instances[id] !== ed) {
+						return;
+					}
 					delete window.__xerteCke5Instances[id];
 					delete window.__xerteCke5Shims[id];
+					delete window.__xerteCke5SourceElements[id];
 				});
 			}
+			delete window.__xerteCke5SourceElements[id];
 			return Promise.resolve();
 		}
 	};
@@ -433,12 +452,29 @@
 			var deferred = $.Deferred();
 			promises.push(deferred.promise());
 			var existing = window.__xerteCke5Instances[id];
-			if (existing) {
+			var boundEl = window.__xerteCke5SourceElements[id];
+			// Reuse only if this jQuery node is the same element the editor was created on.
+			// After buildPage() replaces #mainPanel, ids repeat (e.g. textarea_1) but the node is new — stale maps must refresh.
+			if (existing && boundEl === el) {
 				var shim = apiShim(existing, el);
 				if (callback) {
 					callback.call(shim, el);
 				}
 				deferred.resolve();
+				return;
+			}
+			if (existing && boundEl !== el) {
+				window.XerteCKEditor5Facade.destroyById(id)
+					.then(function () {
+						return createInstance(el, config, callback);
+					})
+					.then(function () {
+						deferred.resolve();
+					})
+					.catch(function (err) {
+						console.error('[XerteCKEditor5]', err);
+						deferred.reject(err);
+					});
 				return;
 			}
 			createInstance(el, config, callback)
