@@ -1,6 +1,7 @@
 <?php
-class openai_ai_ivoverlaypanel extends openai_model {
+class openai_model_ivoverlaypanel extends openai_model {
 	public function __construct($type, $model = null, $context = "standard", $sub_type = null, $model_template = null, $assistantOn = false, $assistantId = null){
+        $assistantOn = false; //remove assistantOn at some point, its a relic of a different api ver.
 		if($assistantId != null){
 			$this->assistantId = $assistantId;
 		}
@@ -46,6 +47,6 @@ class openai_ai_ivoverlaypanel extends openai_model {
 			$this->defaultPrompt = constant("DEFAULT_PROMPT_" . $upper_type . "_BOOTSTRAP");
 		} else {
 			die("not supported context: " . $context);
-		};	
+		}
 	}
 }

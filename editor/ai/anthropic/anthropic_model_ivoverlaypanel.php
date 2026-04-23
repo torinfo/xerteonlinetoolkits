@@ -1,5 +1,5 @@
 <?php
-class anthropic_ai_ivoverlaypanel extends anthropic_model {
+class anthropic_model_ivoverlaypanel extends anthropic_model {
 
 	public function __construct($type, $model = null, $context = "standard", $sub_type = null){
 		if($model != null) {
@@ -33,6 +33,6 @@ class anthropic_ai_ivoverlaypanel extends anthropic_model {
 			}
 		} else {
 			die("not supported context: " . $context);
-		};
+		}
 	}
 }
