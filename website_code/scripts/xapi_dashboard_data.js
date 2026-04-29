@@ -39,9 +39,8 @@ DashboardState.prototype.clear = function () {
   this.pageIndex = 0;
 };
 
-DashboardState.prototype.getStatements = function (q, one, callback, force_xapi=false) {
-  if (this.info.lrs.db && callback != null && !force_xapi)
-  {
+DashboardState.prototype.getStatements = function (q, one, callback, force_xapi = false) {
+  if (this.info.lrs.db && callback != null && !force_xapi) {
     this.getStatementsFromDB(q, one).then(() => callback());
   }
   else if (this.info.lrs.aggregate && !force_xapi) {
@@ -51,8 +50,7 @@ DashboardState.prototype.getStatements = function (q, one, callback, force_xapi=
   }
 };
 
-DashboardState.prototype.httpGetStatements = async function(url, query)
-{
+DashboardState.prototype.httpGetStatements = async function (url, query) {
   const auth = btoa(this.info.lrs.lrskey + ":" + this.info.lrs.lrssecret);
   try {
     const result = await $.ajax({
@@ -73,8 +71,7 @@ DashboardState.prototype.httpGetStatements = async function(url, query)
   }
 }
 
-DashboardState.prototype.getStatementsFromDB = async function(q, one)
-{
+DashboardState.prototype.getStatementsFromDB = async function (q, one) {
   let search = {};
   let activity = "";
   if (q['filter_current_users'] != undefined) {
@@ -89,36 +86,34 @@ DashboardState.prototype.getStatementsFromDB = async function(q, one)
     activity = q['activity'];
     delete q['activity'];
   }
-  $.each(q, function(i, value) {
+  $.each(q, function (i, value) {
     search[i] = value;
   });
   if (one) {
-    limit=1;
+    limit = 1;
   } else {
     limit = 5000;
   }
-  search['unsorted']=1;
+  search['unsorted'] = 1;
 
   let query = 'statements=1&realtime=1&query=' + JSON.stringify(search) + '&limit=' + limit + '&offset=0';
   this.clear();
   $this = this;
-  do
-  {
+  do {
     const response = await this.httpGetStatements(this.info.lrs.lrsendpoint, query);
     $this.rawData = [...$this.rawData, ...response.statements];
     $('#loader_text').html(
-        XAPI_DASHBOARD_DATA_RETRIEVE_DATA + " " + Math.round(($this.rawData.length * 100) / response.nrrecords) + "%"
+      XAPI_DASHBOARD_DATA_RETRIEVE_DATA + " " + Math.round(($this.rawData.length * 100) / response.nrrecords) + "%"
     );
     if (response.more) {
       query = response.more;
     }
-    else
-    {
+    else {
       query = null;
     }
   } while (query != null && query != "");
   $('#loader_text').html(
-        XAPI_DASHBOARD_DATA_PREPARE_GRAPHS
+    XAPI_DASHBOARD_DATA_PREPARE_GRAPHS
   );
   // Transform the statements to the correct activity
   if (typeof this.info.lrs.extra != 'undefined' && this.info.lrs.extra['extra'] != undefined > 0 && activity.indexOf(this.info.lrs.extra['extra']) == 0) {
@@ -130,11 +125,11 @@ DashboardState.prototype.getStatementsFromDB = async function(q, one)
   }
   // Sort statements in descending order
   $this.rawData.sort((a, b) => {
-      if (a.timestamp < b.timestamp) {
-        return 1;
-      }
-      return -1;
-    });
+    if (a.timestamp < b.timestamp) {
+      return 1;
+    }
+    return -1;
+  });
   $this.rawDatamap = [];
   for (var i = 0; i < $this.rawData.length; i++)
     $this.rawDatamap[i] = i;
@@ -145,73 +140,71 @@ DashboardState.prototype.getStatementsxAPI = function (q, one, callback) {
   //ADL.XAPIWrapper.log.debug = true;
   ADL.XAPIWrapper.changeConfig(this.conf);
 
-    var search = ADL.XAPIWrapper.searchParams();
-    var activities = q.activities;
-    var query = q;
-    $.each(q, function(i, value) {
-        if(i != "activities" && i != "actor")
-            search[i] = value;
-    });
-    if (one) {
-        search['limit'] = 1;
-    } else {
-        search['limit'] = 1000;
-    }
-    if (q['actor'] != undefined)
-    {
-        search['agent'] = '{ "mbox" : "mailto:' + q['actor'] + '" }';
-    }
-    var beginDate = moment(q['since']);
-    var endDate = moment(q['until']);
-    var days = moment.duration(endDate.diff(beginDate)).as('days');
-    var nractivities =  1;
-    if (q['activities'] != undefined)
-    {
-        nractivities = q['activities'].length;
-    }
-    var limit = search['limit'];
-    this.clear();
-    $this = this;
-    ADL.XAPIWrapper.getStatements(search, null,
-        function getmorestatements(err, res, body) {
-            for (x = 0; x < body.statements.length; x++) {
-                var statement = body.statements[x];
-                if ($this.info.role == "Teacher") {
-                    if (statement.actor.mbox != undefined) {
-                        if ($this.info.users.findIndex(u => 'mailto:' + u.email === statement.actor.mbox) === -1) {
-                            // Skip this user
-                            continue;
-                        }
-                    }
-                    else if (statement.actor.mbox_sha1sum != undefined) {
-                        if ($this.info.users.findIndex(u => u.sha1 === statement.actor.mbox_sha1sum) === -1) {
-                            // Skip this user
-                            continue;
-                        }
-                    }
-                }
-                if ($this.info.dashboard.anonymous) {
-                    if (statement.actor.mbox != undefined) {
-                        // Key is email
-                        // cutoff mailto: and calc sha1:
-                        var sha1 = toSHA1(statement.actor.mbox);
-                        statement.actor.mbox_sha1sum = sha1;
-                        delete statement.actor.mbox;
-                        if (statement.actor.name) {
-                            delete statement.actor.name;
-                        }
+  var search = ADL.XAPIWrapper.searchParams();
+  var activities = q.activities;
+  var query = q;
+  $.each(q, function (i, value) {
+    if (i != "activities" && i != "actor")
+      search[i] = value;
+  });
+  if (one) {
+    search['limit'] = 1;
+  } else {
+    search['limit'] = 1000;
+  }
+  if (q['actor'] != undefined) {
+    search['agent'] = '{ "mbox" : "mailto:' + q['actor'] + '" }';
+  }
+  var beginDate = moment(q['since']);
+  var endDate = moment(q['until']);
+  var days = moment.duration(endDate.diff(beginDate)).as('days');
+  var nractivities = 1;
+  if (q['activities'] != undefined) {
+    nractivities = q['activities'].length;
+  }
+  var limit = search['limit'];
+  this.clear();
+  $this = this;
+  ADL.XAPIWrapper.getStatements(search, null,
+    function getmorestatements(err, res, body) {
+      for (x = 0; x < body.statements.length; x++) {
+        var statement = body.statements[x];
+        if ($this.info.role == "Teacher") {
+          if (statement.actor.mbox != undefined) {
+            if ($this.info.users.findIndex(u => 'mailto:' + u.email === statement.actor.mbox) === -1) {
+              // Skip this user
+              continue;
+            }
+          }
+          else if (statement.actor.mbox_sha1sum != undefined) {
+            if ($this.info.users.findIndex(u => u.sha1 === statement.actor.mbox_sha1sum) === -1) {
+              // Skip this user
+              continue;
+            }
+          }
+        }
+        if ($this.info.dashboard.anonymous) {
+          if (statement.actor.mbox != undefined) {
+            // Key is email
+            // cutoff mailto: and calc sha1:
+            var sha1 = toSHA1(statement.actor.mbox);
+            statement.actor.mbox_sha1sum = sha1;
+            delete statement.actor.mbox;
+            if (statement.actor.name) {
+              delete statement.actor.name;
+            }
 
-                    } else if (statement.actor.mbox_sha1sum != undefined) {
-                        // Nothing to do
+          } else if (statement.actor.mbox_sha1sum != undefined) {
+            // Nothing to do
 
-                    } else {
-                        // Key is session_id, transform to pseudo mbox_sha1sum
-                        var key = statement.context.extensions['http://xerte.org.uk/sessionId'];
-                        if (key == undefined) {
-                            key = statement.context.extensions[site_url + "sessionId"];
-                        }
-                        if (key != undefined) {
-                            delete statement.actor;
+          } else {
+            // Key is session_id, transform to pseudo mbox_sha1sum
+            var key = statement.context.extensions['http://xerte.org.uk/sessionId'];
+            if (key == undefined) {
+              key = statement.context.extensions[site_url + "sessionId"];
+            }
+            if (key != undefined) {
+              delete statement.actor;
 
               var sha1 = toSHA1("mailto:" + key + "@example.com");
               statement.actor = {
@@ -326,10 +319,10 @@ DashboardState.prototype.getStatementsAggregate = function (q, one, callback) {
   while (startDate <= beginOfPeriod) {
     periods.push(
       '{"timestamp": { "$gte": { "$dte": "' +
-        beginOfPeriod.toISOString() +
-        '" }, "$lte": { "$dte": "' +
-        currDate.toISOString() +
-        '" }}}'
+      beginOfPeriod.toISOString() +
+      '" }, "$lte": { "$dte": "' +
+      currDate.toISOString() +
+      '" }}}'
     );
     currDate = moment(currDate).subtract(15, "days");
     beginOfPeriod = beginOfPeriod = moment(currDate)
@@ -338,10 +331,10 @@ DashboardState.prototype.getStatementsAggregate = function (q, one, callback) {
   }
   periods.push(
     '{"timestamp": { "$gte": { "$dte": "' +
-      startDate.toISOString() +
-      '" }, "$lte": { "$dte": "' +
-      currDate.toISOString() +
-      '" }}}'
+    startDate.toISOString() +
+    '" }, "$lte": { "$dte": "' +
+    currDate.toISOString() +
+    '" }}}'
   );
 
   // var project = '{"$project": { "statement.actor": 1, "statement.context" : 1, "statement.id" : 1, "statement.object" : 1,  "statement.timestamp" : 1, "statement.stored" : 1, "statement.verb" :  1, "_id": 0 }}';
@@ -467,20 +460,20 @@ DashboardState.prototype.retrieveDataThroughAggregate = function (
     beginOfPeriod = moment(data[currindex].timestamp).add(1, "ms");
     periods.push(
       '{"timestamp": { "$gte": { "$dte": "' +
-        beginOfPeriod.toISOString() +
-        '" }, "$lte": { "$dte": "' +
-        currDate.toISOString() +
-        '" }}}'
+      beginOfPeriod.toISOString() +
+      '" }, "$lte": { "$dte": "' +
+      currDate.toISOString() +
+      '" }}}'
     );
     currDate = moment(data[currindex].timestamp);
     currindex += 50;
   }
   periods.push(
     '{"timestamp": { "$gte": { "$dte": "' +
-      startDate.toISOString() +
-      '" }, "$lte": { "$dte": "' +
-      currDate.toISOString() +
-      '" }}}'
+    startDate.toISOString() +
+    '" }, "$lte": { "$dte": "' +
+    currDate.toISOString() +
+    '" }}}'
   );
   var sort = '{"$sort" : {   "timestamp": -1,   "_id": 1 }}';
   var project = '{"$project": { "statement": 1, "_id": 0 }}';
@@ -775,7 +768,7 @@ DashboardState.prototype.groupStatements = function (data) {
           statement.context != undefined &&
           statement.context.extensions != undefined &&
           statement.context.extensions["http://xerte.org.uk/sessionId"] !=
-            undefined
+          undefined
         ) {
           var key =
             statement.context.extensions["http://xerte.org.uk/sessionId"];
@@ -799,7 +792,7 @@ DashboardState.prototype.groupStatements = function (data) {
         statement.context != undefined &&
         statement.context.extensions != undefined &&
         statement.context.extensions["http://xerte.org.uk/sessionId"] !=
-          undefined
+        undefined
       ) {
         var attemptkey =
           statement.context.extensions["http://xerte.org.uk/sessionId"];
@@ -825,7 +818,7 @@ DashboardState.prototype.groupStatements = function (data) {
   if (learningObjects.length > 0) {
     url = learningObjects[0].url;
   }
-  console.log('aaaaa', learningObjects)
+
   for (var user in groupedData) {
     var lastcompleted = null;
     var maxcompletedattempt = null;
@@ -842,12 +835,12 @@ DashboardState.prototype.groupStatements = function (data) {
         if (
           statement.result != undefined &&
           statement.result.extensions[
-            "http://xerte.org.uk/xapi/trackingstate"
+          "http://xerte.org.uk/xapi/trackingstate"
           ] != undefined
         ) {
           var trackingState = JSON.parse(
             statement.result.extensions[
-              "http://xerte.org.uk/xapi/trackingstate"
+            "http://xerte.org.uk/xapi/trackingstate"
             ]
           );
           var xtresults = XTResults(true, trackingState);
@@ -887,7 +880,7 @@ DashboardState.prototype.groupStatements = function (data) {
         // Get first and last statements
         var first =
           this.rawData[
-            attemptdata.statementidxs[attemptdata.statementidxs.length - 1]
+          attemptdata.statementidxs[attemptdata.statementidxs.length - 1]
           ];
         var last = this.rawData[attemptdata.statementidxs[0]];
         attemptdata["score"] = 0;
@@ -935,9 +928,9 @@ DashboardState.prototype.groupStatements = function (data) {
         // Get first statement
         var statement =
           this.rawData[
-            groupedData[user].statementidxs[
-              groupedData[user].statementidxs.length - 1
-            ]
+          groupedData[user].statementidxs[
+          groupedData[user].statementidxs.length - 1
+          ]
           ];
         groupedData[user]["score"] = 0;
         groupedData[user]["completedpercentage"] = 0;
@@ -989,12 +982,12 @@ DashboardState.prototype.groupStatements = function (data) {
                   activeResumedSummary;
                 if (
                   groupedData[user]["attempts"][session][
-                    "completedpercentage"
+                  "completedpercentage"
                   ] > maxcompletion
                 ) {
                   maxcompletion =
                     groupedData[user]["attempts"][session][
-                      "completedpercentage"
+                    "completedpercentage"
                     ];
                 }
                 summarydata["duration"] +=
@@ -1029,12 +1022,12 @@ DashboardState.prototype.groupStatements = function (data) {
                   activeResumedSummary;
                 if (
                   groupedData[user]["attempts"][session][
-                    "completedpercentage"
+                  "completedpercentage"
                   ] > maxcompletion
                 ) {
                   maxcompletion =
                     groupedData[user]["attempts"][session][
-                      "completedpercentage"
+                    "completedpercentage"
                     ];
                 }
               }
@@ -1171,15 +1164,15 @@ DashboardState.prototype.getLearningObjectsOnExited = function (data) {
       if (
         statement.context != undefined &&
         statement.context.extensions[
-          "http://xerte&46;org&46;uk/learningObjectTitle"
+        "http://xerte&46;org&46;uk/learningObjectTitle"
         ] != undefined &&
         statement.context.extensions[
-          "http://xerte&46;org&46;uk/learningObjectId"
+        "http://xerte&46;org&46;uk/learningObjectId"
         ] != undefined
       ) {
         objectId =
           statement.context.extensions[
-            "http://xerte&46;org&46;uk/learningObjectId"
+          "http://xerte&46;org&46;uk/learningObjectId"
           ];
         if (learningObjectsFound.indexOf(objectId) == -1) {
           learningObjectsFound.push(objectId);
@@ -1232,7 +1225,7 @@ DashboardState.prototype.getLearningObjects = function () {
         learningObjectsFound.indexOf(objectId) == -1 &&
         statement.context != undefined &&
         statement.context.extensions[
-          "http://xerte.org.uk/learningObjectTitle"
+        "http://xerte.org.uk/learningObjectTitle"
         ] != undefined
       ) {
         learningObjectsFound.push(objectId);
@@ -1525,10 +1518,10 @@ DashboardState.prototype.hasCompletedNotJudgedInteraction = function (
   var res =
     statementidxList.filter(function (statementidx) {
       var statement = $this.rawData[statementidx];
-			let judge = true;
-			if(statement.result != undefined && statement.result.extensions != undefined){
-					judge = statement.result.extensions["http://xerte.org.uk/result/judge"] ?? true;
-			}
+      let judge = true;
+      if (statement.result != undefined && statement.result.extensions != undefined) {
+        judge = statement.result.extensions["http://xerte.org.uk/result/judge"] ?? true;
+      }
       if (
         statement.object.id + "/video" == interactionUrl &&
         statement.verb.id == "https://w3id.org/xapi/video/verbs/paused"
@@ -1539,7 +1532,7 @@ DashboardState.prototype.hasCompletedNotJudgedInteraction = function (
         statement.result != undefined &&
         statement.result.completion &&
         statement.object.id == interactionUrl &&
-				!judge 
+        !judge
       );
     }).length > 0;
   return res;
@@ -1597,10 +1590,10 @@ DashboardState.prototype.hasPassedInteraction = function (
         statement.context != undefined &&
         statement.context.extensions != undefined &&
         statement.context.extensions[
-          "https://w3id.org/xapi/video/extensions/length"
+        "https://w3id.org/xapi/video/extensions/length"
         ] &&
         statement.context.extensions[
-          "https://w3id.org/xapi/video/extensions/length"
+        "https://w3id.org/xapi/video/extensions/length"
         ] != null
       );
     });
@@ -1608,7 +1601,7 @@ DashboardState.prototype.hasPassedInteraction = function (
       var statement = $this.rawData[lengthStatementIdxs[0]];
       var videoLength = parseInt(
         statement.context.extensions[
-          "https://w3id.org/xapi/video/extensions/length"
+        "https://w3id.org/xapi/video/extensions/length"
         ]
       );
       var durationBlocks = this.getDurationBlocks(
@@ -1687,47 +1680,47 @@ DashboardState.prototype.getAllDurations = function (
 };
 
 DashboardState.prototype.consolidateSegments = function (pausedSegments) {
-    // 1. Sort played segments on start time (first make a copy)
-    if (pausedSegments.length == 0) {
-        return 0;
+  // 1. Sort played segments on start time (first make a copy)
+  if (pausedSegments.length == 0) {
+    return 0;
+  }
+  var $this = this;
+  csegments = pausedSegments.map(function (s) {
+    var segments = $this.rawData[s].result.extensions["https://w3id.org/xapi/video/extensions/played-segments"].split("[,]");
+    if (segments[0] == "") {
+      return [];
     }
-    var $this = this;
-    csegments = pausedSegments.map(function(s) {
-        var segments = $this.rawData[s].result.extensions["https://w3id.org/xapi/video/extensions/played-segments"].split("[,]");
-        if (segments[0] == "") {
-            return [];
-        }
-        return segments.map(function(segment) {
-            return {
-                start: Math.round(segment.split("[.]")[0]),
-                end: Math.round(segment.split("[.]")[1])
-            };
-        });
+    return segments.map(function (segment) {
+      return {
+        start: Math.round(segment.split("[.]")[0]),
+        end: Math.round(segment.split("[.]")[1])
+      };
     });
-    var segments = [];
-    csegments.forEach(function(segment) {
-        segment.forEach(function(seg) {
-            segments.push(seg);
-        });
+  });
+  var segments = [];
+  csegments.forEach(function (segment) {
+    segment.forEach(function (seg) {
+      segments.push(seg);
     });
-    segments.sort(function(a, b) {
-        return (parseFloat(a.start) > parseFloat(b.start)) ? 1 : ((parseFloat(b.start) > parseFloat(a.start)) ? -1 : parseFloat(a.end) - parseFloat(b.end));
-    });
-    // 2. Combine the segments
-    var csegments = [];
-    var i = 0;
-    while (i < segments.length) {
-        var segment = $.extend(true, {}, segments[i]);
-        i++;
-        while (i < segments.length && segments[i].start >= segment.start && segments[i].start <= segment.end) {
-            if (segment.end <= segments[i].end) {
-                segment.end = segments[i].end;
-            }
-            i++;
-        }
-        csegments.push(segment);
+  });
+  segments.sort(function (a, b) {
+    return (parseFloat(a.start) > parseFloat(b.start)) ? 1 : ((parseFloat(b.start) > parseFloat(a.start)) ? -1 : parseFloat(a.end) - parseFloat(b.end));
+  });
+  // 2. Combine the segments
+  var csegments = [];
+  var i = 0;
+  while (i < segments.length) {
+    var segment = $.extend(true, {}, segments[i]);
+    i++;
+    while (i < segments.length && segments[i].start >= segment.start && segments[i].start <= segment.end) {
+      if (segment.end <= segments[i].end) {
+        segment.end = segments[i].end;
+      }
+      i++;
     }
-    return csegments;
+    csegments.push(segment);
+  }
+  return csegments;
 }
 
 DashboardState.prototype.getDurationBlocks = function (
@@ -1881,11 +1874,11 @@ DashboardState.prototype.getQuestion = function (interactionObjectUrl) {
     var statement = this.rawData[statementidxs[i]];
     if (question == undefined || question.interactionType == undefined) {
       question = statement.object.definition;
-			if(question != undefined && statement.result != undefined && statement.result.extensions != undefined && statement.result.extensions["http://xerte.org.uk/result/judge"] != undefined){
-					question.judge = statement.result.extensions["http://xerte.org.uk/result/judge"];
-			}else {
-					question.judge = true;
-			}
+      if (question != undefined && statement.result != undefined && statement.result.extensions != undefined && statement.result.extensions["http://xerte.org.uk/result/judge"] != undefined) {
+        question.judge = statement.result.extensions["http://xerte.org.uk/result/judge"];
+      } else {
+        question.judge = true;
+      }
       // Special case for openanswer
       if (
         question != undefined &&
@@ -1915,7 +1908,7 @@ DashboardState.prototype.getQuestionResponses = function (
         .flatMap(([k, v]) =>
           v.statementidxs.filter(
             (idx) => $this.rawData[idx].object.id === interactionObjectUrl
-            && $this.rawData[idx].verb.id === 'http://adlnet.gov/expapi/verbs/answered'
+              && $this.rawData[idx].verb.id === 'http://adlnet.gov/expapi/verbs/answered'
           )
         )
     )
@@ -1953,7 +1946,7 @@ DashboardState.prototype.getStatementsFromLearningObject = function (
       elem.context == undefined ||
       elem.context.extensions == undefined ||
       elem.context.extensions["http://xerte.org.uk/learningObjectId"] ==
-        undefined
+      undefined
     ) {
       return false;
     }
@@ -1974,7 +1967,7 @@ DashboardState.prototype.getStatementidxsFromGroupedData = function (
     if (
       this.currentGroup.group_id == 'all-groups' ||
       this.currentGroup.group_id ==
-        this.getGroupFromStatements(val.statementidxs)
+      this.getGroupFromStatements(val.statementidxs)
     ) {
       groupedData[key] = val;
     }

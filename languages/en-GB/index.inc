@@ -114,13 +114,13 @@ define("INDEX_XAPI_DASHBOARD_GROUP_ALL", "All groups");
 
 define("INDEX_XAPI_DASHBOARD_SHOW_NAMES", "Show names and/or email addresses");
 
-define("INDEX_XAPI_DASHBOARD_CLOSE", "Close dashboard");
+define("INDEX_XAPI_DASHBOARD_CLOSE", "Close");
 
-define("INDEX_XAPI_DASHBOARD_DISPLAY_OPTIONS", "Display options");
+define("INDEX_XAPI_DASHBOARD_DISPLAY_OPTIONS", "Options");
 
 define("INDEX_XAPI_DASHBOARD_SHOW_HIDE_COLUMNS", "Show / hide columns");
 
-define("INDEX_XAPI_DASHBOARD_QUESTION_OVERVIEW", "Interaction overview");
+define("INDEX_XAPI_DASHBOARD_QUESTION_OVERVIEW", "Interactions");
 
 define("INDEX_XAPI_DASHBOARD_PRINT", "Print");
 

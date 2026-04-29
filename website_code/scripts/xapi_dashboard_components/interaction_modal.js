@@ -62,7 +62,9 @@ export class InteractionModal {
         </div>
       </div>`;
 
-    // Add the modal to the body, guarding against duplicate IDs on re-initialisation
+    // Add the modal to the body, guarding against duplicate IDs on re-initialisation.
+    // All bindings live inside the guard so repeated init() calls don't stack handlers
+    // on the persistent button or modal element.
     if ($(`#${this.#id}`).length === 0) {
       $('body').append(modal);
 
@@ -78,27 +80,27 @@ export class InteractionModal {
           setTimeout(cleanupPrintClass, 30000);
         });
       }
-    }
 
-    // Register the click event for the button that opens the modal
-    if (this.#buttonId) {
-      $(`#${this.#buttonId}`).on('click', async () => {
-        // Open the modal
-        $(`#${this.#id}`).modal();
+      // Register the click event for the button that opens the modal
+      if (this.#buttonId) {
+        $(`#${this.#buttonId}`).on('click', async () => {
+          // Open the modal
+          $(`#${this.#id}`).modal();
 
-        // Add the header to the modal
-        this.addModalHeader();
+          // Add the header to the modal
+          this.addModalHeader();
 
-        // Add the body to the modal
-        await this.addModalBody();
+          // Add the body to the modal
+          await this.addModalBody();
+        });
+      }
+
+      // Clean the modal header and body when it is closed
+      $(`#${this.#id}`).on('hidden.bs.modal', () => {
+        $(`#${this.#id} .modal-header`).empty();
+        $(`#${this.#id} .modal-body`).empty();
       });
     }
-
-    // Clean the modal header and body when it is closed
-    $(`#${this.#id}`).on('hidden.bs.modal', () => {
-      $(`#${this.#id} .modal-header`).empty();
-      $(`#${this.#id} .modal-body`).empty();
-    });
   }
 
   /**

@@ -57,6 +57,30 @@ function xapiGetStatements(lrs, q, one, callback) {
 }
 */
 
+// Dev logger wired into DashboardState / GroupedData so library-emitted
+// messages surface in the browser devtools console. Prefixed so they're
+// easy to grep for. Flip `enabled` to `false` to silence.
+var dashboardStateLogger = (function () {
+  var enabled = true;
+  var prefix = '[DashboardState]';
+  var call = function (method, level) {
+    return function (message, meta) {
+      if (!enabled) return;
+      if (meta !== undefined) {
+        console[method](prefix, '[' + level + ']', message, meta);
+      } else {
+        console[method](prefix, '[' + level + ']', message);
+      }
+    };
+  };
+  return {
+    debug: call('debug', 'DEBUG'),
+    info: call('info', 'INFO'),
+    warn: call('warn', 'WARN'),
+    error: call('error', 'ERROR'),
+  };
+}());
+
 function xAPIDashboard(info) {
   // Define the escapeSelector function if it does not exist, this is added
   // in jQuery 3.0, but as of now we are using an older version.
@@ -421,7 +445,7 @@ xAPIDashboard.prototype.drawInteraction = function (
       contentDiv.find("#" + localJcId)
     );
     panelDiv.append("<svg class='graph'></svg>");
-    pageState.createPieChartInteraction(statements, "#" + localJcId + " svg"); //#model-question-overview svg:last');
+    pageState.createPieChartInteraction(statements, "#" + localJcId + " svg");
     panelDiv.append('<div class="page-info panel"></div>');
     pageState.displayPageInfo(
       contentDiv,
@@ -461,7 +485,7 @@ xAPIDashboard.prototype.drawDashboard = async function (canvas) {
     this,
     this.data.state,
     'interaction-overview-modal',
-    'testtest',
+    'interaction-overview-button',
     'Interaction Overview',
     {
       showPrintButton: true,
@@ -471,6 +495,13 @@ xAPIDashboard.prototype.drawDashboard = async function (canvas) {
   await interactionModal.init();
 }
 
+xAPIDashboard.prototype.setActionButtonsEnabled = function (enabled) {
+  var disabled = !enabled;
+  $(".show-question-overview-button button, .show-display-options-button button, .dashboard-print-button button")
+    .prop("disabled", disabled)
+    .toggleClass("disabled", disabled);
+};
+
 xAPIDashboard.prototype.createJourneyTableSession = async function (div) {
   var $this = this;
   this.data.rawData = this.data.combineUrls();
@@ -478,34 +509,21 @@ xAPIDashboard.prototype.createJourneyTableSession = async function (div) {
     // No statements found
     $("#journeyData").html('<div id="loader"><p id="loader_text"></p></div>');
     $("#loader_text").html(XAPI_DASHBOARD_NO_STATEMENTS_FOUND);
+    this.setActionButtonsEnabled(false);
+  } else {
+    this.setActionButtonsEnabled(true);
   }
 
   $("#journeyData").append('<div id="journeyDataNew"></div>')
   const containerCanvas = $("#journeyDataNew");
 
-  // TODO: remove
-  containerCanvas.append('<button id="testtest">aaaaaaaa</button>');
-
-  // TODO: remove — temporary print button
-  containerCanvas.append('<button id="print-dashboard">Print Dashboard</button>');
-
-  $('#print-dashboard').on('click', () => {
-    const printClass = 'printing-dashboard';
-    document.documentElement.classList.add(printClass);
-
-    const cleanup = () => {
-      document.documentElement.classList.remove(printClass);
-      clearTimeout(fallbackTimer);
-    };
-
-    // Register listener BEFORE print() — some browsers fire afterprint
-    // synchronously when the dialog closes, so the listener must exist first.
-    window.addEventListener('afterprint', cleanup, { once: true });
-    const fallbackTimer = setTimeout(cleanup, 30000);
-    window.print();
-  });
-
-  this.data.state = new DS.GroupedData(this.data.rawData);
+  this.data.state = new DS.GroupedData(
+    this.data.rawData,
+    undefined,
+    undefined,
+    undefined,
+    { logger: dashboardStateLogger },
+  );
 
   await this.drawDashboard(containerCanvas);
 
@@ -638,9 +656,6 @@ xAPIDashboard.prototype.createJourneyTableSession = async function (div) {
     var orangeDiv =
       '<i class="status-indicator status-orange fa fa-square"></i>';
     var greyDiv = '<i class="status-indicator status-gray fa fa-square"></i>';
-    $.each(data, function (key, value) {
-      console.log(key);
-    });
     var userCount = 0;
     for (var user in data) {
       if (data[user]["attemptkeys"].length > 0) {
@@ -1143,231 +1158,21 @@ xAPIDashboard.prototype.createJourneyTableSession = async function (div) {
     });
     $("#pageButtonLeft").trigger("click", [true]);
 
-    /* Setup modal question overview
-     * but only add the div when it is not there yet
-     * */
-    let modelQuestionOverviewName = "model-question-overview";
-    if ($("body").find(`#${modelQuestionOverviewName}`).length === 0) {
-      $("body").append(
-        `<div id="${modelQuestionOverviewName}" class="modal fade" role="dialog" >` +
-        '<div class="modal-dialog">' +
-        '<div class="modal-content">' +
-        '<div class="modal-header">' +
-        '<h4 class="modal-title">Interaction overview</h4>' +
-        '<button id="interaction-overview-print" type="button" class="xerte_button_c_no_width">Print</button><button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>' +
-        "</div>" +
-        '<div class="modal-body col-md-12" style="overflow-x: hidden;">' +
-        "</div>" +
-        "</div>" +
-        "</div>" +
-        "</div>"
-      );
-    }
-
-    $("#interaction-overview-print").click(function (e) {
-      e.preventDefault();
-      var currentUrl = window.location.href;
-      if (currentUrl.endsWith("#")) {
-        currentUrl = currentUrl.slice(0, -1);
-      }
-      if (!currentUrl.endsWith("/")) {
-        currentUrl = currentUrl + "/";
-      }
-      var w = window.open();
-      var htmlHead = $("head").html();
-      var htmlBody = $("#model-question-overview .modal-body").html();
-      $(w.document.body).parent().find("head").html(htmlHead);
-      $(w.document.body).html(
-        "<button id='doprint' type='button' class='xerte_button_c_no_width noprint' onclick='window.print();'>Do print</button><div id='print-overview' class='dashboard'>" +
-        htmlBody +
-        "</div>"
-      );
-
-      $(w.document.body)
-        .parent()
-        .find("link")
-        .each(function (l) {
-          var href = $(this).attr("href");
-          if (href.includes("frontpage.css")) {
-            $(this).remove();
-          }
-          if (!href.startsWith("http://") && !href.startsWith("https://")) {
-            $(this).attr("href", currentUrl + href);
-          }
-        });
-
-      $(w.document.body)
-        .find("button")
-        .each(function (l) {
-          $(this).hide();
-        });
-
-      $(w.document)
-        .find(".noprint")
-        .each(function (l) {
-          $(this).show();
-        });
-    });
-
-    $(".show-question-overview-button").on("click", function () {
-      var drawOverviewCheckbox = $(".hide-show-overview-interaction-overview");
-      var drawOverview =
-        drawOverviewCheckbox.length == 0 || drawOverviewCheckbox.is(":checked");
-
-      if (drawOverview) {
-        $("#model-question-overview .modal-body").html(
-          '<div class="journeyOverviewModal"><div class="journeyOverviewHeader row"><h3>' +
-          XAPI_DASHBOARD_OVERVIEW +
-          '</h3></div><div class="journeyOverviewActivityModal row"></div><div class="journeyOverviewStats row"></div></div>'
-        );
-      } else {
-        $("#model-question-overview .modal-body").html("");
-      }
-
-      $("#model-question-overview").modal();
-      if (drawOverview) {
-        pageState.setStatisticsValues(".journeyOverviewModal ", 0);
-      }
-
-      var first_launch = new Date(
-        moment($("#dp-start").val(), "DD/MM/YYYY")
-          .add(-1, "days")
-          .format("YYYY-MM-DD")
-      );
-      var last_launch = new Date(
-        moment($("#dp-end").val(), "DD/MM/YYYY")
-          .add(1, "days")
-          .format("YYYY-MM-DD")
-      );
-
-      $("#model-question-overview").on("shown.bs.modal", function () {
-        $(".modal-body > .print_block").remove();
-        for (
-          var learningObjectIndex = 0;
-          learningObjectIndex < learningObjects.length;
-          learningObjectIndex++
-        ) {
-          interactions = pageState.data.getInteractions(
-            learningObjects[learningObjectIndex].url
-          );
-          for (
-            var interactionIndex = 0;
-            interactionIndex < interactions.length;
-            interactionIndex++
-          ) {
-            let interaction = interactions[interactionIndex];
-            let showPageInteraction =
-              interactions.filter(
-                (inter) =>
-                  interaction.children.includes(inter.url) &&
-                  inter.type === "interaction"
-              ).length > 1;
-            //let showPageInteraction =
-            //  interactions.filter(
-            //    (interaction) => interaction.type === "interaction"
-            //  ).length > 1;
-            var contentDiv = $("#model-question-overview .modal-body");
-            interaction = interactions[interactionIndex];
-            jcId =
-              "journey-container-" +
-              learningObjectIndex +
-              "-" +
-              interactionIndex;
-            var block = "";
-            if (
-              interaction.children.length === 0 &&
-              interaction.type === "interaction" &&
-              showPageInteraction
-            ) {
-              block += `<div class='print_block'><div class='offset-1 container'><h4>${interaction.name}</h4></div>`;
-            } else if (interaction.type === "page" && showPageInteraction) {
-              block += `<div class='print_block'><div class='container'><h4>${interaction.name}</h4></div>`;
-            } else if (
-              interaction.type === "interaction" &&
-              !showPageInteraction
-            ) {
-              block += `<div class='print_block'><div class='container'><h4>${
-                //interactions.filter(
-                //  (interaction) => interaction.type === "page"
-                //)[0].name
-                interaction.name
-                }</h4></div>`;
-            }
-            block += `<div class="class-overview-box" id="${jcId}"></div>`;
-            block += `${!showPageInteraction && interaction.type === "page" ? "" : "<hr>"
-              }</div>`;
-            contentDiv.append(block);
-            pageState.drawInteraction(
-              interaction,
-              showPageInteraction,
-              contentDiv,
-              interactions,
-              learningObjectIndex,
-              interactionIndex,
-              jcId
-            );
-          }
-        }
-        if (drawOverview) {
-          $(".journeyOverviewActivityModal").empty();
-          pageState.drawActivityChart(
-            ".journeyOverviewModal ",
-            $(".journeyOverviewActivityModal"),
-            first_launch,
-            last_launch,
-            false
-          );
-        }
-      });
-    });
-
     $(".dashboard-print-button").on("click", function (e) {
       e.preventDefault();
-      var currentUrl = window.location.href;
-      if (currentUrl.endsWith("#")) {
-        currentUrl = currentUrl.slice(0, -1);
-      }
-      if (!currentUrl.endsWith("/")) {
-        currentUrl = currentUrl + "/";
-      }
-      var w = window.open();
-      var htmlHead = $("head").html();
-      var htmlBody = $(".dashboard-body").html();
-      $(w.document.body).parent().find("head").html(htmlHead);
-      $(w.document.body).html(
-        "<button id='doprint' type='button' class='xerte_button_c_no_width noprint' onclick='window.print();'>Do print</button><div id='print-overview' class='dashboard'>" +
-        htmlBody +
-        "</div>"
-      );
+      const printClass = 'printing-dashboard';
+      document.documentElement.classList.add(printClass);
 
-      $(w.document.body)
-        .parent()
-        .find("link")
-        .each(function (l) {
-          var href = $(this).attr("href");
-          if (href.includes("frontpage.css")) {
-            $(this).remove();
-          }
-          if (!href.startsWith("http://") && !href.startsWith("https://")) {
-            $(this).attr("href", currentUrl + href);
-          }
-        });
+      const cleanup = () => {
+        document.documentElement.classList.remove(printClass);
+        clearTimeout(fallbackTimer);
+      };
 
-      $(w.document.body)
-        .find("button")
-        .each(function (l) {
-          $(this).hide();
-        });
-      $(w.document)
-        .find(".noprint")
-        .each(function (l) {
-          $(this).show();
-        });
-
-      $(w.document.body).find('#journeyData').css({
-        height: 'auto',
-        overflow: 'visible',
-      });
+      // Register listener BEFORE print() — some browsers fire afterprint
+      // synchronously when the dialog closes, so the listener must exist first.
+      window.addEventListener('afterprint', cleanup, { once: true });
+      const fallbackTimer = setTimeout(cleanup, 30000);
+      window.print();
     });
 
     // Display options modal
@@ -1382,6 +1187,7 @@ xAPIDashboard.prototype.createJourneyTableSession = async function (div) {
         interactionOverview: XAPI_DASHBOARD_DISPLAY_INTERACTION_OVERVIEW,
         pageSize: XAPI_DASHBOARD_PAGE_SIZE,
         pageSizeAll: XAPI_DASHBOARD_PAGE_SIZE_ALL,
+        showNames: XAPI_DASHBOARD_SHOW_NAMES,
       },
     );
     await displayOptionsModal.init();
@@ -3254,8 +3060,6 @@ xAPIDashboard.prototype.drawActivityChart = function (
     tick += tickMarkNrDays * 1000 * 3600 * 24;
   }
 
-  console.log($(base + "#graph-svg-wrapper-" + template_id).width());
-
   var chart = dash.createLineChart({
     container:
       base + "#graph-svg-wrapper-" + this.data.info.template_id + " svg",
@@ -3321,8 +3125,8 @@ function close_dashboard() {
   $(document).off('click');
 
   $(document).off("show.bs.modal");
-  $("#model-question-overview").off("shown.bs.modal");
-  $(".show-question-overview-button").off("click");
+  $('#interaction-overview-button').off('click');
+  $('#interaction-overview-modal').off('hidden.bs.modal').remove();
 
   $(".journeyData > div").remove();
   $(".dashboard-modal").remove();
@@ -3409,7 +3213,13 @@ xAPIDashboard.prototype.show_dashboard = function (begin, end) {
       var filteredStatements = group === 'all-groups'
         ? $this.data.rawData
         : DS.filterByGroup($this.data.rawData, group);
-      $this.data.state = new DS.GroupedData(filteredStatements);
+      $this.data.state = new DS.GroupedData(
+        filteredStatements,
+        undefined,
+        undefined,
+        undefined,
+        { logger: dashboardStateLogger },
+      );
 
       // Clean up orphaned journey event handlers, then re-draw
       $(document).off('click.journey');
@@ -3435,24 +3245,9 @@ xAPIDashboard.prototype.show_dashboard = function (begin, end) {
 
   if (this.data.info.dashboard.enable_nonanonymous == "true") {
     if (this.data.info.unanonymous == "true") {
-      $("#dp-unanonymous-view").prop("checked", true);
-      $("#dp-unanonymous-view").hide();
       this.data.info.dashboard.anonymous = false;
-    } else {
-      $(".unanonymous-view").show();
-      this.data.info.dashboard.anonymous = !$("#dp-unanonymous-view").is(
-        ":checked"
-      );
-      $("#dp-unanonymous-view").change(function (event) {
-        $this.data.info.dashboard.anonymous = !$("#dp-unanonymous-view").is(
-          ":checked"
-        );
-        $("#dp-start").prop("disabled", true);
-        $("#dp-end").prop("disabled", true);
-        $("#dp-unanonymous-view").prop("disabled", true);
-
-        $this.regenerate_dashboard();
-      });
+    } else if (this.data.info.dashboard.anonymous === undefined) {
+      this.data.info.dashboard.anonymous = true;
     }
   }
 

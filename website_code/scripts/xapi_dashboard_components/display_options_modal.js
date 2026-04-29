@@ -123,6 +123,7 @@ export class DisplayOptionsModal {
                   ${pageSizeSelect}
                 </div>
               </div>
+              ${this.#buildShowNamesSection()}
             </div>
           </div>
         </div>
@@ -164,6 +165,41 @@ export class DisplayOptionsModal {
           </div>`;
       })
       .join('');
+  }
+
+  /**
+   * Build the "Show names and/or email addresses" section HTML.
+   * Returns an empty string when the feature is disabled by config.
+   *
+   * @returns {string} HTML string for the section, or '' if hidden
+   */
+  #buildShowNamesSection() {
+    const info = this.#dashboard.data.info;
+    if (info.dashboard.enable_nonanonymous !== 'true') {
+      return '';
+    }
+    const forced = info.unanonymous === 'true';
+    const checked = forced || info.dashboard.anonymous === false ? 'checked' : '';
+    const disabled = forced ? 'disabled' : '';
+
+    return `
+      <div class="p-3 my-2 rounded display-options-section">
+        <h6 class="display-options-section-heading">
+          ${escapeHtml(this.#labels.showNames)}
+        </h6>
+        <div class="custom-control custom-checkbox">
+          <input
+            type="checkbox"
+            class="custom-control-input"
+            id="dp-unanonymous-view"
+            ${checked}
+            ${disabled}
+          >
+          <label class="custom-control-label" for="dp-unanonymous-view">
+            ${escapeHtml(this.#labels.showNames)}
+          </label>
+        </div>
+      </div>`;
   }
 
   /**
@@ -274,6 +310,19 @@ export class DisplayOptionsModal {
           properties: dashboard.data.info.dashboard.display_options,
         },
       );
+    });
+
+    // Show names / email addresses toggle (only if rendered + user-toggleable)
+    $modal.on('change', '#dp-unanonymous-view', function handleUnanonymousChange() {
+      if ($(this).prop('disabled')) return;
+      dashboard.data.info.dashboard.anonymous = !$(this).is(':checked');
+      $('#dp-start').prop('disabled', true);
+      $('#dp-end').prop('disabled', true);
+      $('#dp-unanonymous-view').prop('disabled', true);
+      $modal.one('hidden.bs.modal', () => {
+        dashboard.regenerate_dashboard();
+      });
+      $modal.modal('hide');
     });
 
     // Page size change

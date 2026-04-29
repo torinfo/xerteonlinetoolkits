@@ -275,26 +275,19 @@ Folder popup is the div that appears when creating a new folder
     <div class="dashboard" id="dashboard">
         <div class="container-fluid dashboard-header">
             <div class="row dash-row">
-                <div class="dash-col unanonymous-view" >
-                    <label for="dp-unanonymous-view">
-                        <?php echo INDEX_XAPI_DASHBOARD_SHOW_NAMES; ?>
-                    </label>
-                    <input type="checkbox" id="dp-unanonymous-view" >
-                </div>
-
-                <div class="dash-col">
+                <div class="col-12 col-lg-auto dash-col">
                     <label for="dp-start">
                         <?php echo INDEX_XAPI_DASHBOARD_FROM; ?>
                     </label>
                     <input type="text" id="dp-start" value="2018/03/24 21:23" data-test="2018/03/24 21:23">
                 </div>
-                <div class="dash-col-1">
+                <div class="col-12 col-lg-auto dash-col-1">
                     <label for="dp-end">
                         <?php echo INDEX_XAPI_DASHBOARD_UNTIL; ?>
                     </label>
                     <input type="text" id="dp-end">
                 </div>
-                <div class="dash-col-1">
+                <div class="col-12 col-lg-auto dash-col-1">
                     <label for="group-select">
                         <?php echo INDEX_XAPI_DASHBOARD_GROUP_SELECT; ?>
                     </label>
@@ -302,22 +295,24 @@ Folder popup is the div that appears when creating a new folder
                         <option value="all-groups"><?php echo INDEX_XAPI_DASHBOARD_GROUP_ALL; ?></option>
                     </select>
                 </div>
-                <div class="close-button">
-                    <button type="button" class="xerte_button_c_no_width_small"
-                            onclick="javascript:close_dashboard()"><?php echo INDEX_XAPI_DASHBOARD_CLOSE; ?>
-                    </button>
-                </div>
-                <div class="show-display-options-button">
-                    <button type="button" class="xerte_button_c_no_width_small"><?php echo INDEX_XAPI_DASHBOARD_DISPLAY_OPTIONS; ?>
-                    </button>
-                </div>
-                <div class="show-question-overview-button">
-                    <button type="button" class="xerte_button_c_no_width_small"><?php echo INDEX_XAPI_DASHBOARD_QUESTION_OVERVIEW; ?>
-                    </button>
-                </div>
-                <div class="dashboard-print-button">
-                    <button type="button" class="xerte_button_c_no_width_small"><?php echo INDEX_XAPI_DASHBOARD_PRINT; ?>
-                    </button>
+                <div class="col-12 col-lg-auto dash-actions">
+                    <div class="show-question-overview-button">
+                        <button type="button" id="interaction-overview-button" class="xerte_button_c_no_width_small"><?php echo INDEX_XAPI_DASHBOARD_QUESTION_OVERVIEW; ?>
+                        </button>
+                    </div>
+                    <div class="show-display-options-button">
+                        <button type="button" class="xerte_button_c_no_width_small"><?php echo INDEX_XAPI_DASHBOARD_DISPLAY_OPTIONS; ?>
+                        </button>
+                    </div>
+                    <div class="dashboard-print-button">
+                        <button type="button" class="xerte_button_c_no_width_small"><?php echo INDEX_XAPI_DASHBOARD_PRINT; ?>
+                        </button>
+                    </div>
+                    <div class="close-button">
+                        <button type="button" class="xerte_button_c_no_width_small"
+                                onclick="javascript:close_dashboard()"><?php echo INDEX_XAPI_DASHBOARD_CLOSE; ?>
+                        </button>
+                    </div>
                 </div>
             </div>
             <div id="dashboard-title" class="row header pl-4"></div>

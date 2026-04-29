@@ -427,7 +427,14 @@ export class JourneyTable {
     const name = isNonAnonymous
       ? `<td class="text-left align-middle small">${escapeHtml(displayName)}</td>`
       : '';
-    const completed = `<td class="text-center align-middle small jt-completed-cell" data-row-index="${rowIndex}" data-attempt-key="${escapeHtmlAttr(attempt.key)}">${this.createJourneyTableCompletedTick(attempt)}</td>`;
+    const completed = `
+      <td
+        class="text-center align-middle small jt-completed-cell"
+        data-row-index="${rowIndex}"
+        data-attempt-key="${escapeHtmlAttr(attempt.key)}"
+      >
+        ${this.createJourneyTableCompletedTick(attempt)}
+      </td>`;
     const completion = `<td class="text-center align-middle small">${attempt.completedPercentage !== undefined ? `${Math.round(attempt.completedPercentage)}%` : this.#faMinus
       }</td>`;
     const score = `<td class="text-center align-middle small">${attempt.score !== undefined ? `${Math.round(attempt.score)}%` : this.#faMinus
@@ -1209,11 +1216,6 @@ export class JourneyTable {
    * @returns {string} HTML for the interactions section
    */
   #createResultsInteractionsHtml(xtResults) {
-    const isFullResults = xtResults.mode === 'full-results';
-    const detailsHeader = isFullResults
-      ? `<th>${escapeHtml(XAPI_RESULTS_DETAILS)}</th>`
-      : '';
-
     const bodyRows = xtResults.interactions.map((interaction) => {
       const scoreCell = interaction.type !== 'page'
         ? `${Math.round(interaction.score)}%`
@@ -1229,17 +1231,6 @@ export class JourneyTable {
         completedIcon = this.#faMinus;
       }
 
-      let detailsCell = '';
-      if (isFullResults) {
-        const hasDetails = interaction.subinteractions
-          && interaction.subinteractions.length > 0
-          && interaction.type !== 'page';
-        const detailsIcon = hasDetails
-          ? '<i class="fa fa-circle jt-results-details-icon"></i>'
-          : '<i class="fa fa-circle-o jt-results-details-icon"></i>';
-        detailsCell = `<td class="text-center">${detailsIcon}</td>`;
-      }
-
       return `
         <tr>
           <td>${escapeHtml(interaction.title)}</td>
@@ -1247,7 +1238,6 @@ export class JourneyTable {
           <td class="text-right">${escapeHtml(durationCell)}</td>
           <td class="text-center">${escapeHtml(String(interaction.weighting))}</td>
           <td class="text-center">${completedIcon}</td>
-          ${detailsCell}
         </tr>`;
     }).join('');
 
@@ -1262,7 +1252,6 @@ export class JourneyTable {
               <th>${escapeHtml(XAPI_RESULTS_DURATION_COL)}</th>
               <th>${escapeHtml(XAPI_RESULTS_WEIGHTING)}</th>
               <th>${escapeHtml(XAPI_RESULTS_COMPLETED)}</th>
-              ${detailsHeader}
             </tr>
           </thead>
           <tbody>${bodyRows}</tbody>

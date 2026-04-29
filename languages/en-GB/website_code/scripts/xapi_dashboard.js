@@ -55,6 +55,7 @@ var XAPI_DASHBOARD_AVERAGE_COMPLETED_PAGES = "Average completed pages";
 var XAPI_DASHBOARD_AVERAGE_SESSION_COMPLETION = "Average session completion";
 var XAPI_DASHBOARD_AVERAGE_USER_COMPLETION = "Average user completion";
 var XAPI_DASHBOARD_DISPLAY_OPTIONS = "Display options";
+var XAPI_DASHBOARD_SHOW_NAMES = "Show names and/or email addresses";
 var XAPI_DASHBOARD_DISPLAY_COLUMNS = "Show/hide columns";
 var XAPI_DASHBOARD_DISPLAY_OVERVIEW = "Display overview";
 var XAPI_DASHBOARD_DISPLAY_INTERACTION_OVERVIEW = "Display overview in interaction overview";

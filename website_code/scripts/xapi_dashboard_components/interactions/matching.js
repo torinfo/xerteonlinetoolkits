@@ -146,8 +146,6 @@ export class MatchingInteraction {
 
     $parent.append(body);
 
-    console.log('kaas answered_statements', answeredStatements, colors);
-
     this.#answersGivenChartLib.drawAnswersGivenGraph(
       $(`#matching-answers-${selector}`),
       selector,

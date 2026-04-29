@@ -127,23 +127,6 @@ button#pageButtonLeft {
   white-space: nowrap;
 }
 
-#print-overview{
-  width: 100%;
-  height: 100%;
-}
-
-#print-overview.dashboard {
-  position: static;
-  width: auto !important;
-  height: auto !important;
-  display: block;
-}
-
-#print-overview #journeyData {
-  height: auto;
-  overflow: visible;
-}
-
 .status-indicator{
   height: 100%;
   width: 21px;
@@ -309,7 +292,7 @@ td a{
 }
 
 .show-display-options-button, .show-question-overview-button, .dashboard-print-button{
-  float: right;
+  float: none;
   padding: 5px;
 }
 
@@ -317,41 +300,49 @@ td a{
   display: flex;
 }
 
-#model-question-overview .modal-body{
-  max-height: calc(100vh - 100px);
-  overflow-y: auto;
-}
-
 .close-button {
-  float: right;
+  float: none;
   padding:5px;
 }
 
 .dash-row {
-  display: -webkit-box;
-  display: -ms-flexbox;
-  display: block;
-  -ms-flex-wrap: wrap;
-  flex-wrap: wrap;
-  margin-right: -15px;
-  margin-left: -15px;
+  align-items: center;
   color: #a01a13;
-  padding-left:20px;
-  padding-right:20px;
+  padding-left: 20px;
+  padding-right: 20px;
+  row-gap: 4px;
 }
 
 .dash-row input[type=text] {
-  width:100px;
+  width: 100px;
 }
 
-.dash-col-1 {
-  display: inline-block;
+.dash-col-1,
+.dash-col {
+  float: none;
+  display: flex;
+  align-items: center;
+  gap: 6px;
   padding: 5px;
 }
 
-.dash-col {
-  float: left;
-  padding:5px;
+.dash-col-1 > label,
+.dash-col > label {
+  margin-bottom: 0;
+}
+
+.dash-actions {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+
+@media (min-width: 992px) {
+  .dash-actions {
+    margin-left: auto;
+    flex-wrap: nowrap;
+  }
 }
 
 th.x-dashboard-page {
@@ -569,39 +560,6 @@ td.x-dashboard-interaction
   font-size: 0.8rem;
 }
 
-#interaction-overview-print {
-  margin: auto;
-}
-
-#print-overview .journeyData {
-  overflow-y: hidden !important;
-}
-
-#print-overview .journeyTable .table {
-  overflow-x: unset;
-}
-
-#print-overview .jt-scroll-wrapper {
-  overflow-x: unset;
-}
-
-#print-overview .jt-sticky-header {
-  display: none !important;
-}
-
-#print-overview .jt-scroll-btn {
-  display: none !important;
-}
-
-#print-overview .jt-table th,
-#print-overview .jt-table td {
-  white-space: normal;
-}
-
-#print-overview .journeyOverviewStats div, #print-overview .journeyOverviewActivity {
-  border: solid 1px;
-}
-
 @media print {
   .noprint {
     display: none !important;
@@ -710,8 +668,7 @@ td.x-dashboard-interaction
   html.printing-dashboard #jt-page-left,
   html.printing-dashboard #jt-page-right,
   html.printing-dashboard #jt-page-info,
-  html.printing-dashboard #testtest,
-  html.printing-dashboard #print-dashboard {
+  html.printing-dashboard .dashboard-print-button {
     display: none !important;
   }
 
