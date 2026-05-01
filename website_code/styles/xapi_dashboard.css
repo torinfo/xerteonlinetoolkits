@@ -63,68 +63,9 @@ table {
   max-width: 120px;
 }
 
-.journeyOverview, .journeyOverviewModal{
+.journeyOverview {
   padding-top: 1rem;
   padding-bottom: 1rem;
-}
-
-.journeyOverviewModal{
-  background: #eee;
-  padding: 2%;
-}
-
-.journeyOverviewActivity.row {
-  background:#ffffff;
-  border-radius: 5px;
-}
-
-.journeyOverviewActivity{
-  margin-left: -1rem;
-  margin-right: -1rem;
-}
-
-.journeyOverviewActivity a{
-  width: 100%;
-}
-
-.journeyOverviewActivityModal.row {
-  background:#ffffff;
-  border-radius: 5px;
-}
-
-.journeyOverviewActivityModal{
-  margin-left: -1rem;
-  margin-right: -1rem;
-}
-
-.journeyOverviewActivityModal a{
-  width: 100%;
-}
-
-.row.journeyTable {
-  background: #ffffff;
-  border-radius: 5px;
-}
-
-button#pageButtonLeft {
-  margin-left: -6px;
-}
-
-.journeyTable .table{
-  overflow-x: scroll;
-  border: 0px;
-  padding-left: 10px;
-  max-height: calc(100vh - 250px);
-}
-
-.journeyTable th{
-  position: relative;
-  /* min-width: 120px; */
-  white-space: nowrap;
-}
-
-.journeyTable tr{
-  white-space: nowrap;
 }
 
 .status-indicator{
@@ -138,41 +79,6 @@ button#pageButtonLeft {
 
 td a{
   text-decoration: none;
-}
-
-.col-widget{
-  margin-top: 1rem;
-  /* border-style: solid; */
-  /* border-width: 1px; */
-  /* border-color: #007bff; */
-  border-radius: 5px;
-  height: 100px;
-  text-align: center;
-  margin-right:1%;
-  background: white;
-}
-
-.col-widget:last-of-type {
-  margin-right: 0;
-}
-
-.col-2 {
-  -ms-flex: 0 0 15.83333333333333;
-  flex: 0 0 15.83333333333333%;
-  max-width: 15.83333333333333%;
-}
-
-
-.col-widget h2{
-  font-weight: initial;
-  color: #f86718;
-  margin-top: .5rem;
-  font-size: 2.0rem;
-}
-
-.col-widget h5{
-  margin-top: .5rem;
-  font-size: 0.8rem;
 }
 
 .status-gray{
@@ -207,13 +113,6 @@ td a{
   font-size: x-large;
 }
 
-.card{
-  background-color: #eee;
-  border-color: #333;
-  margin-left: 100px;
-}
-
-
 .modal-dialog {
   width: 100%;
   height: 80%;
@@ -224,15 +123,6 @@ td a{
 .modal-content {
   width: 100%;
   border-radius: 0;
-}
-
-.graph{
-  display:block;
-  height: 500px;
-}
-
-#graph_link_6{
-  width: 100%;
 }
 
 .graph-svg-wrapper
@@ -248,45 +138,6 @@ td a{
   height: 250px;
 }
 
-.icon-header{
-  position: absolute;
-  right: 5px;
-  top: 5px;
-  color: #999da1;
-  cursor: pointer;
-  font-size: 1.3em;
-}
-
-.icon-hide{
-  transition-duration: 0.5s;
-  transform: rotate(0deg)
-}
-
-.icon-show{
-  transition-duration: 0.5s;
-  transform: rotate(-450deg)
-}
-
-.column-show{
-  display: table-cell;
-
-}
-
-.column-hide{
-  display: none;
-}
-
-#overview{
-    color: white;
-}
-
-#overview svg{
-  color: black;
-  background-color: white;
-  height: 200px;
-  width: 500px;
-}
-
 .modebar {
   display: none !important;
 }
@@ -294,10 +145,6 @@ td a{
 .show-display-options-button, .show-question-overview-button, .dashboard-print-button{
   float: none;
   padding: 5px;
-}
-
-.class-overview-box{
-  display: flex;
 }
 
 .close-button {
@@ -345,30 +192,11 @@ td a{
   }
 }
 
-th.x-dashboard-page {
-  color: #fff;
-  vertical-align: top;
-}
-
-th.x-dashboard-page.x-dashboard-has-children a {
-  margin-right:20px;
-}
-
-th.x-dashboard-interaction {
-  font-size: smaller;
-  margin-top:4px;
-}
-
 #journeyData {
   height: 100%;
   overflow-y: scroll;
   overflow-x: hidden;
   padding: 0px 30px 20px 25px;
-}
-
-.journeyData th a{
-  font-family: Arial;
-  color: #000;
 }
 
 .pdfContent {
@@ -377,50 +205,6 @@ th.x-dashboard-interaction {
 
   padding: 10px;
   border-radius: 4px;
-}
-
-.dashboard .dashboard-table th {
-  font-size: 0.8rem;
-  font-weight: normal;
-  padding: 5px;
-  position: sticky;
-  top: 0;
-  z-index: 10;
-}
-
-.dashboard .dashboard-table td {
-  padding: 2px;
-}
-
-.journeyTable tr.session-row.hide {
-  display: none;
-}
-
-.dashboard .dashboard-table .session-row td.align-right, .td-right {
-  text-align: right;
-}
-
-.dashboard .dashboard-table .session-row td.showresult {
-  cursor: pointer;
-}
-
-.dashboard .dashboard-table .session-row td.align-left, .td-left {
-  text-align: left;
-}
-
-tr.attempt td:first-child {
-  padding-left: 15px;
-}
-
-.dashboard .dashboard-table .session-row td {
-  text-align: center;
-  vertical-align: middle;
-}
-
-.unanonymous-view {
-  display: none;
-  padding-top: 8px;
-  margin-right: 10px;
 }
 
 .dashboard{
@@ -452,30 +236,6 @@ tr.attempt td:first-child {
   overflow-y: hidden;
 }
 
-td.x-dashboard-interaction
-{
-  background: #f4f4f4;
-}
-
-.panel {
-  padding: 5px;
-  border: solid 1px lightgray;
-  border-radius: 5px;
-  margin-bottom: 1rem;
-  margin-left: 1rem;
-  float:left;
-  word-break: break-all;
-}
-
-.panel.col-12 {
-  margin: 5px;
-}
-
-.panel.col-6 {
-  margin: 5px;
-  max-width: 49%;
-}
-
 #loader {
   position: absolute;
   left: 50%;
@@ -498,39 +258,8 @@ td.x-dashboard-interaction
 
 /* FONT AWESOME BUTTON ICONS */
 
-/* chevron */
-.fa-x-next:before { content: "\f054"; }
-.fa-x-prev:before { content: "\f053"; }
-.fa-x-next-circle:before { content: "\f138"; } /* circle versions are used in multiple perspectives & thumbnail viewer pages */
-.fa-x-prev-circle:before { content: "\f137"; }
-
-/* arrow */
-/*
-.fa-x-next:before { content: "\f061"; }
-.fa-x-prev:before { content: "\f060"; }
-.fa-x-next-circle:before { content: "\f0a9"; }
-.fa-x-prev-circle:before { content: "\f0a8"; }
-*/
-.fa-x-close:before { content: "\f00d"; }
-.fa-x-refresh:before { content: "\f021"; }
-.fa-x-acc-hide:before { content: "\f0da"; }
-.fa-x-acc-show:before { content: "\f0d7"; }
-.fa-x-btn-hide:before { content: "\f0d8"; } /* btn-hide/show used on transcript buttons */
-.fa-x-btn-show:before { content: "\f0d7"; }
-.fa-x-zoom-in:before { content: "\f00e"; }
-.fa-x-zoom-out:before { content: "\f010"; }
-.fa-x-download:before { content: "\f019"; }
-.fa-x-copy:before { content:"\f0c5" }
-.fa-x-info-circle:before { content:"\f05a" }
 .fa-x-circle:before { content:"\f111" }
 .fa-x-circle-o:before { content:"\f10c" }
-
-/* decision tree overview icons */
-.fa-x-info:before { content:"\f129" }
-.fa-x-question:before { content:"\f128" }
-.fa-x-lightbulb:before { content:"\f0eb" }
-
-.fa-x-tick-circle:before { content:"\f058"} /* used for visited ticks in table of contents */
 
 /* marking on interactivity pages */
 .fa-x-tick:before { font-family: FontAwesome; content: "\f00c"; color: #62c562; }
@@ -547,24 +276,7 @@ td.x-dashboard-interaction
 
 .fa-x-inprogress { content: "\f017"; color: orange; }
 
-#pageButtonRight{
-  float:right;
-}
-
-.page-button{
-  margin: 5%;
-}
-
-#page-information {
-  padding-top: 10px;
-  font-size: 0.8rem;
-}
-
 @media print {
-  .noprint {
-    display: none !important;
-  }
-
   /* Interaction overview modal print styles */
   html.printing-interaction-overview-modal body { overflow: visible !important; }
   html.printing-interaction-overview-modal body > *:not(#interaction-overview-modal) { display: none !important; }
@@ -700,36 +412,12 @@ td.x-dashboard-interaction
   }
 }
 
-.print_block {
-  page-break-inside: avoid;
-}
-
-td i.openclose {
-  cursor: pointer;
-}
-
-td i.openclose.disabled {
-  color: lightgray;
-  cursor: initial;
-}
-
-td  i.openclose.usedattempt {
-  color: #ff4500;
-}
-
-td i.openclose.usedattempt.disabled {
-  color: rgba(255,69,0,0.5);
-  cursor: initial;
-}
-
-
 td.td-center {
   text-align: center;
 }
 
-.dashboard .dashboard-table td.duration, .dashboard .dashboard-table td.start, .dashboard .dashboard-table td.score, .dashboard .dashboard-table td.completion {
-  padding-left: 0.5em;
-  padding-right: 0.5em;
+.td-right {
+  text-align: right;
 }
 
 /* New journey table component styles */

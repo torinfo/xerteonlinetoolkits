@@ -144,7 +144,6 @@ export class DisplayOptionsModal {
    */
   #buildColumnCheckboxes() {
     return this.#interactions
-      .filter((i) => i.type === 'page')
       .map((i, index) => {
         const header = $(`th[data-interaction-url="${CSS.escape(i.url)}"]`);
         const isVisible = header.is(':visible');

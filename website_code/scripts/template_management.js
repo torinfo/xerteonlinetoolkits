@@ -740,9 +740,29 @@ function getProjectInformation(user_id, template_id) {
             var todayendofday = new Date(today.getFullYear(), today.getMonth(), today.getDate(), 23, 59, 59, 0);
             q['since'] = startstartofday.toISOString();
             x_Dashboard = new xAPIDashboard(info);
-            x_Dashboard.getStatements(q, false, function() {
-                $("#graph_" + info.template_id).html("");
-                x_Dashboard.drawActivityChart("", $("#graph_" + info.template_id), startstartofday, todayendofday);
+            x_Dashboard.getStatements(q, false, async function() {
+                var canvasId = 'graph_canvas_' + info.template_id;
+                var linkId = 'graph_link_' + info.template_id;
+                $("#graph_" + info.template_id).html(
+                    '<a id="' + linkId + '" href="#">'
+                    + '<div class="graph-svg-wrapper">'
+                    + '<canvas id="' + canvasId + '"></canvas>'
+                    + '</div>'
+                    + '</a>'
+                );
+
+                $('#' + linkId).off('click.workspaceActivity').on('click.workspaceActivity', function (e) {
+                    e.preventDefault();
+                    x_Dashboard.show_dashboard(startstartofday, todayendofday);
+                });
+
+                var activityChartLib = await import('./xapi_dashboard_components/graphs/activity.js');
+                activityChartLib.drawActivityChart(
+                    { statements: x_Dashboard.data.rawData },
+                    canvasId,
+                    luxon.DateTime.fromJSDate(startstartofday),
+                    luxon.DateTime.fromJSDate(todayendofday),
+                );
             }, true);
         }
     })
