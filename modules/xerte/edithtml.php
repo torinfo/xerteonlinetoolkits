@@ -104,7 +104,6 @@ function output_editor_code($row_edit, $xerte_toolkits_site, $read_status, $vers
             $xwd_file_url = $xwd_url . "data.xwd";
         }
     }
-    $xwd_file_url = $xwd_url . "wizards/getXwd.php";
 
     $module_url = "modules/" . $row_edit['template_framework'] . "/";
 
@@ -414,6 +413,7 @@ function output_editor_code($row_edit, $xerte_toolkits_site, $read_status, $vers
     echo "editorlanguagefile=\"" . getWizardfile($_SESSION['toolkits_language']) . "\";\n";
     echo "originalpathvariable=\"" . $xwd_url . "\";\n";
     echo "xwd_file_url=\"" . $xwd_file_url . "\";\n";
+    echo "wizard_xwd_use_rest_api=true;\n";
     echo "moduleurlvariable=\"" . $module_url . "\";\n";
     echo "template_id=\"" . $row_edit['template_id'] . "\";\n";
     echo "template_height=\"" . $temp[1] . "\";\n";

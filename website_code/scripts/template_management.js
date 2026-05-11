@@ -494,15 +494,19 @@ function example_window(example_id) {
 
     if (example_id != 0) {
 
+        var apiBase = (typeof rest_api_url !== 'undefined') ? rest_api_url : 'website_code/api/v1/index.php';
         $.ajax({
             type: "POST",
-            url: "website_code/php/properties/screen_size_template.php",
+            url: apiBase + '?route=' + encodeURIComponent('properties/screen-size'),
             data: {
                 tutorial_id: example_id
-            }
+            },
+            dataType: 'json'
         })
-        .done(function (response) {
-            example_stateChanged(response);
+        .done(function (res) {
+            if (res && res.ok && res.data) {
+                example_stateChanged(res.data.width + '~' + res.data.height + '~' + res.data.templateId);
+            }
         });
 
     } else {
@@ -825,7 +829,7 @@ function getProjectInformation(user_id, template_id) {
     })
     .done(function(response) {
         var info = apiUnpack(response);
-        document.getElementById('project_information').innerHTML = info.properties;
+        document.getElementById('project_information').innerHTML = renderWorkspaceTemplateInfo(info);
         disableReadOnlyButtons(info);
         if (info.fetch_statistics) {
             url = site_url + info.template_id;
@@ -855,6 +859,34 @@ function getProjectInformation(user_id, template_id) {
     {
 
     });
+}
+
+function escapeHtml(s) {
+    if (s === null || s === undefined) return '';
+    return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+}
+
+function renderWorkspaceTemplateInfo(info) {
+    if (!info || !info.panels || !info.panels.project) {
+        return '';
+    }
+    var p = info.panels.project;
+    var h = '<div class="workspace_info">';
+    h += '<h3>' + escapeHtml(p.displayName || '') + '</h3>';
+    h += '<ul class="workspace_info_list">';
+    h += '<li><strong>ID</strong>: ' + escapeHtml(p.templateId) + '</li>';
+    if (p.dateCreated) h += '<li><strong>Created</strong>: ' + escapeHtml(p.dateCreated) + '</li>';
+    if (p.dateModified) h += '<li><strong>Modified</strong>: ' + escapeHtml(p.dateModified) + '</li>';
+    if (p.access) h += '<li><strong>Access</strong>: ' + escapeHtml(p.access) + '</li>';
+    if (p.playUrl) h += '<li><strong>URL</strong>: <a target="_blank" href="' + escapeHtml(p.playUrl) + '">' + escapeHtml(p.playUrl) + '</a></li>';
+    h += '</ul>';
+
+    // Stats placeholder for xAPIDashboard
+    if (info.fetch_statistics) {
+        h += '<div id="graph_' + escapeHtml(info.template_id) + '" class="statistics"><img src="editor/img/loading16.gif"/></div>';
+    }
+    h += '</div>';
+    return h;
 }
 
 function disableReadOnlyButtons(info){
@@ -901,11 +933,23 @@ function getFolderInformation(user_id, folder_id) {
         dataType: "json",
         success: function (response) {
             var info = apiUnpack(response);
-            document.getElementById('project_information').innerHTML = info.properties;
+            document.getElementById('project_information').innerHTML = renderWorkspaceFolderInfo(info);
             disableReadOnlyButtons(info);
 
         }
     });
+}
+
+function renderWorkspaceFolderInfo(info) {
+    if (!info) return '';
+    var h = '<div class="workspace_info">';
+    h += '<h3>' + escapeHtml(info.name || '') + '</h3>';
+    h += '<ul class="workspace_info_list">';
+    h += '<li><strong>ID</strong>: ' + escapeHtml(info.folder_id) + '</li>';
+    if (info.date_created) h += '<li><strong>Created</strong>: ' + escapeHtml(info.date_created) + '</li>';
+    if (info.date_modified) h += '<li><strong>Modified</strong>: ' + escapeHtml(info.date_modified) + '</li>';
+    h += '</ul></div>';
+    return h;
 }
 
 function getGroupInformation(user_id, group_name, group_id)
@@ -920,10 +964,29 @@ function getGroupInformation(user_id, group_name, group_id)
         dataType: "json",
         success: function (response) {
             var info = apiUnpack(response);
-            document.getElementById('project_information').innerHTML = info.properties;
+            document.getElementById('project_information').innerHTML = renderWorkspaceGroupInfo(info);
             disableReadOnlyButtons(info);
         }
     });
+}
+
+function renderWorkspaceGroupInfo(info) {
+    if (!info) return '';
+    var h = '<div class="workspace_info">';
+    h += '<h3>' + escapeHtml(info.group_name || '') + '</h3>';
+    h += '<ul class="workspace_info_list">';
+    h += '<li><strong>ID</strong>: ' + escapeHtml(info.group_id) + '</li>';
+    h += '</ul>';
+    if (info.members && info.members.length) {
+        h += '<h4>Members</h4><ul class="group_members">';
+        for (var i = 0; i < info.members.length; i++) {
+            var m = info.members[i];
+            h += '<li>' + escapeHtml(m.firstname) + ' ' + escapeHtml(m.surname) + ' (' + escapeHtml(m.username) + ')</li>';
+        }
+        h += '</ul>';
+    }
+    h += '</div>';
+    return h;
 }
 
 /**

@@ -1,6 +1,6 @@
 <?php
 /**
- * Merged wizard definition (.xwd) for the editor — shared by getXwd.php and REST API.
+ * Merged wizard definition (.xwd) for the editor — used by REST wizard/definition and legacy callers.
  */
 
 function wizard_evaluate_condition_expression($ctree)

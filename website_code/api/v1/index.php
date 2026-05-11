@@ -3,6 +3,7 @@
  * Xerte REST API v1 — JSON responses (see route list below).
  * Call: .../website_code/api/v1/index.php?route=session/keepalive
  * XML payloads (preview.xml, wizard .xwd) are returned inside JSON as { "xml": "..." } unless noted.
+ * GET wizard/definition?template_id=… — merged wizard (.xwd) for editor; requires login + template access.
  */
 
 require_once dirname(__FILE__) . '/../../../config.php';
@@ -56,19 +57,6 @@ if ($method === 'GET' && $path === 'preview-xml') {
         exit;
     }
     ApiResponse::success(array('xml' => $result['xml']));
-    exit;
-}
-
-if ($method === 'GET' && $path === 'wizard/definition') {
-    ApiAuth::requireLoggedIn();
-    require_once $xerte_toolkits_site->root_file_path . 'website_code/php/services/WizardDefinitionService.php';
-    $base = $xerte_toolkits_site->root_file_path . 'modules/xerte/parent_templates/Nottingham/';
-    $xml = wizard_get_merged_xwd_xml($base);
-    if ($xml === '') {
-        ApiResponse::error(404, 'wizard_not_found', 'Wizard definition not found');
-        exit;
-    }
-    ApiResponse::success(array('xml' => $xml));
     exit;
 }
 
@@ -166,21 +154,50 @@ if ($method === 'POST' && $path === 'management/group-members') {
 }
 
 if ($method === 'POST' && $path === 'user/preferences') {
-    ob_start();
-    $_POST = array_merge($_POST, $params);
-    require $xerte_toolkits_site->root_file_path . 'website_code/php/save_user_preferences.php';
-    $json = ob_get_clean();
-    $decoded = json_decode($json, true);
-    if (is_array($decoded)) {
-        ApiResponse::success($decoded);
-    } else {
-        ApiResponse::success(array('raw' => $json));
+    ApiAuth::requireLoggedIn();
+    require_once $xerte_toolkits_site->root_file_path . 'website_code/php/services/UserPreferencesRestService.php';
+    $res = user_preferences_rest_save($params);
+    if (!is_array($res) || empty($res['ok'])) {
+        $status = is_array($res) && isset($res['status']) ? (int) $res['status'] : 500;
+        $code = is_array($res) && isset($res['code']) ? (string) $res['code'] : 'preferences_error';
+        $msg = is_array($res) && isset($res['message']) ? (string) $res['message'] : 'Preferences error';
+        ApiResponse::error($status, $code, $msg);
+        exit;
     }
+    ApiResponse::success($res['data']);
     exit;
 }
 
 if ($method === 'GET' && $path === 'system/health') {
     ApiResponse::success(array('api' => 'v1', 'time' => date('c')));
+    exit;
+}
+
+if (strpos($path, 'properties/') === 0) {
+    ApiAuth::requireLoggedIn();
+    require_once dirname(__FILE__) . '/routes/properties.php';
+    properties_rest_api_dispatch($method, $path, $params);
+    exit;
+}
+
+if (strpos($path, 'wizard/') === 0) {
+    ApiAuth::requireLoggedIn();
+    require_once dirname(__FILE__) . '/routes/wizard.php';
+    wizard_rest_api_dispatch($method, $path, $params);
+    exit;
+}
+
+if (strpos($path, 'workspaceproperties/') === 0) {
+    ApiAuth::requireLoggedIn();
+    require_once dirname(__FILE__) . '/routes/workspaceproperties.php';
+    workspaceproperties_rest_api_dispatch($method, $path, $params);
+    exit;
+}
+
+if (strpos($path, 'management/') === 0) {
+    ApiAuth::requireLoggedIn();
+    require_once dirname(__FILE__) . '/routes/management.php';
+    management_rest_api_dispatch($method, $path, $params);
     exit;
 }
 
