@@ -925,11 +925,8 @@ h3.contentTitle {
         }
     }
 
-    @media print {
-        a[href]:after {
-            content: none !important;
-        }
-    }
+    /* Print-only rules live in common/css/print.css (loaded via
+     * <link media="print"> in rloObject.htm). */
 
     /* --SCROLL DOWN PROMPT STYLE AND ANIMATION-------------------------------------- */
     /*navigation promt arrow and text*/

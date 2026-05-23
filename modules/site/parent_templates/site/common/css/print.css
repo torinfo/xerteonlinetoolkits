@@ -1,0 +1,117 @@
+/* Print-only stylesheet for the bootstrap "site" template.
+ *
+ * Loaded via <link rel="stylesheet" media="print"> in rloObject.htm so it is
+ * deferred by the browser for screen rendering. The whole file is therefore
+ * already in a print media context — no outer `@media print` wrapper needed.
+ *
+ * Class management: application.js wires beforeprint/afterprint listeners
+ * (and the toolbar print button click handler) to add/remove the
+ * `printing-bootstrap` class on <html>. Rules scoped to that class take
+ * effect only when the page is actually being printed, so the browser's
+ * native Ctrl+P benefits from the same isolation as the toolbar button. */
+
+a[href]:after {
+    content: none !important;
+}
+
+/* Single-page print isolation. Strategy: hide every body sibling except
+ * #aboveFooter; inside it, keep only #overview (LO title / logos) +
+ * #mainContent; collapse the Bootstrap 2 grid so #mainContent fills the
+ * page. .alertMsg is hidden so author-support previews never print
+ * plaintext access codes. */
+html.printing-bootstrap body {
+    overflow: visible !important;
+    background-color: #fff !important;
+}
+html.printing-bootstrap body > *:not(#aboveFooter) {
+    display: none !important;
+}
+html.printing-bootstrap #topnav,
+html.printing-bootstrap #contentTable,
+html.printing-bootstrap #alwaysTop,
+html.printing-bootstrap #printIcon,
+html.printing-bootstrap .alertMsg {
+    display: none !important;
+}
+html.printing-bootstrap #aboveFooter,
+html.printing-bootstrap #aboveFooter .container,
+html.printing-bootstrap #aboveFooter .row-fluid,
+html.printing-bootstrap #mainContent {
+    width: 100% !important;
+    max-width: 100% !important;
+    float: none !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    overflow: visible !important;
+    height: auto !important;
+}
+html.printing-bootstrap #overview,
+html.printing-bootstrap #mainContent {
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+}
+
+/* Cap images to page width; keep figure + caption together across page
+ * breaks. We deliberately do NOT reset float / display on figures or
+ * images — that flattens multi-column rows (image left + text right)
+ * into stacked blocks, often pushing the image to its own page. */
+html.printing-bootstrap #mainContent img,
+html.printing-bootstrap #mainContent figure,
+html.printing-bootstrap #mainContent .img-polaroid {
+    max-width: 100% !important;
+    height: auto !important;
+    page-break-inside: avoid !important;
+    break-inside: avoid !important;
+}
+
+/* Preserve authored two-column layouts in print so image-left +
+ * text-right blocks keep their proportions. Bootstrap's own
+ * print/responsive stylesheets collapse these to full width — override.
+ * `.columns` is the CKEditor xotcolumns plugin / LO inline-styles
+ * convention (`.columns div:first-child { float: left }`). */
+html.printing-bootstrap #mainContent .row,
+html.printing-bootstrap #mainContent .row-fluid,
+html.printing-bootstrap #mainContent .columns {
+    display: block !important;
+    page-break-inside: avoid !important;
+    break-inside: avoid !important;
+}
+html.printing-bootstrap #mainContent .columns::after,
+html.printing-bootstrap #mainContent .row::after,
+html.printing-bootstrap #mainContent .row-fluid::after {
+    content: "" !important;
+    display: table !important;
+    clear: both !important;
+}
+html.printing-bootstrap #mainContent .columns > div:first-child {
+    float: left !important;
+    max-width: 60% !important;
+    padding-right: 1em !important;
+}
+html.printing-bootstrap #mainContent [class*="span"] {
+    float: left !important;
+    display: block !important;
+    box-sizing: border-box !important;
+}
+html.printing-bootstrap #mainContent .row-fluid .span1  { width: 8.333%  !important; }
+html.printing-bootstrap #mainContent .row-fluid .span2  { width: 16.666% !important; }
+html.printing-bootstrap #mainContent .row-fluid .span3  { width: 25%     !important; }
+html.printing-bootstrap #mainContent .row-fluid .span4  { width: 33.333% !important; }
+html.printing-bootstrap #mainContent .row-fluid .span5  { width: 41.666% !important; }
+html.printing-bootstrap #mainContent .row-fluid .span6  { width: 50%     !important; }
+html.printing-bootstrap #mainContent .row-fluid .span7  { width: 58.333% !important; }
+html.printing-bootstrap #mainContent .row-fluid .span8  { width: 66.666% !important; }
+html.printing-bootstrap #mainContent .row-fluid .span9  { width: 75%     !important; }
+html.printing-bootstrap #mainContent .row-fluid .span10 { width: 83.333% !important; }
+html.printing-bootstrap #mainContent .row-fluid .span11 { width: 91.666% !important; }
+html.printing-bootstrap #mainContent .row-fluid .span12 { width: 100%    !important; }
+
+/* Don't orphan a heading at the bottom of a page from its content */
+html.printing-bootstrap #mainContent h1,
+html.printing-bootstrap #mainContent h2,
+html.printing-bootstrap #mainContent h3,
+html.printing-bootstrap #mainContent h4,
+html.printing-bootstrap #mainContent h5 {
+    page-break-after: avoid !important;
+    break-after: avoid !important;
+}

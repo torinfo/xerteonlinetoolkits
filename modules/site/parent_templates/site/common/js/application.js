@@ -782,14 +782,42 @@ function setup() {
 			}
 		});
 
-	// set up print functionality - all this does is add a print button to the toolbar which triggers browser's print dialog
-	if ($(data).find('learningObject').attr('print') == 'true') {
+	// set up print functionality — adds a toolbar button that triggers a clean
+	// print of the current page. CSS isolation lives in custom.css under
+	// `html.printing-bootstrap`. Class management is hooked into native
+	// beforeprint/afterprint so the browser's own Ctrl+P also benefits
+	// (matters in author-support previews where .alertMsg holds plaintext
+	// access codes that must not reach paper).
+	if (!window.__bootstrapPrintListenersRegistered) {
+		window.__bootstrapPrintListenersRegistered = true;
+		window.addEventListener('beforeprint', function () {
+			document.documentElement.classList.add('printing-bootstrap');
+		});
+		window.addEventListener('afterprint', function () {
+			document.documentElement.classList.remove('printing-bootstrap');
+		});
+	}
 
-		var altTxt = languageData.find("print")[0] != undefined && languageData.find("print")[0].getAttribute('printBtn') != null ? languageData.find("print")[0].getAttribute('printBtn') : "Print page";
+	if ($(data).find('learningObject').attr('print') === 'true' && document.getElementById('printIcon') === null) {
+
+		var printLang = languageData.find('print')[0];
+		var altTxt = printLang !== undefined && printLang.getAttribute('printBtn') !== null
+			? printLang.getAttribute('printBtn')
+			: 'Print page';
 
 		$('<li id="printIcon" role="none"><a href="#" aria-label="' + altTxt + '"><i class="fa fa-print text-white ml-3" aria-hidden="true" title="' + altTxt + '"></i></a></li>')
 			.appendTo('#nav')
-			.click(function() {
+			.on('click.bootstrapPrint', function (e) {
+				e.preventDefault();
+				// Add the class up-front in case the browser doesn't fire
+				// beforeprint synchronously (Safari historically lazy).
+				// Schedule a 30s removal as a defensive fallback if afterprint
+				// never fires — class is gated behind @media print so a
+				// lingering class is harmless.
+				document.documentElement.classList.add('printing-bootstrap');
+				setTimeout(function () {
+					document.documentElement.classList.remove('printing-bootstrap');
+				}, 30000);
 				window.print();
 			});
 	}
