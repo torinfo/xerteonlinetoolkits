@@ -251,3 +251,27 @@ html.printing-bootstrap .pdf-print-fallback {
     page-break-inside: avoid !important;
     break-inside: avoid !important;
 }
+
+/* --- XOT (embedded Xerte project): print the live embed, link as fallback --- */
+.xot-print-fallback { display: none; }
+/* Block box in print so the saved PDF gets a clickable link over the embed. */
+html.printing-bootstrap .xot-frame-link {
+    display: block !important;
+    page-break-inside: avoid !important;
+    break-inside: avoid !important;
+}
+html.printing-bootstrap .xot-frame {
+    display: block !important;
+    float: none !important;
+    width: 100% !important;
+    page-break-inside: avoid !important;
+    break-inside: avoid !important;
+}
+html.printing-bootstrap .xot-print-fallback {
+    display: block !important;
+    margin: 0.25em 0 1em 0;
+    font-size: 0.85em;
+    color: #555;
+    page-break-inside: avoid !important;
+    break-inside: avoid !important;
+}

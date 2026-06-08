@@ -995,8 +995,14 @@ h3.contentTitle {
 .audio-print-fallback,
 .video-print-fallback,
 .pdf-print-fallback,
+.xot-print-fallback,
 .media-print-url {
     display: none;
+}
+
+/* XOT iframe link wrapper: layout-neutral on screen; print.css gives it a box. */
+.xot-frame-link {
+    display: contents;
 }
 
 .x_videoContainer {

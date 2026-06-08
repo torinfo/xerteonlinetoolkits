@@ -56,6 +56,9 @@ var m_volume=1;
 // frame capture); drained by prepareMediaForPrint.
 var __mediaPrintTasks = [];
 
+// In-progress warm-ups of XOT embeds in hidden panes; the Print button awaits these.
+var __xotWarmupPromises = [];
+
 // Resolve every queued media-print task with a 2.5s overall cap so the print
 // dialog is never blocked indefinitely (Vimeo down, mp4 metadata stuck, etc.).
 // Always resolves; never rejects. Tasks left unresolved at the deadline are
@@ -69,6 +72,59 @@ function prepareMediaForPrint() {
 	const all = Promise.all(wrapped).then(function () {}, function () {});
 	const timeout = new Promise(function (resolve) { setTimeout(resolve, 2500); });
 	return Promise.race([all, timeout]);
+}
+
+// Renders XOT embeds in inactive navigator panes by briefly laying each pane out
+// off-screen at full width, so they don't print blank when their tab was never opened.
+function warmUpHiddenXotEmbeds($root, width) {
+	$root.find('.tab-pane:not(.active)').each(function () {
+		const $pane = $(this);
+		if ($pane.data('xotWarmed') || $pane.find('iframe.xot-frame').length === 0) {
+			return;
+		}
+		$pane.data('xotWarmed', true);
+		const w = width || $pane.parent().width();
+		$pane.css({
+			display: 'block',
+			position: 'absolute',
+			left: '-99999px',
+			top: '0',
+			width: w + 'px',
+			visibility: 'hidden',
+		});
+
+		const $frames = $pane.find('iframe.xot-frame');
+		const promise = new Promise(function (resolve) {
+			let settled = false;
+			const done = function () {
+				if (settled) {
+					return;
+				}
+				settled = true;
+				$pane.css({ display: '', position: '', left: '', top: '', width: '', visibility: '' });
+				resolve();
+			};
+			let pending = $frames.length;
+			$frames.each(function () {
+				this.addEventListener('load', function () {
+					pending -= 1;
+					// Let the player lay out before hiding the pane again.
+					if (pending <= 0) { setTimeout(done, 1500); }
+				}, { once: true });
+			});
+			// Hard cap so a stalled embed can't hold things open.
+			setTimeout(done, 6000);
+		});
+		__xotWarmupPromises.push(promise);
+	});
+}
+
+// Resolves once all hidden-pane warm-ups have settled (never rejects).
+function whenXotWarmupSettled() {
+	if (__xotWarmupPromises.length === 0) {
+		return Promise.resolve();
+	}
+	return Promise.all(__xotWarmupPromises).then(function () {}, function () {});
 }
 
 // Validate a URL and return its absolute form, or null if it fails the scheme
@@ -325,6 +381,19 @@ function buildPdfPrintFallback($parent, $xmlNode) {
 	$parent.append($fallback);
 }
 
+// Source-link caption beneath the printed XOT embed (also the fallback if it prints blank).
+function buildXotPrintFallback($parent, $xmlNode) {
+	const printUrl = displayUrl($xmlNode.attr('link'));
+	if (printUrl === '') return;
+	const $fallback = $('<div/>', {
+		'class': 'xot-print-fallback',
+		'aria-hidden': 'true',
+	});
+	$fallback.append(document.createTextNode('Interactive content — view online: '));
+	$fallback.append($('<span/>', { 'class': 'media-print-url' }).text(printUrl));
+	$parent.append($fallback);
+}
+
 // --- Render helpers (replace the inline audio/video/pdf branches) -----------
 
 // Preserves the existing screen rendering verbatim and appends the print-only
@@ -366,6 +435,11 @@ function renderPdfNode($container, $xmlNode, urlSuffix) {
 	$container.append('<a class="pdfLink" href="' + url + '" target="_blank">' + openPdfLabel + '</a>');
 	buildPdfPrintFallback($container, $xmlNode);
 	return $container.find('object').last();
+}
+
+function renderXotNode($container, $xmlNode) {
+	$container.append(loadXotContent($xmlNode));
+	buildXotPrintFallback($container, $xmlNode);
 }
 
 function init(){
@@ -1137,6 +1211,18 @@ function setup() {
 			.appendTo('#nav')
 			.on('click.bootstrapPrint', function (e) {
 				e.preventDefault();
+				const $icon = $(this).find('i');
+				// Ignore repeat clicks while a print is already being prepared.
+				if ($icon.data('printing')) {
+					return;
+				}
+				$icon.data('printing', true);
+				// Show a spinner while warm-up + media prep finish.
+				$icon.removeClass('fa-print').addClass('fa-spinner fa-spin');
+				const restoreIcon = function () {
+					$icon.removeClass('fa-spinner fa-spin').addClass('fa-print');
+					$icon.data('printing', false);
+				};
 				// Add the class up-front in case the browser doesn't fire
 				// beforeprint synchronously (Safari historically lazy).
 				// Schedule a 30s removal as a defensive fallback if afterprint
@@ -1146,11 +1232,15 @@ function setup() {
 				setTimeout(function () {
 					document.documentElement.classList.remove('printing-bootstrap');
 				}, 30000);
-				// Await async fallback prep (Vimeo oEmbed + mp4 frame capture)
-				// with a 2.5s timeout so the print dialog is never blocked
-				// indefinitely. The browser print dialog itself is the wait UX.
-				prepareMediaForPrint().then(function () {
-					window.print();
+				// Wait for embed warm-up + media prep before opening the dialog (both self-capped).
+				Promise.all([whenXotWarmupSettled(), prepareMediaForPrint()]).then(function () {
+					restoreIcon();
+					// Paint the restored icon before the blocking print dialog opens.
+					requestAnimationFrame(function () {
+						requestAnimationFrame(function () {
+							window.print();
+						});
+					});
 				});
 			});
 	}
@@ -2737,7 +2827,7 @@ function loadSection(thisSection, section, sectionIndex, page, pageHash, pageInd
 					var hideContentMessage = `<span class="alertMsg">${hideContent?.[1] ?? ''}</span>`;
 					section.append(hideContentMessage);
 				}
-				section.append(loadXotContent($(this)));
+				renderXotNode(section, $(this));
 				section.append(hideContentMessage);
 			}
 		}
@@ -3343,7 +3433,7 @@ function makeNav(node,section,type, sectionIndex, itemIndex){
 			}
 
 			if (this.nodeName == 'xot'){
-				pane.append(loadXotContent($(this)));
+				renderXotNode(pane, $(this));
 			}
 
 		});
@@ -3413,7 +3503,15 @@ function makeNav(node,section,type, sectionIndex, itemIndex){
 			iframeInit($(this));
 		});
 
+		// Pre-render XOT embeds in inactive panes so they don't print blank.
+		warmUpHiddenXotEmbeds(tabDiv, content.width());
+
 	}, 0);
+
+	// Drop warm-up styling when the user opens a pane.
+	tabDiv.on('shown.bs.tab', function () {
+		tabDiv.find('.tab-pane').css({ display: '', position: '', left: '', top: '', width: '', visibility: '' });
+	});
 
 }
 
@@ -3603,7 +3701,7 @@ function makeAccordion(node,section, sectionIndex, itemIndex){
 			if (this.nodeName == 'xot') {
 				var hideContent = checkHiddenContent($(this), 'Content');
 				if (hideContent[0] == false || hideContent[0] == undefined || authorSupport == true) {
-					inner.append(loadXotContent($(this)));
+					renderXotNode(inner, $(this));
 				}
 				if(authorSupport == true){
 					var hideContentMessage = `<span class="alertMsg">${hideContent?.[1] ?? ''}</span>`;
@@ -3748,7 +3846,7 @@ function makeCarousel(node, section, sectionIndex, itemIndex){
 			}
 
 			if (this.nodeName == 'xot'){
-				pane.append(loadXotContent($(this)));
+				renderXotNode(pane, $(this));
 			}
 
 		});
@@ -3880,7 +3978,14 @@ function loadXotContent($this) {
 
 	// xot project can be embedded, link to or both
 	if ($this.attr('showEmbed') != 'false' || $this.attr('showLink') != 'true')	{
-		html += warning + '<iframe width="' + xotWidth + '" height="' + xotHeight + '" src="' + xotLink + separator + 'x_embed=true' + '" frameborder="0" style="float:left; position:relative; top:0px; left:0px; z-index:0;"></iframe>';
+		const iframeHtml = '<iframe class="xot-frame" width="' + xotWidth + '" height="' + xotHeight + '" src="' + xotLink + separator + 'x_embed=true' + '" frameborder="0" style="float:left; position:relative; top:0px; left:0px; z-index:0;"></iframe>';
+		// Wrap the iframe in a link so the rendered page is clickable in a saved PDF.
+		const frameLink = displayUrl($this.attr('link'));
+		if (frameLink !== '') {
+			html += warning + '<a class="xot-frame-link" href="' + frameLink + '" target="_blank" rel="noopener" aria-hidden="true" tabindex="-1">' + iframeHtml + '</a>';
+		} else {
+			html += warning + iframeHtml;
+		}
 	}
 
 	if ($this.attr('showLink') == 'true') {
@@ -3894,7 +3999,7 @@ function loadXotContent($this) {
 			linkWarning = "";
 		}
 		const linkText = $this.attr('linkText') != undefined && $this.attr('linkText') != "" ? $this.attr('linkText') : $this.attr('link');
-		html += "<a href='" + xotLink + "' " + target + ">" + linkText + linkWarning + "</a>";
+		html += "<a class='xot-link' href='" + xotLink + "' " + target + ">" + linkText + linkWarning + "</a>";
 	}
 	return html;
 
