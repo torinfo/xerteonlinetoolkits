@@ -115,3 +115,139 @@ html.printing-bootstrap #mainContent h5 {
     page-break-after: avoid !important;
     break-after: avoid !important;
 }
+
+/* ===========================================================================
+ * Media print fallbacks (audio / video / pdf).
+ *
+ * Each renderer emits two trees:
+ *   1) the live, interactive element (mejs container / vidHolder / object)
+ *   2) a sibling `.{audio|video|pdf}-print-fallback` block, `display: none`
+ *      by default and revealed under `html.printing-bootstrap` here.
+ *
+ * Everything that lives in the live tree is hidden during print so we don't
+ * end up with a blank player on the page; the fallback then carries the
+ * visual representation (audio bar mock, video thumbnail, plain text URL).
+ * =========================================================================== */
+
+/* Force open Bootstrap panes that are normally `display: none` so all tab /
+ * accordion / pill / carousel siblings print rather than just the active one. */
+html.printing-bootstrap .tab-pane,
+html.printing-bootstrap .tab-content > .tab-pane,
+html.printing-bootstrap .carousel-inner > .item,
+html.printing-bootstrap .accordion-body,
+html.printing-bootstrap .collapse {
+    display: block !important;
+    opacity: 1 !important;
+    visibility: visible !important;
+    height: auto !important;
+}
+html.printing-bootstrap .nav-tabs,
+html.printing-bootstrap .carousel-control,
+html.printing-bootstrap .carousel-indicators {
+    display: none !important;
+}
+
+/* Shared print-only URL display (audio, video, pdf). Monospace + wrap so long
+ * URLs break inside the page rather than overflowing the column. */
+.media-print-url { display: none; }
+html.printing-bootstrap .media-print-url {
+    display: block !important;
+    word-break: break-all;
+    overflow-wrap: anywhere;
+    font-family: monospace;
+    font-size: 0.9em;
+    margin: 0.25em 0 1em 0;
+}
+
+/* --- Audio ----------------------------------------------------------------- */
+.audio-print-fallback { display: none; }
+html.printing-bootstrap .mejs-container,
+html.printing-bootstrap .mejs-offscreen,
+html.printing-bootstrap audio {
+    display: none !important;
+}
+html.printing-bootstrap .audio-print-fallback {
+    display: block !important;
+    margin: 0.5em 0 1em 0;
+    page-break-inside: avoid !important;
+    break-inside: avoid !important;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+}
+html.printing-bootstrap .audio-print-fallback__bar {
+    display: flex;
+    align-items: center;
+    background: #222;
+    color: #fff;
+    padding: 0.5em 0.75em;
+    border-radius: 2px;
+    gap: 0.75em;
+}
+html.printing-bootstrap .audio-print-fallback__bar .fa {
+    color: #fff;
+}
+html.printing-bootstrap .audio-print-fallback__time {
+    font-family: monospace;
+    font-size: 0.85em;
+    color: #fff;
+}
+html.printing-bootstrap .audio-print-fallback__progress {
+    flex: 1 1 auto;
+    height: 6px;
+    background: #555;
+    border-radius: 3px;
+}
+html.printing-bootstrap .audio-print-fallback__filename {
+    font-size: 0.9em;
+    margin: 0.25em 0 0 0;
+    color: #555;
+}
+html.printing-bootstrap .audio-print-fallback__transcript {
+    display: block;
+    font-size: 0.9em;
+    margin: 0.25em 0 0 0;
+}
+
+/* --- Video ----------------------------------------------------------------- */
+.video-print-fallback { display: none; }
+html.printing-bootstrap .vidHolder,
+html.printing-bootstrap .x_videoContainer {
+    display: none !important;
+}
+html.printing-bootstrap .video-print-fallback {
+    display: block !important;
+    position: relative;
+    margin: 0.5em 0 1em 0;
+    page-break-inside: avoid !important;
+    break-inside: avoid !important;
+}
+html.printing-bootstrap .video-print-fallback__thumb {
+    display: block;
+    max-width: 100%;
+    height: auto;
+    background: #eee;
+    min-height: 100px;
+}
+html.printing-bootstrap .video-print-fallback__play {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 4em;
+    color: rgba(255, 255, 255, 0.9);
+    text-shadow: 0 0 8px rgba(0, 0, 0, 0.6);
+    pointer-events: none;
+}
+
+/* --- PDF ------------------------------------------------------------------- */
+.pdf-print-fallback { display: none; }
+html.printing-bootstrap object[type="application/pdf"],
+html.printing-bootstrap .pdfLink {
+    display: none !important;
+}
+html.printing-bootstrap .pdf-print-fallback {
+    display: block !important;
+    margin: 0.5em 0 1em 0;
+    page-break-inside: avoid !important;
+    break-inside: avoid !important;
+}

@@ -988,6 +988,17 @@ h3.contentTitle {
 }
 
 
+/* Media print fallbacks are emitted into the live DOM so the browser print
+ * renderer can see them, but they must never be visible on screen. The
+ * matching reveal rules under `html.printing-bootstrap` live in print.css
+ * (which is media="print"-only, so it can't host these screen-time hides). */
+.audio-print-fallback,
+.video-print-fallback,
+.pdf-print-fallback,
+.media-print-url {
+    display: none;
+}
+
 .x_videoContainer {
     width: 100%;
 }

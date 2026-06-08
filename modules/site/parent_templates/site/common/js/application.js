@@ -43,6 +43,331 @@ var hideBannerBtn = false;
 var fullscreenBannerTitleMargin=10;
 var m_volume=1;
 
+/* ---------------------------------------------------------------------------
+ * Print-fallback utilities (audio / video / pdf)
+ *
+ * Used by renderAudioNode / renderVideoNode / renderPdfNode to build the
+ * `display: none` sibling elements that replace the live media when the page
+ * is printed (gated by `html.printing-bootstrap` in print.css).
+ * --------------------------------------------------------------------------- */
+
+// Pending async work to resolve before the toolbar Print button fires
+// window.print(). Populated by buildVideoPrintFallback (Vimeo oEmbed + mp4
+// frame capture); drained by prepareMediaForPrint.
+var __mediaPrintTasks = [];
+
+// Resolve every queued media-print task with a 2.5s overall cap so the print
+// dialog is never blocked indefinitely (Vimeo down, mp4 metadata stuck, etc.).
+// Always resolves; never rejects. Tasks left unresolved at the deadline are
+// abandoned for this print attempt but will run to completion in the
+// background, so a subsequent print attempt will see them ready.
+function prepareMediaForPrint() {
+	const tasks = __mediaPrintTasks.splice(0, __mediaPrintTasks.length);
+	const wrapped = tasks.map(function (t) {
+		try { return Promise.resolve(t()); } catch (e) { return Promise.resolve(); }
+	});
+	const all = Promise.all(wrapped).then(function () {}, function () {});
+	const timeout = new Promise(function (resolve) { setTimeout(resolve, 2500); });
+	return Promise.race([all, timeout]);
+}
+
+// Validate a URL and return its absolute form, or null if it fails the scheme
+// allowlist or is malformed. Author-controlled XML attributes can carry
+// `javascript:` / `data:` payloads — reject everything except http/https.
+function validateUrl(raw) {
+	if (raw === undefined || raw === null || raw === '') return null;
+	try {
+		const u = new URL(String(raw), window.location.href);
+		if (u.protocol !== 'http:' && u.protocol !== 'https:') return null;
+		return u;
+	} catch (e) {
+		return null;
+	}
+}
+
+// Strip control / bidi-format characters that could be used to misrepresent
+// a printed URL (e.g. U+202E reversing the apparent domain).
+function stripUrlDisplayChars(s) {
+	return String(s).replace(/[\u202A-\u202E\u2066-\u2069\u200E\u200F\u00AD\u0000-\u001F\u007F]/g, '');
+}
+
+// Return a printable URL string with userinfo stripped and bidi/control
+// chars removed. Returns '' if the raw URL fails validation.
+function displayUrl(raw) {
+	const u = validateUrl(raw);
+	if (u === null) return '';
+	u.username = '';
+	u.password = '';
+	return stripUrlDisplayChars(u.toString());
+}
+
+// Best-effort basename of a URL's path, percent-decoded. Returns '' if the
+// URL is invalid or has no path component.
+function extractFilename(raw) {
+	const u = validateUrl(raw);
+	if (u === null) return '';
+	const last = u.pathname.split('/').pop() || '';
+	let decoded;
+	try {
+		decoded = decodeURIComponent(last);
+	} catch (e) {
+		decoded = last;
+	}
+	return stripUrlDisplayChars(decoded);
+}
+
+// Pull the `src` attribute out of an iframe HTML blob without instantiating
+// the iframe in the DOM (which would trigger network requests for hostile
+// `<iframe src=...>` content). Returns '' on no match.
+function extractIframeSrc(blob) {
+	if (typeof blob !== 'string') return '';
+	const m = /<iframe\b[^>]*\bsrc\s*=\s*["']([^"']+)["']/i.exec(blob);
+	return m ? m[1] : '';
+}
+
+// Resolve the canonical URL of a video XML node's `url` attribute. If it's
+// an iframe embed blob, extract the src; otherwise use as-is. Returns ''
+// when the result fails scheme validation.
+function resolveVideoUrl(rawUrl) {
+	if (typeof rawUrl === 'string' && /^\s*<iframe/i.test(rawUrl)) {
+		return displayUrl(extractIframeSrc(rawUrl));
+	}
+	return displayUrl(rawUrl);
+}
+
+// --- Video thumbnail resolution (used by buildVideoPrintFallback) -----------
+
+function parseYouTubeId(rawUrl) {
+	const u = validateUrl(rawUrl);
+	if (u === null) return '';
+	const host = u.hostname.toLowerCase().replace(/^www\./, '');
+	const ytHosts = ['youtube.com', 'youtu.be', 'youtube-nocookie.com'];
+	if (ytHosts.indexOf(host) === -1) return '';
+	const idRegex = /^[A-Za-z0-9_-]{6,20}$/;
+	if (host === 'youtu.be') {
+		const id = u.pathname.replace(/^\//, '').split('/')[0];
+		return idRegex.test(id) ? id : '';
+	}
+	if (u.pathname.indexOf('/embed/') === 0) {
+		const id = u.pathname.substring('/embed/'.length).split('/')[0];
+		return idRegex.test(id) ? id : '';
+	}
+	const v = u.searchParams.get('v');
+	return v && idRegex.test(v) ? v : '';
+}
+
+function parseVimeoId(rawUrl) {
+	const u = validateUrl(rawUrl);
+	if (u === null) return '';
+	const host = u.hostname.toLowerCase().replace(/^www\./, '');
+	if (host !== 'vimeo.com' && host !== 'player.vimeo.com') return '';
+	const m = u.pathname.match(/\/(?:video\/)?(\d+)/);
+	return m ? m[1] : '';
+}
+
+function fetchVimeoThumb(id) {
+	const oembedUrl = 'https://vimeo.com/api/oembed.json?url=' + encodeURIComponent('https://vimeo.com/' + id);
+	return fetch(oembedUrl, { referrerPolicy: 'no-referrer' })
+		.then(function (r) { return r.ok ? r.json() : null; })
+		.then(function (data) {
+			if (!data || !data.thumbnail_url) return '';
+			const tu = validateUrl(data.thumbnail_url);
+			if (tu === null) return '';
+			if (!/(^|\.)vimeocdn\.com$/.test(tu.hostname.toLowerCase())) return '';
+			return tu.toString();
+		})
+		.catch(function () { return ''; });
+}
+
+// Draw the current frame of a <video> to canvas and return a JPEG data URL.
+// Returns '' on CORS taint, decode failure, or timeout. Same-origin mp4 only.
+function captureVideoFrame(videoEl) {
+	return new Promise(function (resolve) {
+		const draw = function () {
+			try {
+				const canvas = document.createElement('canvas');
+				canvas.width = videoEl.videoWidth || 640;
+				canvas.height = videoEl.videoHeight || 360;
+				canvas.getContext('2d').drawImage(videoEl, 0, 0, canvas.width, canvas.height);
+				resolve(canvas.toDataURL('image/jpeg', 0.85));
+			} catch (e) {
+				resolve('');
+			}
+		};
+		if (videoEl.readyState >= 2) {
+			draw();
+		} else {
+			let settled = false;
+			const onReady = function () { if (!settled) { settled = true; draw(); } };
+			videoEl.addEventListener('loadeddata', onReady, { once: true });
+			try { videoEl.load(); } catch (e) { /* no-op */ }
+			setTimeout(function () { if (!settled) { settled = true; resolve(''); } }, 2000);
+		}
+	});
+}
+
+// Resolve a thumbnail URL/data-URL for a video node. Deferred until first
+// print intent so unprinted pages incur no oEmbed fetch / frame capture cost.
+function resolveVideoThumbnail(rawUrl, $playerEl) {
+	let candidate = rawUrl;
+	if (typeof rawUrl === 'string' && /^\s*<iframe/i.test(rawUrl)) {
+		candidate = extractIframeSrc(rawUrl);
+	}
+	const ytId = parseYouTubeId(candidate);
+	if (ytId !== '') {
+		return Promise.resolve('https://img.youtube.com/vi/' + ytId + '/hqdefault.jpg');
+	}
+	const vimeoId = parseVimeoId(candidate);
+	if (vimeoId !== '') {
+		return fetchVimeoThumb(vimeoId);
+	}
+	if ($playerEl && $playerEl.length && $playerEl[0].tagName === 'VIDEO') {
+		const poster = $playerEl.attr('poster');
+		const validPoster = validateUrl(poster);
+		if (validPoster !== null) return Promise.resolve(validPoster.toString());
+		return captureVideoFrame($playerEl[0]);
+	}
+	return Promise.resolve('');
+}
+
+// --- Print-fallback builders (called by renderAudioNode etc.) ---------------
+
+function buildAudioPrintFallback($parent, $xmlNode) {
+	const rawUrl = $xmlNode.attr('url');
+	const rawTranscript = $xmlNode.attr('transcript');
+	const filename = extractFilename(rawUrl);
+	const printUrl = displayUrl(rawUrl);
+	const transcriptUrl = displayUrl(rawTranscript);
+
+	const $fallback = $('<div/>', {
+		'class': 'audio-print-fallback',
+		'aria-hidden': 'true',
+	});
+
+	const $bar = $('<div/>', { 'class': 'audio-print-fallback__bar' });
+	$bar.append($('<i/>', { 'class': 'fa fa-play', 'aria-hidden': 'true' }));
+	$bar.append($('<span/>', { 'class': 'audio-print-fallback__time' }).text('00:00'));
+	$bar.append($('<div/>', { 'class': 'audio-print-fallback__progress' }));
+	$bar.append($('<span/>', { 'class': 'audio-print-fallback__time' }).text('00:00'));
+	$bar.append($('<i/>', { 'class': 'fa fa-volume-up', 'aria-hidden': 'true' }));
+	$fallback.append($bar);
+
+	if (filename !== '') {
+		$fallback.append($('<div/>', { 'class': 'audio-print-fallback__filename' }).text(filename));
+	}
+	if (transcriptUrl !== '') {
+		$fallback.append($('<a/>', {
+			'class': 'audio-print-fallback__transcript',
+			href: transcriptUrl,
+			rel: 'noopener noreferrer',
+			target: '_blank',
+		}).text('Transcript: ' + transcriptUrl));
+	}
+	if (printUrl !== '') {
+		$fallback.append($('<div/>', { 'class': 'media-print-url' }).text(printUrl));
+	}
+
+	$parent.append($fallback);
+}
+
+function buildVideoPrintFallback($parent, $xmlNode) {
+	const rawUrl = $xmlNode.attr('url');
+	const printUrl = resolveVideoUrl(rawUrl);
+
+	const $fallback = $('<div/>', {
+		'class': 'video-print-fallback',
+		'aria-hidden': 'true',
+	});
+	const $img = $('<img/>', {
+		'class': 'video-print-fallback__thumb x_noLightBox',
+		alt: '',
+	});
+	const $play = $('<i/>', {
+		'class': 'fa fa-play-circle video-print-fallback__play',
+		'aria-hidden': 'true',
+	});
+	$fallback.append($img);
+	$fallback.append($play);
+	if (printUrl !== '') {
+		$fallback.append($('<div/>', { 'class': 'media-print-url' }).text(printUrl));
+	}
+	$parent.append($fallback);
+
+	__mediaPrintTasks.push(function () {
+		const $player = $parent.find('video, iframe').last();
+		return resolveVideoThumbnail(rawUrl, $player).then(function (thumbUrl) {
+			if (thumbUrl) {
+				$img.attr('src', thumbUrl);
+			} else {
+				// No thumbnail (Kaltura, MediaSpace, cross-origin mp4, etc.) —
+				// drop the empty <img> and play icon so the fallback collapses
+				// to just the printed URL rather than rendering a stray play
+				// icon over the URL text.
+				$img.remove();
+				$play.remove();
+			}
+		}, function () {
+			$img.remove();
+			$play.remove();
+		});
+	});
+}
+
+function buildPdfPrintFallback($parent, $xmlNode) {
+	const printUrl = displayUrl($xmlNode.attr('url'));
+	if (printUrl === '') return;
+	const $fallback = $('<div/>', {
+		'class': 'pdf-print-fallback',
+		'aria-hidden': 'true',
+	});
+	$fallback.append(document.createTextNode('PDF document: '));
+	$fallback.append($('<span/>', { 'class': 'media-print-url' }).text(printUrl));
+	$parent.append($fallback);
+}
+
+// --- Render helpers (replace the inline audio/video/pdf branches) -----------
+
+// Preserves the existing screen rendering verbatim and appends the print-only
+// fallback as a sibling. Returns the inserted vidHolder / object so callers
+// that need to push into video[]/pdf[] arrays can do so without re-querying.
+
+function renderAudioNode($container, $xmlNode) {
+	const $audio = $('<audio src="' + $xmlNode.attr('url') + '" type="audio/mp3" controls="controls" preload="none" width="100%"></audio>');
+	$container.append($audio);
+	$audio.wrap('<p></p>');
+	if ($xmlNode.attr('transcript') != undefined && $xmlNode.attr('transcript') != '') {
+		$audio.data('transcript', $xmlNode.attr('transcript'));
+	}
+	// Append fallback as sibling of the wrapping <p> so CSS sibling rules and
+	// print isolation work uniformly across all four render sites.
+	buildAudioPrintFallback($container, $xmlNode);
+	return $audio;
+}
+
+function renderVideoNode($container, $xmlNode, idSuffix) {
+	const videoInfo = setUpVideo($xmlNode.attr('url'), $xmlNode.attr('iframeRatio'), idSuffix);
+	$container.append('<p>' + videoInfo[0] + '</p>');
+	const $vidHolder = $container.find('.vidHolder').last();
+	if (videoInfo[1] != undefined) {
+		$vidHolder.data('iframeRatio', videoInfo[1]);
+	}
+	buildVideoPrintFallback($container, $xmlNode);
+	return $vidHolder;
+}
+
+function renderPdfNode($container, $xmlNode, urlSuffix) {
+	const suffix = urlSuffix || '';
+	const url = $xmlNode.attr('url');
+	const dataUrl = url + suffix;
+	const timestamp = new Date().getTime();
+	const openPdf = $xmlNode.attr('openPDF');
+	const openPdfLabel = (openPdf == '' || openPdf == undefined) ? 'Open PDF in new tab' : openPdf;
+	$container.append('<object id="pdfDoc' + timestamp + '" data="' + dataUrl + '" type="application/pdf" width="100%" height="600"><param name="src" value="' + dataUrl + '"></object>');
+	$container.append('<a class="pdfLink" href="' + url + '" target="_blank">' + openPdfLabel + '</a>');
+	buildPdfPrintFallback($container, $xmlNode);
+	return $container.find('object').last();
+}
+
 function init(){
 
 	$.extend($.featherlight.defaults, {
@@ -792,6 +1117,9 @@ function setup() {
 		window.__bootstrapPrintListenersRegistered = true;
 		window.addEventListener('beforeprint', function () {
 			document.documentElement.classList.add('printing-bootstrap');
+			// Fire-and-forget: native Ctrl+P can't await, but at least the
+			// resolvers start running so the next re-print sees them resolved.
+			prepareMediaForPrint();
 		});
 		window.addEventListener('afterprint', function () {
 			document.documentElement.classList.remove('printing-bootstrap');
@@ -818,7 +1146,12 @@ function setup() {
 				setTimeout(function () {
 					document.documentElement.classList.remove('printing-bootstrap');
 				}, 30000);
-				window.print();
+				// Await async fallback prep (Vimeo oEmbed + mp4 frame capture)
+				// with a 2.5s timeout so the print dialog is never blocked
+				// indefinitely. The browser print dialog itself is the wait UX.
+				prepareMediaForPrint().then(function () {
+					window.print();
+				});
 			});
 	}
 
@@ -2368,14 +2701,7 @@ function loadSection(thisSection, section, sectionIndex, page, pageHash, pageInd
 					var hideContentMessage = `<span class="alertMsg">${hideContent?.[1] ?? ''}</span>`;
 					section.append(hideContentMessage);
 				}
-				const $audio = $('<audio src="' + $(this).attr('url') + '" type="audio/mp3" controls="controls" preload="none" width="100%"></audio>');
-				section.append($audio);
-				$audio.wrap('<p></p>');
-
-				// there's a transcript - store the transcript text so the transcript button can be set up when player had loaded
-				if ($(this).attr('transcript') != undefined && $(this).attr('transcript') != '') {
-					$audio.data("transcript", $(this).attr('transcript'));
-				}
+				renderAudioNode(section, $(this));
 				section.append(hideContentMessage);
 			}
 		}
@@ -2388,12 +2714,7 @@ function loadSection(thisSection, section, sectionIndex, page, pageHash, pageInd
 					section.append(hideContentMessage);
 				}
 				section.append(hideContentMessage);
-				var videoInfo = setUpVideo($(this).attr('url'), $(this).attr('iframeRatio'), pageIndex + '_' + sectionIndex + '_' + itemIndex);
-				section.append('<p>' + videoInfo[0] + '</p>');
-
-				if (videoInfo[1] != undefined) {
-					section.find('.vidHolder').last().data('iframeRatio', videoInfo[1]);
-				}
+				renderVideoNode(section, $(this), pageIndex + '_' + sectionIndex + '_' + itemIndex);
 			}
 		}
 
@@ -2404,8 +2725,7 @@ function loadSection(thisSection, section, sectionIndex, page, pageHash, pageInd
 					var hideContentMessage = `<span class="alertMsg">${hideContent?.[1] ?? ''}</span>`;
 					section.append(hideContentMessage);
 				}
-				section.append('<object id="pdfDoc"' + new Date().getTime() + ' data="' + $(this).attr('url') + '" type="application/pdf" width="100%" height="600"><param name="src" value="' + $(this).attr('url') + '"></object>');
-				section.append('<a class="pdfLink" href="' + $(this).attr('url') + '" target="_blank">' + ($(this).attr('openPDF') == "" || $(this).attr('openPDF') == undefined ? "Open PDF in new tab" : $(this).attr('openPDF')) + '</a>');
+				renderPdfNode(section, $(this));
 				section.append(hideContentMessage);
 			}
 		}
@@ -2965,31 +3285,15 @@ function makeNav(node,section,type, sectionIndex, itemIndex){
 			}
 
 			if (this.nodeName == 'audio'){
-
-				const $audio = $('<audio src="' + $(this).attr('url') + '" type="audio/mp3" controls="controls" preload="none" width="100%"></audio>');
-				pane.append($audio);
-				$audio.wrap('<p></p>');
-
-				// there's a transcript - store the transcript text so the transcript button can be set up when player had loaded
-				if ($(this).attr('transcript') != undefined && $(this).attr('transcript') != '') {
-					$audio.data("transcript", $(this).attr('transcript'));
-				}
-
+				renderAudioNode(pane, $(this));
 			}
 
 			if (this.nodeName == 'video'){
-				var videoInfo = setUpVideo($(this).attr('url'), $(this).attr('iframeRatio'), currentPage + '_' + sectionIndex + '_' + itemIndex + '_' + index + "_" + x);
-				pane.append('<p>' + videoInfo[0] + '</p>');
-
-				if (videoInfo[1] != undefined) {
-					pane.find('.vidHolder').last().data('iframeRatio', videoInfo[1]);
+				const $vidHolder = renderVideoNode(pane, $(this), currentPage + '_' + sectionIndex + '_' + itemIndex + '_' + index + '_' + x);
+				video.push($vidHolder.find('video'));
+				if ($vidHolder.hasClass('iframe')) {
+					video.push($vidHolder);
 				}
-
-				video.push(pane.find('.vidHolder').last().find('video'));
-				if (pane.find('.vidHolder').last().hasClass('iframe')) {
-					video.push(pane.find('.vidHolder').last());
-				}
-
 			}
 
 			if (this.nodeName == 'link'){
@@ -3034,11 +3338,8 @@ function makeNav(node,section,type, sectionIndex, itemIndex){
 			}
 
 			if (this.nodeName == 'pdf'){
-
-				pane.append('<object id="pdfDoc"' + new Date().getTime() + ' data="' + $(this).attr('url') + '#page=1&view=fitH" type="application/pdf" width="100%" height="600"><param name="src" value="' + $(this).attr('url') + '#page=1&view=fitH"></object>');
-				pane.append('<a class="pdfLink" href="' + $(this).attr('url') + '" target="_blank">' + ($(this).attr('openPDF') == "" || $(this).attr('openPDF') == undefined ? "Open PDF in new tab" : $(this).attr('openPDF')) + '</a>');
-				pdf.push(pane.find('object'));
-
+				const $object = renderPdfNode(pane, $(this), '#page=1&view=fitH');
+				pdf.push($object);
 			}
 
 			if (this.nodeName == 'xot'){
@@ -3227,14 +3528,7 @@ function makeAccordion(node,section, sectionIndex, itemIndex){
 			if (this.nodeName == 'audio'){
 				var hideContent = checkHiddenContent($(this), 'Content');
 				if (hideContent[0] == false || hideContent[0] == undefined || authorSupport == true) {
-					const $audio = $('<audio src="' + $(this).attr('url') + '" type="audio/mp3" controls="controls" preload="none" width="100%"></audio>');
-					inner.append($audio);
-					$audio.wrap('<p></p>');
-
-					// there's a transcript - store the transcript text so the transcript button can be set up when player had loaded
-					if ($(this).attr('transcript') != undefined && $(this).attr('transcript') != '') {
-						$audio.data("transcript", $(this).attr('transcript'));
-					}
+					renderAudioNode(inner, $(this));
 					if(authorSupport == true){
 						var hideContentMessage = `<span class="alertMsg">${hideContent?.[1] ?? ''}</span>`;
 						inner.append(hideContentMessage);
@@ -3249,11 +3543,7 @@ function makeAccordion(node,section, sectionIndex, itemIndex){
 						var hideContentMessage = `<span class="alertMsg">${hideContent?.[1] ?? ''}</span>`;
 						inner.append(hideContentMessage);
 					}
-					var videoInfo = setUpVideo($(this).attr('url'), $(this).attr('iframeRatio'), currentPage + '_' + sectionIndex + '_' + itemIndex + '_' + index + "_" + i);
-					inner.append('<p>' + videoInfo[0] + '</p>');
-					if (videoInfo[1] != undefined) {
-						inner.find('.vidHolder').last().data('iframeRatio', videoInfo[1]);
-					}
+					renderVideoNode(inner, $(this), currentPage + '_' + sectionIndex + '_' + itemIndex + '_' + index + '_' + i);
 				}
 			}
 
@@ -3302,8 +3592,7 @@ function makeAccordion(node,section, sectionIndex, itemIndex){
 			if (this.nodeName == 'pdf'){
 				var hideContent = checkHiddenContent($(this), 'Content');
 				if (hideContent[0] == false || hideContent[0] == undefined || authorSupport == true) {
-					inner.append('<object id="pdfDoc"' + new Date().getTime() + ' data="' + $(this).attr('url') + '" type="application/pdf" width="100%" height="600"><param name="src" value="' + $(this).attr('url') + '"></object>');
-					inner.append('<a class="pdfLink" href="' + $(this).attr('url') + '" target="_blank">' + ($(this).attr('openPDF') == "" || $(this).attr('openPDF') == undefined ? "Open PDF in new tab" : $(this).attr('openPDF')) + '</a>');
+					renderPdfNode(inner, $(this));
 					if(authorSupport == true){
 						var hideContentMessage = `<span class="alertMsg">${hideContent?.[1] ?? ''}</span>`;
 						inner.append(hideContentMessage);
@@ -3404,26 +3693,12 @@ function makeCarousel(node, section, sectionIndex, itemIndex){
 			}
 
 			if (this.nodeName == 'audio'){
-
-				const $audio = $('<audio src="' + $(this).attr('url') + '" type="audio/mp3" controls="controls" preload="none" width="100%"></audio>');
-				pane.append($audio);
-				$audio.wrap('<p></p>');
-
-				// there's a transcript - store the transcript text so the transcript button can be set up when player had loaded
-				if ($(this).attr('transcript') != undefined && $(this).attr('transcript') != '') {
-					$audio.data("transcript", $(this).attr('transcript'));
-				}
+				renderAudioNode(pane, $(this));
 			}
 
 			if (this.nodeName == 'video'){
-				var videoInfo = setUpVideo($(this).attr('url'), $(this).attr('iframeRatio'), currentPage + '_' + sectionIndex + '_' + itemIndex + '_' + index + '_' + i);
-				pane.append('<p>' + videoInfo[0] + '</p>');
-
-				if (videoInfo[1] != undefined) {
-					pane.find('.vidHolder').last().data('iframeRatio', videoInfo[1]);
-				}
-
-				video.push(pane.find('.vidHolder').last());
+				const $vidHolder = renderVideoNode(pane, $(this), currentPage + '_' + sectionIndex + '_' + itemIndex + '_' + index + '_' + i);
+				video.push($vidHolder);
 			}
 
 			if (this.nodeName == 'link'){
@@ -3469,9 +3744,7 @@ function makeCarousel(node, section, sectionIndex, itemIndex){
 			}
 
 			if (this.nodeName == 'pdf'){
-				pane.append('<object id="pdfDoc"' + new Date().getTime() + ' data="' + $(this).attr('url') + '" type="application/pdf" width="100%" height="600"><param name="src" value="' + $(this).attr('url') + '"></object>');
-				pane.append('<a class="pdfLink" href="' + $(this).attr('url') + '" target="_blank">' + ($(this).attr('openPDF') == "" || $(this).attr('openPDF') == undefined ? "Open PDF in new tab" : $(this).attr('openPDF')) + '</a>');
-
+				renderPdfNode(pane, $(this));
 			}
 
 			if (this.nodeName == 'xot'){
