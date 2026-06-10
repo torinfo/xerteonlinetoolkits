@@ -111,7 +111,7 @@ if ($xerte_toolkits_site->rights == 'elevated')
     
     -->
 
-    <body onload="javascript:properties_template();" onunload="javascript:parent.window.opener.refresh_workspace()" <?php echo $body_class; ?> >
+    <body class="<?php echo htmlspecialchars(toolkits_ui_theme_body_class(), ENT_QUOTES, 'UTF-8'); ?>" onload="javascript:properties_template();" onunload="javascript:parent.window.opener.refresh_workspace()" <?php echo $body_class; ?> >
 
         <!--
         

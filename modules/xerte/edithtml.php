@@ -281,7 +281,7 @@ function output_editor_code($row_edit, $xerte_toolkits_site, $read_status, $vers
     }
     ?>
 
-    <script src="website_code/scripts/template_management.js?version=<?php echo $version;?>"></script>
+    <script src="<?php echo htmlspecialchars(toolkits_script_url('website_code/scripts/template_management.js?version=' . $version), ENT_QUOTES, 'UTF-8'); ?>"></script>
     <!--[if lte IE 7]>
     <style type="text/css"> body { font-size: 85%; } </style>
     <![endif]-->

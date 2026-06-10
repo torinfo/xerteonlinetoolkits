@@ -258,6 +258,7 @@ CREATE TABLE `$templaterights` (
   `role` char(255) DEFAULT NULL,
   `folder` bigint(20) DEFAULT NULL,
   `notes` text DEFAULT NULL,
+  `favorite` tinyint(1) NOT NULL DEFAULT 0,
    KEY `index1` (`template_id`,`user_id`,`role`(10)),
    KEY `index2` (`folder`)
 ) DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;

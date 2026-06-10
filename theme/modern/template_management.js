@@ -699,6 +699,10 @@ function refresh_workspace() {
         // Clear the project details
         $("#project_information").html("");
         init_workspace();
+
+        if (typeof toolkitsModernOnWorkspaceRefreshed === 'function') {
+            toolkitsModernOnWorkspaceRefreshed();
+        }
         
         // Save sort preference
         save_user_preference('sort_type', document.sorting.type.value);

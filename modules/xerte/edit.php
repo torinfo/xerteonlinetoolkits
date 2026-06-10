@@ -106,7 +106,7 @@ function output_editor_code($row_edit, $xerte_toolkits_site, $read_status, $vers
 	<link rel="shortcut icon" href="favicon_edit.ico" type="image/x-icon" />
     <script src="modules/xerte/js/swfobject.js"></script>
     <script src="website_code/scripts/opencloseedit.js"></script>
-    <script src="website_code/scripts/template_management.js"></script>
+    <script src="<?php echo htmlspecialchars(toolkits_script_url('website_code/scripts/template_management.js'), ENT_QUOTES, 'UTF-8'); ?>"></script>
     <script src="website_code/scripts/ajax_management.js"></script>
     <script type="text/javascript" language="javascript">
 

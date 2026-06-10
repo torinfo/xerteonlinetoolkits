@@ -40,6 +40,10 @@ if(empty($_SESSION['toolkits_logon_id'])) {
 
 _load_language_file("/user_settings.inc");
 
+if (function_exists('ensure_toolkits_ui_theme_preference')) {
+    ensure_toolkits_ui_theme_preference(true);
+}
+
 header('Content-Type: text/html; charset=utf-8');
 
 $username = isset($_SESSION['toolkits_logon_username']) ? $_SESSION['toolkits_logon_username'] : '';
@@ -63,6 +67,16 @@ ob_end_clean();
         </form>
         <div id="result"></div>
         <div class="panel-settings" style="margin-top: 20px; padding-top: 20px; border-top: 1px solid #ccc;">
+            <div class="panel-setting-item" style="margin-bottom: 12px;">
+                <label for="toolkits_ui_theme" style="display: block; margin-bottom: 6px;">
+                    <?php echo USER_SETTINGS_UI_THEME_LABEL; ?>
+                </label>
+                <select id="toolkits_ui_theme" name="toolkits_ui_theme" style="width: 100%; max-width: 100%; padding: 6px; box-sizing: border-box; border: 1px solid #ccc; border-radius: 3px;">
+                    <option value="nottingham"<?php echo get_toolkits_ui_theme() === 'nottingham' ? ' selected="selected"' : ''; ?>><?php echo USER_SETTINGS_UI_THEME_NOTTINGHAM; ?></option>
+                    <option value="modern"<?php echo get_toolkits_ui_theme() === 'modern' ? ' selected="selected"' : ''; ?>><?php echo USER_SETTINGS_UI_THEME_MODERN; ?></option>
+                </select>
+                <p style="margin-top: 6px; font-size: 0.9em; color: #555;"><?php echo USER_SETTINGS_UI_THEME_HELP; ?></p>
+            </div>
             <div class="panel-setting-item">
                 <label for="panel_east_open" style="display: inline-block; margin-right: 10px; cursor: pointer;">
                     <input type="checkbox" id="panel_east_open" name="panel_east_open" style="margin-right: 5px; cursor: pointer;">

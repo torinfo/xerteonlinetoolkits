@@ -86,6 +86,8 @@ function changepasswordPopup() {
                 '#change-password-dialog .panel-setting-item { margin-top: 10px; } ' +
                 '#change-password-dialog .panel-setting-item label { display: inline-block; margin-right: 10px; cursor: pointer; color: #000; font-weight: normal; } ' +
                 '#change-password-dialog .panel-setting-item input[type="checkbox"] { margin-right: 5px; cursor: pointer; width: auto; } ' +
+                '#change-password-dialog #toolkits_ui_theme { width: 100%; padding: 6px; box-sizing: border-box; border: 1px solid #ccc; border-radius: 3px; margin-bottom: 4px; } ' +
+                '#change-password-dialog .toolkits-theme-settings p { margin-top: 8px; font-size: 0.9em; color: #555; } ' +
                 '</style>');
         }
         
@@ -114,6 +116,23 @@ function changepasswordPopup() {
         success: function(html) {
             $dialog.html(html);
             
+            if (typeof user_preferences === 'undefined' || !user_preferences) {
+                user_preferences = {};
+            }
+
+            // Interface theme — default to nottingham when missing.
+            // Do NOT auto-save here: it can race with a user's change and overwrite their selection.
+            var themeSelect = $("#change-password-dialog #toolkits_ui_theme");
+            if (themeSelect.length) {
+                var savedTheme = user_preferences.toolkits_ui_theme;
+                if (savedTheme === 'modern' || savedTheme === 'nottingham') {
+                    themeSelect.val(savedTheme);
+                } else {
+                    themeSelect.val('nottingham');
+                    user_preferences.toolkits_ui_theme = 'nottingham';
+                }
+            }
+
             // Load current panel states from user preferences
             if (typeof user_preferences !== 'undefined' && user_preferences) {
                 // Set east panel checkbox (workspace)
@@ -199,7 +218,36 @@ function changepasswordPopup() {
                     }
                 }
             }
-            
+
+            // Theme selector change handler.
+            // Dropdowns can be flaky depending on how the DOM is injected, so we bind multiple events
+            // and show immediate feedback in the dialog.
+            function handleToolkitsThemeChange(e) {
+                var newTheme = $(this).val();
+                if (newTheme !== 'nottingham' && newTheme !== 'modern') return;
+                if (typeof save_user_preference !== 'function') return;
+
+                var $result = $("#change-password-dialog #result");
+                if ($result.length) {
+                    $result.html("<div>Saving interface theme…</div>");
+                }
+
+                save_user_preference('toolkits_ui_theme', newTheme, function() {
+                    if ($result.length) {
+                        $result.html("<div>Interface theme saved. Reload the page to apply.</div>");
+                    }
+                });
+            }
+
+            var themeSelectForHandler = $("#change-password-dialog #toolkits_ui_theme");
+            if (themeSelectForHandler.length) {
+                themeSelectForHandler
+                    .off('change.toolkitsThemeDirect input.toolkitsThemeDirect blur.toolkitsThemeDirect')
+                    .on('change.toolkitsThemeDirect input.toolkitsThemeDirect blur.toolkitsThemeDirect', handleToolkitsThemeChange);
+            }
+            $(document).off('change.toolkitsTheme input.toolkitsTheme blur.toolkitsTheme', '#change-password-dialog #toolkits_ui_theme');
+            $(document).on('change.toolkitsTheme input.toolkitsTheme blur.toolkitsTheme', '#change-password-dialog #toolkits_ui_theme', handleToolkitsThemeChange);
+
             // Add change handlers for panel checkboxes
             $("#change-password-dialog #panel_east_open").on('change', function() {
                 if (typeof save_user_preference === 'function') {

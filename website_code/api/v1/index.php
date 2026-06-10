@@ -83,6 +83,61 @@ if ($method === 'POST' && $path === 'workspace/projects-sorted') {
     exit;
 }
 
+if ($method === 'POST' && $path === 'workspace/toggle-favorite') {
+    ApiAuth::requireLoggedIn();
+    require_once $xerte_toolkits_site->root_file_path . 'website_code/php/user_library.php';
+    require_once $xerte_toolkits_site->root_file_path . 'website_code/php/template_status.php';
+    if (!isset($params['template_id'])) {
+        ApiResponse::error(400, 'missing_template_id', 'No template id');
+        exit;
+    }
+    $template_id = x_clean_input($params['template_id'], 'numeric');
+    $user_id = (int) $_SESSION['toolkits_logon_id'];
+    if (!has_rights_to_this_template($template_id, $user_id) && !is_user_permitted('projectadmin')) {
+        ApiResponse::error(403, 'forbidden', 'No access to this template');
+        exit;
+    }
+    $favorite = isset($params['favorite']) ? (int) $params['favorite'] : 1;
+    $favorite = $favorite === 1 ? 1 : 0;
+    $prefix = $xerte_toolkits_site->database_table_prefix;
+    $ok = db_query(
+        "UPDATE {$prefix}templaterights SET favorite = ? WHERE template_id = ? AND user_id = ?",
+        array($favorite, $template_id, $user_id)
+    );
+    if ($ok === false) {
+        ApiResponse::error(500, 'update_failed', 'Could not update favorite');
+        exit;
+    }
+    $row = db_query_one(
+        "SELECT favorite FROM {$prefix}templaterights WHERE template_id = ? AND user_id = ? LIMIT 1",
+        array($template_id, $user_id)
+    );
+    if (!$row && $favorite === 1) {
+        db_query(
+            "UPDATE {$prefix}templaterights tr "
+            . "JOIN {$prefix}templatedetails td ON td.template_id = tr.template_id "
+            . "SET tr.favorite = ? "
+            . "WHERE tr.template_id = ? AND td.creator_id = ? AND tr.role = 'creator'",
+            array($favorite, $template_id, $user_id)
+        );
+        $row = db_query_one(
+            "SELECT favorite FROM {$prefix}templaterights WHERE template_id = ? AND user_id = ? LIMIT 1",
+            array($template_id, $user_id)
+        );
+    }
+    if (!$row) {
+        ApiResponse::error(404, 'not_found', 'No template rights row found for this user');
+        exit;
+    }
+    $stored = (int) $row['favorite'];
+    if ($stored !== $favorite) {
+        ApiResponse::error(500, 'update_failed', 'Favorite was not saved');
+        exit;
+    }
+    ApiResponse::success(array('favorite' => $stored));
+    exit;
+}
+
 if ($method === 'POST' && $path === 'templates/info') {
     ApiAuth::requireLoggedIn();
     require_once $xerte_toolkits_site->root_file_path . 'website_code/php/templates/TemplateWorkspaceInfoService.php';

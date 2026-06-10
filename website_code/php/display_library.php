@@ -36,6 +36,18 @@ _load_language_file("/website_code/php/display_library.inc");
 $level = -1;
 
 /**
+ * Attach list metadata (dates, template label, access, favorite) to a workspace file item.
+ */
+function workspace_apply_template_list_fields($item, $row)
+{
+    $item->date_created = isset($row['date_created']) ? $row['date_created'] : '';
+    $item->date_modified = isset($row['date_modified']) ? $row['date_modified'] : '';
+    $item->display_name = isset($row['display_name']) ? $row['display_name'] : '';
+    $item->access = isset($row['access_to_whom']) ? $row['access_to_whom'] : '';
+    $item->favorite = isset($row['favorite']) ? (int) $row['favorite'] : 0;
+}
+
+/**
  *
  * Function list folders in this folder event free
  * This function is used in the folder properties tab to display content
@@ -500,7 +512,8 @@ function get_group_files_in_this_group($folder_id, $tree_id, $sort_type, $copy_o
     $prefix = $xerte_toolkits_site->database_table_prefix;
 
     //select templates the same way as regularly, however, now check for group_id in template_group_rights
-    $query = "select td.template_name as project_name, td.creator_id, otd.template_name,td.access_to_whom, td.tsugi_published, "
+    $query = "select td.template_name as project_name, td.creator_id, otd.template_name, td.access_to_whom, td.tsugi_published, "
+        . " td.date_created, td.date_modified, otd.display_name, 0 as favorite, "
         . " otd.parent_template, otd.template_framework, td.template_id, tgr.role, '' as creator_folder_name, 2 as nrshared from {$prefix}templatedetails td, "
         . " {$prefix}template_group_rights tgr, {$prefix}originaltemplatesdetails otd where td.template_id = tgr.template_id and tgr.group_id = ? "
         . " and otd.template_type_id = td.template_type_id ";
@@ -558,6 +571,8 @@ function get_group_files_in_this_group($folder_id, $tree_id, $sort_type, $copy_o
             $item->editor_size = $xerte_toolkits_site->learning_objects->{$row['template_framework'] . "_" . $row['template_name']}->editor_size;
             $item->preview_size = $xerte_toolkits_site->learning_objects->{$row['template_framework'] . "_" . $row['template_name']}->preview_size;
         }
+
+        workspace_apply_template_list_fields($item, $row);
 
         $items[] = $item;
     }
@@ -766,7 +781,10 @@ function get_shared_folder_contents($folder_id, $role, $tree_id, $sort_type, $co
     }
 
     // Get files in the folders
-    $sql = "select td.template_name as project_name, td.creator_id, otd.template_name,td.access_to_whom, td.tsugi_published, "
+    $logon_id = (int) $_SESSION['toolkits_logon_id'];
+    $sql = "select td.template_name as project_name, td.creator_id, otd.template_name, td.access_to_whom, td.tsugi_published, "
+        . " td.date_created, td.date_modified, otd.display_name, "
+        . " (SELECT COALESCE(trf.favorite, 0) FROM {$prefix}templaterights trf WHERE trf.template_id = td.template_id AND trf.user_id = {$logon_id} LIMIT 1) as favorite, "
         . " otd.parent_template, otd.template_framework, td.template_id, tr.folder, tr.role, fd3.folder_name as creator_folder_name, count(tr2.template_id) as nrshared "
         . " from {$prefix}templatedetails td "
         . " join {$prefix}templaterights tr on td.template_id=tr.template_id and tr.folder in (" . implode(",", $folderids) . ")" //and tr.user_id=?
@@ -777,7 +795,7 @@ function get_shared_folder_contents($folder_id, $role, $tree_id, $sort_type, $co
     //if ($copy_only) {
     //    $sql .= " and (tr.role = 'creator' or tr.role ='co-author') ";
     //}
-    $sql .= " group by td.template_id, td.creator_id, td.template_name, td.date_created, otd.template_name,td.access_to_whom, td.tsugi_published, otd.parent_template, otd.template_framework, tr.role, tr.folder,fd3.folder_name ";
+    $sql .= " group by td.template_id, td.creator_id, td.template_name, td.date_created, td.date_modified, otd.display_name, otd.template_name, td.access_to_whom, td.tsugi_published, otd.parent_template, otd.template_framework, tr.role, tr.folder, fd3.folder_name ";
     if ($sort_type == "alpha_down") {
         $sql .= " order by td.template_name DESC";
     } elseif ($sort_type == "alpha_up") {
@@ -830,6 +848,7 @@ function get_shared_folder_contents($folder_id, $role, $tree_id, $sort_type, $co
             $item->editor_size = $xerte_toolkits_site->learning_objects->{$row['template_framework'] . "_" . $row['template_name']}->editor_size;
             $item->preview_size = $xerte_toolkits_site->learning_objects->{$row['template_framework'] . "_" . $row['template_name']}->preview_size;
         }
+        workspace_apply_template_list_fields($item, $row);
         $items[] = $item;
     }
 
@@ -855,8 +874,11 @@ function get_files_in_this_folder($folder_id, $tree_id, $sort_type, $copy_only, 
     $query = NULL;
     $params = NULL;
 
+    $logon_id = (int) $_SESSION['toolkits_logon_id'];
     if ($type != "group_top") {
-        $query  = "select td.template_name as project_name, td.creator_id, otd.template_name,td.access_to_whom, td.tsugi_published, "
+        $query  = "select td.template_name as project_name, td.creator_id, otd.template_name, td.access_to_whom, td.tsugi_published, "
+            . " td.date_created, td.date_modified, otd.display_name, "
+            . " (SELECT COALESCE(trf.favorite, 0) FROM {$prefix}templaterights trf WHERE trf.template_id = td.template_id AND trf.user_id = {$logon_id} LIMIT 1) as favorite, "
             . " otd.parent_template, otd.template_framework, td.template_id, tr.role, fd3.folder_name as creator_folder_name, count(tr2.template_id) as nrshared "
             . " from {$prefix}templatedetails td "
             . " join {$prefix}templaterights tr on td.template_id=tr.template_id and tr.folder=? " //and tr.user_id=?
@@ -870,7 +892,8 @@ function get_files_in_this_folder($folder_id, $tree_id, $sort_type, $copy_only, 
         }
     } else {
         //select templates the same way as regularly, however, now check for group_id in template_group_rights
-        $query = "select td.template_name as project_name, td.creator_id, otd.template_name,td.access_to_whom, td.tsugi_published, "
+        $query = "select td.template_name as project_name, td.creator_id, otd.template_name, td.access_to_whom, td.tsugi_published, "
+            . " td.date_created, td.date_modified, otd.display_name, 0 as favorite, "
             . " otd.parent_template, otd.template_framework, td.template_id, tgr.role, '' as creator_folder_name, 2 as nrshared from {$prefix}templatedetails td, "
             . " {$prefix}template_group_rights tgr, {$prefix}originaltemplatesdetails otd where td.template_id = tgr.template_id and tgr.group_id = ? "
             . " and otd.template_type_id = td.template_type_id ";
@@ -880,7 +903,7 @@ function get_files_in_this_folder($folder_id, $tree_id, $sort_type, $copy_only, 
     }
 
     if ($type != "group_top") {
-        $query .= " group by td.template_id, td.creator_id, td.template_name, td.date_created, otd.template_name,td.access_to_whom, td.tsugi_published, otd.parent_template, otd.template_framework, tr.role, tr.folder,fd3.folder_name ";
+        $query .= " group by td.template_id, td.creator_id, td.template_name, td.date_created, td.date_modified, otd.display_name, otd.template_name, td.access_to_whom, td.tsugi_published, otd.parent_template, otd.template_framework, tr.role, tr.folder, fd3.folder_name ";
     }
 
     $top = false;
@@ -948,6 +971,8 @@ function get_files_in_this_folder($folder_id, $tree_id, $sort_type, $copy_only, 
             $item->editor_size = $xerte_toolkits_site->learning_objects->{$row['template_framework'] . "_" . $row['template_name']}->editor_size;
             $item->preview_size = $xerte_toolkits_site->learning_objects->{$row['template_framework'] . "_" . $row['template_name']}->preview_size;
         }
+
+        workspace_apply_template_list_fields($item, $row);
 
         $items[] = $item;
     }
@@ -1095,6 +1120,8 @@ function get_workspace_contents($folder_id, $tree_id, $sort_type, $copy_only=fal
                     $titem->preview_size = $xerte_toolkits_site->learning_objects->{$template['template_framework'] . "_" . $template['template_name']}->preview_size;
                 }
 
+                workspace_apply_template_list_fields($titem, $template);
+
                 $items[] = $titem;
             }
         }
@@ -1146,6 +1173,7 @@ function get_workspace_contents($folder_id, $tree_id, $sort_type, $copy_only=fal
 		{
             $titem->preview_size = $xerte_toolkits_site->learning_objects->{$template['template_framework'] . "_" . $template['parent_template']}->preview_size;
 		}
+        workspace_apply_template_list_fields($titem, $template);
         $items[] = $titem;
     }
 
@@ -1465,7 +1493,8 @@ function get_workspace_templates($folder_id, $tree_id, $sort_type, $copy_only=fa
             . " {$prefix}templaterights tr, {$prefix}originaltemplatesdetails otd left join {$prefix}templaterights tr2 on tr.template_id=tr2.template_id "
             . " where td.template_id = tr.template_id and tr.user_id = ? "
             . " and tr.folder= ? and  otd.template_type_id = td.template_type_id ";
-        $query  = "select td.template_name as project_name, otd.template_name,td.access_to_whom, td.tsugi_published, "
+        $query  = "select td.template_name as project_name, otd.template_name, td.access_to_whom, td.tsugi_published, "
+            . " td.date_created, td.date_modified, otd.display_name, COALESCE(tr.favorite, 0) as favorite, "
             . " otd.parent_template, otd.template_framework, td.template_id, tr.role, tr.folder, fd3.folder_name as creator_folder_name, count(tr2.template_id) as nrshared "
             . " from {$prefix}templatedetails td "
             . " join {$prefix}templaterights tr on td.template_id=tr.template_id and tr.user_id=? "
@@ -1476,7 +1505,8 @@ function get_workspace_templates($folder_id, $tree_id, $sort_type, $copy_only=fa
         $params = array($_SESSION['toolkits_logon_id']);
     } else {
         //select templates the same way as regularly, however, now check for group_id in template_group_rights
-        $query = "select td.template_name as project_name, otd.template_name,td.access_to_whom, td.tsugi_published, "
+        $query = "select td.template_name as project_name, otd.template_name, td.access_to_whom, td.tsugi_published, "
+           . " td.date_created, td.date_modified, otd.display_name, 0 as favorite, "
            . " otd.parent_template, otd.template_framework, td.template_id, tgr.role, 2 as nrshared from {$prefix}templatedetails td, "
             . " {$prefix}template_group_rights tgr, {$prefix}originaltemplatesdetails otd where td.template_id = tgr.template_id and tgr.group_id = ? "
             . " and otd.template_type_id = td.template_type_id ";
@@ -1488,7 +1518,7 @@ function get_workspace_templates($folder_id, $tree_id, $sort_type, $copy_only=fa
     }
 
     if ($type != "group_top") {
-        $query .= " group by td.template_id, td.template_name, td.date_created, otd.template_name,td.access_to_whom, td.tsugi_published, otd.parent_template, otd.template_framework, tr.role, tr.folder,fd3.folder_name ";
+        $query .= " group by td.template_id, td.template_name, td.date_created, td.date_modified, otd.display_name, otd.template_name, td.access_to_whom, td.tsugi_published, otd.parent_template, otd.template_framework, tr.role, tr.folder, fd3.folder_name, tr.favorite ";
     }
 
     if ($sort_type == "alpha_down") {

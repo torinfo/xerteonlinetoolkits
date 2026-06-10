@@ -273,7 +273,7 @@ if(isset($_SESSION['toolkits_logon_id'])) {
         </style>
     </head>
 
-    <body onload="javascript:show_first_tab()">
+    <body class="<?php echo htmlspecialchars(toolkits_ui_theme_body_class(), ENT_QUOTES, 'UTF-8'); ?>" onload="javascript:show_first_tab()">
 
         <iframe id="upload_iframe" name="upload_iframe" src="" style="width:0px;height:0px; display:none;"></iframe>
 

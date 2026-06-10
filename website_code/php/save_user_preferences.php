@@ -82,7 +82,17 @@ if (isset($_POST['preferences']) && is_array($_POST['preferences'])) {
 } else {
     // Handle single preference update (key/value format)
     if (isset($_POST['key']) && isset($_POST['value'])) {
-        $preferences[$_POST['key']] = $_POST['value'];
+        $key = (string) $_POST['key'];
+        $value = $_POST['value'];
+        if ($key === 'toolkits_ui_theme') {
+            $value = preg_replace('/[^a-zA-Z0-9_-]/', '', (string) $value);
+            if (!in_array($value, get_available_toolkits_ui_themes(), true)) {
+                ob_end_clean();
+                echo json_encode(array("success" => false, "message" => "Invalid interface theme"));
+                exit;
+            }
+        }
+        $preferences[$key] = $value;
     } else {
         echo json_encode(array("success" => false, "message" => "No preference data provided"));
         exit;
@@ -100,7 +110,7 @@ if ($result !== false) {
     // Update session with parsed array (not JSON string)
     $_SESSION['toolkits_preferences'] = $preferences;
     ob_end_clean(); // Clear any output before sending JSON
-    echo json_encode(array("success" => true, "message" => "Preferences saved"));
+    echo json_encode(array("success" => true, "message" => "Preferences saved", "preferences" => $preferences));
 } else {
     ob_end_clean(); // Clear any output before sending JSON
     echo json_encode(array("success" => false, "message" => "Failed to save preferences to database"));

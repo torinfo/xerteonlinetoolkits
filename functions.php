@@ -147,6 +147,371 @@ function _load_language_file($file_path) {
     return true;
 }
 
+/**
+ * Supported toolkits UI themes (files under theme/{name}/).
+ */
+function get_available_toolkits_ui_themes() {
+    return array('nottingham', 'modern');
+}
+
+/**
+ * Reload preferences JSON from the database into the session (when supported).
+ */
+function refresh_toolkits_user_preferences_session() {
+    global $xerte_toolkits_site;
+
+    if (empty($_SESSION['toolkits_logon_username'])) {
+        return;
+    }
+    if (!function_exists('db_query_one')) {
+        return;
+    }
+    try {
+        $authmech = Xerte_Authentication_Factory::create($xerte_toolkits_site->authentication_method);
+        if (!$authmech || !$authmech->hasUserPrefrences()) {
+            return;
+        }
+    } catch (Exception $e) {
+        return;
+    }
+
+    $row = db_query_one(
+        "SELECT preference FROM {$xerte_toolkits_site->database_table_prefix}logindetails WHERE username = ?",
+        array($_SESSION['toolkits_logon_username'])
+    );
+    if (!empty($row) && isset($row['preference']) && $row['preference'] !== '') {
+        $decoded = json_decode($row['preference'], true);
+        if (is_array($decoded)) {
+            $_SESSION['toolkits_preferences'] = $decoded;
+            return;
+        }
+    }
+    if (!isset($_SESSION['toolkits_preferences']) || !is_array($_SESSION['toolkits_preferences'])) {
+        $_SESSION['toolkits_preferences'] = array();
+    }
+    ensure_toolkits_ui_theme_preference(false);
+}
+
+/**
+ * Ensure toolkits_ui_theme exists in session preferences (default: nottingham).
+ *
+ * @param bool $persist When true, write back to logindetails.preference if the key was missing or invalid.
+ * @return string Active theme id
+ */
+function ensure_toolkits_ui_theme_preference($persist = false) {
+    global $xerte_toolkits_site;
+
+    $available = get_available_toolkits_ui_themes();
+    if (!isset($_SESSION['toolkits_preferences']) || !is_array($_SESSION['toolkits_preferences'])) {
+        $_SESSION['toolkits_preferences'] = array();
+    }
+
+    $needsDefault = true;
+    if (array_key_exists('toolkits_ui_theme', $_SESSION['toolkits_preferences'])) {
+        $candidate = preg_replace('/[^a-zA-Z0-9_-]/', '', (string) $_SESSION['toolkits_preferences']['toolkits_ui_theme']);
+        if (in_array($candidate, $available, true)) {
+            $_SESSION['toolkits_preferences']['toolkits_ui_theme'] = $candidate;
+            $needsDefault = false;
+        }
+    }
+
+    if ($needsDefault) {
+        $_SESSION['toolkits_preferences']['toolkits_ui_theme'] = 'nottingham';
+    }
+
+    if ($persist && $needsDefault && !empty($_SESSION['toolkits_logon_username']) && function_exists('db_query')) {
+        try {
+            $authmech = Xerte_Authentication_Factory::create($xerte_toolkits_site->authentication_method);
+            if ($authmech && $authmech->hasUserPrefrences()) {
+                $preferences_json = json_encode($_SESSION['toolkits_preferences']);
+                if ($preferences_json !== false) {
+                    db_query(
+                        "UPDATE {$xerte_toolkits_site->database_table_prefix}logindetails SET preference = ? WHERE username = ?",
+                        array($preferences_json, $_SESSION['toolkits_logon_username'])
+                    );
+                }
+            }
+        } catch (Exception $e) {
+            // Session default is enough if DB write fails
+        }
+    }
+
+    return $_SESSION['toolkits_preferences']['toolkits_ui_theme'];
+}
+
+function get_toolkits_ui_theme() {
+    return ensure_toolkits_ui_theme_preference(false);
+}
+
+function toolkits_ui_theme_body_class() {
+    return 'toolkits-ui-theme-' . get_toolkits_ui_theme();
+}
+
+/**
+ * Resolve a script path to theme override or core website_code path.
+ *
+ * @return array{path: string, url_param: string}
+ */
+function resolve_toolkits_script_path($file_path) {
+    $root = dirname(__FILE__) . DIRECTORY_SEPARATOR;
+    $url_param = '';
+    $parpos = strpos($file_path, '?');
+    if ($parpos !== false) {
+        $url_param = substr($file_path, $parpos);
+        $file_path = substr($file_path, 0, $parpos);
+    }
+
+    $theme = get_toolkits_ui_theme();
+    $basename = basename($file_path);
+    $candidates = array(
+        'theme/' . $theme . '/' . $file_path,
+        'theme/' . $theme . '/' . $basename,
+    );
+
+    foreach ($candidates as $candidate) {
+        $fsPath = $root . str_replace('/', DIRECTORY_SEPARATOR, $candidate);
+        if (file_exists($fsPath)) {
+            return array('path' => $candidate, 'url_param' => $url_param);
+        }
+    }
+
+    return array('path' => $file_path, 'url_param' => $url_param);
+}
+
+function toolkits_script_url($file_path) {
+    global $xerte_toolkits_site;
+    $resolved = resolve_toolkits_script_path($file_path);
+    return $xerte_toolkits_site->site_url . $resolved['path'] . $resolved['url_param'];
+}
+
+/**
+ * Resolve a theme asset (e.g. modern.css, nottingham.js) under theme/{name}/.
+ *
+ * @return array{path: string, url_param: string}
+ */
+function resolve_toolkits_theme_asset_path($filename) {
+    $root = dirname(__FILE__) . DIRECTORY_SEPARATOR;
+    $url_param = '';
+    $parpos = strpos($filename, '?');
+    if ($parpos !== false) {
+        $url_param = substr($filename, $parpos);
+        $filename = substr($filename, 0, $parpos);
+    }
+
+    $theme = get_toolkits_ui_theme();
+    $candidate = 'theme/' . $theme . '/' . $filename;
+    $fsPath = $root . str_replace('/', DIRECTORY_SEPARATOR, $candidate);
+    if (file_exists($fsPath)) {
+        return array('path' => $candidate, 'url_param' => $url_param);
+    }
+
+    return array('path' => $filename, 'url_param' => $url_param);
+}
+
+function toolkits_theme_asset_url($filename) {
+    global $xerte_toolkits_site;
+    $resolved = resolve_toolkits_theme_asset_path($filename);
+    return $xerte_toolkits_site->site_url . $resolved['path'] . $resolved['url_param'];
+}
+
+function echo_toolkits_theme_stylesheet_link($version = '') {
+    $theme = get_toolkits_ui_theme();
+    $query = $version !== '' ? '?version=' . rawurlencode($version) : '';
+    $href = htmlspecialchars(toolkits_theme_asset_url($theme . '.css' . $query), ENT_QUOTES, 'UTF-8');
+    echo '<link href="' . $href . '" media="all" type="text/css" rel="stylesheet"/>' . "\n";
+}
+
+function echo_toolkits_theme_shell_script($version = '') {
+    $theme = get_toolkits_ui_theme();
+    $query = $version !== '' ? '?version=' . rawurlencode($version) : '';
+    $src = htmlspecialchars(toolkits_theme_asset_url($theme . '.js' . $query), ENT_QUOTES, 'UTF-8');
+    echo '<script type="text/javascript" src="' . $src . '"></script>' . "\n";
+}
+
+/**
+ * Data passed to theme shell scripts (nottingham.js / modern.js) on index.php.
+ *
+ * @param object $authmech
+ * @return array<string, mixed>
+ */
+function build_toolkits_index_page_config($authmech) {
+    global $xerte_toolkits_site;
+
+    $root = $xerte_toolkits_site->root_file_path;
+    $logoLeft = file_exists($root . 'branding/logo_left.png')
+        ? 'branding/logo_left.png'
+        : 'website_code/images/logo.png';
+    $logoRight = file_exists($root . 'branding/logo_right.png')
+        ? 'branding/logo_right.png'
+        : 'website_code/images/apereoLogo.png';
+
+    ob_start();
+    display_language_selectionform('general', false);
+    $languageFormHtml = ob_get_clean();
+
+    ob_start();
+    list_blank_templates();
+    $blankTemplatesHtml = ob_get_clean();
+
+    ob_start();
+    echo apply_filters('editor_pod_one', $xerte_toolkits_site->pod_one);
+    $podOne = ob_get_clean();
+
+    ob_start();
+    echo apply_filters('editor_pod_two', $xerte_toolkits_site->pod_two);
+    $podTwo = ob_get_clean();
+
+    $vtext = 'version.txt';
+    $versionInfo = '';
+    if (file_exists($root . $vtext)) {
+        $lines = file($root . $vtext);
+        $versionInfo = isset($lines[0]) ? trim($lines[0]) : '';
+    }
+
+    $firstName = isset($_SESSION['toolkits_firstname']) ? $_SESSION['toolkits_firstname'] : '';
+    $surname = isset($_SESSION['toolkits_surname']) ? $_SESSION['toolkits_surname'] : '';
+    $displayName = trim($firstName . ' ' . $surname);
+    if ($displayName === '' && !empty($_SESSION['toolkits_logon_username'])) {
+        $displayName = $_SESSION['toolkits_logon_username'];
+    }
+
+    $welcome = defined('INDEX_MODERN_WELCOME')
+        ? sprintf(INDEX_MODERN_WELCOME, $firstName !== '' ? $firstName : $displayName)
+        : $displayName . ', welcome to Xerte';
+
+    $jsscript = '';
+    $canManageUser = $authmech->canManageUser($jsscript);
+
+    $strings = array(
+        'folderPrompt' => INDEX_FOLDER_PROMPT,
+        'folderName' => INDEX_FOLDER_NAME,
+        'folderCreate' => INDEX_BUTTON_NEWFOLDER_CREATE,
+        'folderCancel' => INDEX_BUTTON_CANCEL,
+        'xapiShowNames' => INDEX_XAPI_DASHBOARD_SHOW_NAMES,
+        'xapiFrom' => INDEX_XAPI_DASHBOARD_FROM,
+        'xapiUntil' => INDEX_XAPI_DASHBOARD_UNTIL,
+        'xapiGroupSelect' => INDEX_XAPI_DASHBOARD_GROUP_SELECT,
+        'xapiGroupAll' => INDEX_XAPI_DASHBOARD_GROUP_ALL,
+        'xapiClose' => INDEX_XAPI_DASHBOARD_CLOSE,
+        'xapiDisplayOptions' => INDEX_XAPI_DASHBOARD_DISPLAY_OPTIONS,
+        'xapiQuestionOverview' => INDEX_XAPI_DASHBOARD_QUESTION_OVERVIEW,
+        'xapiPrint' => INDEX_XAPI_DASHBOARD_PRINT,
+        'logoAlt' => INDEX_LOGO_ALT,
+        'changePassword' => INDEX_CHANGE_PASSWORD,
+        'modernSettings' => defined('INDEX_MODERN_SETTINGS') ? INDEX_MODERN_SETTINGS : 'Settings',
+        'toManagement' => INDEX_TO_MANAGEMENT,
+        'logout' => INDEX_BUTTON_LOGOUT,
+        'details' => INDEX_DETAILS,
+        'edit' => INDEX_BUTTON_EDIT,
+        'properties' => INDEX_BUTTON_PROPERTIES,
+        'preview' => INDEX_BUTTON_PREVIEW,
+        'newFolder' => INDEX_BUTTON_NEWFOLDER,
+        'delete' => INDEX_BUTTON_DELETE,
+        'duplicate' => INDEX_BUTTON_DUPLICATE,
+        'publish' => INDEX_BUTTON_PUBLISH,
+        'sort' => INDEX_SORT,
+        'sortA' => INDEX_SORT_A,
+        'sortZ' => INDEX_SORT_Z,
+        'sortNew' => INDEX_SORT_NEW,
+        'sortOld' => INDEX_SORT_OLD,
+        'search' => INDEX_SEARCH,
+        'searchPlaceholder' => INDEX_SEARCH_PLACEHOLDER,
+        'create' => INDEX_CREATE,
+        'wcagAlt' => INDEX_WCAG_LOGO_ALT,
+        'osiAlt' => INDEX_OSI_LOGO_ALT,
+        'apereoAlt' => INDEX_APEREO_LOGO_ALT,
+        'xerteAlt' => INDEX_XERTE_LOGO_ALT,
+        'modernSearch' => defined('INDEX_MODERN_SEARCH_PLACEHOLDER') ? INDEX_MODERN_SEARCH_PLACEHOLDER : INDEX_SEARCH,
+        'modernCreateLo' => defined('INDEX_MODERN_CREATE_LO') ? INDEX_MODERN_CREATE_LO : INDEX_CREATE,
+        'modernNavAll' => defined('INDEX_MODERN_NAV_ALL') ? INDEX_MODERN_NAV_ALL : INDEX_WORKSPACE_TITLE,
+        'modernEmptyTitle' => defined('INDEX_MODERN_EMPTY_TITLE') ? INDEX_MODERN_EMPTY_TITLE : 'You have no learning objects yet',
+        'modernEmptyDesc' => defined('INDEX_MODERN_EMPTY_DESC') ? INDEX_MODERN_EMPTY_DESC : 'Learning objects appear here',
+        'modernRecentEmptyTitle' => defined('INDEX_MODERN_RECENT_EMPTY_TITLE') ? INDEX_MODERN_RECENT_EMPTY_TITLE : 'You have no recent learning objects yet',
+        'modernRecentEmptyDesc' => defined('INDEX_MODERN_RECENT_EMPTY_DESC') ? INDEX_MODERN_RECENT_EMPTY_DESC : 'Recent learning objects appear here',
+        'modernLoTypeInteractive' => defined('INDEX_MODERN_LO_TYPE_INTERACTIVE') ? INDEX_MODERN_LO_TYPE_INTERACTIVE : 'Interactive learning object',
+        'modernLoTypeSite' => defined('INDEX_MODERN_LO_TYPE_SITE') ? INDEX_MODERN_LO_TYPE_SITE : 'Mini-website learning object',
+        'modernNavFolders' => defined('INDEX_MODERN_NAV_FOLDERS') ? INDEX_MODERN_NAV_FOLDERS : INDEX_BUTTON_NEWFOLDER,
+        'modernNavRecent' => defined('INDEX_MODERN_NAV_RECENT') ? INDEX_MODERN_NAV_RECENT : 'Recent',
+        'modernNavPublished' => defined('INDEX_MODERN_NAV_PUBLISHED') ? INDEX_MODERN_NAV_PUBLISHED : INDEX_BUTTON_PUBLISH,
+        'modernNavFavourites' => defined('INDEX_MODERN_NAV_FAVOURITES') ? INDEX_MODERN_NAV_FAVOURITES : 'Favourites',
+        'modernNavTrash' => defined('INDEX_MODERN_NAV_TRASH') ? INDEX_MODERN_NAV_TRASH : 'Trash',
+        'modernNavGuides' => defined('INDEX_MODERN_NAV_GUIDES') ? INDEX_MODERN_NAV_GUIDES : INDEX_HELP_TITLE,
+        'modernWelcome' => $welcome,
+        'modernTagline' => defined('INDEX_MODERN_TAGLINE') ? INDEX_MODERN_TAGLINE : '',
+        'modernStartSection' => defined('INDEX_MODERN_START_SECTION') ? INDEX_MODERN_START_SECTION : INDEX_CREATE,
+        'modernCardInteractiveTitle' => defined('INDEX_MODERN_CARD_INTERACTIVE_TITLE') ? INDEX_MODERN_CARD_INTERACTIVE_TITLE : 'Interactive learning object',
+        'modernCardInteractiveDesc' => defined('INDEX_MODERN_CARD_INTERACTIVE_DESC') ? INDEX_MODERN_CARD_INTERACTIVE_DESC : '',
+        'modernCardInteractiveBtn' => defined('INDEX_MODERN_CARD_INTERACTIVE_BTN') ? INDEX_MODERN_CARD_INTERACTIVE_BTN : DISPLAY_CREATE,
+        'modernCardSiteTitle' => defined('INDEX_MODERN_CARD_SITE_TITLE') ? INDEX_MODERN_CARD_SITE_TITLE : 'Mini-website learning object',
+        'modernCardSiteDesc' => defined('INDEX_MODERN_CARD_SITE_DESC') ? INDEX_MODERN_CARD_SITE_DESC : '',
+        'modernCardSiteBtn' => defined('INDEX_MODERN_CARD_SITE_BTN') ? INDEX_MODERN_CARD_SITE_BTN : DISPLAY_CREATE,
+        'modernGetStarted' => defined('INDEX_MODERN_GET_STARTED') ? INDEX_MODERN_GET_STARTED : INDEX_HELP_TITLE,
+        'modernGuide1Title' => defined('INDEX_MODERN_GUIDE_1_TITLE') ? INDEX_MODERN_GUIDE_1_TITLE : '',
+        'modernGuide1Desc' => defined('INDEX_MODERN_GUIDE_1_DESC') ? INDEX_MODERN_GUIDE_1_DESC : '',
+        'modernGuide2Title' => defined('INDEX_MODERN_GUIDE_2_TITLE') ? INDEX_MODERN_GUIDE_2_TITLE : '',
+        'modernGuide2Desc' => defined('INDEX_MODERN_GUIDE_2_DESC') ? INDEX_MODERN_GUIDE_2_DESC : '',
+        'modernGuide3Title' => defined('INDEX_MODERN_GUIDE_3_TITLE') ? INDEX_MODERN_GUIDE_3_TITLE : '',
+        'modernGuide3Desc' => defined('INDEX_MODERN_GUIDE_3_DESC') ? INDEX_MODERN_GUIDE_3_DESC : '',
+        'modernMoreGuides' => defined('INDEX_MODERN_MORE_GUIDES') ? INDEX_MODERN_MORE_GUIDES : INDEX_HELP_INTRO_LINK_TEXT,
+        'modernLoPageTitle' => defined('INDEX_MODERN_LO_PAGE_TITLE') ? INDEX_MODERN_LO_PAGE_TITLE : 'Learning objects',
+        'modernLoColPreview' => defined('INDEX_MODERN_LO_COL_PREVIEW') ? INDEX_MODERN_LO_COL_PREVIEW : 'Preview',
+        'modernLoColName' => defined('INDEX_MODERN_LO_COL_NAME') ? INDEX_MODERN_LO_COL_NAME : 'Learning object name',
+        'modernLoColId' => defined('INDEX_MODERN_LO_COL_ID') ? INDEX_MODERN_LO_COL_ID : 'ID',
+        'modernLoColModified' => defined('INDEX_MODERN_LO_COL_MODIFIED') ? INDEX_MODERN_LO_COL_MODIFIED : 'Modified',
+        'modernLoColTemplate' => defined('INDEX_MODERN_LO_COL_TEMPLATE') ? INDEX_MODERN_LO_COL_TEMPLATE : 'Template',
+        'modernLoColAccess' => defined('INDEX_MODERN_LO_COL_ACCESS') ? INDEX_MODERN_LO_COL_ACCESS : 'Access',
+        'modernLoColActions' => defined('INDEX_MODERN_LO_COL_ACTIONS') ? INDEX_MODERN_LO_COL_ACTIONS : 'Actions',
+        'modernLoAccessPrivate' => defined('INDEX_MODERN_LO_ACCESS_PRIVATE') ? INDEX_MODERN_LO_ACCESS_PRIVATE : 'Private',
+        'modernLoAccessPublic' => defined('INDEX_MODERN_LO_ACCESS_PUBLIC') ? INDEX_MODERN_LO_ACCESS_PUBLIC : 'Public',
+        'modernLoAccessPassword' => defined('INDEX_MODERN_LO_ACCESS_PASSWORD') ? INDEX_MODERN_LO_ACCESS_PASSWORD : 'Password',
+        'modernLoAccessDemo' => defined('INDEX_MODERN_LO_ACCESS_DEMO') ? INDEX_MODERN_LO_ACCESS_DEMO : 'Demo',
+        'modernLoMenuEdit' => defined('INDEX_MODERN_LO_MENU_EDIT') ? INDEX_MODERN_LO_MENU_EDIT : INDEX_BUTTON_EDIT,
+        'modernLoMenuCopy' => defined('INDEX_MODERN_LO_MENU_COPY') ? INDEX_MODERN_LO_MENU_COPY : INDEX_BUTTON_DUPLICATE,
+        'modernLoMenuPreview' => defined('INDEX_MODERN_LO_MENU_PREVIEW') ? INDEX_MODERN_LO_MENU_PREVIEW : INDEX_BUTTON_PREVIEW,
+        'modernLoMenuShare' => defined('INDEX_MODERN_LO_MENU_SHARE') ? INDEX_MODERN_LO_MENU_SHARE : INDEX_BUTTON_PUBLISH,
+        'modernLoMenuMove' => defined('INDEX_MODERN_LO_MENU_MOVE') ? INDEX_MODERN_LO_MENU_MOVE : 'Move',
+        'modernLoMenuFavorite' => defined('INDEX_MODERN_LO_MENU_FAVORITE') ? INDEX_MODERN_LO_MENU_FAVORITE : 'Make favourite',
+        'modernLoMenuUnfavorite' => defined('INDEX_MODERN_LO_MENU_UNFAVORITE') ? INDEX_MODERN_LO_MENU_UNFAVORITE : 'Remove favourite',
+        'modernLoMenuProperties' => defined('INDEX_MODERN_LO_MENU_PROPERTIES') ? INDEX_MODERN_LO_MENU_PROPERTIES : INDEX_BUTTON_PROPERTIES,
+        'modernLoMenuDelete' => defined('INDEX_MODERN_LO_MENU_DELETE') ? INDEX_MODERN_LO_MENU_DELETE : INDEX_BUTTON_DELETE,
+        'modernLoEditBtn' => defined('INDEX_MODERN_LO_EDIT_BTN') ? INDEX_MODERN_LO_EDIT_BTN : INDEX_BUTTON_EDIT,
+        'modernLoMenuBtn' => defined('INDEX_MODERN_LO_MENU_BTN') ? INDEX_MODERN_LO_MENU_BTN : 'More actions',
+        'modernFavouritesEmptyTitle' => defined('INDEX_MODERN_FAVOURITES_EMPTY_TITLE') ? INDEX_MODERN_FAVOURITES_EMPTY_TITLE : 'You have no favourite learning objects yet',
+        'modernFavouritesEmptyDesc' => defined('INDEX_MODERN_FAVOURITES_EMPTY_DESC') ? INDEX_MODERN_FAVOURITES_EMPTY_DESC : 'Favourite learning objects appear here',
+        'modernPublishedEmptyTitle' => defined('INDEX_MODERN_PUBLISHED_EMPTY_TITLE') ? INDEX_MODERN_PUBLISHED_EMPTY_TITLE : 'You have no published learning objects yet',
+        'modernPublishedEmptyDesc' => defined('INDEX_MODERN_PUBLISHED_EMPTY_DESC') ? INDEX_MODERN_PUBLISHED_EMPTY_DESC : 'Published learning objects appear here',
+        'modernTrashEmptyTitle' => defined('INDEX_MODERN_TRASH_EMPTY_TITLE') ? INDEX_MODERN_TRASH_EMPTY_TITLE : 'Your trash is empty',
+        'modernTrashEmptyDesc' => defined('INDEX_MODERN_TRASH_EMPTY_DESC') ? INDEX_MODERN_TRASH_EMPTY_DESC : 'Deleted learning objects appear here',
+    );
+
+    return array(
+        'theme' => get_toolkits_ui_theme(),
+        'strings' => $strings,
+        'user' => array(
+            'displayName' => $displayName,
+            'firstName' => $firstName,
+            'surname' => $surname,
+            'canManageUser' => $canManageUser,
+            'hasManagementRole' => (bool) getRolesFromUser($_SESSION['toolkits_logon_id']),
+            'isGuest' => $xerte_toolkits_site->authentication_method === 'Guest',
+            'samlLogout' => $xerte_toolkits_site->authentication_method === 'Saml2',
+        ),
+        'logos' => array(
+            'left' => $logoLeft,
+            'right' => $logoRight,
+        ),
+        'languageFormHtml' => $languageFormHtml,
+        'blankTemplatesHtml' => $blankTemplatesHtml,
+        'footer' => array(
+            'copyright' => $xerte_toolkits_site->copyright,
+            'versionInfo' => $versionInfo,
+            'newsHtml' => $xerte_toolkits_site->news_text,
+            'podOneHtml' => $podOne,
+            'podTwoHtml' => $podTwo,
+        ),
+    );
+}
+
 function _include_javascript_file($file_path) {
 
     global $xerte_toolkits_site;
@@ -154,6 +519,7 @@ function _include_javascript_file($file_path) {
     $languages = 'languages/';
 
     // Remove URI parameters
+    $url_param = '';
     $parpos = strpos($file_path, "?");
     if ($parpos !== false)
     {
@@ -212,7 +578,8 @@ function _include_javascript_file($file_path) {
             }
         }
     }
-    echo "<script type=\"text/javascript\" language=\"javascript\" src=\"" . $xerte_toolkits_site->site_url . $file_path . $url_param . "\"></script>";
+    $resolved = resolve_toolkits_script_path($file_path . $url_param);
+    echo "<script type=\"text/javascript\" language=\"javascript\" src=\"" . $xerte_toolkits_site->site_url . $resolved['path'] . $resolved['url_param'] . "\"></script>";
     return true;
 }
 

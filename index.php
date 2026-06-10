@@ -143,6 +143,11 @@ $version = getVersion();
     <link href="website_code/styles/jquery-ui-layout.css?version=<?php echo $version;?>" media="all" type="text/css" rel="stylesheet"/>
     <link href="website_code/styles/xerte_buttons.css?version=<?php echo $version;?>" media="screen" type="text/css" rel="stylesheet"/>
     <link href="website_code/styles/frontpage.css?version=<?php echo $version;?>" media="all" type="text/css" rel="stylesheet"/>
+    <?php
+    if (function_exists('echo_toolkits_theme_stylesheet_link')) {
+        echo_toolkits_theme_stylesheet_link($version);
+    }
+    ?>
     <link rel="stylesheet" href="modules/common/js/featherlight/featherlight.min.css?version=<?php echo $version;?>" />
     <link rel="stylesheet" href="modules/common/js/featherlight/featherlight.gallery.min.css?version=<?php echo $version;?>" />
 
@@ -169,6 +174,13 @@ $version = getVersion();
     // Prepare user preferences for JavaScript
     $user_preferences_json = "{}";
     $user_has_preferences = "false";
+
+    if (function_exists('refresh_toolkits_user_preferences_session')) {
+        refresh_toolkits_user_preferences_session();
+    }
+    if (function_exists('ensure_toolkits_ui_theme_preference')) {
+        ensure_toolkits_ui_theme_preference(true);
+    }
     
     if (isset($_SESSION['toolkits_preferences']) && is_array($_SESSION['toolkits_preferences'])) {
         $user_preferences_json = json_encode($_SESSION['toolkits_preferences']);
@@ -220,6 +232,9 @@ $version = getVersion();
     _include_javascript_file("website_code/scripts/xapi_dashboard_data.js?version=" . $version);
     _include_javascript_file("website_code/scripts/xapi_dashboard.js?version=" . $version);
 
+    if (function_exists('echo_toolkits_theme_shell_script')) {
+        echo_toolkits_theme_shell_script($version);
+    }
     ?>
     <?php head_end(); ?></head>
 
@@ -231,305 +246,38 @@ body_scroll handles the calculation of the documents actual height in IE.
 
 -->
 
-<body >
+<body class="<?php echo htmlspecialchars(toolkits_ui_theme_body_class(), ENT_QUOTES, 'UTF-8'); ?>">
 <?php body_start(); ?>
-<!--
 
-Folder popup is the div that appears when creating a new folder
+<div id="toolkits-index-mount"></div>
 
--->
-
-<div class="folder_popup" id="message_box">
-    <div class="main_area" id="dynamic_section">
-        <p style="color:white"><?PHP echo INDEX_FOLDER_PROMPT; ?></p>
-
-        <form id="foldernamepopup" action="javascript:create_folder()" method="post" enctype="text/plain">
-			<label for="foldername" class="sr-only"><?php echo INDEX_FOLDER_NAME ?></label>
-            <input type="text" width="200" id="foldername" name="foldername"
-                   style="margin:0px; margin-right:5px; padding:3px"/>
-            <button type="submit" class="xerte_button_c">
-                <?php echo INDEX_BUTTON_NEWFOLDER_CREATE; ?>
-            </button>
-            <button type="button" class="xerte_button_c" style="margin-top:0.5em;"
-                    onclick="javascript:popup_close()"><?php echo INDEX_BUTTON_CANCEL; ?>
-            </button>
-        </form>
-        <p><span id="folder_feedback"></span></p>
-    </div>
-</div>
-
-<div class="dashboard-wrapper" id="dashboard-wrapper">
-
-    <div class="dashboard" id="dashboard">
-        <div id="options-div">
-            <div class="row dash-row">
-                <div class="dash-col unanonymous-view" >
-                    <label for="dp-unanonymous-view">
-                        <?php echo INDEX_XAPI_DASHBOARD_SHOW_NAMES; ?>
-                    </label>
-                    <input type="checkbox" id="dp-unanonymous-view" >
-                </div>
-
-                <div class="dash-col">
-                    <label for="dp-start">
-                        <?php echo INDEX_XAPI_DASHBOARD_FROM; ?>
-                    </label>
-                    <input type="text" id="dp-start" value="2018/03/24 21:23" data-test="2018/03/24 21:23">
-                </div>
-                <div class="dash-col-1">
-                    <label for="dp-end">
-                        <?php echo INDEX_XAPI_DASHBOARD_UNTIL; ?>
-                    </label>
-                    <input type="text" id="dp-end">
-                </div>
-                <div class="dash-col-1">
-                    <label for="group-select">
-                        <?php echo INDEX_XAPI_DASHBOARD_GROUP_SELECT; ?>
-                    </label>
-                    <select type="text" id="group-select">
-                        <option value="all-groups"><?php echo INDEX_XAPI_DASHBOARD_GROUP_ALL; ?></option>
-                    </select>
-                </div>
-                <div class="close-button">
-                    <button type="button" class="xerte_button_c_no_width"
-                            onclick="javascript:close_dashboard()"><?php echo INDEX_XAPI_DASHBOARD_CLOSE; ?>
-                    </button>
-                </div>
-                <div class="show-display-options-button">
-                    <button type="button" class="xerte_button_c_no_width"><?php echo INDEX_XAPI_DASHBOARD_DISPLAY_OPTIONS; ?>
-                    </button>
-                </div>
-                <div class="show-question-overview-button">
-                    <button type="button" class="xerte_button_c_no_width"><?php echo INDEX_XAPI_DASHBOARD_QUESTION_OVERVIEW; ?>
-                    </button>
-                </div>
-                <div class="dashboard-print-button">
-                    <button type="button" class="xerte_button_c_no_width"><?php echo INDEX_XAPI_DASHBOARD_PRINT; ?>
-                    </button>
-                </div>
-            </div>
-        </div>
-        <div id="dashboard-title"></div>
-        <div class="jorneyData-container">
-            <div id="journeyData" class="journeyData journey-container"></div>
-        </div>
-    </div>
-</div>
-
-<div class="ui-layout-north">
-<header>
-    <div class="content" id="mainHeader">
-
-        <div class="topbar">
-            <?php
-            if (file_exists($xerte_toolkits_site->root_file_path . "branding/logo_right.png"))
-            {
-            ?>
-                <div
-                    style="width:50%; height:100%; float:right; position:relative; background-image:url(branding/logo_right.png); background-repeat:no-repeat; background-position:right; margin-right:10px; float:right">
-                </div>
-            <?php
-            }
-            else {
-            ?>
-                <div
-                    style="width:50%; height:100%; float:right; position:relative; background-image:url(website_code/images/apereoLogo.png); background-repeat:no-repeat; background-position:right; margin-right:10px; float:right">
-                </div>
-            <?php
-            }
-            if (file_exists($xerte_toolkits_site->root_file_path . "branding/logo_left.png"))
-            {
-            ?>
-                <img src="branding/logo_left.png" style="margin-left:10px; float:left" alt="<?php echo INDEX_LOGO_ALT; ?>"/>
-            <?php
-            }
-            else {
-            ?>
-                <img src="website_code/images/logo.png" style="margin-left:10px; float:left" alt="<?php echo INDEX_LOGO_ALT; ?>"/>
-            <?php
-            }
-            ?>
-        </div>
-
-        <div class="buttonbar">
-            <div class="file_mgt_area_top">
-
-
-            </div>
-
-           <div class="userbar">
-                <?PHP //echo "&nbsp;&nbsp;&nbsp;" . INDEX_LOGGED_IN_AS . " " .;
-                echo $_SESSION['toolkits_firstname'] . " " . $_SESSION['toolkits_surname'] ?>
-               <?PHP
-                // only on Db:
-                if ($authmech->canManageUser($jsscript)){
-                    echo '
-                    <div class="settingsDropdown">
-                        <button onclick="changepasswordPopup()" title=" ' . INDEX_CHANGE_PASSWORD . ' " class="xerte_workspace_button settingsButton"><i class="fa fa-cog xerte-icon"></i></button>
-                        <!-- <div id="settings" class="settings-content">
-                            <button class="xerte_button" onclick="changepasswordPopup()">' . INDEX_CHANGE_PASSWORD . '</button>
-                            <button class="xerte_button">Placeholder</button>
-                            <button class="xerte_button">Placeholder</button>
-                            <button class="xerte_button">Placeholder</button>
-                        </div> -->
-                    </div>
-                ';
-                }
-                if (getRolesFromUser($_SESSION['toolkits_logon_id'])) {
-                    echo '<button onclick="javascript:elevate(\'management.php\')" title=" ' . INDEX_TO_MANAGEMENT . ' " class="xerte_workspace_button "><i class="fas fa-tools xerte-icon"></i></button>';
-                }
-
-               ?>
-
-               <div style="display: inline-block"><?php display_language_selectionform("general", false); ?></div>
-               <?PHP if($xerte_toolkits_site->authentication_method != "Guest") {
-               ?><button title="<?PHP echo INDEX_BUTTON_LOGOUT; ?>" type="button" class="xerte_workspace_button"
-                        onclick="javascript:logout(<?php echo($xerte_toolkits_site->authentication_method == "Saml2" ? "true" : "false"); ?>)">
-                    <i class="fa fa-sign-out xerte-icon"></i><!--<?PHP echo INDEX_BUTTON_LOGOUT; ?>-->
-                </button><?PHP } ?>
-            </div>
-            <div style="clear:both;"></div>
-            <div class="separator"></div>
-        </div>
-
-    </div>
-	</header>
-</div>
-<!--
-
-    Main part of the page
-
--->
-<div class="ui-layout-center" id="pagecontainer" role="main">
-
-    <div class="ui-layout-west" id="workspace_layout" >
-        <div class="header" id="inner_left_header">
-			<h1 class="heading sr-only"><?PHP echo INDEX_DETAILS; ?></h1>
-			<div class="file_mgt_area_buttons">
-				<!--Workspace buttons-->
-
-				<div class="file_mgt_area_middle_button_left">
-					<button title="<?php echo INDEX_BUTTON_EDIT; ?>" type="button" class="xerte_workspace_button disabled" disabled="disabled"
-							id="edit"><i class="fa fa-pencil-square-o xerte-icon"></i></button>
-					<button title="<?php echo INDEX_BUTTON_PROPERTIES; ?>" type="button" class="xerte_workspace_button disabled" disabled="disabled"
-							id="properties"><i class="fa fa-info xerte-icon"></i></button>
-					<button title="<?php echo INDEX_BUTTON_PREVIEW; ?>" type="button" class="xerte_workspace_button disabled" disabled="disabled"
-							id="preview"><i class="fa fa-play xerte-icon"></i></button>
-				</div>
-
-				<div class="file_mgt_area_middle_button_left">
-					<button title="<?php echo INDEX_BUTTON_NEWFOLDER; ?>" type="button" class="xerte_workspace_button" id="newfolder" onClick="javascript:make_new_folder()">
-						<i class="fa fa-folder xerte-icon"></i>
-					</button>
-				</div>
-
-				<div class="file_mgt_area_middle_button_right">
-					<button title="<?php echo INDEX_BUTTON_DELETE; ?>" type="button" class="xerte_workspace_button disabled" disabled="disabled"
-							id="delete"><i class="fa  fa-trash xerte-icon"></i></button>
-					<button title="<?php echo INDEX_BUTTON_DUPLICATE; ?>" type="button" class="xerte_workspace_button disabled" disabled="disabled"
-							id="duplicate"><i class="fa fa-copy xerte-icon"></i></button>
-					<button title="<?php echo INDEX_BUTTON_PUBLISH; ?>" type="button" class="xerte_workspace_button disabled" disabled="disabled"
-							id="publish"><i class="fa  fa-share xerte-icon"></i></button>
-				</div>
-			</div>
-        </div>
-        <div class="content">
-            <div id="workspace"></div>
-        </div>
-        <div class="footer" id="sortContainer">
-            <div class="file_mgt_area_bottom">
-				<div class="sorter">
-					<form name="sorting" style="float:left;margin:7px 5px 5px 10px;">
-						<i class="fa  fa-sort xerte-icon"></i>&nbsp;<label for="sort-selector"><?PHP echo INDEX_SORT; ?></label>
-						<select id="sort-selector" name="type" onChange="refresh_workspace(); save_user_preference('sort_type', this.value);">
-							<option value="alpha_up"><?PHP echo INDEX_SORT_A; ?></option>
-							<option value="alpha_down"><?PHP echo INDEX_SORT_Z; ?></option>
-							<option value="date_down" selected><?PHP echo INDEX_SORT_NEW; ?></option>
-							<option value="date_up"><?PHP echo INDEX_SORT_OLD; ?></option>
-						</select>
-					</form>
-				</div>
-				<div class="workspace_search_outer">
-					<div class="workspace_search">
-						<i class="fa  fa-search"></i>&nbsp;<label for="workspace_search"><?PHP echo INDEX_SEARCH; ?></label>
-						<input type="text" id="workspace_search" placeholder="<?php echo INDEX_SEARCH_PLACEHOLDER?>">
-					</div>
-				</div>
-			</div>
-        </div>
-    </div>
-
-    <div class="ui-layout-center">
-        <div class="header" id="inner_center_header">
-			<h1 class="heading"><i class="fa icon-info-sign xerte-icon"></i>&nbsp;<?PHP echo INDEX_DETAILS; ?></h1>
-        </div>
-        <div class="content">
-            <div class="projectInformationContainer" id="project_information">
-
-            </div>
-        </div>
-        <div class="footer" id="inner_center_footer"></div>
-    </div>
-
-    <div class="ui-layout-east">
-
-        <div class="header" id="inner_right_header">
-            <h1 class="heading"><i class="fa icon-wrench xerte-icon"></i>&nbsp;<?PHP echo INDEX_CREATE; ?></h1>
-        </div>
-
-        <div class="content">
-            <div class="new_template_area_middle">
-                <div id="new_template_area_middle_ajax" class="new_template_area_middle_scroll"><?PHP
-                    list_blank_templates();
-                    ?>
-                </div>
-            </div>
-        </div>
-        <div class="footer" id="inner_right_footer"></div>
-    </div>
-</div>
-
-
-<div class="ui-layout-south">
-    <div class="content">
-        <!-- <div class="border" style="margin:10px"></div>  -->
-
-        <section class="help" style="width:31%;float:left;">
-            <?PHP echo apply_filters('editor_pod_one', $xerte_toolkits_site->pod_one); ?>
-        </section>
-
-        <section class="help" style="width:31%;float:left;">
-            <?PHP echo apply_filters('editor_pod_two', $xerte_toolkits_site->pod_two); ?>
-        </section>
-        <section class="highlightbox" style="width:31%;float:right;">
-            <?PHP
-            //echo $xerte_toolkits_site->demonstration_page;
-            echo $xerte_toolkits_site->news_text;
-            //echo $xerte_toolkits_site->tutorial_text;
-            //echo $xerte_toolkits_site->site_text;
-            ?>
-        </section>
-
-        <div class="border"></div>
-		<footer>
-			<p class="copyright">
-				<?php echo $xerte_toolkits_site->copyright; ?> <i class="fa fa-info-circle" aria-hidden="true" style="color:#f86718; cursor: help;" title="<?PHP $vtext = "version.txt";$lines = file($vtext);echo $lines[0];?>"></i>
-			</p>
-			<div class="footerlogos">
-				<a href="https://xot.xerte.org.uk/play.php?template_id=214#home" target="_blank" title="Xerte accessibility statement https://xot.xerte.org.uk/play.php?template_id=214"><img src="website_code/images/wcag2.2AA-blue.png" border="0" alt="<?php echo INDEX_WCAG_LOGO_ALT; ?>"></a><a href="https://opensource.org/" target="_blank" title="Open Source Initiative: https://opensource.org/"><img src="website_code/images/osiFooterLogo.png" border="0" alt="<?php echo INDEX_OSI_LOGO_ALT; ?>"></a><a href="https://www.apereo.org" target="_blank" title="Apereo: https://www.apereo.org"><img src="website_code/images/apereoFooterLogo.png" border="0" alt="<?php echo INDEX_APEREO_LOGO_ALT; ?>"></a><a href="https://xerte.org.uk" target="_blank" title="Xerte: https://xerte.org.uk"><img src="website_code/images/xerteFooterLogo.png" border="0" alt="<?php echo INDEX_XERTE_LOGO_ALT; ?>"></a>
-			</div>
-		</footer>
-        <div style="clear:both;"></div>
-    </div>
-</div>
+<script type="text/javascript">
+    var toolkits_index_config = <?php
+        echo json_encode(
+            build_toolkits_index_page_config($authmech),
+            JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT
+        );
+    ?>;
+</script>
 
 <script>
     $(document).ready(function () {
-        setupMainLayout();
-        if (typeof load_user_preferences === 'function') {
-            load_user_preferences(); // Load preferences before refreshing workspace
+        if (typeof renderToolkitsIndexShell === 'function') {
+            renderToolkitsIndexShell();
         }
-        refresh_workspace();
+        if (typeof toolkitsIndexAfterShell === 'function') {
+            toolkitsIndexAfterShell();
+        } else {
+            if (typeof setupMainLayout === 'function') {
+                setupMainLayout();
+            }
+            if (typeof load_user_preferences === 'function') {
+                load_user_preferences();
+            }
+            if (typeof refresh_workspace === 'function') {
+                refresh_workspace();
+            }
+        }
     });
 </script>
 <?php body_end(); ?></body>

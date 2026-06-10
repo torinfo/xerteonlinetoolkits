@@ -84,7 +84,7 @@ Start the page and once loaded set the default option
 
 -->
 
-<body onload="my_properties_template()">
+<body class="<?php echo htmlspecialchars(toolkits_ui_theme_body_class(), ENT_QUOTES, 'UTF-8'); ?>" onload="my_properties_template()">
 
 <!--
 
