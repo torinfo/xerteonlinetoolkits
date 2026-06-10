@@ -996,7 +996,8 @@ h3.contentTitle {
 .video-print-fallback,
 .pdf-print-fallback,
 .xot-print-fallback,
-.media-print-url {
+.media-print-url,
+.x_autocol-print {
     display: none;
 }
 

@@ -50,7 +50,6 @@ html.printing-bootstrap #mainContent {
     -webkit-print-color-adjust: exact !important;
     print-color-adjust: exact !important;
 }
-
 /* Cap images to page width; keep figure + caption together across page
  * breaks. We deliberately do NOT reset float / display on figures or
  * images — that flattens multi-column rows (image left + text right)
@@ -105,6 +104,37 @@ html.printing-bootstrap #mainContent .row-fluid .span9  { width: 75%     !import
 html.printing-bootstrap #mainContent .row-fluid .span10 { width: 83.333% !important; }
 html.printing-bootstrap #mainContent .row-fluid .span11 { width: 91.666% !important; }
 html.printing-bootstrap #mainContent .row-fluid .span12 { width: 100%    !important; }
+
+/* CSS multi-column (.autocolumns*) doesn't fragment into columns in print, so
+ * hide the live block and show the JS-built float replica (.x_autocol-print)
+ * instead; its column widths are set inline. Screen-time hide is in custom.css
+ * (this file is media="print"-only). */
+html.printing-bootstrap #mainContent .x_autocol-replaced {
+    display: none !important;
+}
+html.printing-bootstrap #mainContent .x_autocol-print {
+    display: block !important;
+    page-break-inside: avoid !important;
+    break-inside: avoid !important;
+}
+html.printing-bootstrap #mainContent .x_autocol-print::after {
+    content: "" !important;
+    display: table !important;
+    clear: both !important;
+}
+html.printing-bootstrap #mainContent .x_autocol-col {
+    float: left !important;
+    box-sizing: border-box !important;
+}
+html.printing-bootstrap #mainContent .x_autocol-col:not(:last-child) {
+    padding-right: 1.5em !important;
+}
+html.printing-bootstrap #mainContent .x_autocol-col li,
+html.printing-bootstrap #mainContent .x_autocol-col > blockquote,
+html.printing-bootstrap #mainContent .x_autocol-col > p {
+    break-inside: avoid !important;
+    page-break-inside: avoid !important;
+}
 
 /* Don't orphan a heading at the bottom of a page from its content */
 html.printing-bootstrap #mainContent h1,

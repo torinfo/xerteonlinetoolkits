@@ -65,6 +65,9 @@ var __xotWarmupPromises = [];
 // abandoned for this print attempt but will run to completion in the
 // background, so a subsequent print attempt will see them ready.
 function prepareMediaForPrint() {
+	buildAutocolumnsForPrint();
+	applyPrintColors();
+	applyPrintBreakAvoidance();
 	const tasks = __mediaPrintTasks.splice(0, __mediaPrintTasks.length);
 	const wrapped = tasks.map(function (t) {
 		try { return Promise.resolve(t()); } catch (e) { return Promise.resolve(); }
@@ -72,6 +75,184 @@ function prepareMediaForPrint() {
 	const all = Promise.all(wrapped).then(function () {}, function () {});
 	const timeout = new Promise(function (resolve) { setTimeout(resolve, 2500); });
 	return Promise.race([all, timeout]);
+}
+
+// --- Auto-columns print replica --------------------------------------------
+// CSS multi-column (.autocolumns2..5) doesn't fragment into columns in print,
+// so build a static float-based replica; print.css swaps live block for replica.
+
+// Split a <p> on "blank line" separators (<br> run, optional space, <br> run)
+// so a single authored paragraph can spread across columns.
+function splitParagraphSegments(p) {
+	const segs = p.innerHTML.split(/(?:<br\s*\/?>\s*)+(?:&nbsp;| |\s)*(?:<br\s*\/?>\s*)+/i)
+		.map(function (s) { return s.trim(); })
+		.filter(function (s) { return s.length && s !== '&nbsp;'; });
+	if (segs.length < 2) {
+		return [p.outerHTML];
+	}
+	const cls = p.getAttribute('class');
+	const open = cls ? '<p class="' + cls + '">' : '<p>';
+	return segs.map(function (s) { return open + s + '</p>'; });
+}
+
+// Flatten a container's children into ordered atom HTML strings; paragraphs
+// may split (see splitParagraphSegments), other blocks are kept whole.
+function collectAutocolAtoms(container) {
+	const atoms = [];
+	$(container).children().each(function () {
+		const tag = this.tagName ? this.tagName.toUpperCase() : '';
+		if (tag === 'P') {
+			splitParagraphSegments(this).forEach(function (h) { atoms.push(h); });
+		} else if (tag) {
+			atoms.push(this.outerHTML);
+		}
+	});
+	return atoms;
+}
+
+// Fill columns in order up to a cumulative share of total text weight, so
+// reading order matches multicol (top-to-bottom, then next column).
+function distributeAtoms(atoms, n) {
+	const weights = atoms.map(function (h) {
+		return $('<div></div>').html(h).text().length || 1;
+	});
+	const total = weights.reduce(function (a, b) { return a + b; }, 0);
+	const target = total / n;
+	const cols = [];
+	for (let i = 0; i < n; i += 1) { cols.push([]); }
+	let ci = 0;
+	let acc = 0;
+	for (let i = 0; i < atoms.length; i += 1) {
+		cols[ci].push(atoms[i]);
+		acc += weights[i];
+		if (ci < n - 1 && acc >= target * (ci + 1)) { ci += 1; }
+	}
+	return cols;
+}
+
+// Bootstrap's print reset (* { background:transparent!important; color:#000
+// !important } in bootstrap.css) strips author background colours and forces
+// black text in print. We copy each element's on-screen colours (read via
+// getComputedStyle, which doesn't see the print reset) onto it as inline
+// !important so panels/wells/alerts/highlights keep their look on paper. The
+// stamps mutate the live DOM, so we record each element's original style and
+// revert after printing — otherwise the inline !important colours would break
+// screen states like link :hover. Only elements with a background or non-black
+// text are touched (plain black-on-transparent content is unaffected anyway).
+var __printColorStamped = [];
+
+function applyPrintColors() {
+	if (__printColorStamped.length) {
+		return;
+	}
+	// Read pass first (all getComputedStyle), then write pass, so we don't
+	// thrash layout by interleaving reads and inline-style writes.
+	const plans = [];
+	$('#mainContent *').each(function () {
+		const cs = window.getComputedStyle(this);
+		const bg = cs.backgroundColor;
+		const hasBg = bg && bg !== 'transparent' && bg !== 'rgba(0, 0, 0, 0)';
+		// Bootstrap 2 glyphicons are background-image sprites, so the print
+		// reset's `background: transparent` blanks them entirely — stamp the
+		// sprite image + offset back on, same as the colour stamps below.
+		const isSpriteIcon = this.matches('[class^="icon-"], [class*=" icon-"]') && cs.backgroundImage !== 'none';
+		if (!hasBg && !isSpriteIcon && cs.color === 'rgb(0, 0, 0)') {
+			return;
+		}
+		plans.push({
+			el: this,
+			color: cs.color,
+			bg: hasBg ? bg : null,
+			bgImg: isSpriteIcon ? cs.backgroundImage : null,
+			bgPos: isSpriteIcon ? cs.backgroundPosition : null,
+			style: this.getAttribute('style'),
+		});
+	});
+	plans.forEach(function (p) {
+		__printColorStamped.push({ el: p.el, style: p.style });
+		p.el.style.setProperty('color', p.color, 'important');
+		if (p.bg !== null) {
+			p.el.style.setProperty('background-color', p.bg, 'important');
+		}
+		if (p.bgImg !== null) {
+			p.el.style.setProperty('background-image', p.bgImg, 'important');
+			p.el.style.setProperty('background-position', p.bgPos, 'important');
+			p.el.style.setProperty('background-repeat', 'no-repeat', 'important');
+		}
+		if (p.bg !== null || p.bgImg !== null) {
+			p.el.style.setProperty('-webkit-print-color-adjust', 'exact', 'important');
+			p.el.style.setProperty('print-color-adjust', 'exact', 'important');
+		}
+	});
+}
+
+function revertPrintColors() {
+	__printColorStamped.forEach(function (rec) {
+		if (rec.style === null) {
+			rec.el.removeAttribute('style');
+		} else {
+			rec.el.setAttribute('style', rec.style);
+		}
+	});
+	__printColorStamped = [];
+}
+
+// Chart libraries (e.g. Google Charts) paint into absolutely-positioned divs
+// inside a position:relative wrapper they generate themselves, so there is no
+// stable class to target from print.css. When such a wrapper fragments across
+// a page break, browsers paint the absolute content at the wrong offset and
+// neighbouring widgets overlap — keep each widget whole on one page instead.
+// Same applies to aspect-ratio embed wrappers (.embed-container et al), where
+// the absolutely-positioned child is an iframe rather than a div.
+// Stamps are recorded in __printColorStamped so revertPrintColors undoes them.
+function applyPrintBreakAvoidance() {
+	// No svg here: SVGElement has no offsetParent, so the wrapper lookup below
+	// can never resolve for it (chart svgs sit inside absolute divs anyway).
+	$('#mainContent').find('div, iframe, object, embed, video, canvas, img').each(function () {
+		if (window.getComputedStyle(this).position !== 'absolute') {
+			return;
+		}
+		const wrapper = this.offsetParent;
+		if (!wrapper || $(wrapper).closest('#mainContent').length === 0) {
+			return;
+		}
+		// Already stamped this print run (wrappers usually hold several
+		// absolute children) or authored as avoid — nothing to do.
+		if (wrapper.style.getPropertyValue('break-inside') === 'avoid') {
+			return;
+		}
+		const recorded = __printColorStamped.some(function (rec) { return rec.el === wrapper; });
+		if (!recorded) {
+			__printColorStamped.push({ el: wrapper, style: wrapper.getAttribute('style') });
+		}
+		wrapper.style.setProperty('page-break-inside', 'avoid', 'important');
+		wrapper.style.setProperty('break-inside', 'avoid', 'important');
+	});
+}
+
+function buildAutocolumnsForPrint() {
+	$('#mainContent .autocolumns2, #mainContent .autocolumns3, #mainContent .autocolumns4, #mainContent .autocolumns5').each(function () {
+		const $live = $(this);
+		if ($live.data('autocolPrintBuilt')) {
+			return;
+		}
+		$live.data('autocolPrintBuilt', true);
+		// Cap at 3 columns for print readability on A4.
+		const n = $live.is('.autocolumns3, .autocolumns4, .autocolumns5') ? 3 : 2;
+		const atoms = collectAutocolAtoms(this);
+		if (atoms.length < 2) {
+			return;
+		}
+		const filled = distributeAtoms(atoms, n).filter(function (c) { return c.length; });
+		const $replica = $('<div class="x_autocol-print" aria-hidden="true"></div>');
+		filled.forEach(function (colAtoms) {
+			const $col = $('<div class="x_autocol-col"></div>').css('width', (100 / filled.length) + '%');
+			// Duplicated from trusted, already-rendered content (no scripts).
+			colAtoms.forEach(function (h) { $col.append(h); });
+			$replica.append($col);
+		});
+		$live.after($replica).addClass('x_autocol-replaced');
+	});
 }
 
 // Renders XOT embeds in inactive navigator panes by briefly laying each pane out
@@ -1197,6 +1378,7 @@ function setup() {
 		});
 		window.addEventListener('afterprint', function () {
 			document.documentElement.classList.remove('printing-bootstrap');
+			revertPrintColors();
 		});
 	}
 
@@ -1231,6 +1413,7 @@ function setup() {
 				document.documentElement.classList.add('printing-bootstrap');
 				setTimeout(function () {
 					document.documentElement.classList.remove('printing-bootstrap');
+					revertPrintColors();
 				}, 30000);
 				// Wait for embed warm-up + media prep before opening the dialog (both self-capped).
 				Promise.all([whenXotWarmupSettled(), prepareMediaForPrint()]).then(function () {
