@@ -46,24 +46,194 @@ $(function() {
             }
         }
     });
-})
+});
+
+function isModernToolkitsTheme() {
+    return document.body.classList.contains('toolkits-ui-theme-modern');
+}
+
+function userSettingsFeedbackRoot($root) {
+    var $settingsResult = $root.find('#settings-result');
+    if ($settingsResult.length) {
+        return $settingsResult;
+    }
+    return $root.find('#result');
+}
+
+function loadUserSettingsPreferences($root) {
+    if (typeof user_preferences === 'undefined' || !user_preferences) {
+        user_preferences = {};
+    }
+
+    var themeSelect = $root.find('#toolkits_ui_theme');
+    if (themeSelect.length) {
+        var savedTheme = user_preferences.toolkits_ui_theme;
+        if (savedTheme === 'modern' || savedTheme === 'nottingham') {
+            themeSelect.val(savedTheme);
+        } else {
+            themeSelect.val('nottingham');
+            user_preferences.toolkits_ui_theme = 'nottingham';
+        }
+    }
+
+    function setCheckbox(id, prefKey, defaultValue) {
+        var checkbox = $root.find('#' + id);
+        if (!checkbox.length) {
+            return;
+        }
+        var value = user_preferences[prefKey];
+        if (value === undefined || value === null) {
+            checkbox.prop('checked', defaultValue);
+            if (id === 'editor_panel_east_open' && defaultValue && typeof save_user_preference === 'function') {
+                save_user_preference('editor_panel_east_open', true);
+            }
+        } else {
+            checkbox.prop('checked', value !== false && value !== 'false' && value !== 0 && value !== '0');
+        }
+    }
+
+    setCheckbox('panel_east_open', 'panel_east_open', true);
+    setCheckbox('panel_south_open', 'panel_south_open', true);
+    setCheckbox('editor_panel_east_open', 'editor_panel_east_open', true);
+    setCheckbox('editor_show_language', 'editor_show_language', false);
+    setCheckbox('editor_show_toolbar', 'editor_show_toolbar', false);
+    setCheckbox('editor_expand_groups', 'editor_expand_groups', false);
+    setCheckbox('editor_expand_tree', 'editor_expand_tree', false);
+}
+
+function initUserSettingsHandlers($root) {
+    loadUserSettingsPreferences($root);
+
+    function handleToolkitsThemeChange() {
+        var newTheme = $(this).val();
+        if (newTheme !== 'nottingham' && newTheme !== 'modern') {
+            return;
+        }
+        if (typeof save_user_preference !== 'function') {
+            return;
+        }
+
+        var $result = userSettingsFeedbackRoot($root);
+        if ($result.length) {
+            $result.html('<div>Saving interface theme…</div>');
+        }
+
+        save_user_preference('toolkits_ui_theme', newTheme, function() {
+            if ($result.length) {
+                $result.html('<div>Interface theme saved. Reload the page to apply.</div>');
+            }
+        });
+    }
+
+    $root.find('#toolkits_ui_theme')
+        .off('.toolkitsThemeDirect')
+        .on('change.toolkitsThemeDirect input.toolkitsThemeDirect blur.toolkitsThemeDirect', handleToolkitsThemeChange);
+
+    $root.find('#panel_east_open').off('change.userSettings').on('change.userSettings', function() {
+        if (typeof save_user_preference === 'function') {
+            save_user_preference('panel_east_open', $(this).is(':checked'));
+            if (typeof xerteinner_layout !== 'undefined') {
+                if ($(this).is(':checked')) {
+                    xerteinner_layout.open('east');
+                } else {
+                    xerteinner_layout.close('east');
+                }
+            }
+        }
+    });
+
+    $root.find('#panel_south_open').off('change.userSettings').on('change.userSettings', function() {
+        if (typeof save_user_preference === 'function') {
+            save_user_preference('panel_south_open', $(this).is(':checked'));
+            if (typeof xertemain_layout !== 'undefined') {
+                if ($(this).is(':checked')) {
+                    xertemain_layout.open('south');
+                } else {
+                    xertemain_layout.close('south');
+                }
+            }
+        }
+    });
+
+    $root.find('#editor_panel_east_open').off('change.userSettings').on('change.userSettings', function() {
+        if (typeof save_user_preference === 'function') {
+            save_user_preference('editor_panel_east_open', $(this).is(':checked'));
+        }
+    });
+
+    $root.find('#editor_show_language').off('change.userSettings').on('change.userSettings', function() {
+        if (typeof save_user_preference === 'function') {
+            save_user_preference('editor_show_language', $(this).is(':checked'));
+        }
+    });
+
+    $root.find('#editor_show_toolbar').off('change.userSettings').on('change.userSettings', function() {
+        if (typeof save_user_preference === 'function') {
+            save_user_preference('editor_show_toolbar', $(this).is(':checked'));
+        }
+    });
+
+    $root.find('#editor_expand_groups').off('change.userSettings').on('change.userSettings', function() {
+        if (typeof save_user_preference === 'function') {
+            save_user_preference('editor_expand_groups', $(this).is(':checked'));
+        }
+    });
+
+    $root.find('#editor_expand_tree').off('change.userSettings').on('change.userSettings', function() {
+        if (typeof save_user_preference === 'function') {
+            save_user_preference('editor_expand_tree', $(this).is(':checked'));
+            var expandTreeCb = $('#expand_tree');
+            if (expandTreeCb.length > 0) {
+                expandTreeCb.prop('checked', $(this).is(':checked'));
+                expandTreeCb.trigger('change');
+            }
+        }
+    });
+}
+
+function loadUserSettingsFormHtml(section, onSuccess, onError) {
+    $.ajax({
+        url: site_url + 'website_code/php/get_user_settings_form.php',
+        type: 'GET',
+        data: { section: section },
+        dataType: 'html',
+        success: onSuccess,
+        error: onError
+    });
+}
+
+function clearPasswordForm($root) {
+    $root.find('#passform input[type=password]').val('');
+    $root.find('#result').html('');
+}
 
 /**
  * Password change popup and form code:
  */
+function changepasswordPopup(focusSection) {
+    if (isModernToolkitsTheme()) {
+        if (focusSection === 'settings') {
+            if (typeof toolkitsModernOpenSettingsModal === 'function') {
+                toolkitsModernOpenSettingsModal();
+            }
+        } else if (typeof toolkitsModernOpenPasswordModal === 'function') {
+            toolkitsModernOpenPasswordModal();
+        }
+        return;
+    }
 
-function changepasswordPopup() {
-    // Check if dialog already exists
-    var $dialog = $("#change-password-dialog");
-    
+    openLegacyUserSettingsDialog(focusSection);
+}
+
+function openLegacyUserSettingsDialog(focusSection) {
+    var $dialog = $('#change-password-dialog');
+
     if ($dialog.length === 0) {
-        // Create dialog div if it doesn't exist
         $dialog = $("<div id='change-password-dialog' style='display: none;'></div>");
-        $("body").append($dialog);
-        
-        // Add custom CSS for workspace styling
-        if ($("#change-password-dialog-styles").length === 0) {
-            $("head").append('<style id="change-password-dialog-styles">' +
+        $('body').append($dialog);
+
+        if ($('#change-password-dialog-styles').length === 0) {
+            $('head').append('<style id="change-password-dialog-styles">' +
                 '#change-password-dialog { font-family: Arial, sans-serif; } ' +
                 '#change-password-dialog .ui-dialog-titlebar { background-color: #ededed; border: 1px solid #ccc; border-bottom: none; padding: 10px; border-radius: 5px 5px 0 0; } ' +
                 '#change-password-dialog .ui-dialog-titlebar-close { background-color: #f86718 !important; border: 1px solid #fff !important; border-radius: 4px; color: #fff !important; width: 20px !important; height: 20px !important; padding: 0 !important; } ' +
@@ -90,242 +260,41 @@ function changepasswordPopup() {
                 '#change-password-dialog .toolkits-theme-settings p { margin-top: 8px; font-size: 0.9em; color: #555; } ' +
                 '</style>');
         }
-        
-        // Initialize dialog
+
         $dialog.dialog({
             autoOpen: false,
             modal: true,
             width: 450,
             height: 'auto',
             resizable: false,
-            title: "Change Password",
-            dialogClass: "workspace-dialog",
+            title: 'Change Password',
+            dialogClass: 'workspace-dialog',
             close: function() {
-                // Clear form on close
-                $("#passform").find("input[type=password]").val('');
-                $("#result").html('');
+                clearPasswordForm($dialog);
             }
         });
     }
-    
-    // Load form content via AJAX
-    $.ajax({
-        url: site_url + "website_code/php/get_user_settings_form.php",
-        type: "GET",
-        dataType: "html",
-        success: function(html) {
-            $dialog.html(html);
-            
-            if (typeof user_preferences === 'undefined' || !user_preferences) {
-                user_preferences = {};
+
+    loadUserSettingsFormHtml('all', function(html) {
+        $dialog.html(html);
+        initUserSettingsHandlers($dialog);
+        $dialog.dialog('open');
+
+        if (focusSection === 'settings') {
+            var panelSettings = $dialog.find('.panel-settings')[0];
+            if (panelSettings) {
+                panelSettings.scrollIntoView({ block: 'start' });
             }
-
-            // Interface theme — default to nottingham when missing.
-            // Do NOT auto-save here: it can race with a user's change and overwrite their selection.
-            var themeSelect = $("#change-password-dialog #toolkits_ui_theme");
-            if (themeSelect.length) {
-                var savedTheme = user_preferences.toolkits_ui_theme;
-                if (savedTheme === 'modern' || savedTheme === 'nottingham') {
-                    themeSelect.val(savedTheme);
-                } else {
-                    themeSelect.val('nottingham');
-                    user_preferences.toolkits_ui_theme = 'nottingham';
-                }
+        } else {
+            var oldpassField = $dialog.find('#oldpass')[0];
+            if (oldpassField) {
+                oldpassField.focus();
             }
-
-            // Load current panel states from user preferences
-            if (typeof user_preferences !== 'undefined' && user_preferences) {
-                // Set east panel checkbox (workspace)
-                var eastCheckbox = $("#change-password-dialog #panel_east_open");
-                if (eastCheckbox.length) {
-                    var eastOpen = user_preferences.panel_east_open;
-                    if (eastOpen === undefined || eastOpen === null) {
-                        // Default to true if not set
-                        eastCheckbox.prop('checked', true);
-                    } else {
-                        eastCheckbox.prop('checked', eastOpen !== false && eastOpen !== 'false' && eastOpen !== 0 && eastOpen !== '0');
-                    }
-                }
-                
-                // Set south panel checkbox (workspace)
-                var southCheckbox = $("#change-password-dialog #panel_south_open");
-                if (southCheckbox.length) {
-                    var southOpen = user_preferences.panel_south_open;
-                    if (southOpen === undefined || southOpen === null) {
-                        // Default to true if not set
-                        southCheckbox.prop('checked', true);
-                    } else {
-                        southCheckbox.prop('checked', southOpen !== false && southOpen !== 'false' && southOpen !== 0 && southOpen !== '0');
-                    }
-                }
-                
-                // Set editor east panel checkbox
-                var editorEastCheckbox = $("#change-password-dialog #editor_panel_east_open");
-                if (editorEastCheckbox.length) {
-                    var editorEastOpen = user_preferences.editor_panel_east_open;
-                    if (editorEastOpen === undefined || editorEastOpen === null) {
-                        // Default to true if not set, and create it in preferences
-                        editorEastCheckbox.prop('checked', true);
-                        if (typeof save_user_preference === 'function') {
-                            save_user_preference('editor_panel_east_open', true);
-                        }
-                    } else {
-                        editorEastCheckbox.prop('checked', editorEastOpen !== false && editorEastOpen !== 'false' && editorEastOpen !== 0 && editorEastOpen !== '0');
-                    }
-                }
-                
-                // Set editor show language checkbox (default false)
-                var editorShowLanguageCheckbox = $("#change-password-dialog #editor_show_language");
-                if (editorShowLanguageCheckbox.length) {
-                    var editorShowLanguage = user_preferences.editor_show_language;
-                    if (editorShowLanguage === undefined || editorShowLanguage === null) {
-                        editorShowLanguageCheckbox.prop('checked', false);
-                    } else {
-                        editorShowLanguageCheckbox.prop('checked', editorShowLanguage !== false && editorShowLanguage !== 'false' && editorShowLanguage !== 0 && editorShowLanguage !== '0');
-                    }
-                }
-                
-                // Set editor show toolbar checkbox (default false)
-                var editorShowToolbarCheckbox = $("#change-password-dialog #editor_show_toolbar");
-                if (editorShowToolbarCheckbox.length) {
-                    var editorShowToolbar = user_preferences.editor_show_toolbar;
-                    if (editorShowToolbar === undefined || editorShowToolbar === null) {
-                        editorShowToolbarCheckbox.prop('checked', false);
-                    } else {
-                        editorShowToolbarCheckbox.prop('checked', editorShowToolbar !== false && editorShowToolbar !== 'false' && editorShowToolbar !== 0 && editorShowToolbar !== '0');
-                    }
-                }
-                
-                // Set editor expand groups checkbox (default false)
-                var editorExpandGroupsCheckbox = $("#change-password-dialog #editor_expand_groups");
-                if (editorExpandGroupsCheckbox.length) {
-                    var editorExpandGroups = user_preferences.editor_expand_groups;
-                    if (editorExpandGroups === undefined || editorExpandGroups === null) {
-                        editorExpandGroupsCheckbox.prop('checked', false);
-                    } else {
-                        editorExpandGroupsCheckbox.prop('checked', editorExpandGroups !== false && editorExpandGroups !== 'false' && editorExpandGroups !== 0 && editorExpandGroups !== '0');
-                    }
-                }
-                
-                // Set editor expand tree checkbox (default false)
-                var editorExpandTreeCheckbox = $("#change-password-dialog #editor_expand_tree");
-                if (editorExpandTreeCheckbox.length) {
-                    var editorExpandTree = user_preferences.editor_expand_tree;
-                    if (editorExpandTree === undefined || editorExpandTree === null) {
-                        editorExpandTreeCheckbox.prop('checked', false);
-                    } else {
-                        editorExpandTreeCheckbox.prop('checked', editorExpandTree !== false && editorExpandTree !== 'false' && editorExpandTree !== 0 && editorExpandTree !== '0');
-                    }
-                }
-            }
-
-            // Theme selector change handler.
-            // Dropdowns can be flaky depending on how the DOM is injected, so we bind multiple events
-            // and show immediate feedback in the dialog.
-            function handleToolkitsThemeChange(e) {
-                var newTheme = $(this).val();
-                if (newTheme !== 'nottingham' && newTheme !== 'modern') return;
-                if (typeof save_user_preference !== 'function') return;
-
-                var $result = $("#change-password-dialog #result");
-                if ($result.length) {
-                    $result.html("<div>Saving interface theme…</div>");
-                }
-
-                save_user_preference('toolkits_ui_theme', newTheme, function() {
-                    if ($result.length) {
-                        $result.html("<div>Interface theme saved. Reload the page to apply.</div>");
-                    }
-                });
-            }
-
-            var themeSelectForHandler = $("#change-password-dialog #toolkits_ui_theme");
-            if (themeSelectForHandler.length) {
-                themeSelectForHandler
-                    .off('change.toolkitsThemeDirect input.toolkitsThemeDirect blur.toolkitsThemeDirect')
-                    .on('change.toolkitsThemeDirect input.toolkitsThemeDirect blur.toolkitsThemeDirect', handleToolkitsThemeChange);
-            }
-            $(document).off('change.toolkitsTheme input.toolkitsTheme blur.toolkitsTheme', '#change-password-dialog #toolkits_ui_theme');
-            $(document).on('change.toolkitsTheme input.toolkitsTheme blur.toolkitsTheme', '#change-password-dialog #toolkits_ui_theme', handleToolkitsThemeChange);
-
-            // Add change handlers for panel checkboxes
-            $("#change-password-dialog #panel_east_open").on('change', function() {
-                if (typeof save_user_preference === 'function') {
-                    save_user_preference('panel_east_open', $(this).is(':checked'));
-                    // Update actual panel state
-                    if (typeof xerteinner_layout !== 'undefined') {
-                        if ($(this).is(':checked')) {
-                            xerteinner_layout.open('east');
-                        } else {
-                            xerteinner_layout.close('east');
-                        }
-                    }
-                }
-            });
-            
-            $("#change-password-dialog #panel_south_open").on('change', function() {
-                if (typeof save_user_preference === 'function') {
-                    save_user_preference('panel_south_open', $(this).is(':checked'));
-                    // Update actual panel state
-                    if (typeof xertemain_layout !== 'undefined') {
-                        if ($(this).is(':checked')) {
-                            xertemain_layout.open('south');
-                        } else {
-                            xertemain_layout.close('south');
-                        }
-                    }
-                }
-            });
-            
-            // Editor panel checkbox handler
-            $("#change-password-dialog #editor_panel_east_open").on('change', function() {
-                if (typeof save_user_preference === 'function') {
-                    save_user_preference('editor_panel_east_open', $(this).is(':checked'));
-                }
-            });
-            
-            // Editor show language checkbox handler
-            $("#change-password-dialog #editor_show_language").on('change', function() {
-                if (typeof save_user_preference === 'function') {
-                    save_user_preference('editor_show_language', $(this).is(':checked'));
-                }
-            });
-            
-            // Editor show toolbar checkbox handler
-            $("#change-password-dialog #editor_show_toolbar").on('change', function() {
-                if (typeof save_user_preference === 'function') {
-                    save_user_preference('editor_show_toolbar', $(this).is(':checked'));
-                }
-            });
-            
-            // Editor expand groups checkbox handler
-            $("#change-password-dialog #editor_expand_groups").on('change', function() {
-                if (typeof save_user_preference === 'function') {
-                    save_user_preference('editor_expand_groups', $(this).is(':checked'));
-                }
-            });
-            
-            // Editor expand tree checkbox handler
-            $("#change-password-dialog #editor_expand_tree").on('change', function() {
-                if (typeof save_user_preference === 'function') {
-                    save_user_preference('editor_expand_tree', $(this).is(':checked'));
-                    // Apply change to editor's expand_tree checkbox if editor is open
-                    var expandTreeCb = $('#expand_tree');
-                    if (expandTreeCb.length > 0) {
-                        expandTreeCb.prop('checked', $(this).is(':checked'));
-                        // Trigger change event to call expandTree()
-                        expandTreeCb.trigger('change');
-                    }
-                }
-            });
-            
-            $dialog.dialog("open");
-        },
-        error: function(xhr, status, error) {
-            console.error("Error loading password form:", error);
-            $dialog.html("<div style='padding: 20px; color: red;'>Error loading password form. Please try again.</div>");
-            $dialog.dialog("open");
         }
+    }, function(xhr, status, error) {
+        console.error('Error loading password form:', error);
+        $dialog.html("<div style='padding: 20px; color: red;'>Error loading password form. Please try again.</div>");
+        $dialog.dialog('open');
     });
 }
 
@@ -357,4 +326,3 @@ function changePassword(username){
 
     $("#passform").find("input[type=password], textarea").val('');
 }
-

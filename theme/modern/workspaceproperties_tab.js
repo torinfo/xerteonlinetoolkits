@@ -132,7 +132,7 @@ function renderProjectsTable(d) {
 				var on = !!val;
 				h += '<td class="iconCell">' + (on ? '<i class="fa fa-check"></i>' : '<i class="fa fa-times"></i>') + '<span class="sr-only">' + escapeHtml(on ? (d.i18n && d.i18n.on ? d.i18n.on : 'on') : (d.i18n && d.i18n.off ? d.i18n.off : 'off')) + '</span></td>';
 			} else if (col.id === 'password' && it.password) {
-				h += '<td>' + escapeHtml(it.password) + (d.i18n && d.i18n.copy ? '<button class="copyBtn" onclick="javascript:navigator.clipboard.writeText(\\'' + escapeHtml(it.password).replace(/'/g, \"\\\\'\") + '\\');" title="' + escapeHtml(d.i18n.copy) + '"><i class="fa fa-copy"></i><span class="sr-only">' + escapeHtml(d.i18n.copy) + '</span></button>' : '') + '</td>';
+				h += '<td>' + escapeHtml(it.password) + (d.i18n && d.i18n.copy ? '<button class="copyBtn" onclick="javascript:navigator.clipboard.writeText(\'' + escapeHtml(it.password).replace(/\\/g, '\\\\').replace(/'/g, "\\'") + '\');" title="' + escapeHtml(d.i18n.copy) + '"><i class="fa fa-copy"></i><span class="sr-only">' + escapeHtml(d.i18n.copy) + '</span></button>' : '') + '</td>';
 			} else {
 				h += '<td>' + escapeHtml(val === null || val === undefined ? '' : val) + '</td>';
 			}

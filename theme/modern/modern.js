@@ -91,13 +91,13 @@ function renderToolkitsIndexShell() {
             { id: 'all', icon: 'fa-table-cells-large', label: s.modernNavAll, action: 'all' }
         ],
         [
-            { id: 'recent', icon: 'fa-clock', label: s.modernNavRecent, action: 'recent' },
-            { id: 'published', icon: 'fa-tower-broadcast', label: s.modernNavPublished, action: 'published' },
-            { id: 'favourites', icon: 'fa-heart', label: s.modernNavFavourites, action: 'favourites' },
-            { id: 'trash', icon: 'fa-trash', label: s.modernNavTrash, action: 'trash' }
+            { id: 'recent', icon: 'fa-clock', label: s.modernNavRecent, action: 'recent', countKey: 'recent' },
+            { id: 'published', icon: 'fa-tower-broadcast', label: s.modernNavPublished, action: 'published', countKey: 'published' },
+            { id: 'favourites', icon: 'fa-heart', label: s.modernNavFavourites, action: 'favourites', countKey: 'favourites' },
+            { id: 'trash', icon: 'fa-trash', label: s.modernNavTrash, action: 'trash', countKey: 'trash' }
         ],
         [
-            { id: 'guides', icon: 'fa-book', label: s.modernNavGuides, href: 'https://xot.xerte.org.uk/play.php?template_id=150' }
+            { id: 'guides', icon: 'fa-book', label: s.modernNavGuides, action: 'guides' }
         ]
     ];
 
@@ -106,15 +106,20 @@ function renderToolkitsIndexShell() {
         navHtml += '<div class="toolkits-modern-nav__group">';
         group.forEach(function (item, itemIndex) {
             var active = groupIndex === 0 && itemIndex === 0 ? ' toolkits-modern-nav__item--active' : '';
+            var badgeHtml = item.countKey
+                ? '<span class="toolkits-modern-nav__badge" data-modern-nav-count="' + item.countKey + '">0</span>'
+                : '';
             if (item.href) {
                 navHtml += '<a href="' + item.href + '" target="_blank" rel="noopener" class="toolkits-modern-nav__item toolkits-modern-nav__item--link' + active + '">' +
                     '<i class="fa ' + item.icon + ' toolkits-modern-nav__icon"></i>' +
-                    '<span>' + item.label + '</span>' +
+                    '<span class="toolkits-modern-nav__label">' + item.label + '</span>' +
+                    badgeHtml +
                 '</a>';
             } else {
                 navHtml += '<button type="button" class="toolkits-modern-nav__item' + active + '" data-modern-view="' + item.action + '" data-modern-nav="' + item.id + '">' +
                     '<i class="fa ' + item.icon + ' toolkits-modern-nav__icon"></i>' +
-                    '<span>' + item.label + '</span>' +
+                    '<span class="toolkits-modern-nav__label">' + item.label + '</span>' +
+                    badgeHtml +
                 '</button>';
             }
         });
@@ -164,9 +169,7 @@ function renderToolkitsIndexShell() {
                     '<i class="fa fa-search" aria-hidden="true"></i>' +
                     '<input type="search" id="toolkits-modern-sidebar-search" placeholder="' + s.modernSearch + '" autocomplete="off"/>' +
                 '</div>' +
-                '<button type="button" class="toolkits-modern-btn toolkits-modern-btn--primary toolkits-modern-sidebar__create" onclick="toolkitsModernShowWorkspace(true)">' +
-                    '<i class="fa fa-plus"></i> ' + s.modernCreateLo +
-                '</button>' +
+                toolkitsModernCreateButtonHtml(s) +
                 '<nav class="toolkits-modern-nav">' + navHtml + '</nav>' +
                 '<div class="toolkits-modern-sidebar__badges">' +
                         '<a href="https://www.apereo.org" target="_blank" rel="noopener" title="Apereo">' +
@@ -192,33 +195,10 @@ function renderToolkitsIndexShell() {
 
                     toolkitsModernStartSectionHtml(s) +
 
-                    '<section class="toolkits-modern-section">' +
-                        '<h2 class="toolkits-modern-section__title">' + s.modernGetStarted + '</h2>' +
-                        '<div class="toolkits-modern-cards toolkits-modern-cards--three">' +
-                            '<a class="toolkits-modern-guide toolkits-modern-guide--orange" href="https://xot.xerte.org.uk/play.php?template_id=150" target="_blank" rel="noopener">' +
-                                '<div class="toolkits-modern-guide__icon"><i class="fa fa-lightbulb"></i></div>' +
-                                '<h3>' + s.modernGuide1Title + '</h3>' +
-                                '<p>' + s.modernGuide1Desc + '</p>' +
-                                '<span class="toolkits-modern-guide__arrow"><i class="fa fa-chevron-right"></i></span>' +
-                            '</a>' +
-                            '<a class="toolkits-modern-guide toolkits-modern-guide--cream" href="https://xot.xerte.org.uk/play.php?template_id=150#page2" target="_blank" rel="noopener">' +
-                                '<div class="toolkits-modern-guide__icon"><i class="fa fa-signs-post"></i></div>' +
-                                '<h3>' + s.modernGuide2Title + '</h3>' +
-                                '<p>' + s.modernGuide2Desc + '</p>' +
-                                '<span class="toolkits-modern-guide__arrow"><i class="fa fa-chevron-right"></i></span>' +
-                            '</a>' +
-                            '<a class="toolkits-modern-guide toolkits-modern-guide--peach" href="https://xot.xerte.org.uk/play.php?template_id=150#page3" target="_blank" rel="noopener">' +
-                                '<div class="toolkits-modern-guide__icon"><i class="fa fa-magnifying-glass"></i></div>' +
-                                '<h3>' + s.modernGuide3Title + '</h3>' +
-                                '<p>' + s.modernGuide3Desc + '</p>' +
-                                '<span class="toolkits-modern-guide__arrow"><i class="fa fa-chevron-right"></i></span>' +
-                            '</a>' +
-                        '</div>' +
-                        '<p class="toolkits-modern-more-guides">' +
-                            '<a href="https://xot.xerte.org.uk/play.php?template_id=150" target="_blank" rel="noopener">' + s.modernMoreGuides + ' <i class="fa fa-arrow-right"></i></a>' +
-                        '</p>' +
-                    '</section>' +
+                    toolkitsModernHomeGuidesSectionHtml(s) +
                 '</div>' +
+
+                toolkitsModernGuidesViewHtml(s) +
 
                 toolkitsModernObjectsViewHtml(s) +
 
@@ -226,23 +206,159 @@ function renderToolkitsIndexShell() {
                     toolkitsIndexWorkspaceHtml(cfg) +
                 '</div>' +
             '</div>' +
-        '</div>';
+        '</div>' +
+        toolkitsModernUserModalShellHtml(s);
+}
+
+function toolkitsModernCreateButtonHtml(s) {
+    return '<div class="toolkits-modern-sidebar__create-wrap">' +
+        '<button type="button" class="toolkits-modern-btn toolkits-modern-btn--primary toolkits-modern-sidebar__create" id="toolkits-modern-create-toggle" aria-expanded="false" aria-haspopup="true" aria-controls="toolkits-modern-create-menu">' +
+            '<i class="fa fa-plus" aria-hidden="true"></i> ' + s.modernCreateLo +
+        '</button>' +
+        '<div class="toolkits-modern-create-flyout" id="toolkits-modern-create-menu" hidden>' +
+            '<div class="toolkits-modern-create-menu__panel" id="toolkits-modern-create-menu-main">' +
+                '<button type="button" class="toolkits-modern-create-menu__item" role="menuitem" data-create-parent="Nottingham">' +
+                    '<span class="toolkits-modern-create-menu__head">' +
+                        '<i class="fa fa-plus toolkits-modern-create-menu__plus" aria-hidden="true"></i>' +
+                        '<span class="toolkits-modern-create-menu__title">' + s.modernCardInteractiveTitle + '</span>' +
+                        '<i class="fa fa-chevron-right toolkits-modern-create-menu__chevron" aria-hidden="true"></i>' +
+                    '</span>' +
+                    '<span class="toolkits-modern-create-menu__desc">' + s.modernCardInteractiveDesc + '</span>' +
+                '</button>' +
+                '<hr class="toolkits-modern-create-menu__divider" aria-hidden="true">' +
+                '<button type="button" class="toolkits-modern-create-menu__item" role="menuitem" data-create-parent="site">' +
+                    '<span class="toolkits-modern-create-menu__head">' +
+                        '<i class="fa fa-plus toolkits-modern-create-menu__plus" aria-hidden="true"></i>' +
+                        '<span class="toolkits-modern-create-menu__title">' + s.modernCardSiteTitle + '</span>' +
+                        '<i class="fa fa-chevron-right toolkits-modern-create-menu__chevron" aria-hidden="true"></i>' +
+                    '</span>' +
+                    '<span class="toolkits-modern-create-menu__desc">' + s.modernCardSiteDesc + '</span>' +
+                '</button>' +
+            '</div>' +
+            '<div class="toolkits-modern-create-menu__panel toolkits-modern-create-menu__panel--sub" id="toolkits-modern-create-menu-sub" hidden>' +
+                '<button type="button" class="toolkits-modern-create-menu__option" data-create-empty>' +
+                    '<span class="toolkits-modern-create-menu__head">' +
+                        '<i class="fa fa-plus toolkits-modern-create-menu__plus" aria-hidden="true"></i>' +
+                        '<span class="toolkits-modern-create-menu__title">' + s.modernCreateEmptyTitle + '</span>' +
+                    '</span>' +
+                    '<span class="toolkits-modern-create-menu__desc">' + s.modernCreateEmptyDesc + '</span>' +
+                '</button>' +
+                '<hr class="toolkits-modern-create-menu__divider" aria-hidden="true">' +
+                '<div class="toolkits-modern-create-menu__template-block">' +
+                    '<span class="toolkits-modern-create-menu__head">' +
+                        '<i class="fa fa-plus toolkits-modern-create-menu__plus" aria-hidden="true"></i>' +
+                        '<span class="toolkits-modern-create-menu__title">' + s.modernCreateTemplateTitle + '</span>' +
+                    '</span>' +
+                    '<span class="toolkits-modern-create-menu__desc">' + s.modernCreateTemplateDesc + '</span>' +
+                    '<label class="sr-only" for="toolkits-modern-create-template-select">' + s.modernCreateTemplatePlaceholder + '</label>' +
+                    '<select class="toolkits-modern-create-menu__select" id="toolkits-modern-create-template-select">' +
+                        '<option value="">' + s.modernCreateTemplatePlaceholder + '</option>' +
+                    '</select>' +
+                '</div>' +
+            '</div>' +
+        '</div>' +
+    '</div>';
+}
+
+function toolkitsModernUserModalShellHtml(s) {
+    return '<div class="toolkits-modern-user-modal" id="toolkits-modern-user-modal" hidden>' +
+        '<div class="toolkits-modern-user-modal__backdrop" data-user-modal-close></div>' +
+        '<div class="toolkits-modern-user-modal__dialog" role="dialog" aria-modal="true" aria-labelledby="toolkits-modern-user-modal-title">' +
+            '<div class="toolkits-modern-user-modal__header">' +
+                '<h2 class="toolkits-modern-user-modal__title" id="toolkits-modern-user-modal-title"></h2>' +
+                '<button type="button" class="toolkits-modern-user-modal__close" data-user-modal-close aria-label="' + (s.folderCancel || 'Close') + '">' +
+                    '<i class="fa fa-times" aria-hidden="true"></i>' +
+                '</button>' +
+            '</div>' +
+            '<div class="toolkits-modern-user-modal__body" id="toolkits-modern-user-modal-body"></div>' +
+        '</div>' +
+    '</div>';
+}
+
+function toolkitsModernUserMenuItemHtml(icon, label, onclick, modifier) {
+    var mod = modifier ? ' ' + modifier : '';
+    return '<button type="button" class="toolkits-modern-topbar__dropdown-item' + mod + '" role="menuitem" onclick="' + onclick + '">' +
+        '<i class="fa ' + icon + ' toolkits-modern-topbar__dropdown-icon" aria-hidden="true"></i>' +
+        '<span>' + label + '</span>' +
+    '</button>';
+}
+
+function toolkitsModernOpenUserDetails() {
+    toolkitsModernCloseUserMenu();
+    if (typeof $ === 'undefined' || typeof rest_api_url === 'undefined') {
+        return;
+    }
+    $.ajax({
+        url: rest_api_url,
+        data: { route: 'workspaceproperties/my-properties' },
+        dataType: 'json',
+        success: function (res) {
+            if (!res || !res.ok || !res.data) {
+                return;
+            }
+            var d = res.data;
+            var esc = typeof escapeHtml === 'function' ? escapeHtml : function (v) { return v; };
+            var html = '<div class="toolkits-modern-user-details">' +
+                '<h3 class="toolkits-modern-user-details__title">' + esc(d.heading) + '</h3>' +
+                '<p><strong>' + esc(d.i18n.nameLabel) + ':</strong> ' + esc(d.user.name) + '</p>' +
+                '<p><strong>' + esc(d.i18n.usernameLabel) + ':</strong> ' + esc(d.user.username) + '</p>' +
+                '<p><strong>' + esc(d.i18n.lastLoginLabel) + ':</strong> ' + esc(d.user.lastLogin) + '</p>' +
+            '</div>';
+            $.featherlight(html);
+        }
+    });
+}
+
+function toolkitsModernOpenFeedback() {
+    toolkitsModernCloseUserMenu();
+    if (typeof $ === 'undefined' || typeof $.featherlight !== 'function') {
+        return;
+    }
+    var feedbackUrl = (typeof site_url !== 'undefined' ? site_url : '') + 'feedback/';
+    $.featherlight({
+        iframe: feedbackUrl,
+        iframeWidth: '85vw',
+        iframeHeight: '85vh'
+    });
 }
 
 function toolkitsModernTopbarUserMenuHtml(cfg) {
     var s = cfg.strings || {};
     var user = cfg.user || {};
-    var settingsLabel = s.modernSettings || 'Settings';
     var items = '';
 
     if (user.canManageUser) {
-        items += '<button type="button" class="toolkits-modern-topbar__dropdown-item" role="menuitem" onclick="toolkitsModernCloseUserMenu(); changepasswordPopup();">' + settingsLabel + '</button>';
-    }
-    if (user.hasManagementRole) {
-        items += '<button type="button" class="toolkits-modern-topbar__dropdown-item" role="menuitem" onclick="toolkitsModernCloseUserMenu(); javascript:elevate(\'management.php\');">' + s.toManagement + '</button>';
+        items += toolkitsModernUserMenuItemHtml(
+            'fa-lock',
+            s.changePassword,
+            'toolkitsModernCloseUserMenu(); toolkitsModernOpenPasswordModal();'
+        );
     }
     if (!user.isGuest) {
-        items += '<button type="button" class="toolkits-modern-topbar__dropdown-item" role="menuitem" onclick="toolkitsModernCloseUserMenu(); javascript:logout(' + (user.samlLogout ? 'true' : 'false') + ');">' + s.logout + '</button>';
+        items += toolkitsModernUserMenuItemHtml(
+            'fa-user-circle',
+            s.modernMyDetails,
+            'toolkitsModernOpenUserDetails();'
+        );
+        if (user.canManageUser) {
+            items += toolkitsModernUserMenuItemHtml(
+                'fa-gears',
+                s.modernSettings,
+                'toolkitsModernCloseUserMenu(); toolkitsModernOpenSettingsModal();'
+            );
+        }
+        items += toolkitsModernUserMenuItemHtml(
+            'fa-pencil',
+            s.modernFeedback,
+            'toolkitsModernOpenFeedback();'
+        );
+        items += '<hr class="toolkits-modern-topbar__dropdown-divider" aria-hidden="true">';
+        items += toolkitsModernUserMenuItemHtml(
+            'fa-right-from-bracket',
+            s.logout,
+            'toolkitsModernCloseUserMenu(); logout(' + (user.samlLogout ? 'true' : 'false') + ');',
+            'toolkits-modern-topbar__dropdown-item--logout'
+        );
     }
 
     var topbarName = user.firstName || user.displayName || '';
@@ -253,16 +369,16 @@ function toolkitsModernTopbarUserMenuHtml(cfg) {
                 '<button type="button" class="toolkits-modern-topbar__user-toggle" id="toolkits-modern-user-toggle" aria-expanded="false" aria-haspopup="true" aria-controls="toolkits-modern-user-menu">' +
                     '<span class="toolkits-modern-topbar__name">' + topbarName + '</span>' +
                     '<i class="fa fa-chevron-down toolkits-modern-topbar__chevron" aria-hidden="true"></i>' +
+                    '<span class="toolkits-modern-topbar__avatar" aria-hidden="true"><i class="fa fa-user"></i></span>' +
                 '</button>' +
                 '<div class="toolkits-modern-topbar__dropdown" id="toolkits-modern-user-menu" role="menu" hidden>' + items + '</div>' +
             '</div>';
     } else if (topbarName) {
-        menuHtml = '<span class="toolkits-modern-topbar__name">' + topbarName + '</span>';
+        menuHtml = '<span class="toolkits-modern-topbar__name">' + topbarName + '</span>' +
+            '<span class="toolkits-modern-topbar__avatar" aria-hidden="true"><i class="fa fa-user"></i></span>';
     }
 
-    return '<div class="toolkits-modern-topbar__user">' + menuHtml +
-        '<span class="toolkits-modern-topbar__avatar" aria-hidden="true"><i class="fa fa-user"></i></span>' +
-    '</div>';
+    return '<div class="toolkits-modern-topbar__user">' + menuHtml + '</div>';
 }
 
 function toolkitsModernTopbarHtml(cfg) {
@@ -277,6 +393,83 @@ function toolkitsModernTopbarHtml(cfg) {
         '</div>' +
         toolkitsModernTopbarUserMenuHtml(cfg) +
     '</header>';
+}
+
+function toolkitsModernGuideCardHtml(variant, icon, title, desc, href) {
+    return '<a class="toolkits-modern-guide toolkits-modern-guide--' + variant + '" href="' + href + '" target="_blank" rel="noopener">' +
+        '<div class="toolkits-modern-guide__icon"><i class="fa ' + icon + '"></i></div>' +
+        '<h3>' + title + '</h3>' +
+        '<p>' + desc + '</p>' +
+        '<span class="toolkits-modern-guide__arrow"><i class="fa fa-chevron-right"></i></span>' +
+    '</a>';
+}
+
+function toolkitsModernHomeGuidesSectionHtml(s) {
+    return '<section class="toolkits-modern-section">' +
+        '<h2 class="toolkits-modern-section__title">' + s.modernGetStarted + '</h2>' +
+        '<div class="toolkits-modern-cards toolkits-modern-cards--three">' +
+            toolkitsModernGuideCardHtml('orange', 'fa-lightbulb', s.modernGuide1Title, s.modernGuide1Desc, 'https://xot.xerte.org.uk/play.php?template_id=150') +
+            toolkitsModernGuideCardHtml('cream', 'fa-signs-post', s.modernGuide2Title, s.modernGuide2Desc, 'https://xot.xerte.org.uk/play.php?template_id=150#page2') +
+            toolkitsModernGuideCardHtml('peach', 'fa-magnifying-glass', s.modernGuide3Title, s.modernGuide3Desc, 'https://xot.xerte.org.uk/play.php?template_id=150#page3') +
+        '</div>' +
+        '<p class="toolkits-modern-more-guides">' +
+            '<button type="button" class="toolkits-modern-more-guides__link" data-modern-view="guides">' + s.modernMoreGuides + ' <i class="fa fa-arrow-right"></i></button>' +
+        '</p>' +
+    '</section>';
+}
+
+function toolkitsModernFaqItemHtml(question, answer, linkText, linkHref, open) {
+    var openClass = open ? ' toolkits-modern-faq__item--open' : '';
+    var expanded = open ? 'true' : 'false';
+    var panelHidden = open ? '' : ' hidden';
+    var linkHtml = '';
+    if (linkText && linkHref) {
+        linkHtml = '<p class="toolkits-modern-faq__link"><a class="toolkits-modern-btn toolkits-modern-btn--primary toolkits-modern-btn--small" href="' + linkHref + '" target="_blank" rel="noopener">' + linkText + '</a></p>';
+    }
+    return '<div class="toolkits-modern-faq__item' + openClass + '">' +
+        '<div class="toolkits-modern-faq__header">' +
+            '<h3 class="toolkits-modern-faq__question">' + question + '</h3>' +
+            '<button type="button" class="toolkits-modern-faq__toggle" aria-expanded="' + expanded + '">' +
+                '<i class="fa fa-chevron-up" aria-hidden="true"></i>' +
+            '</button>' +
+        '</div>' +
+        '<div class="toolkits-modern-faq__panel"' + panelHidden + '>' +
+            '<p>' + answer + '</p>' +
+            linkHtml +
+        '</div>' +
+    '</div>';
+}
+
+function toolkitsModernGuidesViewHtml(s) {
+    return '<div class="toolkits-modern-guides" id="toolkits-modern-guides" hidden>' +
+        '<header class="toolkits-modern-guides__header">' +
+            '<h1 class="toolkits-modern-guides__title">' + s.modernNavGuides + '</h1>' +
+        '</header>' +
+        '<section class="toolkits-modern-section">' +
+            '<h2 class="toolkits-modern-section__title">' + s.modernGuidesSectionManuals + '</h2>' +
+            '<div class="toolkits-modern-cards toolkits-modern-cards--three">' +
+                toolkitsModernGuideCardHtml('orange', 'fa-lightbulb', s.modernGuide1Title, s.modernGuide1Desc, 'https://xot.xerte.org.uk/play.php?template_id=150') +
+                toolkitsModernGuideCardHtml('cream', 'fa-signs-post', s.modernGuide2Title, s.modernGuide2Desc, 'https://xot.xerte.org.uk/play.php?template_id=150#page2') +
+                toolkitsModernGuideCardHtml('peach', 'fa-magnifying-glass', s.modernGuide3Title, s.modernGuide3Desc, 'https://xot.xerte.org.uk/play.php?template_id=150#page3') +
+            '</div>' +
+        '</section>' +
+        '<section class="toolkits-modern-section">' +
+            '<h2 class="toolkits-modern-section__title">' + s.modernGuidesSectionDemos + '</h2>' +
+            '<div class="toolkits-modern-cards toolkits-modern-cards--three">' +
+                toolkitsModernGuideCardHtml('demo', 'fa-play-circle', s.modernDemo1Title, s.modernDemo1Desc, 'modules/xerte/training/toolkits.htm') +
+                toolkitsModernGuideCardHtml('demo', 'fa-table-cells', s.modernDemo2Title, s.modernDemo2Desc, 'https://xot.xerte.org.uk/play.php?template_id=116#xertepagetypes') +
+                toolkitsModernGuideCardHtml('demo', 'fa-globe', s.modernDemo3Title, s.modernDemo3Desc, 'https://xot.xerte.org.uk/play.php?template_id=137') +
+            '</div>' +
+        '</section>' +
+        '<section class="toolkits-modern-section toolkits-modern-section--faq">' +
+            '<h2 class="toolkits-modern-section__title">' + s.modernGuidesSectionFaq + '</h2>' +
+            '<div class="toolkits-modern-faq">' +
+                toolkitsModernFaqItemHtml(s.modernFaq1Question, s.modernFaq1Answer, s.modernFaq1Link, 'https://xerte.org.uk', true) +
+                toolkitsModernFaqItemHtml(s.modernFaq2Question, s.modernFaq2Answer, '', '', false) +
+                toolkitsModernFaqItemHtml(s.modernFaq3Question, s.modernFaq3Answer, '', '', false) +
+            '</div>' +
+        '</section>' +
+    '</div>';
 }
 
 function toolkitsModernStartSectionHtml(s) {
@@ -350,6 +543,16 @@ function toolkitsModernObjectsViewHtml(s) {
             '</div>' +
         '</div>' +
         '<div class="toolkits-modern-lo-menu" id="toolkits-modern-lo-menu" role="menu" hidden></div>' +
+        '<div class="toolkits-modern-lo-preview" id="toolkits-modern-lo-preview" hidden>' +
+            '<div class="toolkits-modern-lo-preview__backdrop" data-lo-preview-close></div>' +
+            '<div class="toolkits-modern-lo-preview__dialog" role="dialog" aria-modal="true" aria-labelledby="toolkits-modern-lo-preview-title">' +
+                '<button type="button" class="toolkits-modern-lo-preview__close" data-lo-preview-close aria-label="' + (s.modernLoPreviewClose || 'Close preview') + '">' +
+                    '<i class="fa fa-times" aria-hidden="true"></i>' +
+                '</button>' +
+                '<p class="toolkits-modern-lo-preview__title" id="toolkits-modern-lo-preview-title"></p>' +
+                '<iframe class="toolkits-modern-lo-preview__frame" id="toolkits-modern-lo-preview-frame" title=""></iframe>' +
+            '</div>' +
+        '</div>' +
     '</div>';
 }
 
@@ -439,6 +642,55 @@ function toolkitsModernRememberRecent(nodeId) {
     try {
         window.localStorage.setItem(TOOLKITS_MODERN_RECENT_KEY, JSON.stringify(ids));
     } catch (e) { /* storage unavailable */ }
+    toolkitsModernUpdateNavCounts();
+}
+
+function toolkitsModernCountLearningObjectsByMode(mode) {
+    if (typeof workspace === 'undefined' || !workspace.items) {
+        return 0;
+    }
+    var count = 0;
+    var recentIds = mode === 'recent' ? toolkitsModernGetRecentIds() : null;
+    var recentRank = {};
+
+    if (recentIds) {
+        recentIds.forEach(function (id, index) {
+            recentRank[id] = index;
+        });
+    }
+
+    workspace.items.forEach(function (item) {
+        if (mode === 'trash') {
+            if (!toolkitsModernIsTrashLearningObjectNode(item)) {
+                return;
+            }
+        } else if (!toolkitsModernIsLearningObjectNode(item)) {
+            return;
+        }
+        item = toolkitsModernSyncWorkspaceItemMeta(item);
+        if (mode === 'favourites' && !toolkitsModernIsFavorite(item.favorite)) {
+            return;
+        }
+        if (mode === 'published' && !toolkitsModernIsPublished(item.published)) {
+            return;
+        }
+        if (recentIds && recentRank[item.id] === undefined) {
+            return;
+        }
+        count++;
+    });
+
+    return count;
+}
+
+function toolkitsModernUpdateNavCounts() {
+    var modes = ['recent', 'published', 'favourites', 'trash'];
+    modes.forEach(function (mode) {
+        var badge = document.querySelector('[data-modern-nav-count="' + mode + '"]');
+        if (badge) {
+            badge.textContent = String(toolkitsModernCountLearningObjectsByMode(mode));
+        }
+    });
 }
 
 function toolkitsModernGetBrowseStrings() {
@@ -528,8 +780,67 @@ function toolkitsModernFormatAccess(access) {
     return value || s.modernLoAccessPrivate || 'Private';
 }
 
-function toolkitsModernGetLoPlaceholderUrl() {
-    return 'website_code/images/Icon_Page.gif';
+function toolkitsModernGetLoPreviewUrl(templateId) {
+    if (!templateId) {
+        return '';
+    }
+    var path = 'preview.php?template_id=' + templateId;
+    if (typeof url_return === 'function') {
+        path = url_return('preview', templateId);
+    }
+    var base = (typeof site_url !== 'undefined' && site_url) ? site_url : '';
+    return base + path + '#page1';
+}
+
+function toolkitsModernOpenLoPreviewLightbox(previewUrl, title) {
+    var overlay = document.getElementById('toolkits-modern-lo-preview');
+    var frame = document.getElementById('toolkits-modern-lo-preview-frame');
+    var titleEl = document.getElementById('toolkits-modern-lo-preview-title');
+    if (!overlay || !frame || !previewUrl) {
+        return;
+    }
+    frame.src = previewUrl;
+    frame.title = title || 'Preview';
+    if (titleEl) {
+        titleEl.textContent = title || '';
+    }
+    overlay.hidden = false;
+    document.body.classList.add('toolkits-modern-lo-preview-open');
+}
+
+function toolkitsModernCloseLoPreviewLightbox() {
+    var overlay = document.getElementById('toolkits-modern-lo-preview');
+    var frame = document.getElementById('toolkits-modern-lo-preview-frame');
+    if (overlay) {
+        overlay.hidden = true;
+    }
+    if (frame) {
+        frame.src = 'about:blank';
+    }
+    document.body.classList.remove('toolkits-modern-lo-preview-open');
+}
+
+function toolkitsModernBindLoPreviewLightbox() {
+    if (window.toolkitsModernLoPreviewBound) {
+        return;
+    }
+    window.toolkitsModernLoPreviewBound = true;
+
+    document.addEventListener('click', function (e) {
+        if (e.target.closest('[data-lo-preview-close]')) {
+            e.preventDefault();
+            toolkitsModernCloseLoPreviewLightbox();
+        }
+    });
+
+    document.addEventListener('keydown', function (e) {
+        if (e.key === 'Escape') {
+            var overlay = document.getElementById('toolkits-modern-lo-preview');
+            if (overlay && !overlay.hidden) {
+                toolkitsModernCloseLoPreviewLightbox();
+            }
+        }
+    });
 }
 
 function toolkitsModernSyncWorkspaceItemMeta(item) {
@@ -729,7 +1040,7 @@ function toolkitsModernRunLoAction(action, nodeId, actionBtn) {
     toolkitsModernCloseLoMenu();
 
     if (action === 'edit' && typeof edit_window === 'function') {
-        edit_window(false);
+        edit_window(false, 'edithtml');
     } else if (action === 'copy' && typeof duplicate_template === 'function') {
         duplicate_template();
     } else if (action === 'preview' && typeof preview_window === 'function') {
@@ -784,6 +1095,7 @@ function toolkitsModernToggleFavorite(nodeId, favorite) {
             });
         }
         toolkitsModernRenderObjectList();
+        toolkitsModernUpdateNavCounts();
     });
 }
 
@@ -891,6 +1203,7 @@ function toolkitsModernRenderObjectList() {
     toolkitsModernUpdateBrowseChrome();
     toolkitsModernBindLoToolbar();
     toolkitsModernBindLoMenu();
+    toolkitsModernBindLoPreviewLightbox();
 
     var objects = toolkitsModernCollectLearningObjects();
     listEl.innerHTML = '';
@@ -935,9 +1248,30 @@ function toolkitsModernRenderObjectList() {
 
         var previewTd = document.createElement('td');
         previewTd.className = 'toolkits-modern-lo-item__preview';
-        previewTd.innerHTML =
-            '<span class="toolkits-modern-lo-item__chevron" aria-hidden="true"><i class="fa fa-chevron-right"></i></span>' +
-            '<img class="toolkits-modern-lo-item__thumb" src="' + toolkitsModernGetLoPlaceholderUrl() + '" alt="" width="48" height="32"/>';
+        var chevronSpan = document.createElement('span');
+        chevronSpan.className = 'toolkits-modern-lo-item__chevron';
+        chevronSpan.setAttribute('aria-hidden', 'true');
+        chevronSpan.innerHTML = '<i class="fa fa-chevron-right"></i>';
+        var thumbWrap = document.createElement('button');
+        thumbWrap.type = 'button';
+        thumbWrap.className = 'toolkits-modern-lo-item__thumb-wrap';
+        thumbWrap.setAttribute('aria-label', (s.modernLoMenuPreview || 'Preview') + ': ' + (item.text || ''));
+        var previewFrame = document.createElement('iframe');
+        previewFrame.className = 'toolkits-modern-lo-item__thumb-frame';
+        previewFrame.src = toolkitsModernGetLoPreviewUrl(item.xot_id);
+        previewFrame.setAttribute('title', (item.text || 'Learning object') + ' preview');
+        previewFrame.setAttribute('loading', 'lazy');
+        previewFrame.setAttribute('tabindex', '-1');
+        thumbWrap.appendChild(previewFrame);
+        thumbWrap.addEventListener('click', function (e) {
+            e.stopPropagation();
+            toolkitsModernOpenLoPreviewLightbox(
+                toolkitsModernGetLoPreviewUrl(item.xot_id),
+                item.text || ''
+            );
+        });
+        previewTd.appendChild(chevronSpan);
+        previewTd.appendChild(thumbWrap);
 
         var nameTd = document.createElement('td');
         nameTd.className = 'toolkits-modern-lo-item__name';
@@ -1027,6 +1361,7 @@ function toolkitsModernOnWorkspaceRefreshed() {
     if (loSort && sortSelector) {
         loSort.value = sortSelector.value || 'date_down';
     }
+    toolkitsModernUpdateNavCounts();
     toolkitsModernRenderObjectList();
 }
 
@@ -1038,11 +1373,15 @@ function toolkitsModernEnsureWorkspaceData() {
 
 function toolkitsModernSetMainView(view) {
     var home = document.getElementById('toolkits-modern-home');
+    var guides = document.getElementById('toolkits-modern-guides');
     var objects = document.getElementById('toolkits-modern-objects');
     var workspacePanel = document.getElementById('toolkits-modern-workspace');
 
     if (home) {
         home.hidden = view !== 'home';
+    }
+    if (guides) {
+        guides.hidden = view !== 'guides';
     }
     if (objects) {
         objects.hidden = view !== 'all' && view !== 'recent' && view !== 'favourites' && view !== 'published' && view !== 'trash';
@@ -1144,7 +1483,257 @@ function toolkitsModernShowHome() {
     toolkitsModernSetMainView('home');
 }
 
+function toolkitsModernShowGuidesView() {
+    toolkitsModernSetMainView('guides');
+}
+
+function toolkitsModernResetCreateMenuPanels() {
+    var flyout = document.getElementById('toolkits-modern-create-menu');
+    var subPanel = document.getElementById('toolkits-modern-create-menu-sub');
+    var templateSelect = document.getElementById('toolkits-modern-create-template-select');
+    if (flyout) {
+        flyout.classList.remove('toolkits-modern-create-flyout--sub');
+    }
+    if (subPanel) {
+        subPanel.hidden = true;
+    }
+    document.querySelectorAll('[data-create-parent]').forEach(function (el) {
+        el.classList.remove('toolkits-modern-create-menu__item--active');
+    });
+    if (templateSelect) {
+        templateSelect.innerHTML = '';
+        var s = (window.toolkits_index_config && window.toolkits_index_config.strings) || {};
+        var placeholder = document.createElement('option');
+        placeholder.value = '';
+        placeholder.textContent = s.modernCreateTemplatePlaceholder || 'Choose a template';
+        templateSelect.appendChild(placeholder);
+    }
+    window.toolkitsModernCreateParentKey = '';
+}
+
+function toolkitsModernCloseCreateMenu() {
+    var menu = document.getElementById('toolkits-modern-create-menu');
+    var toggle = document.getElementById('toolkits-modern-create-toggle');
+    toolkitsModernResetCreateMenuPanels();
+    if (menu) {
+        menu.hidden = true;
+    }
+    if (toggle) {
+        toggle.setAttribute('aria-expanded', 'false');
+    }
+}
+
+function toolkitsModernGetDerivedTemplateOptions(parentKey) {
+    var options = [];
+    var select = document.getElementById(parentKey + '_templatename');
+    if (select && select.options && select.options.length) {
+        Array.prototype.forEach.call(select.options, function (opt) {
+            if (opt.value && opt.value !== parentKey) {
+                options.push({
+                    value: opt.value,
+                    label: opt.textContent.trim()
+                });
+            }
+        });
+    }
+    return options;
+}
+
+function toolkitsModernShowCreateSubmenu(parentKey) {
+    var menu = document.getElementById('toolkits-modern-create-menu');
+    var mainPanel = document.getElementById('toolkits-modern-create-menu-main');
+    var subPanel = document.getElementById('toolkits-modern-create-menu-sub');
+    var templateSelect = document.getElementById('toolkits-modern-create-template-select');
+    if (!menu || !mainPanel || !subPanel || !templateSelect) {
+        return;
+    }
+
+    if (!document.getElementById(parentKey + '_templatename')) {
+        toolkitsModernShowWorkspace(true);
+        window.setTimeout(function () {
+            toolkitsModernShowCreateSubmenu(parentKey);
+        }, 450);
+        return;
+    }
+
+    window.toolkitsModernCreateParentKey = parentKey;
+    var s = (window.toolkits_index_config && window.toolkits_index_config.strings) || {};
+    templateSelect.innerHTML = '';
+    var placeholder = document.createElement('option');
+    placeholder.value = '';
+    placeholder.textContent = s.modernCreateTemplatePlaceholder || 'Choose a template';
+    templateSelect.appendChild(placeholder);
+
+    toolkitsModernGetDerivedTemplateOptions(parentKey).forEach(function (opt) {
+        var option = document.createElement('option');
+        option.value = opt.value;
+        option.textContent = opt.label;
+        templateSelect.appendChild(option);
+    });
+
+    document.querySelectorAll('[data-create-parent]').forEach(function (el) {
+        el.classList.toggle(
+            'toolkits-modern-create-menu__item--active',
+            el.getAttribute('data-create-parent') === parentKey
+        );
+    });
+
+    subPanel.hidden = false;
+    menu.classList.add('toolkits-modern-create-flyout--sub');
+}
+
+function toolkitsModernPromptProjectName() {
+    var s = (window.toolkits_index_config && window.toolkits_index_config.strings) || {};
+    var label = s.modernCreateProjectName || 'Project name';
+    return window.prompt(label);
+}
+
+function toolkitsModernGetCreateFolderId() {
+    if (typeof $ === 'undefined' || typeof workspace === 'undefined') {
+        return '';
+    }
+    var tree = $.jstree.reference('#workspace');
+    if (!tree) {
+        return '';
+    }
+    var ids = tree.get_selected();
+    if (!ids || ids.length !== 1) {
+        return '';
+    }
+    var node = workspace.nodes[ids[0]];
+    if (node && node.xot_type === 'folder') {
+        return node.xot_id;
+    }
+    return '';
+}
+
+function toolkitsModernCreateLearningObject(parentKey, templateName, projectName) {
+    if (typeof is_ok_name === 'function' && !is_ok_name(projectName)) {
+        if (typeof NAME_FAIL !== 'undefined') {
+            window.alert(NAME_FAIL);
+        }
+        return;
+    }
+    if (typeof $ === 'undefined' || typeof site_url === 'undefined') {
+        return;
+    }
+
+    toolkitsModernCloseCreateMenu();
+    toolkitsModernShowWorkspace(true);
+
+    var folderId = toolkitsModernGetCreateFolderId();
+    if (typeof new_template_folder !== 'undefined') {
+        new_template_folder = folderId;
+    }
+
+    $.ajax({
+        type: 'POST',
+        url: site_url + 'website_code/php/templates/new_template.php',
+        data: {
+            tutorialid: parentKey,
+            templatename: templateName,
+            tutorialname: projectName,
+            folder_id: folderId
+        }
+    }).done(function (response) {
+        if (typeof refresh_workspace === 'function') {
+            refresh_workspace();
+        }
+        if (typeof tutorial_created === 'function') {
+            tutorial_created(response);
+        }
+    });
+}
+
+function toolkitsModernToggleCreateMenu() {
+    var menu = document.getElementById('toolkits-modern-create-menu');
+    var toggle = document.getElementById('toolkits-modern-create-toggle');
+    if (!menu || !toggle) {
+        return;
+    }
+    if (!menu.hidden) {
+        toolkitsModernCloseCreateMenu();
+        return;
+    }
+    toolkitsModernResetCreateMenuPanels();
+    toolkitsModernCloseUserMenu();
+    menu.hidden = false;
+    toggle.setAttribute('aria-expanded', 'true');
+}
+
+function toolkitsModernBindCreateMenu() {
+    if (window.toolkitsModernCreateMenuBound) {
+        return;
+    }
+    window.toolkitsModernCreateMenuBound = true;
+
+    document.addEventListener('click', function (e) {
+        var toggle = document.getElementById('toolkits-modern-create-toggle');
+        var menu = document.getElementById('toolkits-modern-create-menu');
+        if (!toggle || !menu) {
+            return;
+        }
+
+        var parentItem = e.target.closest('[data-create-parent]');
+        if (parentItem) {
+            e.preventDefault();
+            e.stopPropagation();
+            toolkitsModernShowCreateSubmenu(parentItem.getAttribute('data-create-parent'));
+            return;
+        }
+
+        var emptyBtn = e.target.closest('[data-create-empty]');
+        if (emptyBtn && window.toolkitsModernCreateParentKey) {
+            e.preventDefault();
+            e.stopPropagation();
+            var projectName = toolkitsModernPromptProjectName();
+            if (projectName) {
+                toolkitsModernCreateLearningObject(
+                    window.toolkitsModernCreateParentKey,
+                    window.toolkitsModernCreateParentKey,
+                    projectName
+                );
+            }
+            return;
+        }
+
+        if (e.target.closest('#toolkits-modern-create-toggle')) {
+            e.preventDefault();
+            e.stopPropagation();
+            toolkitsModernToggleCreateMenu();
+            return;
+        }
+
+        if (!menu.hidden && !e.target.closest('.toolkits-modern-sidebar__create-wrap')) {
+            toolkitsModernCloseCreateMenu();
+        }
+    });
+
+    document.addEventListener('change', function (e) {
+        if (e.target.id !== 'toolkits-modern-create-template-select') {
+            return;
+        }
+        var templateName = e.target.value;
+        var parentKey = window.toolkitsModernCreateParentKey;
+        if (!templateName || !parentKey) {
+            return;
+        }
+        var projectName = toolkitsModernPromptProjectName();
+        e.target.value = '';
+        if (projectName) {
+            toolkitsModernCreateLearningObject(parentKey, templateName, projectName);
+        }
+    });
+
+    document.addEventListener('keydown', function (e) {
+        if (e.key === 'Escape') {
+            toolkitsModernCloseCreateMenu();
+        }
+    });
+}
+
 function toolkitsModernCreateTemplate(templateName) {
+    toolkitsModernCloseCreateMenu();
     toolkitsModernShowWorkspace(true);
     window.setTimeout(function () {
         if (typeof template_toggle === 'function') {
@@ -1220,14 +1809,23 @@ function toolkitsModernBindNav() {
             toolkitsModernShowPublishedView();
         } else if (view === 'trash') {
             toolkitsModernShowTrashView();
+        } else if (view === 'guides') {
+            toolkitsModernShowGuidesView();
         } else if (view === 'workspace') {
             toolkitsModernShowWorkspace(false);
         }
-        if (view === 'all' || view === 'recent' || view === 'favourites' || view === 'published' || view === 'trash' || view === 'workspace') {
+        if (view === 'all' || view === 'recent' || view === 'favourites' || view === 'published' || view === 'trash' || view === 'guides' || view === 'workspace') {
             mount.querySelectorAll('.toolkits-modern-nav__item[data-modern-nav]').forEach(function (el) {
                 el.classList.remove('toolkits-modern-nav__item--active');
             });
-            btn.classList.add('toolkits-modern-nav__item--active');
+            if (btn.hasAttribute('data-modern-nav')) {
+                btn.classList.add('toolkits-modern-nav__item--active');
+            } else if (view === 'guides') {
+                var guidesNav = mount.querySelector('.toolkits-modern-nav__item[data-modern-nav="guides"]');
+                if (guidesNav) {
+                    guidesNav.classList.add('toolkits-modern-nav__item--active');
+                }
+            }
         }
     });
 
@@ -1251,8 +1849,121 @@ function toolkitsModernBindNav() {
     }
 }
 
+function toolkitsModernCloseUserModal() {
+    var modal = document.getElementById('toolkits-modern-user-modal');
+    var body = document.getElementById('toolkits-modern-user-modal-body');
+    if (!modal) {
+        return;
+    }
+    modal.hidden = true;
+    document.body.classList.remove('toolkits-modern-user-modal-open');
+    if (body) {
+        body.innerHTML = '';
+    }
+    modal.classList.remove('toolkits-modern-user-modal--password', 'toolkits-modern-user-modal--settings');
+}
+
+function toolkitsModernOpenUserModal(title, section) {
+    var modal = document.getElementById('toolkits-modern-user-modal');
+    var body = document.getElementById('toolkits-modern-user-modal-body');
+    var titleEl = document.getElementById('toolkits-modern-user-modal-title');
+    if (!modal || !body || typeof loadUserSettingsFormHtml !== 'function') {
+        return;
+    }
+
+    toolkitsModernCloseUserModal();
+    if (titleEl) {
+        titleEl.textContent = title;
+    }
+    modal.classList.add(section === 'settings' ? 'toolkits-modern-user-modal--settings' : 'toolkits-modern-user-modal--password');
+
+    loadUserSettingsFormHtml(section, function (html) {
+        body.innerHTML = html;
+        if (typeof initUserSettingsHandlers === 'function') {
+            initUserSettingsHandlers($(body));
+        }
+        modal.hidden = false;
+        document.body.classList.add('toolkits-modern-user-modal-open');
+        if (section === 'password') {
+            var oldpass = body.querySelector('#oldpass');
+            if (oldpass) {
+                oldpass.focus();
+            }
+        }
+    }, function () {
+        body.innerHTML = '<p class="toolkits-modern-user-modal__error">Error loading form. Please try again.</p>';
+        modal.hidden = false;
+        document.body.classList.add('toolkits-modern-user-modal-open');
+    });
+}
+
+function toolkitsModernOpenPasswordModal() {
+    var s = (window.toolkits_index_config && window.toolkits_index_config.strings) || {};
+    toolkitsModernOpenUserModal(s.changePassword || 'Change password', 'password');
+}
+
+function toolkitsModernOpenSettingsModal() {
+    var s = (window.toolkits_index_config && window.toolkits_index_config.strings) || {};
+    toolkitsModernOpenUserModal(s.modernSettings || 'Settings', 'settings');
+}
+
+function toolkitsModernBindUserModal() {
+    if (window.toolkitsModernUserModalBound) {
+        return;
+    }
+    window.toolkitsModernUserModalBound = true;
+
+    document.addEventListener('click', function (e) {
+        if (e.target.closest('[data-user-modal-close]')) {
+            toolkitsModernCloseUserModal();
+        }
+    });
+
+    document.addEventListener('keydown', function (e) {
+        if (e.key === 'Escape') {
+            var modal = document.getElementById('toolkits-modern-user-modal');
+            if (modal && !modal.hidden) {
+                toolkitsModernCloseUserModal();
+            }
+        }
+    });
+}
+
+function toolkitsModernBindFaq() {
+    var faq = document.getElementById('toolkits-modern-guides');
+    if (!faq || faq.dataset.faqBound === '1') {
+        return;
+    }
+    faq.dataset.faqBound = '1';
+    faq.addEventListener('click', function (e) {
+        var toggle = e.target.closest('.toolkits-modern-faq__toggle');
+        if (!toggle) {
+            return;
+        }
+        var item = toggle.closest('.toolkits-modern-faq__item');
+        var panel = item ? item.querySelector('.toolkits-modern-faq__panel') : null;
+        if (!item || !panel) {
+            return;
+        }
+        var open = item.classList.contains('toolkits-modern-faq__item--open');
+        if (open) {
+            item.classList.remove('toolkits-modern-faq__item--open');
+            panel.hidden = true;
+            toggle.setAttribute('aria-expanded', 'false');
+        } else {
+            item.classList.add('toolkits-modern-faq__item--open');
+            panel.hidden = false;
+            toggle.setAttribute('aria-expanded', 'true');
+        }
+    });
+}
+
 function toolkitsIndexAfterShell() {
     toolkitsModernBindNav();
+    toolkitsModernBindFaq();
+    toolkitsModernBindUserModal();
+    toolkitsModernBindCreateMenu();
+    toolkitsModernUpdateNavCounts();
 }
 
 function toolkitsModernSetupInnerLayout() {

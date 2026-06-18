@@ -18,6 +18,7 @@
 
 require_once(dirname(__FILE__) . "/config.php");
 _load_language_file("/workspaceproperties.inc");
+$version = getVersion();
 
 ?>
 
@@ -59,21 +60,28 @@ _load_language_file("/workspaceproperties.inc");
         ?>
         <?php
     }
+    if (function_exists('echo_toolkits_theme_stylesheet_link')) {
+        echo_toolkits_theme_stylesheet_link($version);
+    }
     ?>
+<script type="text/javascript">
+    var site_url = "<?php echo $xerte_toolkits_site->site_url; ?>";
+    var rest_api_url = "<?php echo $xerte_toolkits_site->site_url; ?>website_code/api/v1/index.php";
+</script>
 <script src="modules/common/js/jquery-1.9.1.min.js"></script>
 <script>window.jQuery || document.write('<script src="editor/js/vendor/jquery-1.9.1.min.js"><\/script>')</script>
 <script type="text/javascript" src="editor/js/vendor/jquery.ui-1.10.4.js"></script>
 <script type="text/javascript" src="editor/js/vendor/jquery.ui.touch-punch.min.js"></script>
 
     <?php
-    _include_javascript_file("website_code/scripts/template_management.js");
-    _include_javascript_file("website_code/scripts/properties_tab.js");
+    _include_javascript_file("website_code/scripts/template_management.js?version=" . $version);
+    _include_javascript_file("website_code/scripts/properties_tab.js?version=" . $version);
     ?>
-    <script type="text/javascript" language="javascript" src="website_code/scripts/validation.js"></script>
+    <script type="text/javascript" language="javascript" src="website_code/scripts/validation.js?version=<?php echo $version; ?>"></script>
     <?php
-    _include_javascript_file("website_code/scripts/workspaceproperties_tab.js");
-    _include_javascript_file("website_code/scripts/ajax_management.js");
-    _include_javascript_file("website_code/scripts/import.js");
+    _include_javascript_file("website_code/scripts/workspaceproperties_tab.js?version=" . $version);
+    _include_javascript_file("website_code/scripts/ajax_management.js?version=" . $version);
+    _include_javascript_file("website_code/scripts/import.js?version=" . $version);
     ?>
 
 </head>

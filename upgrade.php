@@ -1797,3 +1797,21 @@ function upgrade_56(){
         return "Tsugi directory already exists - ok ? true". "<br>";
     }
 }
+
+function upgrade_57(){
+    if (! _db_field_exists('templaterights', 'favorite')) {
+        $error1 = _db_add_field('templaterights', 'favorite', 'text', '', 'disabled');
+        $error1_returned = true;
+
+
+        if (($error1 === false)) {
+            $error1_returned = false;
+        }
+
+        return "Tsugi directory field - ok ? " . ($error1_returned ? 'true' : 'false'). "<br>";
+    }
+    else
+    {
+        return "Tsugi directory already exists - ok ? true". "<br>";
+    }
+}

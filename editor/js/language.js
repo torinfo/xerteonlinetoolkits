@@ -271,14 +271,101 @@ var EDITOR = (function ($, parent) {
         waitonlanguage();
     },
 
+    wizard_xwd_load_failed = function (message) {
+        console.error(message);
+        $('#loader').hide();
+        alert(message || 'Failed to load wizard definition');
+    },
+
     process_data_xwd = function (xml) {
         //console.log("data.xwd is loaded...");
 
-        var wizard_xml = $($.parseXML(xml)).find("wizard");
+        if (!xml || typeof xml !== 'string' || xml.trim() === '') {
+            wizard_xwd_load_failed('Failed to load wizard definition (empty response).');
+            return;
+        }
+
+        var doc;
+        try {
+            doc = $.parseXML(xml);
+        } catch (e) {
+            wizard_xwd_load_failed('Failed to load wizard definition (invalid XML).');
+            return;
+        }
+
+        var wizard_xml = $(doc).find("wizard");
+        if (!wizard_xml.length || !wizard_xml[0] || !wizard_xml[0].attributes || !wizard_xml[0].attributes.menus) {
+            wizard_xwd_load_failed('Failed to load wizard definition (missing wizard structure).');
+            return;
+        }
 
         parse_wizard_xml(wizard_xml);
 
         waitonlanguage();
+    },
+
+    load_wizard_xwd_legacy = function (entry) {
+        var url = entry.u;
+        if (url.indexOf("getXwd") != -1) {
+            url += "?simple_mode=" + simple_mode;
+            url += "&disable_advanced=" + disable_advanced;
+            url += "&simple_lo_page=" + simple_lo_page;
+            url += "&template_sub_pages=" + template_sub_pages;
+            url += "&languagecode=" + languagecodevariable;
+            url += "&theme=" + theme;
+        }
+        $.ajax({
+            type: "GET",
+            url: url,
+            dataType: "text",
+            success: function (data) {
+                entry.loaded = true;
+                entry.c(data);
+            },
+            error: function () {
+                entry.loaded = true;
+                entry.c("");
+            }
+        });
+    },
+
+    load_wizard_xwd_rest = function (entry) {
+        var apiBase = (typeof rest_api_url !== "undefined" && rest_api_url) ? rest_api_url : ((typeof site_url !== "undefined" && site_url) ? (site_url.replace(/\/$/, "") + "/website_code/api/v1/index.php") : "website_code/api/v1/index.php");
+        var tsp = template_sub_pages;
+        if (Array.isArray(tsp)) {
+            tsp = tsp.join(",");
+        }
+        var qp = {
+            route: "wizard/definition",
+            template_id: typeof template_id !== "undefined" ? template_id : "",
+            simple_mode: simple_mode,
+            disable_advanced: disable_advanced,
+            simple_lo_page: simple_lo_page,
+            template_sub_pages: tsp,
+            languagecode: languagecodevariable,
+            theme: typeof theme !== "undefined" ? theme : ""
+        };
+        $.ajax({
+            type: "GET",
+            url: apiBase + "?" + $.param(qp),
+            dataType: "json",
+            success: function (resp) {
+                var payload = (resp && resp.ok === true && resp.data) ? resp.data : resp;
+                var xml = payload && payload.xml !== undefined ? payload.xml : "";
+                if (!xml || xml.trim() === '') {
+                    console.warn("Wizard REST returned no XML, falling back to direct .xwd load");
+                    load_wizard_xwd_legacy(entry);
+                    return;
+                }
+                entry.loaded = true;
+                entry.c(xml);
+            },
+            error: function (xhr, status, err) {
+                console.error("Wizard REST load failed", status, err, xhr && xhr.responseText);
+                console.warn("Falling back to direct .xwd load");
+                load_wizard_xwd_legacy(entry);
+            }
+        });
     },
 
     process_config_file = function (xml) {
@@ -400,47 +487,12 @@ var EDITOR = (function ($, parent) {
         $(language_files).each(function() {
             var _this = this;
             if (typeof wizard_xwd_use_rest_api !== "undefined" && wizard_xwd_use_rest_api && _this.u === xwd_file_url) {
-                var apiBase = (typeof rest_api_url !== "undefined" && rest_api_url) ? rest_api_url : ((typeof site_url !== "undefined" && site_url) ? (site_url.replace(/\/$/, "") + "/website_code/api/v1/index.php") : "website_code/api/v1/index.php");
-                var tsp = template_sub_pages;
-                if (Array.isArray(tsp)) {
-                    tsp = tsp.join(",");
-                }
-                var qp = {
-                    route: "wizard/definition",
-                    template_id: typeof template_id !== "undefined" ? template_id : "",
-                    simple_mode: simple_mode,
-                    disable_advanced: disable_advanced,
-                    simple_lo_page: simple_lo_page,
-                    template_sub_pages: tsp,
-                    languagecode: languagecodevariable,
-                    theme: typeof theme !== "undefined" ? theme : ""
-                };
-                $.ajax({
-                    type: "GET",
-                    url: apiBase + "?" + $.param(qp),
-                    dataType: "json",
-                    success: function (resp) {
-                        _this.loaded = true;
-                        var payload = (resp && resp.ok === true && resp.data) ? resp.data : resp;
-                        var xml = payload && payload.xml !== undefined ? payload.xml : "";
-                        _this.c(xml);
-                    },
-                    error: function (xhr, status, err) {
-                        console.error("Wizard REST load failed", status, err);
-                        _this.loaded = true;
-                        _this.c("");
-                    }
-                });
+                load_wizard_xwd_rest(_this);
                 return;
             }
-            // Legacy: direct .xwd URL or getXwd.php with query params for plugin conditions
-            if (_this.u.indexOf("getXwd") != -1) {
-                _this.u += "?simple_mode=" + simple_mode;
-                _this.u += "&disable_advanced=" + disable_advanced;
-                _this.u += "&simple_lo_page=" + simple_lo_page;
-                _this.u += "&template_sub_pages=" + template_sub_pages;
-                _this.u += "&languagecode=" + languagecodevariable;
-                _this.u += "&theme=" + theme;
+            if (_this.u === xwd_file_url) {
+                load_wizard_xwd_legacy(_this);
+                return;
             }
             $.ajax({
                 type: "GET",

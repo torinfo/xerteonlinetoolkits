@@ -117,6 +117,7 @@ function wizard_get_merged_definition_for_rest(array $params)
 
     require_once dirname(__FILE__) . '/WizardDefinitionService.php';
     require_once $xerte_toolkits_site->root_file_path . $xerte_toolkits_site->php_library_path . 'user_library.php';
+    require_once $xerte_toolkits_site->root_file_path . 'website_code/php/template_status.php';
 
     if (empty($_SESSION['toolkits_logon_id'])) {
         return array('ok' => false, 'code' => 401, 'error' => 'auth_required', 'message' => 'Please login');
