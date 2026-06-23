@@ -1292,21 +1292,8 @@ function tabClicked(tab){
 function property_tab_download(id,html5_tag, flash_tag, url)
 {
     var ifrm = document.getElementById(id);
-    var export_html5_engine="";
-    var export_flash_engine="";
-	
-	if ($('input[name="exportEngine"]:checked').length > 0) {
-		if (html5_tag.length>0) {
-			export_html5_engine = $('input[name="exportEngine"]:checked').attr('id') == html5_tag;
-		}
-		if(flash_tag.length>0) {
-			
-			export_flash_engine = $('input[name="exportEngine"]:checked').attr('id') == flash_tag;
-		}
-	}
-	
-	var urlparams = url.indexOf('?') !== false;
-	ifrm.src = url + (urlparams ? '&' : '?') + 'html5='+export_html5_engine+'&flash='+export_flash_engine;
+    var urlparams = url.indexOf('?') !== false;
+    ifrm.src = url + (urlparams ? '&' : '?') + 'html5=true&flash=false';
 }
 
 

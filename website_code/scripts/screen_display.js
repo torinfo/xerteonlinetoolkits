@@ -435,25 +435,7 @@ function button_check(){
                 editbtn.removeAttribute("disabled");
                 editbtn.className = "xerte_workspace_button";
                 editbtn.onclick = function (e) {
-                    var locationParam;
-                    if (e.shiftKey) {
-                        locationParam = undefined;
-                    } else if (e.ctrlKey) {
-                        locationParam = "_blank";
-                    } else if (e.altKey) {
-                        locationParam = "lightbox";
-                    } else {
-                        var mode = (typeof user_preferences !== 'undefined' && user_preferences && user_preferences.editor_open_mode) ? user_preferences.editor_open_mode : 'popup';
-                        locationParam = (mode === '_blank' || mode === 'lightbox') ? mode : undefined;
-                    }
-                    if (locationParam === "_blank") {
-                        win = edit_window(false, "edithtml", "_blank");
-                        if (win) win.focus();
-                    } else if (locationParam === "lightbox") {
-                        edit_window(false, "edithtml", "lightbox");
-                    } else {
-                        edit_window(false, "edithtml");
-                    }
+                    openSelectedEditor(e, 'edithtml');
                 };
 
                 previewbtn.removeAttribute("disabled");
@@ -982,15 +964,7 @@ function init_workspace()
                     tree.deselect_all();
                     tree.select_node(id);
 
-                    var editorMode = (typeof user_preferences !== 'undefined' && user_preferences && user_preferences.editor_open_mode) ? user_preferences.editor_open_mode : 'popup';
-                    if (editorMode === '_blank') {
-                        var win = edit_window(false, "edithtml", "_blank");
-                        if (win) win.focus();
-                    } else if (editorMode === 'lightbox') {
-                        edit_window(false, "edithtml", "lightbox");
-                    } else {
-                        edit_window(false, "edithtml");
-                    }
+                    openSelectedEditor(null, 'edithtml');
 
             }
         });
