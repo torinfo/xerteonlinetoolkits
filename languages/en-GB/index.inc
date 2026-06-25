@@ -126,6 +126,10 @@ define("INDEX_XAPI_DASHBOARD_PRINT", "Print");
 
 define("INDEX_CHANGE_PASSWORD", "Change Password");
 
+define("INDEX_MY_DETAILS", "My details");
+
+define("INDEX_MY_PREFERENCES", "My preferences");
+
 define("INDEX_TO_MANAGEMENT", "Management");
 
 define("INDEX_SETTINGS_BUTTON", "Settings");

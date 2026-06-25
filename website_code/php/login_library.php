@@ -543,7 +543,7 @@ function login_processing2($firstname = false, $surname = false, $username = fal
       /*
        * Load user preferences from database if the authentication method supports it
        */
-      if ($authmech->hasUserPrefrences() && isset($_SESSION['toolkits_logon_username'])) {
+      if ($authmech->hasUserPreferences() && isset($_SESSION['toolkits_logon_username'])) {
           $row = db_query_one("SELECT preference FROM {$xerte_toolkits_site->database_table_prefix}logindetails WHERE username = ?", array($_SESSION['toolkits_logon_username']));
           
           if (!empty($row) && isset($row['preference']) && !empty($row['preference'])) {

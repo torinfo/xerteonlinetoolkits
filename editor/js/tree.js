@@ -954,6 +954,12 @@ var EDITOR = (function ($, parent) {
                 toolbox.displayParameter('#mainPanel .wizard', node_options['name'], attribute_name, node_options['name'][0].value.defaultValue, key);
             }
         }
+
+        // Inline Quick Fill panel — resolve from node_options.all (never mutated by getGroups)
+        if (key !== 'treeroot') {
+            toolbox.showInlineQFGroup(key, node_name, menu_options);
+        }
+
         if (advanced_mode || key!='treeroot' || !simple_lo_page) {
 			
 			function getGroups(options) {
@@ -1230,23 +1236,20 @@ var EDITOR = (function ($, parent) {
                 }
             }
 
-            if (tableLightbox.find("tr").length > 0) {
-                var tablerow = $('<tr>')
-                    .append('<td class="optPropTitle">' + (language.optionalAssistantPropHTML && language.optionalAssistantPropHTML.$general ? language.optionalAssistantPropHTML.$general : "Assistants") + '</td>');
-                //tableLightbox.prepend(tablerow);
-                html.append(tableLightbox);
-            }
-
             if (table.find("tr").length > 0) {
-                var optionaltitlerow = $('<tr>')
-                    .append('<td class="optMainTitle">' + (language.optionalPropHTML ? language.optionalPropHTML.$label : "Optional Properties") + '</td>');
                 if (menu_options.menu != undefined) {
                     var tablerow = $('<tr>')
                         .append('<td class="optPropTitle">' + menu_options.menuItem + '</td>');
                     table.prepend(tablerow);
                 }
-                table.prepend(optionaltitlerow);
                 html.append(table);
+            }
+
+            if (tableLightbox.find("tr").length > 0) {
+                var tablerow = $('<tr>')
+                    .append('<td class="optPropTitle">' + (language.optionalAssistantPropHTML && language.optionalAssistantPropHTML.$general ? language.optionalAssistantPropHTML.$general : "Assistants") + '</td>');
+                tableLightbox.prepend(tablerow);
+                html.append(tableLightbox);
             }
 
             if (table2.find("tr").length > 0) {
@@ -1460,6 +1463,7 @@ var EDITOR = (function ($, parent) {
 
         toolbox.convertTextAreas();
         toolbox.convertTextInputs();
+        toolbox.sizeInlineQFPanel($('#mainPanel .qf-inline-row'));
         toolbox.convertColorPickers();
 		toolbox.convertIconPickers();
         toolbox.convertDataGrids();
@@ -2377,7 +2381,6 @@ img_search_and_help = function(query, api, url, interpretPrompt, overrideSetting
     my.refresh_workspaceMerge = refresh_workspaceMerge;
     my.build_json = build_json;
     my.savepreviewasync = savepreviewasync;
-
 
     return parent;
 

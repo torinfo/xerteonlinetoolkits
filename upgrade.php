@@ -1779,10 +1779,10 @@ function upgrade_56(){
             $error1_returned = false;
         }
 
-        return "Tsugi directory field - ok ? " . ($error1_returned ? 'true' : 'false'). "<br>";
+        return "Logindetails preference field - ok ? " . ($error1_returned ? 'true' : 'false'). "<br>";
     }
     else
     {
-        return "Tsugi directory already exists - ok ? true". "<br>";
+        return "Logindetails preference field already exists - ok ? true". "<br>";
     }
 }

@@ -164,9 +164,8 @@ var EDITOR = (function ($, parent) {
             if (this.href.substr(this.href.length-1) == "#") this.href = path +"#";
         });
 		
-		//var optionaltitle = language.optionalPropHTML ? language.optionalPropHTML.$label : "Optional Properties";
-        var assistantTitle = language.optionalAssistantPropHTML && language.optionalAssistantPropHTML.$general ? language.optionalAssistantPropHTML.$general : "Assistants"
-		$("#optional_title").html(assistantTitle);
+		var optionaltitle = language.optionalPropHTML ? language.optionalPropHTML.$label : "Optional Properties";
+		$("#optional_title").html(optionaltitle);
     };
 
     /*

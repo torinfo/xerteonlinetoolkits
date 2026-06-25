@@ -166,19 +166,25 @@ $version = getVersion();
         $authmech = Xerte_Authentication_Factory::create($xerte_toolkits_site->authentication_method);
     }
     
-    // Prepare user preferences for JavaScript
+    // Prepare user preferences for JavaScript (always reload from DB when supported)
     $user_preferences_json = "{}";
     $user_has_preferences = "false";
-    
-    if (isset($_SESSION['toolkits_preferences']) && is_array($_SESSION['toolkits_preferences'])) {
+
+    if ($authmech->hasUserPreferences() && !empty($_SESSION['toolkits_logon_id']) && isset($_SESSION['toolkits_logon_username'])) {
+        $user_has_preferences = "true";
+        $pref_row = db_query_one(
+            "SELECT preference FROM {$xerte_toolkits_site->database_table_prefix}logindetails WHERE username = ?",
+            array($_SESSION['toolkits_logon_username'])
+        );
+        if (!empty($pref_row) && isset($pref_row['preference']) && $pref_row['preference'] !== '') {
+            $preferences = json_decode($pref_row['preference'], true);
+            $_SESSION['toolkits_preferences'] = is_array($preferences) ? $preferences : array();
+        } else {
+            $_SESSION['toolkits_preferences'] = array();
+        }
         $user_preferences_json = json_encode($_SESSION['toolkits_preferences']);
-        if ($authmech->hasUserPrefrences()) {
-            $user_has_preferences = "true";
-        }
-    } else {
-        if (isset($authmech) && $authmech->hasUserPrefrences()) {
-            $user_has_preferences = "true";
-        }
+    } elseif (isset($_SESSION['toolkits_preferences']) && is_array($_SESSION['toolkits_preferences'])) {
+        $user_preferences_json = json_encode($_SESSION['toolkits_preferences']);
     }
     
     echo "
@@ -191,6 +197,8 @@ $version = getVersion();
             {$languagecodevar};
             var user_preferences = {$user_preferences_json};
             var user_has_preferences = {$user_has_preferences};
+            var INDEX_CHANGE_PASSWORD = " . json_encode(INDEX_CHANGE_PASSWORD) . ";
+            var INDEX_MY_PREFERENCES = " . json_encode(INDEX_MY_PREFERENCES) . ";
         </script>";
     ?>
     <script type="text/javascript" language="javascript" src="website_code/scripts/validation.js?version=<?php echo $version;?>"></script>
@@ -358,35 +366,56 @@ Folder popup is the div that appears when creating a new folder
             </div>
 
            <div class="userbar">
-                <?PHP //echo "&nbsp;&nbsp;&nbsp;" . INDEX_LOGGED_IN_AS . " " .;
-                echo $_SESSION['toolkits_firstname'] . " " . $_SESSION['toolkits_surname'] ?>
-               <?PHP
-                // only on Db:
-                if ($authmech->canManageUser($jsscript)){
-                    echo '
-                    <div class="settingsDropdown">
-                        <button onclick="changepasswordPopup()" title=" ' . INDEX_CHANGE_PASSWORD . ' " class="xerte_workspace_button settingsButton"><i class="fa fa-cog xerte-icon"></i></button>
-                        <!-- <div id="settings" class="settings-content">
-                            <button class="xerte_button" onclick="changepasswordPopup()">' . INDEX_CHANGE_PASSWORD . '</button>
-                            <button class="xerte_button">Placeholder</button>
-                            <button class="xerte_button">Placeholder</button>
-                            <button class="xerte_button">Placeholder</button>
-                        </div> -->
+                <?php display_language_userbar(); ?>
+
+                <div class="userbar-item userbar-user">
+                    <div class="userbar-dropdown user-dropdown">
+                        <button type="button" class="userbar-dropdown-toggle" aria-haspopup="true" aria-expanded="false">
+                            <span class="userbar-dropdown-label"><?php echo htmlspecialchars($_SESSION['toolkits_firstname']); ?></span>
+                            <i class="fa fa-chevron-down userbar-chevron" aria-hidden="true"></i>
+                        </button>
+                        <div class="userbar-dropdown-menu userbar-user-menu" id="user-menu" role="menu">
+                            <ul class="userbar-dropdown-list" id="user-menu-items">
+                                <?php if ($authmech->canManageUser($jsscript)) { ?>
+                                <li role="none">
+                                    <button type="button" role="menuitem" class="userbar-dropdown-item userbar-user-item" onclick="changepasswordPopup('details')">
+                                        <i class="fa-solid fa-key userbar-user-item-icon" aria-hidden="true"></i>
+                                        <span class="userbar-user-item-label"><?php echo INDEX_CHANGE_PASSWORD; ?></span>
+                                    </button>
+                                </li>
+                                <?php } ?>
+                                <li role="none">
+                                    <button type="button" role="menuitem" class="userbar-dropdown-item userbar-user-item" onclick="changepasswordPopup('preferences')">
+                                        <i class="fa-solid fa-sliders userbar-user-item-icon" aria-hidden="true"></i>
+                                        <span class="userbar-user-item-label"><?php echo INDEX_MY_PREFERENCES; ?></span>
+                                    </button>
+                                </li>
+                                <?php if ($xerte_toolkits_site->authentication_method != "Guest") { ?>
+                                <li role="none">
+                                    <button type="button" role="menuitem" class="userbar-dropdown-item userbar-user-item userbar-user-item--logout"
+                                            onclick="javascript:logout(<?php echo($xerte_toolkits_site->authentication_method == "Saml2" ? "true" : "false"); ?>)">
+                                        <i class="fa-solid fa-right-from-bracket userbar-user-item-icon" aria-hidden="true"></i>
+                                        <span class="userbar-user-item-label"><?php echo INDEX_BUTTON_LOGOUT; ?></span>
+                                    </button>
+                                </li>
+                                <?php } ?>
+                            </ul>
+                        </div>
                     </div>
-                ';
-                }
-                if (getRolesFromUser($_SESSION['toolkits_logon_id'])) {
-                    echo '<button onclick="javascript:elevate(\'management.php\')" title=" ' . INDEX_TO_MANAGEMENT . ' " class="xerte_workspace_button "><i class="fas fa-tools xerte-icon"></i></button>';
-                }
+                </div>
 
-               ?>
-
-               <div style="display: inline-block"><?php display_language_selectionform("general", false); ?></div>
-               <?PHP if($xerte_toolkits_site->authentication_method != "Guest") {
-               ?><button title="<?PHP echo INDEX_BUTTON_LOGOUT; ?>" type="button" class="xerte_workspace_button"
-                        onclick="javascript:logout(<?php echo($xerte_toolkits_site->authentication_method == "Saml2" ? "true" : "false"); ?>)">
-                    <i class="fa fa-sign-out xerte-icon"></i><!--<?PHP echo INDEX_BUTTON_LOGOUT; ?>-->
-                </button><?PHP } ?>
+                <?php
+                $profileTitle = INDEX_LOGGED_IN_AS . ' ' . $_SESSION['toolkits_firstname'];
+                if ($authmech->canManageUser($jsscript)) {
+                    $profileTitle = INDEX_CHANGE_PASSWORD;
+                }
+                ?>
+                <button type="button"
+                        class="userbar-profile-btn"
+                        title="<?php echo htmlspecialchars($profileTitle); ?>"
+                        <?php if ($authmech->canManageUser($jsscript)) { ?>onclick="changepasswordPopup('details')"<?php } ?>>
+                    <i class="fa fa-user" aria-hidden="true"></i>
+                </button>
             </div>
             <div style="clear:both;"></div>
             <div class="separator"></div>

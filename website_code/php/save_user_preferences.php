@@ -42,7 +42,7 @@ if(empty($_SESSION['toolkits_logon_id'])) {
 try {
     $authmech = Xerte_Authentication_Factory::create($xerte_toolkits_site->authentication_method);
     
-    if (!$authmech || !$authmech->hasUserPrefrences()) {
+    if (!$authmech || !$authmech->hasUserPreferences()) {
         echo json_encode(array("success" => false, "message" => "User preferences not supported"));
         exit;
     }

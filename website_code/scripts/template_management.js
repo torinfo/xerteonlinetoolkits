@@ -186,6 +186,85 @@ function toggle(tag) {
 
 }
 
+function normalizeEditorOpenMode(mode) {
+    if (!mode) {
+        return 'popup';
+    }
+    mode = String(mode).trim();
+    if (mode === '_blank') {
+        return '_blank';
+    }
+    if (mode === 'lightbox') {
+        return 'lightbox';
+    }
+    return 'popup';
+}
+
+function normalizeEditorOpenLocation(location) {
+    if (location === '_blank' || location === 'lightbox') {
+        return location;
+    }
+    return 'popup';
+}
+
+function getEditorOpenModePreference() {
+    var prefs = (typeof window.user_preferences !== 'undefined' && window.user_preferences)
+        ? window.user_preferences
+        : ((typeof user_preferences !== 'undefined') ? user_preferences : null);
+    if (prefs) {
+        return normalizeEditorOpenMode(prefs.editor_open_mode);
+    }
+    return 'popup';
+}
+
+function isBrowserEditWindow(editorWindow) {
+    return !!(editorWindow && typeof editorWindow.closed === 'boolean');
+}
+
+function isEditorWindowAlive(editorWindow) {
+    if (!editorWindow) {
+        return false;
+    }
+    if (editorWindow.$content && editorWindow.$content.length) {
+        return $('body .featherlight').length > 0;
+    }
+    if (typeof editorWindow.closed === 'boolean') {
+        return !editorWindow.closed;
+    }
+    return false;
+}
+
+function getEditorOpenLocation(event) {
+    if (event) {
+        if (event.shiftKey) {
+            return 'popup';
+        }
+        if (event.ctrlKey || event.metaKey) {
+            return '_blank';
+        }
+        if (event.altKey) {
+            return 'lightbox';
+        }
+    }
+    return getEditorOpenModePreference();
+}
+
+function openSelectedEditor(event, editType) {
+    var openMode = getEditorOpenLocation(event);
+    editType = editType || 'edithtml';
+
+    if (openMode === '_blank') {
+        var win = edit_window(false, editType, '_blank');
+        if (win) {
+            win.focus();
+        }
+    } else if (openMode === 'lightbox') {
+        edit_window(false, editType, 'lightbox');
+    } else {
+        edit_window(false, editType);
+    }
+}
+
 /**
  *
  * Function edit window
@@ -195,7 +274,7 @@ function toggle(tag) {
  * @author Patrick Lockley
  */
 
-function edit_window(admin, edit, location) {
+function edit_window(admin, edit, openMode) {
 
     if (!admin) {
 
@@ -210,20 +289,31 @@ function edit_window(admin, edit, location) {
 
                 if (node.parent != workspace.recyclebin_id) {
                     window_id = "editwindow" + node.id;
-
-                    window_open = false;
+                    var window_open = false;
+                    var window_open_location = null;
+                    var window_open_index = -1;
+                    var requestedLocation = normalizeEditorOpenLocation(openMode);
 
                     if (typeof(edit_window_open) != 'undefined') {
-
                         for (z = 0; z < edit_window_open.length; z++) {
                             if (("editwindow" + edit_window_open[z].id) == window_id) {
                                 window_open = edit_window_open[z].window;
+                                window_open_location = edit_window_open[z].location || 'popup';
+                                window_open_index = z;
+                                break;
                             }
                         }
                     }
-                    console.log("Window open length: " + window_open.length);
-                    console.log("Window open parent: " + window_open.parent);
-                    if (!window_open || window_open.parent == null) {
+
+                    var canReuseWindow = isEditorWindowAlive(window_open) && window_open_location === requestedLocation;
+
+                    if (!canReuseWindow) {
+                        if (window_open_index >= 0) {
+                            if (isBrowserEditWindow(window_open) && !window_open.closed) {
+                                window_open.close();
+                            }
+                            edit_window_open.splice(window_open_index, 1);
+                        }
 
                         let size = node.editor_size.split(",");
                         let swidth = window.screen.width;
@@ -248,13 +338,16 @@ function edit_window(admin, edit, location) {
                             size[1] = sheight;
 
 
-                        if (location != null) {
-                            if (location === "_blank") {
-                                var NewEditWindow = window.open(site_url + url_return(edit, node.xot_id), location);
-                            }
-                            else
-                            {
-                                var NewEditWindow = $.featherlight(
+                        var NewEditWindow;
+
+                        if (requestedLocation === "_blank") {
+                            NewEditWindow = window.open(site_url + url_return(edit, node.xot_id), "_blank");
+                        } else if (requestedLocation === "lightbox") {
+                            if (typeof $.featherlight !== 'function') {
+                                console.error("Featherlight is not available; falling back to popup window.");
+                                NewEditWindow = window.open(site_url + url_return(edit, node.xot_id), "editwindow" + node.id, "toolbar=yes,location=yes");
+                            } else {
+                                NewEditWindow = $.featherlight(
                                     {
                                         iframe: site_url + url_return(edit, node.xot_id),
                                         iframeWidth: '95%',
@@ -262,20 +355,17 @@ function edit_window(admin, edit, location) {
                                         beforeClose: function(){
                                             if (typeof this.$content[0].contentWindow.WIZARD_EDITOR != "undefined") {
                                                 this.$content[0].contentWindow.WIZARD_EDITOR.tree.savepreviewasync(false);
-                                                //tree.savepreviewasync(false);
-                                                // Fake path, only id is used
                                                 edit_window_close(node.xot_id + "-");
                                             }
                                         },
                                         closeOnClick: false,
                                     });
                             }
-                        }
-                        else {
+                        } else {
                             if (size.length == 1) {
-                                var NewEditWindow = window.open(site_url + url_return(edit, node.xot_id), "editwindow" + node.id, "toolbar=yes,location=yes");
+                                NewEditWindow = window.open(site_url + url_return(edit, node.xot_id), "editwindow" + node.id, "toolbar=yes,location=yes");
                             } else {
-                                var NewEditWindow = window.open(site_url + url_return(edit, node.xot_id), "editwindow" + node.id, "height=" + size[1] + ", width=" +
+                                NewEditWindow = window.open(site_url + url_return(edit, node.xot_id), "editwindow" + node.id, "height=" + size[1] + ", width=" +
                                     size[0] + ",toolbar=yes,location=yes,resizable=yes");
                             }
                         }
@@ -296,20 +386,23 @@ function edit_window(admin, edit, location) {
                             }
                         }
 
-                        NewEditWindow.ajax_handle = xmlHttp;
-                        self.last_reference = self;
-
-                        if (!NewEditWindow.iframe)
-                            NewEditWindow.focus();
+                        if (isBrowserEditWindow(NewEditWindow)) {
+                            NewEditWindow.ajax_handle = xmlHttp;
+                            self.last_reference = self;
+                            if (typeof NewEditWindow.focus === 'function') {
+                                NewEditWindow.focus();
+                            }
+                        }
 
                         edit_window_open.push({
                             id: node.id,
-                            window: NewEditWindow
+                            window: NewEditWindow,
+                            location: requestedLocation
                         });
 
                         return NewEditWindow;
 
-                    } else {
+                    } else if (isBrowserEditWindow(window_open) && typeof window_open.focus === 'function') {
                         window_open.focus();
                     }
 

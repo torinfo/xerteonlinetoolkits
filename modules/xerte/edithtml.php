@@ -242,7 +242,16 @@ function output_editor_code($row_edit, $xerte_toolkits_site, $read_status, $vers
 
     $version = getVersion();
 
-    /* Set flag of whether oai-pmh harvesting is configured and available */
+    $editor_root = $xerte_toolkits_site->root_file_path;
+    $editor_js_mtime = function ($relativePath) use ($editor_root, $version) {
+        $path = $editor_root . str_replace('/', DIRECTORY_SEPARATOR, $relativePath);
+        return file_exists($path) ? filemtime($path) : $version;
+    };
+    $mtime_toolbox_js = $editor_js_mtime('editor/js/toolbox.js');
+    $mtime_language_js = $editor_js_mtime('editor/js/language.js');
+    $mtime_tree_js = $editor_js_mtime('editor/js/tree.js');
+    $mtime_layout_js = $editor_js_mtime('editor/js/layout.js');
+    $mtime_complex_css = $editor_js_mtime('editor/css/complex.css');
     $oai_pmh = file_exists($xerte_toolkits_site->root_file_path . "oai-pmh/oai_config.php");
     $user_roles = getRolesFromUser($_SESSION['toolkits_logon_id']);
     if ($_SESSION['toolkits_logon_id'] === "site_administrator")
@@ -303,7 +312,7 @@ function output_editor_code($row_edit, $xerte_toolkits_site, $read_status, $vers
     <link rel="stylesheet" href="editor/css/jquery-ui.css?version=<?php echo $version;?>">
     <link rel="stylesheet" href="editor/js/vendor/themes/default/style.css?version=<?php echo $version;?>" />
     <link rel="stylesheet" type="text/css" href="website_code/styles/xerte_buttons.css?version=<?php echo $version;?>" />
-    <link rel="stylesheet" type="text/css" href="editor/css/complex.css?version=<?php echo $version;?>" />
+    <link rel="stylesheet" type="text/css" href="editor/css/complex.css?version=<?php echo $version;?>&m=<?php echo $mtime_complex_css;?>" />
     <link rel="stylesheet" type="text/css" href="editor/css/fonts.css?version=<?php echo $version;?>" />
     <link rel="stylesheet" type="text/css" href="modules/common/js/featherlight/featherlight.min.css?version=<?php echo $version;?>" />
     <link rel="stylesheet" type="text/css" href="editor/js/vendor/imgareaselect/imgareaselect-default.css?version=<?php echo $version;?>" />
@@ -506,11 +515,11 @@ function output_editor_code($row_edit, $xerte_toolkits_site, $read_status, $vers
 
     if (isset($_SESSION['toolkits_preferences']) && is_array($_SESSION['toolkits_preferences'])) {
         $user_preferences_json = json_encode($_SESSION['toolkits_preferences']);
-        if ($authmech->hasUserPrefrences()) {
+        if ($authmech->hasUserPreferences()) {
             $user_has_preferences = "true";
         }
     } else {
-        if (isset($authmech) && $authmech->hasUserPrefrences()) {
+        if (isset($authmech) && $authmech->hasUserPreferences()) {
             $user_has_preferences = "true";
         }
     }
@@ -547,10 +556,10 @@ function output_editor_code($row_edit, $xerte_toolkits_site, $read_status, $vers
 </script>
 <script type="text/javascript" src="editor/js/data.js?version=<?php echo $version;?>"></script>
 <script type="text/javascript" src="editor/js/application.js?version=<?php echo $version;?>"></script>
-<script type="text/javascript" src="editor/js/toolbox.js?version=<?php echo $version;?>"></script>
-<script type="text/javascript" src="editor/js/language.js?version=<?php echo $version;?>"></script>
-<script type="text/javascript" src="editor/js/layout.js?version=<?php echo $version;?>"></script>
-<script type="text/javascript" src="editor/js/tree.js?version=<?php echo $version;?>"></script>
+<script type="text/javascript" src="editor/js/toolbox.js?version=<?php echo $version;?>&m=<?php echo $mtime_toolbox_js;?>"></script>
+<script type="text/javascript" src="editor/js/language.js?version=<?php echo $version;?>&m=<?php echo $mtime_language_js;?>"></script>
+<script type="text/javascript" src="editor/js/layout.js?version=<?php echo $version;?>&m=<?php echo $mtime_layout_js;?>"></script>
+<script type="text/javascript" src="editor/js/tree.js?version=<?php echo $version;?>&m=<?php echo $mtime_tree_js;?>"></script>
 </body>
 </html>
 

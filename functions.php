@@ -201,7 +201,7 @@ function _include_javascript_file($file_path) {
     _debug($real_file_path);
     _debug($en_gb_file_path);
     if (file_exists(dirname(__FILE__) . "/" . $en_gb_file_path)) {
-        echo "<script type=\"text/javascript\" language=\"javascript\" src=\"" . $xerte_toolkits_site->site_url . $en_gb_file_path . $url_param . "\"></script>";
+        echo "<script type=\"text/javascript\" language=\"javascript\" src=\"" . $en_gb_file_path . $url_param . "\"></script>";
     } else {
         // stuff will break at this point.
         //die("Where was $real_file_path?");
@@ -211,7 +211,7 @@ function _include_javascript_file($file_path) {
 
     if ($language != "en-GB") {
         if (file_exists(dirname(__FILE__) . "/" . $real_file_path)) {
-            echo "<script type=\"text/javascript\" language=\"javascript\" src=\"" . $xerte_toolkits_site->site_url . $real_file_path . $url_param . "\"></script>";
+            echo "<script type=\"text/javascript\" language=\"javascript\" src=\"" . $real_file_path . $url_param . "\"></script>";
         } else {
             // stuff will break at this point.
             //die("Where was $real_file_path?");
@@ -220,7 +220,7 @@ function _include_javascript_file($file_path) {
             }
         }
     }
-    echo "<script type=\"text/javascript\" language=\"javascript\" src=\"" . $xerte_toolkits_site->site_url . $file_path . $url_param . "\"></script>";
+    echo "<script type=\"text/javascript\" language=\"javascript\" src=\"" . $file_path . $url_param . "\"></script>";
     return true;
 }
 
