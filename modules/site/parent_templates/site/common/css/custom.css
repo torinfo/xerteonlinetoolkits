@@ -9,7 +9,7 @@
  * compliance with the License. You may obtain a copy of the License at:
  *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -925,9 +925,6 @@ h3.contentTitle {
         }
     }
 
-    /* Print-only rules live in common/css/print.css (loaded via
-     * <link media="print"> in rloObject.htm). */
-
     /* --SCROLL DOWN PROMPT STYLE AND ANIMATION-------------------------------------- */
     /*navigation promt arrow and text*/
     @keyframes x_bounce {
@@ -1001,9 +998,49 @@ h3.contentTitle {
     display: none;
 }
 
-/* XOT iframe link wrapper: layout-neutral on screen; print.css gives it a box. */
 .xot-frame-link {
     display: contents;
+}
+
+#printAllContent {
+    position: fixed;
+    inset: 0;
+    overflow: hidden;
+    opacity: 0.01;
+    pointer-events: none;
+    z-index: 9999;
+}
+#printAllContent .x_printpage {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    opacity: 0.99;
+}
+#printAllContent .tab-pane,
+#printAllContent .tab-content > .tab-pane,
+#printAllContent .carousel-inner > .item,
+#printAllContent .accordion-body,
+#printAllContent .collapse {
+    display: block;
+    opacity: 1;
+    visibility: visible;
+    height: auto;
+}
+
+html.x_print-capture .tab-pane,
+html.x_print-capture .tab-content > .tab-pane,
+html.x_print-capture .carousel-inner > .item,
+html.x_print-capture .accordion-body,
+html.x_print-capture .collapse {
+    display: block !important;
+    opacity: 1 !important;
+    visibility: visible !important;
+    height: auto !important;
+}
+html.x_print-capture .carousel-control,
+html.x_print-capture .carousel-indicators {
+    display: none !important;
 }
 
 .x_videoContainer {

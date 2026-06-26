@@ -36,7 +36,7 @@ html.printing-bootstrap .alertMsg {
 html.printing-bootstrap #aboveFooter,
 html.printing-bootstrap #aboveFooter .container,
 html.printing-bootstrap #aboveFooter .row-fluid,
-html.printing-bootstrap #mainContent {
+html.printing-bootstrap :is(#mainContent, #printAllContent) {
     width: 100% !important;
     max-width: 100% !important;
     float: none !important;
@@ -46,7 +46,7 @@ html.printing-bootstrap #mainContent {
     height: auto !important;
 }
 html.printing-bootstrap #overview,
-html.printing-bootstrap #mainContent {
+html.printing-bootstrap :is(#mainContent, #printAllContent) {
     -webkit-print-color-adjust: exact !important;
     print-color-adjust: exact !important;
 }
@@ -54,9 +54,9 @@ html.printing-bootstrap #mainContent {
  * breaks. We deliberately do NOT reset float / display on figures or
  * images — that flattens multi-column rows (image left + text right)
  * into stacked blocks, often pushing the image to its own page. */
-html.printing-bootstrap #mainContent img,
-html.printing-bootstrap #mainContent figure,
-html.printing-bootstrap #mainContent .img-polaroid {
+html.printing-bootstrap :is(#mainContent, #printAllContent) img,
+html.printing-bootstrap :is(#mainContent, #printAllContent) figure,
+html.printing-bootstrap :is(#mainContent, #printAllContent) .img-polaroid {
     max-width: 100% !important;
     height: auto !important;
     page-break-inside: avoid !important;
@@ -68,80 +68,80 @@ html.printing-bootstrap #mainContent .img-polaroid {
  * print/responsive stylesheets collapse these to full width — override.
  * `.columns` is the CKEditor xotcolumns plugin / LO inline-styles
  * convention (`.columns div:first-child { float: left }`). */
-html.printing-bootstrap #mainContent .row,
-html.printing-bootstrap #mainContent .row-fluid,
-html.printing-bootstrap #mainContent .columns {
+html.printing-bootstrap :is(#mainContent, #printAllContent) .row,
+html.printing-bootstrap :is(#mainContent, #printAllContent) .row-fluid,
+html.printing-bootstrap :is(#mainContent, #printAllContent) .columns {
     display: block !important;
     page-break-inside: avoid !important;
     break-inside: avoid !important;
 }
-html.printing-bootstrap #mainContent .columns::after,
-html.printing-bootstrap #mainContent .row::after,
-html.printing-bootstrap #mainContent .row-fluid::after {
+html.printing-bootstrap :is(#mainContent, #printAllContent) .columns::after,
+html.printing-bootstrap :is(#mainContent, #printAllContent) .row::after,
+html.printing-bootstrap :is(#mainContent, #printAllContent) .row-fluid::after {
     content: "" !important;
     display: table !important;
     clear: both !important;
 }
-html.printing-bootstrap #mainContent .columns > div:first-child {
+html.printing-bootstrap :is(#mainContent, #printAllContent) .columns > div:first-child {
     float: left !important;
     max-width: 60% !important;
     padding-right: 1em !important;
 }
-html.printing-bootstrap #mainContent [class*="span"] {
+html.printing-bootstrap :is(#mainContent, #printAllContent) [class*="span"] {
     float: left !important;
     display: block !important;
     box-sizing: border-box !important;
 }
-html.printing-bootstrap #mainContent .row-fluid .span1  { width: 8.333%  !important; }
-html.printing-bootstrap #mainContent .row-fluid .span2  { width: 16.666% !important; }
-html.printing-bootstrap #mainContent .row-fluid .span3  { width: 25%     !important; }
-html.printing-bootstrap #mainContent .row-fluid .span4  { width: 33.333% !important; }
-html.printing-bootstrap #mainContent .row-fluid .span5  { width: 41.666% !important; }
-html.printing-bootstrap #mainContent .row-fluid .span6  { width: 50%     !important; }
-html.printing-bootstrap #mainContent .row-fluid .span7  { width: 58.333% !important; }
-html.printing-bootstrap #mainContent .row-fluid .span8  { width: 66.666% !important; }
-html.printing-bootstrap #mainContent .row-fluid .span9  { width: 75%     !important; }
-html.printing-bootstrap #mainContent .row-fluid .span10 { width: 83.333% !important; }
-html.printing-bootstrap #mainContent .row-fluid .span11 { width: 91.666% !important; }
-html.printing-bootstrap #mainContent .row-fluid .span12 { width: 100%    !important; }
+html.printing-bootstrap :is(#mainContent, #printAllContent) .row-fluid .span1  { width: 8.333%  !important; }
+html.printing-bootstrap :is(#mainContent, #printAllContent) .row-fluid .span2  { width: 16.666% !important; }
+html.printing-bootstrap :is(#mainContent, #printAllContent) .row-fluid .span3  { width: 25%     !important; }
+html.printing-bootstrap :is(#mainContent, #printAllContent) .row-fluid .span4  { width: 33.333% !important; }
+html.printing-bootstrap :is(#mainContent, #printAllContent) .row-fluid .span5  { width: 41.666% !important; }
+html.printing-bootstrap :is(#mainContent, #printAllContent) .row-fluid .span6  { width: 50%     !important; }
+html.printing-bootstrap :is(#mainContent, #printAllContent) .row-fluid .span7  { width: 58.333% !important; }
+html.printing-bootstrap :is(#mainContent, #printAllContent) .row-fluid .span8  { width: 66.666% !important; }
+html.printing-bootstrap :is(#mainContent, #printAllContent) .row-fluid .span9  { width: 75%     !important; }
+html.printing-bootstrap :is(#mainContent, #printAllContent) .row-fluid .span10 { width: 83.333% !important; }
+html.printing-bootstrap :is(#mainContent, #printAllContent) .row-fluid .span11 { width: 91.666% !important; }
+html.printing-bootstrap :is(#mainContent, #printAllContent) .row-fluid .span12 { width: 100%    !important; }
 
 /* CSS multi-column (.autocolumns*) doesn't fragment into columns in print, so
  * hide the live block and show the JS-built float replica (.x_autocol-print)
  * instead; its column widths are set inline. Screen-time hide is in custom.css
  * (this file is media="print"-only). */
-html.printing-bootstrap #mainContent .x_autocol-replaced {
+html.printing-bootstrap :is(#mainContent, #printAllContent) .x_autocol-replaced {
     display: none !important;
 }
-html.printing-bootstrap #mainContent .x_autocol-print {
+html.printing-bootstrap :is(#mainContent, #printAllContent) .x_autocol-print {
     display: block !important;
     page-break-inside: avoid !important;
     break-inside: avoid !important;
 }
-html.printing-bootstrap #mainContent .x_autocol-print::after {
+html.printing-bootstrap :is(#mainContent, #printAllContent) .x_autocol-print::after {
     content: "" !important;
     display: table !important;
     clear: both !important;
 }
-html.printing-bootstrap #mainContent .x_autocol-col {
+html.printing-bootstrap :is(#mainContent, #printAllContent) .x_autocol-col {
     float: left !important;
     box-sizing: border-box !important;
 }
-html.printing-bootstrap #mainContent .x_autocol-col:not(:last-child) {
+html.printing-bootstrap :is(#mainContent, #printAllContent) .x_autocol-col:not(:last-child) {
     padding-right: 1.5em !important;
 }
-html.printing-bootstrap #mainContent .x_autocol-col li,
-html.printing-bootstrap #mainContent .x_autocol-col > blockquote,
-html.printing-bootstrap #mainContent .x_autocol-col > p {
+html.printing-bootstrap :is(#mainContent, #printAllContent) .x_autocol-col li,
+html.printing-bootstrap :is(#mainContent, #printAllContent) .x_autocol-col > blockquote,
+html.printing-bootstrap :is(#mainContent, #printAllContent) .x_autocol-col > p {
     break-inside: avoid !important;
     page-break-inside: avoid !important;
 }
 
 /* Don't orphan a heading at the bottom of a page from its content */
-html.printing-bootstrap #mainContent h1,
-html.printing-bootstrap #mainContent h2,
-html.printing-bootstrap #mainContent h3,
-html.printing-bootstrap #mainContent h4,
-html.printing-bootstrap #mainContent h5 {
+html.printing-bootstrap :is(#mainContent, #printAllContent) h1,
+html.printing-bootstrap :is(#mainContent, #printAllContent) h2,
+html.printing-bootstrap :is(#mainContent, #printAllContent) h3,
+html.printing-bootstrap :is(#mainContent, #printAllContent) h4,
+html.printing-bootstrap :is(#mainContent, #printAllContent) h5 {
     page-break-after: avoid !important;
     break-after: avoid !important;
 }
@@ -175,6 +175,12 @@ html.printing-bootstrap .nav-tabs,
 html.printing-bootstrap .carousel-control,
 html.printing-bootstrap .carousel-indicators {
     display: none !important;
+}
+/* Pill rows are short button strips — never slice one across a page break. */
+html.printing-bootstrap .nav-pills,
+html.printing-bootstrap .navigator .nav {
+    page-break-inside: avoid !important;
+    break-inside: avoid !important;
 }
 
 /* Shared print-only URL display (audio, video, pdf). Monospace + wrap so long
@@ -304,4 +310,53 @@ html.printing-bootstrap .xot-print-fallback {
     color: #555;
     page-break-inside: avoid !important;
     break-inside: avoid !important;
+}
+
+/* --- Google Maps: tiles never render in the hidden print-all replica, so the
+ * embed is swapped for a labelled link box (built in buildPrintPageReplica). */
+html.printing-bootstrap .map-print-fallback {
+    display: block;
+    border: 1px solid #ccc;
+    padding: 1em;
+    margin: 0.5em 0 1em 0;
+    page-break-inside: avoid !important;
+    break-inside: avoid !important;
+}
+
+/* ===========================================================================
+ * Print all pages (toolbar print button).
+ *
+ * application.js captures every project page into the #printAllContent
+ * accumulator (kept off-screen for screen media; see custom.css) and adds
+ * `x_print-all` next to `printing-bootstrap` on <html>. The accumulator then
+ * replaces #mainContent in the printed output. Content rules above are scoped
+ * `:is(#mainContent, #printAllContent)` so the captured clones get the same
+ * print layout as a live page. Native Ctrl+P never carries `x_print-all`, so
+ * it keeps printing just the current page.
+ * =========================================================================== */
+html.printing-bootstrap.x_print-all #mainContent {
+    display: none !important;
+}
+html.printing-bootstrap.x_print-all #printAllContent {
+    display: block !important;
+    position: static !important;
+    overflow: visible !important;
+    opacity: 1 !important;
+    z-index: auto !important;
+}
+html.printing-bootstrap.x_print-all .x_printpage {
+    position: static !important;
+    width: auto !important;
+    opacity: 1 !important;
+    page-break-before: always;
+    break-before: page;
+}
+html.printing-bootstrap.x_print-all .x_printpage:first-child {
+    page-break-before: auto;
+    break-before: auto;
+}
+html.printing-bootstrap.x_print-all .x_printpage-header {
+    border-bottom: 1px solid #ccc;
+    margin: 0 0 1em 0;
+    padding-bottom: 0.25em;
 }

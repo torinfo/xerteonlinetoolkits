@@ -66,7 +66,10 @@ var __xotWarmupPromises = [];
 // background, so a subsequent print attempt will see them ready.
 function prepareMediaForPrint() {
 	buildAutocolumnsForPrint();
+	// Order matters: applyPrintColors early-returns once the stamp registry
+	// is non-empty, so it must run before the other stampers add records.
 	applyPrintColors();
+	applyPrintIconImages();
 	applyPrintBreakAvoidance();
 	const tasks = __mediaPrintTasks.splice(0, __mediaPrintTasks.length);
 	const wrapped = tasks.map(function (t) {
@@ -152,34 +155,16 @@ function applyPrintColors() {
 		const cs = window.getComputedStyle(this);
 		const bg = cs.backgroundColor;
 		const hasBg = bg && bg !== 'transparent' && bg !== 'rgba(0, 0, 0, 0)';
-		// Bootstrap 2 glyphicons are background-image sprites, so the print
-		// reset's `background: transparent` blanks them entirely — stamp the
-		// sprite image + offset back on, same as the colour stamps below.
-		const isSpriteIcon = this.matches('[class^="icon-"], [class*=" icon-"]') && cs.backgroundImage !== 'none';
-		if (!hasBg && !isSpriteIcon && cs.color === 'rgb(0, 0, 0)') {
+		if (!hasBg && cs.color === 'rgb(0, 0, 0)') {
 			return;
 		}
-		plans.push({
-			el: this,
-			color: cs.color,
-			bg: hasBg ? bg : null,
-			bgImg: isSpriteIcon ? cs.backgroundImage : null,
-			bgPos: isSpriteIcon ? cs.backgroundPosition : null,
-			style: this.getAttribute('style'),
-		});
+		plans.push({ el: this, color: cs.color, bg: hasBg ? bg : null, style: this.getAttribute('style') });
 	});
 	plans.forEach(function (p) {
 		__printColorStamped.push({ el: p.el, style: p.style });
 		p.el.style.setProperty('color', p.color, 'important');
 		if (p.bg !== null) {
 			p.el.style.setProperty('background-color', p.bg, 'important');
-		}
-		if (p.bgImg !== null) {
-			p.el.style.setProperty('background-image', p.bgImg, 'important');
-			p.el.style.setProperty('background-position', p.bgPos, 'important');
-			p.el.style.setProperty('background-repeat', 'no-repeat', 'important');
-		}
-		if (p.bg !== null || p.bgImg !== null) {
 			p.el.style.setProperty('-webkit-print-color-adjust', 'exact', 'important');
 			p.el.style.setProperty('print-color-adjust', 'exact', 'important');
 		}
@@ -195,6 +180,50 @@ function revertPrintColors() {
 		}
 	});
 	__printColorStamped = [];
+	// Scoped to the live page: replicas inside #printAllContent keep theirs.
+	$('#mainContent .x_print-icon-img').remove();
+}
+
+// Bootstrap 2 glyphicons are background-image sprites; the bootstrap.css
+// print reset blanks background images and Safari refuses to print them even
+// when stamped inline with print-color-adjust. Swap each icon for a real
+// cropped <img> of the sprite — every browser prints real images. The live
+// icon is hidden inline (recorded for revert) and revertPrintColors removes
+// the injected replicas again.
+function applyPrintIconImages() {
+	$('#mainContent').find('[class^="icon-"], [class*=" icon-"]').each(function () {
+		const cs = window.getComputedStyle(this);
+		const match = /url\(["']?([^"')]+)["']?\)/.exec(cs.backgroundImage);
+		if (!match || $(this).next('.x_print-icon-img').length) {
+			return;
+		}
+		const pos = cs.backgroundPosition.split(' ');
+		const img = $('<img/>', { src: match[1], alt: '' })[0];
+		// !important needed: print.css forces max-width 100% on content
+		// images, which would shrink the whole sprite into the 14px window.
+		img.style.setProperty('max-width', 'none', 'important');
+		img.style.setProperty('height', 'auto', 'important');
+		img.style.setProperty('margin-left', pos[0] || '0px');
+		img.style.setProperty('margin-top', pos[1] || '0px');
+		const $replica = $('<span class="x_print-icon-img" aria-hidden="true"></span>')
+			.css({
+				display: 'inline-block',
+				width: cs.width,
+				height: cs.height,
+				overflow: 'hidden',
+				'vertical-align': 'text-top',
+			})
+			.append(img);
+		// applyPrintColors may already hold this element's original style —
+		// a second record would re-apply its stamps during revert.
+		const el = this;
+		const recorded = __printColorStamped.some(function (rec) { return rec.el === el; });
+		if (!recorded) {
+			__printColorStamped.push({ el: el, style: el.getAttribute('style') });
+		}
+		el.style.setProperty('display', 'none', 'important');
+		$(el).after($replica);
+	});
 }
 
 // Chart libraries (e.g. Google Charts) paint into absolutely-positioned divs
@@ -306,6 +335,165 @@ function whenXotWarmupSettled() {
 		return Promise.resolve();
 	}
 	return Promise.all(__xotWarmupPromises).then(function () {}, function () {});
+}
+
+// --- Print all pages --------------------------------------------------------
+// The toolbar print button prints the whole project, not just the current
+// page: every page in validPages is rendered in turn through the normal
+// navigation path, given its print stamps, and cloned into the off-screen
+// #printAllContent accumulator, which print.css swaps in for #mainContent
+// under html.x_print-all. Native Ctrl+P stays single-page — pages can't be
+// rendered asynchronously from inside beforeprint.
+
+// Clone the freshly rendered + stamped current page into a print replica.
+function buildPrintPageReplica() {
+	const $wrap = $('<div class="x_printpage"></div>');
+	// Reuse the rendered title/subtitle rather than rebuilding from XML.
+	const $header = $('<div class="x_printpage-header"></div>')
+		.append($('#pageTitle').clone().removeAttr('id aria-live'))
+		.append($('#pageSubTitle').clone().removeAttr('id aria-live'));
+	const $content = $('#mainContent').children().clone();
+	$wrap.append($header).append($content);
+	// jQuery re-executes script elements on append — authored page scripts
+	// must not run a second time against the live document.
+	$wrap.find('script').remove();
+	// Live players and video/pdf embeds don't survive cloning — jQuery .data()
+	// (e.g. vidHolder's iframeRatio) is lost, so global helpers like
+	// updateContent and the resizeEnd handler would throw when they sweep
+	// `$('.vidHolder iframe')` and hit a clone. print.css hides these live
+	// trees in print anyway in favour of their *-print-fallback siblings.
+	$wrap.find('.mejs-container, audio, video, .vidHolder, .x_videoContainer, object[type="application/pdf"]').remove();
+	// Google Maps embeds gate their tile rendering on occlusion-aware
+	// visibility detection, so a reloaded clone in the hidden accumulator
+	// never draws and prints as a blank box — print a link box instead
+	// (anchors stay clickable in PDFs saved from the print dialog).
+	$wrap.find('iframe[src*="google.com/maps"]').each(function () {
+		const url = validateUrl(this.src);
+		const $box = $('<div/>', { 'class': 'map-print-fallback', 'aria-hidden': 'true' });
+		$box.append(document.createTextNode('Interactive map — '));
+		if (url !== null) {
+			$box.append($('<a/>', { href: url.toString(), rel: 'noopener noreferrer' }).text('open this map in Google Maps'));
+		} else {
+			$box.append(document.createTextNode('view online'));
+		}
+		const $container = $(this).closest('.embed-container');
+		($container.length ? $container : $(this)).replaceWith($box);
+	});
+	// clone() doesn't copy canvas bitmaps — repaint them from the originals
+	// (clone strips no canvases, so live and cloned lists line up by index).
+	const liveCanvases = $('#mainContent').find('canvas');
+	$wrap.find('canvas').each(function (i) {
+		const src = liveCanvases[i];
+		if (src && src.width > 0 && src.height > 0) {
+			try { this.getContext('2d').drawImage(src, 0, 0); } catch (e) {}
+		}
+	});
+	return $wrap;
+}
+
+// Cloned iframes always reload their src once appended. Listeners attach in
+// the same tick as the append — before any load event can fire — and every
+// frame carries its own cap, so frames that finished early never force a
+// full-length wait at print time. Never rejects.
+var __printReplicaFramePromises = [];
+
+function trackPrintReplicaFrames($replica) {
+	$replica.find('iframe').each(function () {
+		const frame = this;
+		__printReplicaFramePromises.push(new Promise(function (resolve) {
+			frame.addEventListener('load', function () {
+				// Let the embedded document lay out and finish its fade-in
+				// (XOT players fade content in after load) before printing.
+				setTimeout(resolve, 2000);
+			}, { once: true });
+			// Hard cap so a dead embed can't hold the print dialog hostage.
+			setTimeout(resolve, 8000);
+		}));
+	});
+}
+
+function whenPrintReplicaFramesLoaded() {
+	return Promise.all(__printReplicaFramePromises).then(function () {}, function () {});
+}
+
+
+function captureAllPagesForPrint() {
+	const originalPage = currentPage;
+	const originalScroll = $(window).scrollTop();
+	$('#printAllContent').remove();
+	__printReplicaFramePromises = [];
+	const $accumulator = $('<div id="printAllContent" aria-hidden="true"></div>').appendTo('#aboveFooter');
+	// Force panes open on the live page while capturing (see custom.css) so
+	// stamping reads real computed styles and embeds in inactive panes render
+	// before they're cloned.
+	document.documentElement.classList.add('x_print-capture');
+
+	const capturePage = function (pageIndex) {
+		return new Promise(function (resolve) {
+			parseContent({ type: 'index', id: pageIndex }, undefined, undefined, false);
+			// Order matters: authored async (Google Charts callbacks, MathJax)
+			// must finish BEFORE prepareMediaForPrint stamps the page — chart
+			// widgets that draw after the break-avoidance scan would be cloned
+			// unstamped and overlap again in print. So: wait for warm-ups and
+			// a settle first, stamp right before cloning.
+			setTimeout(function () {
+				whenXotWarmupSettled().then(function () {
+					setTimeout(function () {
+						// The user can still navigate while the capture runs;
+						// skip the clone rather than capture the wrong page.
+						if (currentPage !== pageIndex) {
+							resolve();
+							return;
+						}
+						prepareMediaForPrint().then(function () {
+							if (currentPage !== pageIndex) {
+								resolve();
+								return;
+							}
+							// Append immediately so cloned iframes start
+							// reloading while later pages are still captured.
+							const $replica = buildPrintPageReplica();
+							$accumulator.append($replica);
+							trackPrintReplicaFrames($replica);
+							// The clone keeps its stamped inline styles;
+							// reverting only the live page clears the registry
+							// so the next page's applyPrintColors doesn't
+							// early-return.
+							revertPrintColors();
+							resolve();
+						});
+					}, 800);
+				});
+			}, 0);
+		});
+	};
+
+	let chain = Promise.resolve();
+	validPages.forEach(function (pageIndex) {
+		const page = $(data).find('page').eq(pageIndex);
+		// Pages behind an access code that hasn't been entered would only
+		// capture the password prompt — leave them out entirely.
+		const locked = $.trim(page.attr('password') || '').length > 0 && page.attr('passwordPass') != 'true';
+		if (locked) {
+			return;
+		}
+		chain = chain.then(function () { return capturePage(pageIndex); }).catch(function (e) {
+			// One bad page must not hang the whole print — log and move on,
+			// it just won't appear in the printout.
+			console.log('print: failed to capture page ' + (pageIndex + 1), e);
+		});
+	});
+
+	return chain.then(function () {
+		// Drop the forced-open panes before the original page re-renders so
+		// the user gets their normal view back.
+		document.documentElement.classList.remove('x_print-capture');
+		if (currentPage !== originalPage) {
+			parseContent({ type: 'index', id: originalPage }, undefined, undefined, false);
+		}
+		$(window).scrollTop(originalScroll);
+		return whenPrintReplicaFramesLoaded();
+	});
 }
 
 // Validate a URL and return its absolute form, or null if it fails the scheme
@@ -1377,8 +1565,11 @@ function setup() {
 			prepareMediaForPrint();
 		});
 		window.addEventListener('afterprint', function () {
-			document.documentElement.classList.remove('printing-bootstrap');
+			document.documentElement.classList.remove('printing-bootstrap', 'x_print-all', 'x_print-capture');
 			revertPrintColors();
+			// Drop the print-all accumulator; a repeat print re-captures so
+			// the content is always current.
+			$('#printAllContent').remove();
 		});
 	}
 
@@ -1405,18 +1596,28 @@ function setup() {
 					$icon.removeClass('fa-spinner fa-spin').addClass('fa-print');
 					$icon.data('printing', false);
 				};
-				// Add the class up-front in case the browser doesn't fire
-				// beforeprint synchronously (Safari historically lazy).
-				// Schedule a 30s removal as a defensive fallback if afterprint
-				// never fires — class is gated behind @media print so a
-				// lingering class is harmless.
-				document.documentElement.classList.add('printing-bootstrap');
-				setTimeout(function () {
-					document.documentElement.classList.remove('printing-bootstrap');
-					revertPrintColors();
-				}, 30000);
-				// Wait for embed warm-up + media prep before opening the dialog (both self-capped).
-				Promise.all([whenXotWarmupSettled(), prepareMediaForPrint()]).then(function () {
+				// Capture every project page into #printAllContent; fall back
+				// to single-page printing when the current page sits outside
+				// validPages (e.g. a standalone page).
+				const printAll = $.inArray(currentPage, validPages) > -1;
+				const prepared = printAll
+					? captureAllPagesForPrint()
+					: Promise.all([whenXotWarmupSettled(), prepareMediaForPrint()]);
+				prepared.then(function () {
+					// Add the classes up-front in case the browser doesn't fire
+					// beforeprint synchronously (Safari historically lazy).
+					document.documentElement.classList.add('printing-bootstrap');
+					if (printAll) {
+						document.documentElement.classList.add('x_print-all');
+					}
+					// Defensive fallback if afterprint never fires — the
+					// classes are gated behind @media print so lingering is
+					// harmless, and a missing accumulator remove is a no-op.
+					setTimeout(function () {
+						document.documentElement.classList.remove('printing-bootstrap', 'x_print-all', 'x_print-capture');
+						revertPrintColors();
+						$('#printAllContent').remove();
+					}, 30000);
 					restoreIcon();
 					// Paint the restored icon before the blocking print dialog opens.
 					requestAnimationFrame(function () {
