@@ -3355,6 +3355,9 @@ var EDITOR = (function ($, parent) {
         var $label = $nameRow.find('td.wizardlabel').first();
         var $input = $nameRow.find('.wizardvalue_inner .inlinewysiwyg p').first();
         if (!$input.length) {
+            $input = $nameRow.find('.wizardvalue_inner .ck-editor__editable_inline').first();
+        }
+        if (!$input.length) {
             $input = $nameRow.find('.wizardvalue_inner .inlinewysiwyg, .wizardvalue_inner input, .wizardvalue_inner textarea, .wizardvalue_inner select').first();
         }
         if (!$label.length || !$input.length) {

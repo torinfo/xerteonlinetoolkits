@@ -189,6 +189,11 @@ var EDITOR = (function ($, parent) {
 			$("#mainPanel .ui-jqgrid").show();
 			$("#mainPanel .ui-jqgrid table").jqGrid("setGridWidth", newWidth, true);
 		}
+
+		// resize inline Quick Fill panel to match name field width
+		if (parent.toolbox && parent.toolbox.sizeInlineQFPanel && $('#mainPanel .qf-inline-row').length) {
+			parent.toolbox.sizeInlineQFPanel($('#mainPanel .qf-inline-row'));
+		}
     }
     // Create the layout once the document has finished loading
     //$(document).ready(setup);

@@ -4,7 +4,7 @@
  * @license Apache-2.0
  */
 import { Plugin } from '@ckeditor/ckeditor5-core';
-import { ButtonView } from '@ckeditor/ckeditor5-ui';
+import { ButtonView, MenuBarMenuListItemButtonView } from '@ckeditor/ckeditor5-ui';
 import { IconLink } from 'ckeditor5/src/icons.js';
 
 function escapeHtml( value ) {
@@ -203,6 +203,58 @@ function choosePageFromModal( pages ) {
 	} );
 }
 
+export async function runXertePageLink( editor ) {
+	const pages = normalizePageItems( getPageItems() );
+	const pageId = await choosePageFromModal( pages );
+	if ( !pageId ) {
+		return;
+	}
+	const trimmedId = String( pageId ).trim();
+	if ( !trimmedId ) {
+		return;
+	}
+
+	const selection = editor.model.document.selection;
+	const selectedContent = editor.model.getSelectedContent( selection );
+	const selectedView = editor.data.toView( selectedContent );
+	const selectedHtml = editor.data.processor.toData( selectedView ).trim();
+
+	let linkBody = selectedHtml;
+	if ( !linkBody ) {
+		const matchedPage = pages.find( page => page.id === trimmedId );
+		linkBody = escapeHtml( matchedPage ? matchedPage.label : trimmedId );
+	}
+
+	const linkHtml = `<a href="#" onclick="x_navigateToPage(false,{type:'linkID',ID:'${ escapeHtml( trimmedId ) }'}); return false;">${ linkBody }</a>`;
+	editor.model.change( () => {
+		const viewFragment = editor.data.processor.toView( linkHtml );
+		const modelFragment = editor.data.toModel( viewFragment );
+		editor.model.insertContent( modelFragment, selection );
+	} );
+}
+
+function createXertePageLinkButton( editor, ButtonClass, locale ) {
+	const view = new ButtonClass( locale );
+	const buttonProps = {
+		label: 'Xerte Page Link',
+		icon: IconLink
+	};
+
+	if ( ButtonClass === ButtonView ) {
+		buttonProps.tooltip = true;
+	} else {
+		buttonProps.role = 'menuitem';
+	}
+
+	view.set( buttonProps );
+
+	view.on( 'execute', () => {
+		runXertePageLink( editor );
+	} );
+
+	return view;
+}
+
 export class XertePageLink extends Plugin {
 	static get pluginName() {
 		return 'XertePageLink';
@@ -210,45 +262,14 @@ export class XertePageLink extends Plugin {
 
 	init() {
 		const editor = this.editor;
+
 		editor.ui.componentFactory.add( 'xotlink', locale => {
-			const view = new ButtonView( locale );
-			view.set( {
-				label: 'Xerte Page Link',
-				icon: IconLink,
-				tooltip: true
-			} );
+			return createXertePageLinkButton( editor, ButtonView, locale );
+		} );
 
-			view.on( 'execute', async () => {
-				const pages = normalizePageItems( getPageItems() );
-				const pageId = await choosePageFromModal( pages );
-				if ( !pageId ) {
-					return;
-				}
-				const trimmedId = String( pageId ).trim();
-				if ( !trimmedId ) {
-					return;
-				}
-
-				const selection = editor.model.document.selection;
-				const selectedContent = editor.model.getSelectedContent( selection );
-				const selectedView = editor.data.toView( selectedContent );
-				const selectedHtml = editor.data.processor.toData( selectedView ).trim();
-
-				let linkBody = selectedHtml;
-				if ( !linkBody ) {
-					const matchedPage = pages.find( page => page.id === trimmedId );
-					linkBody = escapeHtml( matchedPage ? matchedPage.label : trimmedId );
-				}
-
-				const linkHtml = `<a href="#" onclick="x_navigateToPage(false,{type:'linkID',ID:'${ escapeHtml( trimmedId ) }'}); return false;">${ linkBody }</a>`;
-				editor.model.change( () => {
-					const viewFragment = editor.data.processor.toView( linkHtml );
-					const modelFragment = editor.data.toModel( viewFragment );
-					editor.model.insertContent( modelFragment, selection );
-				} );
-			} );
-
-			return view;
+		// Insert > Link in the menu bar should open the Xerte page picker, not CK5's link form.
+		editor.ui.componentFactory.add( 'menuBar:link', locale => {
+			return createXertePageLinkButton( editor, MenuBarMenuListItemButtonView, locale );
 		} );
 	}
 }

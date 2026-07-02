@@ -48,6 +48,7 @@ import { XerteBrowseMedia } from './plugins/xerte-browse-media.js';
 import { XerteMathJaxSnippet } from './plugins/xerte-mathjax-snippet.js';
 import { XertePageLink } from './plugins/xerte-page-link.js';
 import { XerteMarkWord } from './plugins/xerte-mark-word.js';
+import { XerteContextMenu } from './plugins/xerte-context-menu.js';
 
 const toolbarItems = [
 	'undo', 'redo', '|',
@@ -141,7 +142,8 @@ const xerteBuiltinPlugins = [
 	XerteBrowseMedia,
 	XerteMathJaxSnippet,
 	XertePageLink,
-	XerteMarkWord
+	XerteMarkWord,
+	XerteContextMenu
 ];
 
 const xerteDefaultConfig = {
