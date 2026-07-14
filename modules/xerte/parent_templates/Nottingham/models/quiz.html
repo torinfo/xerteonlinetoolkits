@@ -92,6 +92,7 @@
 
 		this.startQs = function() {
 			$("#feedbackGroup").find('.feedbackBlock').html("");
+			$(".correctFeedback, .incorrectFeedback").removeClass("correctFeedback incorrectFeedback");
 			$("#optionHolder").removeClass("hidden");
 			$("#checkBtn, #nextBtn, #restartBtn").button("disable");
 			
@@ -204,10 +205,11 @@
 
 				var $thisQ = $(x_currentPageXML).children()[this.questions[this.currentQ]];
 
-
 				// if language attributes aren't in xml will have to use english fall back
-				const qNoTxt = x_currentPageXML.getAttribute("quesCount") == undefined ? "Question {i} of {n}" : x_currentPageXML.getAttribute("quesCount");
-				$("#qNo").html(qNoTxt.replace("{i}", this.currentQ + 1).replace("{n}", this.questions.length));
+				if ($("#qNo").length > 0) {
+					const qNoTxt = x_currentPageXML.getAttribute("quesCount") == undefined ? "Question {i} of {n}" : x_currentPageXML.getAttribute("quesCount");
+					$("#qNo").html(qNoTxt.replace("{i}", this.currentQ + 1).replace("{n}", this.questions.length));
+				}
 
 				var infoString = $thisQ.getAttribute("prompt");
 				
@@ -283,6 +285,7 @@
 								.change(function() {
 									const $selected = $("#optionHolder input:checked");
 									$("#feedbackGroup").find('.feedbackBlock').html("");
+									$(".correctFeedback, .incorrectFeedback").removeClass("correctFeedback incorrectFeedback");
 									$("#nextBtn").button("disable");
 
 									if (!$thisOptionGroup.hasClass("answerBtn")) {
@@ -334,7 +337,9 @@
 						});
 
 					quiz.checked = false;
-					$('#qNo').attr('tabIndex', "-1").focus();
+					if ($("#qNo").length > 0) {
+						$('#qNo').attr('tabIndex', "-1").focus();
+					}
 				}
 			}
 		}
@@ -428,14 +433,18 @@
 					// add correct feedback depending on if question overall has been answered correctly or not
 					if (currentQuestion.getAttribute("type") == "Multiple Answer") {
 						if (correct == true) {
+							$("#feedbackGroup").addClass("correctFeedback");
 							rightWrongTxt = '<p>' + $("#pageContents").data("multiRight") + '</p>';
 						} else {
+							$("#feedbackGroup").addClass("incorrectFeedback");
 							rightWrongTxt = '<p>' + $("#pageContents").data("multiWrong") + '</p>';
 						}
 					} else {
 						if (correct == true) {
+							$("#feedbackGroup").addClass("correctFeedback");
 							rightWrongTxt = '<p>' + $("#pageContents").data("singleRight") + '</p>';
 						} else {
+							$("#feedbackGroup").addClass("incorrectFeedback");
 							rightWrongTxt = '<p>' + $("#pageContents").data("singleWrong") + '</p>';
 						}
 					}
@@ -446,6 +455,8 @@
 
 				feedbackOrder = [...feedbackOrder];
 
+				// show the feedback in the order specified
+				// feedback will include correctFeedback / incorrectFeedback classes that can be used in themes to style feedback differently
 				const showfeedback = x_currentPageXML.getAttribute("showfeedback") != undefined ? x_currentPageXML.getAttribute("showfeedback") == "true" : true;
 				if (showfeedback) {
 					if (thisQ.getAttribute("type") != "Multiple Answer") {
@@ -460,31 +471,34 @@
 									if (selectedOption.audioFB != undefined && selectedOption.audioFB != "") {
 										thisFeedback += '<div class="audioHolder" data-audio="' + selectedOption.audioFB + '" data-transcript="' + selectedOption.transcript + '"></div>';
 									}
+									if (x_currentPageXML.getAttribute("judge") != "false" && thisFeedback != "") {
+										thisFeedback = '<div class="' + (selectedOption.correct == 'true' ? 'correct' : 'incorrect') + 'Feedback">' + thisFeedback + '</div>';
+									}
 								}
 							} else {
 								thisFeedback = rightWrongTxt;
 							}
 
-						// to avoid a sudden jump in layout, feedback should slide in gradually if content is centred vertically & panel is full height
-						if ($("#pageContents").data("slideIn")) {
-							$('#' + feedbackDiv[i] + 'Feedback')
-									.hide()
-									.html(thisFeedback)
-									.slideDown();
-						} else {
-							$('#' + feedbackDiv[i] + 'Feedback')
-									.show()
-									.html(thisFeedback);
+							// to avoid a sudden jump in layout, feedback should slide in gradually if content is centred vertically & panel is full height
+							if ($("#pageContents").data("slideIn")) {
+								$('#' + feedbackDiv[i] + 'Feedback')
+										.hide()
+										.html(thisFeedback)
+										.slideDown();
+							} else {
+								$('#' + feedbackDiv[i] + 'Feedback')
+										.show()
+										.html(thisFeedback);
+							}
 						}
-					}
 
 						var feedbackLabel = x_currentPageXML.getAttribute("feedbackLabel");
 						if (feedbackLabel == undefined) {
 							feedbackLabel = "Feedback";
 						}
 						$("#feedbackHeader").html(feedbackLabel != '' ? "<h3>" + feedbackLabel + "</h3>" : '');
-					} else {
 
+					} else {
 						for (var p = 0; p < feedbackDiv.length; p++) {
 							var thisFeedback;
 							if (feedbackOrder[p] == 'G') {
@@ -501,11 +515,15 @@
 								for (var l = 0; l < multipleFeedback.length; l++) {
 									for (var j = 0; j < thisQ.children.length; j++) {
 										if (multipleFeedback[l] === thisQ.children[j].attributes.text.value) {
-											feedback += thisQ.children[j].attributes.feedback.value;
+											let thisFeedback = thisQ.children[j].attributes.feedback.value;
 											if (thisQ.children[j].attributes.audioFB != undefined && thisQ.children[j].attributes.audioFB.value != undefined && thisQ.children[j].attributes.audioFB.value != "") {
 												var transcriptInfo = thisQ.children[j].attributes.audioTranscript != undefined ? 'data-transcript="' + thisQ.children[j].attributes.audioTranscript.value + '"' : '';
-												feedback += '<div class="audioHolder" data-audio="' + thisQ.children[j].attributes.audioFB.value + '" ' + transcriptInfo + '></div>';
+												thisFeedback += '<div class="audioHolder" data-audio="' + thisQ.children[j].attributes.audioFB.value + '" ' + transcriptInfo + '></div>';
 											}
+											if (x_currentPageXML.getAttribute("judge") != "false" && thisFeedback != "") {
+												thisFeedback = '<div class="' + (thisQ.children[j].attributes.correct.value == 'true' ? 'correct' : 'incorrect')  + 'Feedback">' + thisFeedback + '</div>';
+											}
+											feedback += thisFeedback;
 										}
 									}
 								}
@@ -756,6 +774,7 @@
 				.click(function() {
 					$(this).button("disable");
 					$("#feedbackGroup").find('.feedbackBlock').html("");
+					$(".correctFeedback, .incorrectFeedback").removeClass("correctFeedback incorrectFeedback");
 
 					quiz.nextQuestion();
 
@@ -769,6 +788,11 @@
 				.click(function() {
 					quiz.startQs();
 				});
+
+			// remove qNoTxt if no string to put in it
+			if (x_currentPageXML.getAttribute("quesCount") === "") {
+				$("#qNo").remove();
+			}
 
 			this.startQs();
 			this.sizeChanged();

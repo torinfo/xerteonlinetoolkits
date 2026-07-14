@@ -120,6 +120,16 @@ function sanitizeName($cmd, $result, $args, $elfinder)
     return true;
 }
 
+function preventPathTraversal($name)
+{
+    global $rootpath;
+    if (strpos(urldecode($name), '..') !== false) {
+        return false;
+    }
+    x_check_path_traversal_newpath($rootpath . 'media/' . $name, $rootpath, "Invalid file name", "file");
+    return true;
+}
+
 // Documentation for connector options:
 // https://github.com/Studio-42/elFinder/wiki/Connector-configuration-options
 $opts = array(

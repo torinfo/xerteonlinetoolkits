@@ -224,13 +224,14 @@ function _do_cleanup()
         'LTI/*',
         'play_html5.php',
         'play_site.php',
-        'setup/xampp.php',
-        'setup/xampp.txt',
-        'setup/xampp_database.txt',
         'rloObject.js',
         'package.json',
         'package-lock.json',
         'modules/xerte/parent_templates/Nottingham/common/js/jsPDF/jspdf.min.js',
+        'webctlink.php',
+        'setup/*',
+        'modules/xerte/parent_templates/Nottingham/common_html5/',
+        'modules/xerte/parent_templates/Nottingham/models_html5/'
     );
 
     foreach ($filelist as $file)
@@ -1658,6 +1659,9 @@ function upgrade_52()
             return "Adding new extensions to the blacklisted extensions - ok ? false";
         }
     }
+    else{
+        return "Adding new extensions to the blacklisted extensions - NO PREVIOUS EXTENSIONS FOUND!";
+    }
 }
 
 function upgrade_53()
@@ -1786,3 +1790,4 @@ function upgrade_56(){
         return "Logindetails preference field already exists - ok ? true". "<br>";
     }
 }
+
