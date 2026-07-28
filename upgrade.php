@@ -1853,3 +1853,19 @@ function upgrade_58()
 
     return $message;
 }
+
+function upgrade_59()
+{
+    $table = table_by_key("management_helper");
+
+    $ok = db_query("
+        INSERT INTO $table
+            (`vendor`, `label`, `type`, `needs_key`, `enabled`, `sub_options`, `preferred_model`)
+        VALUES
+            ('gemini', 'Gemini (Google)', 'ai', 1, 0, '{}', 'gemini-3.6-flash')
+    ");
+
+    $message = "Adding Gemini to management_helper - ok ? " . ($ok ? 'true' : 'false') . "<br>";
+
+    return $message;
+}

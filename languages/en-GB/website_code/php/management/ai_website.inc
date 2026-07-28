@@ -16,6 +16,7 @@
     define("MANAGEMENT_VENDOR_AI_OPENAI", "OpenAI");
     define("MANAGEMENT_VENDOR_AI_MISTRAL", "Mistral");
     define("MANAGEMENT_VENDOR_AI_ANTHROPIC", "Anthropic");
+    define("MANAGEMENT_VENDOR_AI_GEMINI", "Gemini");
     define("MANAGEMENT_VENDOR_ENCODING_OPENAIENC", "OpenAI");
     define("MANAGEMENT_VENDOR_ENCODING_MISTRALENC", "Mistral");
     define("MANAGEMENT_VENDOR_IMAGE_PEXELS", "Pexels");

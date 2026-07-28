@@ -28,7 +28,7 @@ require_once(dirname(__FILE__) . "/" . "BaseApi.php");
 require_once(dirname(__FILE__) . "/Apis/" . $api ."Api.php");
 
 //get the user-set preferred model for text generation, if any
-$providerPreferredModel = $managementSettings['ai']['preferred_model'];
+$providerPreferredModel = $managementSettings['ai']['active_vendors'][$textApi]['preferred_model'];
 
 //dynamically initiate correct api class
 $api_type = $api . 'Api';

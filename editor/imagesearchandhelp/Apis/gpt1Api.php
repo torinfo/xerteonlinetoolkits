@@ -19,7 +19,7 @@ class gpt1Api extends openaiImageApi
             ];
             $res = $this->postImagesGenerations($payload);
             $details = [
-            'imagemodel'      => $this->imageModel, // model name for logs
+            'imagemodel'      => $settings['imgmodelver'] ?? $this->imageModel, // model name for logs
             'imagesrequested' => 1,                // always defaults to 1 for gpt1
             'imagesize'       => $size,             // e.g. "1024x1024" (mapper will parse width/height)
                 ];
