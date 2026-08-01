@@ -329,6 +329,44 @@ function echo_toolkits_theme_shell_script($version = '') {
 }
 
 /**
+ * Optional LO editor theme assets (only when theme/{name}/editor.css or editor-pages.js exist).
+ * Nottingham has none — classic editor unchanged.
+ */
+function echo_toolkits_theme_editor_assets($version = '') {
+    $theme = get_toolkits_ui_theme();
+    $root = dirname(__FILE__) . DIRECTORY_SEPARATOR;
+    $query = $version !== '' ? '?version=' . rawurlencode($version) : '';
+
+    $cssRel = 'theme/' . $theme . '/editor.css';
+    if (file_exists($root . str_replace('/', DIRECTORY_SEPARATOR, $cssRel))) {
+        $href = htmlspecialchars(toolkits_theme_asset_url('editor.css' . $query), ENT_QUOTES, 'UTF-8');
+        echo '<link rel="stylesheet" type="text/css" href="' . $href . '"/>' . "\n";
+    }
+
+    $jsRel = 'theme/' . $theme . '/editor-pages.js';
+    if (file_exists($root . str_replace('/', DIRECTORY_SEPARATOR, $jsRel))) {
+        // Loaded after tree.js from edithtml — this helper only used for the link when called late.
+        $src = htmlspecialchars(toolkits_theme_asset_url('editor-pages.js' . $query), ENT_QUOTES, 'UTF-8');
+        echo '<script type="text/javascript" src="' . $src . '"></script>' . "\n";
+    }
+}
+
+/**
+ * Body class list for the LO editor (elevated rights + toolkits UI theme).
+ *
+ * @param bool $elevated
+ * @return string attribute including leading space, or empty string
+ */
+function toolkits_editor_body_class_attr($elevated = false) {
+    $classes = array();
+    if ($elevated) {
+        $classes[] = 'elevated';
+    }
+    $classes[] = toolkits_ui_theme_body_class();
+    return ' class="' . htmlspecialchars(implode(' ', $classes), ENT_QUOTES, 'UTF-8') . '"';
+}
+
+/**
  * Data passed to theme shell scripts (nottingham.js / modern.js) on index.php.
  *
  * @param object $authmech
@@ -398,9 +436,18 @@ function build_toolkits_index_page_config($authmech) {
         'xapiPrint' => INDEX_XAPI_DASHBOARD_PRINT,
         'logoAlt' => INDEX_LOGO_ALT,
         'changePassword' => INDEX_CHANGE_PASSWORD,
+        'modernPreferences' => defined('INDEX_MODERN_PREFERENCES') ? INDEX_MODERN_PREFERENCES : 'Preferences',
         'modernSettings' => defined('INDEX_MODERN_SETTINGS') ? INDEX_MODERN_SETTINGS : INDEX_SETTINGS_BUTTON,
         'modernMyDetails' => defined('INDEX_MODERN_USER_MENU_MY_DETAILS') ? INDEX_MODERN_USER_MENU_MY_DETAILS : 'My details',
         'modernFeedback' => defined('INDEX_MODERN_USER_MENU_FEEDBACK') ? INDEX_MODERN_USER_MENU_FEEDBACK : 'Give feedback',
+        'modernFeedbackDesc' => defined('INDEX_MODERN_FEEDBACK_DESC') ? INDEX_MODERN_FEEDBACK_DESC : 'Share your thoughts about Xerte. Feedback is anonymous unless you leave your name or contact details.',
+        'modernFeedbackName' => defined('INDEX_MODERN_FEEDBACK_NAME') ? INDEX_MODERN_FEEDBACK_NAME : 'Name (optional)',
+        'modernFeedbackMessage' => defined('INDEX_MODERN_FEEDBACK_MESSAGE') ? INDEX_MODERN_FEEDBACK_MESSAGE : 'Your feedback',
+        'modernFeedbackSend' => defined('INDEX_MODERN_FEEDBACK_SEND') ? INDEX_MODERN_FEEDBACK_SEND : 'Send feedback',
+        'modernFeedbackThanks' => defined('INDEX_MODERN_FEEDBACK_THANKS') ? INDEX_MODERN_FEEDBACK_THANKS : 'Thank you for your feedback.',
+        'modernFeedbackError' => defined('INDEX_MODERN_FEEDBACK_ERROR') ? INDEX_MODERN_FEEDBACK_ERROR : 'Could not send feedback. Please try again.',
+        'modernDetailsLoading' => defined('INDEX_MODERN_DETAILS_LOADING') ? INDEX_MODERN_DETAILS_LOADING : 'Loading details…',
+        'modernDetailsError' => defined('INDEX_MODERN_DETAILS_ERROR') ? INDEX_MODERN_DETAILS_ERROR : 'Could not load your details. Please try again.',
         'toManagement' => INDEX_TO_MANAGEMENT,
         'logout' => INDEX_BUTTON_LOGOUT,
         'details' => INDEX_DETAILS,
@@ -507,6 +554,61 @@ function build_toolkits_index_page_config($authmech) {
         'modernPublishedEmptyDesc' => defined('INDEX_MODERN_PUBLISHED_EMPTY_DESC') ? INDEX_MODERN_PUBLISHED_EMPTY_DESC : 'Published learning objects appear here',
         'modernTrashEmptyTitle' => defined('INDEX_MODERN_TRASH_EMPTY_TITLE') ? INDEX_MODERN_TRASH_EMPTY_TITLE : 'Your trash is empty',
         'modernTrashEmptyDesc' => defined('INDEX_MODERN_TRASH_EMPTY_DESC') ? INDEX_MODERN_TRASH_EMPTY_DESC : 'Deleted learning objects appear here',
+        'modernFolderCount' => defined('INDEX_MODERN_FOLDER_COUNT') ? INDEX_MODERN_FOLDER_COUNT : '%s learning objects',
+        'modernFolderEmptyTitle' => defined('INDEX_MODERN_FOLDER_EMPTY_TITLE') ? INDEX_MODERN_FOLDER_EMPTY_TITLE : 'This folder is empty',
+        'modernFolderEmptyDesc' => defined('INDEX_MODERN_FOLDER_EMPTY_DESC') ? INDEX_MODERN_FOLDER_EMPTY_DESC : 'Learning objects and folders appear here',
+        'modernFolderMenuOpen' => defined('INDEX_MODERN_FOLDER_MENU_OPEN') ? INDEX_MODERN_FOLDER_MENU_OPEN : 'Open',
+        'modernFolderMenuNew' => defined('INDEX_MODERN_FOLDER_MENU_NEW') ? INDEX_MODERN_FOLDER_MENU_NEW : INDEX_BUTTON_NEWFOLDER,
+        'modernFolderDetailId' => defined('INDEX_MODERN_FOLDER_DETAIL_ID') ? INDEX_MODERN_FOLDER_DETAIL_ID : 'ID',
+        'modernFolderDetailCreated' => defined('INDEX_MODERN_FOLDER_DETAIL_CREATED') ? INDEX_MODERN_FOLDER_DETAIL_CREATED : 'Created',
+        'modernFolderDetailModified' => defined('INDEX_MODERN_FOLDER_DETAIL_MODIFIED') ? INDEX_MODERN_FOLDER_DETAIL_MODIFIED : 'Modified',
+        'modernFolderDetailRights' => defined('INDEX_MODERN_FOLDER_DETAIL_RIGHTS') ? INDEX_MODERN_FOLDER_DETAIL_RIGHTS : 'Your rights',
+        'modernFolderDetailCount' => defined('INDEX_MODERN_FOLDER_DETAIL_COUNT') ? INDEX_MODERN_FOLDER_DETAIL_COUNT : 'Learning objects',
+        'modernFolderTypeLabel' => defined('INDEX_MODERN_FOLDER_TYPE_LABEL') ? INDEX_MODERN_FOLDER_TYPE_LABEL : 'Folder',
+        'modernFolderOpenBtn' => defined('INDEX_MODERN_FOLDER_OPEN_BTN') ? INDEX_MODERN_FOLDER_OPEN_BTN : 'Open folder',
+        'modernFolderPropertiesTitle' => defined('INDEX_MODERN_FOLDER_PROPERTIES_TITLE') ? INDEX_MODERN_FOLDER_PROPERTIES_TITLE : 'Folder properties',
+        'modernAccessFilterAll' => defined('INDEX_MODERN_ACCESS_FILTER_ALL') ? INDEX_MODERN_ACCESS_FILTER_ALL : 'All',
+        'modernNewFolder' => defined('INDEX_MODERN_NEW_FOLDER') ? INDEX_MODERN_NEW_FOLDER : INDEX_BUTTON_NEWFOLDER,
+        'modernImport' => defined('INDEX_MODERN_IMPORT') ? INDEX_MODERN_IMPORT : (defined('WORKSPACE_PROPERTIES_TAB_IMPORT') ? WORKSPACE_PROPERTIES_TAB_IMPORT : 'Import'),
+        'modernImportInstructions' => defined('INDEX_MODERN_IMPORT_INSTRUCTIONS') ? INDEX_MODERN_IMPORT_INSTRUCTIONS : 'Import a project that has been exported from another Xerte installation. Enter a name for the imported project, then choose a zip file to upload.',
+        'modernImportProjectName' => defined('INDEX_MODERN_IMPORT_PROJECT_NAME') ? INDEX_MODERN_IMPORT_PROJECT_NAME : 'New project name',
+        'modernImportFileLabel' => defined('INDEX_MODERN_IMPORT_FILE_LABEL') ? INDEX_MODERN_IMPORT_FILE_LABEL : 'Zip file',
+        'modernImportUpload' => defined('INDEX_MODERN_IMPORT_UPLOAD') ? INDEX_MODERN_IMPORT_UPLOAD : 'Upload',
+        'modernImportUploading' => defined('INDEX_MODERN_IMPORT_UPLOADING') ? INDEX_MODERN_IMPORT_UPLOADING : 'Uploading...',
+        'modernImportNameFail' => defined('INDEX_MODERN_IMPORT_NAME_FAIL') ? INDEX_MODERN_IMPORT_NAME_FAIL : 'Sorry that is not a valid project name. Please use only letters and numbers.',
+        'modernLoDetailSize' => defined('INDEX_MODERN_LO_DETAIL_SIZE') ? INDEX_MODERN_LO_DETAIL_SIZE : 'Learning object size',
+        'modernLoDetailAccess' => defined('INDEX_MODERN_LO_DETAIL_ACCESS') ? INDEX_MODERN_LO_DETAIL_ACCESS : (defined('INDEX_MODERN_LO_COL_ACCESS') ? INDEX_MODERN_LO_COL_ACCESS : 'Access'),
+        'modernLoDetailViews' => defined('INDEX_MODERN_LO_DETAIL_VIEWS') ? INDEX_MODERN_LO_DETAIL_VIEWS : 'Views',
+        'modernLoDetailShared' => defined('INDEX_MODERN_LO_DETAIL_SHARED') ? INDEX_MODERN_LO_DETAIL_SHARED : 'Shared',
+        'modernLoDetailSharedNone' => defined('INDEX_MODERN_LO_DETAIL_SHARED_NONE') ? INDEX_MODERN_LO_DETAIL_SHARED_NONE : 'Not shared',
+        'modernLoDetailPublicLink' => defined('INDEX_MODERN_LO_DETAIL_PUBLIC_LINK') ? INDEX_MODERN_LO_DETAIL_PUBLIC_LINK : 'Public link',
+        'modernLoDetailNoLink' => defined('INDEX_MODERN_LO_DETAIL_NO_LINK') ? INDEX_MODERN_LO_DETAIL_NO_LINK : 'No public link (private)',
+        'modernLoDetailGraph' => defined('INDEX_MODERN_LO_DETAIL_GRAPH') ? INDEX_MODERN_LO_DETAIL_GRAPH : 'Number of launches',
+        'modernLoDetailLoading' => defined('INDEX_MODERN_LO_DETAIL_LOADING') ? INDEX_MODERN_LO_DETAIL_LOADING : 'Loading details...',
+        'modernLoDetailError' => defined('INDEX_MODERN_LO_DETAIL_ERROR') ? INDEX_MODERN_LO_DETAIL_ERROR : 'Could not load details.',
+        'modernLoDetailExpand' => defined('INDEX_MODERN_LO_DETAIL_EXPAND') ? INDEX_MODERN_LO_DETAIL_EXPAND : 'Show details',
+        'modernLoDetailCollapse' => defined('INDEX_MODERN_LO_DETAIL_COLLAPSE') ? INDEX_MODERN_LO_DETAIL_COLLAPSE : 'Hide details',
+        'modernTourWelcomeTitle' => defined('INDEX_MODERN_TOUR_WELCOME_TITLE') ? INDEX_MODERN_TOUR_WELCOME_TITLE : 'Welcome to',
+        'modernTourWelcomeBody' => defined('INDEX_MODERN_TOUR_WELCOME_BODY') ? INDEX_MODERN_TOUR_WELCOME_BODY : 'Develop interactive learning objects and create mini-websites as teaching materials. We\'d like to show you the most important parts.',
+        'modernTourSkip' => defined('INDEX_MODERN_TOUR_SKIP') ? INDEX_MODERN_TOUR_SKIP : 'Skip',
+        'modernTourStart' => defined('INDEX_MODERN_TOUR_START') ? INDEX_MODERN_TOUR_START : 'Start tour',
+        'modernTourNext' => defined('INDEX_MODERN_TOUR_NEXT') ? INDEX_MODERN_TOUR_NEXT : 'Next step',
+        'modernTourClose' => defined('INDEX_MODERN_TOUR_CLOSE') ? INDEX_MODERN_TOUR_CLOSE : 'Close tour',
+        'modernTourStepCreateTitle' => defined('INDEX_MODERN_TOUR_STEP_CREATE_TITLE') ? INDEX_MODERN_TOUR_STEP_CREATE_TITLE : 'Create a new learning object',
+        'modernTourStepCreateBody' => defined('INDEX_MODERN_TOUR_STEP_CREATE_BODY') ? INDEX_MODERN_TOUR_STEP_CREATE_BODY : 'Click \'+ Create new learning object\' in the menu.<br>Then choose:<ul class="toolkits-modern-tour__tip-list"><li>an <strong>interactive learning object</strong></li><li>or a <strong>mini-website</strong></li></ul>',
+        'modernTourStepFilterTitle' => defined('INDEX_MODERN_TOUR_STEP_FILTER_TITLE') ? INDEX_MODERN_TOUR_STEP_FILTER_TITLE : 'Filtering',
+        'modernTourStepFilterBody' => defined('INDEX_MODERN_TOUR_STEP_FILTER_BODY') ? INDEX_MODERN_TOUR_STEP_FILTER_BODY : 'Here you can sort and find your learning objects.<br>You can choose from:<ul class="toolkits-modern-tour__tip-list"><li><strong class="toolkits-modern-tour__tip-label">Recent</strong> – the last learning objects you created</li><li><strong class="toolkits-modern-tour__tip-label">Published</strong> – learning objects that are visible to others</li><li><strong class="toolkits-modern-tour__tip-label">Favourites</strong> – learning objects you have saved as favourites</li><li><strong class="toolkits-modern-tour__tip-label">Trash</strong> – deleted learning objects</li></ul>',
+        'modernTourStepInteractiveTitle' => defined('INDEX_MODERN_TOUR_STEP_INTERACTIVE_TITLE') ? INDEX_MODERN_TOUR_STEP_INTERACTIVE_TITLE : 'Create an interactive learning object',
+        'modernTourStepInteractiveBody' => defined('INDEX_MODERN_TOUR_STEP_INTERACTIVE_BODY') ? INDEX_MODERN_TOUR_STEP_INTERACTIVE_BODY : 'Here you can start an interactive learning object.<br>You have two choices:<ul class="toolkits-modern-tour__tip-list"><li><strong class="toolkits-modern-tour__tip-label">Empty learning object</strong> – you start building entirely yourself</li><li><strong class="toolkits-modern-tour__tip-label">A template</strong> – you use an example that you can customise</li></ul>',
+        'modernTourProjectName' => defined('INDEX_MODERN_TOUR_PROJECT_NAME') ? INDEX_MODERN_TOUR_PROJECT_NAME : 'My first learning object',
+        'modernTourOpeningEditor' => defined('INDEX_MODERN_TOUR_OPENING_EDITOR') ? INDEX_MODERN_TOUR_OPENING_EDITOR : 'Opening the editor…',
+        'modernTourFinish' => defined('INDEX_MODERN_TOUR_FINISH') ? INDEX_MODERN_TOUR_FINISH : 'Finish',
+        'modernTourEditorTopbarTitle' => defined('INDEX_MODERN_TOUR_EDITOR_TOPBAR_TITLE') ? INDEX_MODERN_TOUR_EDITOR_TOPBAR_TITLE : 'The editor top bar',
+        'modernTourEditorTopbarBody' => defined('INDEX_MODERN_TOUR_EDITOR_TOPBAR_BODY') ? INDEX_MODERN_TOUR_EDITOR_TOPBAR_BODY : 'Use the top bar to preview your learning object, save your work, and open your account menu.',
+        'modernTourEditorPagesTitle' => defined('INDEX_MODERN_TOUR_EDITOR_PAGES_TITLE') ? INDEX_MODERN_TOUR_EDITOR_PAGES_TITLE : 'Your pages',
+        'modernTourEditorPagesBody' => defined('INDEX_MODERN_TOUR_EDITOR_PAGES_BODY') ? INDEX_MODERN_TOUR_EDITOR_PAGES_BODY : 'This list shows the pages in your learning object. Select a page to edit it, or add a new page.',
+        'modernTourEditorContentTitle' => defined('INDEX_MODERN_TOUR_EDITOR_CONTENT_TITLE') ? INDEX_MODERN_TOUR_EDITOR_CONTENT_TITLE : 'Edit your content',
+        'modernTourEditorContentBody' => defined('INDEX_MODERN_TOUR_EDITOR_CONTENT_BODY') ? INDEX_MODERN_TOUR_EDITOR_CONTENT_BODY : 'The centre panel is where you build each page. Change titles, text and settings, then save from the top bar.',
     );
 
     return array(

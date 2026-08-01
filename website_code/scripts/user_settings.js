@@ -99,6 +99,20 @@ function loadUserSettingsPreferences($root) {
     setCheckbox('editor_show_toolbar', 'editor_show_toolbar', false);
     setCheckbox('editor_expand_groups', 'editor_expand_groups', false);
     setCheckbox('editor_expand_tree', 'editor_expand_tree', false);
+
+    // Guided tour: show by default until the user completes/skips it (modern_tour_done).
+    var tourCheckbox = $root.find('#modern_show_tour');
+    if (tourCheckbox.length) {
+        var tourDone = user_preferences.modern_tour_done;
+        var showTour = !(tourDone === true || tourDone === 'true' || tourDone === 1 || tourDone === '1');
+        tourCheckbox.prop('checked', showTour);
+    }
+
+    var editorOpenMode = user_preferences.editor_open_mode;
+    if (editorOpenMode !== 'popup' && editorOpenMode !== '_blank' && editorOpenMode !== 'lightbox' && editorOpenMode !== '_self') {
+        editorOpenMode = 'popup';
+    }
+    $root.find('input[name="editor_open_mode"][value="' + editorOpenMode + '"]').prop('checked', true);
 }
 
 function initUserSettingsHandlers($root) {
@@ -129,6 +143,16 @@ function initUserSettingsHandlers($root) {
         .off('.toolkitsThemeDirect')
         .on('change.toolkitsThemeDirect input.toolkitsThemeDirect blur.toolkitsThemeDirect', handleToolkitsThemeChange);
 
+    $root.find('input[name="editor_open_mode"]').off('change.userSettings').on('change.userSettings', function() {
+        if (typeof save_user_preference === 'function') {
+            var mode = $(this).val();
+            if (mode !== 'popup' && mode !== '_blank' && mode !== 'lightbox' && mode !== '_self') {
+                mode = 'popup';
+            }
+            save_user_preference('editor_open_mode', mode);
+        }
+    });
+
     $root.find('#panel_east_open').off('change.userSettings').on('change.userSettings', function() {
         if (typeof save_user_preference === 'function') {
             save_user_preference('panel_east_open', $(this).is(':checked'));
@@ -153,6 +177,27 @@ function initUserSettingsHandlers($root) {
                 }
             }
         }
+    });
+
+    $root.find('#modern_show_tour').off('change.userSettings').on('change.userSettings', function() {
+        if (typeof save_user_preference !== 'function') {
+            return;
+        }
+        var showTour = $(this).is(':checked');
+        // Store completion flag: done = true means do not auto-show the tour.
+        save_user_preference('modern_tour_done', !showTour, function () {
+            try {
+                if (showTour) {
+                    window.localStorage.removeItem('toolkits_modern_tour_done');
+                } else {
+                    window.localStorage.setItem('toolkits_modern_tour_done', '1');
+                }
+            } catch (e) { /* ignore */ }
+            if (showTour && typeof window.toolkitsModernRestartTour === 'function' &&
+                document.body.classList.contains('toolkits-ui-theme-modern')) {
+                window.toolkitsModernRestartTour();
+            }
+        });
     });
 
     $root.find('#editor_panel_east_open').off('change.userSettings').on('change.userSettings', function() {
@@ -216,6 +261,10 @@ function changepasswordPopup(focusSection) {
             if (typeof toolkitsModernOpenSettingsModal === 'function') {
                 toolkitsModernOpenSettingsModal();
             }
+        } else if (focusSection === 'preferences') {
+            if (typeof toolkitsModernOpenPreferencesModal === 'function') {
+                toolkitsModernOpenPreferencesModal();
+            }
         } else if (typeof toolkitsModernOpenPasswordModal === 'function') {
             toolkitsModernOpenPasswordModal();
         }
@@ -256,6 +305,10 @@ function openLegacyUserSettingsDialog(focusSection) {
                 '#change-password-dialog .panel-setting-item { margin-top: 10px; } ' +
                 '#change-password-dialog .panel-setting-item label { display: inline-block; margin-right: 10px; cursor: pointer; color: #000; font-weight: normal; } ' +
                 '#change-password-dialog .panel-setting-item input[type="checkbox"] { margin-right: 5px; cursor: pointer; width: auto; } ' +
+                '#change-password-dialog .toolkits-user-settings-form__section-title { margin: 8px 0 6px; font-weight: bold; color: #000; } ' +
+                '#change-password-dialog .toolkits-editor-open-options { display: flex; flex-direction: column; gap: 6px; } ' +
+                '#change-password-dialog .toolkits-editor-open-option { display: flex; align-items: center; gap: 8px; cursor: pointer; color: #000; font-weight: normal; } ' +
+                '#change-password-dialog .toolkits-editor-open-option input[type="radio"] { width: auto; margin: 0; cursor: pointer; } ' +
                 '#change-password-dialog #toolkits_ui_theme { width: 100%; padding: 6px; box-sizing: border-box; border: 1px solid #ccc; border-radius: 3px; margin-bottom: 4px; } ' +
                 '#change-password-dialog .toolkits-theme-settings p { margin-top: 8px; font-size: 0.9em; color: #555; } ' +
                 '</style>');

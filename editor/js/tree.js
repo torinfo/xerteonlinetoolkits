@@ -1206,6 +1206,16 @@ var EDITOR = (function ($, parent) {
                 $('#optionalParams').append(html);
             }
 
+            // Modern theme: replace plus-buttons with toggle preference cards
+            if (typeof window.modernEditorRenderOptionalPrefs === 'function') {
+                window.modernEditorRenderOptionalPrefs({
+                    key: key,
+                    nodeName: node_name,
+                    pageTitle: (menu_options && menu_options.menuItem) ? menu_options.menuItem : node_name,
+                    optional: node_options['optional']
+                });
+            }
+
             // Add optional property values to main panel in the order they have in the xwd
             for (var i = 0; i < node_options['optional'].length; i++)
             {

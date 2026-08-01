@@ -77,7 +77,7 @@ function properties_rest_project_payload($template_id, $change, $msgtype)
     global $xerte_toolkits_site;
     $prefix = $xerte_toolkits_site->database_table_prefix;
 
-    $query_for_names = "select {$prefix}templatedetails.template_name, template_framework, date_created, date_modified, extra_flags from "
+    $query_for_names = "select {$prefix}templatedetails.template_name, template_framework, date_created, date_modified, extra_flags, number_of_uses from "
         . "{$prefix}templatedetails, {$prefix}originaltemplatesdetails where template_id= ? and {$prefix}originaltemplatesdetails.template_type_id =  {$prefix}templatedetails.template_type_id ";
     $row = db_query_one($query_for_names, array($template_id));
     if ($row === false || $row === null) {
@@ -131,6 +131,7 @@ function properties_rest_project_payload($template_id, $change, $msgtype)
         'canRename' => $can_rename,
         'dateCreated' => $row['date_created'],
         'dateModified' => $row['date_modified'],
+        'numberOfUses' => isset($row['number_of_uses']) ? (int) $row['number_of_uses'] : 0,
         'access' => $access,
         'playUrl' => $play_url,
         'embed' => array(

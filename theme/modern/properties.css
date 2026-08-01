@@ -1,0 +1,441 @@
+/**
+ * Modern theme styles for properties.php (especially embed/modal mode).
+ */
+
+body.toolkits-ui-theme-modern {
+    font-family: "Segoe UI", system-ui, -apple-system, sans-serif;
+    background: #f8fafc;
+    color: #111827;
+}
+
+body.toolkits-ui-theme-modern .properties_main {
+    background: #f8fafc;
+    min-height: 100%;
+}
+
+body.toolkits-ui-theme-modern.properties-embed .properties_main {
+    background: #fff;
+}
+
+body.toolkits-ui-theme-modern .main_area {
+    color: #111827;
+}
+
+body.toolkits-ui-theme-modern #title {
+    padding: 1rem 1.25rem 0.75rem;
+    color: #111827;
+    border-bottom: 1px solid #e5e7eb;
+    background: #fff;
+}
+
+body.toolkits-ui-theme-modern.properties-embed #title {
+    display: none;
+}
+
+body.toolkits-ui-theme-modern #title h1 {
+    font-size: 1.15rem;
+    font-weight: 700;
+    color: #111827;
+}
+
+body.toolkits-ui-theme-modern #title i {
+    color: #007ebb;
+}
+
+body.toolkits-ui-theme-modern #data_area {
+    padding: 0;
+}
+
+body.toolkits-ui-theme-modern #menu_tabs {
+    display: flex;
+    align-items: stretch;
+    gap: 0;
+    height: 100%;
+    background: #fff;
+}
+
+body.toolkits-ui-theme-modern #menu_tabs #tabs {
+    float: none;
+    flex: 0 0 220px;
+    width: 220px;
+    max-width: 38%;
+    margin-top: 0;
+    padding: 0.75rem 0.5rem;
+    box-sizing: border-box;
+    background: #f8fafc;
+    border-right: 1px solid #e5e7eb;
+    overflow-y: auto;
+}
+
+body.toolkits-ui-theme-modern #menu_tabs #tabs button {
+    display: flex;
+    align-items: center;
+    gap: 0.55rem;
+    width: 100%;
+    margin: 0 0 0.25rem;
+    padding: 0.65rem 0.75rem;
+    border: none;
+    border-radius: 8px;
+    background: transparent;
+    color: #374151;
+    font-size: 0.875rem;
+    font-weight: 600;
+    font-family: inherit;
+    text-align: left;
+    cursor: pointer;
+    box-sizing: border-box;
+}
+
+body.toolkits-ui-theme-modern #menu_tabs #tabs button i {
+    color: #6b7280;
+    width: 1.1rem;
+    text-align: center;
+}
+
+body.toolkits-ui-theme-modern #menu_tabs #tabs button:not(.tabSelected):hover,
+body.toolkits-ui-theme-modern #menu_tabs #tabs button:not(.tabSelected):focus,
+body.toolkits-ui-theme-modern #menu_tabs #tabs button:not(.tabSelected):active {
+    background: #eef7fa;
+    color: #007ebb;
+}
+
+body.toolkits-ui-theme-modern #menu_tabs #tabs button:not(.tabSelected):hover i,
+body.toolkits-ui-theme-modern #menu_tabs #tabs button:not(.tabSelected):focus i {
+    color: #007ebb;
+}
+
+body.toolkits-ui-theme-modern #menu_tabs #tabs button.tabSelected,
+body.toolkits-ui-theme-modern #menu_tabs #tabs button[aria-selected="true"] {
+    background: #007ebb;
+    color: #fff;
+}
+
+body.toolkits-ui-theme-modern #menu_tabs #tabs button.tabSelected i,
+body.toolkits-ui-theme-modern #menu_tabs #tabs button[aria-selected="true"] i {
+    color: #fff;
+}
+
+body.toolkits-ui-theme-modern #menu_tabs #dynamic_area {
+    float: none;
+    flex: 1 1 auto;
+    width: auto;
+    margin: 0;
+    border-radius: 0;
+    background: #fff;
+    overflow: auto;
+    height: 100%;
+    box-sizing: border-box;
+}
+
+body.toolkits-ui-theme-modern .tabPanel {
+    padding: 0;
+}
+
+body.toolkits-ui-theme-modern .header,
+body.toolkits-ui-theme-modern .tabPanel h2.header {
+    background: transparent;
+    color: #111827;
+    margin: 0;
+    padding: 1rem 1.25rem 0.5rem;
+    font-size: 1.05rem;
+    font-weight: 700;
+    border-bottom: 1px solid #e5e7eb;
+}
+
+body.toolkits-ui-theme-modern #mainContent {
+    padding: 1rem 1.25rem 1.5rem;
+    box-sizing: border-box;
+}
+
+body.toolkits-ui-theme-modern #dynamic_area p {
+    padding: 0.35rem 0;
+    color: #374151;
+    line-height: 1.45;
+}
+
+body.toolkits-ui-theme-modern #dynamic_area a {
+    color: #007ebb;
+}
+
+body.toolkits-ui-theme-modern #dynamic_area form {
+    padding-left: 0;
+}
+
+body.toolkits-ui-theme-modern #dynamic_area input[type="text"],
+body.toolkits-ui-theme-modern #dynamic_area input[type="password"],
+body.toolkits-ui-theme-modern #dynamic_area input[type="email"],
+body.toolkits-ui-theme-modern #dynamic_area select,
+body.toolkits-ui-theme-modern #dynamic_area textarea {
+    box-sizing: border-box;
+    max-width: 100%;
+    padding: 0.55rem 0.7rem;
+    border: 1px solid #d1d5db;
+    border-radius: 8px;
+    font-family: inherit;
+    font-size: 0.9rem;
+    color: #111827;
+    background: #fff;
+}
+
+body.toolkits-ui-theme-modern #dynamic_area input[type="text"]:focus,
+body.toolkits-ui-theme-modern #dynamic_area input[type="password"]:focus,
+body.toolkits-ui-theme-modern #dynamic_area select:focus,
+body.toolkits-ui-theme-modern #dynamic_area textarea:focus {
+    outline: none;
+    border-color: #007ebb;
+    box-shadow: 0 0 0 3px rgba(0, 126, 187, 0.15);
+}
+
+body.toolkits-ui-theme-modern #dynamic_area .xerte_button,
+body.toolkits-ui-theme-modern #dynamic_area .xerte_button_c,
+body.toolkits-ui-theme-modern #dynamic_area button.xerte_button {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    margin: 0.25rem 0.35rem 0.25rem 0;
+    padding: 0.5rem 0.85rem;
+    border: 1px solid #007ebb;
+    border-radius: 6px;
+    background: #007ebb;
+    color: #fff;
+    font-family: inherit;
+    font-size: 0.875rem;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+body.toolkits-ui-theme-modern #dynamic_area .xerte_button:hover,
+body.toolkits-ui-theme-modern #dynamic_area .xerte_button_c:hover {
+    background: #006ba1;
+    border-color: #006ba1;
+}
+
+body.toolkits-ui-theme-modern #mediaTable,
+body.toolkits-ui-theme-modern .workspaceProjectsTable {
+    border-collapse: collapse;
+    width: 100%;
+    font-size: 0.875rem;
+}
+
+body.toolkits-ui-theme-modern #mediaTable th,
+body.toolkits-ui-theme-modern .workspaceProjectsTable th {
+    background: #f8fafc;
+    color: #007ebb;
+    text-transform: uppercase;
+    font-size: 0.7rem;
+    letter-spacing: 0.03em;
+    border: 1px solid #e5e7eb;
+    padding: 0.55rem 0.65rem;
+}
+
+body.toolkits-ui-theme-modern #mediaTable td,
+body.toolkits-ui-theme-modern .workspaceProjectsTable td {
+    border: 1px solid #e5e7eb;
+    padding: 0.55rem 0.65rem;
+    color: #374151;
+}
+
+body.toolkits-ui-theme-modern #importpopup.properties-media-upload,
+body.toolkits-ui-theme-modern #panelMedia #importpopup {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.5rem;
+    margin: 0.35rem 0 0.75rem;
+}
+
+body.toolkits-ui-theme-modern #filenameuploaded_container {
+    display: inline-flex;
+    align-items: center;
+    flex: 1 1 14rem;
+    min-width: 0;
+    max-width: 100%;
+    border: 1px solid #d1d5db;
+    border-radius: 8px;
+    overflow: hidden;
+    background: #fff;
+}
+
+body.toolkits-ui-theme-modern #filenameuploaded_container input[type="file"] {
+    width: 100%;
+    min-width: 0;
+    border: 0;
+    background: transparent;
+    font-family: inherit;
+    font-size: 0.875rem;
+}
+
+body.toolkits-ui-theme-modern input[type=file]#filenameuploaded::file-selector-button {
+    background: #f3f4f6;
+    color: #374151;
+    border: 0;
+    border-right: 1px solid #d1d5db;
+    padding: 0.55rem 0.75rem;
+    margin-right: 0.65rem;
+    cursor: pointer;
+    font-family: inherit;
+}
+
+body.toolkits-ui-theme-modern #panelMedia #submitbutton {
+    flex: 0 0 auto;
+    margin: 0;
+}
+
+body.toolkits-ui-theme-modern .share_top {
+    background: #f8fafc;
+}
+
+body.toolkits-ui-theme-modern #security_list {
+    border: none;
+    margin: 0;
+    padding: 0;
+    min-width: 0;
+}
+
+body.toolkits-ui-theme-modern #security_list > div {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin: 0.55rem 0 0.15rem;
+}
+
+body.toolkits-ui-theme-modern #security_list > div label {
+    font-weight: 600;
+    color: #111827;
+}
+
+body.toolkits-ui-theme-modern #security_list p.share_explain_paragraph {
+    border: none;
+    background: transparent;
+    margin: 0 0 0.35rem 1.6rem;
+    padding: 0;
+    color: #6b7280;
+    font-size: 0.875rem;
+}
+
+body.toolkits-ui-theme-modern #security_list #PWPlay_pwd,
+body.toolkits-ui-theme-modern #security_list #other_site_address {
+    margin: 0.25rem 0 0.85rem 1.6rem;
+    padding: 0;
+    max-width: 16rem;
+}
+
+body.toolkits-ui-theme-modern #security_list .properties-access-input,
+body.toolkits-ui-theme-modern #security_list #pwd,
+body.toolkits-ui-theme-modern #security_list #url {
+    display: block;
+    width: 100%;
+    max-width: 100%;
+    height: auto !important;
+    min-height: 0;
+    padding: 0.3rem 0.5rem;
+    border: 1px solid #d1d5db;
+    border-radius: 6px;
+    background: #fff;
+    color: #111827;
+    font-family: inherit;
+    font-size: 0.8125rem;
+    line-height: 1.3;
+    box-sizing: border-box;
+    resize: none;
+}
+
+body.toolkits-ui-theme-modern #security_list .properties-access-input:focus,
+body.toolkits-ui-theme-modern #security_list #pwd:focus,
+body.toolkits-ui-theme-modern #security_list #url:focus {
+    outline: none;
+    border-color: #007ebb;
+    box-shadow: 0 0 0 3px rgba(0, 126, 187, 0.15);
+}
+
+/* Folder properties embed extras */
+html:has(body.properties-embed),
+body.toolkits-ui-theme-modern.properties-embed {
+    height: 100%;
+    margin: 0;
+}
+
+body.toolkits-ui-theme-modern.properties-embed .properties_main,
+body.toolkits-ui-theme-modern.properties-embed .main_area,
+body.toolkits-ui-theme-modern.properties-embed #data_area,
+body.toolkits-ui-theme-modern.properties-embed #menu_tabs {
+    height: 100%;
+    box-sizing: border-box;
+}
+
+body.toolkits-ui-theme-modern #mainContent form#rename_form,
+body.toolkits-ui-theme-modern #mainContent form[name="rename_form"] {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.5rem;
+    margin: 0.5rem 0 1rem;
+}
+
+body.toolkits-ui-theme-modern #mainContent form#rename_form input[type="text"],
+body.toolkits-ui-theme-modern #mainContent form[name="rename_form"] input[type="text"] {
+    flex: 1 1 12rem;
+    min-width: 0;
+}
+
+body.toolkits-ui-theme-modern .folder_content,
+body.toolkits-ui-theme-modern #panelContent .folder,
+body.toolkits-ui-theme-modern #panelContent .file {
+    line-height: 1.5;
+}
+
+body.toolkits-ui-theme-modern ul.share_users,
+body.toolkits-ui-theme-modern ul.share_form_results {
+    list-style: none;
+    margin: 0.75rem 0;
+    padding: 0;
+}
+
+body.toolkits-ui-theme-modern ul.share_users > li,
+body.toolkits-ui-theme-modern ul.share_form_results > li {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.65rem 0.75rem;
+    margin: 0 0 0.4rem;
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    background: #fff;
+}
+
+body.toolkits-ui-theme-modern #area2,
+body.toolkits-ui-theme-modern #searcharea {
+    max-width: 100%;
+}
+
+body.toolkits-ui-theme-modern #searcharea {
+    width: min(100%, 20rem);
+    padding: 0.45rem 0.65rem;
+    border: 1px solid #d1d5db;
+    border-radius: 8px;
+    font: inherit;
+    box-sizing: border-box;
+}
+
+@media (max-width: 720px) {
+    body.toolkits-ui-theme-modern #menu_tabs {
+        flex-direction: column;
+    }
+
+    body.toolkits-ui-theme-modern #tabs {
+        flex: 0 0 auto;
+        width: 100%;
+        max-width: none;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.35rem;
+        border-right: none;
+        border-bottom: 1px solid #e5e7eb;
+    }
+
+    body.toolkits-ui-theme-modern #tabs button {
+        width: auto;
+        margin: 0;
+    }
+}

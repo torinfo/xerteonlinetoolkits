@@ -435,20 +435,7 @@ function button_check(){
                 editbtn.removeAttribute("disabled");
                 editbtn.className = "xerte_workspace_button";
                 editbtn.onclick = function (e) {
-                    if (e.shiftKey) {
-                        edit_window(false, "edithtml");
-                    }
-                    else if (e.ctrlKey) {
-                        win = edit_window(false, "edithtml", "_blank");
-                        win.focus();
-                    }
-                    else if (e.altKey) {
-                        win = edit_window(false, "edithtml", "lightbox");
-                    }
-                    else
-                    {
-                        edit_window(false, "edithtml");
-                    }
+                    openSelectedEditor(e, 'edithtml');
                 };
 
                 previewbtn.removeAttribute("disabled");
@@ -978,7 +965,7 @@ function init_workspace()
                     tree.deselect_all();
                     tree.select_node(id);
 
-                    edit_window(false, "edithtml");
+                    openSelectedEditor(null, 'edithtml');
 
             }
         });

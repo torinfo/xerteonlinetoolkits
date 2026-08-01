@@ -1,0 +1,676 @@
+/* Modern editor — workspace user menu / modals (workspace-window mode) */
+
+body.toolkits-ui-theme-modern .toolkits-modern-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.4rem;
+    border: none;
+    border-radius: 8px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    cursor: pointer;
+    padding: 0.7rem 1rem;
+    text-decoration: none;
+}
+
+body.toolkits-ui-theme-modern .toolkits-modern-btn--primary {
+    background: #007ebb;
+    color: #fff;
+}
+
+body.toolkits-ui-theme-modern .toolkits-modern-btn--primary:hover {
+    background: #006699;
+}
+
+body.toolkits-ui-theme-modern .toolkits-modern-topbar__chevron {
+    font-size: 0.7rem;
+    color: #1a1a1a;
+}
+
+body.toolkits-ui-theme-modern .toolkits-modern-topbar__user {
+    display: flex;
+    align-items: center;
+    gap: 0.85rem;
+}
+
+body.toolkits-ui-theme-modern .toolkits-modern-topbar__user-menu {
+    position: relative;
+}
+
+body.toolkits-ui-theme-modern .toolkits-modern-topbar__user-toggle {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.65rem;
+    border: none;
+    background: transparent;
+    padding: 0.25rem 0.15rem;
+    cursor: pointer;
+    font: inherit;
+    color: #000;
+}
+
+body.toolkits-ui-theme-modern .toolkits-modern-topbar__name {
+    font-weight: 600;
+    font-size: 0.95rem;
+    color: #000;
+}
+
+body.toolkits-ui-theme-modern .toolkits-modern-topbar__dropdown {
+    position: absolute;
+    top: calc(100% + 0.4rem);
+    right: 0;
+    min-width: 15rem;
+    background: #fff;
+    border: 1px solid #d1d5db;
+    border-radius: 10px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+    padding: 0.5rem 0;
+    z-index: 2100;
+}
+
+body.toolkits-ui-theme-modern .toolkits-modern-topbar__dropdown-item {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    width: 100%;
+    border: none;
+    background: transparent;
+    text-align: left;
+    padding: 0.65rem 1.1rem;
+    font-size: 0.95rem;
+    color: #374151;
+    cursor: pointer;
+    box-sizing: border-box;
+}
+
+body.toolkits-ui-theme-modern .toolkits-modern-topbar__dropdown-item:hover {
+    background: #f9fafb;
+}
+
+body.toolkits-ui-theme-modern .toolkits-modern-topbar__dropdown-icon {
+    width: 1.15rem;
+    flex-shrink: 0;
+    text-align: center;
+    color: #4b5563;
+    font-size: 1rem;
+}
+
+body.toolkits-ui-theme-modern .toolkits-modern-topbar__dropdown-divider {
+    border: none;
+    border-top: 1px solid #e5e7eb;
+    margin: 0.35rem 0;
+}
+
+body.toolkits-ui-theme-modern .toolkits-modern-topbar__dropdown-item--logout,
+body.toolkits-ui-theme-modern .toolkits-modern-topbar__dropdown-item--logout .toolkits-modern-topbar__dropdown-icon {
+    color: #1e3a5f;
+    font-weight: 600;
+}
+
+body.toolkits-ui-theme-modern .toolkits-modern-user-details {
+    margin: 0;
+}
+
+body.toolkits-ui-theme-modern .toolkits-modern-user-details__hero {
+    display: flex;
+    align-items: center;
+    gap: 0.9rem;
+    margin: 0 0 1.25rem;
+    padding: 0 0 1.1rem;
+    border-bottom: 1px solid #e5e7eb;
+}
+
+body.toolkits-ui-theme-modern .toolkits-modern-user-details__avatar {
+    width: 3.25rem;
+    height: 3.25rem;
+    border-radius: 50%;
+    border: 2px solid #f39200;
+    background: #fff7ed;
+    color: #c2410c;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.25rem;
+    font-weight: 700;
+    flex-shrink: 0;
+}
+
+body.toolkits-ui-theme-modern .toolkits-modern-user-details__hero-text {
+    min-width: 0;
+}
+
+body.toolkits-ui-theme-modern .toolkits-modern-user-details__name {
+    margin: 0;
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: #111827;
+    line-height: 1.3;
+}
+
+body.toolkits-ui-theme-modern .toolkits-modern-user-details__username {
+    margin: 0.2rem 0 0;
+    font-size: 0.875rem;
+    color: #6b7280;
+}
+
+body.toolkits-ui-theme-modern .toolkits-modern-user-details__list {
+    margin: 0;
+    padding: 0;
+}
+
+body.toolkits-ui-theme-modern .toolkits-modern-user-details__row {
+    display: grid;
+    grid-template-columns: 7.5rem 1fr;
+    gap: 0.75rem;
+    align-items: baseline;
+    padding: 0.7rem 0;
+    border-bottom: 1px solid #f3f4f6;
+}
+
+body.toolkits-ui-theme-modern .toolkits-modern-user-details__row:last-child {
+    border-bottom: none;
+    padding-bottom: 0;
+}
+
+body.toolkits-ui-theme-modern .toolkits-modern-user-details__row dt {
+    margin: 0;
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: #6b7280;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+}
+
+body.toolkits-ui-theme-modern .toolkits-modern-user-details__row dd {
+    margin: 0;
+    font-size: 0.95rem;
+    color: #111827;
+    font-weight: 500;
+    word-break: break-word;
+}
+
+body.toolkits-ui-theme-modern .toolkits-modern-topbar__avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    border: 2px solid #f39200;
+    background: #fff;
+    color: #f39200;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+body.toolkits-ui-theme-modern .toolkits-modern-topbar__avatar .fa-user {
+    font-size: 1.15rem;
+}
+
+/* User settings / password modals */
+body.toolkits-ui-theme-modern .toolkits-modern-user-modal {
+    position: fixed;
+    inset: 0;
+    z-index: 2200;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1.5rem;
+    box-sizing: border-box;
+}
+
+body.toolkits-ui-theme-modern .toolkits-modern-user-modal[hidden] {
+    display: none !important;
+}
+
+body.toolkits-ui-theme-modern.toolkits-modern-user-modal-open {
+    overflow: hidden;
+}
+
+body.toolkits-ui-theme-modern .toolkits-modern-user-modal__backdrop {
+    position: absolute;
+    inset: 0;
+    background: rgba(17, 24, 39, 0.55);
+}
+
+body.toolkits-ui-theme-modern .toolkits-modern-user-modal__dialog {
+    position: relative;
+    z-index: 1;
+    width: min(440px, 92vw);
+    max-height: min(88vh, 720px);
+    background: #fff;
+    border-radius: 12px;
+    box-shadow: 0 24px 48px rgba(0, 0, 0, 0.2);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+body.toolkits-ui-theme-modern .toolkits-modern-user-modal--settings .toolkits-modern-user-modal__dialog {
+    width: min(520px, 92vw);
+}
+
+body.toolkits-ui-theme-modern .toolkits-modern-user-modal--feedback .toolkits-modern-user-modal__dialog {
+    width: min(520px, 92vw);
+}
+
+body.toolkits-ui-theme-modern .toolkits-modern-user-modal__loading {
+    margin: 0;
+    color: #6b7280;
+}
+
+body.toolkits-ui-theme-modern .toolkits-modern-feedback__desc {
+    margin: 0 0 1.15rem;
+    color: #4b5563;
+    font-size: 0.925rem;
+    line-height: 1.5;
+}
+
+body.toolkits-ui-theme-modern .toolkits-modern-feedback__label {
+    display: block;
+    margin: 0 0 0.4rem;
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: #374151;
+}
+
+body.toolkits-ui-theme-modern .toolkits-modern-feedback__input,
+body.toolkits-ui-theme-modern .toolkits-modern-feedback__textarea {
+    display: block;
+    width: 100%;
+    box-sizing: border-box;
+    margin: 0 0 1rem;
+    padding: 0.65rem 0.75rem;
+    border: 1px solid #d1d5db;
+    border-radius: 8px;
+    font: inherit;
+    font-size: 0.95rem;
+    color: #111827;
+    background: #fff;
+}
+
+body.toolkits-ui-theme-modern .toolkits-modern-feedback__textarea {
+    min-height: 10rem;
+    resize: vertical;
+    line-height: 1.45;
+}
+
+body.toolkits-ui-theme-modern .toolkits-modern-feedback__input:focus,
+body.toolkits-ui-theme-modern .toolkits-modern-feedback__textarea:focus {
+    outline: none;
+    border-color: #007ebb;
+    box-shadow: 0 0 0 3px rgba(0, 126, 187, 0.15);
+}
+
+body.toolkits-ui-theme-modern .toolkits-modern-feedback__actions {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 0.25rem;
+}
+
+body.toolkits-ui-theme-modern .toolkits-modern-feedback__status {
+    margin: 0 0 0.85rem;
+    padding: 0.7rem 0.85rem;
+    border-radius: 8px;
+    font-size: 0.9rem;
+    line-height: 1.4;
+}
+
+body.toolkits-ui-theme-modern .toolkits-modern-feedback__status--ok {
+    background: #ecfdf5;
+    color: #065f46;
+    border: 1px solid #a7f3d0;
+}
+
+body.toolkits-ui-theme-modern .toolkits-modern-feedback__status--error {
+    background: #fef2f2;
+    color: #991b1b;
+    border: 1px solid #fecaca;
+}
+
+body.toolkits-ui-theme-modern .toolkits-modern-user-modal__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 1rem 1.25rem;
+    border-bottom: 1px solid #e5e7eb;
+    flex-shrink: 0;
+}
+
+body.toolkits-ui-theme-modern .toolkits-modern-user-modal__title {
+    margin: 0;
+    font-size: 1.15rem;
+    font-weight: 700;
+    color: #111827;
+}
+
+body.toolkits-ui-theme-modern .toolkits-modern-user-modal__close {
+    width: 2.25rem;
+    height: 2.25rem;
+    border: none;
+    border-radius: 8px;
+    background: transparent;
+    color: #6b7280;
+    font-size: 1.1rem;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+body.toolkits-ui-theme-modern .toolkits-modern-user-modal__close:hover {
+    background: #f3f4f6;
+    color: #111827;
+}
+
+body.toolkits-ui-theme-modern .toolkits-modern-user-modal__body {
+    overflow-y: auto;
+    padding: 1.25rem 1.25rem 1.5rem;
+}
+
+body.toolkits-ui-theme-modern .toolkits-modern-user-modal__error {
+    margin: 0;
+    color: #b91c1c;
+}
+
+body.toolkits-ui-theme-modern .toolkits-modern-user-modal .toolkits-user-settings-form__field {
+    margin-bottom: 1rem;
+}
+
+body.toolkits-ui-theme-modern .toolkits-modern-user-modal .toolkits-user-settings-form__field label {
+    display: block;
+    margin: 0 0 0.4rem;
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: #374151;
+}
+
+body.toolkits-ui-theme-modern .toolkits-modern-user-modal .toolkits-user-settings-form__field input[type="password"],
+body.toolkits-ui-theme-modern .toolkits-modern-user-modal .toolkits-user-settings-form__field select {
+    width: 100%;
+    box-sizing: border-box;
+    padding: 0.6rem 0.75rem;
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    font-size: 0.95rem;
+    color: #111827;
+    background: #fff;
+}
+
+body.toolkits-ui-theme-modern .toolkits-modern-user-modal .toolkits-user-settings-form__field input[type="password"]:focus,
+body.toolkits-ui-theme-modern .toolkits-modern-user-modal .toolkits-user-settings-form__field select:focus {
+    outline: none;
+    border-color: #007ebb;
+    box-shadow: 0 0 0 3px rgba(0, 126, 187, 0.15);
+}
+
+body.toolkits-ui-theme-modern .toolkits-modern-user-modal .toolkits-user-settings-form__actions {
+    margin-top: 0.5rem;
+}
+
+body.toolkits-ui-theme-modern .toolkits-modern-user-modal .toolkits-user-settings-form__actions .xerte_button {
+    border: none;
+    margin: 0;
+}
+
+body.toolkits-ui-theme-modern .toolkits-modern-user-modal .toolkits-user-settings-form__help {
+    margin: 0.5rem 0 0;
+    font-size: 0.875rem;
+    color: #6b7280;
+    line-height: 1.45;
+}
+
+/* Preferences modal â€” card groups + switches (matches editor optional prefs) */
+body.toolkits-ui-theme-modern .toolkits-modern-user-modal--preferences .toolkits-modern-user-modal__dialog {
+    width: min(440px, 92vw);
+}
+
+body.toolkits-ui-theme-modern .toolkits-modern-user-modal .toolkits-pref-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.85rem;
+}
+
+body.toolkits-ui-theme-modern .toolkits-modern-user-modal .toolkits-pref-card {
+    background: #fff;
+    border: 1px solid #e5e7eb;
+    border-radius: 12px;
+    padding: 0.7rem 0.85rem 0.35rem;
+    box-sizing: border-box;
+}
+
+body.toolkits-ui-theme-modern .toolkits-modern-user-modal .toolkits-pref-card__heading {
+    margin: 0 0 0.2rem 0.15rem;
+    font-size: 0.72rem;
+    font-weight: 600;
+    color: #9ca3af;
+    letter-spacing: 0.02em;
+    text-transform: uppercase;
+}
+
+body.toolkits-ui-theme-modern .toolkits-modern-user-modal .toolkits-pref-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.85rem;
+    width: 100%;
+    padding: 0.7rem 0.15rem;
+    box-sizing: border-box;
+}
+
+body.toolkits-ui-theme-modern .toolkits-modern-user-modal .toolkits-pref-row + .toolkits-pref-row {
+    border-top: 1px solid #f3f4f6;
+}
+
+body.toolkits-ui-theme-modern .toolkits-modern-user-modal .toolkits-pref-row__text {
+    min-width: 0;
+    flex: 1 1 auto;
+}
+
+body.toolkits-ui-theme-modern .toolkits-modern-user-modal .toolkits-pref-row__title {
+    display: block;
+    margin: 0;
+    font-size: 0.92rem;
+    font-weight: 700;
+    color: #111827;
+    line-height: 1.25;
+    cursor: pointer;
+}
+
+body.toolkits-ui-theme-modern .toolkits-modern-user-modal .toolkits-pref-row__desc {
+    margin: 0.15rem 0 0;
+    font-size: 0.78rem;
+    color: #9ca3af;
+    line-height: 1.35;
+}
+
+body.toolkits-ui-theme-modern .toolkits-modern-user-modal .toolkits-pref-switch {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    flex-shrink: 0;
+    cursor: pointer;
+}
+
+body.toolkits-ui-theme-modern .toolkits-modern-user-modal .toolkits-pref-switch__input {
+    position: absolute;
+    opacity: 0;
+    width: 1px;
+    height: 1px;
+    margin: 0;
+}
+
+body.toolkits-ui-theme-modern .toolkits-modern-user-modal .toolkits-pref-switch__ui {
+    width: 42px;
+    height: 24px;
+    border-radius: 999px;
+    background: #d1d5db;
+    position: relative;
+    transition: background 0.15s ease;
+    display: block;
+}
+
+body.toolkits-ui-theme-modern .toolkits-modern-user-modal .toolkits-pref-switch__ui::after {
+    content: '';
+    position: absolute;
+    top: 3px;
+    left: 3px;
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    background: #fff;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+    transition: transform 0.15s ease;
+}
+
+body.toolkits-ui-theme-modern .toolkits-modern-user-modal .toolkits-pref-switch__input:checked + .toolkits-pref-switch__ui {
+    background: #007ebb;
+}
+
+body.toolkits-ui-theme-modern .toolkits-modern-user-modal .toolkits-pref-switch__input:checked + .toolkits-pref-switch__ui::after {
+    transform: translateX(18px);
+}
+
+body.toolkits-ui-theme-modern .toolkits-modern-user-modal .toolkits-pref-switch__input:focus-visible + .toolkits-pref-switch__ui {
+    outline: 2px solid #007ebb;
+    outline-offset: 2px;
+}
+
+body.toolkits-ui-theme-modern .toolkits-modern-user-modal .toolkits-pref-radio-list {
+    display: flex;
+    flex-direction: column;
+    padding: 0.15rem 0 0.45rem;
+}
+
+body.toolkits-ui-theme-modern .toolkits-modern-user-modal .toolkits-pref-radio {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.7rem;
+    padding: 0.55rem 0.15rem;
+    cursor: pointer;
+    box-sizing: border-box;
+}
+
+body.toolkits-ui-theme-modern .toolkits-modern-user-modal .toolkits-pref-radio + .toolkits-pref-radio {
+    border-top: 1px solid #f3f4f6;
+}
+
+body.toolkits-ui-theme-modern .toolkits-modern-user-modal .toolkits-pref-radio__input {
+    position: absolute;
+    opacity: 0;
+    width: 1px;
+    height: 1px;
+    margin: 0;
+    pointer-events: none;
+}
+
+body.toolkits-ui-theme-modern .toolkits-modern-user-modal .toolkits-pref-radio__control {
+    width: 1.05rem;
+    height: 1.05rem;
+    margin-top: 0.12rem;
+    border: 2px solid #d1d5db;
+    border-radius: 50%;
+    background: #fff;
+    flex-shrink: 0;
+    box-sizing: border-box;
+    position: relative;
+}
+
+body.toolkits-ui-theme-modern .toolkits-modern-user-modal .toolkits-pref-radio__input:checked + .toolkits-pref-radio__control {
+    border-color: #007ebb;
+}
+
+body.toolkits-ui-theme-modern .toolkits-modern-user-modal .toolkits-pref-radio__input:checked + .toolkits-pref-radio__control::after {
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 0.45rem;
+    height: 0.45rem;
+    border-radius: 50%;
+    background: #007ebb;
+    transform: translate(-50%, -50%);
+}
+
+body.toolkits-ui-theme-modern .toolkits-modern-user-modal .toolkits-pref-radio__input:focus-visible + .toolkits-pref-radio__control {
+    outline: 2px solid #007ebb;
+    outline-offset: 2px;
+}
+
+body.toolkits-ui-theme-modern .toolkits-modern-user-modal .toolkits-pref-radio__text {
+    font-size: 0.92rem;
+    font-weight: 600;
+    color: #111827;
+    line-height: 1.35;
+}
+
+body.toolkits-ui-theme-modern .toolkits-modern-user-modal .toolkits-user-settings-form__checkbox {
+    margin-bottom: 0.65rem;
+}
+
+body.toolkits-ui-theme-modern .toolkits-modern-user-modal .toolkits-user-settings-form__checkbox label {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.6rem;
+    font-size: 0.95rem;
+    font-weight: 400;
+    color: #374151;
+    cursor: pointer;
+    line-height: 1.4;
+}
+
+body.toolkits-ui-theme-modern .toolkits-modern-user-modal .toolkits-user-settings-form__checkbox input[type="checkbox"] {
+    margin: 0.2rem 0 0;
+    width: 1rem;
+    height: 1rem;
+    flex-shrink: 0;
+    accent-color: #007ebb;
+    cursor: pointer;
+}
+
+body.toolkits-ui-theme-modern .toolkits-modern-user-modal .toolkits-user-settings-form__result {
+    margin-top: 0.25rem;
+    font-size: 0.9rem;
+    color: #374151;
+    line-height: 1.45;
+}
+
+body.toolkits-ui-theme-modern .toolkits-modern-user-modal .toolkits-user-settings-form__result ul {
+    margin: 0.5rem 0 0;
+    padding-left: 1.25rem;
+}
+
+body.toolkits-ui-theme-modern.toolkits-modern-browse-active .toolkits-modern-home {
+    display: none;
+}
+
+/* Workspace panel inside modern shell */
+body.toolkits-ui-theme-modern .toolkits-modern-workspace {
+
+
+/* Editor topbar placement for workspace user chrome */
+body.toolkits-ui-theme-modern .modern-editor-topbar__workspace-user {
+    margin-left: 0.15rem;
+    flex-shrink: 0;
+}
+
+body.toolkits-ui-theme-modern .modern-editor-topbar__workspace-user .toolkits-modern-topbar__dropdown[hidden] {
+    display: none !important;
+}
+
+body.toolkits-ui-theme-modern .modern-editor-topbar__workspace-user .toolkits-modern-topbar__name {
+    max-width: 10rem;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+body.toolkits-ui-theme-modern .modern-editor-topbar__right {
+    overflow: visible;
+}
+
+body.toolkits-ui-theme-modern .modern-editor-topbar__workspace-user .toolkits-modern-topbar__dropdown {
+    z-index: 5000;
+}

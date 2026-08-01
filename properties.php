@@ -25,10 +25,23 @@ require_once(dirname(__FILE__) . "/website_code/php/properties/properties_librar
 _load_language_file("/properties.inc");
 $version = getVersion();
 
-$body_class = "";
-if ($xerte_toolkits_site->rights == 'elevated')
-{
-    $body_class = ' class="elevated"';
+$body_classes = array(toolkits_ui_theme_body_class());
+if ($xerte_toolkits_site->rights == 'elevated') {
+    $body_classes[] = 'elevated';
+}
+$properties_embed = isset($_GET['embed']) && (string) $_GET['embed'] === '1';
+if ($properties_embed) {
+    $body_classes[] = 'properties-embed';
+}
+$body_class_attr = htmlspecialchars(implode(' ', $body_classes), ENT_QUOTES, 'UTF-8');
+
+// Resolve template_id from query string or apache-style properties_123 URL.
+$properties_template_id = 0;
+if (isset($_GET['template_id']) && is_numeric($_GET['template_id'])) {
+    $properties_template_id = (int) $_GET['template_id'];
+} elseif (!empty($_SERVER['REQUEST_URI']) && preg_match('/properties[_-](\d+)/', $_SERVER['REQUEST_URI'], $properties_uri_match)) {
+    $properties_template_id = (int) $properties_uri_match[1];
+    $_GET['template_id'] = $properties_template_id;
 }
 
 ?><!DOCTYPE html>
@@ -64,6 +77,23 @@ if ($xerte_toolkits_site->rights == 'elevated')
             var properties_ajax_php_path = "website_code/php/properties/";
             var management_ajax_php_path = "website_code/php/management/";
             var ajax_php_path = "website_code/php/";
+            <?php if ($properties_template_id > 0) { ?>
+            // properties_tab.js posts template_id from window.name (set by window.open in popups).
+            // In an embed iframe, force it from the resolved template id.
+            window.name = "<?php echo $properties_template_id; ?>";
+            <?php } ?>
+
+            function toolkitsPropertiesOnUnload() {
+                try {
+                    if (window.parent && window.parent !== window && typeof window.parent.refresh_workspace === 'function') {
+                        window.parent.refresh_workspace();
+                        return;
+                    }
+                    if (window.opener && !window.opener.closed && typeof window.opener.refresh_workspace === 'function') {
+                        window.opener.refresh_workspace();
+                    }
+                } catch (e) { /* cross-window refresh unavailable */ }
+            }
 
         </script>
         <?php
@@ -78,7 +108,7 @@ if ($xerte_toolkits_site->rights == 'elevated')
         _include_javascript_file("website_code/scripts/screen_display.js");
         _include_javascript_file("website_code/scripts/file_system.js");
 
-        $template_supports = $learning_objects->{get_template_type((int) $_GET['template_id'])}->supports;
+        $template_supports = $learning_objects->{get_template_type($properties_template_id)}->supports;
 
         if ($template_supports == "") {
             $template_supports = array();
@@ -97,9 +127,8 @@ if ($xerte_toolkits_site->rights == 'elevated')
             <link href='branding/branding.css' rel='stylesheet' type='text/css'>
             <?php
         }
-        else {
-            ?>
-            <?php
+        if (function_exists('get_toolkits_ui_theme') && get_toolkits_ui_theme() === 'modern') {
+            echo '<link href="theme/modern/properties.css?version=' . htmlspecialchars($version, ENT_QUOTES, 'UTF-8') . '" media="screen" type="text/css" rel="stylesheet" />' . "\n";
         }
         ?>
 
@@ -111,7 +140,7 @@ if ($xerte_toolkits_site->rights == 'elevated')
     
     -->
 
-    <body class="<?php echo htmlspecialchars(toolkits_ui_theme_body_class(), ENT_QUOTES, 'UTF-8'); ?>" onload="javascript:properties_template();" onunload="javascript:parent.window.opener.refresh_workspace()" <?php echo $body_class; ?> >
+    <body class="<?php echo $body_class_attr; ?>" onload="javascript:properties_template();" onunload="javascript:toolkitsPropertiesOnUnload()">
 
         <!--
         

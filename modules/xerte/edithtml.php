@@ -221,11 +221,7 @@ function output_editor_code($row_edit, $xerte_toolkits_site, $read_status, $vers
         $user_roles = array("super");
     }
 
-    $body_class = "";
-    if ($xerte_toolkits_site->rights == 'elevated')
-    {
-        $body_class = ' class="elevated"';
-    }
+    $body_class = toolkits_editor_body_class_attr($xerte_toolkits_site->rights == 'elevated');
 
     $vendors = get_vendor_settings();
     $corpus_upload_types = array();
@@ -278,6 +274,18 @@ function output_editor_code($row_edit, $xerte_toolkits_site, $read_status, $vers
     else {
         ?>
         <?php
+    }
+    $theme_editor_css = 'theme/' . get_toolkits_ui_theme() . '/editor.css';
+    if (file_exists($xerte_toolkits_site->root_file_path . $theme_editor_css)) {
+        $href = htmlspecialchars(toolkits_theme_asset_url('editor.css?version=' . $version), ENT_QUOTES, 'UTF-8');
+        echo '<link rel="stylesheet" type="text/css" href="' . $href . '"/>' . "\n";
+    }
+    if (function_exists('get_toolkits_ui_theme') && get_toolkits_ui_theme() === 'modern') {
+        $theme_editor_user_css = 'theme/modern/editor-user.css';
+        if (file_exists($xerte_toolkits_site->root_file_path . $theme_editor_user_css)) {
+            $href = htmlspecialchars(toolkits_theme_asset_url('editor-user.css?version=' . $version), ENT_QUOTES, 'UTF-8');
+            echo '<link rel="stylesheet" type="text/css" href="' . $href . '"/>' . "\n";
+        }
     }
     ?>
 
@@ -472,6 +480,64 @@ function output_editor_code($row_edit, $xerte_toolkits_site, $read_status, $vers
     echo "var user_has_preferences = {$user_has_preferences};\n";
     echo "console.log('Editor: user_preferences loaded:', user_preferences);\n";
     echo "console.log('Editor: user_has_preferences =', user_has_preferences);\n";
+
+    if (function_exists('get_toolkits_ui_theme') && get_toolkits_ui_theme() === 'modern') {
+        echo "var ajax_php_path = \"website_code/php/\";\n";
+        if (!defined('INDEX_CHANGE_PASSWORD')) {
+            _load_language_file("/index.inc");
+        }
+
+        $firstName = isset($_SESSION['toolkits_firstname']) ? $_SESSION['toolkits_firstname'] : '';
+        $surname = isset($_SESSION['toolkits_surname']) ? $_SESSION['toolkits_surname'] : '';
+        $displayName = trim($firstName . ' ' . $surname);
+        if ($displayName === '' && !empty($_SESSION['toolkits_logon_username'])) {
+            $displayName = $_SESSION['toolkits_logon_username'];
+        }
+        $jsscript = '';
+        $canManageUser = $authmech && method_exists($authmech, 'canManageUser')
+            ? (bool) $authmech->canManageUser($jsscript)
+            : false;
+        $editor_user_config = array(
+            'strings' => array(
+                'folderCancel' => defined('INDEX_BUTTON_CANCEL') ? INDEX_BUTTON_CANCEL : 'Close',
+                'changePassword' => defined('INDEX_CHANGE_PASSWORD') ? INDEX_CHANGE_PASSWORD : 'Change password',
+                'modernPreferences' => defined('INDEX_MODERN_PREFERENCES') ? INDEX_MODERN_PREFERENCES : 'Preferences',
+                'modernSettings' => defined('INDEX_MODERN_SETTINGS') ? INDEX_MODERN_SETTINGS : 'Settings',
+                'modernMyDetails' => defined('INDEX_MODERN_USER_MENU_MY_DETAILS') ? INDEX_MODERN_USER_MENU_MY_DETAILS : 'My details',
+                'modernFeedback' => defined('INDEX_MODERN_USER_MENU_FEEDBACK') ? INDEX_MODERN_USER_MENU_FEEDBACK : 'Give feedback',
+                'modernFeedbackDesc' => defined('INDEX_MODERN_FEEDBACK_DESC') ? INDEX_MODERN_FEEDBACK_DESC : 'Share your thoughts about Xerte. Feedback is anonymous unless you leave your name or contact details.',
+                'modernFeedbackName' => defined('INDEX_MODERN_FEEDBACK_NAME') ? INDEX_MODERN_FEEDBACK_NAME : 'Name (optional)',
+                'modernFeedbackMessage' => defined('INDEX_MODERN_FEEDBACK_MESSAGE') ? INDEX_MODERN_FEEDBACK_MESSAGE : 'Your feedback',
+                'modernFeedbackSend' => defined('INDEX_MODERN_FEEDBACK_SEND') ? INDEX_MODERN_FEEDBACK_SEND : 'Send feedback',
+                'modernFeedbackThanks' => defined('INDEX_MODERN_FEEDBACK_THANKS') ? INDEX_MODERN_FEEDBACK_THANKS : 'Thank you for your feedback.',
+                'modernFeedbackError' => defined('INDEX_MODERN_FEEDBACK_ERROR') ? INDEX_MODERN_FEEDBACK_ERROR : 'Could not send feedback. Please try again.',
+                'modernDetailsLoading' => defined('INDEX_MODERN_DETAILS_LOADING') ? INDEX_MODERN_DETAILS_LOADING : 'Loading details…',
+                'modernDetailsError' => defined('INDEX_MODERN_DETAILS_ERROR') ? INDEX_MODERN_DETAILS_ERROR : 'Could not load your details. Please try again.',
+                'logout' => defined('INDEX_BUTTON_LOGOUT') ? INDEX_BUTTON_LOGOUT : 'Logout',
+                'modernTourNext' => defined('INDEX_MODERN_TOUR_NEXT') ? INDEX_MODERN_TOUR_NEXT : 'Next step',
+                'modernTourClose' => defined('INDEX_MODERN_TOUR_CLOSE') ? INDEX_MODERN_TOUR_CLOSE : 'Close tour',
+                'modernTourFinish' => defined('INDEX_MODERN_TOUR_FINISH') ? INDEX_MODERN_TOUR_FINISH : 'Finish',
+                'modernTourEditorTopbarTitle' => defined('INDEX_MODERN_TOUR_EDITOR_TOPBAR_TITLE') ? INDEX_MODERN_TOUR_EDITOR_TOPBAR_TITLE : 'The editor top bar',
+                'modernTourEditorTopbarBody' => defined('INDEX_MODERN_TOUR_EDITOR_TOPBAR_BODY') ? INDEX_MODERN_TOUR_EDITOR_TOPBAR_BODY : 'Use the top bar to preview your learning object, save your work, and open your account menu.',
+                'modernTourEditorPagesTitle' => defined('INDEX_MODERN_TOUR_EDITOR_PAGES_TITLE') ? INDEX_MODERN_TOUR_EDITOR_PAGES_TITLE : 'Your pages',
+                'modernTourEditorPagesBody' => defined('INDEX_MODERN_TOUR_EDITOR_PAGES_BODY') ? INDEX_MODERN_TOUR_EDITOR_PAGES_BODY : 'This list shows the pages in your learning object. Select a page to edit it, or add a new page.',
+                'modernTourEditorContentTitle' => defined('INDEX_MODERN_TOUR_EDITOR_CONTENT_TITLE') ? INDEX_MODERN_TOUR_EDITOR_CONTENT_TITLE : 'Edit your content',
+                'modernTourEditorContentBody' => defined('INDEX_MODERN_TOUR_EDITOR_CONTENT_BODY') ? INDEX_MODERN_TOUR_EDITOR_CONTENT_BODY : 'The centre panel is where you build each page. Change titles, text and settings, then save from the top bar.',
+            ),
+            'user' => array(
+                'displayName' => $displayName,
+                'firstName' => $firstName,
+                'surname' => $surname,
+                'canManageUser' => $canManageUser,
+                'isGuest' => $xerte_toolkits_site->authentication_method === 'Guest',
+                'samlLogout' => $xerte_toolkits_site->authentication_method === 'Saml2',
+            ),
+        );
+        echo "var toolkits_index_config = " . json_encode(
+            $editor_user_config,
+            JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT
+        ) . ";\n";
+    }
     ?>
 
     function bunload(){
@@ -503,6 +569,39 @@ function output_editor_code($row_edit, $xerte_toolkits_site, $read_status, $vers
 <script type="text/javascript" src="editor/js/language.js?version=<?php echo $version;?>"></script>
 <script type="text/javascript" src="editor/js/layout.js?version=<?php echo $version;?>"></script>
 <script type="text/javascript" src="editor/js/tree.js?version=<?php echo $version;?>"></script>
+<?php
+    if (function_exists('get_toolkits_ui_theme') && get_toolkits_ui_theme() === 'modern') {
+        if (function_exists('_include_javascript_file')) {
+            _include_javascript_file("website_code/scripts/user_settings.js?version=" . $version);
+            _include_javascript_file("website_code/scripts/logout.js?version=" . $version);
+        } else {
+            echo '<script type="text/javascript" src="website_code/scripts/user_settings.js?version=' . htmlspecialchars($version, ENT_QUOTES, 'UTF-8') . '"></script>' . "\n";
+            echo '<script type="text/javascript" src="website_code/scripts/logout.js?version=' . htmlspecialchars($version, ENT_QUOTES, 'UTF-8') . '"></script>' . "\n";
+        }
+        $theme_editor_user_js = 'theme/modern/editor-user.js';
+        if (file_exists($xerte_toolkits_site->root_file_path . $theme_editor_user_js)) {
+            $src = htmlspecialchars(toolkits_theme_asset_url('editor-user.js?version=' . $version), ENT_QUOTES, 'UTF-8');
+            echo '<script type="text/javascript" src="' . $src . '"></script>' . "\n";
+        }
+    }
+    $theme_editor_js = 'theme/' . get_toolkits_ui_theme() . '/editor-pages.js';
+    if (file_exists($xerte_toolkits_site->root_file_path . $theme_editor_js)) {
+        $src = htmlspecialchars(toolkits_theme_asset_url('editor-pages.js?version=' . $version), ENT_QUOTES, 'UTF-8');
+        echo '<script type="text/javascript" src="' . $src . '"></script>' . "\n";
+    }
+    if (function_exists('get_toolkits_ui_theme') && get_toolkits_ui_theme() === 'modern') {
+        $theme_editor_tour_js = 'theme/modern/editor-tour.js';
+        if (file_exists($xerte_toolkits_site->root_file_path . $theme_editor_tour_js)) {
+            $src = htmlspecialchars(toolkits_theme_asset_url('editor-tour.js?version=' . $version), ENT_QUOTES, 'UTF-8');
+            echo '<script type="text/javascript" src="' . $src . '"></script>' . "\n";
+        }
+    }
+    $theme_editor_opt_js = 'theme/' . get_toolkits_ui_theme() . '/editor-optional.js';
+    if (file_exists($xerte_toolkits_site->root_file_path . $theme_editor_opt_js)) {
+        $src = htmlspecialchars(toolkits_theme_asset_url('editor-optional.js?version=' . $version), ENT_QUOTES, 'UTF-8');
+        echo '<script type="text/javascript" src="' . $src . '"></script>' . "\n";
+    }
+?>
 </body>
 </html>
 

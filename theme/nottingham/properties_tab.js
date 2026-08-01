@@ -64,6 +64,9 @@ function propertiesApiPost(route, data, onOk, onFail) {
 		var msg = 'Request failed';
 		try {
 			var j = xhr.responseJSON;
+			if (!j && xhr.responseText) {
+				j = JSON.parse(xhr.responseText);
+			}
 			if (j && j.error && j.error.message) msg = j.error.message;
 		} catch (e) {}
 		if (onFail) onFail(null); else alert(msg);

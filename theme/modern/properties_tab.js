@@ -64,6 +64,9 @@ function propertiesApiPost(route, data, onOk, onFail) {
 		var msg = 'Request failed';
 		try {
 			var j = xhr.responseJSON;
+			if (!j && xhr.responseText) {
+				j = JSON.parse(xhr.responseText);
+			}
 			if (j && j.error && j.error.message) msg = j.error.message;
 		} catch (e) {}
 		if (onFail) onFail(null); else alert(msg);
@@ -265,13 +268,13 @@ function renderAccessPanel(d) {
 	h += '<div><input type="radio" id="Password" name="share_status" value="Password"' + (sel === 'Password' ? ' checked' : '') + '><label for="Password">' + PROPERTIES_LIBRARY_ACCESS_PASSWORD + '</label></div>';
 	h += '<p class="share_explain_paragraph">' + PROPERTIES_LIBRARY_ACCESS_PASSWORD_EXPLAINED + '</p>';
 	h += '<div><input type="radio" id="PasswordPlay" name="share_status" value="PasswordPlay"' + (sel.indexOf('PasswordPlay') === 0 ? ' checked' : '') + '><label for="PasswordPlay">' + PROPERTIES_LIBRARY_ACCESS_PASSWORD_PLAY + '</label></div>';
-	h += '<p class="share_explain_paragraph">' + PROPERTIES_LIBRARY_ACCESS_PASSWORD_PLAY_EXPLAINED + '</p><form id="PWPlay_pwd"><textarea id="pwd" style="width:90%; height:20px;">' + escapeHtml(d.passwordPlayValue) + '</textarea></form>';
+	h += '<p class="share_explain_paragraph">' + PROPERTIES_LIBRARY_ACCESS_PASSWORD_PLAY_EXPLAINED + '</p><form id="PWPlay_pwd"><input type="text" id="pwd" class="properties-access-input" value="' + escapeHtml(d.passwordPlayValue) + '" autocomplete="off" /></form>';
 	h += '<div><input type="radio" id="Other" name="share_status" value="Other"' + (sel.indexOf('Other') === 0 ? ' checked' : '') + '><label for="Other">' + PROPERTIES_LIBRARY_ACCESS_OTHER;
 	if (sel.indexOf('Other') === 0 && d.otherSiteValue) {
 		h += ' - ' + escapeHtml(d.otherSiteValue);
 	}
 	h += '</label></div>';
-	h += '<p id="other_explain" class="share_explain_paragraph">' + PROPERTIES_LIBRARY_ACCESS_OTHER_EXPLAINED + '</p><form id="other_site_address"><textarea id="url" style="width:90%; height:20px;">' + escapeHtml(d.otherSiteValue) + '</textarea></form>';
+	h += '<p id="other_explain" class="share_explain_paragraph">' + PROPERTIES_LIBRARY_ACCESS_OTHER_EXPLAINED + '</p><form id="other_site_address"><input type="text" id="url" class="properties-access-input" value="' + escapeHtml(d.otherSiteValue) + '" autocomplete="off" /></form>';
 	h += '<div><input type="radio" id="Private" name="share_status" value="Private"' + (sel === 'Private' ? ' checked' : '') + '><label for="Private">' + PROPERTIES_LIBRARY_ACCESS_PRIVATE + '</label></div>';
 	h += '<p class="share_explain_paragraph">' + PROPERTIES_LIBRARY_ACCESS_PRIVATE_EXPLAINED + '</p>';
 	var j;
@@ -298,7 +301,7 @@ function renderMediaPanel(d) {
 	var h = '<h2 class="header">' + PROPERTIES_TAB_MEDIA + '</h2><div id="mainContent">';
 	h += '<p>' + MEDIA_AND_QUOTA_USAGE + ' ' + escapeHtml(d.quotaMb) + ' MB</p>';
 	h += '<p>' + MEDIA_AND_QUOTA_IMPORT_MEDIA + '</p>';
-	h += '<form method="post" enctype="multipart/form-data" id="importpopup" name="importform" target="upload_iframe" action="website_code/php/import/fileupload.php" onsubmit="javascript:iframe_upload_check_initialise(1);">';
+	h += '<form method="post" enctype="multipart/form-data" id="importpopup" class="properties-media-upload" name="importform" target="upload_iframe" action="website_code/php/import/fileupload.php" onsubmit="javascript:iframe_upload_check_initialise(1);">';
 	h += '<div id="filenameuploaded_container"><input type="file" id="filenameuploaded" name="filenameuploaded"/><input type="hidden" name="mediapath" value="' + escapeHtml(d.mediaPath) + '" /></div>';
 	h += '<button id="submitbutton" type="submit" class="xerte_button" name="submitBtn" onclick="javascript:load_button_spinner(this)"><i class="fa fa-upload"></i> ' + MEDIA_AND_QUOTA_BUTTON_IMPORT + '</button></form>';
 	h += '<p id="linktextLabel" class="block indent" for="linktext">' + MEDIA_AND_QUOTA_CLICK_FILENAME + '</p>';

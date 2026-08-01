@@ -6955,6 +6955,7 @@ var EDITOR = (function ($, parent) {
     my.showToolBar = showToolBar;
     my.getIcon = getIcon;
     my.insertOptionalProperty = insertOptionalProperty;
+    my.removeOptionalProperty = removeOptionalProperty;
     my.getPageList = getPageList;
     my.hideInlineEditor = hideInlineEditor;
     my.triggerRedrawForm = triggerRedrawForm;

@@ -92,7 +92,14 @@ Start the page and once loaded set the default option
 
 -->
 
-<body class="<?php echo htmlspecialchars(toolkits_ui_theme_body_class(), ENT_QUOTES, 'UTF-8'); ?>" onload="my_properties_template()">
+<body class="<?php echo htmlspecialchars(toolkits_ui_theme_body_class(), ENT_QUOTES, 'UTF-8'); ?>" onload="<?php
+    $openImport = isset($_GET['tab']) && $_GET['tab'] === 'import';
+    if ($openImport) {
+        echo 'import_templates_template(' . (int)$_SESSION['toolkits_logon_id'] . '); tabClicked(\'tabImport\');';
+    } else {
+        echo 'my_properties_template()';
+    }
+?>">
 
 <!--
 

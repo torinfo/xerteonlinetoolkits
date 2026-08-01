@@ -527,22 +527,85 @@ body.toolkits-ui-theme-modern .toolkits-modern-topbar__dropdown-item--logout .to
 }
 
 body.toolkits-ui-theme-modern .toolkits-modern-user-details {
-    padding: 1.5rem 1.75rem;
-    min-width: 18rem;
-    max-width: 24rem;
+    margin: 0;
 }
 
-body.toolkits-ui-theme-modern .toolkits-modern-user-details__title {
-    margin: 0 0 1rem;
-    font-size: 1.15rem;
+body.toolkits-ui-theme-modern .toolkits-modern-user-details__hero {
+    display: flex;
+    align-items: center;
+    gap: 0.9rem;
+    margin: 0 0 1.25rem;
+    padding: 0 0 1.1rem;
+    border-bottom: 1px solid #e5e7eb;
+}
+
+body.toolkits-ui-theme-modern .toolkits-modern-user-details__avatar {
+    width: 3.25rem;
+    height: 3.25rem;
+    border-radius: 50%;
+    border: 2px solid #f39200;
+    background: #fff7ed;
+    color: #c2410c;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.25rem;
+    font-weight: 700;
+    flex-shrink: 0;
+}
+
+body.toolkits-ui-theme-modern .toolkits-modern-user-details__hero-text {
+    min-width: 0;
+}
+
+body.toolkits-ui-theme-modern .toolkits-modern-user-details__name {
+    margin: 0;
+    font-size: 1.1rem;
     font-weight: 700;
     color: #111827;
+    line-height: 1.3;
 }
 
-body.toolkits-ui-theme-modern .toolkits-modern-user-details p {
-    margin: 0 0 0.65rem;
-    line-height: 1.45;
-    color: #374151;
+body.toolkits-ui-theme-modern .toolkits-modern-user-details__username {
+    margin: 0.2rem 0 0;
+    font-size: 0.875rem;
+    color: #6b7280;
+}
+
+body.toolkits-ui-theme-modern .toolkits-modern-user-details__list {
+    margin: 0;
+    padding: 0;
+}
+
+body.toolkits-ui-theme-modern .toolkits-modern-user-details__row {
+    display: grid;
+    grid-template-columns: 7.5rem 1fr;
+    gap: 0.75rem;
+    align-items: baseline;
+    padding: 0.7rem 0;
+    border-bottom: 1px solid #f3f4f6;
+}
+
+body.toolkits-ui-theme-modern .toolkits-modern-user-details__row:last-child {
+    border-bottom: none;
+    padding-bottom: 0;
+}
+
+body.toolkits-ui-theme-modern .toolkits-modern-user-details__row dt {
+    margin: 0;
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: #6b7280;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+}
+
+body.toolkits-ui-theme-modern .toolkits-modern-user-details__row dd {
+    margin: 0;
+    font-size: 0.95rem;
+    color: #111827;
+    font-weight: 500;
+    word-break: break-word;
 }
 
 body.toolkits-ui-theme-modern .toolkits-modern-topbar__avatar {
@@ -611,6 +674,7 @@ body.toolkits-ui-theme-modern .toolkits-modern-cards--two {
 
 body.toolkits-ui-theme-modern .toolkits-modern-cards--three {
     grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 1.5rem;
 }
 
 @media (max-width: 1100px) {
@@ -649,13 +713,14 @@ body.toolkits-ui-theme-modern .toolkits-modern-card p {
 
 body.toolkits-ui-theme-modern .toolkits-modern-guide {
     position: relative;
-    display: block;
-    border-radius: 12px;
-    padding: 1.25rem 1.25rem 2.5rem;
+    display: flex;
+    flex-direction: column;
+    border-radius: 16px;
+    padding: 2rem 2rem 3.25rem;
     text-decoration: none;
     color: inherit;
     box-sizing: border-box;
-    min-height: 200px;
+    min-height: 22rem;
 }
 
 body.toolkits-ui-theme-modern .toolkits-modern-guide--orange {
@@ -671,31 +736,42 @@ body.toolkits-ui-theme-modern .toolkits-modern-guide--peach {
 }
 
 body.toolkits-ui-theme-modern .toolkits-modern-guide__icon {
-    font-size: 2rem;
-    color: #ea580c;
-    margin-bottom: 0.75rem;
+    font-size: 3.25rem;
+    color: #111;
+    margin-bottom: 1.25rem;
+    line-height: 0;
+}
+
+body.toolkits-ui-theme-modern .toolkits-modern-guide__img {
+    display: block;
+    width: 4.25rem;
+    height: auto;
+    max-height: 4.25rem;
+    object-fit: contain;
 }
 
 body.toolkits-ui-theme-modern .toolkits-modern-guide h3 {
-    margin: 0 0 0.5rem;
-    font-size: 1.2rem;
+    margin: 0 0 1rem;
+    font-size: 1.65rem;
     font-weight: 700;
-    line-height: 1.35;
+    line-height: 1.3;
     color: #000;
 }
 
 body.toolkits-ui-theme-modern .toolkits-modern-guide p {
     margin: 0;
-    font-size: 1.05rem;
+    font-size: 1.15rem;
     color: #1a1a1a;
-    line-height: 1.45;
+    line-height: 1.5;
+    flex: 1;
 }
 
 body.toolkits-ui-theme-modern .toolkits-modern-guide__arrow {
     position: absolute;
-    right: 1rem;
-    bottom: 1rem;
-    color: #6b7280;
+    right: 1.5rem;
+    bottom: 1.5rem;
+    color: #111;
+    font-size: 1.35rem;
 }
 
 body.toolkits-ui-theme-modern .toolkits-modern-more-guides {
@@ -849,19 +925,19 @@ body.toolkits-ui-theme-modern .toolkits-modern-objects__scroll {
 
 body.toolkits-ui-theme-modern .toolkits-modern-lo-page__header {
     display: flex;
-    align-items: flex-start;
-    justify-content: space-between;
-    gap: 1rem;
-    flex-wrap: wrap;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.75rem;
     padding-top: 3rem;
     margin-bottom: 1.25rem;
 }
 
-body.toolkits-ui-theme-modern .toolkits-modern-lo-page__intro {
+body.toolkits-ui-theme-modern .toolkits-modern-lo-page__top {
     display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 0.65rem;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    flex-wrap: wrap;
 }
 
 body.toolkits-ui-theme-modern .toolkits-modern-lo-page__title {
@@ -871,14 +947,144 @@ body.toolkits-ui-theme-modern .toolkits-modern-lo-page__title {
     color: #111827;
 }
 
-body.toolkits-ui-theme-modern .toolkits-modern-objects__filter {
-    display: inline-block;
-    padding: 0.35rem 0.85rem;
-    border-radius: 999px;
-    background: #f3f4f6;
-    color: #1a1a1a;
+body.toolkits-ui-theme-modern .toolkits-modern-lo-page__breadcrumb-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    flex-wrap: wrap;
+    width: 100%;
+}
+
+body.toolkits-ui-theme-modern .toolkits-modern-lo-page__breadcrumb-row .toolkits-modern-lo-page__toolbar {
+    margin-left: auto;
+}
+
+body.toolkits-ui-theme-modern .toolkits-modern-lo-page__actions {
+    display: flex;
+    align-items: center;
+    gap: 0.55rem;
+    flex-shrink: 0;
+}
+
+body.toolkits-ui-theme-modern .toolkits-modern-lo-page__action {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    margin: 0;
+    padding: 0.5rem 0.9rem;
+    border-radius: 6px;
+    font-size: 0.875rem;
+    font-weight: 600;
+    font-family: inherit;
+    line-height: 1.2;
+    cursor: pointer;
+    white-space: nowrap;
+}
+
+body.toolkits-ui-theme-modern .toolkits-modern-lo-page__action--primary {
+    border: 1px solid #007ebb;
+    background: #007ebb;
+    color: #fff;
+}
+
+body.toolkits-ui-theme-modern .toolkits-modern-lo-page__action--primary:hover {
+    background: #006ba1;
+    border-color: #006ba1;
+}
+
+body.toolkits-ui-theme-modern .toolkits-modern-lo-page__action--secondary {
+    border: 1px solid #007ebb;
+    background: #fff;
+    color: #007ebb;
+}
+
+body.toolkits-ui-theme-modern .toolkits-modern-lo-page__action--secondary:hover {
+    background: #eef7fa;
+}
+
+body.toolkits-ui-theme-modern .toolkits-modern-objects__breadcrumb {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.4rem;
+    min-width: 0;
+}
+
+body.toolkits-ui-theme-modern .toolkits-modern-objects__crumb-sep {
+    color: #9ca3af;
     font-size: 0.8125rem;
     font-weight: 600;
+}
+
+body.toolkits-ui-theme-modern .toolkits-modern-objects__crumb {
+    border: 0;
+    background: transparent;
+    padding: 0;
+    color: #007ebb;
+    font-size: 0.8125rem;
+    font-weight: 600;
+    font-family: inherit;
+    line-height: 1.2;
+    cursor: pointer;
+}
+
+body.toolkits-ui-theme-modern .toolkits-modern-objects__crumb--current {
+    color: #111827;
+    cursor: default;
+}
+
+body.toolkits-ui-theme-modern button.toolkits-modern-objects__crumb:hover {
+    text-decoration: underline;
+}
+
+body.toolkits-ui-theme-modern .toolkits-modern-objects__access-filters {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.45rem;
+}
+
+body.toolkits-ui-theme-modern .toolkits-modern-objects__access-pill {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0;
+    padding: 0.35rem 0.85rem;
+    border: 1px solid #d1d5db;
+    border-radius: 999px;
+    background: #fff;
+    color: #6b7280;
+    font-size: 0.8125rem;
+    font-weight: 600;
+    font-family: inherit;
+    line-height: 1.2;
+    cursor: pointer;
+    transition: background 0.15s ease, border-color 0.15s ease, color 0.15s ease;
+}
+
+body.toolkits-ui-theme-modern .toolkits-modern-objects__access-pill:hover {
+    border-color: #007ebb;
+    color: #007ebb;
+}
+
+body.toolkits-ui-theme-modern .toolkits-modern-objects__access-pill--active {
+    background: #007ebb;
+    border-color: #007ebb;
+    color: #fff;
+}
+
+body.toolkits-ui-theme-modern .toolkits-modern-objects__access-pill--active:hover {
+    background: #006ba1;
+    border-color: #006ba1;
+    color: #fff;
+}
+
+body.toolkits-ui-theme-modern .toolkits-modern-objects__count {
+    margin: 0;
+    color: #9ca3af;
+    font-size: 0.8125rem;
+    font-weight: 500;
 }
 
 body.toolkits-ui-theme-modern .toolkits-modern-lo-page__toolbar {
@@ -991,11 +1197,147 @@ body.toolkits-ui-theme-modern .toolkits-modern-lo-item__preview {
 }
 
 body.toolkits-ui-theme-modern .toolkits-modern-lo-item__chevron {
-    display: inline-block;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 1.75rem;
+    height: 1.75rem;
+    margin-right: 0.5rem;
+    padding: 0;
+    border: none;
+    outline: none;
+    box-shadow: none;
+    border-radius: 6px;
+    background: transparent;
     color: #9ca3af;
     font-size: 0.75rem;
-    margin-right: 0.5rem;
     vertical-align: middle;
+    cursor: pointer;
+}
+
+body.toolkits-ui-theme-modern .toolkits-modern-lo-item__chevron:hover,
+body.toolkits-ui-theme-modern .toolkits-modern-lo-item__chevron:focus,
+body.toolkits-ui-theme-modern .toolkits-modern-lo-item__chevron:focus-visible {
+    background: #eef7fa;
+    color: #007ebb;
+    border: none;
+    outline: none;
+    box-shadow: none;
+}
+
+body.toolkits-ui-theme-modern .toolkits-modern-lo-item--expanded .toolkits-modern-lo-item__chevron {
+    color: #007ebb;
+}
+
+body.toolkits-ui-theme-modern .toolkits-modern-lo-item--expanded td {
+    border-bottom-color: transparent;
+}
+
+body.toolkits-ui-theme-modern .toolkits-modern-lo-detail td {
+    padding: 0;
+    border-bottom: 1px solid #e5e7eb;
+    background: #f3f9fc;
+}
+
+body.toolkits-ui-theme-modern .toolkits-modern-lo-detail[hidden] {
+    display: none !important;
+}
+
+body.toolkits-ui-theme-modern .toolkits-modern-lo-detail__panel {
+    padding: 1rem 1.25rem 1.25rem;
+}
+
+body.toolkits-ui-theme-modern .toolkits-modern-lo-detail__grid {
+    display: grid;
+    grid-template-columns: minmax(220px, 1fr) minmax(280px, 1.4fr);
+    gap: 1.5rem 2rem;
+}
+
+body.toolkits-ui-theme-modern .toolkits-modern-lo-detail__row {
+    display: grid;
+    grid-template-columns: minmax(120px, 160px) 1fr;
+    gap: 0.75rem;
+    align-items: start;
+    margin-bottom: 0.75rem;
+}
+
+body.toolkits-ui-theme-modern .toolkits-modern-lo-detail__row:last-child {
+    margin-bottom: 0;
+}
+
+body.toolkits-ui-theme-modern .toolkits-modern-lo-detail__label {
+    font-size: 0.8125rem;
+    font-weight: 600;
+    color: #6b7280;
+}
+
+body.toolkits-ui-theme-modern .toolkits-modern-lo-detail__value {
+    font-size: 0.875rem;
+    color: #111827;
+    min-width: 0;
+    word-break: break-word;
+}
+
+body.toolkits-ui-theme-modern .toolkits-modern-lo-detail__muted {
+    color: #9ca3af;
+}
+
+body.toolkits-ui-theme-modern .toolkits-modern-lo-detail__share-list {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+body.toolkits-ui-theme-modern .toolkits-modern-lo-detail__share-list li {
+    margin: 0 0 0.25rem;
+}
+
+body.toolkits-ui-theme-modern .toolkits-modern-lo-detail__link {
+    color: #007ebb;
+    text-decoration: none;
+}
+
+body.toolkits-ui-theme-modern .toolkits-modern-lo-detail__link:hover {
+    text-decoration: underline;
+}
+
+body.toolkits-ui-theme-modern .toolkits-modern-lo-detail__graph-wrap {
+    margin-top: 1rem;
+}
+
+body.toolkits-ui-theme-modern .toolkits-modern-lo-detail__graph-wrap > .toolkits-modern-lo-detail__label {
+    display: block;
+    margin-bottom: 0.5rem;
+}
+
+body.toolkits-ui-theme-modern .toolkits-modern-lo-detail__graph {
+    min-height: 160px;
+    background: #fff;
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    padding: 0.75rem;
+}
+
+body.toolkits-ui-theme-modern .toolkits-modern-lo-detail__loading,
+body.toolkits-ui-theme-modern .toolkits-modern-lo-detail__error {
+    margin: 0;
+    color: #6b7280;
+    font-size: 0.875rem;
+}
+
+body.toolkits-ui-theme-modern .toolkits-modern-lo-detail__error {
+    color: #b45309;
+}
+
+@media (max-width: 900px) {
+    body.toolkits-ui-theme-modern .toolkits-modern-lo-detail__grid {
+        grid-template-columns: 1fr;
+    }
+
+    body.toolkits-ui-theme-modern .toolkits-modern-lo-detail__row {
+        grid-template-columns: 1fr;
+        gap: 0.25rem;
+    }
 }
 
 body.toolkits-ui-theme-modern .toolkits-modern-lo-item__thumb-wrap {
@@ -1069,7 +1411,29 @@ body.toolkits-ui-theme-modern .toolkits-modern-lo-item__access {
 
 body.toolkits-ui-theme-modern .toolkits-modern-lo-item__access-label {
     display: inline-block;
-    margin-right: 3rem;
+    margin-right: 0.75rem;
+    padding: 0.2rem 0.65rem;
+    border-radius: 999px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    line-height: 1.3;
+    color: #374151;
+}
+
+body.toolkits-ui-theme-modern .toolkits-modern-lo-item__access-label--public {
+    background: #d1fae5;
+}
+
+body.toolkits-ui-theme-modern .toolkits-modern-lo-item__access-label--private {
+    background: #fef3c7;
+}
+
+body.toolkits-ui-theme-modern .toolkits-modern-lo-item__access-label--password {
+    background: #fecaca;
+}
+
+body.toolkits-ui-theme-modern .toolkits-modern-lo-item__access-label--demo {
+    background: #ddd6fe;
 }
 
 body.toolkits-ui-theme-modern .toolkits-modern-lo-item__access-icons {
@@ -1089,6 +1453,57 @@ body.toolkits-ui-theme-modern .toolkits-modern-lo-item__shared {
 body.toolkits-ui-theme-modern .toolkits-modern-lo-item__actions {
     text-align: right;
     white-space: nowrap;
+}
+
+body.toolkits-ui-theme-modern .toolkits-modern-lo-item--folder .toolkits-modern-lo-item__name {
+    padding-left: 0.35rem;
+}
+
+body.toolkits-ui-theme-modern .toolkits-modern-lo-item__folder-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    color: #007ebb;
+    font-size: 1.2rem;
+    line-height: 1;
+}
+
+body.toolkits-ui-theme-modern .toolkits-modern-lo-item__folder-icon--thumb {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 96px;
+    height: 64px;
+    border-radius: 4px;
+    background: #eef7fa;
+    border: 1px solid #d7ebf3;
+    font-size: 1.75rem;
+    vertical-align: middle;
+    box-sizing: border-box;
+}
+
+body.toolkits-ui-theme-modern .toolkits-modern-lo-item__label--folder {
+    color: #007ebb;
+}
+
+body.toolkits-ui-theme-modern .toolkits-modern-lo-item__access-label--folder {
+    background: #eef2ff;
+    color: #3730a3;
+}
+
+body.toolkits-ui-theme-modern .toolkits-modern-lo-detail__grid--folder {
+    grid-template-columns: 1fr;
+    max-width: 36rem;
+}
+
+body.toolkits-ui-theme-modern .toolkits-modern-lo-item__action--open {
+    color: #007ebb;
+}
+
+body.toolkits-ui-theme-modern .toolkits-modern-lo-item__action--open:hover {
+    background: #eef7fa;
+    color: #006ba1;
 }
 
 body.toolkits-ui-theme-modern .toolkits-modern-lo-item__action {
@@ -1245,7 +1660,308 @@ body.toolkits-ui-theme-modern .toolkits-modern-lo-preview__frame {
     background: #fff;
 }
 
+/* Properties modal */
+body.toolkits-ui-theme-modern .toolkits-modern-properties-modal {
+    position: fixed;
+    inset: 0;
+    z-index: 2300;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1.5rem;
+    box-sizing: border-box;
+}
+
+body.toolkits-ui-theme-modern .toolkits-modern-properties-modal[hidden] {
+    display: none !important;
+}
+
+body.toolkits-ui-theme-modern.toolkits-modern-properties-modal-open {
+    overflow: hidden;
+}
+
+body.toolkits-ui-theme-modern .toolkits-modern-properties-modal__backdrop {
+    position: absolute;
+    inset: 0;
+    background: rgba(17, 24, 39, 0.55);
+}
+
+body.toolkits-ui-theme-modern .toolkits-modern-properties-modal__dialog {
+    position: relative;
+    z-index: 1;
+    width: min(1040px, 94vw);
+    height: min(780px, 90vh);
+    background: #fff;
+    border-radius: 12px;
+    box-shadow: 0 24px 48px rgba(0, 0, 0, 0.2);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+body.toolkits-ui-theme-modern .toolkits-modern-properties-modal__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 0.9rem 1.15rem;
+    border-bottom: 1px solid #e5e7eb;
+    flex-shrink: 0;
+    background: #fff;
+}
+
+body.toolkits-ui-theme-modern .toolkits-modern-properties-modal__title {
+    margin: 0;
+    font-size: 1.05rem;
+    font-weight: 700;
+    color: #111827;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+body.toolkits-ui-theme-modern .toolkits-modern-properties-modal__close {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 2.25rem;
+    height: 2.25rem;
+    border: none;
+    border-radius: 8px;
+    background: transparent;
+    color: #6b7280;
+    font-size: 1.1rem;
+    cursor: pointer;
+    flex-shrink: 0;
+}
+
+body.toolkits-ui-theme-modern .toolkits-modern-properties-modal__close:hover {
+    background: #f3f4f6;
+    color: #111827;
+}
+
+body.toolkits-ui-theme-modern .toolkits-modern-properties-modal__frame {
+    flex: 1;
+    width: 100%;
+    border: 0;
+    background: #f8fafc;
+}
+
 /* User settings / password modals */
+body.toolkits-ui-theme-modern .toolkits-modern-folder-modal,
+body.toolkits-ui-theme-modern .toolkits-modern-import-modal {
+    position: fixed;
+    inset: 0;
+    z-index: 2200;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1.5rem;
+    box-sizing: border-box;
+}
+
+body.toolkits-ui-theme-modern .toolkits-modern-folder-modal[hidden],
+body.toolkits-ui-theme-modern .toolkits-modern-import-modal[hidden] {
+    display: none !important;
+}
+
+body.toolkits-ui-theme-modern.toolkits-modern-folder-modal-open,
+body.toolkits-ui-theme-modern.toolkits-modern-import-modal-open {
+    overflow: hidden;
+}
+
+body.toolkits-ui-theme-modern .toolkits-modern-folder-modal__backdrop,
+body.toolkits-ui-theme-modern .toolkits-modern-import-modal__backdrop {
+    position: absolute;
+    inset: 0;
+    background: rgba(17, 24, 39, 0.55);
+}
+
+body.toolkits-ui-theme-modern .toolkits-modern-folder-modal__dialog,
+body.toolkits-ui-theme-modern .toolkits-modern-import-modal__dialog {
+    position: relative;
+    z-index: 1;
+    width: min(420px, 92vw);
+    background: #fff;
+    border-radius: 12px;
+    box-shadow: 0 24px 48px rgba(0, 0, 0, 0.2);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+body.toolkits-ui-theme-modern .toolkits-modern-import-modal__dialog {
+    width: min(480px, 92vw);
+}
+
+body.toolkits-ui-theme-modern .toolkits-modern-folder-modal__header,
+body.toolkits-ui-theme-modern .toolkits-modern-import-modal__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 1rem 1.25rem;
+    border-bottom: 1px solid #e5e7eb;
+}
+
+body.toolkits-ui-theme-modern .toolkits-modern-folder-modal__title,
+body.toolkits-ui-theme-modern .toolkits-modern-import-modal__title {
+    margin: 0;
+    font-size: 1.05rem;
+    font-weight: 700;
+    color: #111827;
+}
+
+body.toolkits-ui-theme-modern .toolkits-modern-folder-modal__close,
+body.toolkits-ui-theme-modern .toolkits-modern-import-modal__close {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 2rem;
+    height: 2rem;
+    border: none;
+    border-radius: 6px;
+    background: transparent;
+    color: #6b7280;
+    cursor: pointer;
+    font-size: 1rem;
+}
+
+body.toolkits-ui-theme-modern .toolkits-modern-folder-modal__close:hover,
+body.toolkits-ui-theme-modern .toolkits-modern-import-modal__close:hover {
+    background: #f3f4f6;
+    color: #111827;
+}
+
+body.toolkits-ui-theme-modern .toolkits-modern-folder-modal__body,
+body.toolkits-ui-theme-modern .toolkits-modern-import-modal__body {
+    padding: 1.25rem;
+}
+
+body.toolkits-ui-theme-modern .toolkits-modern-folder-modal__prompt,
+body.toolkits-ui-theme-modern .toolkits-modern-import-modal__prompt {
+    margin: 0 0 1rem;
+    color: #4b5563;
+    font-size: 0.9375rem;
+    line-height: 1.45;
+}
+
+body.toolkits-ui-theme-modern .toolkits-modern-folder-modal__label,
+body.toolkits-ui-theme-modern .toolkits-modern-import-modal__label {
+    display: block;
+    margin-bottom: 0.4rem;
+    font-size: 0.8125rem;
+    font-weight: 600;
+    color: #374151;
+}
+
+body.toolkits-ui-theme-modern .toolkits-modern-folder-modal__input,
+body.toolkits-ui-theme-modern .toolkits-modern-import-modal__input {
+    display: block;
+    width: 100%;
+    box-sizing: border-box;
+    margin: 0 0 1.15rem;
+    padding: 0.65rem 0.75rem;
+    border: 1px solid #d1d5db;
+    border-radius: 8px;
+    font-size: 0.9375rem;
+    font-family: inherit;
+    color: #111827;
+    background: #fff;
+}
+
+body.toolkits-ui-theme-modern .toolkits-modern-folder-modal__input:focus,
+body.toolkits-ui-theme-modern .toolkits-modern-import-modal__input:focus {
+    outline: none;
+    border-color: #007ebb;
+    box-shadow: 0 0 0 3px rgba(0, 126, 187, 0.15);
+}
+
+body.toolkits-ui-theme-modern .toolkits-modern-import-modal__namewrong {
+    margin: -0.65rem 0 0.85rem;
+    min-height: 0;
+}
+
+body.toolkits-ui-theme-modern .toolkits-modern-import-modal__namewrong .alert_msg {
+    margin: 0;
+    color: #b45309;
+    font-size: 0.8125rem;
+}
+
+body.toolkits-ui-theme-modern .toolkits-modern-import-modal__file {
+    margin: 0 0 1.15rem;
+}
+
+body.toolkits-ui-theme-modern .toolkits-modern-import-modal__file input[type="file"] {
+    display: block;
+    width: 100%;
+    box-sizing: border-box;
+    padding: 0.55rem 0;
+    font-size: 0.875rem;
+    font-family: inherit;
+    color: #374151;
+}
+
+body.toolkits-ui-theme-modern .toolkits-modern-folder-modal__actions,
+body.toolkits-ui-theme-modern .toolkits-modern-import-modal__actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 0.55rem;
+}
+
+body.toolkits-ui-theme-modern .toolkits-modern-folder-modal__btn,
+body.toolkits-ui-theme-modern .toolkits-modern-import-modal__btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.35rem;
+    margin: 0;
+    padding: 0.55rem 0.95rem;
+    border-radius: 6px;
+    font-size: 0.875rem;
+    font-weight: 600;
+    font-family: inherit;
+    line-height: 1.2;
+    cursor: pointer;
+}
+
+body.toolkits-ui-theme-modern .toolkits-modern-folder-modal__btn--primary,
+body.toolkits-ui-theme-modern .toolkits-modern-import-modal__btn--primary {
+    border: 1px solid #007ebb;
+    background: #007ebb;
+    color: #fff;
+}
+
+body.toolkits-ui-theme-modern .toolkits-modern-folder-modal__btn--primary:hover,
+body.toolkits-ui-theme-modern .toolkits-modern-import-modal__btn--primary:hover {
+    background: #006ba1;
+    border-color: #006ba1;
+}
+
+body.toolkits-ui-theme-modern .toolkits-modern-import-modal__btn--primary:disabled {
+    opacity: 0.55;
+    cursor: not-allowed;
+}
+
+body.toolkits-ui-theme-modern .toolkits-modern-folder-modal__btn--secondary,
+body.toolkits-ui-theme-modern .toolkits-modern-import-modal__btn--secondary {
+    border: 1px solid #d1d5db;
+    background: #fff;
+    color: #374151;
+}
+
+body.toolkits-ui-theme-modern .toolkits-modern-folder-modal__btn--secondary:hover,
+body.toolkits-ui-theme-modern .toolkits-modern-import-modal__btn--secondary:hover {
+    background: #f9fafb;
+}
+
+body.toolkits-ui-theme-modern .toolkits-modern-folder-modal__feedback {
+    margin: 0.75rem 0 0;
+    min-height: 1.25rem;
+    color: #059669;
+    font-size: 0.875rem;
+}
+
 body.toolkits-ui-theme-modern .toolkits-modern-user-modal {
     position: fixed;
     inset: 0;
@@ -1286,6 +2002,84 @@ body.toolkits-ui-theme-modern .toolkits-modern-user-modal__dialog {
 
 body.toolkits-ui-theme-modern .toolkits-modern-user-modal--settings .toolkits-modern-user-modal__dialog {
     width: min(520px, 92vw);
+}
+
+body.toolkits-ui-theme-modern .toolkits-modern-user-modal--feedback .toolkits-modern-user-modal__dialog {
+    width: min(520px, 92vw);
+}
+
+body.toolkits-ui-theme-modern .toolkits-modern-user-modal__loading {
+    margin: 0;
+    color: #6b7280;
+}
+
+body.toolkits-ui-theme-modern .toolkits-modern-feedback__desc {
+    margin: 0 0 1.15rem;
+    color: #4b5563;
+    font-size: 0.925rem;
+    line-height: 1.5;
+}
+
+body.toolkits-ui-theme-modern .toolkits-modern-feedback__label {
+    display: block;
+    margin: 0 0 0.4rem;
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: #374151;
+}
+
+body.toolkits-ui-theme-modern .toolkits-modern-feedback__input,
+body.toolkits-ui-theme-modern .toolkits-modern-feedback__textarea {
+    display: block;
+    width: 100%;
+    box-sizing: border-box;
+    margin: 0 0 1rem;
+    padding: 0.65rem 0.75rem;
+    border: 1px solid #d1d5db;
+    border-radius: 8px;
+    font: inherit;
+    font-size: 0.95rem;
+    color: #111827;
+    background: #fff;
+}
+
+body.toolkits-ui-theme-modern .toolkits-modern-feedback__textarea {
+    min-height: 10rem;
+    resize: vertical;
+    line-height: 1.45;
+}
+
+body.toolkits-ui-theme-modern .toolkits-modern-feedback__input:focus,
+body.toolkits-ui-theme-modern .toolkits-modern-feedback__textarea:focus {
+    outline: none;
+    border-color: #007ebb;
+    box-shadow: 0 0 0 3px rgba(0, 126, 187, 0.15);
+}
+
+body.toolkits-ui-theme-modern .toolkits-modern-feedback__actions {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 0.25rem;
+}
+
+body.toolkits-ui-theme-modern .toolkits-modern-feedback__status {
+    margin: 0 0 0.85rem;
+    padding: 0.7rem 0.85rem;
+    border-radius: 8px;
+    font-size: 0.9rem;
+    line-height: 1.4;
+}
+
+body.toolkits-ui-theme-modern .toolkits-modern-feedback__status--ok {
+    background: #ecfdf5;
+    color: #065f46;
+    border: 1px solid #a7f3d0;
+}
+
+body.toolkits-ui-theme-modern .toolkits-modern-feedback__status--error {
+    background: #fef2f2;
+    color: #991b1b;
+    border: 1px solid #fecaca;
 }
 
 body.toolkits-ui-theme-modern .toolkits-modern-user-modal__header {
@@ -1382,6 +2176,190 @@ body.toolkits-ui-theme-modern .toolkits-modern-user-modal .toolkits-user-setting
     line-height: 1.45;
 }
 
+/* Preferences modal — card groups + switches (matches editor optional prefs) */
+body.toolkits-ui-theme-modern .toolkits-modern-user-modal--preferences .toolkits-modern-user-modal__dialog {
+    width: min(440px, 92vw);
+}
+
+body.toolkits-ui-theme-modern .toolkits-modern-user-modal .toolkits-pref-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.85rem;
+}
+
+body.toolkits-ui-theme-modern .toolkits-modern-user-modal .toolkits-pref-card {
+    background: #fff;
+    border: 1px solid #e5e7eb;
+    border-radius: 12px;
+    padding: 0.7rem 0.85rem 0.35rem;
+    box-sizing: border-box;
+}
+
+body.toolkits-ui-theme-modern .toolkits-modern-user-modal .toolkits-pref-card__heading {
+    margin: 0 0 0.2rem 0.15rem;
+    font-size: 0.72rem;
+    font-weight: 600;
+    color: #9ca3af;
+    letter-spacing: 0.02em;
+    text-transform: uppercase;
+}
+
+body.toolkits-ui-theme-modern .toolkits-modern-user-modal .toolkits-pref-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.85rem;
+    width: 100%;
+    padding: 0.7rem 0.15rem;
+    box-sizing: border-box;
+}
+
+body.toolkits-ui-theme-modern .toolkits-modern-user-modal .toolkits-pref-row + .toolkits-pref-row {
+    border-top: 1px solid #f3f4f6;
+}
+
+body.toolkits-ui-theme-modern .toolkits-modern-user-modal .toolkits-pref-row__text {
+    min-width: 0;
+    flex: 1 1 auto;
+}
+
+body.toolkits-ui-theme-modern .toolkits-modern-user-modal .toolkits-pref-row__title {
+    display: block;
+    margin: 0;
+    font-size: 0.92rem;
+    font-weight: 700;
+    color: #111827;
+    line-height: 1.25;
+    cursor: pointer;
+}
+
+body.toolkits-ui-theme-modern .toolkits-modern-user-modal .toolkits-pref-row__desc {
+    margin: 0.15rem 0 0;
+    font-size: 0.78rem;
+    color: #9ca3af;
+    line-height: 1.35;
+}
+
+body.toolkits-ui-theme-modern .toolkits-modern-user-modal .toolkits-pref-switch {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    flex-shrink: 0;
+    cursor: pointer;
+}
+
+body.toolkits-ui-theme-modern .toolkits-modern-user-modal .toolkits-pref-switch__input {
+    position: absolute;
+    opacity: 0;
+    width: 1px;
+    height: 1px;
+    margin: 0;
+}
+
+body.toolkits-ui-theme-modern .toolkits-modern-user-modal .toolkits-pref-switch__ui {
+    width: 42px;
+    height: 24px;
+    border-radius: 999px;
+    background: #d1d5db;
+    position: relative;
+    transition: background 0.15s ease;
+    display: block;
+}
+
+body.toolkits-ui-theme-modern .toolkits-modern-user-modal .toolkits-pref-switch__ui::after {
+    content: '';
+    position: absolute;
+    top: 3px;
+    left: 3px;
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    background: #fff;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+    transition: transform 0.15s ease;
+}
+
+body.toolkits-ui-theme-modern .toolkits-modern-user-modal .toolkits-pref-switch__input:checked + .toolkits-pref-switch__ui {
+    background: #007ebb;
+}
+
+body.toolkits-ui-theme-modern .toolkits-modern-user-modal .toolkits-pref-switch__input:checked + .toolkits-pref-switch__ui::after {
+    transform: translateX(18px);
+}
+
+body.toolkits-ui-theme-modern .toolkits-modern-user-modal .toolkits-pref-switch__input:focus-visible + .toolkits-pref-switch__ui {
+    outline: 2px solid #007ebb;
+    outline-offset: 2px;
+}
+
+body.toolkits-ui-theme-modern .toolkits-modern-user-modal .toolkits-pref-radio-list {
+    display: flex;
+    flex-direction: column;
+    padding: 0.15rem 0 0.45rem;
+}
+
+body.toolkits-ui-theme-modern .toolkits-modern-user-modal .toolkits-pref-radio {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.7rem;
+    padding: 0.55rem 0.15rem;
+    cursor: pointer;
+    box-sizing: border-box;
+}
+
+body.toolkits-ui-theme-modern .toolkits-modern-user-modal .toolkits-pref-radio + .toolkits-pref-radio {
+    border-top: 1px solid #f3f4f6;
+}
+
+body.toolkits-ui-theme-modern .toolkits-modern-user-modal .toolkits-pref-radio__input {
+    position: absolute;
+    opacity: 0;
+    width: 1px;
+    height: 1px;
+    margin: 0;
+    pointer-events: none;
+}
+
+body.toolkits-ui-theme-modern .toolkits-modern-user-modal .toolkits-pref-radio__control {
+    width: 1.05rem;
+    height: 1.05rem;
+    margin-top: 0.12rem;
+    border: 2px solid #d1d5db;
+    border-radius: 50%;
+    background: #fff;
+    flex-shrink: 0;
+    box-sizing: border-box;
+    position: relative;
+}
+
+body.toolkits-ui-theme-modern .toolkits-modern-user-modal .toolkits-pref-radio__input:checked + .toolkits-pref-radio__control {
+    border-color: #007ebb;
+}
+
+body.toolkits-ui-theme-modern .toolkits-modern-user-modal .toolkits-pref-radio__input:checked + .toolkits-pref-radio__control::after {
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 0.45rem;
+    height: 0.45rem;
+    border-radius: 50%;
+    background: #007ebb;
+    transform: translate(-50%, -50%);
+}
+
+body.toolkits-ui-theme-modern .toolkits-modern-user-modal .toolkits-pref-radio__input:focus-visible + .toolkits-pref-radio__control {
+    outline: 2px solid #007ebb;
+    outline-offset: 2px;
+}
+
+body.toolkits-ui-theme-modern .toolkits-modern-user-modal .toolkits-pref-radio__text {
+    font-size: 0.92rem;
+    font-weight: 600;
+    color: #111827;
+    line-height: 1.35;
+}
+
 body.toolkits-ui-theme-modern .toolkits-modern-user-modal .toolkits-user-settings-form__checkbox {
     margin-bottom: 0.65rem;
 }
@@ -1407,7 +2385,7 @@ body.toolkits-ui-theme-modern .toolkits-modern-user-modal .toolkits-user-setting
 }
 
 body.toolkits-ui-theme-modern .toolkits-modern-user-modal .toolkits-user-settings-form__result {
-    margin-top: 1rem;
+    margin-top: 0.25rem;
     font-size: 0.9rem;
     color: #374151;
     line-height: 1.45;
@@ -1494,4 +2472,280 @@ body.toolkits-ui-theme-modern.toolkits-modern-browse-active .toolkits-modern-wor
 body.toolkits-ui-theme-modern .toolkits-modern-app h2,
 body.toolkits-ui-theme-modern #toolkits-modern-workspace h2 {
     color: #000;
+}
+
+body.toolkits-ui-theme-modern .toolkits-modern-btn--secondary {
+    background: #fff;
+    color: #007ebb;
+    border: 1px solid #007ebb;
+}
+
+body.toolkits-ui-theme-modern .toolkits-modern-btn--secondary:hover {
+    background: #f0f9ff;
+}
+
+body.toolkits-ui-theme-modern .toolkits-modern-card__create-wrap {
+    position: relative;
+    display: inline-block;
+}
+
+body.toolkits-ui-theme-modern .toolkits-modern-card-create-flyout {
+    position: fixed;
+    z-index: 2400;
+    min-width: 260px;
+    max-width: 320px;
+    background: #fff;
+    border: 1px solid #e5e7eb;
+    border-radius: 10px;
+    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.12);
+    padding: 0.35rem 0;
+    box-sizing: border-box;
+}
+
+body.toolkits-ui-theme-modern .toolkits-modern-card-create-flyout[hidden] {
+    display: none !important;
+}
+
+/* Guided tour */
+body.toolkits-ui-theme-modern .toolkits-modern-tour {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    overflow: visible;
+}
+
+body.toolkits-ui-theme-modern .toolkits-modern-tour[hidden] {
+    display: none !important;
+}
+
+body.toolkits-ui-theme-modern .toolkits-modern-tour__overlay {
+    position: absolute;
+    inset: 0;
+    background: rgba(15, 23, 42, 0.48);
+    pointer-events: auto;
+    z-index: 5000;
+}
+
+/* Welcome step: full grey backdrop over the whole UI */
+body.toolkits-ui-theme-modern.toolkits-modern-tour-mode-welcome .toolkits-modern-tour__overlay {
+    background: rgba(75, 85, 99, 0.72);
+}
+
+body.toolkits-ui-theme-modern.toolkits-modern-tour-mode-welcome .toolkits-modern-sidebar,
+body.toolkits-ui-theme-modern.toolkits-modern-tour-mode-welcome .toolkits-modern-main,
+body.toolkits-ui-theme-modern.toolkits-modern-tour-mode-welcome .toolkits-modern-card-create-flyout,
+body.toolkits-ui-theme-modern.toolkits-modern-tour-mode-welcome .toolkits-modern-tour-highlight {
+    z-index: 0 !important;
+    box-shadow: none !important;
+}
+
+body.toolkits-ui-theme-modern .toolkits-modern-tour__welcome,
+body.toolkits-ui-theme-modern .toolkits-modern-tour__tip {
+    pointer-events: auto;
+    z-index: 5100;
+}
+
+body.toolkits-ui-theme-modern .toolkits-modern-tour__welcome {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    width: min(520px, calc(100vw - 2rem));
+    background: #fff;
+    border-radius: 16px;
+    box-shadow: 0 24px 48px rgba(0, 0, 0, 0.2);
+    padding: 2rem 2rem 1.75rem;
+    box-sizing: border-box;
+    text-align: center;
+}
+
+body.toolkits-ui-theme-modern .toolkits-modern-tour__welcome[hidden],
+body.toolkits-ui-theme-modern .toolkits-modern-tour__tip[hidden] {
+    display: none !important;
+}
+
+body.toolkits-ui-theme-modern .toolkits-modern-tour__welcome-title {
+    margin: 0 0 1.25rem;
+    font-size: 1.75rem;
+    font-weight: 700;
+    color: #111827;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+}
+
+body.toolkits-ui-theme-modern .toolkits-modern-tour__welcome-logo {
+    height: 1.85rem;
+    width: auto;
+    display: inline-block;
+    vertical-align: middle;
+}
+
+body.toolkits-ui-theme-modern .toolkits-modern-tour__welcome-art {
+    display: flex;
+    justify-content: center;
+    margin: 0 auto 1.25rem;
+    max-width: 280px;
+}
+
+body.toolkits-ui-theme-modern .toolkits-modern-tour__welcome-art img {
+    width: 100%;
+    max-width: 300px;
+    height: auto;
+}
+
+body.toolkits-ui-theme-modern .toolkits-modern-tour__welcome-body {
+    margin: 0 0 1.75rem;
+    color: #4b5563;
+    line-height: 1.5;
+    font-size: 1rem;
+}
+
+body.toolkits-ui-theme-modern .toolkits-modern-tour__welcome-actions {
+    display: flex;
+    justify-content: center;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+}
+
+body.toolkits-ui-theme-modern .toolkits-modern-tour__tip {
+    position: absolute;
+    width: min(340px, calc(100vw - 2rem));
+    background: #fff;
+    border-radius: 12px;
+    box-shadow: 0 16px 40px rgba(0, 0, 0, 0.18);
+    padding: 1.15rem 1.25rem 1rem;
+    box-sizing: border-box;
+    overflow: visible;
+}
+
+body.toolkits-ui-theme-modern .toolkits-modern-tour__tip-close {
+    position: absolute;
+    top: 0.75rem;
+    right: 0.75rem;
+    border: none;
+    background: transparent;
+    color: #007ebb;
+    cursor: pointer;
+    font-size: 1.1rem;
+    line-height: 1;
+    padding: 0.25rem;
+}
+
+body.toolkits-ui-theme-modern .toolkits-modern-tour__tip-title {
+    margin: 0 1.75rem 0.65rem 0;
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: #111827;
+}
+
+body.toolkits-ui-theme-modern .toolkits-modern-tour__tip-body {
+    margin: 0 0 1.15rem;
+    color: #4b5563;
+    font-size: 0.95rem;
+    line-height: 1.45;
+}
+
+body.toolkits-ui-theme-modern .toolkits-modern-tour__tip-list {
+    margin: 0.4rem 0 0;
+    padding-left: 1.25rem;
+}
+
+body.toolkits-ui-theme-modern .toolkits-modern-tour__tip-list li {
+    margin: 0.15rem 0;
+}
+
+body.toolkits-ui-theme-modern .toolkits-modern-tour__tip-list strong {
+    font-weight: 700;
+    color: #111827;
+}
+
+body.toolkits-ui-theme-modern .toolkits-modern-tour__tip-label {
+    color: #007ebb;
+    font-weight: 700;
+}
+
+body.toolkits-ui-theme-modern .toolkits-modern-tour__tip-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem;
+}
+
+body.toolkits-ui-theme-modern .toolkits-modern-tour__tip-step {
+    color: #6b7280;
+    font-size: 0.9rem;
+    font-weight: 600;
+}
+
+body.toolkits-ui-theme-modern .toolkits-modern-tour__tip-arrow {
+    position: absolute;
+    width: 0;
+    height: 0;
+    background: transparent;
+    box-shadow: none;
+    transform: none;
+    z-index: 1;
+    pointer-events: none;
+}
+
+body.toolkits-ui-theme-modern .toolkits-modern-tour__tip--left .toolkits-modern-tour__tip-arrow {
+    left: -12px;
+    top: 50%;
+    margin-top: -10px;
+    border-style: solid;
+    border-width: 10px 12px 10px 0;
+    border-color: transparent #fff transparent transparent;
+    filter: drop-shadow(-1px 1px 2px rgba(0, 0, 0, 0.12));
+}
+
+body.toolkits-ui-theme-modern .toolkits-modern-tour__tip--right .toolkits-modern-tour__tip-arrow {
+    right: -12px;
+    left: auto;
+    top: 50%;
+    margin-top: -10px;
+    border-style: solid;
+    border-width: 10px 0 10px 12px;
+    border-color: transparent transparent transparent #fff;
+    filter: drop-shadow(1px 1px 2px rgba(0, 0, 0, 0.12));
+}
+
+body.toolkits-ui-theme-modern.toolkits-modern-tour-active .toolkits-modern-tour-highlight {
+    position: relative;
+    z-index: 5001 !important;
+}
+
+body.toolkits-ui-theme-modern.toolkits-modern-tour-active .toolkits-modern-sidebar.toolkits-modern-tour-highlight {
+    background: #fff;
+    box-shadow: 4px 0 24px rgba(0, 0, 0, 0.08);
+}
+
+body.toolkits-ui-theme-modern.toolkits-modern-tour-active #toolkits-modern-create-toggle.toolkits-modern-tour-highlight {
+    box-shadow: 0 0 0 3px rgba(0, 126, 187, 0.35);
+}
+
+body.toolkits-ui-theme-modern.toolkits-modern-tour-active .toolkits-modern-nav__item.toolkits-modern-tour-highlight {
+    background: #f0f9ff;
+    border-radius: 8px;
+    box-shadow: 0 0 0 2px rgba(0, 126, 187, 0.25);
+}
+
+body.toolkits-ui-theme-modern.toolkits-modern-tour-active #toolkits-modern-card-interactive.toolkits-modern-tour-highlight {
+    background: #eef7fa;
+    box-shadow: 0 0 0 3px rgba(0, 126, 187, 0.3), 0 12px 28px rgba(0, 0, 0, 0.08);
+}
+
+body.toolkits-ui-theme-modern.toolkits-modern-tour-active #toolkits-modern-card-create-menu.toolkits-modern-tour-highlight {
+    z-index: 5002 !important;
+}
+
+body.toolkits-ui-theme-modern.toolkits-modern-tour-active #toolkits-modern-card-create-menu:not([hidden]) {
+    z-index: 5002 !important;
+}
+
+body.toolkits-ui-theme-modern.toolkits-modern-tour-mode-card #toolkits-modern-card-site {
+    opacity: 0.45;
+    filter: grayscale(0.15);
 }

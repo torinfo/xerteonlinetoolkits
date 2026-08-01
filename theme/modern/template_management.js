@@ -199,6 +199,63 @@ function toggle(tag) {
 
 }
 
+function normalizeEditorOpenMode(mode) {
+    if (mode === '_blank' || mode === 'lightbox' || mode === '_self') {
+        return mode;
+    }
+    return 'popup';
+}
+
+function normalizeEditorOpenLocation(location) {
+    if (location === '_blank' || location === 'lightbox' || location === '_self') {
+        return location;
+    }
+    return 'popup';
+}
+
+function getEditorOpenModePreference() {
+    var prefs = (typeof window.user_preferences !== 'undefined' && window.user_preferences)
+        ? window.user_preferences
+        : ((typeof user_preferences !== 'undefined') ? user_preferences : null);
+    if (prefs) {
+        return normalizeEditorOpenMode(prefs.editor_open_mode);
+    }
+    return 'popup';
+}
+
+function getEditorOpenLocation(event) {
+    if (event) {
+        if (event.shiftKey) {
+            return 'popup';
+        }
+        if (event.ctrlKey || event.metaKey) {
+            return '_blank';
+        }
+        if (event.altKey) {
+            return 'lightbox';
+        }
+    }
+    return getEditorOpenModePreference();
+}
+
+function openSelectedEditor(event, editType) {
+    var openMode = getEditorOpenLocation(event);
+    editType = editType || 'edithtml';
+
+    if (openMode === '_blank') {
+        var win = edit_window(false, editType, '_blank');
+        if (win) {
+            win.focus();
+        }
+    } else if (openMode === 'lightbox') {
+        edit_window(false, editType, 'lightbox');
+    } else if (openMode === '_self') {
+        edit_window(false, editType, '_self');
+    } else {
+        edit_window(false, editType);
+    }
+}
+
 /**
  *
  * Function edit window
@@ -222,6 +279,12 @@ function edit_window(admin, edit, location) {
             if (node.xot_type == "file") {
 
                 if (node.parent != workspace.recyclebin_id) {
+                    // Always load the editor in the workspace browser window itself
+                    if (location === '_self') {
+                        window.location.assign(site_url + url_return(edit, node.xot_id));
+                        return;
+                    }
+
                     window_id = "editwindow" + node.id;
 
                     window_open = false;

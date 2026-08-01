@@ -119,11 +119,15 @@ function rename_folder(folder_id,form_tag){
 			tab_stateChanged(array_response[0], 'panelFolder');
 
 			// set the file name in the file_area
-			if (typeof window_reference === "undefined") {
-				window.opener.refresh_workspace();
-			} else {
-				window_reference.refresh_workspace();
-			}
+			try {
+				if (typeof window_reference !== "undefined" && window_reference && typeof window_reference.refresh_workspace === "function") {
+					window_reference.refresh_workspace();
+				} else if (window.parent && window.parent !== window && typeof window.parent.refresh_workspace === "function") {
+					window.parent.refresh_workspace();
+				} else if (window.opener && !window.opener.closed && typeof window.opener.refresh_workspace === "function") {
+					window.opener.refresh_workspace();
+				}
+			} catch (e) { /* refresh unavailable */ }
 		})
 	}else{
 		alert(NAME_FAIL_FOLDER_PROPERTIES);

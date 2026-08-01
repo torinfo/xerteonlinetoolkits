@@ -196,11 +196,7 @@ function output_editor_code($row_edit, $xerte_toolkits_site, $read_status, $vers
         $user_roles = array("super");
     }
 
-    $body_class = "";
-    if ($xerte_toolkits_site->rights == 'elevated')
-    {
-        $body_class = ' class="elevated"';
-    }
+    $body_class = toolkits_editor_body_class_attr($xerte_toolkits_site->rights == 'elevated');
 
     $vendors = get_vendor_settings();
     $corpus_upload_types = array();
@@ -251,6 +247,11 @@ function output_editor_code($row_edit, $xerte_toolkits_site, $read_status, $vers
     else {
         ?>
         <?php
+    }
+    $theme_editor_css = 'theme/' . get_toolkits_ui_theme() . '/editor.css';
+    if (file_exists($xerte_toolkits_site->root_file_path . $theme_editor_css)) {
+        $href = htmlspecialchars(toolkits_theme_asset_url('editor.css?version=' . $version), ENT_QUOTES, 'UTF-8');
+        echo '<link rel="stylesheet" type="text/css" href="' . $href . '"/>' . "\n";
     }
     ?>
     <script src="<?php echo htmlspecialchars(toolkits_script_url('website_code/scripts/template_management.js?version=' . $version), ENT_QUOTES, 'UTF-8'); ?>"></script>
@@ -450,6 +451,18 @@ function output_editor_code($row_edit, $xerte_toolkits_site, $read_status, $vers
 <script type="text/javascript" src="editor/js/language.js?version=<?php echo $version;?>"></script>
 <script type="text/javascript" src="editor/js/layout.js?version=<?php echo $version;?>"></script>
 <script type="text/javascript" src="editor/js/tree.js?version=<?php echo $version;?>"></script>
+<?php
+    $theme_editor_js = 'theme/' . get_toolkits_ui_theme() . '/editor-pages.js';
+    if (file_exists($xerte_toolkits_site->root_file_path . $theme_editor_js)) {
+        $src = htmlspecialchars(toolkits_theme_asset_url('editor-pages.js?version=' . $version), ENT_QUOTES, 'UTF-8');
+        echo '<script type="text/javascript" src="' . $src . '"></script>' . "\n";
+    }
+    $theme_editor_opt_js = 'theme/' . get_toolkits_ui_theme() . '/editor-optional.js';
+    if (file_exists($xerte_toolkits_site->root_file_path . $theme_editor_opt_js)) {
+        $src = htmlspecialchars(toolkits_theme_asset_url('editor-optional.js?version=' . $version), ENT_QUOTES, 'UTF-8');
+        echo '<script type="text/javascript" src="' . $src . '"></script>' . "\n";
+    }
+?>
 
 </body>
 </html>
