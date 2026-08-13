@@ -6924,7 +6924,7 @@ var EDITOR = (function ($, parent) {
                         //additional file/snippet stuff here
                         aiSettings['baseUrl'] = rlopathvariable.substr(rlopathvariable.indexOf("USER-FILES"));
 
-                        aiSettings['fileUrl'] = constructorObject['file'] ? constructorObject['file'] : null;
+                        aiSettings['fileUrl'] = constructorObject['file'] != null ? constructorObject['file'].trim() : null;
                         delete constructorObject.fileUrl;
 
                         aiSettings['updateLoOnRequest'] = constructorObject['updateLoOnRequest'] !== undefined ? constructorObject['updateLoOnRequest'] : null;

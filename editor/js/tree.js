@@ -1991,7 +1991,8 @@ img_search_and_help = function(query, api, url, interpretPrompt, overrideSetting
                                     let container = $('<div class="img_search_container"></div>');
                                     image_preview_images.append(container);
                                     container.append(select_input).append(label);
-                                    // Enlarge button. Prevent the label/checkbox from toggling on click
+
+                                    //Button to enlarge the image
                                     let enlarge_button = $(
                                         '<button title="' + language.imageSelection.imgEnlargeCornerBtn + '" type="button" class="enlarge_button">' +
                                         '<i class="fa fa-lg fa-search xerte-icon"></i>' +
@@ -2002,6 +2003,29 @@ img_search_and_help = function(query, api, url, interpretPrompt, overrideSetting
                                         $.featherlight({image:image_url});
                                     });
 
+                                    //Button to copy the credits/copyright information for a specific image
+                                    let copy_credits_button = $(
+                                        '<button title="'+ language.imageSelection.imgCopyrightToClipboardBtn +'" type="button" class="copy_credits_button">' +
+                                        '<i class="fa fa-copyright xerte-icon"></i>' +
+                                        '</button>'
+                                    ).on("click", function (e) {
+                                        e.preventDefault();
+                                        e.stopPropagation();
+
+                                        navigator.clipboard.writeText(image_data.credits[i]).then(function () {
+                                            let copied_notice = $('<span class="copied_notice">'+ language.imageSelection.imgCopyrightToClipboardNotice +'</span>');
+
+                                            frame.append(copied_notice);
+
+                                            setTimeout(function () {
+                                                copied_notice.fadeOut(200, function () {
+                                                    $(this).remove();
+                                                });
+                                            }, 1500);
+                                        });
+                                    });
+
+                                    frame.append(copy_credits_button);
                                     frame.append(enlarge_button);
 
 										image.on("load", function () {
