@@ -1800,7 +1800,7 @@ function upgrade_56(){
 
 function upgrade_57(){
     if (! _db_field_exists('templaterights', 'favorite')) {
-        $error1 = _db_add_field('templaterights', 'favorite', 'text', '', 'disabled');
+        $error1 = _db_add_field('templaterights', 'favorite', 'text', '', '');
         $error1_returned = true;
 
 
