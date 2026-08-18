@@ -2689,7 +2689,7 @@ var EDITOR = (function ($, parent) {
 
     changeLanguage = function(id, key, name, value, obj)
     {
-        if (value == language.$code)
+        if (value === language.$code)
         {
             // The same language is chosen as the selected XOT language
             // Do we want to replace all the language options with the default

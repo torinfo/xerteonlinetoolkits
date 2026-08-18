@@ -200,7 +200,7 @@
 
     function flushModernEditorFields() {
         // Plain wizard controls: change fires on blur in Nottingham; force commit here too.
-        $('#mainPanel input, #mainPanel select, #mainPanel textarea').each(function () {
+        $('#mainPanel input, #mainPanel textarea').each(function () {
             var $el = $(this);
             if ($el.is(':disabled') || $el.attr('type') === 'checkbox' || $el.attr('type') === 'radio' ||
                 $el.attr('type') === 'file' || $el.attr('type') === 'button' || $el.attr('type') === 'submit' ||
@@ -1008,7 +1008,7 @@
         });
 
         // Match Nottingham: commit field values when an input loses focus
-        $(document).on('focusout', '#mainPanel input, #mainPanel select, #mainPanel textarea', function () {
+        $(document).on('focusout', '#mainPanel input, #mainPanel textarea', function () {
             var $el = $(this);
             if ($el.is(':disabled') || $el.attr('type') === 'checkbox' || $el.attr('type') === 'radio' ||
                 $el.attr('type') === 'file' || $el.attr('type') === 'button' || $el.attr('type') === 'submit' ||
