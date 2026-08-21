@@ -228,6 +228,13 @@ if ($method === 'GET' && $path === 'system/health') {
     exit;
 }
 
+if (strpos($path, 'thumbnails/') === 0) {
+    ApiAuth::requireLoggedIn();
+    require_once dirname(__FILE__) . '/routes/thumbnails.php';
+    thumbnails_rest_api_dispatch($method, $path, $params);
+    exit;
+}
+
 if (strpos($path, 'properties/') === 0) {
     ApiAuth::requireLoggedIn();
     require_once dirname(__FILE__) . '/routes/properties.php';

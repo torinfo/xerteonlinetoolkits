@@ -13,6 +13,7 @@ require_once("../../../config.php");
 
 include "../user_library.php";
 include "../template_status.php";
+require_once($xerte_toolkits_site->root_file_path . 'website_code/php/services/ThumbnailService.php');
 
 $prefix = $xerte_toolkits_site->database_table_prefix;
 _load_language_file("/website_code/php/templates/remove_template.inc");
@@ -90,6 +91,14 @@ if(is_numeric($_POST['template_id'])){
                 $params = array($safe_template_id);
 
                 db_query($query_to_delete_xml_and_peer, $params);
+
+                /*
+                 * Remove cached thumbnails belonging to the permanently
+                 * deleted learning object.
+                 */
+                thumbnail_service_delete_all(
+                    $safe_template_id
+                );
                 
             }else{
 

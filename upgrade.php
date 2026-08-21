@@ -1815,3 +1815,44 @@ function upgrade_57(){
         return "Tsugi directory already exists - ok ? true". "<br>";
     }
 }
+
+function upgrade_58()
+{
+    $message = "";
+
+    if (!_table_exists("template_thumbnails")) {
+        $ok = _upgrade_db_query(
+            "CREATE TABLE IF NOT EXISTS `template_thumbnails` (
+                    `id` BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
+                    
+                    `template_id` BIGINT UNSIGNED NOT NULL,
+                    `page_link_id` VARCHAR(255) NOT NULL,
+                    `page_index` INT UNSIGNED NOT NULL DEFAULT 0,
+                    
+                    `revision` VARCHAR(64) NOT NULL,
+                    `mime_type` VARCHAR(32) NOT NULL DEFAULT 'image/jpeg',
+                    
+                    `image_data` MEDIUMBLOB NOT NULL,
+                    
+                    `width` SMALLINT UNSIGNED NOT NULL DEFAULT 0,
+                    `height` SMALLINT UNSIGNED NOT NULL DEFAULT 0,
+                    
+                    `updated_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+                    ON UPDATE CURRENT_TIMESTAMP,
+                    
+                    PRIMARY KEY (`id`),
+                    
+                    UNIQUE KEY `idx_template_page` (`template_id`, `page_link_id`),
+                    KEY `idx_template_index` (`template_id`, `page_index`),
+                    KEY `idx_revision` (`revision`),
+                    KEY `idx_updated_at` (`updated_at`)
+                );"
+        );
+
+        $message .= "Creating template_thumbnails table - ok ? " . ($ok ? 'true' : 'false') . "<br>";
+    } else {
+        $message .= "Table template_thumbnails already exists - ok ? true<br>";
+    }
+
+    return $message;
+}

@@ -68,9 +68,9 @@ login_processing();
 login_processing2();
 
 if(isset($_SESSION["toManagement"]) || $_SESSION['toolkits_logon_id'] === 'site_administrator' || $adminlogin){
-	unset($_SESSION["toManagement"]);
-	header("location: management.php");
-	exit();
+    unset($_SESSION["toManagement"]);
+    header("location: management.php");
+    exit();
 }
 if(isset($_SESSION["adminTo"]) || $_SESSION['toolkits_logon_id'] === 'site_administrator' || $adminlogin){
     $url = $_SESSION["adminTo"];
@@ -170,7 +170,7 @@ $version = getVersion();
     if (!isset($authmech)) {
         $authmech = Xerte_Authentication_Factory::create($xerte_toolkits_site->authentication_method);
     }
-    
+
     // Prepare user preferences for JavaScript
     $user_preferences_json = "{}";
     $user_has_preferences = "false";
@@ -181,7 +181,7 @@ $version = getVersion();
     if (function_exists('ensure_toolkits_ui_theme_preference')) {
         ensure_toolkits_ui_theme_preference(true);
     }
-    
+
     if (isset($_SESSION['toolkits_preferences']) && is_array($_SESSION['toolkits_preferences'])) {
         $user_preferences_json = json_encode($_SESSION['toolkits_preferences']);
         if ($authmech->hasUserPrefrences()) {
@@ -192,7 +192,7 @@ $version = getVersion();
             $user_has_preferences = "true";
         }
     }
-    
+
     echo "
         <script type=\"text/javascript\"> // JAVASCRIPT library for fixed variables\n // management of javascript is set up here\n // SITE SETTINGS
             var site_url = \"{$xerte_toolkits_site->site_url}\";
@@ -253,11 +253,11 @@ body_scroll handles the calculation of the documents actual height in IE.
 
 <script type="text/javascript">
     var toolkits_index_config = <?php
-        echo json_encode(
-            build_toolkits_index_page_config($authmech),
-            JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT
-        );
-    ?>;
+            echo json_encode(
+                    build_toolkits_index_page_config($authmech),
+                    JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT
+            );
+            ?>;
 </script>
 
 <script>

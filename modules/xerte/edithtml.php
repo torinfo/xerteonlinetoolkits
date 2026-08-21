@@ -583,6 +583,22 @@ function output_editor_code($row_edit, $xerte_toolkits_site, $read_status, $vers
             $src = htmlspecialchars(toolkits_theme_asset_url('editor-user.js?version=' . $version), ENT_QUOTES, 'UTF-8');
             echo '<script type="text/javascript" src="' . $src . '"></script>' . "\n";
         }
+
+        // Thumbnail rendering library
+        $iframe2image_js = 'theme/modern/vendor/iframe2image.js';
+        if (file_exists($xerte_toolkits_site->root_file_path . $iframe2image_js)) {
+            echo '<script type="text/javascript" src="theme/modern/vendor/iframe2image.js?version=' .
+                    htmlspecialchars($version, ENT_QUOTES, 'UTF-8') .
+                    '"></script>' . "\n";
+        }
+
+        // Xerte thumbnail manager
+        $thumbnail_manager_js = 'theme/modern/editor-thumbnails.js';
+        if (file_exists($xerte_toolkits_site->root_file_path . $thumbnail_manager_js)) {
+            echo '<script type="text/javascript" src="theme/modern/editor-thumbnails.js?version=' .
+                    htmlspecialchars($version, ENT_QUOTES, 'UTF-8') .
+                    '"></script>' . "\n";
+        }
     }
     $theme_editor_js = 'theme/' . get_toolkits_ui_theme() . '/editor-pages.js';
     if (file_exists($xerte_toolkits_site->root_file_path . $theme_editor_js)) {

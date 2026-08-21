@@ -1288,6 +1288,25 @@ function toolkitsModernGetLoPreviewUrl(templateId) {
     return base + path + '#page1';
 }
 
+function toolkitsModernGetLoThumbnailUrl(templateId) {
+    if (!templateId) {
+        return '';
+    }
+
+    var base =
+        (typeof site_url !== 'undefined' && site_url)
+            ? site_url
+            : '';
+
+    return (
+        base +
+        'website_code/php/thumbnails/image.php' +
+        '?template_id=' +
+        encodeURIComponent(templateId) +
+        '&first=1'
+    );
+}
+
 function toolkitsModernOpenLoPreviewLightbox(previewUrl, title) {
     var overlay = document.getElementById('toolkits-modern-lo-preview');
     var frame = document.getElementById('toolkits-modern-lo-preview-frame');
@@ -2765,13 +2784,51 @@ function toolkitsModernRenderLoRow(item, selectedId, s) {
     thumbWrap.type = 'button';
     thumbWrap.className = 'toolkits-modern-lo-item__thumb-wrap';
     thumbWrap.setAttribute('aria-label', (s.modernLoMenuPreview || 'Preview') + ': ' + (item.text || ''));
-    var previewFrame = document.createElement('iframe');
-    previewFrame.className = 'toolkits-modern-lo-item__thumb-frame';
-    previewFrame.src = toolkitsModernGetLoPreviewUrl(item.xot_id);
-    previewFrame.setAttribute('title', (item.text || 'Learning object') + ' preview');
-    previewFrame.setAttribute('loading', 'lazy');
-    previewFrame.setAttribute('tabindex', '-1');
-    thumbWrap.appendChild(previewFrame);
+
+    var thumbnailImage = document.createElement('img');
+
+    thumbnailImage.className = 'toolkits-modern-lo-item__thumb-image';
+
+    thumbnailImage.src = toolkitsModernGetLoThumbnailUrl(item.xot_id);
+
+    thumbnailImage.alt = '';
+
+    thumbnailImage.setAttribute('loading', 'lazy');
+
+
+    /*
+     * Old/imported LOs may not have cached thumbnails yet.
+     */
+    var thumbnailPlaceholder = document.createElement('span');
+
+    thumbnailPlaceholder.className = 'toolkits-modern-lo-item__thumb-placeholder';
+
+    thumbnailPlaceholder.hidden = true;
+
+    thumbnailPlaceholder.innerHTML = '<i class="fa fa-image" aria-hidden="true"></i>';
+
+
+    thumbnailImage.addEventListener(
+        'error',
+        function () {
+            thumbnailImage.hidden = true;
+            thumbnailPlaceholder.hidden = false;
+        }
+    );
+
+    thumbnailImage.addEventListener(
+        'load',
+        function () {
+            thumbnailImage.hidden = false;
+            thumbnailPlaceholder.hidden = true;
+        }
+    );
+
+
+    thumbWrap.appendChild(thumbnailImage);
+
+    thumbWrap.appendChild(thumbnailPlaceholder);
+
     thumbWrap.addEventListener('click', function (e) {
         e.stopPropagation();
         toolkitsModernOpenLoPreviewLightbox(
