@@ -452,6 +452,71 @@ function output_editor_code($row_edit, $xerte_toolkits_site, $read_status, $vers
 <script type="text/javascript" src="editor/js/layout.js?version=<?php echo $version;?>"></script>
 <script type="text/javascript" src="editor/js/tree.js?version=<?php echo $version;?>"></script>
 <?php
+
+
+        if (
+            function_exists('get_toolkits_ui_theme') &&
+            get_toolkits_ui_theme() === 'modern'
+        ) {
+
+        /*
+         * iframe2image + Xerte thumbnail manager.
+         *
+         * Bootstrap/site learning objects use the same thumbnail
+         * cache as Nottingham Xerte learning objects.
+         */
+
+        $iframe2image_js =
+                'theme/modern/vendor/iframe2image.js';
+
+        if (file_exists($xerte_toolkits_site->root_file_path . $iframe2image_js)) {
+            echo '<script type="text/javascript" src="' .
+                    $iframe2image_js .
+                    '?version=' .
+                    htmlspecialchars(
+                            $version,
+                            ENT_QUOTES,
+                            'UTF-8'
+                    ) .
+                    '"></script>' .
+                    "\n";
+        }
+
+        $thumbnail_manager_js = 'theme/modern/editor-thumbnails.js';
+
+        if (file_exists($xerte_toolkits_site->root_file_path . $thumbnail_manager_js)) {
+            echo '<script type="text/javascript" src="' .
+                    $thumbnail_manager_js .
+                    '?version=' .
+                    htmlspecialchars(
+                            $version,
+                            ENT_QUOTES,
+                            'UTF-8'
+                    ) .
+                    '"></script>' .
+                    "\n";
+            }
+        }
+
+
+        $theme_editor_js = 'theme/' . get_toolkits_ui_theme() . '/editor-pages.js';
+
+        if (file_exists($xerte_toolkits_site->root_file_path . $theme_editor_js)) {
+        $src = htmlspecialchars(
+                toolkits_theme_asset_url(
+                        'editor-pages.js?version=' .
+                        $version
+                ),
+                ENT_QUOTES,
+                'UTF-8'
+        );
+
+        echo '<script type="text/javascript" src="' .
+                $src .
+                '"></script>' .
+                "\n";
+        }
+
     $theme_editor_js = 'theme/' . get_toolkits_ui_theme() . '/editor-pages.js';
     if (file_exists($xerte_toolkits_site->root_file_path . $theme_editor_js)) {
         $src = htmlspecialchars(toolkits_theme_asset_url('editor-pages.js?version=' . $version), ENT_QUOTES, 'UTF-8');
