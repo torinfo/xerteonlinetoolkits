@@ -3380,9 +3380,9 @@ function toolkitsModernCreateLearningObject(parentKey, templateName, projectName
     var showWorkspace = options.showWorkspace !== false;
 
     toolkitsModernCloseCreateMenu();
-    if (showWorkspace) {
-        toolkitsModernShowWorkspace(true);
-    }
+    // if (showWorkspace) {
+    //     toolkitsModernShowWorkspace(true);
+    // }
 
     var folderId = toolkitsModernGetCreateFolderId();
     if (typeof new_template_folder !== 'undefined') {
