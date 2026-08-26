@@ -1616,7 +1616,7 @@ body.toolkits-ui-theme-modern .toolkits-modern-editor-tour {
     inset: 0;
     pointer-events: none;
     overflow: visible;
-    z-index: auto;
+    z-index: 8000;
 }
 
 body.toolkits-ui-theme-modern .toolkits-modern-editor-tour[hidden] {
