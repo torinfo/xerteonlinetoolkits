@@ -256,6 +256,13 @@ if (strpos($path, 'workspaceproperties/') === 0) {
     exit;
 }
 
+if (strpos($path, 'workspace/folder-organisation') === 0) {
+    ApiAuth::requireLoggedIn();
+    require_once dirname(__FILE__) . '/routes/folderorganisation.php';
+    folderorganisation_rest_api_dispatch($method, $path, $params);
+    exit;
+}
+
 if (strpos($path, 'management/') === 0) {
     ApiAuth::requireLoggedIn();
     require_once dirname(__FILE__) . '/routes/management.php';

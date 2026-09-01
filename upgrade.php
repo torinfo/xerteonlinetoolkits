@@ -1856,3 +1856,54 @@ function upgrade_58()
 
     return $message;
 }
+
+function upgrade_59()
+{
+    global $xerte_toolkits_site;
+    $prefix = $xerte_toolkits_site->database_table_prefix;
+    $message = "";
+
+    if (!_table_exists("folder_user_metadata")) {
+        $ok = _upgrade_db_query("CREATE TABLE `{$prefix}folder_user_metadata` (
+            `folder_id` BIGINT NOT NULL,
+            `login_id` BIGINT NOT NULL,
+            `colour` VARCHAR(24) DEFAULT NULL,
+            `updated_at` DATETIME DEFAULT NULL,
+            PRIMARY KEY (`folder_id`, `login_id`),
+            KEY `idx_folder_user_metadata_login` (`login_id`)
+        ) DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;");
+        $message .= "Creating folder_user_metadata table - ok ? " . ($ok ? 'true' : 'false') . "<br>";
+    } else {
+        $message .= "Table folder_user_metadata already exists - ok ? true<br>";
+    }
+
+    if (!_table_exists("folder_labels")) {
+        $ok = _upgrade_db_query("CREATE TABLE `{$prefix}folder_labels` (
+            `label_id` BIGINT NOT NULL AUTO_INCREMENT,
+            `login_id` BIGINT NOT NULL,
+            `label_name` VARCHAR(100) NOT NULL,
+            `created_at` DATETIME DEFAULT NULL,
+            `updated_at` DATETIME DEFAULT NULL,
+            PRIMARY KEY (`label_id`),
+            UNIQUE KEY `idx_folder_labels_user_name` (`login_id`, `label_name`),
+            KEY `idx_folder_labels_login` (`login_id`)
+        ) DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;");
+        $message .= "Creating folder_labels table - ok ? " . ($ok ? 'true' : 'false') . "<br>";
+    } else {
+        $message .= "Table folder_labels already exists - ok ? true<br>";
+    }
+
+    if (!_table_exists("folder_label_assignments")) {
+        $ok = _upgrade_db_query("CREATE TABLE `{$prefix}folder_label_assignments` (
+            `label_id` BIGINT NOT NULL,
+            `folder_id` BIGINT NOT NULL,
+            PRIMARY KEY (`label_id`, `folder_id`),
+            KEY `idx_folder_label_assignments_folder` (`folder_id`)
+        ) DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;");
+        $message .= "Creating folder_label_assignments table - ok ? " . ($ok ? 'true' : 'false') . "<br>";
+    } else {
+        $message .= "Table folder_label_assignments already exists - ok ? true<br>";
+    }
+
+    return $message;
+}

@@ -1095,6 +1095,17 @@ body.toolkits-ui-theme-modern .toolkits-modern-lo-page__toolbar {
     flex-wrap: wrap;
 }
 
+body.toolkits-ui-theme-modern .toolkits-modern-lo-page__folder-filter select {
+    min-height: 2.25rem;
+    max-width: 16rem;
+    padding: 0.35rem 2rem 0.35rem 0.65rem;
+    border: 1px solid #d1d5db;
+    border-radius: 0.45rem;
+    background: #fff;
+    color: #374151;
+    font: inherit;
+}
+
 body.toolkits-ui-theme-modern .toolkits-modern-lo-page__search {
     position: relative;
     min-width: 200px;
@@ -1505,6 +1516,152 @@ body.toolkits-ui-theme-modern .toolkits-modern-lo-item__folder-icon--thumb {
     font-size: 1.75rem;
     vertical-align: middle;
     box-sizing: border-box;
+}
+
+body.toolkits-ui-theme-modern .toolkits-modern-lo-item--folder[data-folder-colour] .toolkits-modern-lo-item__folder-icon {
+    color: var(--toolkits-folder-colour, #007ebb);
+    background: color-mix(in srgb, var(--toolkits-folder-colour, #007ebb) 14%, white);
+}
+
+body.toolkits-ui-theme-modern [data-folder-colour="blue"] { --toolkits-folder-colour: #1976d2; }
+body.toolkits-ui-theme-modern [data-folder-colour="teal"] { --toolkits-folder-colour: #00897b; }
+body.toolkits-ui-theme-modern [data-folder-colour="green"] { --toolkits-folder-colour: #388e3c; }
+body.toolkits-ui-theme-modern [data-folder-colour="yellow"] { --toolkits-folder-colour: #b28704; }
+body.toolkits-ui-theme-modern [data-folder-colour="orange"] { --toolkits-folder-colour: #ef6c00; }
+body.toolkits-ui-theme-modern [data-folder-colour="red"] { --toolkits-folder-colour: #d32f2f; }
+body.toolkits-ui-theme-modern [data-folder-colour="purple"] { --toolkits-folder-colour: #7b1fa2; }
+body.toolkits-ui-theme-modern [data-folder-colour="pink"] { --toolkits-folder-colour: #c2185b; }
+
+body.toolkits-ui-theme-modern .toolkits-modern-folder-labels {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.3rem;
+    margin-top: 0.3rem;
+}
+
+body.toolkits-ui-theme-modern .toolkits-modern-folder-label {
+    display: inline-flex;
+    max-width: 12rem;
+    padding: 0.15rem 0.5rem;
+    overflow: hidden;
+    border-radius: 999px;
+    background: #eef2f7;
+    color: #4b5563;
+    font-size: 0.72rem;
+    font-weight: 600;
+    line-height: 1.25;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+body.toolkits-ui-theme-modern.toolkits-modern-folder-organisation-open {
+    overflow: hidden;
+}
+
+body.toolkits-ui-theme-modern .toolkits-modern-folder-organise .toolkits-modern-folder-modal__dialog {
+    width: min(34rem, calc(100vw - 2rem));
+}
+
+body.toolkits-ui-theme-modern .toolkits-modern-folder-organise fieldset {
+    margin: 0 0 1.25rem;
+    padding: 0;
+    border: 0;
+}
+
+body.toolkits-ui-theme-modern .toolkits-modern-folder-organise legend {
+    margin-bottom: 0.65rem;
+    color: #111827;
+    font-weight: 700;
+}
+
+body.toolkits-ui-theme-modern .toolkits-modern-folder-organise__colours {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.55rem;
+}
+
+body.toolkits-ui-theme-modern .toolkits-modern-folder-organise__colour {
+    position: relative;
+    cursor: pointer;
+}
+
+body.toolkits-ui-theme-modern .toolkits-modern-folder-organise__colour input {
+    position: absolute;
+    opacity: 0;
+}
+
+body.toolkits-ui-theme-modern .toolkits-modern-folder-organise__swatch {
+    display: block;
+    width: 1.9rem;
+    height: 1.9rem;
+    border: 2px solid #d1d5db;
+    border-radius: 50%;
+    background: linear-gradient(135deg, transparent 46%, #9ca3af 47%, #9ca3af 53%, transparent 54%);
+}
+
+body.toolkits-ui-theme-modern .toolkits-modern-folder-organise__colour--blue .toolkits-modern-folder-organise__swatch { background: #1976d2; }
+body.toolkits-ui-theme-modern .toolkits-modern-folder-organise__colour--teal .toolkits-modern-folder-organise__swatch { background: #00897b; }
+body.toolkits-ui-theme-modern .toolkits-modern-folder-organise__colour--green .toolkits-modern-folder-organise__swatch { background: #388e3c; }
+body.toolkits-ui-theme-modern .toolkits-modern-folder-organise__colour--yellow .toolkits-modern-folder-organise__swatch { background: #fbc02d; }
+body.toolkits-ui-theme-modern .toolkits-modern-folder-organise__colour--orange .toolkits-modern-folder-organise__swatch { background: #ef6c00; }
+body.toolkits-ui-theme-modern .toolkits-modern-folder-organise__colour--red .toolkits-modern-folder-organise__swatch { background: #d32f2f; }
+body.toolkits-ui-theme-modern .toolkits-modern-folder-organise__colour--purple .toolkits-modern-folder-organise__swatch { background: #7b1fa2; }
+body.toolkits-ui-theme-modern .toolkits-modern-folder-organise__colour--pink .toolkits-modern-folder-organise__swatch { background: #c2185b; }
+
+body.toolkits-ui-theme-modern .toolkits-modern-folder-organise__colour input:checked + .toolkits-modern-folder-organise__swatch,
+body.toolkits-ui-theme-modern .toolkits-modern-folder-organise__colour input:focus-visible + .toolkits-modern-folder-organise__swatch {
+    outline: 3px solid #007ebb;
+    outline-offset: 2px;
+}
+
+body.toolkits-ui-theme-modern .toolkits-modern-folder-organise__labels {
+    max-height: 12rem;
+    overflow: auto;
+}
+
+body.toolkits-ui-theme-modern .toolkits-modern-folder-organise__label-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    min-height: 2.25rem;
+    border-bottom: 1px solid #e5e7eb;
+}
+
+body.toolkits-ui-theme-modern .toolkits-modern-folder-organise__label-actions {
+    display: flex;
+    gap: 0.25rem;
+}
+
+body.toolkits-ui-theme-modern .toolkits-modern-folder-organise__label-actions button {
+    border: 0;
+    background: transparent;
+    color: #6b7280;
+    cursor: pointer;
+}
+
+body.toolkits-ui-theme-modern .toolkits-modern-folder-organise__new-label {
+    display: flex;
+    gap: 0.5rem;
+    margin-top: 0.75rem;
+}
+
+body.toolkits-ui-theme-modern .toolkits-modern-folder-organise__new-label input {
+    min-width: 0;
+    flex: 1;
+    padding: 0.5rem 0.65rem;
+    border: 1px solid #d1d5db;
+    border-radius: 0.4rem;
+}
+
+body.toolkits-ui-theme-modern .toolkits-modern-folder-organise__new-label button {
+    padding: 0.5rem 0.75rem;
+    border: 1px solid #007ebb;
+    border-radius: 0.4rem;
+    background: #fff;
+    color: #007ebb;
+    font-weight: 600;
+    cursor: pointer;
 }
 
 body.toolkits-ui-theme-modern .toolkits-modern-lo-item__label--folder {

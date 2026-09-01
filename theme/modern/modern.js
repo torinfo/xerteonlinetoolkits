@@ -834,6 +834,14 @@ function toolkitsModernObjectsViewHtml(s) {
                     '<div class="toolkits-modern-lo-page__breadcrumb-row">' +
                         '<nav class="toolkits-modern-objects__breadcrumb" id="toolkits-modern-objects-filter" aria-label="' + (s.modernNavAll || 'All learning objects') + '"></nav>' +
                         '<div class="toolkits-modern-lo-page__toolbar">' +
+                            '<div class="toolkits-modern-lo-page__folder-filter">' +
+                                '<label class="sr-only" for="toolkits-modern-folder-filter">' + (s.modernFolderFilter || 'Filter folders') + '</label>' +
+                                '<select id="toolkits-modern-folder-filter" aria-label="' + (s.modernFolderFilter || 'Filter folders') + '">' +
+                                    '<option value="all">' + (s.modernFolderFilterAll || 'All folders and learning objects') + '</option>' +
+                                    '<option value="created">' + (s.modernFolderFilterCreated || 'Created by me') + '</option>' +
+                                    '<option value="shared">' + (s.modernFolderFilterShared || 'Shared with me') + '</option>' +
+                                '</select>' +
+                            '</div>' +
                             '<div class="toolkits-modern-lo-page__search">' +
                                 '<i class="fa fa-search" aria-hidden="true"></i>' +
                                 '<input type="search" id="toolkits-modern-lo-search" placeholder="' + (s.modernSearch || s.searchPlaceholder || 'Search') + '" autocomplete="off"/>' +
@@ -1070,6 +1078,97 @@ function toolkitsModernIsTrashLearningObjectNode(item) {
 var TOOLKITS_MODERN_RECENT_KEY = 'toolkits_modern_recent';
 var TOOLKITS_MODERN_RECENT_MAX = 25;
 window.toolkitsModernBrowseMode = 'all';
+window.toolkitsModernFolderOrganisation = { colours: [], labels: [], folders: {} };
+window.toolkitsModernFolderFilter = 'all';
+
+function toolkitsModernFolderMeta(item) {
+    var data = window.toolkitsModernFolderOrganisation || {};
+    var folders = data.folders || {};
+    return folders[String(item && item.xot_id || '')] || { colour: null, label_ids: [] };
+}
+
+function toolkitsModernLabelById(labelId) {
+    var labels = (window.toolkitsModernFolderOrganisation && window.toolkitsModernFolderOrganisation.labels) || [];
+    for (var i = 0; i < labels.length; i++) {
+        if (String(labels[i].id) === String(labelId)) {
+            return labels[i];
+        }
+    }
+    return null;
+}
+
+function toolkitsModernPopulateFolderFilter() {
+    var select = document.getElementById('toolkits-modern-folder-filter');
+    if (!select) {
+        return;
+    }
+    var current = window.toolkitsModernFolderFilter || 'all';
+    while (select.options.length > 3) {
+        select.remove(3);
+    }
+    var labels = (window.toolkitsModernFolderOrganisation && window.toolkitsModernFolderOrganisation.labels) || [];
+    labels.forEach(function (label) {
+        var option = document.createElement('option');
+        option.value = 'label:' + label.id;
+        option.textContent = label.name;
+        select.appendChild(option);
+    });
+    var exists = Array.prototype.some.call(select.options, function (option) { return option.value === current; });
+    window.toolkitsModernFolderFilter = exists ? current : 'all';
+    select.value = window.toolkitsModernFolderFilter;
+    if (select.dataset.bound !== '1') {
+        select.dataset.bound = '1';
+        select.addEventListener('change', function () {
+            window.toolkitsModernFolderFilter = select.value || 'all';
+            toolkitsModernRenderObjectList();
+        });
+    }
+}
+
+function toolkitsModernLoadFolderOrganisation() {
+    if (typeof $ === 'undefined' || typeof apiV1Url !== 'function') {
+        return;
+    }
+    $.ajax({
+        type: 'GET',
+        url: apiV1Url('workspace/folder-organisation'),
+        dataType: 'json'
+    }).done(function (response) {
+        var data = typeof apiUnpack === 'function' ? apiUnpack(response) : response;
+        if (!data || !data.folders) {
+            return;
+        }
+        window.toolkitsModernFolderOrganisation = data;
+        toolkitsModernPopulateFolderFilter();
+        toolkitsModernRenderObjectList();
+    });
+}
+
+function toolkitsModernFolderMatchesFilter(item) {
+    if (window.toolkitsModernBrowseMode !== 'all') {
+        return true;
+    }
+    var filter = window.toolkitsModernFolderFilter || 'all';
+    if (filter === 'all') {
+        return true;
+    }
+    if (!toolkitsModernIsFolderNode(item)) {
+        return false;
+    }
+    if (filter === 'created') {
+        return item.role === 'creator' || item.type === 'folder';
+    }
+    if (filter === 'shared') {
+        return item.role !== 'creator' && item.type !== 'folder';
+    }
+    if (filter.indexOf('label:') === 0) {
+        var labelId = filter.substring(6);
+        return (toolkitsModernFolderMeta(item).label_ids || []).some(function (id) {
+            return String(id) === labelId;
+        });
+    }
+    return true;
+}
 
 function toolkitsModernGetRecentIds() {
     try {
@@ -1489,6 +1588,9 @@ function toolkitsModernCollectLearningObjects() {
             return;
         }
         item = toolkitsModernSyncWorkspaceItemMeta(item);
+        if (!toolkitsModernFolderMatchesFilter(item)) {
+            return;
+        }
         if (window.toolkitsModernBrowseMode === 'favourites' && !toolkitsModernIsFavorite(item.favorite)) {
             return;
         }
@@ -1627,6 +1729,7 @@ function toolkitsModernGetFolderMenuItems(item) {
     var s = cfg.strings || {};
     var items = [
         { id: 'open', icon: 'fa-folder-open', label: s.modernFolderMenuOpen || 'Open' },
+        { id: 'organise', icon: 'fa-tags', label: s.modernFolderOrganise || 'Organise' },
         { id: 'properties', icon: 'fa-sliders', label: s.modernLoMenuProperties || 'Properties' }
     ];
     if (toolkitsModernFolderCanDuplicate(item)) {
@@ -1726,6 +1829,10 @@ function toolkitsModernRunFolderAction(action, nodeId, event) {
         }
         return;
     }
+    if (action === 'organise') {
+        toolkitsModernOpenFolderOrganisation(nodeId);
+        return;
+    }
     if (action === 'copy' && typeof duplicate_folder === 'function') {
         duplicate_folder();
         return;
@@ -1741,6 +1848,161 @@ function toolkitsModernRunFolderAction(action, nodeId, event) {
     if (action === 'delete' && typeof remove_this === 'function') {
         remove_this();
     }
+}
+
+function toolkitsModernFolderOrganisationRequest(route, data, onSuccess) {
+    var s = (window.toolkits_index_config && window.toolkits_index_config.strings) || {};
+    if (typeof $ === 'undefined' || typeof apiV1Url !== 'function') {
+        return;
+    }
+    $.ajax({ type: 'POST', url: apiV1Url(route), dataType: 'json', data: data || {} })
+        .done(function (response) {
+            if (response && response.ok === false) {
+                window.alert(response.error && response.error.message ? response.error.message : (s.modernFolderOrganisationError || 'Could not save folder organisation.'));
+                return;
+            }
+            if (onSuccess) {
+                onSuccess(typeof apiUnpack === 'function' ? apiUnpack(response) : response);
+            }
+        })
+        .fail(function (xhr) {
+            var message = s.modernFolderOrganisationError || 'Could not save folder organisation.';
+            if (xhr.responseJSON && xhr.responseJSON.error && xhr.responseJSON.error.message) {
+                message = xhr.responseJSON.error.message;
+            }
+            window.alert(message);
+        });
+}
+
+function toolkitsModernCloseFolderOrganisation() {
+    var modal = document.getElementById('toolkits-modern-folder-organisation');
+    if (modal) {
+        modal.hidden = true;
+        modal.remove();
+    }
+    document.body.classList.remove('toolkits-modern-folder-organisation-open');
+}
+
+function toolkitsModernRefreshOrganisationAndReopen(nodeId) {
+    if (typeof $ === 'undefined' || typeof apiV1Url !== 'function') {
+        return;
+    }
+    $.ajax({ type: 'GET', url: apiV1Url('workspace/folder-organisation'), dataType: 'json' }).done(function (response) {
+        var data = typeof apiUnpack === 'function' ? apiUnpack(response) : response;
+        if (data && data.folders) {
+            window.toolkitsModernFolderOrganisation = data;
+            toolkitsModernPopulateFolderFilter();
+            toolkitsModernRenderObjectList();
+            if (nodeId) {
+                toolkitsModernOpenFolderOrganisation(nodeId);
+            }
+        }
+    });
+}
+
+function toolkitsModernOpenFolderOrganisation(nodeId) {
+    var node = workspace && workspace.nodes ? workspace.nodes[nodeId] : null;
+    if (!node || !node.xot_id) {
+        return;
+    }
+    toolkitsModernCloseFolderOrganisation();
+    var s = (window.toolkits_index_config && window.toolkits_index_config.strings) || {};
+    var organisation = toolkitsModernFolderMeta(node);
+    var data = window.toolkitsModernFolderOrganisation || { colours: [], labels: [] };
+    var colours = [''].concat(data.colours || []);
+    var colourHtml = '';
+    colours.forEach(function (colour) {
+        var checked = String(organisation.colour || '') === colour ? ' checked' : '';
+        colourHtml += '<label class="toolkits-modern-folder-organise__colour' + (colour ? ' toolkits-modern-folder-organise__colour--' + colour : '') + '">' +
+            '<input type="radio" name="folder-colour" value="' + toolkitsModernEscapeHtml(colour) + '"' + checked + '>' +
+            '<span class="toolkits-modern-folder-organise__swatch" aria-hidden="true"></span>' +
+            '<span class="sr-only">' + toolkitsModernEscapeHtml(colour || (s.modernFolderNoColour || 'No colour')) + '</span>' +
+        '</label>';
+    });
+    var selected = (organisation.label_ids || []).map(String);
+    var labelsHtml = '';
+    (data.labels || []).forEach(function (label) {
+        var checked = selected.indexOf(String(label.id)) !== -1 ? ' checked' : '';
+        labelsHtml += '<div class="toolkits-modern-folder-organise__label-row">' +
+            '<label><input type="checkbox" name="folder-label" value="' + label.id + '"' + checked + '> <span>' + toolkitsModernEscapeHtml(label.name) + '</span></label>' +
+            '<span class="toolkits-modern-folder-organise__label-actions">' +
+                '<button type="button" data-folder-label-rename="' + label.id + '" title="' + toolkitsModernEscapeHtml(s.modernFolderRenameLabel || 'Rename label') + '"><i class="fa fa-pencil" aria-hidden="true"></i></button>' +
+                '<button type="button" data-folder-label-delete="' + label.id + '" title="' + toolkitsModernEscapeHtml(s.modernFolderDeleteLabel || 'Delete label') + '"><i class="fa fa-trash" aria-hidden="true"></i></button>' +
+            '</span>' +
+        '</div>';
+    });
+    var modal = document.createElement('div');
+    modal.id = 'toolkits-modern-folder-organisation';
+    modal.className = 'toolkits-modern-folder-modal toolkits-modern-folder-organise';
+    modal.innerHTML = '<div class="toolkits-modern-folder-modal__backdrop" data-folder-organise-close></div>' +
+        '<div class="toolkits-modern-folder-modal__dialog" role="dialog" aria-modal="true" aria-labelledby="toolkits-modern-folder-organise-title">' +
+            '<div class="toolkits-modern-folder-modal__header">' +
+                '<h2 class="toolkits-modern-folder-modal__title" id="toolkits-modern-folder-organise-title">' + toolkitsModernEscapeHtml(s.modernFolderOrganiseTitle || 'Organise folder') + ': ' + toolkitsModernEscapeHtml(node.text || '') + '</h2>' +
+                '<button type="button" class="toolkits-modern-folder-modal__close" data-folder-organise-close aria-label="' + toolkitsModernEscapeHtml(s.folderCancel || 'Close') + '"><i class="fa fa-times" aria-hidden="true"></i></button>' +
+            '</div>' +
+            '<form class="toolkits-modern-folder-modal__body" id="toolkits-modern-folder-organise-form">' +
+                '<fieldset><legend>' + toolkitsModernEscapeHtml(s.modernFolderColour || 'Folder colour') + '</legend><div class="toolkits-modern-folder-organise__colours">' + colourHtml + '</div></fieldset>' +
+                '<fieldset><legend>' + toolkitsModernEscapeHtml(s.modernFolderLabels || 'Personal labels') + '</legend>' +
+                    '<div class="toolkits-modern-folder-organise__labels">' + labelsHtml + '</div>' +
+                    '<div class="toolkits-modern-folder-organise__new-label"><input type="text" maxlength="100" id="toolkits-modern-folder-new-label" placeholder="' + toolkitsModernEscapeHtml(s.modernFolderLabelName || 'Label name') + '"><button type="button" data-folder-label-create><i class="fa fa-plus" aria-hidden="true"></i> ' + toolkitsModernEscapeHtml(s.modernFolderNewLabel || 'New label') + '</button></div>' +
+                '</fieldset>' +
+                '<div class="toolkits-modern-folder-modal__actions"><button type="button" class="toolkits-modern-folder-modal__btn toolkits-modern-folder-modal__btn--secondary" data-folder-organise-close>' + toolkitsModernEscapeHtml(s.folderCancel || 'Cancel') + '</button><button type="submit" class="toolkits-modern-folder-modal__btn toolkits-modern-folder-modal__btn--primary">' + toolkitsModernEscapeHtml(s.modernFolderOrganisationSave || 'Save') + '</button></div>' +
+            '</form>' +
+        '</div>';
+    document.body.appendChild(modal);
+    document.body.classList.add('toolkits-modern-folder-organisation-open');
+    var firstInput = modal.querySelector('input');
+    if (firstInput) {
+        firstInput.focus();
+    }
+
+    modal.addEventListener('click', function (e) {
+        if (e.target.closest('[data-folder-organise-close]')) {
+            toolkitsModernCloseFolderOrganisation();
+            return;
+        }
+        var create = e.target.closest('[data-folder-label-create]');
+        if (create) {
+            var input = modal.querySelector('#toolkits-modern-folder-new-label');
+            if (input && input.value.trim()) {
+                toolkitsModernFolderOrganisationRequest('workspace/folder-organisation/labels/create', { name: input.value.trim() }, function () {
+                    toolkitsModernCloseFolderOrganisation();
+                    toolkitsModernRefreshOrganisationAndReopen(nodeId);
+                });
+            }
+            return;
+        }
+        var rename = e.target.closest('[data-folder-label-rename]');
+        if (rename) {
+            var label = toolkitsModernLabelById(rename.getAttribute('data-folder-label-rename'));
+            var name = window.prompt(s.modernFolderRenameLabel || 'Rename label', label ? label.name : '');
+            if (name !== null) {
+                toolkitsModernFolderOrganisationRequest('workspace/folder-organisation/labels/rename', { label_id: rename.getAttribute('data-folder-label-rename'), name: name }, function () {
+                    toolkitsModernCloseFolderOrganisation();
+                    toolkitsModernRefreshOrganisationAndReopen(nodeId);
+                });
+            }
+            return;
+        }
+        var remove = e.target.closest('[data-folder-label-delete]');
+        if (remove && window.confirm(s.modernFolderDeleteLabelConfirm || 'Delete this label from all folders?')) {
+            toolkitsModernFolderOrganisationRequest('workspace/folder-organisation/labels/delete', { label_id: remove.getAttribute('data-folder-label-delete') }, function () {
+                toolkitsModernCloseFolderOrganisation();
+                toolkitsModernRefreshOrganisationAndReopen(nodeId);
+            });
+        }
+    });
+    modal.querySelector('form').addEventListener('submit', function (e) {
+        e.preventDefault();
+        var colourInput = modal.querySelector('input[name="folder-colour"]:checked');
+        var labelIds = Array.prototype.map.call(modal.querySelectorAll('input[name="folder-label"]:checked'), function (input) { return input.value; });
+        toolkitsModernFolderOrganisationRequest('workspace/folder-organisation/folder', { folder_id: node.xot_id, colour: colourInput ? colourInput.value : '', label_ids: labelIds }, function (saved) {
+            var folders = window.toolkitsModernFolderOrganisation.folders || {};
+            folders[String(node.xot_id)] = { colour: saved.colour, label_ids: saved.label_ids || [] };
+            toolkitsModernCloseFolderOrganisation();
+            toolkitsModernRenderObjectList();
+        });
+    });
 }
 
 function toolkitsModernOpenPropertiesForNode(nodeId) {
@@ -2139,6 +2401,9 @@ function toolkitsModernBindFolderModal() {
         if (box && !box.hidden) {
             popup_close();
         }
+        if (document.getElementById('toolkits-modern-folder-organisation')) {
+            toolkitsModernCloseFolderOrganisation();
+        }
     });
 }
 
@@ -2365,6 +2630,7 @@ function toolkitsModernToggleFolderExpand(item, tr, detailTr, chevronBtn) {
 
 function toolkitsModernRenderFolderRow(item, selectedId, s) {
     var expanded = !!window.toolkitsModernExpandedFolderIds[item.id];
+    var organisation = toolkitsModernFolderMeta(item);
     var tr = document.createElement('tr');
     tr.className = 'toolkits-modern-lo-item toolkits-modern-lo-item--folder';
     if (item.id === selectedId) {
@@ -2375,6 +2641,9 @@ function toolkitsModernRenderFolderRow(item, selectedId, s) {
     }
     tr.setAttribute('data-node-id', item.id);
     tr.setAttribute('data-folder-id', item.id);
+    if (organisation.colour) {
+        tr.setAttribute('data-folder-colour', organisation.colour);
+    }
 
     var previewTd = document.createElement('td');
     previewTd.className = 'toolkits-modern-lo-item__preview';
@@ -2398,10 +2667,18 @@ function toolkitsModernRenderFolderRow(item, selectedId, s) {
 
     var nameTd = document.createElement('td');
     nameTd.className = 'toolkits-modern-lo-item__name';
+    var labelHtml = '';
+    (organisation.label_ids || []).forEach(function (labelId) {
+        var label = toolkitsModernLabelById(labelId);
+        if (label) {
+            labelHtml += '<span class="toolkits-modern-folder-label">' + toolkitsModernEscapeHtml(label.name) + '</span>';
+        }
+    });
     nameTd.innerHTML =
         '<span class="toolkits-modern-lo-item__label toolkits-modern-lo-item__label--folder">' +
             toolkitsModernEscapeHtml(item.text) +
         '</span>' +
+        (labelHtml ? '<span class="toolkits-modern-folder-labels">' + labelHtml + '</span>' : '') +
         '<span class="toolkits-modern-lo-item__date">' +
             toolkitsModernEscapeHtml(toolkitsModernFormatFolderCount(toolkitsModernCountFolderLearningObjects(item.id))) +
         '</span>';
@@ -3013,6 +3290,7 @@ function toolkitsModernOnWorkspaceRefreshed() {
     window.toolkitsModernFolderDetailCache = {};
     toolkitsModernUpdateNavCounts();
     toolkitsModernRenderObjectList();
+    toolkitsModernLoadFolderOrganisation();
 }
 
 function toolkitsModernEnsureWorkspaceData() {
@@ -3058,6 +3336,13 @@ function toolkitsModernSetMainView(view) {
 }
 
 function toolkitsModernShowBrowseView(mode) {
+    if (mode !== 'all') {
+        window.toolkitsModernFolderFilter = 'all';
+        var folderFilter = document.getElementById('toolkits-modern-folder-filter');
+        if (folderFilter) {
+            folderFilter.value = 'all';
+        }
+    }
     if (mode === 'recent') {
         toolkitsModernResetFolder();
         window.toolkitsModernBrowseMode = 'recent';
@@ -3796,6 +4081,8 @@ function toolkitsIndexAfterShell() {
     toolkitsModernBindPropertiesModal();
     toolkitsModernBindCreateMenu();
     toolkitsModernUpdateNavCounts();
+    toolkitsModernPopulateFolderFilter();
+    toolkitsModernLoadFolderOrganisation();
     toolkitsModernInitTour();
 }
 

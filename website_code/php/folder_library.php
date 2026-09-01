@@ -105,6 +105,11 @@ function delete_folder($folder_id){
 
     $prefix = $xerte_toolkits_site->database_table_prefix;
     
+    // Personal organisation/customization is independent of folder ownership and must not
+    // leave records behind when the folder itself is removed.
+    db_query("delete from {$prefix}folder_user_metadata where folder_id=?", array($folder_id));
+    db_query("delete from {$prefix}folder_label_assignments where folder_id=?", array($folder_id));
+
     $query_to_delete_folder = "delete from {$prefix}folderdetails where folder_id=?";
     $params = array($folder_id); 
 

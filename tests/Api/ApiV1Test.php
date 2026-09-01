@@ -101,6 +101,12 @@ final class ApiV1Test extends TestCase
         $this->assertApiError($res, 401, 'auth_required');
     }
 
+    public function testFolderOrganisationRequiresLogin(): void
+    {
+        $res = $this->callApi('GET', 'workspace/folder-organisation');
+        $this->assertApiError($res, 401, 'auth_required');
+    }
+
     public function testManagementRequiresLogin(): void
     {
         $res = $this->callApi('GET', 'management/feeds');
