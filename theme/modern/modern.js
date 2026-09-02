@@ -1080,6 +1080,8 @@ var TOOLKITS_MODERN_RECENT_MAX = 25;
 window.toolkitsModernBrowseMode = 'all';
 window.toolkitsModernFolderOrganisation = { colours: [], labels: [], folders: {} };
 window.toolkitsModernFolderFilter = 'all';
+window.toolkitsModernFolderOrganisationLoaded = false;
+window.toolkitsModernFolderOrganisationLoading = false;
 
 function toolkitsModernFolderMeta(item) {
     var data = window.toolkitsModernFolderOrganisation || {};
@@ -1095,6 +1097,53 @@ function toolkitsModernLabelById(labelId) {
         }
     }
     return null;
+}
+
+function toolkitsModernFolderLabelsHtml(organisation) {
+    var html = '';
+    (organisation.label_ids || []).forEach(function (labelId) {
+        var label = toolkitsModernLabelById(labelId);
+        if (label) {
+            html += '<span class="toolkits-modern-folder-label">' + toolkitsModernEscapeHtml(label.name) + '</span>';
+        }
+    });
+    return html;
+}
+
+function toolkitsModernApplyFolderOrganisationToRows() {
+    if (typeof workspace === 'undefined' || !workspace.nodes) {
+        return;
+    }
+    // Patch folder presentation in place. Rebuilding the complete table here
+    // would recreate every learning-object thumbnail request.
+    document.querySelectorAll('#toolkits-modern-lo-list .toolkits-modern-lo-item--folder[data-node-id]').forEach(function (row) {
+        var item = workspace.nodes[row.getAttribute('data-node-id')];
+        if (!item) {
+            return;
+        }
+        var organisation = toolkitsModernFolderMeta(item);
+        if (organisation.colour) {
+            row.setAttribute('data-folder-colour', organisation.colour);
+        } else {
+            row.removeAttribute('data-folder-colour');
+        }
+        var nameCell = row.querySelector('.toolkits-modern-lo-item__name');
+        if (!nameCell) {
+            return;
+        }
+        var current = nameCell.querySelector('.toolkits-modern-folder-labels');
+        if (current) {
+            current.remove();
+        }
+        var labelHtml = toolkitsModernFolderLabelsHtml(organisation);
+        var date = nameCell.querySelector('.toolkits-modern-lo-item__date');
+        if (labelHtml && date) {
+            var labels = document.createElement('span');
+            labels.className = 'toolkits-modern-folder-labels';
+            labels.innerHTML = labelHtml;
+            nameCell.insertBefore(labels, date);
+        }
+    });
 }
 
 function toolkitsModernPopulateFolderFilter() {
@@ -1126,9 +1175,11 @@ function toolkitsModernPopulateFolderFilter() {
 }
 
 function toolkitsModernLoadFolderOrganisation() {
-    if (typeof $ === 'undefined' || typeof apiV1Url !== 'function') {
+    if (window.toolkitsModernFolderOrganisationLoaded || window.toolkitsModernFolderOrganisationLoading ||
+        typeof $ === 'undefined' || typeof apiV1Url !== 'function') {
         return;
     }
+    window.toolkitsModernFolderOrganisationLoading = true;
     $.ajax({
         type: 'GET',
         url: apiV1Url('workspace/folder-organisation'),
@@ -1138,9 +1189,12 @@ function toolkitsModernLoadFolderOrganisation() {
         if (!data || !data.folders) {
             return;
         }
+        window.toolkitsModernFolderOrganisationLoaded = true;
         window.toolkitsModernFolderOrganisation = data;
         toolkitsModernPopulateFolderFilter();
-        toolkitsModernRenderObjectList();
+        toolkitsModernApplyFolderOrganisationToRows();
+    }).always(function () {
+        window.toolkitsModernFolderOrganisationLoading = false;
     });
 }
 
@@ -1760,30 +1814,48 @@ function toolkitsModernBuildLoMenuHtml(item) {
     return html;
 }
 
-function toolkitsModernOpenLoMenu(button, item) {
+function toolkitsModernOpenLoMenu(button, item, pointer) {
     var menu = document.getElementById('toolkits-modern-lo-menu');
-    if (!menu || !button) {
+    if (!menu || !item || (!button && !pointer)) {
         return;
     }
     toolkitsModernLoMenuState.nodeId = item.id;
     toolkitsModernLoMenuState.templateId = String(item.xot_id || '');
     menu.innerHTML = toolkitsModernBuildLoMenuHtml(item);
     menu.hidden = false;
-    var rect = button.getBoundingClientRect();
     var menuWidth = menu.offsetWidth || 200;
-    menu.style.top = (rect.bottom + 4) + 'px';
-    menu.style.left = Math.max(8, rect.right - menuWidth) + 'px';
+    var menuHeight = menu.offsetHeight || 0;
+    var left;
+    var top;
+    if (pointer) {
+        left = pointer.clientX;
+        top = pointer.clientY;
+    } else {
+        var rect = button.getBoundingClientRect();
+        left = rect.right - menuWidth;
+        top = rect.bottom + 4;
+    }
+    left = Math.max(8, Math.min(left, window.innerWidth - menuWidth - 8));
+    top = Math.max(8, Math.min(top, window.innerHeight - menuHeight - 8));
+    menu.style.left = left + 'px';
+    menu.style.top = top + 'px';
 }
 
 function toolkitsModernRunLoAction(action, nodeId, actionBtn, event) {
     if (!nodeId) {
         return;
     }
-    toolkitsModernSelectTreeNode(nodeId);
     toolkitsModernUpdateListSelection(nodeId);
     toolkitsModernCloseLoMenu();
 
     var node = workspace && workspace.nodes ? workspace.nodes[nodeId] : null;
+    if (node && toolkitsModernIsFolderNode(node) && action === 'organise') {
+        toolkitsModernRunFolderAction(action, nodeId, event);
+        return;
+    }
+
+    // Legacy workspace actions read their target from jsTree selection.
+    toolkitsModernSelectTreeNode(nodeId);
     if (node && toolkitsModernIsFolderNode(node)) {
         toolkitsModernRunFolderAction(action, nodeId, event);
         return;
@@ -1883,21 +1955,22 @@ function toolkitsModernCloseFolderOrganisation() {
     document.body.classList.remove('toolkits-modern-folder-organisation-open');
 }
 
-function toolkitsModernRefreshOrganisationAndReopen(nodeId) {
-    if (typeof $ === 'undefined' || typeof apiV1Url !== 'function') {
-        return;
-    }
-    $.ajax({ type: 'GET', url: apiV1Url('workspace/folder-organisation'), dataType: 'json' }).done(function (response) {
-        var data = typeof apiUnpack === 'function' ? apiUnpack(response) : response;
-        if (data && data.folders) {
-            window.toolkitsModernFolderOrganisation = data;
-            toolkitsModernPopulateFolderFilter();
-            toolkitsModernRenderObjectList();
-            if (nodeId) {
-                toolkitsModernOpenFolderOrganisation(nodeId);
-            }
-        }
+function toolkitsModernRefreshOrganisationUi(nodeId) {
+    var labels = window.toolkitsModernFolderOrganisation.labels || [];
+    var previousFilter = window.toolkitsModernFolderFilter || 'all';
+    labels.sort(function (a, b) {
+        return String(a.name || '').localeCompare(String(b.name || ''));
     });
+    toolkitsModernPopulateFolderFilter();
+    if (previousFilter === 'all' && window.toolkitsModernFolderFilter === 'all') {
+        toolkitsModernApplyFolderOrganisationToRows();
+    } else {
+        toolkitsModernRenderObjectList();
+    }
+    toolkitsModernCloseFolderOrganisation();
+    if (nodeId) {
+        toolkitsModernOpenFolderOrganisation(nodeId);
+    }
 }
 
 function toolkitsModernOpenFolderOrganisation(nodeId) {
@@ -1965,9 +2038,9 @@ function toolkitsModernOpenFolderOrganisation(nodeId) {
         if (create) {
             var input = modal.querySelector('#toolkits-modern-folder-new-label');
             if (input && input.value.trim()) {
-                toolkitsModernFolderOrganisationRequest('workspace/folder-organisation/labels/create', { name: input.value.trim() }, function () {
-                    toolkitsModernCloseFolderOrganisation();
-                    toolkitsModernRefreshOrganisationAndReopen(nodeId);
+                toolkitsModernFolderOrganisationRequest('workspace/folder-organisation/labels/create', { name: input.value.trim() }, function (created) {
+                    window.toolkitsModernFolderOrganisation.labels.push(created);
+                    toolkitsModernRefreshOrganisationUi(nodeId);
                 });
             }
             return;
@@ -1977,18 +2050,30 @@ function toolkitsModernOpenFolderOrganisation(nodeId) {
             var label = toolkitsModernLabelById(rename.getAttribute('data-folder-label-rename'));
             var name = window.prompt(s.modernFolderRenameLabel || 'Rename label', label ? label.name : '');
             if (name !== null) {
-                toolkitsModernFolderOrganisationRequest('workspace/folder-organisation/labels/rename', { label_id: rename.getAttribute('data-folder-label-rename'), name: name }, function () {
-                    toolkitsModernCloseFolderOrganisation();
-                    toolkitsModernRefreshOrganisationAndReopen(nodeId);
+                toolkitsModernFolderOrganisationRequest('workspace/folder-organisation/labels/rename', { label_id: rename.getAttribute('data-folder-label-rename'), name: name }, function (renamed) {
+                    var cached = toolkitsModernLabelById(renamed.id);
+                    if (cached) {
+                        cached.name = renamed.name;
+                    }
+                    toolkitsModernRefreshOrganisationUi(nodeId);
                 });
             }
             return;
         }
         var remove = e.target.closest('[data-folder-label-delete]');
         if (remove && window.confirm(s.modernFolderDeleteLabelConfirm || 'Delete this label from all folders?')) {
-            toolkitsModernFolderOrganisationRequest('workspace/folder-organisation/labels/delete', { label_id: remove.getAttribute('data-folder-label-delete') }, function () {
-                toolkitsModernCloseFolderOrganisation();
-                toolkitsModernRefreshOrganisationAndReopen(nodeId);
+            var deletedLabelId = remove.getAttribute('data-folder-label-delete');
+            toolkitsModernFolderOrganisationRequest('workspace/folder-organisation/labels/delete', { label_id: deletedLabelId }, function () {
+                window.toolkitsModernFolderOrganisation.labels = (window.toolkitsModernFolderOrganisation.labels || []).filter(function (label) {
+                    return String(label.id) !== String(deletedLabelId);
+                });
+                Object.keys(window.toolkitsModernFolderOrganisation.folders || {}).forEach(function (folderId) {
+                    var folder = window.toolkitsModernFolderOrganisation.folders[folderId];
+                    folder.label_ids = (folder.label_ids || []).filter(function (labelId) {
+                        return String(labelId) !== String(deletedLabelId);
+                    });
+                });
+                toolkitsModernRefreshOrganisationUi(nodeId);
             });
         }
     });
@@ -2000,7 +2085,11 @@ function toolkitsModernOpenFolderOrganisation(nodeId) {
             var folders = window.toolkitsModernFolderOrganisation.folders || {};
             folders[String(node.xot_id)] = { colour: saved.colour, label_ids: saved.label_ids || [] };
             toolkitsModernCloseFolderOrganisation();
-            toolkitsModernRenderObjectList();
+            if (window.toolkitsModernFolderFilter === 'all') {
+                toolkitsModernApplyFolderOrganisationToRows();
+            } else {
+                toolkitsModernRenderObjectList();
+            }
         });
     });
 }
@@ -2240,6 +2329,22 @@ function toolkitsModernBindLoMenu() {
         }
     });
 
+    document.addEventListener('contextmenu', function (e) {
+        var row = e.target.closest('.toolkits-modern-lo-item[data-node-id]');
+        if (!row || !row.closest('#toolkits-modern-lo-list')) {
+            return;
+        }
+        var nodeId = row.getAttribute('data-node-id') || '';
+        var item = workspace && workspace.nodes ? workspace.nodes[nodeId] : null;
+        if (!item) {
+            return;
+        }
+        e.preventDefault();
+        e.stopPropagation();
+        toolkitsModernUpdateListSelection(nodeId);
+        toolkitsModernOpenLoMenu(null, item, e);
+    });
+
     document.addEventListener('keydown', function (e) {
         if (e.key === 'Escape') {
             toolkitsModernCloseLoMenu();
@@ -2405,6 +2510,7 @@ function toolkitsModernBindFolderModal() {
             toolkitsModernCloseFolderOrganisation();
         }
     });
+
 }
 
 function toolkitsModernCloseImportModal() {
@@ -2667,13 +2773,7 @@ function toolkitsModernRenderFolderRow(item, selectedId, s) {
 
     var nameTd = document.createElement('td');
     nameTd.className = 'toolkits-modern-lo-item__name';
-    var labelHtml = '';
-    (organisation.label_ids || []).forEach(function (labelId) {
-        var label = toolkitsModernLabelById(labelId);
-        if (label) {
-            labelHtml += '<span class="toolkits-modern-folder-label">' + toolkitsModernEscapeHtml(label.name) + '</span>';
-        }
-    });
+    var labelHtml = toolkitsModernFolderLabelsHtml(organisation);
     nameTd.innerHTML =
         '<span class="toolkits-modern-lo-item__label toolkits-modern-lo-item__label--folder">' +
             toolkitsModernEscapeHtml(item.text) +
@@ -3275,6 +3375,10 @@ function toolkitsModernSelectTreeNode(nodeId) {
     }
     var tree = $.jstree.reference('#workspace');
     if (tree) {
+        var selected = tree.get_selected();
+        if (selected && selected.length === 1 && selected[0] === nodeId) {
+            return;
+        }
         tree.deselect_all();
         tree.select_node(nodeId);
     }
@@ -3290,7 +3394,6 @@ function toolkitsModernOnWorkspaceRefreshed() {
     window.toolkitsModernFolderDetailCache = {};
     toolkitsModernUpdateNavCounts();
     toolkitsModernRenderObjectList();
-    toolkitsModernLoadFolderOrganisation();
 }
 
 function toolkitsModernEnsureWorkspaceData() {
