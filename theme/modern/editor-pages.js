@@ -368,10 +368,19 @@
         }
     }
 
-    function triggerClassicButton(id) {
+    function triggerClassicButton(id, sourceEvent, overrides) {
         var $btn = $('#' + id);
         if ($btn.length) {
-            $btn.trigger('click');
+            var eventProps = {
+                altKey: !!(sourceEvent && sourceEvent.altKey),
+                ctrlKey: !!(sourceEvent && sourceEvent.ctrlKey),
+                metaKey: !!(sourceEvent && sourceEvent.metaKey),
+                shiftKey: !!(sourceEvent && sourceEvent.shiftKey)
+            };
+            if (overrides) {
+                $.extend(eventProps, overrides);
+            }
+            $btn.trigger($.Event('click', eventProps));
         }
     }
 
@@ -1529,7 +1538,7 @@
         $(document).on('click', '#modern-editor-preview', function (e) {
             e.preventDefault();
             flushModernEditorFields();
-            triggerClassicButton('preview_button');
+            triggerClassicButton('preview_button', e);
         });
 
         $(document).on('click', '#modern-editor-save', function (e) {
@@ -1587,6 +1596,20 @@
             }
             closeMenus();
             selectPage($(this).attr('data-node-id'));
+        });
+
+        $(document).on('dblclick', '#modern-editor-pages-list .modern-editor-page', function (e) {
+            if ($(e.target).closest('.modern-editor-page__menu-wrap, .modern-editor-child').length) {
+                return;
+            }
+            e.preventDefault();
+            closeMenus();
+            selectPage($(this).attr('data-node-id'));
+            flushModernEditorFields();
+            // The classic preview handler uses Shift to append the selected
+            // page's linkID. Reuse that path so saving and window behaviour
+            // remain identical to Shift+Preview.
+            triggerClassicButton('preview_button', e, {shiftKey: true});
         });
 
         $(document).on('click', '#modern-editor-pages-list .modern-editor-child', function (e) {

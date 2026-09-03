@@ -445,6 +445,8 @@ body.toolkits-ui-theme-modern .modern-editor-page__body {
     border-radius: 12px;
     padding: 0.55rem 0.55rem 0.55rem 0.35rem;
     box-sizing: border-box;
+    -webkit-user-select: none;
+    user-select: none;
 }
 
 body.toolkits-ui-theme-modern .modern-editor-page__children {
