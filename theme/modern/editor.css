@@ -457,11 +457,11 @@ body.toolkits-ui-theme-modern .modern-editor-page__children {
 }
 
 body.toolkits-ui-theme-modern .modern-editor-child {
+    position: relative;
     background: #fff;
     border: 1px solid #e5e7eb;
     border-radius: 10px;
-    padding: 0.7rem 0.85rem;
-    cursor: pointer;
+    padding: 0.45rem 0.55rem;
     box-sizing: border-box;
 }
 
@@ -478,14 +478,96 @@ body.toolkits-ui-theme-modern .modern-editor-child--active {
 body.toolkits-ui-theme-modern .modern-editor-child__row {
     display: flex;
     align-items: center;
+    gap: 0.25rem;
+}
+
+body.toolkits-ui-theme-modern .modern-editor-child__select {
+    display: flex;
+    align-items: center;
+    flex: 1 1 auto;
     flex-wrap: wrap;
-    gap: 0.45rem 0.6rem;
+    gap: 0.35rem 0.6rem;
+    min-width: 0;
+    padding: 0.2rem 0.25rem;
+    border: 0;
+    background: transparent;
+    color: inherit;
+    text-align: left;
+    font-family: inherit;
+    cursor: pointer;
+}
+
+body.toolkits-ui-theme-modern .modern-editor-child__toggle,
+body.toolkits-ui-theme-modern .modern-editor-child__toggle-spacer {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex: 0 0 1.5rem;
+    width: 1.5rem;
+    height: 1.5rem;
+}
+
+body.toolkits-ui-theme-modern .modern-editor-child__toggle {
+    padding: 0;
+    border: 0;
+    border-radius: 4px;
+    background: transparent;
+    color: #6b7280;
+    cursor: pointer;
+}
+
+body.toolkits-ui-theme-modern .modern-editor-child__toggle:hover,
+body.toolkits-ui-theme-modern .modern-editor-child__toggle:focus {
+    background: #e5e7eb;
+    color: #111827;
+}
+
+body.toolkits-ui-theme-modern .modern-editor-child__toggle .fa {
+    transition: transform 0.15s ease;
+}
+
+body.toolkits-ui-theme-modern .modern-editor-child--collapsed > .modern-editor-child__row .modern-editor-child__toggle .fa {
+    transform: rotate(-90deg);
+}
+
+body.toolkits-ui-theme-modern .modern-editor-child__children {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+    margin: 0.4rem 0 0 1.25rem;
+    padding-left: 0.9rem;
+}
+
+body.toolkits-ui-theme-modern .modern-editor-child__children::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    bottom: 1.25rem;
+    left: 0;
+    border-left: 1px solid #d1d5db;
+}
+
+body.toolkits-ui-theme-modern .modern-editor-child__children > .modern-editor-child::before {
+    content: "";
+    position: absolute;
+    top: 1.15rem;
+    left: -0.9rem;
+    width: 0.85rem;
+    border-top: 1px solid #d1d5db;
+}
+
+body.toolkits-ui-theme-modern .modern-editor-child--collapsed > .modern-editor-child__children {
+    display: none;
 }
 
 body.toolkits-ui-theme-modern .modern-editor-child__title {
     font-size: 0.9rem;
     font-weight: 700;
     color: #111827;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 body.toolkits-ui-theme-modern .modern-editor-child__badge {
@@ -501,7 +583,7 @@ body.toolkits-ui-theme-modern .modern-editor-child__badge {
 }
 
 body.toolkits-ui-theme-modern .modern-editor-child__status {
-    margin-top: 0.35rem;
+    margin: 0.25rem 0 0 2rem;
     font-size: 0.85rem;
     color: #9ca3af;
     font-weight: 500;

@@ -15,6 +15,8 @@
     var refreshTimer = null;
     var bound = false;
     var topbarReady = false;
+    // Modern navigation state only; the underlying project tree is unchanged.
+    var collapsedNodeIds = Object.create(null);
 
     var thumbnailEditTimer = null;
     var THUMBNAIL_EDIT_DELAY = 1500;
@@ -491,6 +493,20 @@
     function getChildTitle(childId, index) {
         var data = (typeof lo_data !== 'undefined') ? lo_data[childId] : null;
         var nodeName = data && data.attributes ? data.attributes.nodeName : '';
+        var attributes = data && data.attributes ? data.attributes : {};
+        var titleFields = ['name', 'title', 'prompt', 'question', 'answer', 'text', 'label'];
+        for (var i = 0; i < titleFields.length; i++) {
+            var title = plainText(attributes[titleFields[i]] || '').trim();
+            if (title) {
+                return title;
+            }
+        }
+        if (data && data.data) {
+            var dataTitle = plainText(data.data).trim();
+            if (dataTitle) {
+                return dataTitle;
+            }
+        }
         var menuItem = '';
         if (typeof wizard_data !== 'undefined' && wizard_data[nodeName] &&
             wizard_data[nodeName].menu_options && wizard_data[nodeName].menu_options.menuItem) {
@@ -549,29 +565,50 @@
         return (walk && walk !== 'treeroot') ? walk : null;
     }
 
-    function buildChildrenHtml(tree, pageId, selectedId) {
-        var node = tree.get_node(pageId);
+    function buildChildrenHtml(tree, parentId, selectedId, depth) {
+        var node = tree.get_node(parentId);
         var children = node && node.children ? node.children : [];
         if (!children.length) {
             return '';
         }
-        var html = '<div class="modern-editor-page__children">';
+        depth = depth || 0;
+        var containerClass = depth === 0
+            ? 'modern-editor-page__children'
+            : 'modern-editor-child__children';
+        var html = '<div class="' + containerClass + '">';
         children.forEach(function (childId, index) {
+            var childNode = tree.get_node(childId);
+            var hasChildren = !!(childNode && childNode.children && childNode.children.length);
+            var collapsed = hasChildren && collapsedNodeIds[childId];
             var active = childId === selectedId ? ' modern-editor-child--active' : '';
+            var collapsedClass = collapsed ? ' modern-editor-child--collapsed' : '';
             var badge = getChildBadge(childId);
             var incomplete = isChildIncomplete(childId);
-            html += '<div class="modern-editor-child' + active + '" data-node-id="' + childId + '" role="button" tabindex="0">' +
+            html += '<div class="modern-editor-child' + active + collapsedClass + '" data-node-id="' + childId + '" data-sibling-index="' + index + '">' +
                 '<div class="modern-editor-child__row">' +
-                    '<span class="modern-editor-child__title"></span>' +
-                    (badge ? '<span class="modern-editor-child__badge"></span>' : '') +
+                    (hasChildren
+                        ? '<button type="button" class="modern-editor-child__toggle" aria-label="Toggle nested items" aria-expanded="' + (!collapsed) + '"><i class="fa fa-chevron-down" aria-hidden="true"></i></button>'
+                        : '<span class="modern-editor-child__toggle-spacer" aria-hidden="true"></span>') +
+                    '<button type="button" class="modern-editor-child__select"><span class="modern-editor-child__title"></span>' +
+                        (badge ? '<span class="modern-editor-child__badge"></span>' : '') +
+                    '</button>' +
                 '</div>' +
                 (incomplete
                     ? '<div class="modern-editor-child__status"></div>'
                     : '') +
+                (hasChildren ? buildChildrenHtml(tree, childId, selectedId, depth + 1) : '') +
             '</div>';
         });
         html += '</div>';
         return html;
+    }
+
+    function revealNodePath(tree, nodeId) {
+        var walk = nodeId;
+        while (walk && walk !== 'treeroot') {
+            delete collapsedNodeIds[walk];
+            walk = tree.get_parent(walk);
+        }
     }
 
     function previewUrl(pageIndex1Based) {
@@ -1073,16 +1110,17 @@
             var pageId = $card.attr('data-node-id');
             $card.find('.modern-editor-page__label').text(getPageLabel(pageId));
 
-            $card.find('.modern-editor-child').each(function (childIndex) {
+            $card.find('.modern-editor-child').each(function () {
                 var $child = $(this);
                 var childId = $child.attr('data-node-id');
-                $child.find('.modern-editor-child__title').text(getChildTitle(childId, childIndex));
+                var childIndex = parseInt($child.attr('data-sibling-index'), 10) || 0;
+                $child.children('.modern-editor-child__row').find('.modern-editor-child__title').text(getChildTitle(childId, childIndex));
                 var badge = getChildBadge(childId);
                 if (badge) {
-                    $child.find('.modern-editor-child__badge').text(badge);
+                    $child.children('.modern-editor-child__row').find('.modern-editor-child__badge').text(badge);
                 }
                 if (isChildIncomplete(childId)) {
-                    $child.find('.modern-editor-child__status').text(incompleteLabel());
+                    $child.children('.modern-editor-child__status').text(incompleteLabel());
                 }
             });
         });
@@ -1612,11 +1650,26 @@
             triggerClassicButton('preview_button', e, {shiftKey: true});
         });
 
-        $(document).on('click', '#modern-editor-pages-list .modern-editor-child', function (e) {
+        $(document).on('click', '#modern-editor-pages-list .modern-editor-child__toggle', function (e) {
+            e.preventDefault();
+            e.stopPropagation();
+            var $child = $(this).closest('.modern-editor-child');
+            var nodeId = $child.attr('data-node-id');
+            var collapsed = !$child.hasClass('modern-editor-child--collapsed');
+            $child.toggleClass('modern-editor-child--collapsed', collapsed);
+            $(this).attr('aria-expanded', String(!collapsed));
+            if (collapsed) {
+                collapsedNodeIds[nodeId] = true;
+            } else {
+                delete collapsedNodeIds[nodeId];
+            }
+        });
+
+        $(document).on('click', '#modern-editor-pages-list .modern-editor-child__select', function (e) {
             e.preventDefault();
             e.stopPropagation();
             closeMenus();
-            selectPage($(this).attr('data-node-id'));
+            selectPage($(this).closest('.modern-editor-child').attr('data-node-id'));
         });
 
         $(document).on('keydown', '#modern-editor-pages-list .modern-editor-page', function (e) {
@@ -1625,14 +1678,6 @@
             }
             if (e.key === 'Enter' || e.key === ' ') {
                 e.preventDefault();
-                selectPage($(this).attr('data-node-id'));
-            }
-        });
-
-        $(document).on('keydown', '#modern-editor-pages-list .modern-editor-child', function (e) {
-            if (e.key === 'Enter' || e.key === ' ') {
-                e.preventDefault();
-                e.stopPropagation();
                 selectPage($(this).attr('data-node-id'));
             }
         });
@@ -1802,6 +1847,19 @@
                 var topId = getTopLevelPageId(tree, selectedId) || selectedId;
                 var isRoot = selectedId === 'treeroot';
 
+                if (!isRoot) {
+                    revealNodePath(tree, selectedId);
+                    $('#modern-editor-pages-list .modern-editor-child').each(function () {
+                        var nodeId = $(this).attr('data-node-id');
+                        if (!collapsedNodeIds[nodeId]) {
+                            $(this).removeClass('modern-editor-child--collapsed')
+                                .children('.modern-editor-child__row')
+                                .find('.modern-editor-child__toggle')
+                                .attr('aria-expanded', 'true');
+                        }
+                    });
+                }
+
                 $('#modern-editor-lo-title').toggleClass('is-active', isRoot);
 
                 $('#modern-editor-pages-list .modern-editor-page')
@@ -1824,27 +1882,29 @@
 
                 // Refresh child meta (e.g. incomplete status after editing)
                 $('#modern-editor-pages-list .modern-editor-page').each(function () {
-                    $(this).find('.modern-editor-child').each(function (childIndex) {
+                    $(this).find('.modern-editor-child').each(function () {
                         var $child = $(this);
                         var childId = $child.attr('data-node-id');
-                        $child.find('.modern-editor-child__title').text(getChildTitle(childId, childIndex));
+                        var childIndex = parseInt($child.attr('data-sibling-index'), 10) || 0;
+                        var $row = $child.children('.modern-editor-child__row');
+                        $row.find('.modern-editor-child__title').text(getChildTitle(childId, childIndex));
                         var badge = getChildBadge(childId);
-                        var $badge = $child.find('.modern-editor-child__badge');
+                        var $badge = $row.find('.modern-editor-child__badge');
                         if (badge) {
                             if (!$badge.length) {
-                                $child.find('.modern-editor-child__row')
+                                $child.find('.modern-editor-child__select')
                                     .append($('<span class="modern-editor-child__badge"></span>'));
-                                $badge = $child.find('.modern-editor-child__badge');
+                                $badge = $row.find('.modern-editor-child__badge');
                             }
                             $badge.text(badge).show();
                         } else {
                             $badge.remove();
                         }
-                        var $status = $child.find('.modern-editor-child__status');
+                        var $status = $child.children('.modern-editor-child__status');
                         if (isChildIncomplete(childId)) {
                             if (!$status.length) {
-                                $child.append($('<div class="modern-editor-child__status"></div>'));
-                                $status = $child.find('.modern-editor-child__status');
+                                $row.after($('<div class="modern-editor-child__status"></div>'));
+                                $status = $child.children('.modern-editor-child__status');
                             }
                             $status.text(incompleteLabel());
                         } else {
@@ -1855,10 +1915,24 @@
             })
             .on(
                 'create_node.jstree move_node.jstree rename_node.jstree set_text.jstree',
-                function () {
+                function (e, data) {
+                    var tree = getTree();
+                    if (tree && data && data.node &&
+                        (e.type === 'create_node' || e.type === 'move_node')) {
+                        revealNodePath(tree, data.node.id);
+                    }
                     renderPages({
                         refreshPreviews: true
                     });
+                    if (e.type === 'create_node' && data && data.node) {
+                        setTimeout(function () {
+                            var $newNode = $('#modern-editor-pages-list .modern-editor-child')
+                                .filter('[data-node-id="' + data.node.id + '"]');
+                            if ($newNode.length && $newNode[0].scrollIntoView) {
+                                $newNode[0].scrollIntoView({ block: 'nearest' });
+                            }
+                        }, 0);
+                    }
                 }
             )
             .on(
