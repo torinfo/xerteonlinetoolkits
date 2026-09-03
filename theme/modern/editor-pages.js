@@ -480,16 +480,6 @@
         return nodeName || nodeId;
     }
 
-    function incompleteLabel() {
-        var lang = (typeof languagecodevariable !== 'undefined' && languagecodevariable)
-            ? String(languagecodevariable)
-            : '';
-        if (lang.indexOf('nl') === 0) {
-            return 'Nog niet ingevuld';
-        }
-        return 'Not yet filled in';
-    }
-
     function getChildTitle(childId, index) {
         var data = (typeof lo_data !== 'undefined') ? lo_data[childId] : null;
         var nodeName = data && data.attributes ? data.attributes.nodeName : '';
@@ -538,20 +528,114 @@
         return type;
     }
 
-    function isChildIncomplete(childId) {
-        var data = (typeof lo_data !== 'undefined') ? lo_data[childId] : null;
-        if (!data || !data.attributes) {
+    function incompleteLabel() {
+        var lang = (typeof languagecodevariable !== 'undefined' && languagecodevariable)
+            ? String(languagecodevariable)
+            : '';
+        return lang.indexOf('nl') === 0 ? 'Nog niet ingevuld' : 'Not yet filled in';
+    }
+
+    function optionApplies(option, nodeId) {
+        if (!option.condition || !EDITOR.toolbox || !EDITOR.toolbox.evaluateCondition) {
             return true;
         }
-        var prompt = plainText(data.attributes.prompt || '');
-        if (prompt) {
+        try {
+            return EDITOR.toolbox.evaluateCondition(option.condition, nodeId);
+        } catch (e) {
+            // Do not show a warning when a condition cannot be evaluated safely.
             return false;
         }
-        // Some nodes use CDATA / data text instead of prompt
-        if (data.data && plainText(data.data).trim()) {
+    }
+
+    function optionGroupApplies(option, nodeId, nodeOptions, attributes) {
+        var groupName = option.value && option.value.group;
+        if (!groupName) {
+            return true;
+        }
+        var options = nodeOptions.all || [];
+        var group = null;
+        var groupHasStoredValue = false;
+        for (var i = 0; i < options.length; i++) {
+            if (options[i].name === groupName && options[i].value.type === 'group') {
+                group = options[i];
+            }
+            if (options[i].value.group === groupName &&
+                Object.prototype.hasOwnProperty.call(attributes, options[i].name)) {
+                groupHasStoredValue = true;
+            }
+        }
+        if (!group) {
+            return true;
+        }
+        if (!optionApplies(group.value, nodeId)) {
             return false;
         }
-        return true;
+        if (group.value.optional === 'true' && !groupHasStoredValue) {
+            return false;
+        }
+        return optionGroupApplies(group, nodeId, nodeOptions, attributes);
+    }
+
+    function isRequiredOptionEmpty(option, nodeId, nodeOptions, attributes) {
+        var rules = option.value || {};
+        var required = rules.mandatory === true || rules.mandatory === 'true';
+        var verification = rules.verification || '';
+        if (!required && !verification) {
+            return false;
+        }
+        if (!optionApplies(rules, nodeId)) {
+            return false;
+        }
+        if (!optionGroupApplies(option, nodeId, nodeOptions, attributes)) {
+            return false;
+        }
+
+        var attribute = EDITOR.toolbox.getAttributeValue(
+            attributes,
+            option.name,
+            nodeOptions,
+            nodeId
+        );
+        if (rules.optional === 'true' && !attribute.found) {
+            return false;
+        }
+        var value = attribute.found ? attribute.value : rules.defaultValue;
+        value = value == null ? '' : plainText(value).trim();
+
+        if (required && value === '') {
+            return true;
+        }
+        if (verification) {
+            try {
+                return !(new RegExp(verification)).test(value);
+            } catch (e) {
+                // An invalid schema expression should not produce a false warning.
+                return false;
+            }
+        }
+        return false;
+    }
+
+    function isChildIncomplete(childId) {
+        var data = (typeof lo_data !== 'undefined') ? lo_data[childId] : null;
+        var nodeName = data && data.attributes ? data.attributes.nodeName : '';
+        var definition = (typeof wizard_data !== 'undefined') ? wizard_data[nodeName] : null;
+        var nodeOptions = definition && definition.node_options;
+        var options = nodeOptions && nodeOptions.all ? nodeOptions.all : [];
+
+        if (!data || !data.attributes || !EDITOR.toolbox ||
+            !EDITOR.toolbox.getAttributeValue || !options.length) {
+            return false;
+        }
+
+        for (var i = 0; i < options.length; i++) {
+            var option = options[i];
+            if (option && option.value &&
+                isRequiredOptionEmpty(option, childId, nodeOptions, data.attributes)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     function getTopLevelPageId(tree, nodeId) {
@@ -565,6 +649,8 @@
         return (walk && walk !== 'treeroot') ? walk : null;
     }
 
+    // Completion is derived from each node type's XWD requirements. Do not infer
+    // it from generic field names: descendants/sub-nodes store their content differently i.e. 'prompt', 'text', etc.
     function buildChildrenHtml(tree, parentId, selectedId, depth) {
         var node = tree.get_node(parentId);
         var children = node && node.children ? node.children : [];
@@ -593,9 +679,7 @@
                         (badge ? '<span class="modern-editor-child__badge"></span>' : '') +
                     '</button>' +
                 '</div>' +
-                (incomplete
-                    ? '<div class="modern-editor-child__status"></div>'
-                    : '') +
+                (incomplete ? '<div class="modern-editor-child__status"></div>' : '') +
                 (hasChildren ? buildChildrenHtml(tree, childId, selectedId, depth + 1) : '') +
             '</div>';
         });
