@@ -497,26 +497,6 @@ function output_editor_code($row_edit, $xerte_toolkits_site, $read_status, $vers
                     "\n";
             }
         }
-
-
-        $theme_editor_js = 'theme/' . get_toolkits_ui_theme() . '/editor-pages.js';
-
-        if (file_exists($xerte_toolkits_site->root_file_path . $theme_editor_js)) {
-        $src = htmlspecialchars(
-                toolkits_theme_asset_url(
-                        'editor-pages.js?version=' .
-                        $version
-                ),
-                ENT_QUOTES,
-                'UTF-8'
-        );
-
-        echo '<script type="text/javascript" src="' .
-                $src .
-                '"></script>' .
-                "\n";
-        }
-
     $theme_editor_js = 'theme/' . get_toolkits_ui_theme() . '/editor-pages.js';
     if (file_exists($xerte_toolkits_site->root_file_path . $theme_editor_js)) {
         $src = htmlspecialchars(toolkits_theme_asset_url('editor-pages.js?version=' . $version), ENT_QUOTES, 'UTF-8');
