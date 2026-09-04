@@ -7,6 +7,9 @@
         <insertAtEnd label="At end" tooltip="Insert as last page"/>
 		<insertMerge label="Import pages" tooltip="Import pages after last page"/>
     </insertDialog>
+    <modernEditor pages="Pages" expandAll="Expand all" collapseAll="Collapse all" learningObject="Learning Object" learningObjectSettings="Learning Object settings" home="Home" addPage="Add page" toggleNestedItems="Toggle nested items" toggleNestedPages="Toggle nested pages" pageOptions="Page options" notYetFilledIn="Not yet filled in" selectPage="Select a page to add" allPages="All pages" close="Close" categories="Categories">
+        <answerType single="Single answer" multiple="Multiple answers"/>
+    </modernEditor>
     <btnSaveXerte label="Save" tooltip="Save Project" description="Save Button"/>
 	<btnPublishXot label="Publish" tooltip="Publish Project" description="Publish Button"/>
 	<wikiLink tooltip="Open {x} wiki page (new window)"/>

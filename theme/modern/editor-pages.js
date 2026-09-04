@@ -104,20 +104,13 @@
     }
 
     function nestedPagesLabel(expand) {
-        var lang = (typeof languagecodevariable !== 'undefined' && languagecodevariable)
-            ? String(languagecodevariable)
-            : '';
-        if (lang.indexOf('nl') === 0) {
-            return expand ? 'Alles uitvouwen' : 'Alles invouwen';
-        }
-        return expand ? 'Expand all' : 'Collapse all';
+        return expand
+            ? langLabel('modernEditor.$expandAll', 'Expand all')
+            : langLabel('modernEditor.$collapseAll', 'Collapse all');
     }
 
     function pagesHeadingLabel() {
-        var lang = (typeof languagecodevariable !== 'undefined' && languagecodevariable)
-            ? String(languagecodevariable)
-            : '';
-        return lang.indexOf('nl') === 0 ? "Pagina's" : 'Pages';
+        return langLabel('modernEditor.$pages', 'Pages');
     }
 
     function updateNestedPagesButton() {
@@ -154,9 +147,9 @@
         var root = (typeof lo_data !== 'undefined') ? lo_data.treeroot : null;
         if (root && root.attributes) {
             var title = plainText(root.attributes.name || root.attributes.navigationName);
-            return title || 'Learning Object';
+            return title || langLabel('modernEditor.$learningObject', 'Learning Object');
         }
-        return 'Learning Object';
+        return langLabel('modernEditor.$learningObject', 'Learning Object');
     }
 
     function langLabel(path, fallback) {
@@ -513,15 +506,16 @@
         }
 
         var logoSrc = getLogoSrc();
-        // Always "Preview" in modern; en-GB wizard label is historically "Play"
-        var previewLabel = 'Preview';
+        // Use the tooltip because en-GB's legacy button label is historically "Play".
+        var previewLabel = langLabel('btnPreview.$tooltip', 'Preview');
         var previewTip = langLabel('btnPreview.$tooltip', previewLabel);
         var saveLabel = langLabel('btnSaveXerte.$label', 'Save');
         var saveTip = langLabel('btnPublishXot.$tooltip', saveLabel);
+        var homeLabel = langLabel('modernEditor.$home', 'Home');
         var showWorkspaceChrome = isWorkspaceWindowMode();
         var homeHtml = showWorkspaceChrome
             ? (
-                '<button type="button" class="modern-editor-topbar__home" id="modern-editor-home" title="Home" aria-label="Home">' +
+                '<button type="button" class="modern-editor-topbar__home" id="modern-editor-home" title="' + homeLabel + '" aria-label="' + homeLabel + '">' +
                     '<i class="fa fa-home" aria-hidden="true"></i>' +
                 '</button>'
             )
@@ -626,25 +620,17 @@
             return '';
         }
         var type = plainText(data.attributes.type);
-        var lang = (typeof languagecodevariable !== 'undefined' && languagecodevariable)
-            ? String(languagecodevariable)
-            : '';
-        if (lang.indexOf('nl') === 0) {
-            if (type === 'Single Answer') {
-                return 'Eén antwoord';
-            }
-            if (type === 'Multiple Answer') {
-                return 'Meerdere antwoorden';
-            }
+        if (type === 'Single Answer') {
+            return langLabel('modernEditor.answerType.$single', 'Single answer');
+        }
+        if (type === 'Multiple Answer') {
+            return langLabel('modernEditor.answerType.$multiple', 'Multiple answers');
         }
         return type;
     }
 
     function incompleteLabel() {
-        var lang = (typeof languagecodevariable !== 'undefined' && languagecodevariable)
-            ? String(languagecodevariable)
-            : '';
-        return lang.indexOf('nl') === 0 ? 'Nog niet ingevuld' : 'Not yet filled in';
+        return langLabel('modernEditor.$notYetFilledIn', 'Not yet filled in');
     }
 
     function optionApplies(option, nodeId) {
@@ -774,6 +760,7 @@
             ? 'modern-editor-page__children'
             : 'modern-editor-child__children';
         var html = '<div class="' + containerClass + '">';
+        var toggleNestedItemsLabel = langLabel('modernEditor.$toggleNestedItems', 'Toggle nested items');
         children.forEach(function (childId, index) {
             var childNode = tree.get_node(childId);
             var hasChildren = !!(childNode && childNode.children && childNode.children.length);
@@ -785,7 +772,7 @@
             html += '<div class="modern-editor-child' + active + collapsedClass + '" data-node-id="' + childId + '" data-sibling-index="' + index + '">' +
                 '<div class="modern-editor-child__row">' +
                     (hasChildren
-                        ? '<button type="button" class="modern-editor-child__toggle" aria-label="Toggle nested items" aria-expanded="' + (!collapsed) + '"><i class="fa fa-chevron-down" aria-hidden="true"></i></button>'
+                        ? '<button type="button" class="modern-editor-child__toggle" aria-label="' + toggleNestedItemsLabel + '" aria-expanded="' + (!collapsed) + '"><i class="fa fa-chevron-down" aria-hidden="true"></i></button>'
                         : '<span class="modern-editor-child__toggle-spacer" aria-hidden="true"></span>') +
                     '<button type="button" class="modern-editor-child__select"><span class="modern-editor-child__title"></span>' +
                         (badge ? '<span class="modern-editor-child__badge"></span>' : '') +
@@ -824,10 +811,11 @@
         if (!$content.length) {
             return null;
         }
+        var learningObjectSettingsLabel = langLabel('modernEditor.$learningObjectSettings', 'Learning Object settings');
         if (!$content.find('#modern-editor-pages').length) {
             $content.prepend(
                 '<div id="modern-editor-pages" class="modern-editor-pages">' +
-                    '<button type="button" class="modern-editor-pages__title" id="modern-editor-lo-title" title="Learning Object settings"></button>' +
+                    '<button type="button" class="modern-editor-pages__title" id="modern-editor-lo-title" title="' + learningObjectSettingsLabel + '"></button>' +
                     '<div class="modern-editor-pages__toolbar">' +
                         '<span class="modern-editor-pages__heading">' + pagesHeadingLabel() + '</span>' +
                         '<button type="button" class="modern-editor-pages__toggle-all" id="modern-editor-pages-toggle-all"></button>' +
@@ -839,7 +827,8 @@
             var $title = $content.find('#modern-editor-lo-title');
             if ($title.length && !$title.is('button')) {
                 var text = $title.text();
-                var $btn = $('<button type="button" class="modern-editor-pages__title" id="modern-editor-lo-title" title="Learning Object settings"></button>');
+                var $btn = $('<button type="button" class="modern-editor-pages__title" id="modern-editor-lo-title"></button>')
+                    .attr('title', learningObjectSettingsLabel);
                 $btn.text(text);
                 $title.replaceWith($btn);
             }
@@ -862,9 +851,10 @@
     }
 
     function buildInsertHtml(insertIndex) {
+        var addPageLabel = langLabel('modernEditor.$addPage', 'Add page');
         return '<div class="modern-editor-insert" data-insert-index="' + insertIndex + '">' +
             '<hr class="modern-editor-insert__line" />' +
-            '<button type="button" class="modern-editor-insert__btn" title="Add page" aria-label="Add page">' +
+            '<button type="button" class="modern-editor-insert__btn" title="' + addPageLabel + '" aria-label="' + addPageLabel + '">' +
                 '<i class="fa fa-plus" aria-hidden="true"></i>' +
             '</button>' +
         '</div>';
@@ -877,20 +867,24 @@
         var hasChildren = !!(node && node.children && node.children.length);
         var collapsed = hasChildren && collapsedNodeIds[nodeId];
         var collapsedClass = collapsed ? ' modern-editor-page--children-collapsed' : '';
+        var toggleNestedPagesLabel = langLabel('modernEditor.$toggleNestedPages', 'Toggle nested pages');
+        var pageOptionsLabel = langLabel('modernEditor.$pageOptions', 'Page options');
+        var duplicateLabel = langLabel('btnDuplicate.$tooltip', 'Duplicate');
+        var deleteLabel = langLabel('btnDelete.$label', 'Delete');
 
         return '<div class="modern-editor-page' + active + collapsedClass + '" data-node-id="' + nodeId + '" data-page-num="' + pageNum + '" role="button" tabindex="0">' +
                 '<div class="modern-editor-page__head">' +
                     (hasChildren
-                        ? '<button type="button" class="modern-editor-page__toggle" aria-label="Toggle nested pages" aria-expanded="' + (!collapsed) + '"><i class="fa fa-chevron-down" aria-hidden="true"></i></button>'
+                        ? '<button type="button" class="modern-editor-page__toggle" aria-label="' + toggleNestedPagesLabel + '" aria-expanded="' + (!collapsed) + '"><i class="fa fa-chevron-down" aria-hidden="true"></i></button>'
                         : '') +
                     '<span class="modern-editor-page__label"></span>' +
                     '<div class="modern-editor-page__menu-wrap">' +
-                        '<button type="button" class="modern-editor-page__menu" aria-label="Page options" aria-haspopup="true" aria-expanded="false">' +
+                        '<button type="button" class="modern-editor-page__menu" aria-label="' + pageOptionsLabel + '" aria-haspopup="true" aria-expanded="false">' +
                             '<i class="fa fa-ellipsis-v" aria-hidden="true"></i>' +
                         '</button>' +
                         '<div class="modern-editor-page__dropdown" role="menu">' +
-                            '<button type="button" data-action="duplicate" role="menuitem">Duplicate</button>' +
-                            '<button type="button" class="is-danger" data-action="delete" role="menuitem">Delete</button>' +
+                            '<button type="button" data-action="duplicate" role="menuitem">' + duplicateLabel + '</button>' +
+                            '<button type="button" class="is-danger" data-action="delete" role="menuitem">' + deleteLabel + '</button>' +
                         '</div>' +
                     '</div>' +
                 '</div>' +
@@ -1535,23 +1529,18 @@
     }
 
     function insertLightboxTitle() {
-        var lang = (typeof languagecodevariable !== 'undefined' && languagecodevariable)
-            ? String(languagecodevariable)
-            : '';
-        if (lang.indexOf('nl') === 0) {
-            return 'Selecteer een pagina om toe te voegen';
-        }
-        return 'Select a page to add';
+        return langLabel('modernEditor.$selectPage', 'Select a page to add');
     }
 
     function insertExampleLabel() {
         if (typeof language !== 'undefined' && language.insertDialog && language.insertDialog.$preview) {
             return language.insertDialog.$preview;
         }
-        var lang = (typeof languagecodevariable !== 'undefined' && languagecodevariable)
-            ? String(languagecodevariable)
-            : '';
-        return lang.indexOf('nl') === 0 ? 'voorbeeld' : 'example';
+        return langLabel('insertDialog.$example', 'View example');
+    }
+
+    function allPagesLabel() {
+        return langLabel('modernEditor.$allPages', 'All pages');
     }
 
     function getInsertCategories() {
@@ -1584,6 +1573,18 @@
                 });
             }
         });
+
+        if (cats.length) {
+            var allPages = [];
+            cats.forEach(function (category) {
+                allPages = allPages.concat(category.pages);
+            });
+            cats.unshift({
+                name: allPagesLabel(),
+                pages: allPages
+            });
+        }
+
         return cats;
     }
 
@@ -1599,18 +1600,20 @@
         if ($('#modern-insert-lightbox').length) {
             return $('#modern-insert-lightbox');
         }
+        var closeLabel = langLabel('modernEditor.$close', 'Close');
+        var categoriesLabel = langLabel('modernEditor.$categories', 'Categories');
         $('body').append(
             '<div id="modern-insert-lightbox" class="modern-insert-lightbox" hidden>' +
                 '<div class="modern-insert-lightbox__backdrop" data-insert-close></div>' +
                 '<div class="modern-insert-lightbox__dialog" role="dialog" aria-modal="true" aria-labelledby="modern-insert-title">' +
                     '<div class="modern-insert-lightbox__header">' +
                         '<h2 class="modern-insert-lightbox__title" id="modern-insert-title"></h2>' +
-                        '<button type="button" class="modern-insert-lightbox__close" data-insert-close aria-label="Close">' +
+                        '<button type="button" class="modern-insert-lightbox__close" data-insert-close aria-label="' + closeLabel + '">' +
                             '<i class="fa fa-times" aria-hidden="true"></i>' +
                         '</button>' +
                     '</div>' +
                     '<div class="modern-insert-lightbox__body">' +
-                        '<nav class="modern-insert-lightbox__nav" id="modern-insert-nav" aria-label="Categories"></nav>' +
+                        '<nav class="modern-insert-lightbox__nav" id="modern-insert-nav" aria-label="' + categoriesLabel + '"></nav>' +
                         '<div class="modern-insert-lightbox__content">' +
                             '<div class="modern-insert-lightbox__grid" id="modern-insert-grid"></div>' +
                         '</div>' +
