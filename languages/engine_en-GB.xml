@@ -15,7 +15,7 @@
   <homeButton label="Home"/>
   
   <homeLink description="Go to Home page"/>
-  
+
   <glossaryButton label="Glossary"/>
   
   <projectIntroButton label="Introduction"/>
@@ -27,7 +27,7 @@
   <footerTools hide="Hide footer tools" show="Show footer tools"/>
   
   <sideBar hide="Hide side bar" show="Show side bar"/>
-  
+
   <toc label="Table of Contents" htmlDescription="Use the tab key to select a page. Press space to go to that page.">
 	  <closeButton description="Close Table of Contents"/>
   </toc>
@@ -42,7 +42,7 @@
 	  <closeButton description="Close Special Characters"/>
 	  <dialog instruction="Use CAPS and SHIFT" on="ON" off="OFF" caps="Caps"/>
   </kbLanguage>
-  
+
   <errorPage label="No template is currently available for this page type."/>
   
   <errorBrowser label="Your browser does not fully support this page type."/>
@@ -56,7 +56,7 @@
   <errorQuestions noQ="No questions have been added" noA="No answer options have been added" />
   
   <errorFlash label="You need to install the Flash Player to view this content." description="Get the Flash Player"/>
-  
+	
   <authorSupport label="Author Support is ON: text shown in red will not appear in live projects."/>
   
   <hiddenPage label="This page will be hidden in live projects" hidden="This page is currently hidden in live projects" shown="This page is currently shown in live projects" until="Hide until" from="Hide from"/>
@@ -78,12 +78,12 @@
 	<item>Full Screen</item>
 	<item>fill window</item>
   </sizes>
-  
+
   <vocab>
 	  <page>Page</page>
 	  <of>of</of>
   </vocab>
-  
+
   <movieController>
 	<stopButton label="Reset Movie" description="Stop Movie Button"/>
 	<playButton label="Play Movie" description="Play Movie Button"/>
@@ -122,6 +122,7 @@
   
   <fetchResults label="Fetching results..."/>
   <loadError label="Error loading"/>
+  <downloadError label="Download error"/>
   <noResults label="No results returned"/>
   <noData label="No page data"/>
 
@@ -151,7 +152,7 @@
 	  <responsiveTxt label="Responsive text" tip="When responsive text is turned on, the text size will adapt to the size of the screen you are viewing this project on. If you use the browser zoom to increase the text size then you may get a better experience if you turn responsive text off."/>
   </colourChanger>
 
-  <resources label="Resources" text="{x} Resources Available" completeText="{y}/{x} Resources Complete">
+  <resources label="Resources" text="{x} Resources Available" textSingle="{x} Resource Available" completeText="{y}/{x} Resources Complete">
 	  <table title="Title" description="Description" actions="Actions" complete="Mark as complete" downloadBtn="Download resource" viewBtn="Open resource"/>
 	  <warning suppress="Don't show this message again" continue="Continue anyway" review="Review the resources"/>
   </resources>
