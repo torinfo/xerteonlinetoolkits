@@ -17,6 +17,7 @@
     var topbarReady = false;
     // Modern navigation state only; the underlying project tree is unchanged.
     var collapsedNodeIds = Object.create(null);
+    var collapsedStateLoaded = false;
 
     var thumbnailEditTimer = null;
     var THUMBNAIL_EDIT_DELAY = 1500;
@@ -25,6 +26,115 @@
 
     function getTree() {
         return $.jstree.reference('#treeview');
+    }
+
+    function collapsedStorageKey() {
+        var templateKey = typeof template_id !== 'undefined' && template_id
+            ? template_id
+            : 'unknown';
+        return 'xerte-modern-editor-collapsed:' + String(templateKey);
+    }
+
+    function loadCollapsedNodeIds() {
+        try {
+            var storedValue = window.localStorage.getItem(collapsedStorageKey());
+            var stored = JSON.parse(storedValue || '[]');
+            var collapsed = Object.create(null);
+            if (Array.isArray(stored)) {
+                stored.forEach(function (nodeId) {
+                    collapsed[nodeId] = true;
+                });
+            }
+            return collapsed;
+        } catch (e) {
+            return Object.create(null);
+        }
+    }
+
+    function saveCollapsedNodeIds() {
+        try {
+            window.localStorage.setItem(
+                collapsedStorageKey(),
+                JSON.stringify(Object.keys(collapsedNodeIds))
+            );
+        } catch (e) {
+            // Navigation still works when browser storage is unavailable.
+        }
+    }
+
+    function ensureCollapsedNodeIdsLoaded() {
+        if (!collapsedStateLoaded) {
+            collapsedNodeIds = loadCollapsedNodeIds();
+            collapsedStateLoaded = true;
+        }
+    }
+
+    function setAllNestedPagesCollapsed(collapse) {
+        var tree = getTree();
+        var root = tree && tree.get_node('treeroot');
+        if (!root) {
+            return;
+        }
+        ensureCollapsedNodeIdsLoaded();
+        (root.children_d || []).forEach(function (nodeId) {
+            var node = tree.get_node(nodeId);
+            if (!node || !node.children || !node.children.length) {
+                return;
+            }
+            if (collapse) {
+                collapsedNodeIds[nodeId] = true;
+            } else {
+                delete collapsedNodeIds[nodeId];
+            }
+        });
+        saveCollapsedNodeIds();
+    }
+
+    function hasCollapsedNestedPages() {
+        var tree = getTree();
+        var root = tree && tree.get_node('treeroot');
+        if (!root) {
+            return false;
+        }
+        ensureCollapsedNodeIdsLoaded();
+        return (root.children_d || []).some(function (nodeId) {
+            var node = tree.get_node(nodeId);
+            return node && node.children && node.children.length && collapsedNodeIds[nodeId];
+        });
+    }
+
+    function nestedPagesLabel(expand) {
+        var lang = (typeof languagecodevariable !== 'undefined' && languagecodevariable)
+            ? String(languagecodevariable)
+            : '';
+        if (lang.indexOf('nl') === 0) {
+            return expand ? 'Alles uitvouwen' : 'Alles invouwen';
+        }
+        return expand ? 'Expand all' : 'Collapse all';
+    }
+
+    function pagesHeadingLabel() {
+        var lang = (typeof languagecodevariable !== 'undefined' && languagecodevariable)
+            ? String(languagecodevariable)
+            : '';
+        return lang.indexOf('nl') === 0 ? "Pagina's" : 'Pages';
+    }
+
+    function updateNestedPagesButton() {
+        var $button = $('#modern-editor-pages-toggle-all');
+        if (!$button.length) {
+            return;
+        }
+        var tree = getTree();
+        var root = tree && tree.get_node('treeroot');
+        var hasBranches = !!(root && (root.children_d || []).some(function (nodeId) {
+            var node = tree.get_node(nodeId);
+            return node && node.children && node.children.length;
+        }));
+        var expand = hasCollapsedNestedPages();
+        $button.text(nestedPagesLabel(expand))
+            .attr('aria-label', nestedPagesLabel(expand))
+            .prop('hidden', !hasBranches);
     }
 
     function getPageIds(tree) {
@@ -133,10 +243,11 @@
 
     function modernizeFooterCheckboxes() {
         var $box = $('#parameter_checkboxes');
-        if (!$box.length || $box.hasClass('modern-footer-checks')) {
+        if (!$box.length) {
             pinCenterFooter();
             return;
         }
+
         $box.addClass('modern-footer-checks');
         $('#main_footer').addClass('modern-main-footer');
 
@@ -161,6 +272,7 @@
             $wrap.append($input).append($title);
             $box.append($wrap);
         });
+
         pinCenterFooter();
     }
 
@@ -688,10 +800,16 @@
     }
 
     function revealNodePath(tree, nodeId) {
-        var walk = nodeId;
+        // Reveal the node itself without changing whether its own children are open.
+        var walk = tree.get_parent(nodeId);
+        var changed = false;
         while (walk && walk !== 'treeroot') {
+            changed = changed || !!collapsedNodeIds[walk];
             delete collapsedNodeIds[walk];
             walk = tree.get_parent(walk);
+        }
+        if (changed) {
+            saveCollapsedNodeIds();
         }
     }
 
@@ -710,6 +828,10 @@
             $content.prepend(
                 '<div id="modern-editor-pages" class="modern-editor-pages">' +
                     '<button type="button" class="modern-editor-pages__title" id="modern-editor-lo-title" title="Learning Object settings"></button>' +
+                    '<div class="modern-editor-pages__toolbar">' +
+                        '<span class="modern-editor-pages__heading">' + pagesHeadingLabel() + '</span>' +
+                        '<button type="button" class="modern-editor-pages__toggle-all" id="modern-editor-pages-toggle-all"></button>' +
+                    '</div>' +
                     '<div class="modern-editor-pages__list" id="modern-editor-pages-list"></div>' +
                 '</div>'
             );
@@ -720,6 +842,14 @@
                 var $btn = $('<button type="button" class="modern-editor-pages__title" id="modern-editor-lo-title" title="Learning Object settings"></button>');
                 $btn.text(text);
                 $title.replaceWith($btn);
+            }
+            if (!$content.find('#modern-editor-pages-toggle-all').length) {
+                $content.find('#modern-editor-pages-list').before(
+                    '<div class="modern-editor-pages__toolbar">' +
+                        '<span class="modern-editor-pages__heading">' + pagesHeadingLabel() + '</span>' +
+                        '<button type="button" class="modern-editor-pages__toggle-all" id="modern-editor-pages-toggle-all"></button>' +
+                    '</div>'
+                );
             }
         }
         return $content.find('#modern-editor-pages');
@@ -743,9 +873,16 @@
     function buildCardHtml(tree, nodeId, pageNum, selectedId) {
         var topSelected = getTopLevelPageId(tree, selectedId) || selectedId;
         var active = nodeId === topSelected ? ' modern-editor-page--active' : '';
+        var node = tree.get_node(nodeId);
+        var hasChildren = !!(node && node.children && node.children.length);
+        var collapsed = hasChildren && collapsedNodeIds[nodeId];
+        var collapsedClass = collapsed ? ' modern-editor-page--children-collapsed' : '';
 
-        return '<div class="modern-editor-page' + active + '" data-node-id="' + nodeId + '" data-page-num="' + pageNum + '" role="button" tabindex="0">' +
+        return '<div class="modern-editor-page' + active + collapsedClass + '" data-node-id="' + nodeId + '" data-page-num="' + pageNum + '" role="button" tabindex="0">' +
                 '<div class="modern-editor-page__head">' +
+                    (hasChildren
+                        ? '<button type="button" class="modern-editor-page__toggle" aria-label="Toggle nested pages" aria-expanded="' + (!collapsed) + '"><i class="fa fa-chevron-down" aria-hidden="true"></i></button>'
+                        : '') +
                     '<span class="modern-editor-page__label"></span>' +
                     '<div class="modern-editor-page__menu-wrap">' +
                         '<button type="button" class="modern-editor-page__menu" aria-label="Page options" aria-haspopup="true" aria-expanded="false">' +
@@ -1174,6 +1311,7 @@
         if (!$shell) {
             return;
         }
+        ensureCollapsedNodeIdsLoaded();
 
         var pageIds = getPageIds(tree);
         var selected = tree.get_selected();
@@ -1188,6 +1326,7 @@
             html += buildInsertHtml(index + 1);
         });
         $list.html(html);
+        updateNestedPagesButton();
 
         $list.find('.modern-editor-page').each(function () {
             var $card = $(this);
@@ -1613,6 +1752,12 @@
             selectLoRoot();
         });
 
+        $(document).on('click', '#modern-editor-pages-toggle-all', function (e) {
+            e.preventDefault();
+            setAllNestedPagesCollapsed(!hasCollapsedNestedPages());
+            renderPages({ refreshPreviews: false });
+        });
+
         // Restore toolbar + editability when focusing a field
         $(document).on('focus', '#mainPanel .inlinewysiwyg, #mainPanel .cke_editable', function () {
             var id = this.id;
@@ -1744,9 +1889,30 @@
             $(this).attr('aria-expanded', String(!collapsed));
             if (collapsed) {
                 collapsedNodeIds[nodeId] = true;
+                $('#expand_tree').prop('checked', false);
             } else {
                 delete collapsedNodeIds[nodeId];
             }
+            saveCollapsedNodeIds();
+            updateNestedPagesButton();
+        });
+
+        $(document).on('click', '#modern-editor-pages-list .modern-editor-page__toggle', function (e) {
+            e.preventDefault();
+            e.stopPropagation();
+            var $page = $(this).closest('.modern-editor-page');
+            var nodeId = $page.attr('data-node-id');
+            var collapsed = !$page.hasClass('modern-editor-page--children-collapsed');
+            $page.toggleClass('modern-editor-page--children-collapsed', collapsed);
+            $(this).attr('aria-expanded', String(!collapsed));
+            if (collapsed) {
+                collapsedNodeIds[nodeId] = true;
+                $('#expand_tree').prop('checked', false);
+            } else {
+                delete collapsedNodeIds[nodeId];
+            }
+            saveCollapsedNodeIds();
+            updateNestedPagesButton();
         });
 
         $(document).on('click', '#modern-editor-pages-list .modern-editor-child__select', function (e) {
@@ -1933,6 +2099,15 @@
 
                 if (!isRoot) {
                     revealNodePath(tree, selectedId);
+                    $('#modern-editor-pages-list .modern-editor-page').each(function () {
+                        var nodeId = $(this).attr('data-node-id');
+                        if (!collapsedNodeIds[nodeId]) {
+                            $(this).removeClass('modern-editor-page--children-collapsed')
+                                .children('.modern-editor-page__head')
+                                .find('.modern-editor-page__toggle')
+                                .attr('aria-expanded', 'true');
+                        }
+                    });
                     $('#modern-editor-pages-list .modern-editor-child').each(function () {
                         var nodeId = $(this).attr('data-node-id');
                         if (!collapsedNodeIds[nodeId]) {
@@ -2027,6 +2202,11 @@
                         data && data.node
                             ? data.node.id
                             : null;
+
+                    if (deletedNodeId && collapsedNodeIds[deletedNodeId]) {
+                        delete collapsedNodeIds[deletedNodeId];
+                        saveCollapsedNodeIds();
+                    }
 
                     var deletedPageLinkId =
                         deletedNodeId
