@@ -846,8 +846,18 @@
 
     function closeMenus() {
         $('.modern-editor-page__dropdown').removeClass('is-open');
+        $('.modern-editor-page__menu').attr('aria-expanded', 'false');
         $('#modern-editor-user-menu').removeClass('is-open');
         $('#modern-editor-user-toggle').attr('aria-expanded', 'false');
+    }
+
+    function previewPage(nodeId, event) {
+        selectPage(nodeId);
+        flushModernEditorFields();
+        // The classic preview handler uses Shift to append the selected
+        // page's linkID. Reuse that path so saving and window behaviour
+        // remain identical to Shift+Preview.
+        triggerClassicButton('preview_button', event, {shiftKey: true});
     }
 
     function buildInsertHtml(insertIndex) {
@@ -869,6 +879,7 @@
         var collapsedClass = collapsed ? ' modern-editor-page--children-collapsed' : '';
         var toggleNestedPagesLabel = langLabel('modernEditor.$toggleNestedPages', 'Toggle nested pages');
         var pageOptionsLabel = langLabel('modernEditor.$pageOptions', 'Page options');
+        var previewLabel = langLabel('btnPreview.$tooltip', 'Preview');
         var duplicateLabel = langLabel('btnDuplicate.$tooltip', 'Duplicate');
         var deleteLabel = langLabel('btnDelete.$label', 'Delete');
 
@@ -883,6 +894,7 @@
                             '<i class="fa fa-ellipsis-v" aria-hidden="true"></i>' +
                         '</button>' +
                         '<div class="modern-editor-page__dropdown" role="menu">' +
+                            '<button type="button" data-action="preview" role="menuitem">' + previewLabel + '</button>' +
                             '<button type="button" data-action="duplicate" role="menuitem">' + duplicateLabel + '</button>' +
                             '<button type="button" class="is-danger" data-action="delete" role="menuitem">' + deleteLabel + '</button>' +
                         '</div>' +
@@ -1874,12 +1886,7 @@
             }
             e.preventDefault();
             closeMenus();
-            selectPage($(this).attr('data-node-id'));
-            flushModernEditorFields();
-            // The classic preview handler uses Shift to append the selected
-            // page's linkID. Reuse that path so saving and window behaviour
-            // remain identical to Shift+Preview.
-            triggerClassicButton('preview_button', e, {shiftKey: true});
+            previewPage($(this).attr('data-node-id'), e);
         });
 
         $(document).on('click', '#modern-editor-pages-list .modern-editor-child__toggle', function (e) {
@@ -1947,6 +1954,19 @@
             }
         });
 
+        $(document).on('contextmenu', '#modern-editor-pages-list .modern-editor-page', function (e) {
+            if ($(e.target).closest('.modern-editor-child').length) {
+                return;
+            }
+            e.preventDefault();
+            e.stopPropagation();
+            var $menuButton = $(this).find('> .modern-editor-page__head .modern-editor-page__menu');
+            var $dropdown = $menuButton.siblings('.modern-editor-page__dropdown');
+            closeMenus();
+            $dropdown.addClass('is-open');
+            $menuButton.attr('aria-expanded', 'true');
+        });
+
         $(document).on('click', '#modern-editor-pages-list .modern-editor-page__dropdown button', function (e) {
             e.preventDefault();
             e.stopPropagation();
@@ -1955,7 +1975,9 @@
             closeMenus();
             selectPage(nodeId);
             setTimeout(function () {
-                if (action === 'duplicate') {
+                if (action === 'preview') {
+                    previewPage(nodeId, e);
+                } else if (action === 'duplicate') {
                     $('#copy_button').trigger('click');
                 } else if (action === 'delete') {
                     $('#delete_button').trigger('click');
