@@ -94,6 +94,7 @@
 			Superscript: 'superscript',
 			RemoveFormat: 'removeFormat',
 			SpecialChar: 'specialCharacters',
+			FontAwesome: 'fontAwesome',
 			HorizontalRule: 'horizontalLine',
 			Mathjax: 'xerteMathJax',
 			Link: 'link',
