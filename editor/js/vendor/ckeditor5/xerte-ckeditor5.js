@@ -238,8 +238,10 @@
 			editable.style.height = sourceHeight + 'px';
 			editable.style.overflowY = 'auto';
 		}
-		if (initialMetrics && initialMetrics.width && root) {
-			root.style.minWidth = parseInt(initialMetrics.width, 10) + 'px';
+		if (root) {
+			// The wizard panel is resizable. A pixel min-width captured before CKEditor
+			// replaces the textarea prevents the editor (and its table cell) shrinking.
+			root.style.minWidth = '0';
 		}
 	}
 
@@ -288,9 +290,11 @@
 		}
 		// Keep CKEditor 5 UI constrained to container width (prevents toolbar going off-screen).
 		var css = ''
-			+ '.ck.ck-editor{max-width:100%!important;}'
+			+ '.ck.ck-editor{width:100%!important;min-width:0!important;max-width:100%!important;overflow:hidden;}'
+			+ '.ck.ck-editor__top{width:100%!important;min-width:0!important;max-width:100%!important;overflow:hidden;}'
 			+ '.ck.ck-editor__top,.ck.ck-editor__top *{box-sizing:border-box;}'
-			+ '.ck.ck-editor__top .ck-sticky-panel__content{width:100%!important;max-width:100%!important;}';
+			+ '.ck.ck-editor__top .ck-sticky-panel,.ck.ck-editor__top .ck-sticky-panel__content{width:100%!important;min-width:0!important;max-width:100%!important;}'
+			+ '.ck.ck-editor__top .ck-toolbar,.ck.ck-editor__top .ck-toolbar__items{min-width:0!important;max-width:100%!important;}';
 		var style = document.createElement('style');
 		style.type = 'text/css';
 		style.appendChild(document.createTextNode(css));
