@@ -35,6 +35,10 @@
 		padding-right: 1em;
 	}
 
+	#x_pageDiv {
+		box-sizing: border-box;
+	}
+
 	#x_pageDiv.autoLayout {
 		width: 100%;
 		height: auto !important;
@@ -71,6 +75,10 @@
 
 	#mediaHolder {
 		margin-bottom: 0;
+	}
+
+	#mediaHolder iframe {
+		float: none;
 	}
 
 	#x_mainHolder.x_mobile .pageAudio,

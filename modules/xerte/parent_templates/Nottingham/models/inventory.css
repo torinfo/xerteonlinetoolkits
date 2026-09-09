@@ -4,7 +4,7 @@
 		margin-top:	0px;
 	}
 	
-	#infoHolder .panel {
+	#infoHolder .panelContent.panel {
 		overflow:	auto;
 	}
 
@@ -66,4 +66,12 @@
 
 	#qTxt {
 		padding: 0;
+	}
+
+	#chartContainer {
+		position: relative;
+	}
+
+	#btnHolder {
+		overflow: auto;
 	}

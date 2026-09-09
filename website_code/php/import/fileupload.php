@@ -68,7 +68,7 @@ if (!isset($_POST['mediapath']))
 $mediapath = x_clean_input($_POST['mediapath'], 'string');
 
 // Make sure the mediapath is a valid path and does not contain any path traversal
-x_check_path_traversal($mediapath, $xerte_toolkits_site->users_file_area_full, "Invalid mediapath specified");
+x_check_path_traversal($mediapath, $xerte_toolkits_site->users_file_area_full, "Invalid mediapath specified", 'folder');
 
 _load_language_file("/website_code/php/import/fileupload.inc");
 
@@ -90,7 +90,7 @@ if(apply_filters('editor_upload_file', $_FILES)){
 
         $php_check = file_get_contents($tmp_name);
 
-        if(stripos($php_check,"<?PHP") !== false || stripos($php_check, "<?")){
+        if(stripos($php_check,"<?PHP") === false && stripos($php_check, "<?") === false){
 
             $new_file_name = $mediapath . $filename;
 

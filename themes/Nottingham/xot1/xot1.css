@@ -75,9 +75,7 @@ body:not(.sb_right):not(.sb_left) #x_headerBlock {
   color: #000000;
 }
 
-.x_columnPage_page #textHolder,
 .x_imageSequence_page #controlBar,
-.x_nav_page #pageContents.col #textHolder,
 .x_SictTimeline_page #pageContents .tl-text .tl-headline-date, .x_SictTimeline_page #pageContents .tl-text h3.tl-headline-date,
 .x_results_page #txtHolder {
   border-bottom: 3px solid #ebebeb;
@@ -99,8 +97,8 @@ body:not(.sb_right):not(.sb_left) #x_headerBlock {
 .x_interactiveText_page #pageContents.show #btnHolder,
 .x_interactiveText_page #pageContents.find #btnHolder,
 .x_interactiveText_page #pageContents.find2 #btnHolder,
-.x_interactiveVideo_page .panel h3,
-.x_mediaLesson_page .panel h3,
+.x_interactiveVideo_page .videoPanel.panel h3,
+.x_mediaLesson_page .layoutPanel.panel h3,
 .x_youtuberss_page #resultsHolder .shadedDiv {
   border-bottom: 3px solid #ffffff;
 }
@@ -246,7 +244,7 @@ body:not(.sb_right):not(.sb_left) #x_headerBlock {
   border-color: #f86718;
 }
 
-.x_mediaLesson_page #panelHolder .panel {
+.x_mediaLesson_page #panelHolder .layoutPanel.panel {
   overflow-x: hidden;
 }
 
@@ -469,6 +467,24 @@ body:not(.sb_right):not(.sb_left) #x_headerBlock {
   background: #bdbdbd;
 }
 
+.x_list_page #infoHolderTop .closeBtn {
+  color: #222222;
+}
+
+.x_list_page #infoHolderTop .closeBtn:hover, .x_list_page #infoHolderTop .closeBtn:focus, .x_list_page #infoHolderTop .closeBtn:active {
+  color: #4078C0;
+}
+
+#x_mainHolder.x_nav_page #pageContents.col .textTopHolder + #navHolder:not(.panel):not(.panelColumns),
+#x_mainHolder.x_nav_page #pageContents.col #textHolder + #navHolder:not(.panel):not(.panelColumns),
+#x_mainHolder.x_nav_page #pageContents.col #navHolder:not(.panel):not(.panelColumns) + .textBottomHolder,
+#x_mainHolder.x_columnPage_page .textTopHolder + #columnHolder:not(.panel):not(.panelColumns),
+#x_mainHolder.x_columnPage_page #columnHolder:not(.panel):not(.panelColumns) + .textBottomHolder {
+  border-top: 3px solid #ebebeb;
+  margin-top: 1.5em;
+  padding-top: 1.5em;
+}
+
 #pageContents textarea {
   border-radius: 0;
   padding: 10px;
@@ -606,7 +622,7 @@ a.hotspot, a.hotspot.selected {
 }
 
 .hsinfo {
-  padding: 1%;
+  /*padding:1%;*/
 }
 
 .x_hotspotImage_page #infoHolder {
@@ -1800,8 +1816,8 @@ body:not(.sb_right):not(.sb_left) #x_mainHolder {
 }
 
 #infoHolder {
-  border-radius: 0;
-  background: #ebebeb;
+  /*border-radius:$mediumroundedcorners;
+  background: $lightgrey;*/
 }
 
 .panel {
@@ -1809,6 +1825,13 @@ body:not(.sb_right):not(.sb_left) #x_mainHolder {
   background: #ebebeb;
   box-shadow: none;
   border-color: #ebebeb;
+}
+
+.panel .panel.editorStyle,
+.ui-accordion-content .panel.editorStyle,
+.ui-tabs-panel .panel.editorStyle {
+  background: #ffffff;
+  border-color: #ffffff;
 }
 
 .panelPage {

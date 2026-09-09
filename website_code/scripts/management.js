@@ -25,10 +25,10 @@ var xwd_url = "http://localhost/xerteonlinetoolkits/modules/xerte/parent_templat
 
 if(typeof(String.prototype.trim) === "undefined")
 {
-    String.prototype.trim = function()
-    {
-        return String(this).replace(/^\s+|\s+$/g, '');
-    };
+	String.prototype.trim = function()
+	{
+		return String(this).replace(/^\s+|\s+$/g, '');
+	};
 }
 
 function apiV1Url(route) {
@@ -182,7 +182,7 @@ function renderGroupMembersFromApi(d) {
 
 function management_ajax_send_prepare(url){
 
-   	xmlHttp.open("post",management_ajax_php_path + url,true);
+	xmlHttp.open("post",management_ajax_php_path + url,true);
 	xmlHttp.onreadystatechange=management_stateChanged;
 	xmlHttp.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
 
@@ -223,7 +223,7 @@ function management_delete_sub_stateChanged(response){
 }
 
 function upload_template(){
-	
+
 }
 
 // Function feeds list
@@ -405,18 +405,18 @@ function user_templates_list(){
 		url: "website_code/php/management/user_templates.php",
 		data: {no_id: 1},
 	})
-	.done(function(response){
-		management_stateChanged(response);
-	});
+		.done(function(response){
+			management_stateChanged(response);
+		});
 }
 
 function register()
 {
-    // Open link to community website
-    // The way this is implemented, is to open register.php
-    // register.php will verify if a unique id for this installation already exists,
-    // If not, it will generate is, and then open the registration form on the community website
-    window.open("website_code/php/register.php");
+	// Open link to community website
+	// The way this is implemented, is to open register.php
+	// register.php will verify if a unique id for this installation already exists,
+	// If not, it will generate is, and then open the registration form on the community website
+	window.open("website_code/php/register.php");
 }
 
 // Function users list
@@ -430,9 +430,9 @@ function users_list(){
 		url: "website_code/php/management/users.php",
 		data: {no_id: 1},
 	})
-	.done(function(response){
-		management_stateChanged(response);
-	});
+		.done(function(response){
+			management_stateChanged(response);
+		});
 }
 
 // Function template_sync
@@ -445,9 +445,9 @@ function template_sync(){
 		url: "website_code/php/management/sync.php",
 		data: {no_id: 1},
 	})
-	.done(function(response){
-		management_stateChanged(response);
-	});
+		.done(function(response){
+			management_stateChanged(response);
+		});
 }
 
 // Show first tab that user has permission to see
@@ -467,9 +467,9 @@ function site_list(){
 		url: "website_code/php/management/site.php",
 		data: {no_id: 1},
 	})
-	.done(function(response){
-		management_stateChanged(response);
-	});
+		.done(function(response){
+			management_stateChanged(response);
+		});
 }
 
 // Function delete sharing template
@@ -483,9 +483,9 @@ function templates_list(){
 		url: "website_code/php/management/templates.php",
 		data: {no_id: 1},
 	})
-	.done(function(response){
-		management_stateChanged(response);
-	});
+		.done(function(response){
+			management_stateChanged(response);
+		});
 }
 
 function themes_list(){
@@ -495,9 +495,9 @@ function themes_list(){
 		url: "website_code/php/management/themes.php",
 		data: {no_id: 1},
 	})
-	.done(function(response){
-		management_stateChanged(response);
-	});
+		.done(function(response){
+			management_stateChanged(response);
+		});
 }
 
 function ai_list(){
@@ -583,9 +583,9 @@ function update_template(){
 			template_sub_pages: sub_pages
 		},
 	})
-	.done(function(response){
-		management_alert_stateChanged(response);
-	});
+		.done(function(response){
+			management_alert_stateChanged(response);
+		});
 
 }
 
@@ -604,9 +604,9 @@ function update_play_security(){
 			info    : document.getElementById(active_section + "info").value,
 		},
 	})
-	.done(function(response){
-		management_alert_stateChanged(response);
-	});
+		.done(function(response){
+			management_alert_stateChanged(response);
+		});
 }
 
 // Function remove security
@@ -625,9 +625,9 @@ function remove_security(){
 				url: "website_code/php/management/remove_play_security.php",
 				data: {play_id: active_section},
 			})
-			.done(function (response) {
-				management_stateChanged(response);
-			});
+				.done(function (response) {
+					management_stateChanged(response);
+				});
 		}
 	}
 }
@@ -719,9 +719,9 @@ function update_site() {
 			//default_theme_site: document.getElementById("default_theme_site").value
 		},
 	})
-	.done(function (response) {
-		management_alert_stateChanged(response);
-	});
+		.done(function (response) {
+			management_alert_stateChanged(response);
+		});
 }
 
 function update_themes() {
@@ -746,16 +746,16 @@ function update_themes() {
 // remove a share, and check who did it
 
 function update_course(){
-    $.ajax({
+	$.ajax({
 		type: "POST",
 		url: "website_code/php/management/course_details_management.php",
 		data: {
 			course_freetext_enabled: document.getElementById("course_freetext_enabled").value
 		},
 	})
-	.done(function (response) {
-		management_alert_stateChanged(response);
-	});
+		.done(function (response) {
+			management_alert_stateChanged(response);
+		});
 }
 
 
@@ -774,9 +774,9 @@ function user_template(){
 			username : document.getElementById("username"+active_section).value
 		},
 	})
-	.done(function (response) {
-		management_alert_stateChanged(response);
-	});
+		.done(function (response) {
+			management_alert_stateChanged(response);
+		});
 }
 
 // Function play security list
@@ -790,9 +790,9 @@ function play_security_list(template){
 		url: "website_code/php/management/play_security_list.php",
 		data: {logon_id: 1},
 	})
-	.done(function (response) {
-		management_stateChanged(response);
-	});
+		.done(function (response) {
+			management_stateChanged(response);
+		});
 }
 
 // Function new LTI Key
@@ -810,9 +810,9 @@ function new_LTI_key(){
 			lti_keys_context_id: document.getElementById("lti_keys_context_idNEW").value
 		},
 	})
-	.done(function (response) {
-		management_stateChanged(response);
-	});
+		.done(function (response) {
+			management_stateChanged(response);
+		});
 }
 
 // Function edit LTI Key
@@ -831,9 +831,9 @@ function edit_LTI_key(editltikey){
 			lti_keys_context_id: document.getElementById("lti_keys_context_id" + editltikey).value
 		},
 	})
-	.done(function (response) {
-		management_stateChanged(response);
-	});
+		.done(function (response) {
+			management_stateChanged(response);
+		});
 }
 
 // Function delete LTI Key
@@ -849,9 +849,9 @@ function delete_LTI_key(ltikey) {
 				lti_keys_id: ltikey
 			},
 		})
-		.done(function (response) {
-			management_stateChanged(response);
-		});
+			.done(function (response) {
+				management_stateChanged(response);
+			});
 	}
 }
 
@@ -869,9 +869,9 @@ function new_security(){
 			newdesc: document.getElementById("newdesc").value
 		},
 	})
-	.done(function (response) {
-		management_stateChanged(response);
-	});
+		.done(function (response) {
+			management_stateChanged(response);
+		});
 }
 
 // Function new category
@@ -948,9 +948,9 @@ function errors_list(template){
 			logon_id: 1
 		},
 	})
-	.done(function (response) {
-		management_stateChanged(response);
-	});
+		.done(function (response) {
+			management_stateChanged(response);
+		});
 }
 
 // Function delete error logs
@@ -966,9 +966,9 @@ function delete_error_logs(){
 				logon_id: 1
 			},
 		})
-		.done(function (response) {
-			management_stateChanged(response);
-		});
+			.done(function (response) {
+				management_stateChanged(response);
+			});
 	}
 }
 
@@ -984,9 +984,9 @@ function delete_template(template){
 			template_id: template
 		},
 	})
-	.done(function (response) {
-		management_stateChanged(response);
-	});
+		.done(function (response) {
+			management_stateChanged(response);
+		});
 }
 
 
@@ -994,33 +994,33 @@ var iframe_language_interval = 0;
 
 function iframe_language_check_upload(){
 
-    if(window["upload_iframe"].document.body.innerHTML!=""){
+	if(window["upload_iframe"].document.body.innerHTML!=""){
 
-        if(window["upload_iframe"].document.body.innerHTML.indexOf("****")!=-1){
+		if(window["upload_iframe"].document.body.innerHTML.indexOf("****")!=-1){
 
-            clearInterval(iframe_language_interval);
+			clearInterval(iframe_language_interval);
 
-            string = window["upload_iframe"].document.body.innerHTML.substr(window["upload_iframe"].document.body.innerHTML.indexOf(">")+1);
+			string = window["upload_iframe"].document.body.innerHTML.substr(window["upload_iframe"].document.body.innerHTML.indexOf(">")+1);
 
-            string = string.substr(0,string.length-4);
+			string = string.substr(0,string.length-4);
 
-            alert(string);
+			alert(string);
 
-            refresh_languages();
+			refresh_languages();
 
-            window["upload_iframe"].document.body.innerHTML="";
+			window["upload_iframe"].document.body.innerHTML="";
 
-        }else{
+		}else{
 
-            clearInterval(iframe_language_interval);
+			clearInterval(iframe_language_interval);
 
-            string = window["upload_iframe"].document.body.innerHTML.substr(window["upload_iframe"].document.body.innerHTML.indexOf(">")+1);
+			string = window["upload_iframe"].document.body.innerHTML.substr(window["upload_iframe"].document.body.innerHTML.indexOf(">")+1);
 
-            alert(PHP_ERROR + " - " + string);
+			alert(PHP_ERROR + " - " + string);
 
-        }
+		}
 
-    }
+	}
 
 }
 
@@ -1028,43 +1028,43 @@ var iframe_language_interval = 0;
 
 function iframe_language_check(){
 
-    if(window["upload_iframe"].document.body.innerHTML!=""){
+	if(window["upload_iframe"].document.body.innerHTML!=""){
 
-        if(window["upload_iframe"].document.body.innerHTML.indexOf("****")!=-1){
+		if(window["upload_iframe"].document.body.innerHTML.indexOf("****")!=-1){
 
-            clearInterval(iframe_language_interval);
+			clearInterval(iframe_language_interval);
 
-            string = window["upload_iframe"].document.body.innerHTML.substr(window["upload_iframe"].document.body.innerHTML.indexOf(">")+1);
+			string = window["upload_iframe"].document.body.innerHTML.substr(window["upload_iframe"].document.body.innerHTML.indexOf(">")+1);
 
-            string = string.substr(0,string.length-4);
+			string = string.substr(0,string.length-4);
 
-            alert(string);
+			alert(string);
 
-            if(typeof window_reference==="undefined"){
+			if(typeof window_reference==="undefined"){
 
-                //window.opener.screen_refresh();
-                window.opener.refresh_workspace();
+				//window.opener.screen_refresh();
+				window.opener.refresh_workspace();
 
-            }else{
+			}else{
 
-                //window_reference.screen_refresh();
-                window_reference.refresh_workspace();
+				//window_reference.screen_refresh();
+				window_reference.refresh_workspace();
 
-            }
+			}
 
-            window["upload_iframe"].document.body.innerHTML="";
+			window["upload_iframe"].document.body.innerHTML="";
 
-        }else{
+		}else{
 
-            clearInterval(iframe_language_interval);
+			clearInterval(iframe_language_interval);
 
-            string = window["upload_iframe"].document.body.innerHTML.substr(window["upload_iframe"].document.body.innerHTML.indexOf(">")+1);
+			string = window["upload_iframe"].document.body.innerHTML.substr(window["upload_iframe"].document.body.innerHTML.indexOf(">")+1);
 
-            alert(PHP_ERROR + " - " + string);
+			alert(PHP_ERROR + " - " + string);
 
-        }
+		}
 
-    }
+	}
 
 }
 
@@ -1078,13 +1078,13 @@ function iframe_language_check(){
 
 function iframe_upload_language_check_initialise(){
 
-    iframe_language_interval = setInterval("iframe_language_check_upload()",500);
+	iframe_language_interval = setInterval("iframe_language_check_upload()",500);
 
 }
 
 function iframe_language_check_initialise(){
 
-    iframe_language_interval = setInterval("iframe_language_check()",500);
+	iframe_language_interval = setInterval("iframe_language_check()",500);
 
 }
 
@@ -1109,9 +1109,9 @@ function management_languageChanged(response){
 }
 
 function delete_language(code){
-    var answer = confirm(MANAGEMENT_DELETE_LANGUAGE + code);
-    if (answer)
-    {
+	var answer = confirm(MANAGEMENT_DELETE_LANGUAGE + code);
+	if (answer)
+	{
 		$.ajax({
 			type: "POST",
 			url: "website_code/php/language/delete_language.php",
@@ -1119,10 +1119,10 @@ function delete_language(code){
 				code: code
 			},
 		})
-		.done(function (response) {
-			management_languageChanged(response);
-		});
-    }
+			.done(function (response) {
+				management_languageChanged(response);
+			});
+	}
 }
 
 function refresh_languages()
@@ -1131,9 +1131,9 @@ function refresh_languages()
 		type: "POST",
 		url: "website_code/php/language/refresh_language.php",
 	})
-	.done(function (response) {
-		management_languageChanged(response);
-	});
+		.done(function (response) {
+			management_languageChanged(response);
+		});
 }
 // Function give a project
 //
@@ -1191,11 +1191,11 @@ function templates_get_details(user_id, template_id)
 				'template_id': template_id,
 			}
 		})
-		.done(function (data) {
-			$('#' + child_tag).html(data);
-			document.getElementById(child_tag).style.display="block";
-			document.getElementById(button_tag).innerHTML = MANAGEMENT_HIDE;
-		});
+			.done(function (data) {
+				$('#' + child_tag).html(data);
+				document.getElementById(child_tag).style.display="block";
+				document.getElementById(button_tag).innerHTML = MANAGEMENT_HIDE;
+			});
 	}
 }
 
@@ -1204,17 +1204,17 @@ var active_section = null;
 function templates_display(tag){
 
 	var child_tag = tag + "_child";
-    var button_tag = tag + "_btn";
+	var button_tag = tag + "_btn";
 	active_section = document.getElementById(tag).getAttribute("savevalue");
 
 	if(document.getElementById(child_tag).style.display=="block"){
 
 		document.getElementById(child_tag).style.display="none";
-	    document.getElementById(button_tag).innerHTML = MANAGEMENT_SHOW;
+		document.getElementById(button_tag).innerHTML = MANAGEMENT_SHOW;
 	}else{
 
 		document.getElementById(child_tag).style.display="block";
-        document.getElementById(button_tag).innerHTML = MANAGEMENT_HIDE;
+		document.getElementById(button_tag).innerHTML = MANAGEMENT_HIDE;
 
 	}
 
@@ -1231,9 +1231,9 @@ function templates_delete_sub(id){
 				template_id: id
 			},
 		})
-		.done(function (response) {
-			management_delete_sub_stateChanged(response);
-		});
+			.done(function (response) {
+				management_delete_sub_stateChanged(response);
+			});
 	}
 }
 
@@ -1249,7 +1249,7 @@ function save_changes(){
 		case "users":user_template();
 			break;
 		case "playsecurity":update_play_security();
-			  break;
+			break;
 		case "course": update_course();
 			break;
 		case "ai": update_ai();
@@ -1275,7 +1275,7 @@ function theme_display(tag){
 
 function list_templates_for_user(tag){
 
-    var user = document.getElementById(tag).value;
+	var user = document.getElementById(tag).value;
 
 	$.ajax({
 		type: "POST",
@@ -1284,9 +1284,9 @@ function list_templates_for_user(tag){
 			user_id: user
 		},
 	})
-	.done(function (response) {
-		list_templates_for_user_stateChanged(response);
-	});
+		.done(function (response) {
+			list_templates_for_user_stateChanged(response);
+		});
 }
 
 function list_templates_for_user_stateChanged(response){
@@ -1299,15 +1299,15 @@ function list_templates_for_user_stateChanged(response){
 
 function loadModal() {
 
-    var modal = document.getElementById("nottingham_modal");
-    var btn = document.getElementById("nottingham_btn");
+	var modal = document.getElementById("nottingham_modal");
+	var btn = document.getElementById("nottingham_btn");
 
-    if (modal !== null) {
-        btn.onclick = function () {
-            modal.style.display = "block";
-            load(modal);
-        }
-    }
+	if (modal !== null) {
+		btn.onclick = function () {
+			modal.style.display = "block";
+			load(modal);
+		}
+	}
 }
 
 function load(modal)
@@ -1315,37 +1315,37 @@ function load(modal)
 	$.get("website_code/php/management/query_templates.php", {queryData: 'modal'}, function(data){
 		var x = data;
 
-        var span = document.getElementsByClassName("close");
-        var template_content = $(".template-content");
+		var span = document.getElementsByClassName("close");
+		var template_content = $(".template-content");
 
-        if(span.length !== 0)
-        {
-            span[0].onclick = function () {
-                modal.style.display = "none";
-                template_content.empty();
-            }
-        }
-
-        window.onclick = function(event)
-        {
-            if(event.target == modal)
-            {
-                modal.style.display = "none";
-                template_content.empty();
-            }
-        };
-
-        var templates = JSON.parse(x);
-        for (var i=0; i<templates.length; i++) {
-        	if(templates[i]["template_name"] === "Nottingham") {continue;}
-			else{
-                var paragraph = $("<p></p>");
-                paragraph.append(templates[i]["template_name"]);
-                template_content.append(paragraph, $("<br>"));
+		if(span.length !== 0)
+		{
+			span[0].onclick = function () {
+				modal.style.display = "none";
+				template_content.empty();
 			}
-        };
+		}
 
-        $.ajax({
+		window.onclick = function(event)
+		{
+			if(event.target == modal)
+			{
+				modal.style.display = "none";
+				template_content.empty();
+			}
+		};
+
+		var templates = JSON.parse(x);
+		for (var i=0; i<templates.length; i++) {
+			if(templates[i]["template_name"] === "Nottingham") {continue;}
+			else{
+				var paragraph = $("<p></p>");
+				paragraph.append(templates[i]["template_name"]);
+				template_content.append(paragraph, $("<br>"));
+			}
+		};
+
+		$.ajax({
 			type: "GET",
 			url: xwd_url,
 			dataType: "text",
@@ -1369,9 +1369,9 @@ function search_user_templates(tag){
 			search: search
 		},
 	})
-	.done(function (response) {
-		search_user_templates_stateChanged(response);
-	});
+		.done(function (response) {
+			search_user_templates_stateChanged(response);
+		});
 }
 
 function search_user_templates_stateChanged(response){
@@ -1392,9 +1392,9 @@ function transfer_user_templates(tag){
 			user_id: user
 		},
 	})
-	.done(function (response) {
-		transfer_user_templates_stateChanged(response);
-	});
+		.done(function (response) {
+			transfer_user_templates_stateChanged(response);
+		});
 }
 
 function transfer_user_templates_stateChanged(response){
@@ -1425,9 +1425,9 @@ function do_transfer_user_templates(user_id, tag_user_select, tag_transfer_priva
 			delete_user: delete_user
 		},
 	})
-	.done(function (response) {
-		do_transfer_user_templates_stateChanged(response);
-	});
+		.done(function (response) {
+			do_transfer_user_templates_stateChanged(response);
+		});
 }
 
 function do_transfer_user_templates_stateChanged(response){
@@ -1464,9 +1464,9 @@ function user_groups_list(){
 			no_id: 1
 		},
 	})
-	.done(function (response) {
-		management_usergroupStateChanged(response);
-	});
+		.done(function (response) {
+			management_usergroupStateChanged(response);
+		});
 }
 
 // Function management state changed update screen
@@ -1535,12 +1535,12 @@ function add_member(login_id, group_id){
 				group_id: group
 			},
 		})
-		.done(function (response) {
-			list_group_members(group_id);
-		})
-		.fail(function(){
-			alert(ADD_MEMBER_FAIL);
-		});
+			.done(function (response) {
+				list_group_members(group_id);
+			})
+			.fail(function(){
+				alert(ADD_MEMBER_FAIL);
+			});
 	}
 }
 
@@ -1559,28 +1559,28 @@ function delete_member(login_id, group_id){
 				group_id: group,
 			},
 		})
-		.done(function(owns_templates) {
-			do_it = true;
-			if (owns_templates != "OK") {
-				do_it = confirm(owns_templates);
-			}
-			if (do_it) {
-				$.ajax({
-					type: "POST",
-					url: "website_code/php/management/delete_member.php",
-					data: {
-						login_id: login_id,
-						group_id: group
-					},
-				})
-				.done(function (response) {
-					list_group_members(group_id);
-				})
-				.fail(function () {
-					alert(DELETE_MEMBER_FAIL);
-				})
-			}
-		});
+			.done(function(owns_templates) {
+				do_it = true;
+				if (owns_templates != "OK") {
+					do_it = confirm(owns_templates);
+				}
+				if (do_it) {
+					$.ajax({
+						type: "POST",
+						url: "website_code/php/management/delete_member.php",
+						data: {
+							login_id: login_id,
+							group_id: group
+						},
+					})
+						.done(function (response) {
+							list_group_members(group_id);
+						})
+						.fail(function () {
+							alert(DELETE_MEMBER_FAIL);
+						})
+				}
+			});
 	}
 }
 
@@ -1616,15 +1616,17 @@ function add_new_group_stateChanged(response){
 		list_group_members('group', $("#group").val());
 	}else{
 		alert(GROUP_EXISTS);
-    }
+	}
 }
 
 
 function delete_group( group_tag ){
 	var group_id = document.getElementById(group_tag).value
+	var current_name = group.options[group.selectedIndex].text;
 	if (group_id != "")
 	{
-		if (confirm(DELETE_GROUP)) {
+		//if (confirm(DELETE_GROUP)) {
+		if (confirm(DELETE_GROUP + " (" + current_name + ")")) {
 			$.ajax({
 				type: "POST",
 				url: "website_code/php/management/delete_group.php",
@@ -1632,13 +1634,63 @@ function delete_group( group_tag ){
 					group_id: group_id,
 				},
 			})
-			.done(function (response) {
-				user_groups_list();
+				.done(function (response) {
+					user_groups_list();
+				})
+				.fail(function () {
+					alert(GROUP_DELETE_FAIL);
+					user_groups_list();
+				});
+		}
+	}
+}
+
+function rename_group(group_tag){
+
+	var group = document.getElementById(group_tag);
+	var group_id = group.value;
+
+	if (group_id != "") {
+
+		var current_name = group.options[group.selectedIndex].text;
+
+		var group_name = prompt(GROUP_RENAME + " (" + current_name + "):", current_name);
+
+		if (group_name != null && group_name.trim() != "") {
+
+			group_name = group_name.trim();
+
+			if (group_name == "") {
+				return;
+			}
+
+			if (group_name == current_name.trim()) {
+				return;
+			}
+
+			$.ajax({
+				type: "POST",
+				url: "website_code/php/management/rename_group.php",
+				data: {
+					group_id: group_id,
+					group_name: group_name
+				},
 			})
-			.fail(function () {
-				alert(GROUP_DELETE_FAIL);
-				user_groups_list();
-			});
+				.done(function(response){
+
+					if(response != ""){
+						$("#group").html(response).show();
+						list_group_members('group', $("#group").val());
+						alert(GROUP_RENAME_SUCCESS);
+					}else{
+						alert(GROUP_EXISTS);
+					}
+
+				})
+				.fail(function(){
+					alert(GROUP_RENAME_FAIL);
+				});
+
 		}
 	}
 }
@@ -1765,21 +1817,21 @@ function disable_users_based_on_last_login()
 	}
 }
 function changeUserSelection_user_roles(){
-		let role_user_select = document.getElementById("user_roles");
-		if(role_user_select){
-				$.ajax({
-						type: "POST",
-						url: "website_code/php/management/get_user_roles.php",
-						data : {
-								userid: role_user_select.value,
-						},
-				}).done(function (response){
-						document.getElementById("manage_user_roles").innerHTML = response;
-						$(".selectize").selectize();
-				}).fail(function (){
-						alert("something went wrong");
-				});
-		}
+	let role_user_select = document.getElementById("user_roles");
+	if(role_user_select){
+		$.ajax({
+			type: "POST",
+			url: "website_code/php/management/get_user_roles.php",
+			data : {
+				userid: role_user_select.value,
+			},
+		}).done(function (response){
+			document.getElementById("manage_user_roles").innerHTML = response;
+			$(".selectize").selectize();
+		}).fail(function (){
+			alert("something went wrong");
+		});
+	}
 }
 
 
@@ -1802,29 +1854,29 @@ function manage_user_roles_select(user_id)
 }
 
 function update_roles(userid){
-		// usage of fromdata because you don't have to hard code the roles
-		let formdata = new FormData(document.getElementById("roles"));
-		let data = {};
-		formdata.forEach((value, key) =>{
-				data[key] = value == "on"? true : value;
-		});
-		if(userid != null){
-				if(confirm("are you sure want to modify the roles of the user")){
-						data["id"]=userid;
-						$.ajax({
-								type: "POST",
-								url: "website_code/php/management/modify_roles.php",
-								data: data
-						}).done(function (response) {
-								alert(response);
-								users_list();
-						}).fail(function () {
-								alert("failed to load modify_roles.php");
-								users_list();
-						});
-						
-				}
+	// usage of fromdata because you don't have to hard code the roles
+	let formdata = new FormData(document.getElementById("roles"));
+	let data = {};
+	formdata.forEach((value, key) =>{
+		data[key] = value == "on"? true : value;
+	});
+	if(userid != null){
+		if(confirm("are you sure want to modify the roles of the user")){
+			data["id"]=userid;
+			$.ajax({
+				type: "POST",
+				url: "website_code/php/management/modify_roles.php",
+				data: data
+			}).done(function (response) {
+				alert(response);
+				users_list();
+			}).fail(function () {
+				alert("failed to load modify_roles.php");
+				users_list();
+			});
+
 		}
+	}
 }
 
 function template_submit()
@@ -1886,9 +1938,9 @@ function theme_disable(theme, type, displayname, btn_enable_txt, btn_disable_txt
 				type: type,
 			},
 		})
-		.done(function (response) {
-			$('#'+ type + '_' + theme).html("<s>" + displayname + " (" + theme + ")</s><button class='xerte_button theme_enable' onclick=\"javascript:theme_enable('" + theme + "','" + type + "','" + displayname + "','" + btn_enable_txt + "','" + btn_disable_txt + "')\">" + btn_enable_txt + "</button>");
-		});
+			.done(function (response) {
+				$('#'+ type + '_' + theme).html("<s>" + displayname + " (" + theme + ")</s><button class='xerte_button theme_enable' onclick=\"javascript:theme_enable('" + theme + "','" + type + "','" + displayname + "','" + btn_enable_txt + "','" + btn_disable_txt + "')\">" + btn_enable_txt + "</button>");
+			});
 	}
 }
 
@@ -1901,9 +1953,9 @@ function theme_enable(theme, type, displayname, btn_enable_txt, btn_disable_txt)
 			type: type,
 		},
 	})
-	.done(function (response) {
-		$('#'+ type + '_' + theme).html(displayname + " (" + theme + ")<button class='xerte_button theme_disable' onclick=\"javascript:theme_disable('" + theme + "','" + type + "','" + displayname + "','" + btn_enable_txt + "','" + btn_disable_txt + "')\">" + btn_disable_txt + "</button>");
-	});
+		.done(function (response) {
+			$('#'+ type + '_' + theme).html(displayname + " (" + theme + ")<button class='xerte_button theme_disable' onclick=\"javascript:theme_disable('" + theme + "','" + type + "','" + displayname + "','" + btn_enable_txt + "','" + btn_disable_txt + "')\">" + btn_disable_txt + "</button>");
+		});
 }
 
  

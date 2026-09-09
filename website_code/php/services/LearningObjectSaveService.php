@@ -5,6 +5,7 @@
  */
 
 require_once(dirname(__FILE__) . '/../template_status.php');
+require_once(dirname(__FILE__) . '/../../../plugins.php');
 
 /**
  * Extension for SimpleXMLElement
@@ -152,6 +153,22 @@ function learning_object_update_oai($data, $template_id)
     }
 }
 
+function learning_object_store_lti($template_id, $filename)
+{
+    global $xerte_toolkits_site;
+
+    $lockfile_path = explode('/', x_clean_input($filename));
+    if (count($lockfile_path) === 3) {
+        $_POST['file_path'] = $lockfile_path[1] . '/';
+    }
+
+    include(dirname(__FILE__) . '/../versioncontrol/template_close.php');
+
+    $sql = "SELECT template_name FROM {$xerte_toolkits_site->database_table_prefix}templatedetails WHERE template_id=?";
+    $result = db_query_one($sql, array($template_id));
+    apply_filters('lti_callback', $result['template_name'], $template_id, $xerte_toolkits_site->site_url);
+}
+
 /**
  * @param array $post fileupdate, filename, lo_data, absmedia, template_id, optional preview for publish
  * @return array{ok:bool,message?:string,code?:string,mode?:string}
@@ -173,13 +190,13 @@ function learning_object_save_from_request(array $post)
         }
         $previewxml = x_clean_input($post['preview']);
         $preview = x_convert_user_area_url_to_path($previewxml);
-        if (!x_check_path_traversal($preview, $xerte_toolkits_site->users_file_area_full, 'Invalid preview path specified', true)) {
+        if (!x_check_path_traversal($preview, $xerte_toolkits_site->users_file_area_full, 'Invalid preview path specified', 'file', true)) {
             return array('ok' => false, 'message' => 'Invalid preview path specified', 'code' => 'invalid_path');
         }
     }
 
     $filenamePath = x_convert_user_area_url_to_path($filename);
-    if (!x_check_path_traversal($filenamePath, $xerte_toolkits_site->users_file_area_full, 'Invalid file path specified', true)) {
+    if (!x_check_path_traversal($filenamePath, $xerte_toolkits_site->users_file_area_full, 'Invalid file path specified', 'file', true)) {
         return array('ok' => false, 'message' => 'Invalid file path specified', 'code' => 'invalid_path');
     }
 
@@ -237,6 +254,11 @@ function learning_object_save_from_request(array $post)
         $sql = "update {$xerte_toolkits_site->database_table_prefix}templatedetails set date_modified=? where template_id=?";
         db_query_one($sql, array(date("Y-m-d H:i:s"), $template_id));
         learning_object_update_oai($data, $template_id);
+
+        if (!empty($post['lti_save'])) {
+            learning_object_store_lti($template_id, $filename);
+            return array('ok' => true, 'mode' => $mode, 'lti_stored' => true);
+        }
     }
 
     return array('ok' => true, 'mode' => $mode);

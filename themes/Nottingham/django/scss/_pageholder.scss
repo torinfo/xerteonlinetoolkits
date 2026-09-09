@@ -27,7 +27,7 @@
       font-size: 110%;
     }
 
-  span,
+  /*span,*/
   p,
   li,
   u,
@@ -58,6 +58,10 @@
     margin: 0 20px 20px;
     background-color: #1c1c1c;
   }
+}
+
+.x_flashCards_page #x_pageHolder .cardSide.panel {
+  padding: 0;
 }
 
 //*****speech bubbles******//

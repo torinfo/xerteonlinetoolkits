@@ -1,20 +1,22 @@
 <?php
 
 require_once (str_replace('\\', '/', __DIR__) . "/../../../website_code/php/database_library.php");
+require_once (str_replace('\\', '/', __DIR__) . "/ActorContext.php");
 
 function log_ai_request($response, $category, $vendor, $details=null)
 {
     global $xerte_toolkits_site;
 
-    if (!isset($_SESSION['toolkits_logon_id'])) {
+    if((!isset($_SESSION['toolkits_logon_id'])) && (php_sapi_name() !== 'cli')) {
         die("Session ID not set");
     }
 
-    // Actor from session
-    $actor = array(
-        'user_id' => isset($_SESSION['toolkits_logon_username']) ? $_SESSION['toolkits_logon_username'] : null,
-        'workspace_id' => isset($_SESSION['XAPI_PROXY']) ? $_SESSION['XAPI_PROXY'] : null
-    );
+    if (php_sapi_name() == 'cli'){
+        $actor = ActorContext::get();
+    } else {
+        $actor['user_id'] = isset($_SESSION['toolkits_logon_username']) ? $_SESSION['toolkits_logon_username'] : null;
+        $actor['workspace_id'] = isset($_SESSION['XAPI_PROXY']) ? $_SESSION['XAPI_PROXY'] : null;
+    }
 
     $category = strtolower($category);
     $vendor = strtolower($vendor);
@@ -161,11 +163,19 @@ VALUES
     function response_mapping($category, $response, $event, $vendor, $details)
     {
         if ($category === 'genai') {
-            if ($vendor === 'openai') return map_genai_openai($response, $event);
-            elseif ($vendor === 'openaiassistant') return map_genai_openaiassistant($response, $event);
-            elseif ($vendor === 'mistral') return map_genai_mistral($response, $event);
-            elseif ($vendor === 'anthropic') return map_genai_anthropic($response, $event);
-            else                           return map_genai_default($response, $event);
+            if ($vendor === 'openai') {
+                return map_genai_openai($response, $event);
+            } elseif ($vendor === 'openaiassistant') {
+                return map_genai_openaiassistant($response, $event);
+            } elseif ($vendor === 'mistral') {
+                return map_genai_mistral($response, $event);
+            } elseif ($vendor === 'anthropic') {
+                return map_genai_anthropic($response, $event);
+            } elseif ($vendor === 'gemini') {
+                return map_genai_gemini($response, $event);
+            }
+
+            return map_genai_default($response, $event);
         } elseif ($category === 'encoding' || $category === 'embedding') {
             if ($vendor === 'openaienc') return map_encoding_openai($response, $event);
             elseif ($vendor === 'mistralenc') return map_encoding_mistral($response, $event);
@@ -306,6 +316,151 @@ function map_genai_anthropic($res, $ev)
         'output_tokens' => $out,
         'total_tokens'  => $tot
     );
+    return $ev;
+}
+
+function map_genai_gemini($res, $ev)
+{
+    $ev['model'] = array_check($res, 'model');
+    $ev['request_id'] = array_check($res, 'id');
+
+    /*
+     * Gemini interaction statuses include completed, incomplete,
+     * failed and cancelled.
+     */
+    $interactionStatus = array_check($res, 'status');
+
+    if (
+        $interactionStatus === 'failed' ||
+        $interactionStatus === 'cancelled'
+    ) {
+        $ev['status'] = 'error';
+    } elseif ($interactionStatus === 'completed') {
+        $ev['status'] = 'ok';
+    }
+
+    /*
+     * Gemini may return a top-level API error.
+     */
+    $error = array_check($res, 'error');
+
+    if (
+        is_array($error) &&
+        isset($error['message'])
+    ) {
+        $ev['status'] = 'error';
+        $ev['error_message'] = $error['message'];
+    }
+
+    /*
+     * Some failed interactions may expose last_error.
+     */
+    $lastError = array_check($res, 'last_error');
+
+    if (
+        $ev['error_message'] === null &&
+        is_array($lastError) &&
+        isset($lastError['message'])
+    ) {
+        $ev['error_message'] = $lastError['message'];
+    }
+
+    /*
+     * A model_output step may contain its own error object.
+     */
+    $steps = array_check($res, 'steps', array());
+
+    if (
+        $ev['error_message'] === null &&
+        is_array($steps)
+    ) {
+        foreach ($steps as $step) {
+            if (
+                !is_array($step) ||
+                array_check($step, 'type') !== 'model_output'
+            ) {
+                continue;
+            }
+
+            $stepError = array_check($step, 'error');
+
+            if (
+                is_array($stepError) &&
+                isset($stepError['message'])
+            ) {
+                $ev['status'] = 'error';
+                $ev['error_message'] =
+                    $stepError['message'];
+
+                break;
+            }
+        }
+    }
+
+    /*
+     * Gemini Interactions usage field names.
+     */
+    $usage = array_check(
+        $res,
+        'usage',
+        array()
+    );
+
+    $inputTokens = array_check(
+        $usage,
+        'total_input_tokens'
+    );
+
+    $outputTokens = array_check(
+        $usage,
+        'total_output_tokens'
+    );
+
+    $totalTokens = array_check(
+        $usage,
+        'total_tokens'
+    );
+
+    if (
+        $totalTokens === null &&
+        ($inputTokens !== null || $outputTokens !== null)
+    ) {
+        $totalTokens =
+            (int)$inputTokens +
+            (int)$outputTokens;
+    }
+
+    $ev['metrics'] = array(
+        'input_tokens' => $inputTokens,
+        'output_tokens' => $outputTokens,
+        'total_tokens' => $totalTokens
+    );
+
+    /*
+     * Gemini returns an ISO timestamp in "created".
+     */
+    $created = array_check($res, 'created');
+
+    if (
+        is_string($created) &&
+        trim($created) !== ''
+    ) {
+        try {
+            $createdAt = new DateTimeImmutable(
+                $created
+            );
+
+            $ev['occurred_at'] = $createdAt
+                ->setTimezone(new DateTimeZone('UTC'))
+                ->format('c');
+        } catch (Exception $e) {
+            /*
+             * Retain the logger's default timestamp when Gemini's
+             * timestamp cannot be parsed.
+             */
+        }
+    }
+
     return $ev;
 }
 
@@ -498,7 +653,9 @@ function map_imagegen_openai($res, $ev, $details)
     $imagesRequested = isset($details['imagesrequested']) ? (int)$details['imagesrequested'] : null;
 
     // Parse dimensions from $details['imagesize']
-    [$w, $h, $dimStr] = _parse_image_dimensions_any($details['imagesize'] ?? null);
+    list($w, $h, $dimStr) = _parse_image_dimensions_any(
+        isset($details['imagesize']) ? $details['imagesize'] : null
+    );
 
     // Event fields
     $ev['model']       = $model;
@@ -644,7 +801,7 @@ function array_check($arr, $key, $default = null)
  *   - "00:00.000 --> 07:08.900"
  *   - With extra cue settings after the end time (align:, position:, etc.)
  */
-function vtt_duration_seconds(?string $vtt): ?float
+function vtt_duration_seconds($vtt)
 {
     if (!is_string($vtt) || strpos($vtt, '-->') === false) {
         return null;
@@ -670,7 +827,7 @@ function vtt_duration_seconds(?string $vtt): ?float
  * Parse a VTT/SRT timestamp into seconds.
  * Accepts hh:mm:ss.mmm, mm:ss.mmm, or ss.mmm; comma or dot decimals.
  */
-function vtt_parse_timestamp_to_seconds(string $ts): ?float
+function vtt_parse_timestamp_to_seconds($ts)
 {
     $ts = trim($ts);
     $ts = str_replace(',', '.', $ts);               // allow SRT-style commas
@@ -681,10 +838,10 @@ function vtt_parse_timestamp_to_seconds(string $ts): ?float
     $parts = explode(':', $ts);
     // Allow ss(.mmm), mm:ss(.mmm), or hh:mm:ss(.mmm)
     if (count($parts) === 3) {
-        [$h, $m, $s] = $parts;
+        list($h, $m, $s) = $parts;
         return (int)$h * 3600 + (int)$m * 60 + (float)$s;
     } elseif (count($parts) === 2) {
-        [$m, $s] = $parts;
+        list($m, $s) = $parts;
         return (int)$m * 60 + (float)$s;
     } elseif (count($parts) === 1) {
         return (float)$parts[0];
@@ -699,10 +856,10 @@ function vtt_parse_timestamp_to_seconds(string $ts): ?float
  * - Otherwise scans common fields (or all top-level string fields) for a match
  * - No heavy recursion to keep it lightweight
  */
-function vtt_find_candidate($res, array $preferredFields = null): ?string
+function vtt_find_candidate($res, array $preferredFields = null)
 {
     // quick helper to judge if a string looks like VTT/SRT
-    $looksLike = function ($s): bool {
+    $looksLike = function ($s) {
         if (!is_string($s)) return false;
         if (stripos($s, 'WEBVTT') === 0 && strpos($s, '-->') !== false) return true;
         if (strpos($s, '-->') === false) return false;
@@ -732,7 +889,7 @@ function vtt_find_candidate($res, array $preferredFields = null): ?string
     }
 
     // Default list of likely fields to check first
-    $preferredFields = $preferredFields ?? [
+    $preferredFields = isset($preferredFields) ? $preferredFields : [
         'vtt','webvtt','srt','captions','subtitles','subtitle','subtitle_vtt',
         'text','body','data','content','transcript'
     ];

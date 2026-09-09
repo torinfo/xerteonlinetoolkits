@@ -43,7 +43,7 @@ include $xerte_toolkits_site->php_library_path . "display_library.php";
 
 require_once(dirname(__FILE__) . "/website_code/php/login_library.php");
 
-if ($xerte_toolkits_site->altauthentication != "" && (isset($_GET['altauth']) || $xerte_toolkits_site->altauthentication == $_SESSION['altauth']))
+if ($xerte_toolkits_site->altauthentication != "" && (isset($_GET['altauth']) || (isset($_SESSION['altauth']) && $xerte_toolkits_site->altauthentication == $_SESSION['altauth'])))
 {
     $xerte_toolkits_site->authentication_method = $xerte_toolkits_site->altauthentication;
     $authmech = Xerte_Authentication_Factory::create($xerte_toolkits_site->authentication_method);
@@ -184,11 +184,11 @@ $version = getVersion();
 
     if (isset($_SESSION['toolkits_preferences']) && is_array($_SESSION['toolkits_preferences'])) {
         $user_preferences_json = json_encode($_SESSION['toolkits_preferences']);
-        if ($authmech->hasUserPrefrences()) {
+        if ($authmech->hasUserPreferences()) {
             $user_has_preferences = "true";
         }
     } else {
-        if (isset($authmech) && $authmech->hasUserPrefrences()) {
+        if (isset($authmech) && $authmech->hasUserPreferences()) {
             $user_has_preferences = "true";
         }
     }
@@ -204,6 +204,8 @@ $version = getVersion();
             {$languagecodevar};
             var user_preferences = {$user_preferences_json};
             var user_has_preferences = {$user_has_preferences};
+            var INDEX_CHANGE_PASSWORD = " . json_encode(INDEX_CHANGE_PASSWORD) . ";
+            var INDEX_MY_PREFERENCES = " . json_encode(INDEX_MY_PREFERENCES) . ";
         </script>";
     ?>
     <script type="text/javascript" language="javascript" src="website_code/scripts/validation.js?version=<?php echo $version;?>"></script>
@@ -227,6 +229,7 @@ $version = getVersion();
     <script type="text/javascript" src="website_code/scripts/jquery-ui-i18n.min.js?version=<?php echo $version;?>"></script>
     <script type="text/javascript" src="website_code/scripts/result.js?version=<?php echo $version;?>"></script>
     <script type="text/javascript" src="website_code/scripts/user_settings.js?version=<?php echo $version;?>"></script>
+    <script type="text/javascript" src="modules/xerte/parent_templates/Nottingham/common/js/dashboard-graphs.main.js?version=<?php echo $version;?>"></script>
 
     <?php
     _include_javascript_file("website_code/scripts/xapi_dashboard_data.js?version=" . $version);

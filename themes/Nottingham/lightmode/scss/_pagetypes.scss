@@ -1,5 +1,5 @@
 //*****lines*****/
-.x_columnPage_page #textHolder, .x_textGraphics_page #imgCaption.transcript, .x_imageSequence_page #controlBar, .x_mediaLesson_page .panel h3, .x_nav_page #pageContents.col #textHolder,
+.x_columnPage_page #textHolder, .x_textGraphics_page #imgCaption.transcript, .x_imageSequence_page #controlBar, .x_mediaLesson_page .layoutPanel.panel h3, .x_nav_page #pageContents.col #textHolder,
 .x_nav_page #pageContents.slide #btnHolder.top, .x_tabNavExtra_page .paneList, .x_table_page #footnote,
 .x_decision_page #overviewHolder .overviewStep,
 .x_documentation_page #pages:not(:last-child),
@@ -134,24 +134,17 @@ table.headerCol.shaded td.header {
 .x_transcriptReader_page .highlight {
   background: $lighterpanel;
 }
-//*****image compare*****/
+//*****compare images*****/
 .x_imageCompare_page #slider {
-  background: $dark1;
+  background-color: $panelcolor;
 }
+
 .x_imageCompare_page #slider_handle {
-  background: $dark1;
-  border: 4px solid lighten($mainfontcolour, 30%);
+  background-color: $lightbtnselected;
 }
-.x_imageCompare_page #slider:focus #slider_handle,.x_imageCompare_page #slider:hover #slider_handle {
-  border-color: $contrastcolor;
-}
-.x_imageCompare_page #slider_handle.vertical {
-  height: 10px;
-  bottom: 4px;
-}
-.x_imageCompare_page #slider_handle.horizontal {
-  width: 10px;
-  right: 4px;
+
+.x_imageCompare_page #slider_handle i {
+  color: $lightbtntxt;
 }
 //*****thumbnailViewer******/
 .x_thumbnailViewer_page #thumbOverlayLeft,
@@ -298,6 +291,12 @@ table.headerCol.shaded td.header {
   border-color: $contrastcolor;
   color: $fontcolorforlightestcolor;
 }
+.x_list_page #infoHolderTop .closeBtn {
+  color: $mainfontcolour;
+}
+.x_list_page #infoHolderTop .closeBtn:hover, .x_list_page #infoHolderTop .closeBtn:focus, .x_list_page #infoHolderTop .closeBtn:active {
+  color:$contrastcolor;
+}
 //*****button navigator*****/
 .ui-button {
   border-radius: $smallroundedcorners;
@@ -392,14 +391,14 @@ table.headerCol.shaded td.header {
   border-color: $contrastcolor !important;
 }
 //*****highlight text******/
-.x_textHighlight_page #selectBtn {
+.x_textHighlight_page .btnHolder button.ui-button {
   border-radius: $smallroundedcorners;
   background: $defaultpagebackground;
   border: 1px solid $btntxtcolor;
   color: $btntxtcolor;
 }
-.x_textHighlight_page #selectBtn.ui-button:not(.ui-button-disabled):hover, .x_textHighlight_page #selectBtn.ui-button:not(.ui-button-disabled):active, .x_textHighlight_page #selectBtn.ui-button:not(.ui-button-disabled):focus,
-.x_textHighlight_page #selectBtn.ui-button:not(.ui-button-disabled):hover p, .x_textHighlight_page #selectBtn.ui-button:not(.ui-button-disabled):active p, .x_textHighlight_page #selectBtn.ui-button:not(.ui-button-disabled):focus p {
+.x_textHighlight_page .btnHolder button.ui-button:not(.ui-button-disabled):hover, .x_textHighlight_page .btnHolder button.ui-button:not(.ui-button-disabled):active, .x_textHighlight_page .btnHolder button.ui-button:not(.ui-button-disabled):focus,
+.x_textHighlight_page .btnHolder button.ui-button:not(.ui-button-disabled):hover p, .x_textHighlight_page .btnHolder button.ui-button:not(.ui-button-disabled):active p, .x_textHighlight_page .btnHolder button.ui-button:not(.ui-button-disabled):focus p {
   background: $contrastcolor;
   color: $lightbtntxt;
   border-color: $contrastcolor;
@@ -525,14 +524,10 @@ a.hotspot, a.hotspot.selected {
   background: none;
 }
 .hsinfo{
-  padding:1%;
-}
-//******Interactive lists*******/
-.x_list_page a.listItem:link {
-	background: $selectedbutton !important;
+  /*padding:1%;*/
 }
 //******Interactive text*******/
-.x_list_page #pageContents a.listItem:link, #passageHolder a.listItem:link, #passageHolder a.listItem:visited, #passageHolder a.listItem:hover, #passageHolder a.listItem:active {
+#passageHolder a.listItem:link, #passageHolder a.listItem:visited, #passageHolder a.listItem:hover, #passageHolder a.listItem:active {
   color: $whiteorlightest !important;
 }
 .x_interactiveText_page .highlight{
@@ -544,6 +539,20 @@ a.hotspot, a.hotspot.selected {
 //*********matching texts*********/
 .x_textMatch_page .target.highlight {
   background: $panelcolor;
+}
+//*****mcq*****/
+.x_mcq_page #pageContents .optionGroup.answerBtn.selected,
+.x_quiz_page #pageContents .optionGroup.answerBtn.selected {
+  border-color: $contrastcolor;
+  color: $contrastcolor;
+}
+.x_mcq_page #pageContents .optionGroup.answerBtn:not(.selected):hover,
+.x_mcq_page #pageContents .optionGroup.answerBtn:not(.selected).ui-state-focus,
+.x_quiz_page #pageContents .optionGroup.answerBtn:not(.selected):hover,
+.x_quiz_page #pageContents .optionGroup.answerBtn:not(.selected).ui-state-focus {
+  background: $contrastcolor;
+  color: $lightbtntxt;
+  border-color: $contrastcolor;
 }
 //*****model answer*****/
 .x_modelAnswer_page #copyTxt {

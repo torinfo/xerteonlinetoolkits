@@ -14,9 +14,9 @@
 //    die('{"status": "error", "message": "prompt must not be empty"}');
 //}
 
-$api = $_POST["api"] ?? 'openai';
-$base_url = $_POST["baseUrl"] ?? 'None';
-$target_language = $_POST["targetLanguage"] ?? 'NL';
+$api = $_POST["api"];
+$base_url = $_POST["baseUrl"];
+$target_language = $_POST["targetLanguage"];
 
 $allowed_apis = ['openai', 'deepl', 'googleautotranslate'];
 
@@ -24,7 +24,7 @@ $allowed_apis = ['openai', 'deepl', 'googleautotranslate'];
 if (!in_array($api, $allowed_apis)){
     die(json_encode(["status" => "error", "message" => "api is not allowed"]));
 }
-//todo Alek convert api name to lowercase
+$api = strtolower($api);
 
 //dynamically load needed api methods
 require_once(dirname(__FILE__) . "/" . $api ."translateApi.php");

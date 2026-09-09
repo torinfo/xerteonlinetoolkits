@@ -49,12 +49,12 @@
     <scoreTxt label="Score Label" type="TextInput" wysiwyg="true" divider="true" language="true" tooltip="where /c is the total number of correct answers available, /r is the number of right selections made and /w is the number of wrong selections made"/>
     <warning label="Warning Label" type="TextInput" wysiwyg="true" language="true"/>
     <again label="Try Again Label" type="TextInput" wysiwyg="true" language="true" tooltip="where /a is the number of attempts remaining"/>
-    <allGood label="All Correct Label" type="TextInput" wysiwyg="true" mandatory="true" language="true" />
-    <allWrong label="All Wrong Label" type="TextInput" wysiwyg="true" mandatory="true" language="true" tooltip="where /c is the total number of correct answers available."/>
+    <allGood label="All Correct Label" type="TextInput" wysiwyg="true" mandatory="true" defaultValue="" language="true" />
+    <allWrong label="All Wrong Label" type="TextInput" wysiwyg="true" mandatory="true" defaultValue="" language="true" tooltip="where /c is the total number of correct answers available."/>
 	<allGood2 label="Incomplete Correct Label" type="TextInput" wysiwyg="true" language="true" mandatory="true" defaultValue="" tooltip="where /c is the total number of correct answers available."/>
 	<btnLabel label="Submit Label" type="TextInput" wysiwyg="true" language="true" mandatory="true" defaultValue="Submit"/>
 
-    <QFGroup type="group" lightbox="form" subgroup="assistant" label="Quick Fill" tooltip ="Generate a blank template based on your specifications." optional="true">
+    <QFGroup type="group" lightbox="form" subgroup="assistant" label="Quick Fill" tooltip ="Generate an empty template based on the options you choose, ready to be populated with your content." optional="true">
       <qfQHotSpot label="Number of Hotspots" type="TextInput" wysiwyg="true" defaultValue = "3" optional="true"/>
       <qfButton type="quickfillbutton" optional="true"/>
     </QFGroup>
@@ -69,7 +69,7 @@
   <QHotSpot type="flexhotspot" label="Edit Hotspot" menuItem="Hotspot" icon="icLayers" remove="true">
     <name label="Title" type="TextInput" wysiwyg="true"/>
     <text label="Feedback" type="TextArea" height="250" />
-    <truth label="Correct Answer" options="True,False" type="ComboBox" data="true,false" defaultValue="true" width="100"/>
+    <truth label="Correct Answer" type="CheckBox" defaultValue="true"/>
 	<alttext label="Tooltip Description" type="script" height="100" defaultValue="" placeholder="Enter a description for accessibility" optional="true" />
   </QHotSpot>
 

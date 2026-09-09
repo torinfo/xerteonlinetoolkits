@@ -26,7 +26,7 @@
 			$hsHolder,
 			$infoHolder,
 			$panel,
-			
+			$maintainSelection,
 			tabfocusoptions,
 			options,
 			$canvas,
@@ -57,22 +57,20 @@
 				$canvas = $("#canvas");
 				context = $canvas[0].getContext("2d");
 			}
-			
-			$infoHolder.html("");
-			
-			this.sizeChanged();
 		}
 		
 		// function called every time the size of the LO is changed
 		this.sizeChanged = function() {
-			this.deselect();
-			
-			$img.css({
-				"opacity": 0,
-				"filter": 'alpha(opacity=0)'
-			});
-			
-			this.setUp();
+			if ($img.hasClass("ready")) {
+				$maintainSelection = $(".listItem.highlight");
+
+				$img.css({
+					"opacity": 0,
+					"filter": 'alpha(opacity=0)'
+				});
+
+				this.setUp();
+			}
 		}
 		
 		this.init = function() {
@@ -97,19 +95,19 @@
 			// when shape is outline (previously called rectangle), mapster is used - even if the hotspot is just a simple rectangle
 			$pageContents.data("hsType",
 				x_currentPageXML.getAttribute("shape") == "Oval" ? "oval" :
-				x_currentPageXML.getAttribute("shape") == "None" || x_currentPageXML.getAttribute("shape") == "Arrow" ? "centre" : "flex"
+				x_currentPageXML.getAttribute("link") == "true" ? "flex" : // if list is hidden then default to outline as line & arrow will have no where to point to
+				x_currentPageXML.getAttribute("shape") == "None" || x_currentPageXML.getAttribute("shape") == "Arrow" ? "centre" :
+				"flex"
 			);
-			
+
 			if ($pageContents.data("hsType") == "centre") {
 				$canvas = $("#canvas");
 				context = $canvas[0].getContext("2d");
-				
 			} else {
 				$("#canvas").remove();
 				
 				if ($pageContents.data("hsType") == "flex") {
 					$hsHolder.addClass("mapster");
-					
 				} else {
 					var newStyles = "<style type='text/css'> #pageContents #hsHolder:not(.mapster).oval .hotspot.selected, #pageContents #hsHolder:not(.mapster).oval .hsGroup.selected .hotspot { border-color: " + highlightColour + ";} <style>";
 					$pageContents.prepend($(newStyles));
@@ -120,7 +118,7 @@
 			
 			// create links
 			$(x_currentPageXML).children().each(function(i) {
-				// deally this should be a button not a link as it's not opening a new page
+				// ideally this should be a button not a link as it's not opening a new page
 				// using role="button" as changing to button tag may cause theme issues with css selectors
 				var $listItem = $('<a class="listItem" href="#" role="button"></a>').appendTo("#listHolder");
 				
@@ -133,7 +131,7 @@
 					})
 					.click(function(e) {
 						e.preventDefault();
-						
+
 						var $this = $(this);
 						
 						// not already selected - so select, show text & highlight hotspots
@@ -142,8 +140,8 @@
 							annotatedDiagram.selectLink($this);
 							
 							if ($pageContents.data("hsType") == "flex") {
-								$("area." + $this.data("group")).mapster("select");
-								
+								$("area." + $this.data("group")).mapster("set", true);
+
 							} else {
 								var shape = x_currentPageXML.getAttribute("shape");
 								if (shape == "Oval") {
@@ -162,7 +160,6 @@
 													}else{
 														annotatedDiagram.drawLineToText($(this), shape);
 													}
-
 												});
 									} else {
 										if(x_currentPageXML.getAttribute("link") == "false" || x_currentPageXML.getAttribute("link") == undefined){
@@ -170,9 +167,7 @@
 										}else{
 											annotatedDiagram.drawLineToText($hs, shape);
 										}
-
 									}
-
 								}
 							}
 							
@@ -182,10 +177,10 @@
 						}
 					});
 			});
+
 			let url = x_currentPageXML.getAttribute("url").split(".");
 			if (url.length > 1) {
 				if (url[1].slice(0, -1) != "swf") {
-
 					$img
 							.data('firstLoad', true)
 							.css({
@@ -193,6 +188,7 @@
 								"filter": 'alpha(opacity=0)'
 							})
 							.one("load", function () {
+								$(this).addClass("ready");
 								annotatedDiagram.setUp();
 
 								// call this function in every model once everything's loaded
@@ -210,22 +206,18 @@
 								}
 							});
 
-					if ($pageContents.data("hsType") == "flex") {
-						$img.attr("usemap", "#hsHolder_map");
-					}
-
 				} else {
 					// have had to add this in I found one old project where a swf was used instead of an image on this page
 					$("#imageHolder").html('<p>Flash files (.swf) are no longer supported</p>');
 					x_pageLoaded();
 				}
-			}else{
+			} else {
 				// If no image was selected
 				$("#imageHolder").html('<p>No image selected.</p>');
 				x_pageLoaded();
 			}
 
-			if(x_currentPageXML.getAttribute("link") == "true"){
+			if (x_currentPageXML.getAttribute("link") == "true") {
 				$("#listHolder").css("display", "none")
 			}
 		}
@@ -249,15 +241,14 @@
 				panelOuterH = $panel.outerHeight() - $panel.height();
 			
 			var align = x_browserInfo.mobile == true ? "Top" : x_currentPageXML.getAttribute("align");
-			
-			var imgMaxW = Math.round($x_pageHolder.width() * (align == "Top" ? 1 : maxPanel) - panelOuterW - (align == "Top" ? parseInt($x_pageDiv.css("padding-left")) * 2 : 0)),
+
+			var imgMaxW = Math.round($x_innerPage.width() * (align == "Top" ? 1 : maxPanel) - panelOuterW/* - (align == "Top" ? parseInt($x_pageDiv.css("padding-left")) * 2 : 0)*/),
 				imgMaxH = $x_pageHolder.height() * (align == "Top" ? maxPanel : 1) - (parseInt($x_pageDiv.css("padding-left")) * 2) - panelOuterH;
-			
 			x_scaleImg($img, imgMaxW, imgMaxH, true, $img.data('firstLoad'), false);
 			
 			// position imageHolder correctly
 			if (align == "Top") {
-				$panel.css("margin-left", ($x_pageDiv.width() - $panel.outerWidth()) / 2);
+				$panel.css("margin-left", ($x_innerPage.width() - $panel.outerWidth()) / 2);
 			}
 			
 			$img
@@ -268,13 +259,47 @@
 				});
 			
 			if ($pageContents.data("hsType") == "centre" && align == "Left") {
-				$(".listItem").css("minWidth", $x_pageDiv.width() - $panel.outerWidth(true) - parseInt($(".listItem").css('padding-left')) - parseInt($(".listItem").css('padding-right')) - 20);
+				$(".listItem").css("minWidth", $x_innerPage.width() - $panel.outerWidth(true) - parseInt($(".listItem").css('padding-left')) - parseInt($(".listItem").css('padding-right')) - 20);
 			}
+
+			// now get info about hotspots & create them
+			if ($pageContents.data("hsType") == "flex") {
+				$hsHolder.html('<map id="hsHolder_map" name="hsHolder_map"></map>');
+				$img.attr("usemap", "#hsHolder_map");
+			}
+
+			$(x_currentPageXML).children().each(function(i) {
+				var _this = this;
+				if (this.nodeName == "hotspotGroup") {
+
+					var $hsGroup;
+					if ($pageContents.data("hsType") != "flex") {
+						$hsGroup = $('<div class="hsGroup"></div>');
+						$hsHolder.append($hsGroup);
+					}
+
+					$(this).children().each(function(j) {
+
+						if ($pageContents.data("hsType") != "flex") {
+							annotatedDiagram.createHs(this, i, $hsGroup);
+
+						} else {
+							annotatedDiagram.createHs(this, i, $("#hsHolder_map"));
+						}
+					});
+
+				} else {
+					if ($pageContents.data("hsType") != "flex") {
+						annotatedDiagram.createHs(this, i, $hsHolder);
+
+					} else {
+						annotatedDiagram.createHs(this, i, $("#hsHolder_map"));
+					}
+				}
+			});
 			
 			// now get info about hotspots & create them
 			if ($pageContents.data("hsType") == "flex") {
-				
-				$hsHolder.html('<map id="hsHolder_map" name="hsHolder_map"></map>');
 
 				var stroke = true,
 					strokeWidth = borderW,
@@ -303,7 +328,13 @@
 						strokeWidth: strokeWidth
 					},
 					scaleMap: true,
-					clickNavigate: true
+					clickNavigate: true,
+					onConfigured: function() {
+						if ($("img.mapster_el").length > 1) {
+							// we've somehow ended up with two images on screen - reset everything
+							annotatedDiagram.sizeChanged();
+						}
+					}
 				};
 
 				tabfocusoptions = JSON.parse(JSON.stringify(options));
@@ -311,6 +342,7 @@
 				// Make sure focus is ALWAYS visible, even if strokewidth is set to 0
 				tabfocusoptions.render_highlight.stroke = true;
 				tabfocusoptions.render_highlight.strokeWidth = (strokeWidth == 0 ? 1 : strokeWidth * 2);
+				$img.mapster(options);
 				
 			} else {
 				$hsHolder
@@ -327,39 +359,16 @@
 					$hsHolder.addClass("oval");
 				}
 			}
-			
-			$(x_currentPageXML).children().each(function(i) {
-				var _this = this;
-				if (this.nodeName == "hotspotGroup") {
-					
-					var $hsGroup;
-					if ($pageContents.data("hsType") != "flex") {
-						$hsGroup = $('<div class="hsGroup"></div>');
-						$hsHolder.append($hsGroup);
-					}
-					
-					$(this).children().each(function(j) {
-						
-						if ($pageContents.data("hsType") != "flex") {
-							annotatedDiagram.createHs(this, i, $hsGroup);
-							
-						} else {
-							annotatedDiagram.createHs(this, i, $("#hsHolder_map"));
-						}
-					});
-					
-				} else {
-					if ($pageContents.data("hsType") != "flex") {
-						annotatedDiagram.createHs(this, i, $hsHolder);
-						
+
+			if ($maintainSelection != undefined) {
+				$maintainSelection.each( function() {
+					if ($pageContents.data("hsType") == "flex") {
+						$("area." + $(this).data("group")).mapster("select");
 					} else {
-						annotatedDiagram.createHs(this, i, $("#hsHolder_map"));
+						annotatedDiagram.deselect();
+						$(this).click();
 					}
-				}
-			});
-			
-			if ($pageContents.data("hsType") == "flex") {
-				$img.mapster(options);
+				});
 			}
 		}
 		
@@ -403,6 +412,7 @@
 					.addClass("hsGroup" + groupIndex)
 					.data("listItem", $listItem)
 					.click(function(e) {
+						e.preventDefault();
 						var $this = $(this);
 						
 						// not already selected - so select link, show text & highlight hotspots
@@ -413,7 +423,7 @@
 							// only trigger selection on hotspots that aren't $this - otherwise $this is unselected
 							$("area." + $this.data("listItem").data("group")).each(function() {
 								if (!$this.is($(this))) {
-									$(this).mapster("select");
+									$(this).mapster("set", true);
 								}
 							});
 							
@@ -422,12 +432,11 @@
 							annotatedDiagram.deselect();
 							
 							// need this otherwise the hs that's been clicked stays highlighted
-							setTimeout(function(){ $this.mapster('deselect'); }, 1);
+							setTimeout(function(){ $this.mapster('set', false); }, 1);
 						}
 					})
 					.focusin(function() {
 						$img.mapster('set_options', tabfocusoptions);
-						
 						$(this)
 							.removeClass("transparent")
 							.addClass("highlight");
@@ -533,8 +542,7 @@
 		
 		this.deselect = function() {
 			$(".listItem.highlight").removeClass("highlight");
-			$infoHolder.html("");			
-			
+			$infoHolder.html("");
 			if ($pageContents.data("hsType") == "flex") {
 				$("area").mapster('set',false);
 				
@@ -589,9 +597,6 @@
 				endY = $("#infoHolder").offset().top;
 			}
 
-
-
-
 			context.beginPath();
 			context.moveTo(startX, startY);
 			context.lineTo(endX, endY);
@@ -602,15 +607,13 @@
 				context.arc(startX, startY, 2, 0, 2 * Math.PI, false);
 				context.fill();
 			}
-
-
 		}
 		
 		this.resizeCanvas = function() {
 			$x_pageHolder.css('overflow', 'hidden');
-			
+
 			$canvas.attr({
-				width: $x_pageDiv.width(),
+				width: $x_innerPage.width(),
 				height: $x_pageHolder.height() - parseInt($x_pageDiv.css("padding-top")) * 2
 			});
 			
@@ -621,7 +624,7 @@
 	}
 	
 	annotatedDiagram.init();
-	
+
 </script>
 
 

@@ -291,11 +291,16 @@ var EDITOR = (function ($, parent) {
         $('.ui-layout-center .header').append($('<div>').attr('id', 'pagetype'));
         // Save buttons
         var buttons = $('<div />').attr('id', 'save_buttons');
-        $([
-            {name:language.btnPreview.$label, tooltip: language.btnPreview.$tooltip, icon:'fa-play', id:'preview_button', click:preview},
-            //{name:language.btnSaveXerte.$label, tooltip: language.btnSaveXerte.$tooltip, icon:'editor/img/publish.png', id:'save_button', click:savepreview},
-            {name:language.btnPublishXot.$label, tooltip: language.btnPublishXot.$tooltip, icon:'fa-globe', id:'publish_button', click:publish}
-        ])
+        //todo hide button in non lti
+
+        let buttons_content = [{name:language.btnPreview.$label, tooltip: language.btnPreview.$tooltip, icon:'fa-play', id:'preview_button', click:preview},
+            {name:language.btnPublishXot.$label, tooltip: language.btnPublishXot.$tooltip, icon:'fa-globe', id:'publish_button', click:publish}];
+
+        if (lti_session) {
+            buttons_content.push({name:'Save', tooltip: "Save project to Edlib", icon:'fas fa-save', id:'lti_save_button', click:lti_save});
+        }
+
+        $(buttons_content)
         .each(function(index, value) {
             var button = $('<button>')
                 .attr('id', value.id)
@@ -445,13 +450,14 @@ var EDITOR = (function ($, parent) {
         .done(function() {
             //alert( "success" );
             // We would also launch the preview window from here
+            preview_url ??= "preview.php?template_id="
             $('#loader').hide();
             if (new_tab)
             {
-                window.open(site_url + "preview.php?template_id=" + template_id + urlparam, "_blank");
+                window.open(preview_url + template_id + urlparam, "_blank");
             }
             else {
-                window.open(site_url + "preview.php?template_id=" + template_id + urlparam, "previewwindow" + template_id, "height=" + template_height + ", width=" + template_width + ", resizable=yes, scrollbars=1");
+                window.open(preview_url + template_id + urlparam, "previewwindow" + template_id, "height=" + template_height + ", width=" + template_width + ", resizable=yes, scrollbars=1");
             }
         })
         .fail(function(data, status, error) {
@@ -478,7 +484,7 @@ var EDITOR = (function ($, parent) {
                     preview: previewxmlurl,
                     lo_data: encodeURIComponent(JSON.stringify(json)),
                     absmedia: rlourlvariable,
-                    template_id: template_id
+                    template_id: template_id,
                 },
 
                 dataType: "json",
@@ -487,6 +493,41 @@ var EDITOR = (function ($, parent) {
         ).done(function() {
             $('#loader').hide();
             //alert( "success" );
+        })
+        .fail(function() {
+            $('#loader').hide();
+			// alert from publish button click
+			var sessionError = language.Alert.sessionError;
+			var msg = sessionError != undefined ? sessionError.replace(/\\n/g, "\n") : "error";
+			alert(msg);
+        });
+    },
+
+    lti_save = function () {
+        if(typeof merged !== 'undefined' && merged == true){
+            return;
+        }
+        var json = build_json("treeroot");
+        upload_url ??= "editor/upload.php";
+        var ajax_call = $.ajax({
+                url: upload_url,
+                data: {
+                    fileupdate: 1, // 1=publish -> data.xml
+                    filename: dataxmlurl,
+                    preview: previewxmlurl,
+                    lo_data: encodeURIComponent(JSON.stringify(json)),
+                    absmedia: rlourlvariable,
+                    template_id: template_id,
+                    lti_save: "true"
+                },
+
+                dataType: "html",
+                type: "POST"
+            }
+        ).done(function(result) {
+            $('#loader').hide();
+            //alert( "success" );
+            $("body").html(result);
         })
         .fail(function() {
             $('#loader').hide();
@@ -602,6 +643,7 @@ var EDITOR = (function ($, parent) {
             defaultAdvanced = false;
         }
     },
+
 
     showToolbar = function(){
         parent.toolbox.showToolBar($('#toolbar_cb').prop('checked'));
@@ -804,12 +846,25 @@ var EDITOR = (function ($, parent) {
 
     // Refresh the page when a new node is selected
     buildPage = function (key, scrollPos, scrollToId, expandedGroups) {
-        // Cleanup all current CKEDITOR instances!
-        for(name in CKEDITOR.instances)
-        {
-            CKEDITOR.instances[name].destroy(true);
+        // Cleanup all current CKEDITOR instances. CKEditor 5 destroy is async; wait before
+        // replacing #mainPanel or a late callback can clear __xerteCke5Instances for reused ids (e.g. textarea_1).
+        var destroyPromises = [];
+        var ckeIds = [];
+        for (var ckeName in CKEDITOR.instances) {
+            if (CKEDITOR.instances.hasOwnProperty(ckeName)) {
+                ckeIds.push(ckeName);
+            }
         }
-
+        for (var ci = 0; ci < ckeIds.length; ci++) {
+            var ckeInst = CKEDITOR.instances[ckeIds[ci]];
+            if (ckeInst && typeof ckeInst.destroy === 'function') {
+                var ckeDestroy = ckeInst.destroy(true);
+                if (ckeDestroy && typeof ckeDestroy.then === 'function') {
+                    destroyPromises.push(ckeDestroy);
+                }
+            }
+        }
+        var runBuildPageBody = function () {
         var attributes = lo_data[key]['attributes'];
 
         // Get the node name
@@ -900,6 +955,12 @@ var EDITOR = (function ($, parent) {
                 toolbox.displayParameter('#mainPanel .wizard', node_options['name'], attribute_name, node_options['name'][0].value.defaultValue, key);
             }
         }
+
+        // Inline Quick Fill panel — resolve from node_options.all (never mutated by getGroups)
+        if (key !== 'treeroot') {
+            toolbox.showInlineQFGroup(key, node_name, menu_options);
+        }
+
         if (advanced_mode || key!='treeroot' || !simple_lo_page) {
 			
 			function getGroups(options) {
@@ -958,7 +1019,7 @@ var EDITOR = (function ($, parent) {
 			
             // If the main node has a label, display the node item second (unconditionaly)
             if (node_label.length > 0 && !node_options['cdata']) {
-                toolbox.displayParameter('#mainPanel .wizard', node_options['normal'], node_name, '', key, false, node_label);
+                toolbox.displayParameter('#mainPanel .wizard', node_options['normal'], node_name, '', key, "", "none", node_label);
             }
 
 			getGroups(node_options['normal']);
@@ -1120,7 +1181,8 @@ var EDITOR = (function ($, parent) {
                         button.attr('title', sorted_options['optional'][i].value.tooltip);
                     }
                     // If group, see if any of the individual items have a tooltip
-                    if (sorted_options['optional'][i].value.type == 'group') {
+                    // 19/03/26 agreed to turn this off as the compiled tooltips can get confusing quickly
+                    /*if (sorted_options['optional'][i].value.type == 'group') {
                         var tooltip_txt = "";
                         for (var j = 0; j < sorted_options['optional'][i].value.children.length; j++) {
                             if (sorted_options['optional'][i].value.children[j].value.tooltip) {
@@ -1138,7 +1200,7 @@ var EDITOR = (function ($, parent) {
                                 button.attr('title', tooltip_txt);
                             }
                         }
-                    }
+                    }*/
                     button.append(label);
 
 
@@ -1176,20 +1238,32 @@ var EDITOR = (function ($, parent) {
                 }
             }
 
-            if (table.find("tr").length > 0) {
-                if (menu_options.menu != undefined) {
-                    var tablerow = $('<tr>')
-                        .append('<td class="optPropTitle">' + menu_options.menuItem + '</td>');
-                    table.prepend(tablerow);
-                }
-                html.append(table);
-            }
+            //Used to make layout optional properties panel top-level title dynamic, since it switches depending on which table(s) are present
+            var optionaltitle = language.optionalPropHTML ? language.optionalPropHTML.$label : "Optional Properties";
+            var assistantTitle = language.optionalAssistantPropHTML && language.optionalAssistantPropHTML.$general ? language.optionalAssistantPropHTML.$general : "Assistants";
 
             if (tableLightbox.find("tr").length > 0) {
-                    var tablerow = $('<tr>')
-                        .append('<td class="optPropTitle">' + (language.optionalAssistantPropHTML && language.optionalAssistantPropHTML.$general ? language.optionalAssistantPropHTML.$general : "Assistant") + '</td>');
-                    tableLightbox.prepend(tablerow);
+                $("#optional_title").html(assistantTitle);
                 html.append(tableLightbox);
+            } else {
+                $("#optional_title").html(optionaltitle);
+            }
+
+            if (table.find("tr").length > 0) {
+                if (tableLightbox.find("tr").length > 0) {
+                    var optionaltitlerow = $('<tr>')
+                        .append('<td class="optMainTitle">' + (language.optionalPropHTML ? language.optionalPropHTML.$label : "Optional Properties") + '</td>');
+
+                    if (menu_options.menu != undefined) {
+                        var tablerow = $('<tr>')
+                            .append('<td class="optPropTitle">' + menu_options.menuItem + '</td>');
+                        table.prepend(tablerow);
+                    }
+
+                    table.prepend(optionaltitlerow);
+                }
+
+                html.append(table);
             }
 
             if (table2.find("tr").length > 0) {
@@ -1413,6 +1487,7 @@ var EDITOR = (function ($, parent) {
 
         toolbox.convertTextAreas();
         toolbox.convertTextInputs();
+        toolbox.sizeInlineQFPanel($('#mainPanel .qf-inline-row'));
         toolbox.convertColorPickers();
 		toolbox.convertIconPickers();
         toolbox.convertDataGrids();
@@ -1466,6 +1541,12 @@ var EDITOR = (function ($, parent) {
 				$(this).parents('.wizardattribute')[0].remove();
 			}
 		});
+        };
+        if (destroyPromises.length) {
+            Promise.all(destroyPromises).then(runBuildPageBody, runBuildPageBody);
+        } else {
+            runBuildPageBody();
+        }
     },
 
 	groupSetUp = function(group, attributes, node_options, key) {
@@ -1786,6 +1867,7 @@ var EDITOR = (function ($, parent) {
                     success: function(data) {
                         try {
                             xml_to_xerte_content(data, aiSettings['key'], 'last', tree, parent);
+                            alert(`${language.vendorApi.generationComplete}`);
                             $.featherlight.close();
                         } catch (error) {
                             console.log('Error occurred in success callback:', error);
@@ -1869,7 +1951,6 @@ var EDITOR = (function ($, parent) {
     quick_fill = function(event, node_type, parameters) {
         return new Promise((resolve, reject) => {
             try {
-                // Call aiAPI.php via jQuery's AJAX method
                 var tree = $.jstree.reference("#treeview");
                 // Show wait icon
                 $('body').css("cursor", "wait");
@@ -1887,6 +1968,7 @@ var EDITOR = (function ($, parent) {
                         var data = (resp && resp.ok === true && resp.data) ? resp.data : resp;
                         try {
                             xml_to_xerte_content(data, event.data.key, 'last', tree, parent);
+                            $.featherlight.close();
                         } catch (error) {
                             console.log('Error occurred in success callback:', error);
                             reject(error);
@@ -1905,7 +1987,7 @@ var EDITOR = (function ($, parent) {
         });
     };
 
-img_search_and_help = function(query, api, url, interpretPrompt, overrideSettings, settings, key, name){
+img_search_and_help = function(query, api, url, interpretPrompt, overrideSettings, settings, key, name, loLang){
         $('body').css("cursor", "wait");
 		let input_type = "checkbox";
 		let image_data;
@@ -1913,7 +1995,7 @@ img_search_and_help = function(query, api, url, interpretPrompt, overrideSetting
 				input_type = "radio";
 		}
 
-        let image_preview = $("<div class=\"img_search_preview\"><div class=\"img_search_loading\">loading...</div></div>");
+        let image_preview = $(`<div class=\"img_search_preview\"><div class=\"img_search_loading\">${language.imageSelection.imgLoadingText}</div></div>`);
         let keepClicked = false;
         let selection_window = $.featherlight(image_preview, {
             closeOnClick: false,
@@ -1925,6 +2007,10 @@ img_search_and_help = function(query, api, url, interpretPrompt, overrideSetting
                     let keptIndices = $.makeArray($boxes)
                         .filter(cb => cb.checked)
                         .map(cb => +cb.name);
+
+                    if (allIndices.length==1){
+                        keptIndices = allIndices;
+                    }
 
                     // if they’d checked something, ask whether to keep them
                     let toDelete;
@@ -1954,11 +2040,15 @@ img_search_and_help = function(query, api, url, interpretPrompt, overrideSetting
         $.ajax({
             url: "editor/imagesearchandhelp/imgSHAPI.php",
             type: "POST",
-            data: {query: query, api: api, target: url, textApi: settings['textApi'],interpretPrompt: interpretPrompt, overrideSettings: overrideSettings, settings: settings},
+            data: {query: query, api: api, target: url, textApi: settings['textApi'],interpretPrompt: interpretPrompt, overrideSettings: overrideSettings, settings: settings, language: loLang},
             success: function(data_json) {
 								image_preview.find(".img_search_loading").remove();
 								let header = $("<h1>" + language.imageSelection.title + "</h1>");
-								image_data = JSON.parse(data_json);
+								image_data = typeof data_json === "string" ? JSON.parse(data_json) : data_json;
+								if (image_data.status === "error") {
+									image_preview.text(language.imageSelection.retrievalError || "An error occurred while retrieving image results.");
+									return;
+								}
 								image_preview.append(header);
 								let image_preview_images = $("<div class=\"image_preview_images\"></div>");
 								image_preview.append(image_preview_images);
@@ -2028,17 +2118,41 @@ img_search_and_help = function(query, api, url, interpretPrompt, overrideSetting
                                     let container = $('<div class="img_search_container"></div>');
                                     image_preview_images.append(container);
                                     container.append(select_input).append(label);
-                                    // Enlarge button. Prevent the label/checkbox from toggling on click
+
+                                    //Button to enlarge the image
                                     let enlarge_button = $(
-                                        '<button title="Enlarge" type="button" class="enlarge_button">' +
+                                        '<button title="' + language.imageSelection.imgEnlargeCornerBtn + '" type="button" class="enlarge_button">' +
                                         '<i class="fa fa-lg fa-search xerte-icon"></i>' +
                                         '</button>'
                                     ).on("click", function (e) {
                                         e.preventDefault();
                                         e.stopPropagation();
-                                        $.featherlight(image_url);
+                                        $.featherlight({image:image_url});
                                     });
 
+                                    //Button to copy the credits/copyright information for a specific image
+                                    let copy_credits_button = $(
+                                        '<button title="'+ language.imageSelection.imgCopyrightToClipboardBtn +'" type="button" class="copy_credits_button">' +
+                                        '<i class="fa fa-copyright xerte-icon"></i>' +
+                                        '</button>'
+                                    ).on("click", function (e) {
+                                        e.preventDefault();
+                                        e.stopPropagation();
+
+                                        navigator.clipboard.writeText(image_data.credits[i]).then(function () {
+                                            let copied_notice = $('<span class="copied_notice">'+ language.imageSelection.imgCopyrightToClipboardNotice +'</span>');
+
+                                            frame.append(copied_notice);
+
+                                            setTimeout(function () {
+                                                copied_notice.fadeOut(200, function () {
+                                                    $(this).remove();
+                                                });
+                                            }, 1500);
+                                        });
+                                    });
+
+                                    frame.append(copy_credits_button);
                                     frame.append(enlarge_button);
 
 										image.on("load", function () {
@@ -2058,7 +2172,7 @@ img_search_and_help = function(query, api, url, interpretPrompt, overrideSetting
             error: function(xhr, status, error) {
                 console.error("Error retrieving image results:", error);
 								image_preview.find(".img_search_loading").remove();
-								image_preview.text("an error occurred");
+								image_preview.text(language.imageSelection.retrievalError || "An error occurred while retrieving image results.");
             },
             complete: function() {
                 // This function runs after the AJAX request completes (whether success or error)
@@ -2150,6 +2264,16 @@ img_search_and_help = function(query, api, url, interpretPrompt, overrideSetting
                 allChildPages.splice($.inArray("chapter", allChildPages), 1);
             } else if (page_name == "chapter" && allChildPages.length > 0) {
                 lchildren = allChildPages;
+            }
+
+            // some pages have changed the type of nested nodes that are used
+            // ensure the old versions are still accepted so that pages can still be fully duplicated
+            if ($.inArray("flexhotspot", lchildren) > -1 && $.inArray("hotspot", lchildren) === -1) {
+                // pages that now use 'flexhotspot' should also allow 'hotspot'
+                lchildren.push("hotspot");
+            } else if ($.inArray("nestedColumnPage", lchildren) > -1 && $.inArray("nestedPage", lchildren) === -1) {
+                // column page that now uses 'nestedColumnPage' should also allow 'nestedPage'
+                lchildren.push("nestedPage");
             }
 
             return {
@@ -2322,7 +2446,6 @@ img_search_and_help = function(query, api, url, interpretPrompt, overrideSetting
     my.refresh_workspaceMerge = refresh_workspaceMerge;
     my.build_json = build_json;
     my.savepreviewasync = savepreviewasync;
-
 
     return parent;
 

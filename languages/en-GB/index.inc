@@ -1,13 +1,22 @@
 <?php
 
 /**
+ * Licensed to The Apereo Foundation under one or more contributor license
+ * agreements. See the NOTICE file distributed with this work for
+ * additional information regarding copyright ownership.
+
+ * The Apereo Foundation licenses this file to you under the Apache License,
+ * Version 2.0 (the "License"); you may not use this file except in
+ * compliance with the License. You may obtain a copy of the License at:
  *
- * index.php english language file
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
- * @author Patrick Lockley
- * @version 1.0
- * @copyright Pat Lockley
- * @package
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 define("INDEX_USERNAME_AND_PASSWORD_EMPTY", "Please enter your username and password");
@@ -35,6 +44,8 @@ define("INDEX_PASSWORD", "Password");
 define("INDEX_LOGO_ALT", "Site logo");
 
 define("INDEX_WCAG_LOGO_ALT", "W3C logo");
+
+define("INDEX_XERTE_AI_LOGO_ALT", "Xerte AI logo");
 
 define("INDEX_OSI_LOGO_ALT", "Open Source Initiative logo");
 
@@ -125,6 +136,10 @@ define("INDEX_XAPI_DASHBOARD_QUESTION_OVERVIEW", "Interaction overview");
 define("INDEX_XAPI_DASHBOARD_PRINT", "Print");
 
 define("INDEX_CHANGE_PASSWORD", "Change Password");
+
+define("INDEX_MY_DETAILS", "My details");
+
+define("INDEX_MY_PREFERENCES", "My preferences");
 
 define("INDEX_TO_MANAGEMENT", "Management");
 

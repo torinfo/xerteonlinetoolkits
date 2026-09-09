@@ -109,7 +109,7 @@ abstract class Xerte_Authentication_Abstract
         return true;
     }
 
-    public function hasUserPrefrences()
+    public function hasUserPreferences()
     {
         return true;
     }

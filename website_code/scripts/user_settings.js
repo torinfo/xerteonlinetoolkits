@@ -32,6 +32,122 @@ function settingsDropdown() {
     document.getElementById("settings").classList.toggle("show");
 }
 
+function getUserbarDropdownMenu($dropdown) {
+    var menuId = $dropdown.data("menuId");
+    if (menuId) {
+        var $portalMenu = $("#" + menuId);
+        if ($portalMenu.length) {
+            return $portalMenu;
+        }
+    }
+    return $dropdown.find(".userbar-dropdown-menu").first();
+}
+
+function positionUserbarDropdownMenu($dropdown) {
+    var $toggle = $dropdown.find(".userbar-dropdown-toggle").first();
+    var $menu = getUserbarDropdownMenu($dropdown);
+    if (!$toggle.length || !$menu.length) {
+        return;
+    }
+    var rect = $toggle[0].getBoundingClientRect();
+    $menu.css({
+        top: rect.bottom + 4,
+        right: window.innerWidth - rect.right,
+        left: "auto"
+    });
+}
+
+function openUserbarDropdown($dropdown) {
+    var $menu = $dropdown.find(".userbar-dropdown-menu").first();
+    if (!$menu.length) {
+        return;
+    }
+
+    var menuId = $dropdown.data("menuId");
+    if (!menuId) {
+        menuId = "userbar-menu-" + ($(".userbar-dropdown").index($dropdown) + 1);
+        $dropdown.data("menuId", menuId);
+        $menu.attr("id", menuId);
+    }
+
+    if (!$menu.parent().is("body")) {
+        $menu.data("userbarDropdown", $dropdown);
+        $("body").append($menu);
+    }
+
+    $dropdown.addClass("open");
+    $dropdown.closest(".userbar-item").find(".userbar-dropdown-toggle, .userbar-profile-btn").attr("aria-expanded", "true");
+    $menu.addClass("userbar-dropdown-menu--open");
+    positionUserbarDropdownMenu($dropdown);
+}
+
+function closeUserbarDropdown($dropdown) {
+    var $menu = getUserbarDropdownMenu($dropdown);
+    $dropdown.removeClass("open");
+    $dropdown.closest(".userbar-item").find(".userbar-dropdown-toggle, .userbar-profile-btn").attr("aria-expanded", "false");
+    $menu.removeClass("userbar-dropdown-menu--open").css({ top: "", right: "", left: "" });
+
+    if ($menu.length && $menu.parent().is("body")) {
+        $dropdown.append($menu);
+    }
+}
+
+function closeUserbarDropdowns(except) {
+    $(".userbar-dropdown.open").each(function() {
+        if (!except || this !== except) {
+            closeUserbarDropdown($(this));
+        }
+    });
+}
+
+$(function() {
+    $(".userbar-dropdown-toggle, .userbar-profile-btn").on("click", function(e) {
+        e.stopPropagation();
+        var $dropdown = $(this).closest(".userbar-dropdown");
+        if (!$dropdown.length) {
+            $dropdown = $(this).closest(".userbar-item").find(".userbar-dropdown").first();
+        }
+        var isOpen = $dropdown.hasClass("open");
+        closeUserbarDropdowns();
+        if (!isOpen) {
+            openUserbarDropdown($dropdown);
+        }
+    });
+
+    $(window).on("resize scroll", function() {
+        $(".userbar-dropdown.open").each(function() {
+            positionUserbarDropdownMenu($(this));
+        });
+    });
+
+    $(document).on("click", ".userbar-language-form .userbar-dropdown-item", function() {
+        var lang = $(this).data("language");
+        $(this).closest("form").find("input[name='language']").val(lang);
+        $(this).closest("form").submit();
+    });
+
+    $(document).on("click", ".userbar-user-item", function(e) {
+        closeUserbarDropdowns();
+        e.stopPropagation();
+    });
+
+    $("body").on("click", function(e) {
+        if (!$(e.target).closest(".userbar-dropdown").length &&
+            !$(e.target).closest(".userbar-dropdown-menu").length) {
+            closeUserbarDropdowns();
+        }
+
+        if (!(e.target.class == "settingsDropdown" || $(e.target).parents(".settingsDropdown").length)) {
+            var dropdowns = $(".settings-content");
+            for (var i = 0; i < dropdowns.length; i++) {
+                if (dropdowns[i].classList.contains('show')) {
+                    dropdowns[i].classList.remove('show');
+                }
+            }
+        }
+    });
+});
+
 // Close the dropdown menu if the user clicks outside of it
 $(function() {
     $("body").click(function(e) {

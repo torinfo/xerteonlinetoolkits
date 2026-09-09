@@ -366,6 +366,9 @@ a:-webkit-any-link {
   color: #555 !important;
 }
 
+#x_pageHolder {
+  /*span,*/
+}
 #x_pageHolder h1 {
   font-size: 1em;
   margin: 0px;
@@ -390,7 +393,6 @@ a:-webkit-any-link {
   color: #007cdb;
   font-size: 110%;
 }
-#x_pageHolder span,
 #x_pageHolder p,
 #x_pageHolder li,
 #x_pageHolder u,
@@ -418,6 +420,10 @@ a:-webkit-any-link {
   display: inline-block;
   margin: 0 20px 20px;
   background-color: #1c1c1c;
+}
+
+.x_flashCards_page #x_pageHolder .cardSide.panel {
+  padding: 0;
 }
 
 .speech-bubble1, .speech-bubble1 h2, .speech-bubble1 strong, .speech-bubble1 span, .speech-bubble1 p {

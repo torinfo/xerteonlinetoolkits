@@ -134,6 +134,8 @@ function renderToolkitsIndexShell() {
                 '<p class="copyright">' + (footer.copyright || '') +
                     ' <i class="fa fa-info-circle" aria-hidden="true" style="color:#f86718; cursor: help;" title="' + (footer.versionInfo || '') + '"></i></p>' +
                 '<div class="footerlogos">' +
+                    '<a href="https://xot.xerte.org.uk/play_653" target="_blank" title="Xerte AI Ethical Use and Transparency Statement">' +
+                        '<img src="website_code/images/XerteFooterAILogo.png" border="0" alt="' + (s.aiTransparencyAlt || '') + '"></a>' +
                     '<a href="https://xot.xerte.org.uk/play.php?template_id=214#home" target="_blank" title="Xerte accessibility statement">' +
                         '<img src="website_code/images/wcag2.2AA-blue.png" border="0" alt="' + s.wcagAlt + '"></a>' +
                     '<a href="https://opensource.org/" target="_blank" title="Open Source Initiative">' +

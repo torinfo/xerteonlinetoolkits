@@ -653,6 +653,62 @@ var EDITOR = (function ($, parent) {
         return false;
     },
 
+        // Required for resolving xml conditionals for AI or other API-based services, please do not remove
+        vendor_is_available = function (vendorType, vendor = "all") {
+            // Helper: is a single row active?
+            const isRowActive = function (row) {
+                // If vendorType is not "all", the row must match the type/category
+                if (vendorType !== "all" && row.type !== vendorType) {
+                    return false;
+                }
+
+                // Must be enabled
+                if (row.enabled != "1") {
+                    return false;
+                }
+
+                // If this vendor doesn't require a key, it's active as-is
+                if (row.needs_key == "0") {
+                    return true;
+                }
+
+                // If it does require a key, check via vendor_options
+                return vendorHasApiKey(row.type, row.vendor);
+            };
+
+            // If we're checking a specific vendor
+            if (vendor !== "all") {
+                for (let i = 0; i < management_helper_table.length; i++) {
+                    const row = management_helper_table[i];
+
+                    // Match vendor name
+                    if (row.vendor !== vendor) {
+                        continue;
+                    }
+
+                    // If vendorType is specific, row must also match that type
+                    if (vendorType !== "all" && row.type !== vendorType) {
+                        continue;
+                    }
+
+                    return isRowActive(row);
+                }
+
+                return false; // no matching row
+            }
+
+            // vendor === "all": is there at least one active vendor in scope?
+            for (let i = 0; i < management_helper_table.length; i++) {
+                const row = management_helper_table[i];
+
+                if (isRowActive(row)) {
+                    return true; // found at least one active vendor
+                }
+            }
+
+            return false; // none active
+        },
+
     vendor_has_option = function(option, vendor = "all") {
         if(vendor == "all") {
             for(let i = 0; i < management_helper_table.length; i++){
@@ -740,30 +796,26 @@ var EDITOR = (function ($, parent) {
             }
 
             var tr = $('<tr>');
-                        //todo move to footer of lightbos (footer does not yet exists)
-						if(options.advanced == "true" && lightboxMode == "form"){
-								if(window?.showAdvanced?.[key] == undefined) {
-                                    if (!all_options.some(opt => opt.name === "toggleAdvanced")){
-										window.showAdvanced = {};
-										console.log(arguments);
-										all_options.push({
-												name: "toggleAdvanced",
-												value: {
-														type: "toggleAdvanced",
-														label: "Show advanced options",
-														optional: "true",
-														group: options.group,
-												}
-										});
-								    }
-                                }
-								if(window.showAdvanced[key] == undefined) {
-										showAdvanced[key] = false;
-								}
-								if(!window.showAdvanced[key]) {
-										tr.css("display", "none");
-								}
-						}
+            //todo move to footer of lightbos (footer does not yet exists)
+            if(options.advanced == "true" && lightboxMode == "form"){
+                    if(window?.showAdvanced?.[key] == undefined) {
+                        if (window.showAdvanced == undefined){
+                            window.showAdvanced = {};
+                        }
+                    }
+                    setTimeout(function() {
+                        $("#lb_advanced_cb, #lb_advanced_cb_span")
+                            .switchClass("disabled", "enabled")
+                            .prop("disabled", false);
+                    }, 250);
+
+                    if(window.showAdvanced[key] == undefined) {
+                            showAdvanced[key] = { 'enabled' : false, 'group': options.group };
+                    }
+                    if(!window.showAdvanced[key]['enabled']) {
+                            tr.css("display", "none");
+                    }
+            }
 
             if (options.deprecated) {
                 var td = $('<td>')
@@ -1221,9 +1273,13 @@ var EDITOR = (function ($, parent) {
                     return raw.slice(idxAny).replace(/^['"]+|['"]+$/g, '');
                 }
                 if (idxPreviewAny !== -1) {
+                    let lolang = loLanguage;
                     // slice and strip quotes again just in case
                     //When normalizing in the corpus, if we see preview.xml, we update the LO in corpus.
-                    updateCorpusSingle(false, true);
+                    let completion_info = updateCorpusSingle(false, true, false, lolang);
+                    const first = completion_info.results?.[0] || {};
+                    const displaymsg = first.rag_status || first.transcription_status || completion_info?.error || 'No status available';
+                    alert(displaymsg);
                     return raw.slice(idxPreviewAny).replace(/^['"]+|['"]+$/g, '');
                 }
 
@@ -1232,14 +1288,14 @@ var EDITOR = (function ($, parent) {
                 throw new Error(`Unrecognized path: ${raw}`);
             }
             //Upload a single file to the corpus
-            async function updateCorpusSingle(postData, corpusGrid = false, useLoInCorpus) {
-                //  Show wait cursor
+            async function updateCorpusSingle(postData, corpusGrid = false, useLoInCorpus = false, language) {
+                // Show wait cursor
                 $('body, .featherlight, .featherlight-content').css("cursor", "wait");
 
                 const baseURL = rlopathvariable.substr(rlopathvariable.indexOf("USER-FILES"));
-                try {
+
                 // Build grid row
-                let singleRow = {};
+                let singleRow;
                 if (!useLoInCorpus) {
                     singleRow = {
                         col_1: postData['col_1'],
@@ -1256,38 +1312,81 @@ var EDITOR = (function ($, parent) {
                     };
                 }
 
-                const payload = { name, baseURL, gridData: [singleRow], corpusGrid, useLoInCorpus };
+                const payload = { name, baseURL, gridData: [singleRow], corpusGrid, useLoInCorpus, language };
 
-                // Return Promise and reset cursor in finally
-
-                    return await new Promise((resolve, reject) => {
+                try {
+                    // 1) Start the job and wait for the start response (job_id)
+                    const resp = await new Promise((resolve, reject) => {
                         $.ajax({
-                            url: 'editor/ai/rag/syncCorpus.php',
+                            url: 'editor/ai/rag/syncCorpus_start.php',
                             method: 'POST',
                             contentType: 'application/json',
                             data: JSON.stringify(payload),
-                            success: function(resp) {
-                                console.log('Corpus sync succeeded:', resp);
-                                const first = resp.results?.[0] || {};
-                                const displaymsg =
-                                    first.rag_status ||
-                                    first.transcription_status ||
-                                    resp?.error ||
-                                    'No status available';
-                                alert(displaymsg);
-                                resolve(resp);
+
+                            success: function (resp) {
+                                console.log('Corpus sync started:', resp);
+
+                                resolve(resp); // just resolve the start response
                             },
-                            error: function(xhr, status, err) {
+
+                            error: function (xhr, status, err) {
                                 console.error('Corpus sync failed:', err);
                                 alert(`${language.vendorApi.contextAlerts.syncErrorGenericMsg}`);
                                 reject(err);
                             }
                         });
                     });
+
+                    // 2) Now poll until the job is actually finished
+                    const finalStatus = await pollJobStatus(resp.job_id, baseURL);
+
+                    // 3) Return final status / completion info
+                    return finalStatus;
+
                 } finally {
                     // Reset cursor no matter what
                     $('body, .featherlight, .featherlight-content').css("cursor", "default");
                 }
+            }
+
+            async function pollJobStatus(jobId, baseURL) {
+                return new Promise((resolve, reject) => {
+
+                    const statusUrl = "editor/ai/rag/syncCorpus_status.php?job_id=" +
+                        encodeURIComponent(jobId) + "&baseURL=" +
+                        encodeURIComponent(baseURL);
+
+                    function checkStatus() {
+                        $.ajax({
+                            url: statusUrl,
+                            method: "GET",
+                            cache: false,
+                            success: function (data) {
+                                if (data.status === "processed") {
+                                    const first = data['completion_info'].results?.[0] || {};
+                                    resolve(data['completion_info']);
+                                    return;
+                                }
+
+                                if (data.status === "error") {
+                                    reject(data['completion_info']);
+                                    return;
+                                }
+
+                                setTimeout(checkStatus, 3000);
+                            },
+                            error: function (xhr, status, err) {
+                                console.log("Polling error:", err);
+
+                                // Fail after a set time, assuming polling fails (not that the job resulted in an error)
+                                setTimeout(checkStatus, 5000);
+                            }
+                        });
+                    }
+
+                    // start polling
+                    checkStatus();
+                });
             }
 
             function updateGrid(name, id) {
@@ -1333,24 +1432,28 @@ var EDITOR = (function ($, parent) {
             }
             (async () => {
                 try {
-                    await updateCorpusSingle(postdata, false, false);
+                    let completion_info = await updateCorpusSingle(postdata, false, false, loLanguage);
+                    const first = completion_info.results?.[0] || {};
+                    const displaymsg = first.rag_status || first.transcription_status || completion_info?.error || 'No status available';
+                    alert(displaymsg);
+
                 } catch (e) {
                     console.error(e);
                 }
+
+                //There is no need to continue with the rest, because updateGrid and updateCorpusSingle already handle the data to and from the backend
+                if ((addMode && options.closeAfterAdd) || (!addMode && options.closeAfterEdit)) {
+                    // close the edit/add dialog
+                    $.jgrid.hideModal("#editmod"+grid_id,
+                        {gb:"#gbox_"+grid_id,jqm:options.jqModal,onClose:options.onClose});
+                }
+
+                //Always update the grid so that it matches the actual corpus
+                updateGrid(name, id);
+
+                this.processing = true;
+                return {};
             })();
-
-            //There is no need to continue with the rest, because updateGrid and updateCorpusSingle already handle the data to and from the backend
-            if ((addMode && options.closeAfterAdd) || (!addMode && options.closeAfterEdit)) {
-                // close the edit/add dialog
-                $.jgrid.hideModal("#editmod"+grid_id,
-                    {gb:"#gbox_"+grid_id,jqm:options.jqModal,onClose:options.onClose});
-            }
-
-            //Always update the grid so that it matches the actual corpus
-            updateGrid(name, id);
-
-            this.processing = true;
-            return {};
         }
 
         if (postdata[id_in_postdata])
@@ -1520,8 +1623,8 @@ var EDITOR = (function ($, parent) {
                 alert(`${raw} ${language.vendorApi.contextAlerts.unrecognisedContextPathMsg}`);
                 throw new Error(`Unrecognized path: ${raw}`);
             }
-
-            function corpusUpdate(grid, name, id) {
+            //Start a sync job
+            async function corpusUpdate(grid, name, id) {
                 const baseURL = rlopathvariable.substr(rlopathvariable.indexOf("USER-FILES"));
 
                 const allRows = grid.map(row => {
@@ -1534,26 +1637,74 @@ var EDITOR = (function ($, parent) {
 
                 //  Show wait cursor
                 $('body, .featherlight, .featherlight-content').css("cursor", "wait");
-
-                //  Return a Promise so this can be awaited
-                return new Promise((resolve, reject) => {
-                    $.ajax({
-                        url: 'editor/ai/rag/syncCorpus.php',
-                        method: 'POST',
-                        contentType: 'application/json',
-                        data: JSON.stringify(payload),
-                        success: function(resp) {
-                            resolve(resp);
-                        },
-                        error: function(xhr, status, err) {
-                            alert(`${language.vendorApi.contextAlerts.syncErrorGenericMsg}`);
-                            reject(err);
-                        },
-                        complete: function() {
-                            //  Reset cursor no matter what
-                            $('body, .featherlight, .featherlight-content').css("cursor", "default");
-                        }
+                try {
+                    let resp = await new Promise((resolve, reject) => {
+                        $.ajax({
+                            url: 'editor/ai/rag/syncCorpus_start.php',
+                            method: 'POST',
+                            contentType: 'application/json',
+                            data: JSON.stringify(payload),
+                            success: function(resp) {
+                                resolve(resp);
+                            },
+                            error: function(xhr, status, err) {
+                                alert(`${language.vendorApi.contextAlerts.syncErrorGenericMsg}`);
+                                reject(err);
+                            },
+                            complete: function() {
+                                //  Reset cursor no matter what
+                                $('body, .featherlight, .featherlight-content').css("cursor", "default");
+                            }
+                        });
                     });
+
+                    // 2) Now poll until the job is actually finished
+                    const finalStatus = await pollJobStatus(resp.job_id, baseURL);
+
+                    // 3) Return final status / completion info
+                    return finalStatus;
+                } finally {
+                    // Reset cursor no matter what
+                    $('body, .featherlight, .featherlight-content').css("cursor", "default");
+                }
+            }
+
+            async function pollJobStatus(jobId, baseURL) {
+                return new Promise((resolve, reject) => {
+
+                    const statusUrl = "editor/ai/rag/syncCorpus_status.php?job_id=" +
+                        encodeURIComponent(jobId) + "&baseURL=" +
+                        encodeURIComponent(baseURL);
+
+                    function checkStatus() {
+                        $.ajax({
+                            url: statusUrl,
+                            method: "GET",
+                            cache: false,
+                            success: function (data) {
+
+                                if (data.status === "processed") {
+                                    const first = data['completion_info'].results?.[0] || {};
+                                    resolve(data['completion_info']);
+                                    return;
+                                }
+
+                                if (data.status === "error") {
+                                    reject(data['completion_info']);
+                                    return;
+                                }
+
+                                setTimeout(checkStatus, 3000);
+                            },
+                            error: function (xhr, status, err) {
+                                console.log("Polling error:", err);
+                                setTimeout(checkStatus, 5000);
+                            }
+                        });
+                    }
+
+                    // start polling
+                    checkStatus();
                 });
             }
 
@@ -1716,13 +1867,13 @@ var EDITOR = (function ($, parent) {
                 }
             }
         }
-
+        lti_session = lti_session !== "" ? "&" + lti_session : "";
         var ckoptions = {
-            filebrowserBrowseUrl : 'editor/elfinder/browse.php?mode=cke&type=media&uploadDir='+rlopathvariable+'&uploadURL='+rlourlvariable.substr(0, rlourlvariable.length-1),
-            filebrowserImageBrowseUrl : 'editor/elfinder/browse.php?mode=cke&type=image&uploadDir='+rlopathvariable+'&uploadURL='+rlourlvariable.substr(0, rlourlvariable.length-1),
-            filebrowserFlashBrowseUrl : 'editor/elfinder/browse.php?mode=cke&type=flash&uploadDir='+rlopathvariable+'&uploadURL='+rlourlvariable.substr(0, rlourlvariable.length-1),
-            uploadUrl : 'editor/uploadImage.php?mode=dragdrop&uploadPath='+rlopathvariable+'&uploadURL='+rlourlvariable.substr(0, rlourlvariable.length-1),
-            uploadAudioUrl : 'editor/uploadAudio.php?mode=record&uploadPath='+rlopathvariable+'&uploadURL='+rlourlvariable.substr(0, rlourlvariable.length-1),
+            filebrowserBrowseUrl : 'editor/elfinder/browse.php?mode=cke' + lti_session + '&type=media&uploadDir='+rlopathvariable+'&uploadURL='+rlourlvariable.substr(0, rlourlvariable.length-1) ,
+            filebrowserImageBrowseUrl : 'editor/elfinder/browse.php?mode=cke' + lti_session + '&type=image&uploadDir='+rlopathvariable+'&uploadURL='+rlourlvariable.substr(0, rlourlvariable.length-1) ,
+            filebrowserFlashBrowseUrl : 'editor/elfinder/browse.php?mode=cke' + lti_session + '&type=flash&uploadDir='+rlopathvariable+'&uploadURL='+rlourlvariable.substr(0, rlourlvariable.length-1) ,
+            uploadUrl : 'editor/uploadImage.php?mode=dragdrop' + lti_session + '&uploadPath='+rlopathvariable+'&uploadURL='+rlourlvariable.substr(0, rlourlvariable.length-1) ,
+            uploadAudioUrl : 'editor/uploadAudio.php?mode=record' + lti_session + '&uploadPath='+rlopathvariable+'&uploadURL='+rlourlvariable.substr(0, rlourlvariable.length-1),
             mathJaxClass :  'mathjax',
             mathJaxLib :    'offline/js/mathjax/MathJax.js?config=TeX-MML-AM_HTMLorMML-full',
             toolbarStartupExpanded : false,
@@ -2013,12 +2164,13 @@ var EDITOR = (function ($, parent) {
                 autoRefresh: true
 
             };
+            lti_session = lti_session !== "" ? "&" + lti_session : "";
             var ckoptions = {
-                filebrowserBrowseUrl : 'editor/elfinder/browse.php?mode=cke&type=media&uploadDir='+rlopathvariable+'&uploadURL='+rlourlvariable.substr(0, rlourlvariable.length-1),
-                filebrowserImageBrowseUrl : 'editor/elfinder/browse.php?mode=cke&type=image&uploadDir='+rlopathvariable+'&uploadURL='+rlourlvariable.substr(0, rlourlvariable.length-1),
-                filebrowserFlashBrowseUrl : 'editor/elfinder/browse.php?mode=cke&type=flash&uploadDir='+rlopathvariable+'&uploadURL='+rlourlvariable.substr(0, rlourlvariable.length-1),
-                uploadUrl : 'editor/uploadImage.php?mode=dragdrop&uploadPath='+rlopathvariable+'&uploadURL='+rlourlvariable.substr(0, rlourlvariable.length-1),
-                uploadAudioUrl : 'editor/uploadAudio.php?mode=record&uploadPath='+rlopathvariable+'&uploadURL='+rlourlvariable.substr(0, rlourlvariable.length-1),
+                filebrowserBrowseUrl : 'editor/elfinder/browse.php?mode=cke' + lti_session + '&type=media&uploadDir='+rlopathvariable+'&uploadURL='+rlourlvariable.substr(0, rlourlvariable.length-1),
+                filebrowserImageBrowseUrl : 'editor/elfinder/browse.php?mode=cke' + lti_session + '&type=image&uploadDir='+rlopathvariable+'&uploadURL='+rlourlvariable.substr(0, rlourlvariable.length-1) ,
+                filebrowserFlashBrowseUrl : 'editor/elfinder/browse.php?mode=cke' + lti_session + '&type=flash&uploadDir='+rlopathvariable+'&uploadURL='+rlourlvariable.substr(0, rlourlvariable.length-1),
+                uploadUrl : 'editor/uploadImage.php?mode=dragdrop' + lti_session + '&uploadPath='+rlopathvariable+'&uploadURL='+rlourlvariable.substr(0, rlourlvariable.length-1) ,
+                uploadAudioUrl : 'editor/uploadAudio.php?mode=record' + lti_session + '&uploadPath='+rlopathvariable+'&uploadURL='+rlourlvariable.substr(0, rlourlvariable.length-1) ,
                 mathJaxClass :  'mathjax',
                 mathJaxLib :    'offline/js/mathjax/MathJax.js?config=TeX-MML-AM_HTMLorMML-full',
                 toolbarStartupExpanded : defaultToolBar,
@@ -2028,10 +2180,10 @@ var EDITOR = (function ($, parent) {
 				editorplaceholder: options.options.placeholder
             };
 
+            let height = -1;
             if (options.options.height)
             {
-                var height = parseInt(options.options.height) + 20;
-                ckoptions['height'] = height;
+                height = parseInt(options.options.height) + 20;
             }
             if (options.options.type == 'html')
             {
@@ -2042,23 +2194,33 @@ var EDITOR = (function ($, parent) {
             {
                 var ckeditorcontents = $('#'+options.id).data('afterckeditor');
                 $('#'+options.id).ckeditor(function(){
-                		var self = this;
+                	var self = this;
 
                     if (ckeditorcontents) this.setData(ckeditorcontents);
+
+                    if (height > 0)
+                    {
+                        const e = $('#' + options.id).next().find('.ck-editor__editable_inline');
+                        const editor = e[0].ckeditorInstance;
+                        $('#' + options.id).next().find('.ck-editor__editable_inline').css("min-height", height + "px").css("max-height", height + "px");
+                        editor.editing.view.change(writer=>{
+                            writer.setStyle('height', height + 'px', editor.editing.view.document.getRoot());
+                        });
+                    }
 
                     // Editor is ready, attach change event
                     this.on('change', function(){
                         inputChanged(options.id, options.key, options.name, self.getData(), self);
                     });
-										this.on('fileUploadResponse', function(e) {
-											/*self.on('NO-EVENT-WORKS-HERE', function(e) {
-												e.removeListener();
-												inputChanged(options.id, options.key, options.name, self.getData(), self);
-											});*/
-											setTimeout(function () {
-														self.fire('change');
-													}, 1500);
-										});
+                    this.on('fileUploadResponse', function(e) {
+                        /*self.on('NO-EVENT-WORKS-HERE', function(e) {
+                            e.removeListener();
+                            inputChanged(options.id, options.key, options.name, self.getData(), self);
+                        });*/
+                        setTimeout(function () {
+                                    self.fire('change');
+                                }, 1500);
+                    });
                 }, ckoptions);
             }
             else
@@ -2072,7 +2234,7 @@ var EDITOR = (function ($, parent) {
                 });
                 if (options.options.height)
                 {
-                    var height = parseInt(options.options.height) + 20;
+                    height = parseInt(options.options.height) + 20;
                     codemirror.setSize(null,height);
                 }
                 $('.CodeMirror').resizable({
@@ -2109,10 +2271,14 @@ var EDITOR = (function ($, parent) {
     },
 
     convertTextInputs = function () {
+        lti_session = lti_session !== "" ? "&" + lti_session : "";
         $.each(textinputs_options, function (i, options) {
             if (options) {
                 $('#'+options.id).ckeditor(function(){
                     // Editor is ready, attach onchange event
+                    if (options.name === 'name') {
+                        sizeInlineQFPanel($('#mainPanel .qf-inline-row'));
+                    }
                     this.on('change', function(){
                         var thisValue = this.getData();
                         thisValue = thisValue.substr(0, thisValue.length-1); // Remove the extra linebreak
@@ -2160,11 +2326,11 @@ var EDITOR = (function ($, parent) {
                         [ 'Sourcedialog' ]
                     ],
                     inlineEditor: true,
-                    filebrowserBrowseUrl : 'editor/elfinder/browse.php?mode=cke&type=media&uploadDir='+rlopathvariable+'&uploadURL='+rlourlvariable.substr(0, rlourlvariable.length-1),
-                    filebrowserImageBrowseUrl : 'editor/elfinder/browse.php?mode=cke&type=image&uploadDir='+rlopathvariable+'&uploadURL='+rlourlvariable.substr(0, rlourlvariable.length-1),
-                    filebrowserFlashBrowseUrl : 'editor/elfinder/browse.php?mode=cke&type=flash&uploadDir='+rlopathvariable+'&uploadURL='+rlourlvariable.substr(0, rlourlvariable.length-1),
-                    uploadUrl : 'editor/uploadImage.php?mode=dragdrop&uploadPath='+rlopathvariable+'&uploadURL='+rlourlvariable.substr(0, rlourlvariable.length-1),
-                    uploadAudioUrl : 'editor/uploadAudio.php?mode=record&uploadPath='+rlopathvariable+'&uploadURL='+rlourlvariable.substr(0, rlourlvariable.length-1),
+                    filebrowserBrowseUrl : 'editor/elfinder/browse.php?mode=cke' + lti_session + '&type=media&uploadDir='+rlopathvariable+'&uploadURL='+rlourlvariable.substr(0, rlourlvariable.length-1) ,
+                    filebrowserImageBrowseUrl : 'editor/elfinder/browse.php?mode=cke' + lti_session + '&type=image&uploadDir='+rlopathvariable+'&uploadURL='+rlourlvariable.substr(0, rlourlvariable.length-1) ,
+                    filebrowserFlashBrowseUrl : 'editor/elfinder/browse.php?mode=cke' + lti_session + '&type=flash&uploadDir='+rlopathvariable+'&uploadURL='+rlourlvariable.substr(0, rlourlvariable.length-1) ,
+                    uploadUrl : 'editor/uploadImage.php?mode=dragdrop' + lti_session + '&uploadPath='+rlopathvariable+'&uploadURL='+rlourlvariable.substr(0, rlourlvariable.length-1) ,
+                    uploadAudioUrl : 'editor/uploadAudio.php?mode=record' + lti_session + '&uploadPath='+rlopathvariable+'&uploadURL='+rlourlvariable.substr(0, rlourlvariable.length-1) ,
                     mathJaxClass :  'mathjax',
                     mathJaxLib :    'offline/js/mathjax/MathJax.js?config=TeX-MML-AM_HTMLorMML-full',
                     //extraPlugins : 'sourcedialog,image3,fontawesome,rubytext,editorplaceholder',
@@ -2464,7 +2630,7 @@ var EDITOR = (function ($, parent) {
                 rowList: [5,10,15,20,30],
                 viewrecords: true,
                 pager: '#' + id + '_nav',
-                editurl: 'editor/js/vendor/jqgrid/jqgrid_dummy.php',
+                editurl: 'editor/js/vendor/jqgrid/jqgrid_dummy.php' + '?' + lti_session,
                 rownumbers:true,
                 gridview:true,
                 ondblClickRow: function(rowid, ri, ci) {
@@ -2578,6 +2744,10 @@ var EDITOR = (function ($, parent) {
 
     readyLocalJgGridData = function(key, name){
         var data_lo = lo_data[key].attributes[name];
+        // For lightboxes, on the very first load the attribute might not yet be there. We treat it as a empty table as a work-around.
+        if (typeof data_lo === 'undefined' || data_lo === '') {
+            data_lo = '|';
+        }
         var rows = [];
         $.each(data_lo.split('||'), function(j, row){
             var records = row.split('|');
@@ -2766,20 +2936,120 @@ var EDITOR = (function ($, parent) {
         setAttributeValue(key, [name], [theme.name]);
     }
 
+    getComboboxOptionsForBaseSetting = function (setting_key){
+        let labels = [];
+        let option = [];
+        let default_value = "";
+
+        if (base_ai_options.hasOwnProperty(setting_key)){
+            for (let i = 0; i < base_ai_options[setting_key].length; i++) {
+                let value = base_ai_options[setting_key][i];
+                let label = value;
+                let section = "";
+                let option_key = value.toUpperCase();
+
+                if (setting_key === "reading_level") {
+                    section = "ReadingLevel";
+                } else if (setting_key === "education_level") {
+                    section = "EducationLevel";
+                } else if (setting_key === "tone_and_style") {
+                    section = "ToneAndStyle";
+                }
+
+                try {
+                    if (
+                        section !== "" &&
+                        language &&
+                        language.assistents &&
+                        language.assistents.AIBaseSettingOptions &&
+                        language.assistents.AIBaseSettingOptions[section] &&
+                        language.assistents.AIBaseSettingOptions[section][option_key] &&
+                        language.assistents.AIBaseSettingOptions[section][option_key].$label
+                    ) {
+                        label = language.assistents.AIBaseSettingOptions[section][option_key].$label;
+                    }
+                } catch (e) {
+                    // fall back to raw db value
+                }
+
+                option.push(value);
+                labels.push(label);
+            }
+
+            // append custom option to preserve existing behaviour
+            option.push("custom");
+
+            try {
+                if (
+                    language &&
+                    language.assistents &&
+                    language.assistents.AIBaseSettingOptions &&
+                    language.assistents.AIBaseSettingOptions.Common &&
+                    language.assistents.AIBaseSettingOptions.Common.CUSTOM &&
+                    language.assistents.AIBaseSettingOptions.Common.CUSTOM.$label
+                ) {
+                    labels.push(language.assistents.AIBaseSettingOptions.Common.CUSTOM.$label);
+                } else {
+                    labels.push("custom");
+                }
+            } catch (e) {
+                labels.push("custom");
+            }
+        } else {
+            option.push("NaN");
+
+            try {
+                if (
+                    language &&
+                    language.assistents &&
+                    language.assistents.AIBaseSettingOptions &&
+                    language.assistents.AIBaseSettingOptions.Common &&
+                    language.assistents.AIBaseSettingOptions.Common.NO_OPTIONS_AVAILABLE &&
+                    language.assistents.AIBaseSettingOptions.Common.NO_OPTIONS_AVAILABLE.$label
+                ) {
+                    labels.push(language.assistents.AIBaseSettingOptions.Common.NO_OPTIONS_AVAILABLE.$label);
+                } else {
+                    labels.push("No options available");
+                }
+            } catch (e) {
+                labels.push("No options available");
+            }
+        }
+
+        if (base_ai_defaults.hasOwnProperty(setting_key)) {
+            default_value = base_ai_defaults[setting_key];
+        }
+
+        return [labels, option, default_value];
+    }
+
     getComboboxOptionsForVendor = function (type){
         let labels = [];
         let option = [];
+
         if (vendor_options.hasOwnProperty(type)){
             for (let vendor in vendor_options[type]) {
+                if (!vendorHasApiKey(type, vendor)) {
+                    continue;
+                }
+
                 option.push(vendor);
                 labels.push(vendor_options[type][vendor].label);
             }
         } else {
             //type is not in management helper table
             labels.push("No options available");
-            option.push("NaN")
+            option.push("NaN");
         }
         return [labels,option];
+    }
+
+    //Helper for determining whether a) a user has the ai user role and b) any of the assistant options are available,
+    checkAssistantFeatureStatus = function (){
+        if (vendor_is_available('all', 'all') && hasrole('aiuser')){
+            return true;
+        }
+        return false;
     }
 
     selectChanged = function (id, key, name, value, obj)
@@ -2799,6 +3069,413 @@ var EDITOR = (function ($, parent) {
 
             setAttributeValue(key, [name], [checked.toString()]);
         },
+
+    getQuickFillParameters = function (type, attributes) {
+        switch (type) {
+            case 'quiz':
+                return {
+                    "question": attributes["numberOfQuestions"] || "3",
+                    "option": attributes["numberOfAnswers"] || "4",
+                };
+            case 'tabNavExtra':
+                return {
+                    "topic": attributes["qfTopic"] || "3",
+                    "nestedTab": attributes["qfNestedTab"] || "3",
+                    "nestedPage": attributes["qfNestedPage"] || "5",
+                };
+            case 'columnPage':
+                return {
+                    "nestedColumnPage": attributes["qfNestedColumnPage"] || "3",
+                };
+            case 'audioSlideshow':
+                return {
+                    "synchPoint": attributes["qfSynchPoint"] || "3",
+                };
+            case 'imageSequence':
+                return {
+                    "case": attributes["qfCase"] || "3",
+                    "imgSeries": attributes["qfImgSeries"] || "3",
+                    "singleImg": attributes["qfSingleImg"] || "5",
+                };
+            case 'thumbnailViewer':
+                return {
+                    "thumbnailImage": attributes["qfThumbnailImage"] || "5",
+                };
+            case 'SictTimeline':
+                return {
+                    "timeLineText": attributes["qfTimeLineText"] || "1",
+                    "timelineimage": attributes["qfTimelineimage"] || "1",
+                    "timelinevideo ": attributes["qfTimelinevideo"] || "1",
+                    "timeLineAudio": attributes["qfTimeLineAudio"] || "1",
+                };
+            case 'transcriptReader':
+                return {
+                    "nestedSynch": attributes["qfNestedSynch"] || "3",
+                };
+            case 'flashCards':
+                return {
+                    "card": attributes["qfCard"] || "5",
+                };
+            case 'list':
+                return {
+                    "listItem": attributes["qfListItem"] || "5",
+                };
+            case 'nav':
+                return {
+                    "navPage": attributes["qfNavPage"] || "3",
+                };
+            case 'perspectives':
+                return {
+                    "movie": attributes["qfMovie"] || "1",
+                    "sound": attributes["qfSound"] || "1",
+                    "image": attributes["qfImage"] || "1",
+                    "mpText": attributes["qfMpText"] || "1",
+                };
+            case 'annotatedDiagram':
+                return {
+                    "flexhotspot": attributes["qfFlexhotspot"] || "3",
+                };
+            case 'hotspotGroup':
+                return {
+                    "flexhotspot": attributes["qfFlexhotspot"] || "3",
+                };
+            case 'topXQ':
+                return {
+                    "optionXQ": attributes["qfOptionXQ"] || "5",
+                };
+            case 'buttonSequence':
+                return {
+                    "button": attributes["qfButton"] || "5",
+                };
+            case 'categories':
+                return {
+                    "category": attributes["qfCategory"] || "3",
+                    "item": attributes["qfItem"] || "5",
+                };
+            case 'decision':
+                return {
+                    "resultStep": attributes["qfResultStep"] || "1",
+                    "infoStep": attributes["qfInfoStep"] || "1",
+                    "sliderStep": attributes["qfSliderStep"] || "1",
+                    "sliderStepOption": attributes["qfSliderStepOption"] || "4",
+                    "mcqStep": attributes["qfMcqStep"] || "1",
+                    "mcqStepOption": attributes["qfMcqStepOption"] || "4",
+                };
+            case 'dialog':
+                return {
+                    "dialogStep": attributes["qfDialogStep"] || "5",
+                };
+            case 'dictation':
+                return {
+                    "nestedDictation": attributes["qfNestedDictation"] || "3",
+                };
+            case 'documentation':
+                return {
+                    "page": attributes["qfPage"] || "1",
+                };
+            case 'page':
+                return {
+                    "media": attributes["qfMedia"] || "1",
+                    "selectlist": attributes["qfSelectlist"] || "1",
+                    "selectitem": attributes["qfSelectitem"] || "5",
+                    "description": attributes["qfDescription"] || "1",
+                    "tableDoc": attributes["qfTableDoc"] || "1",
+                    "checkbox": attributes["qfCheckbox"] || "1",
+                    "textArea": attributes["qfTextArea"] || "1",
+                    "textBox": attributes["qfTextBox"] || "1",
+                };
+            case 'section':
+                return {
+                    "media": attributes["qfMedia"] || "1",
+                    "selectlist": attributes["qfSelectlist"] || "1",
+                    "selectitem": attributes["qfSelectitem"] || "5",
+                    "description": attributes["qfDescription"] || "1",
+                    "tableDoc": attributes["qfTableDoc"] || "1",
+                    "checkbox": attributes["qfCheckbox"] || "1",
+                    "textArea": attributes["qfTextArea"] || "1",
+                    "textBox": attributes["qfTextBox"] || "1",
+                };
+            case 'dragDropLabel':
+                return {
+                    "hotspot": attributes["qfHotspot"] || "3",
+                };
+            case 'hotspotImage':
+                return {
+                    "flexhotspot": attributes["qfFlexhotspot"] || "3",
+                };
+            case 'hotSpotQuestion':
+                return {
+                    "QHotSpot": attributes["qfQHotSpot"] || "3",
+                };
+            case 'interactiveText':
+                return {
+                    "group": attributes["qfGroup"] || "5",
+                };
+            case 'ivOverlayPanel':
+                return {
+                    "ivSynchTextPlus": attributes["qfIvSynchTextPlus"] || "3",
+                    "ivSynchMCQ": attributes["qfIvSynchMCQ"] || "1",
+                    "ivSynchMCQOption": attributes["qfIvSynchMCQOption"] || "4",
+                    "ivSynchXot": attributes["qfIvSynchXot"] || "1",
+                    "ivSynchXotChange": attributes["qfIvSynchXotChange"] || "3",
+                };
+            case 'inventory':
+                return {
+                    "invQuestion": attributes["qfInvQuestion"] || "3",
+                    "invOption": attributes["qfInvOption"] || "4",
+                };
+            case 'textMatch':
+                return {
+                    "sentence": attributes["qfSentence"] || "3",
+                };
+            case 'mcq':
+                return {
+                    "option": attributes["qfOption"] || "4",
+                };
+            case 'opinion':
+                return {
+                    "opinionClass": attributes["qfOpinionClass"] || "3",
+                    "opinionQuestion": attributes["qfOpinionQuestion"] || "3",
+                    "opinionOption": attributes["qfOpinionOption"] || "4",
+                };
+            case 'timeline':
+                return {
+                    "timelinedate": attributes["qfTimelinedate"] || "6",
+                };
+            case 'memory':
+                return {
+                    "matchItem": attributes["qfMatchItem"] || "6",
+                };
+            case 'crossword':
+                return {
+                    "wordAndHint": attributes["qfWordAndHint"] || "6",
+                };
+            case 'links':
+                return {
+                    "link": attributes["qfLink"] || "3",
+                };
+            case 'adaptiveContent':
+                return {
+                    "interaction": attributes["qfInteraction"] || "3",
+                    "interactionBlock": attributes["qfInteractionBlock"] || "3",
+                };
+            case 'mediaLesson':
+                return {
+                    "panel": attributes["qfPanel"] || "3",
+                };
+            case 'mediaPanel':
+                return {
+                    "synchXot": attributes["qfSynchXot"] || "1",
+                    "synchXotChange": attributes["qfSynchXotChange"] || "3",
+                    "synchWebpage": attributes["qfSynchWebpage"] || "3",
+                    "synchMCQ": attributes["qfSynchMCQ"] || "1",
+                    "synchMCQOption": attributes["qfSynchMCQOption"] || "4",
+                    "synchSlides": attributes["qfSynchSlides"] || "1",
+                    "synchSlide": attributes["qfSynchSlide"] || "6",
+                    "synchTextPlus": attributes["qfSynchTextPlus"] || "3",
+                    "synchEmpty": attributes["qfSynchEmpty"] || "3",
+                    "synchCue": attributes["qfSynchCue"] || "3",
+                };
+            case 'panel':
+                return {
+                    "synchXot": attributes["qfSynchXot"] || "1",
+                    "synchXotChange": attributes["qfSynchXotChange"] || "3",
+                    "synchWebpage": attributes["qfSynchWebpage"] || "3",
+                    "synchMCQ": attributes["qfSynchMCQ"] || "1",
+                    "synchMCQOption": attributes["qfSynchMCQOption"] || "4",
+                    "synchSlides": attributes["qfSynchSlides"] || "1",
+                    "synchSlide": attributes["qfSynchSlide"] || "6",
+                    "synchTextPlus": attributes["qfSynchTextPlus"] || "3",
+                    "synchEmpty": attributes["qfSynchEmpty"] || "3",
+                    "synchMediaPlus": attributes["qfSynchMediaPlus"] || "3",
+                    "synchCue": attributes["qfSynchCue"] || "3",
+                };
+            default:
+                return undefined;
+        }
+    },
+
+    runQuickFill = async function (key, $button, skipConfirm) {
+        var type = lo_data[key].attributes.nodeName;
+        var parameters = getQuickFillParameters(type, lo_data[key].attributes);
+        if (!parameters) {
+            return;
+        }
+        $button.prop('disabled', true);
+        var confirmMsg = (language.assistents.QuickFillInline && language.assistents.QuickFillInline.$confirm)
+            ? language.assistents.QuickFillInline.$confirm
+            : "The specified nodes will be automatically generated with their default values. Proceed?";
+        if (!skipConfirm && !confirm(confirmMsg)) {
+            $button.prop('disabled', false);
+            return;
+        }
+        try {
+            await quick_fill({data: {key: key}}, type, parameters);
+            if (skipConfirm) {
+                $.featherlight.close();
+                parent.tree.showNodeData(key);
+            }
+        } catch (error) {
+            console.log('Error occurred:', error);
+            alert("Something went wrong. Please try using the quick fill feature again.");
+        } finally {
+            $button.prop('disabled', false);
+        }
+    },
+
+    syncQfLightboxAttributes = function (key, groupName) {
+        var formInputValues = $('#lightbox_' + groupName + ' :input').add($('#lightbox_' + groupName + ' .inlinewysiwyg'));
+        for (var i = 0; i < formInputValues.length; i++) {
+            var input = formInputValues[i];
+            var name = input.name || input.getAttribute('name');
+            if (!name) {
+                continue;
+            }
+            var value;
+            if (input.getAttribute('type') === 'wysiwyg') {
+                value = stripP(input.textContent);
+            } else if (input.type === 'checkbox') {
+                value = String(input.checked);
+            } else {
+                value = input.value;
+            }
+            lo_data[key].attributes[name] = value;
+            setAttributeValue(key, [name], [value]);
+        }
+    },
+
+    showInlineQFGroup = function (key, nodeName, menuOptions) {
+        var node_options = wizard_data[nodeName] && wizard_data[nodeName].node_options;
+        if (!node_options || !node_options.all) {
+            return;
+        }
+
+        var qfGroupDef = null;
+        for (var i = 0; i < node_options.all.length; i++) {
+            var opt = node_options.all[i];
+            if (opt.name === 'QFGroup' && opt.value.type === 'group') {
+                qfGroupDef = opt;
+                break;
+            }
+        }
+        if (!qfGroupDef) {
+            return;
+        }
+
+        displayInlineQFGroup(key, qfGroupDef, menuOptions);
+    },
+
+    findQFGroupOption = function (node_options) {
+        var qfGroup = null;
+
+        for (var i = 0; i < node_options['optional'].length; i++) {
+            var option = node_options['optional'][i];
+            if (option.name === 'QFGroup' && option.value.type === 'group' && option.value.lightbox === 'form') {
+                qfGroup = option;
+                break;
+            }
+        }
+
+        if (!qfGroup) {
+            for (var k = 0; k < node_options['all'].length; k++) {
+                var allOption = node_options['all'][k];
+                if (allOption.name === 'QFGroup' && allOption.value.type === 'group' && allOption.value.lightbox === 'form') {
+                    qfGroup = allOption;
+                    break;
+                }
+            }
+        }
+
+        if (!qfGroup) {
+            return null;
+        }
+
+        if (!qfGroup.value.children || qfGroup.value.children.length === 0) {
+            qfGroup.value.children = [];
+            for (var j = 0; j < node_options['all'].length; j++) {
+                if (node_options['all'][j].value.group === 'QFGroup') {
+                    qfGroup.value.children.push(node_options['all'][j]);
+                }
+            }
+            if (qfGroup.value.children.length === 0) {
+                for (var m = 0; m < node_options['optional'].length; m++) {
+                    if (node_options['optional'][m].value.group === 'QFGroup') {
+                        qfGroup.value.children.push(node_options['optional'][m]);
+                    }
+                }
+            }
+        }
+
+        return qfGroup;
+    },
+
+    displayInlineQFGroup = function (key, qfGroupDef, menuOptions) {
+        if (!qfGroupDef) {
+            return;
+        }
+        if (qfGroupDef.value.condition && !evaluateCondition(qfGroupDef.value.condition, key)) {
+            return;
+        }
+
+        var pageName = (menuOptions.menuItem || qfGroupDef.value.label || '').toLowerCase();
+        var inlineLang = language.assistents.QuickFillInline || {};
+        var title = inlineLang.$title
+            ? inlineLang.$title.replace('{page}', pageName)
+            : qfGroupDef.value.label;
+        var description = qfGroupDef.value.tooltip || inlineLang.$description || '';
+        var btnLabel = inlineLang.$btnlabel || language.assistents.QuickFillBtn.$label;
+
+        var $panel = $('<div class="qf-inline-panel">');
+        var $content = $('<div class="qf-inline-content">');
+        $content.append($('<div class="qf-inline-title">').text(title));
+        if (description) {
+            $content.append($('<div class="qf-inline-description">').text(description));
+        }
+        $panel.append($content);
+
+        var $setupBtn = $('<button type="button" class="qf-inline-setup-btn">')
+            .text(btnLabel)
+            .click({key: key, nodeName: lo_data[key].attributes.nodeName}, function (event) {
+                var nodeName = event.data.nodeName;
+                var all = wizard_data[nodeName].node_options.all;
+                var children = [];
+                for (var c = 0; c < all.length; c++) {
+                    if (all[c].value.group === 'QFGroup') {
+                        children.push(all[c]);
+                    }
+                }
+                triggerRedrawForm('QFGroup', event.data.key, children, 'initialize');
+            });
+        $panel.append($setupBtn);
+
+        var $row = $('<tr class="qf-inline-row wizardattribute">')
+            .append($('<td>').addClass('wizardparameter'))
+            .append($('<td colspan="2">').addClass('wizardvalue').append(
+                $('<div class="wizardvalue_inner">').append($panel)
+            ));
+        $('#mainPanel .wizard').append($row);
+        sizeInlineQFPanel($row);
+    },
+
+    sizeInlineQFPanel = function ($row) {
+        var $nameRow = $('#param_name');
+        if (!$nameRow.length) {
+            return;
+        }
+        var $label = $nameRow.find('td.wizardlabel').first();
+        var $input = $nameRow.find('.wizardvalue_inner .inlinewysiwyg p').first();
+        if (!$input.length) {
+            $input = $nameRow.find('.wizardvalue_inner .ck-editor__editable_inline').first();
+        }
+        if (!$input.length) {
+            $input = $nameRow.find('.wizardvalue_inner .inlinewysiwyg, .wizardvalue_inner input, .wizardvalue_inner textarea, .wizardvalue_inner select').first();
+        }
+        if (!$label.length || !$input.length) {
+            return;
+        }
+        var panelWidth = ($input.offset().left + $input.outerWidth()) - $label.offset().left;
+        $row.find('.qf-inline-panel').css('width', panelWidth + 'px');
+    },
 
         inputChanged = function (id, key, name, value, obj) {
             //console.log('inputChanged : ' + id + ': ' + key + ', ' +  name  + ', ' +  value);
@@ -2891,7 +3568,7 @@ var EDITOR = (function ($, parent) {
                 }
                 window.elFinder = null;
             };
-            window.open('editor/elfinder/browse.php?type=media&lang=' + languagecodevariable.substr(0, 2) + '&uploadDir=' + rlopathvariable + '&uploadURL=' + rlourlvariable + '&loc=' + tmp_loc, 'Browse file', "height=600, width=800");
+            window.open('editor/elfinder/browse.php?type=media' + lti_session + '&lang=' + languagecodevariable.substr(0, 2) + '&uploadDir=' + rlopathvariable + '&uploadURL=' + rlourlvariable + '&loc=' + tmp_loc, 'Browse file', "height=600, width=800");
         },
 
         previewFile = function (alt, src, title) {
@@ -3009,7 +3686,10 @@ var EDITOR = (function ($, parent) {
 			}
 			
 			var level = Number(thisTarget);
-			var lo_node = tree.get_node(tree.get_node(thisKey, false).parents[level], false);
+            var lo_node = tree.get_node(tree.get_node(thisKey, false).parents[level], false);
+            if (thisTarget < 0) {
+                lo_node = tree.get_node(thisKey, false);
+            }
 			
 			$.each(lo_node.children, function(i, key){
                 // list pages of specified types only if pageType set, or all page types if not specified
@@ -4462,31 +5142,134 @@ var EDITOR = (function ($, parent) {
     {
         parent.tree.showNodeData(key, true);
     };
+    lbShowAdvanced = function(key)
+    {
+        window.showAdvanced[key]['enabled'] = !window.showAdvanced[key]['enabled'];
+        triggerRedrawForm(window.showAdvanced[key]['group'], key, "", "initialize");
+    }
 
     lightboxSetUp = function(group, attributes, node_options, key, formState="") {
 
         let groupChildren = group.value.children;
-        var lightboxHtml = $("<form id='lightbox_" + group.name + "' style='width: 50vw' ></form>");
-        let lightboxTable = $("<table id='lightboxPanel' class='content'></table>");
-        let lightboxId = "#lightbox_" + group.name;
-				let name = wizard_data[lo_data[key]['attributes'].nodeName].menu_options.menuItem;
-				lightboxHtml.append($("<div>").text(name));
+        let menuOptions = wizard_data[lo_data[key]['attributes'].nodeName].menu_options;
+        let pageLabel = menuOptions.menuItem || group.value.label || '';
+        let pageName = pageLabel.toLowerCase();
+        let isQfGroup = group.name === 'QFGroup';
+        let inlineLang = language.assistents.QuickFillInline || {};
+        let modalLang = language.assistents.QuickFillModal || {};
+        let title = isQfGroup
+            ? (modalLang.$title || inlineLang.$title || group.value.label || '').replace('{page}', pageLabel)
+            : menuOptions.menuItem;
 
-        //build lightbox form content input by input
-        for (var j = 0; j < groupChildren.length; j++) {
-
-            //rebuild form
-            displayParameter(
-                lightboxId,
-                groupChildren,
-                groupChildren[j].name,
-                formState,
-                key,
-                lightboxTable,
-                group.value.lightbox
-            );
+        let lightboxHtml = $("<div></div>");
+        if (isQfGroup) {
+            lightboxHtml.addClass('qf-lightbox');
         }
-        lightboxHtml.append(lightboxTable);
+
+        let lightboxBody = $("<form id='lightbox_" + group.name + "' class='lightbox-form'></form>");
+        let lightboxFooter;
+
+        if (isQfGroup) {
+            var description = modalLang.$description || group.value.tooltip || inlineLang.$description || '';
+
+            let lightboxHeader = $("<div class=\"qf-lightbox-header\"></div>");
+            lightboxHeader.append($("<h2 class=\"qf-lightbox-title\">").text(title));
+            lightboxHeader.append(
+                $("<button type=\"button\" class=\"qf-lightbox-close\" aria-label=\"Close\">")
+                    .html('&times;')
+                    .on('click', function () {
+                        $.featherlight.close();
+                    })
+            );
+            if (description) {
+                lightboxHeader.append($('<p class="qf-lightbox-description">').text(description));
+            }
+
+            lightboxBody.addClass('qf-lightbox-form');
+            let fieldsContainer = $('<div class="qf-lightbox-fields"></div>');
+            for (var j = 0; j < groupChildren.length; j++) {
+                var child = groupChildren[j];
+                var childType = (child.value.type || '').toLowerCase();
+                if (childType === 'quickfillbutton' || childType === 'info') {
+                    continue;
+                }
+                var fieldName = child.name;
+                var fieldLabel = child.value.label || fieldName;
+                var fieldValue = (formState && formState[fieldName] !== undefined && formState[fieldName] !== '')
+                    ? formState[fieldName]
+                    : (child.value.defaultValue || '');
+                if (typeof fieldValue === 'string' && fieldValue.indexOf('<') >= 0) {
+                    fieldValue = stripP(fieldValue);
+                }
+                var $field = $('<div class="qf-field">');
+                $field.append($('<label>').attr('for', 'qf_' + fieldName).text(fieldLabel));
+                $field.append(
+                    $('<input type="text">')
+                        .attr('id', 'qf_' + fieldName)
+                        .attr('name', fieldName)
+                        .val(fieldValue)
+                );
+                fieldsContainer.append($field);
+            }
+            lightboxBody.append(fieldsContainer);
+
+            var cancelLabel = modalLang.$cancel || 'Cancel';
+            var createLabel = (modalLang.$create || 'Create {page}').replace('{page}', pageName);
+            lightboxFooter = $('<div class="qf-lightbox-footer"></div>');
+            lightboxFooter.append(
+                $('<button type="button" class="qf-lightbox-btn qf-lightbox-btn-cancel">')
+                    .text(cancelLabel)
+                    .on('click', function () {
+                        $.featherlight.close();
+                    })
+            );
+            lightboxFooter.append(
+                $('<button type="button" class="qf-lightbox-btn qf-lightbox-btn-create">')
+                    .text(createLabel)
+                    .on('click', {key: key, group: group.name}, async function (event) {
+                        syncQfLightboxAttributes(event.data.key, event.data.group);
+                        await runQuickFill(event.data.key, $(this), true);
+                    })
+            );
+
+            lightboxHtml.append(lightboxHeader);
+            lightboxHtml.append(lightboxBody);
+            lightboxHtml.append(lightboxFooter);
+        } else {
+            let titleDefault = menuOptions.menuItem;
+            let lightboxHeader = $("<div id=\"lb_header\" class=\"header\"></div>");
+            lightboxHeader.append($("<div>").text(titleDefault));
+
+            let lightboxAdvancedCbChecked = "";
+            if (window.showAdvanced && window.showAdvanced[key] && window.showAdvanced[key]['enabled'])
+            {
+                lightboxAdvancedCbChecked = "checked";
+            }
+            lightboxFooter = $("<div id=\"lb_footer\" class=\"footer\">\n" +
+                "            <div id=\"checkbox_outer\"><table><tr><td id=\"checkbox_holder\">" +
+                "            <input type=\"checkbox\" id=\"lb_advanced_cb\" title='" + language.chkShowAdvanced.$tooltip + "' " + lightboxAdvancedCbChecked + " disabled class='disabled' onchange='lbShowAdvanced(\"" + key + "\")'> <label id=\"lb_advanced_cb_span\" for=\"lb_advanced_cb\" class=\"disabled\">" + language.chkShowAdvanced.$label + "</label>" +
+                "</td></tr></table></div>\n" +
+                "        </div>");
+
+            let lightboxTable = $("<table id='lightboxPanel' class='content'></table>");
+            let lightboxId = "#lightbox_" + group.name;
+
+            for (var k = 0; k < groupChildren.length; k++) {
+                displayParameter(
+                    lightboxId,
+                    groupChildren,
+                    groupChildren[k].name,
+                    formState,
+                    key,
+                    lightboxTable,
+                    group.value.lightbox
+                );
+            }
+            lightboxBody.append(lightboxTable);
+            lightboxHtml.append(lightboxHeader);
+            lightboxHtml.append(lightboxBody);
+            lightboxHtml.append(lightboxFooter);
+        }
 
         // ensure global is always present
         window.lightboxCKEditorIds = window.lightboxCKEditorIds || [];
@@ -4508,11 +5291,13 @@ var EDITOR = (function ($, parent) {
         $.featherlight(lightboxHtml, {
             persist: true,
             closeOnClick: false,
-            closeOnEsc: false,
+            closeOnEsc: isQfGroup,
             afterOpen: function(event) {
                 var attributes = lo_data[key]['attributes'];
                 formState = { ...attributes };
-                convertTextInputs();
+                if (!isQfGroup) {
+                    convertTextInputs();
+                }
                 convertDataGrids();
                 convertTreeSelect();
                 convertTextAreas();
@@ -4526,6 +5311,12 @@ var EDITOR = (function ($, parent) {
     }
 
     triggerRedrawForm = function (group, key, groupChildren="", mode, alternative_button = "") {
+        let currentNodeType = lo_data[key]['attributes'].nodeName;
+        const fallbackChildren =
+            wizard_data[currentNodeType].node_options.all
+                .find(option => option.name === group).value.children;
+
+        groupChildren = (groupChildren === "" ? fallbackChildren : groupChildren);
         //store current form state for rebuild
         let formState = {};
         let formInputValues = $('#lightbox_' + group + ' :input').add($('#lightbox_' + group + ' .inlinewysiwyg'));
@@ -4547,16 +5338,85 @@ var EDITOR = (function ($, parent) {
                 }
 
                 // inherit any fields.
-                const inheritField = groupChildren[input]?.value?.inheritField;
-                if (inheritField !== undefined && inheritField !== "") {
-                    const groupName = groupChildren[input]?.name;
+                const inheritFieldRaw = groupChildren[input]?.value?.inheritField;
+                const inheritFieldClean = groupChildren[input]?.value?.inheritFieldClean;
 
-                    // determine candidate value
+                // pick which key/spec to inherit from, and remember whether we must clean
+                let inheritSpec;
+                let shouldClean = false;
+
+                if (inheritFieldRaw !== undefined && inheritFieldRaw !== "") {
+                    inheritSpec = inheritFieldRaw;
+                } else if (inheritFieldClean !== undefined && inheritFieldClean !== "") {
+                    inheritSpec = inheritFieldClean;
+                    shouldClean = true;
+                }
+
+                if (inheritSpec) {
+                    const groupName = groupChildren[input]?.name;
                     let value;
-                    if (attributes[inheritField] !== undefined && attributes[inheritField] !== null) {
-                        value = attributes[inheritField];
-                    } else if (lo_attributes[inheritField] !== undefined && lo_attributes[inheritField] !== null) {
-                        value = lo_attributes[inheritField];
+                    const tree = $.jstree.reference("#treeview");
+                    const parts = inheritSpec.split("|").map(p => p.trim()).filter(Boolean);
+
+                    //simple mode: inherit from current context of event
+                    if (parts.length === 1) {
+                        const inheritKey = parts[0];
+
+                        if (attributes[inheritKey] !== undefined && attributes[inheritKey] !== null) {
+                            value = attributes[inheritKey];
+                        } else if (lo_attributes[inheritKey] !== undefined && lo_attributes[inheritKey] !== null) {
+                            value = lo_attributes[inheritKey];
+                        }
+                    }
+
+                    // parent|fieldName (inherit this field from the parent node)
+                    else if (parts[0] === "parent" && parts.length === 2) {
+                        const inheritKey = parts[1];
+                        const parentKey = tree.get_parent(key);
+
+                        if (parentKey && parentKey !== "#" && parentKey !== "treeroot") {
+                            const parentAttrs = lo_data[parentKey]?.attributes;
+                            if (parentAttrs && parentAttrs[inheritKey] !== undefined && parentAttrs[inheritKey] !== null) {
+                                value = parentAttrs[inheritKey];
+                            }
+                        }
+                    }
+
+                    // sibling|nodeType|fieldName (inherit this field from another node under the same parent)
+                    else if (parts[0] === "sibling" && parts.length === 3) {
+                        const siblingType = parts[1];
+                        const inheritKey = parts[2];
+                        const parentKey = tree.get_parent(key);
+
+                        if (parentKey && parentKey !== "#" && parentKey !== "treeroot") {
+                            const parentNode = tree.get_node(parentKey);
+
+                            if (parentNode && parentNode.children) {
+                                for (let i = 0; i < parentNode.children.length; i++) {
+                                    const childKey = parentNode.children[i];
+                                    if (childKey === key) continue;
+
+                                    const childNode = tree.get_node(childKey);
+                                    const childAttrs = lo_data[childKey]?.attributes;
+
+                                    const matchesType =
+                                        (childNode && childNode.type === siblingType) ||
+                                        (childAttrs && childAttrs.nodeName === siblingType);
+
+                                    if (matchesType) {
+                                        if (childAttrs && childAttrs[inheritKey] !== undefined && childAttrs[inheritKey] !== null) {
+                                            value = childAttrs[inheritKey];
+                                            break;
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+
+                    // clean if requested by inheritFieldClean mode
+                    if (shouldClean) {
+                        value = toPlainText(value);
                     }
 
                     // assign only if the value is not empty ("", null, or undefined)
@@ -4571,7 +5431,12 @@ var EDITOR = (function ($, parent) {
             for (let input = 0; input < formInputValues.length ; input++) {
                 if (formInputValues[input].getAttribute('type') === 'wysiwyg') {
                     formState[formInputValues[input].getAttribute('name')] = formInputValues[input].textContent;
-                } else {
+                }
+                if(formInputValues[input].className === 'ckeditor'){
+                    formInputValues[input].value = formState[formInputValues[input].name];
+                    //formState[formInputValues[input].name] = formState[formInputValues[input].name];
+                }
+                else {
                     formState[formInputValues[input].name] = formInputValues[input].type !== 'checkbox' ? formInputValues[input].value : String(formInputValues[input].checked);
                 }
             }
@@ -4584,40 +5449,98 @@ var EDITOR = (function ($, parent) {
         //remove current form and button handler
         $('#lightbox_' + group).remove();
         $('#lightboxbutton_' + group).off("click");
-        let currentNodeType = lo_data[key]['attributes'].nodeName;
         let groupId = wizard_data[currentNodeType].node_options.all.find((option) => option.name == group);
         $.featherlight.close();
         lightboxSetUp(groupId, "", "", key, formState);
     };
+
+    // helper: convert rich text / html-ish strings to plain text
+    toPlainText = function (input) {
+        if (input === undefined || input === null) return input;
+
+        // Non-strings: keep as-is
+        if (typeof input !== "string") return input;
+
+        const s = input.trim();
+        if (s === "") return "";
+
+        // If it doesn't look like HTML, just normalize whitespace a bit
+        if (!/[<>]/.test(s)) {
+            return s.replace(/\s+/g, " ").trim();
+        }
+
+        // Browser env: safest plain-text extraction
+        if (typeof document !== "undefined") {
+            const el = document.createElement("div");
+            el.innerHTML = s;
+
+            // textContent drops tags and formatting; keeps readable text
+            const text = (el.textContent || "").replace(/\u00A0/g, " "); // nbsp -> space
+            return text.replace(/\s+/g, " ").trim();
+        }
+
+        // Non-browser fallback: strip tags + decode a few common entities
+        return s
+            .replace(/<\/p>\s*<p[^>]*>/gi, "\n")      // preserve paragraph breaks
+            .replace(/<br\s*\/?>/gi, "\n")            // preserve line breaks
+            .replace(/<[^>]+>/g, "")                  // strip remaining tags
+            .replace(/&nbsp;/gi, " ")
+            .replace(/&amp;/gi, "&")
+            .replace(/&lt;/gi, "<")
+            .replace(/&gt;/gi, ">")
+            .replace(/&quot;/gi, '"')
+            .replace(/&#39;/gi, "'")
+            .replace(/\u00A0/g, " ")
+            .replace(/[ \t]+\n/g, "\n")
+            .replace(/\n{3,}/g, "\n\n")
+            .replace(/[ \t]{2,}/g, " ")
+            .trim();
+    }
 
     validateFormInput = function (regexCondition, inputValue, name, fieldlabel) {
         let regex = new RegExp(regexCondition);
         const fieldReference = fieldlabel || name;
         if (!regex.test(inputValue.trim())) {
                 const regexString = regexCondition.toString();
-                //todo alek make languiage dynamic
-                let errorMsg=`Please fill in the ${fieldReference} field correctly.`;
+                let errorMsg= language.vendorApi.inputValidations.fieldFilledIncorrectlyMsg +` ${fieldReference}.`;
 
                 if (regexString === '^\\d+$') {
-                     errorMsg = `Please enter a valid numeral in the ${fieldReference} field. For example: '60', not 'sixty'.`;
+                     errorMsg = language.vendorApi.inputValidations.fieldInvalidNumeralMsg + ` ${fieldReference}. ` + language.vendorApi.inputValidations.fieldInvalidNumeralExampleMsg;
 
                 } else if (regexString === '^.+$') {
-                    errorMsg = `${fieldReference} is a mandatory field! Please fill it in.`;
+                    errorMsg = `${fieldReference} ` + language.vendorApi.inputValidations.mandatoryFieldMissingMsg;
 
                 } else if (regexString === '^(\\s*[^,]+\\s*,\\s*)+[^,]+\\s*$') {
-                    errorMsg = `Please make sure to enter at least two valid items separated by a comma in ${fieldReference} field. For example: 'Apples, Oranges, Berries'.`;
+                    errorMsg = language.vendorApi.inputValidations.fieldInvalidCommaListMsg + ` ${fieldReference}. ` + language.vendorApi.inputValidations.fieldInvalidCommaListExampleMsg;
                 }
             alert(errorMsg);
             return false;
         }
         return true;
     }
-    //verifies if an API key is needed and if it exists.
-    hasApiKeyInstalled = function (vendorGroup, vendor) {
-        if (vendor_options[vendorGroup] !== undefined && vendor_options[vendorGroup][vendor] !== undefined && (vendor_options[vendorGroup][vendor].has_key === true || vendor_options[vendorGroup][vendor].needs_key === false)) {
-            return true;
+    vendorHasApiKey = function (vendorGroup, vendor) {
+        function toBool(v) {
+            if (typeof v === 'boolean') return v;
+            if (typeof v === 'number') return v !== 0;
+            if (typeof v === 'string') return v === '1' || v.toLowerCase() === 'true';
+            return Boolean(v);
         }
 
+        const v = vendor_options?.[vendorGroup]?.[vendor];
+        if (!v) return false;
+
+        const hasKey = toBool(v.has_key);
+        const needsKey = toBool(v.needs_key);
+
+        // If it doesn't need a key, it's always OK. If it needs a key, must have one.
+        return !needsKey || hasKey;
+    };
+
+    //verifies if an API key is needed and if it exists.
+    hasApiKeyInstalled = function (vendorGroup, vendor) {
+        if (vendorHasApiKey(vendorGroup, vendor)) {
+            return true;
+        }
         alert(language.vendorApi.missingKey);
         return false;
     }
@@ -4635,7 +5558,7 @@ var EDITOR = (function ($, parent) {
 
                 let formFieldValue = "";
 
-                if (this.getAttribute('type') === 'wysiwyg') {
+                if ((this.getAttribute('type') === 'wysiwyg') || (this.getAttribute('class') === 'ckeditor')){
                     formFieldValue = this.textContent ;
                 } else {
                     formFieldValue = this.value;
@@ -4732,7 +5655,7 @@ var EDITOR = (function ($, parent) {
 
         //if form validation failed do not make request
         if (!formValidation) {
-            html.prop('disabled', false);
+            $(this).prop('disabled', false);
             return false;
         }
         return constructorObject;
@@ -4780,9 +5703,13 @@ var EDITOR = (function ($, parent) {
             case 'combobox_image':
             case 'combobox_imagegen':
             case 'combobox_ai':
+            case 'combobox_base_settings_rl': //ai base settings, reading level
+            case 'combobox_base_settings_el': //education level and
+            case 'combobox_base_settings_ts': //tone and style.
             case 'combobox':
-				var id = 'select_' + form_id_offset;
-				form_id_offset++;
+                var id = 'select_' + form_id_offset;
+                form_id_offset++;
+
                 if (options.type.toLowerCase() === 'combobox') {
                     var s_options = options.options.split(',');
                     for (var i = 0; i < s_options.length; i++) {
@@ -4794,6 +5721,30 @@ var EDITOR = (function ($, parent) {
                     } else {
                         s_data = s_options;
                     }
+                } else if (options.type.toLowerCase() === 'combobox_base_settings_rl') {
+                    let base_setting_options = getComboboxOptionsForBaseSetting('reading_level');
+                    s_options = base_setting_options[0];
+                    s_data = base_setting_options[1];
+
+                    if (value === '' && base_setting_options[2] !== '') {
+                        value = base_setting_options[2];
+                    }
+                } else if (options.type.toLowerCase() === 'combobox_base_settings_el') {
+                    let base_setting_options = getComboboxOptionsForBaseSetting('education_level');
+                    s_options = base_setting_options[0];
+                    s_data = base_setting_options[1];
+
+                    if (value === '' && base_setting_options[2] !== '') {
+                        value = base_setting_options[2];
+                    }
+                } else if (options.type.toLowerCase() === 'combobox_base_settings_ts') {
+                    let base_setting_options = getComboboxOptionsForBaseSetting('tone_and_style');
+                    s_options = base_setting_options[0];
+                    s_data = base_setting_options[1];
+
+                    if (value === '' && base_setting_options[2] !== '') {
+                        value = base_setting_options[2];
+                    }
                 } else {
                     let vendor = options.type.split("_");
                     let vendor_options = getComboboxOptionsForVendor(vendor.length >= 2 ? vendor[1] : "");
@@ -4801,11 +5752,11 @@ var EDITOR = (function ($, parent) {
                     s_data = vendor_options[1];
                 }
 
-				html = $('<select>')
-					.attr('id', id)
+                html = $('<select>')
+                    .attr('id', id)
                     .attr('name', name)
-					.change({id:id, key:key, name:name, group:options.group ,trigger:conditionTrigger}, function(event)
-					{
+                    .change({id:id, key:key, name:name, group:options.group ,trigger:conditionTrigger}, function(event)
+                    {
                         //store data in xml
                         selectChanged(event.data.id, event.data.key, event.data.name, this.value, this);
                         if (event.data.trigger)
@@ -4818,24 +5769,24 @@ var EDITOR = (function ($, parent) {
                                 triggerRedrawForm(event.data.group, event.data.key, "", "redraw");
                             }
                         }
-					});
+                    });
 
                 if (value == '') {
-					html.append($('<option>').attr('value', '').prop('selected', true));
-				}
-				for (var i=0; i<s_options.length; i++) {
-					var option = $('<option>')
-						.attr('value', s_data[i]);
-					if (s_data[i]==value) {
-						option.prop('selected', true);
-					}
-					option.append(s_options[i]);
-					html.append(option);
-					if (value == '' && html.find('option:selected').index() > 0) {
-						html.find(option).eq(0).remove();
-					}
-				}
-				break;
+                    html.append($('<option>').attr('value', '').prop('selected', true));
+                }
+                for (var i=0; i<s_options.length; i++) {
+                    var option = $('<option>')
+                        .attr('value', s_data[i]);
+                    if (s_data[i]==value) {
+                        option.prop('selected', true);
+                    }
+                    option.append(s_options[i]);
+                    html.append(option);
+                    if (value == '' && html.find('option:selected').index() > 0) {
+                        html.find(option).eq(0).remove();
+                    }
+                }
+                break;
 			case 'text':
 			case 'script':
 			case 'html':
@@ -5654,17 +6605,20 @@ var EDITOR = (function ($, parent) {
 						previewFile(options.label, $(this).closest('tr').find('input')[0].value);
 					})
 					.append($('<i>').addClass('fa').addClass('fa-lg').addClass('fa-search').addClass('xerte-icon')));
-
-				btnHolder.append($('<button>')
-					.attr('id', 'lightboxbutton_' + options.group)
-					.attr('title', language.compai.$tooltip)
-                    .attr('type', 'button')
-					.addClass("xerte_button")
-					.click({id:id, key:key, name:name, group: options.group}, function(event)
-					{
-						triggerRedrawForm("imgSearchAndHelpGroup", key, "", "initialize", event.data.name);
-					})
-					.append($('<i>').addClass('fa').addClass('fa-lg').addClass('fa-wand-magic').addClass('xerte-icon')));
+                if(options?.enableImgSHTool!=="false") {
+                    if (vendor_is_available('image', 'all') || (vendor_is_available('imagegen', 'all') && hasrole('aiuser'))) {
+                        btnHolder.append($('<button>')
+                            .attr('id', 'lightboxbutton_' + options.group)
+                            .attr('title', language.compai.$tooltip)
+                            .attr('type', 'button')
+                            .addClass("xerte_button")
+                            .click({id: id, key: key, name: name, group: options.group}, function (event) {
+                                triggerRedrawForm("imgSearchAndHelpGroup", key, "", "initialize", event.data.name);
+                            })
+                            .append($('<i>').addClass('fa').addClass('fa-lg').addClass('fa-wand-magic').addClass('xerte-icon')));
+                    }
+                    ;
+                }
 
 				html = $('<div>')
 					.attr('id', 'container_' + id)
@@ -5696,10 +6650,35 @@ var EDITOR = (function ($, parent) {
 						.attr('id', id + '_addcolumns')
 						.addClass('jqgridAddColumnsContainer'));
 
-                // add button below grid - when clicked a lightbox opens where you can upload a CSV containing data for the grid
+                // add buttons below grid to upload / download csv files containing data for / from the grid
+                const $btnHolder = $('<div class="csvBtnHolder"></div>')
                 $('<input type="button" name="csvUpload" value="' + language.UploadCSV.UploadCSVBtn.$label + '">')
                     .click(function() { csvUploadLb(name, id); })
-                    .appendTo(html);
+                    .appendTo($btnHolder);
+
+                $('<input type="button" name="csvDownload" value="' + language.downloadCSV.downloadCSVBtn.$label + '">')
+                    .click(function() { csvDownload(name, id); })
+                    .appendTo($btnHolder);
+
+                $btnHolder.appendTo(html);
+
+                function csvDownload(name, id) {
+                    let csvContent = getAttributeValue(lo_data[key]['attributes'], name, [], key).value;
+                    // change the separators before download
+                    csvContent = csvContent.replace(/\|\|/g, '\n');
+                    csvContent = csvContent.replace(/\|/g, ',');
+                    const blob = new Blob([csvContent], {
+                        type: 'text/csv;charset=utf-8;'
+                    });
+                    const link = document.createElement('a');
+                    const url = URL.createObjectURL(blob);
+                    link.setAttribute('href', url);
+                    link.setAttribute('download', name + '_data.csv');
+                    document.body.appendChild(link);
+                    link.click();
+                    document.body.removeChild(link);
+                    URL.revokeObjectURL(url);
+                }
 
                 function csvUploadLb(name, id) {
                     var $excel_form =
@@ -5714,6 +6693,7 @@ var EDITOR = (function ($, parent) {
                     </form></div>`);
 
                     $.featherlight($excel_form, {
+                        variant: "csvForm",
                         afterOpen: function (e) {
                             // called if user has uploaded a file to populate a grid
                             this.$content.find('#excel_upload_' + name).submit(function (e) {
@@ -5739,7 +6719,7 @@ var EDITOR = (function ($, parent) {
                         $.ajax({
                             type: 'POST',
                             dataType: 'text',
-                            url: 'editor/upload_file_to_jqgrid_template.php',
+                            url: 'editor/upload_file_to_jqgrid_template.php' + '?' + lti_session,
                             data: form_data,
                             contentType: false,
                             processData: false,
@@ -5885,293 +6865,11 @@ var EDITOR = (function ($, parent) {
                 form_id_offset++;
                 html = $('<button>')
                     .attr('id', qf_button_id)
-                    .attr('class', 'quickfill_button')
-                    .text('Quick Fill')
+                    .attr('class', 'quickfill_button xerte_button_c')
+                    .attr('type', 'button')
+                    .html('<i class="fa fa-arrows-rotate"></i> ' + language.assistents.QuickFillBtn.$label)
                     .click({key: key}, async function(event) {
-                        $(this).prop('disabled', true);
-                        // Build the parameters object based on type. The nodes must match the actual node names of the xml in question.
-                        var parameters;
-                        var type = lo_data[key].attributes.nodeName;
-                        //todo rework same as ai button to prevent huge switch statement
-                        switch (type) {
-                            case 'quiz':
-                                parameters = {
-                                    "question": lo_data[key].attributes["numberOfQuestions"] || "3",
-                                    "option": lo_data[key].attributes["numberOfAnswers"] || "4",
-                                }
-                                break;
-                            case 'tabNavExtra':
-                                parameters = {
-                                    "topic": lo_data[key].attributes["qfTopic"] || "3",
-                                    "nestedTab": lo_data[key].attributes["qfNestedTab"] || "3",
-                                    "nestedPage": lo_data[key].attributes["qfNestedPage"] || "5",
-                                }
-                                break;
-                            case 'columnPage':
-                                parameters = {
-                                    "nestedColumnPage": lo_data[key].attributes["qfNestedColumnPage"] || "3",
-                                }
-                                break;
-                            case 'audioSlideshow':
-                                parameters = {
-                                    "synchPoint": lo_data[key].attributes["qfSynchPoint"] || "3",
-                                }
-                                break;
-                            case 'imageSequence':
-                                parameters = {
-                                    "case": lo_data[key].attributes["qfCase"] || "3",
-                                    "imgSeries": lo_data[key].attributes["qfImgSeries"] || "3",
-                                    "singleImg": lo_data[key].attributes["qfSingleImg"] || "5",
-                                }
-                                break;
-                            case 'thumbnailViewer':
-                                parameters = {
-                                    "thumbnailImage": lo_data[key].attributes["qfThumbnailImage"] || "5",
-                                }
-                                break;
-                            case 'SictTimeline':
-                                parameters = {
-                                    "timeLineText": lo_data[key].attributes["qfTimeLineText"] || "1",
-                                    "timelineimage": lo_data[key].attributes["qfTimelineimage"] || "1",
-                                    "timelinevideo ": lo_data[key].attributes["qfTimelinevideo"] || "1",
-                                    "timeLineAudio": lo_data[key].attributes["qfTimeLineAudio"] || "1",
-                                }
-                                break;
-                            case 'transcriptReader':
-                                parameters = {
-                                    "nestedSynch": lo_data[key].attributes["qfNestedSynch"] || "3",
-                                }
-                                break;
-                            case 'flashCards':
-                                parameters = {
-                                    "card": lo_data[key].attributes["qfCard"] || "5",
-                                }
-                                break;
-                            case 'list':
-                                parameters = {
-                                    "listItem": lo_data[key].attributes["qfListItem"] || "5",
-                                }
-                                break;
-                            case 'nav':
-                                parameters = {
-                                    "navPage": lo_data[key].attributes["qfNavPage"] || "3",
-                                }
-                                break;
-                            case 'perspectives':
-                                parameters = {
-                                    "movie": lo_data[key].attributes["qfMovie"] || "1",
-                                    "sound": lo_data[key].attributes["qfSound"] || "1",
-                                    "image": lo_data[key].attributes["qfImage"] || "1",
-                                    "mpText": lo_data[key].attributes["qfMpText"] || "1",
-                                }
-                                break;
-                            case 'annotatedDiagram':
-                                parameters = {
-                                    "flexhotspot": lo_data[key].attributes["qfFlexhotspot"] || "3",
-                                }
-                                break;
-                            case 'hotspotGroup':
-                                parameters = {
-                                    "flexhotspot": lo_data[key].attributes["qfFlexhotspot"] || "3",
-                                }
-                                break;
-                            case 'topXQ':
-                                parameters = {
-                                    "optionXQ": lo_data[key].attributes["qfOptionXQ"] || "5",
-                                }
-                                break;
-                            case 'buttonSequence':
-                                parameters = {
-                                    "button": lo_data[key].attributes["qfButton"] || "5",
-                                }
-                                break;
-                            case 'categories':
-                                parameters = {
-                                    "category": lo_data[key].attributes["qfCategory"] || "3",
-                                    "item": lo_data[key].attributes["qfItem"] || "5",
-                                }
-                                break;
-                            case 'decision':
-                                parameters = {
-                                    "resultStep": lo_data[key].attributes["qfResultStep"] || "1",
-                                    "infoStep": lo_data[key].attributes["qfInfoStep"] || "1",
-                                    "sliderStep": lo_data[key].attributes["qfSliderStep"] || "1",
-                                    "sliderStepOption": lo_data[key].attributes["qfSliderStepOption"] || "4",
-                                    "mcqStep": lo_data[key].attributes["qfMcqStep"] || "1",
-                                    "mcqStepOption": lo_data[key].attributes["qfMcqStepOption"] || "4",
-                                }
-                                break;
-                            case 'dialog':
-                                parameters = {
-                                    "dialogStep": lo_data[key].attributes["qfDialogStep"] || "5",
-                                }
-                                break;
-                            case 'dictation':
-                                parameters = {
-                                    "nestedDictation": lo_data[key].attributes["qfNestedDictation"] || "3",
-                                }
-                                break;
-                            case 'documentation':
-                                parameters = {
-                                    "page": lo_data[key].attributes["qfPage"] || "1",
-                                }
-                                break;
-                            case 'page': //of documentation
-                                parameters = {
-                                    "media": lo_data[key].attributes["qfMedia"] || "1",
-                                    "selectlist": lo_data[key].attributes["qfSelectlist"] || "1",
-                                    "selectitem": lo_data[key].attributes["qfSelectitem"] || "5",
-                                    "description": lo_data[key].attributes["qfDescription"] || "1",
-                                    "tableDoc": lo_data[key].attributes["qfTableDoc"] || "1",
-                                    "checkbox": lo_data[key].attributes["qfCheckbox"] || "1",
-                                    "textArea": lo_data[key].attributes["qfTextArea"] || "1",
-                                    "textBox": lo_data[key].attributes["qfTextBox"] || "1",
-                                }
-                                break;
-                            case 'section': //of documentation
-                                parameters = {
-                                    "media": lo_data[key].attributes["qfMedia"] || "1",
-                                    "selectlist": lo_data[key].attributes["qfSelectlist"] || "1",
-                                    "selectitem": lo_data[key].attributes["qfSelectitem"] || "5",
-                                    "description": lo_data[key].attributes["qfDescription"] || "1",
-                                    "tableDoc": lo_data[key].attributes["qfTableDoc"] || "1",
-                                    "checkbox": lo_data[key].attributes["qfCheckbox"] || "1",
-                                    "textArea": lo_data[key].attributes["qfTextArea"] || "1",
-                                    "textBox": lo_data[key].attributes["qfTextBox"] || "1",
-                                }
-                                break;
-                            case 'dragDropLabel':
-                                parameters = {
-                                    "hotspot": lo_data[key].attributes["qfHotspot"] || "3",
-                                }
-                                break;
-                            case 'hotspotImage':
-                                parameters = {
-                                    "flexhotspot": lo_data[key].attributes["qfFlexhotspot"] || "3",
-                                }
-                                break;
-                            case 'hotSpotQuestion':
-                                parameters = {
-                                    "QHotSpot": lo_data[key].attributes["qfQHotSpot"] || "3",
-                                }
-                                break;
-                            case 'interactiveText':
-                                parameters = {
-                                    "group": lo_data[key].attributes["qfGroup"] || "5",
-                                }
-                                break;
-                            case 'ivOverlayPanel': //of interactiveVideo
-                                parameters = {
-                                    "ivSynchTextPlus": lo_data[key].attributes["qfIvSynchTextPlus"] || "3",
-                                    "ivSynchMCQ": lo_data[key].attributes["qfIvSynchMCQ"] || "1",
-                                    "ivSynchMCQOption": lo_data[key].attributes["qfIvSynchMCQOption"] || "4",
-                                    "ivSynchXot": lo_data[key].attributes["qfIvSynchXot"] || "1",
-                                    "ivSynchXotChange": lo_data[key].attributes["qfIvSynchXotChange"] || "3",
-                                }
-                                break;
-                            case 'inventory':
-                                parameters = {
-                                    "invQuestion": lo_data[key].attributes["qfInvQuestion"] || "3",
-                                    "invOption": lo_data[key].attributes["qfInvOption"] || "4",
-                                }
-                                break;
-                            case 'textMatch':
-                                parameters = {
-                                    "sentence": lo_data[key].attributes["qfSentence"] || "3",
-                                }
-                                break;
-                            case 'mcq':
-                                parameters = {
-                                    "option": lo_data[key].attributes["qfOption"] || "4",
-                                }
-                                break;
-                            case 'opinion':
-                                parameters = {
-                                    "opinionClass": lo_data[key].attributes["qfOpinionClass"] || "3",
-                                    "opinionQuestion": lo_data[key].attributes["qfOpinionQuestion"] || "3",
-                                    "opinionOption": lo_data[key].attributes["qfOpinionOption"] || "4",
-                                }
-                                break;
-                            case 'timeline':
-                                parameters = {
-                                    "timelinedate": lo_data[key].attributes["qfTimelinedate"] || "6",
-                                }
-                                break;
-                            case 'memory':
-                                parameters = {
-                                    "matchItem": lo_data[key].attributes["qfMatchItem"] || "6",
-                                }
-                                break;
-                            case 'crossword':
-                                parameters = {
-                                    "wordAndHint": lo_data[key].attributes["qfWordAndHint"] || "6",
-                                }
-                                break;
-                            case 'links':
-                                parameters = {
-                                    "link": lo_data[key].attributes["qfLink"] || "3",
-                                }
-                                break;
-                            case 'adaptiveContent':
-                                parameters = {
-                                    "interaction": lo_data[key].attributes["qfInteraction"] || "3",
-                                    "interactionBlock": lo_data[key].attributes["qfInteractionBlock"] || "3",
-                                }
-                                break;
-                            case 'mediaLesson':
-                                parameters = {
-                                    "panel": lo_data[key].attributes["qfPanel"] || "3",
-                                }
-                                break;
-                            case 'mediaPanel': //of mediaLesson
-                                parameters = {
-                                    "synchXot": lo_data[key].attributes["qfSynchXot"] || "1",
-                                    "synchXotChange": lo_data[key].attributes["qfSynchXotChange"] || "3",
-                                    "synchWebpage": lo_data[key].attributes["qfSynchWebpage"] || "3",
-                                    "synchMCQ": lo_data[key].attributes["qfSynchMCQ"] || "1",
-                                    "synchMCQOption": lo_data[key].attributes["qfSynchMCQOption"] || "4",
-                                    "synchSlides": lo_data[key].attributes["qfSynchSlides"] || "1",
-                                    "synchSlide": lo_data[key].attributes["qfSynchSlide"] || "6",
-                                    "synchTextPlus": lo_data[key].attributes["qfSynchTextPlus"] || "3",
-                                    "synchEmpty": lo_data[key].attributes["qfSynchEmpty"] || "3",
-                                    "synchCue": lo_data[key].attributes["qfSynchCue"] || "3",
-                                };
-                                break;
-                            case 'panel': //of mediaLesson
-                                parameters = {
-                                    "synchXot": lo_data[key].attributes["qfSynchXot"] || "1",
-                                    "synchXotChange": lo_data[key].attributes["qfSynchXotChange"] || "3",
-                                    "synchWebpage": lo_data[key].attributes["qfSynchWebpage"] || "3",
-                                    "synchMCQ": lo_data[key].attributes["qfSynchMCQ"] || "1",
-                                    "synchMCQOption": lo_data[key].attributes["qfSynchMCQOption"] || "4",
-                                    "synchSlides": lo_data[key].attributes["qfSynchSlides"] || "1",
-                                    "synchSlide": lo_data[key].attributes["qfSynchSlide"] || "6",
-                                    "synchTextPlus": lo_data[key].attributes["qfSynchTextPlus"] || "3",
-                                    "synchEmpty": lo_data[key].attributes["qfSynchEmpty"] || "3",
-                                    "synchMediaPlus": lo_data[key].attributes["qfSynchMediaPlus"] || "3",
-                                    "synchCue": lo_data[key].attributes["qfSynchCue"] || "3",
-                                };
-                                break;
-                        }
-                        // Show a confirm dialog with a custom message
-                        if (confirm("The specified nodes will be automatically generated with their default values. Proceed?")) {
-                            // User clicked "OK"
-                            try {
-                                await quick_fill(event, type, parameters);
-                            } catch (error) {
-                                console.log('Error occurred:', error);
-                                alert("Something went wrong. Please try using the quick fill feature again.");
-                                html.prop('disabled', false);
-                            } finally {
-                                // Re-enable the button after the function completes (success or failure)
-                                html.prop('disabled', false);
-                            }
-                        } else {
-                            // User clicked "Cancel"
-                            console.log("Quick fill canceled by the user.");
-                            html.prop('disabled', false);
-                        }
-
+                        await runQuickFill(event.data.key, $(this));
                     });
                 break;
             case 'autotranslatebutton':
@@ -6179,10 +6877,11 @@ var EDITOR = (function ($, parent) {
                 form_id_offset++;
                 html = $('<button>')
                     .attr('id', atr_button_id)
-                    .attr('class', 'autotranslate_button')
-                    .text('translate')
+                    .attr('class', 'autotranslate_button xerte_button_c')
+                    .html('<i class="fa fa-language"></i> ' + language.assistents.AutoTranslateBtn.$label)
                     .click({key: key}, async function(event) {
-                        $(this).prop('disabled', true);
+                        const $btn = $(this);          // the button that was clicked
+                        $btn.prop('disabled', true);
                         var api = lo_data[key].attributes['translateApi'] || 'openai';
                         var baseUrl = rlopathvariable.substr(rlopathvariable.indexOf("USER-FILES"));
                         var targetLanguage = lo_data[key].attributes["targetLanguage"];
@@ -6196,12 +6895,12 @@ var EDITOR = (function ($, parent) {
                                 alert("Something went wrong. Please try using the translate feature again.");
                             } finally {
                                 // Re-enable the button after the function completes (success or failure)
-                                html.prop('disabled', false);
+                                $btn.prop('disabled', false);
                             }
                         } else {
                             // User clicked "Cancel"
                             console.log("Translation canceled by the user.");
-                            html.prop('disabled', false);
+                            $btn.prop('disabled', false);
                         }
 
                     });
@@ -6211,13 +6910,42 @@ var EDITOR = (function ($, parent) {
                 form_id_offset++;
                 html = $('<button>')
                     .attr('id', ish_id)
-                    .attr('class', 'imgsh_button')
+                    .attr('class', 'imgsh_button xerte_button_c')
                     .attr('value', value)
                     .attr('name', name)
-                    .text('Query')
+                    .html('<i class="fa fa-arrows-rotate"></i> ' + language.assistents.ImgSearchBtn.$label)
                     .click({key: key, group: options.group, value: value}, function(event) {
-                        html.prop('disabled', true);
+                        const $btn = $(this);          // the button that was clicked
+                        $btn.prop('disabled', true);
                         event.preventDefault();
+
+                        triggerRedrawForm(options.group, key, "", "redraw");
+
+                        function cleanTextField(input) {
+                            if (typeof input !== "string") return input;
+
+                            // 1. Decode HTML entities (&lt;p&gt; to <p>, etc)
+                            const txt = document.createElement("textarea");
+                            txt.innerHTML = input;
+                            input = txt.value;
+
+                            // 2. Strip HTML tags (<p>...</p>)
+                            input = input.replace(/<[^>]*>/g, "");
+
+                            // 3. Replace non-breaking spaces (decoded &nbsp;)
+                            input = input.replace(/\u00A0/g, " ");
+
+                            // 4. Replace literal "&nbsp;" if still present
+                            input = input.replace(/&nbsp;/g, " ");
+
+                            // 5. Normalize whitespace (remove extra spaces, tabs, newlines)
+                            input = input.replace(/\s+/g, " ");
+
+                            // 6. Trim leading/trailing whitespace
+                            input = input.trim();
+
+                            return input;
+                        }
 
                         let constructorObject = getConstructorFromLightbox(html, event.data.group);
                         if (constructorObject === false) {return}
@@ -6271,26 +6999,38 @@ var EDITOR = (function ($, parent) {
                         let aiSettingsOverride = constructorObject['overrideAiSettings'] !== undefined ? constructorObject['overrideAiSettings'] : "true";
                         delete constructorObject.overrideAiSettings;
 
+                        //'pixabayColors' is the expected field, so we create and let it inherit the dropdown value
+                        if (constructorObject['pixabayColorsDropdown']!=='custom'){
+                            constructorObject['pixabayColors'] = constructorObject['pixabayColorsDropdown'];
+                        }
+
+                        // pixabayColors inherits the dropdown value, so we have no need of it further
+                        delete constructorObject['pixabayColorsDropdown'];
+
                         if (serviceType==='generate'){
                             if(!hasApiKeyInstalled('imagegen', api)){
-                                html.prop('disabled', false);
+                                $btn.prop('disabled', false);
                                 return;
                             }
                         } else if (serviceType==='retrieve'){
                             if(!hasApiKeyInstalled('image', api)){
-                                html.prop('disabled', false);
+                                $btn.prop('disabled', false);
                                 return;
                             }
 
                         } else {
                             if ((!hasApiKeyInstalled('image', api))&&(!hasApiKeyInstalled('imagegen', api))) {
-                                html.prop('disabled', false);
+                                $btn.prop('disabled', false);
                                 return;
                             }
                         }
 
-                        img_search_and_help(query, api, rlopathvariable, interpretPrompt, aiSettingsOverride, constructorObject, event.data.key, event.data.value);
-                        html.prop('disabled', false);
+                        query = cleanTextField(query);
+
+                        let loLang= lo_data['treeroot']['attributes']['language'];
+
+                        img_search_and_help(query, api, rlopathvariable, interpretPrompt, aiSettingsOverride, constructorObject, event.data.key, event.data.value, loLang);
+                        $btn.prop('disabled', false);
                     });
                 break;
             case 'generatesuggestionbutton':
@@ -6298,11 +7038,12 @@ var EDITOR = (function ($, parent) {
                 form_id_offset++;
                 html = $('<button>')
                     .attr('id', id)
-                    .attr('class', 'generate_suggestion_button')
-                    .text('Suggest')
+                    .attr('class', 'generate_suggestion_button xerte_button_c')
+                    .html('<i class="fa fa-arrows-rotate"></i> ' + language.assistents.GenerateSuggestion.$btnlabel)
                     .click({key: key}, async function(event) {
+                        const $btn = $(this);          // the button that was clicked
                         // Disable the button to prevent multiple clicks
-                        html.prop('disabled', true);
+                        $btn.prop('disabled', true);
                         var type = lo_data[key].attributes.nodeName; //get the node-type
                         var baseUrl = rlopathvariable.substr(rlopathvariable.indexOf("USER-FILES"));
                         var contextScope = lo_data[key].attributes.linkID; //ensures suggestions are made based on the active node where suggestion request comes from
@@ -6311,7 +7052,8 @@ var EDITOR = (function ($, parent) {
                             (moduleurlvariable === "modules/xerte/") ? "standard" : "standard";
                         // Build the constructor object based on the type
                         var constructorObject = {
-                            "additionalInstructions": "Regarding what kind of suggestions I'm looking for, see: " + lo_data[key].attributes["additionalInstructions"],
+                            // "additionalInstructions": "Regarding what kind of suggestions I'm looking for, see: " + lo_data[key].attributes["additionalInstructions"],
+                            "additionalInstructions": language.assistents.GenerateSuggestion.$instructionprompt + lo_data[key].attributes["additionalInstructions"],
                         };
                         if (confirm(language.vendorApi.overideSuggestionMsg)){
                             try {
@@ -6321,10 +7063,10 @@ var EDITOR = (function ($, parent) {
                                 alert(language.vendorApi.genericAiAPiError);
                             } finally {
                                 // Re-enable the button after the function completes (success or failure)
-                                html.prop('disabled', false);
+                                $btn.prop('disabled', false);
                             }
                         } else {
-                            html.prop('disabled', false);
+                            $btn.prop('disabled', false);
                         }
 
                     });
@@ -6337,8 +7079,9 @@ var EDITOR = (function ($, parent) {
                     .attr('class', 'apply_suggestion_button')
                     .text('Apply suggestion')
                     .click({key: key}, async function(event) {
+                        const $btn = $(this);          // the button that was clicked
                         // Disable the button to prevent multiple clicks
-                        html.prop('disabled', true);
+                        $btn.prop('disabled', true);
                         var type = lo_data[key].attributes.nodeName; //get the node-type
                         var baseUrl = rlopathvariable.substr(rlopathvariable.indexOf("USER-FILES"));
                         var contextScope = "local";
@@ -6366,10 +7109,10 @@ var EDITOR = (function ($, parent) {
                                 alert(language.vendorApi.genericAiAPiError);
                             } finally {
                                 // Re-enable the button after the function completes (success or failure)
-                                html.prop('disabled', false);
+                            $btn.prop('disabled', false);
                             }
                         } else {
-                            html.prop('disabled', false);
+                            $btn.prop('disabled', false);
                         }
 
                     });
@@ -6379,12 +7122,27 @@ var EDITOR = (function ($, parent) {
                 form_id_offset++;
                 html = $('<button>')
                     .attr('id', id)
-                    .attr('class', 'ai_button')
-                    .text('Generate')
+                    .attr('class', 'ai_button xerte_button_c')
+                    .html('<i class="fa fa-wand-magic"></i> ' + language.assistents.AIBtn.$label)
                     .click({key: key, group: options.group}, async function(event) {
+                        const $btn = $(this);          // the button that was clicke
                         // Disable the button to prevent multiple clicks
-                        html.prop('disabled', true);
+                        $btn.prop('disabled', true);
                         event.preventDefault();
+
+                        if ($("#job-ui").length === 0) {
+                            const jobUI = `
+                              <div id="job-ui" style="margin-top:1em;">
+                                <div id="job-starting" style="display:none;">
+                                    <div id="job-spinner">⏳</div>
+                                    <div id="job-status">${language.assistents.AIGenerationStatus.LLMStarting}</div>
+                                    <div id="job-progress-container" style="width:100%;background:#eee;height:4px;">
+                                      <div id="job-progress" style="width:0%;height:4px;background:#4caf50;"></div>
+                                    </div>
+                                </div>
+                              </div>`;
+                            $(this).after(jobUI);
+                        }
 
                         let constructorObject = getConstructorFromLightbox(html, event.data.group);
 
@@ -6419,14 +7177,15 @@ var EDITOR = (function ($, parent) {
                         //additional file/snippet stuff here
                         aiSettings['baseUrl'] = rlopathvariable.substr(rlopathvariable.indexOf("USER-FILES"));
 
-                        aiSettings['fileUrl'] = constructorObject['file'] ? constructorObject['file'] : null;
+                        aiSettings['fileUrl'] = constructorObject['file'] != null ? constructorObject['file'].trim() : null;
                         delete constructorObject.fileUrl;
 
                         aiSettings['updateLoOnRequest'] = constructorObject['updateLoOnRequest'] !== undefined ? constructorObject['updateLoOnRequest'] : null;
                         delete constructorObject.updateLoOnRequest;
 
+                        //TODO: this needs to handle defaults in all languages, not just English!
                         // Check if fileUrl is "Upload a file", empty, or just whitespace
-                        if (aiSettings['fileUrl'] === "Upload a file or enter a video link here..." || !aiSettings['fileUrl'] || aiSettings['fileUrl'].trim() === "") {
+                        if (aiSettings['fileUrl'] === "Upload a file or enter a video link here..." || aiSettings['fileUrl'] === "Select a file or enter a video link here..." || !aiSettings['fileUrl'] || aiSettings['fileUrl'].trim() === "") {
                             aiSettings['fileUrl'] = null;
                         }
 
@@ -6437,6 +7196,56 @@ var EDITOR = (function ($, parent) {
                         delete constructorObject.textSnippet;
                         if (aiSettings['textSnippet'] === "Paste or write your snippet here..." || !aiSettings['textSnippet'] || aiSettings['textSnippet'].trim() === "") {
                             aiSettings['textSnippet'] = null;
+                        }
+
+                        if (uploadPrompt==='select'){
+                            aiSettings['fileUrl'] =constructorObject['fileSelection'] ? constructorObject['fileSelection'] : null;
+                        }
+
+                        // Update bar helpers
+
+                        function addLLMJobBar() {
+                            const $jobUI = $('#job-ui');
+                            if (!$jobUI.length) return;
+
+                            // Avoid duplicates if the user triggers multiple times
+                            if ($('#llm-ui').length) return;
+
+                            const llmUI = `
+                            <div id="llm-ui" style="margin-top:.75em;">
+                              <div id="llm-status">${language.assistents.AIGenerationStatus.LLMInProgress}</div>
+                              <div id="llm-progress-container" style="width:100%;background:#eee;height:4px;">
+                                <div id="llm-progress" style="width:25%;height:4px;background:#4caf50;"></div>
+                              </div>
+                            </div>`;
+                            $jobUI.append(llmUI);
+                        }
+
+                        function startLLMFakeProgress() {
+                            let pct = 25;
+                            const $bar = $('#llm-progress');
+                            const $status = $('#llm-status');
+
+                            if (!$bar.length) return () => {};
+
+                            $status.text(language.assistents.AIGenerationStatus.LLMInProgress);
+                            $bar.css('width', pct + '%');
+
+                            // creep up to a cap (don’t hit 100% until the await finishes)
+                            const cap = 92;
+                            const timer = setInterval(() => {
+                                const remaining = cap - pct;
+                                const step = Math.max(0.4, remaining * 0.08); // slows down near cap
+                                pct = Math.min(cap, pct + step);
+                                $bar.css('width', pct.toFixed(1) + '%');
+                            }, 450);
+
+                            return () => clearInterval(timer);
+                        }
+
+                        function finishLLMOk() {
+                            $('#llm-progress').css('width', '100%');
+                            $('#llm-status').text(language.assistents.AIGenerationStatus.LLMOk);
                         }
 
                         // Corpus sync and update functions:
@@ -6500,11 +7309,10 @@ var EDITOR = (function ($, parent) {
                         * and pass useLoInCorpus to the final requests which signals that we intend to use the latest preview.xml.
                         *
                         */
-                        async function updateCorpus(fileUrl, corpusGrid = false, useLoInCorpus) {
+                        async function updateCorpus(fileUrl, corpusGrid = false, useLoInCorpus, LOlanguage) {
                             const baseURL = rlopathvariable.substr(rlopathvariable.indexOf("USER-FILES"));
 
-                            // 1. Construct a grid row with only fileUrl in col_2, others as empty strings
-                            let singleRow = {};
+                            let singleRow;
                             if (!useLoInCorpus) {
                                 singleRow = {
                                     col_1: "",
@@ -6521,36 +7329,104 @@ var EDITOR = (function ($, parent) {
                                 };
                             }
 
-                            const payload = { name, baseURL, gridData: [singleRow], corpusGrid, useLoInCorpus };
+                            const payload = { name, baseURL, gridData: [singleRow], corpusGrid, useLoInCorpus, LOlanguage};
+
                             $('body, .featherlight, .featherlight-content').css("cursor", "wait");
 
-                            // 2. Send it off
-                            // Return a Promise that resolves or rejects with the AJAX result
-                            return new Promise((resolve, reject) => {
-                                $.ajax({
-                                    url: 'editor/ai/rag/syncCorpus.php',
-                                    method: 'POST',
-                                    contentType: 'application/json',
-                                    data: JSON.stringify(payload),
-                                    success: function(resp) {
-                                        const first = resp.results?.[0] || {};
-                                        const displaymsg =
-                                            first.rag_status ||
-                                            first.transcription_status ||
-                                            resp?.error ||
-                                            'No status available';
-                                        alert(displaymsg);
-                                        resolve(resp);
-                                    },
-                                    error: function(xhr, status, err) {
-                                        console.error('Corpus sync failed:', err);
-                                        alert(`${language.vendorApi.contextAlerts.syncErrorGenericMsg}`);
-                                        reject(err);
-                                    }, complete: function() {
-                                        // Always reset cursor
-                                        $('body, .featherlight, .featherlight-content').css("cursor", "default");
-                                    }
+                            try {
+                                // 1) Start the job and wait for the "start" response (job_id)
+                                const resp = await new Promise((resolve, reject) => {
+                                    $.ajax({
+                                        url: 'editor/ai/rag/syncCorpus_start.php',
+                                        method: 'POST',
+                                        contentType: 'application/json',
+                                        data: JSON.stringify(payload),
+
+                                        success: function (resp) {
+                                            $("#job-ui").show();
+                                            $("#job-status").text(`${language.assistents.AIGenerationStatus.LLMSyncQueued}`);
+                                            $("#job-progress").css("width", "0%");
+                                            resolve(resp);
+                                        },
+
+                                        error: function (xhr, status, err) {
+                                            console.error('Corpus sync failed:', err);
+                                            alert(`${language.vendorApi.contextAlerts.syncErrorGenericMsg}`);
+                                            reject(err);
+                                        }
+                                    });
                                 });
+
+                                // 2) Now poll until the job is really done
+                                const finalStatus = await pollJobStatus(resp.job_id, baseURL);
+
+                                // 3) Return the final completion info / status
+                                return finalStatus;
+
+                            } finally {
+                                // always reset cursor
+                                $('body, .featherlight, .featherlight-content').css("cursor", "default");
+                            }
+                        }
+
+                        async function pollJobStatus(jobId, baseURL) {
+                            return new Promise((resolve, reject) => {
+
+                                const statusUrl = "editor/ai/rag/syncCorpus_status.php?job_id=" +
+                                    encodeURIComponent(jobId) + "&baseURL=" +
+                                    encodeURIComponent(baseURL);
+
+                                $("#job-starting").show();
+                                const statusEl = $("#job-status");
+                                const spinner = $("#job-spinner");
+
+                                function checkStatus() {
+                                    $.ajax({
+                                        url: statusUrl,
+                                        method: "GET",
+                                        cache: false,
+                                        success: function (data) {
+
+                                            // Update UI
+                                            statusEl.text((data.stage || data.status || language.assistents.AIGenerationStatus.LLMLoaded) +
+                                                " — " + (data.message || ""));
+
+                                            if (data.progress !== undefined) {
+                                                $("#job-progress").css("width", data.progress + "%");
+                                            }
+
+                                            if (data.status === "processed") {
+                                                spinner.hide();
+                                                const first = data['completion_info'].results?.[0] || {};
+                                                const displaymsg =
+                                                    first.rag_status ||
+                                                    first.transcription_status ||
+                                                    data['completion_info']?.error ||
+                                                    'No status available';
+                                                //alert(displaymsg);
+                                                statusEl.text(`✅ ${language.assistents.AIGenerationStatus.LLMSyncComplete}`);
+                                                resolve(data['completion_info']);
+                                                return;
+                                            }
+
+                                            if (data.status === "error") {
+                                                spinner.hide();
+                                                statusEl.text(`❌ ${language.assistents.AIGenerationStatus.LLMSyncFailed} ` + (data.error || "unknown"));
+                                                reject(data['completion_info']);
+                                                return;
+                                            }
+
+                                            setTimeout(checkStatus, 3000);
+                                        },
+                                        error: function (xhr, status, err) {
+                                            console.log("Polling error:", err);
+                                            setTimeout(checkStatus, 5000);
+                                        }
+                                    });
+                                }
+
+                                // start polling
+                                checkStatus();
                             });
                         }
 
@@ -6612,10 +7488,18 @@ var EDITOR = (function ($, parent) {
                         *
                          */
                         async function doCorpusCheck(fileUrl, loSettings) {
+                            const statusEl = $("#job-status");
                             if (loSettings['useLoInCorpus'] === true){
                                 alert(`${language.vendorApi.contextAlerts.contextUpdatePreviewMsg}`);
                                 await savepreviewPromise();
-                                const data = await updateCorpus(fileUrl, false, true);
+                                const data = await updateCorpus(fileUrl, false, true, loSettings['language']);
+                                const first = data.results?.[0] || {};
+                                const displaymsg =
+                                    first.rag_status ||
+                                    first.transcription_status ||
+                                    resp?.error ||
+                                    'No status available';
+                                alert(displaymsg);
                                 if ((data?.results?.[0]?.continue_request === 'false')|| (data.success === false)){
                                     return false;
                                 }else{
@@ -6631,10 +7515,18 @@ var EDITOR = (function ($, parent) {
 
                                     if (match) {
                                         alert(`${language.vendorApi.contextAlerts.contextFileFoundProceedMsg}`);
+                                        statusEl.text(`✅ ${language.assistents.AIGenerationStatus.LLMSyncAlreadySynced}`);
                                         return match.metaData.source;  // file found
                                     } else {
                                         if (confirm(`${language.vendorApi.contextAlerts.contextInPageProcessPromptMsg}`)){
-                                            let fileStatus = await updateCorpus(fileUrl, false);
+                                            let fileStatus = await updateCorpus(fileUrl, false, loSettings['useLoInCorpus'], loSettings['language']);
+                                            const first = fileStatus.results?.[0] || {};
+                                            const displaymsg =
+                                                first.rag_status ||
+                                                first.transcription_status ||
+                                                resp?.error ||
+                                                'No status available';
+                                            alert(displaymsg);
                                             if ((fileStatus?.results?.[0]?.continue_request === 'false') || (fileStatus.success === false)) {
                                                 return false;
                                             } else {
@@ -6664,6 +7556,7 @@ var EDITOR = (function ($, parent) {
                         if (uploadPrompt == 'context'){
                             aiSettings['useCorpus'] = true;
                         }
+                        loSettings['language'] = lo_data['treeroot']['attributes']['language'];
 
                         const requiredLoTypes = ['summary', 'orient'];
                         //useLoInCorpus->add the current learning object preview to corpus
@@ -6702,9 +7595,10 @@ var EDITOR = (function ($, parent) {
                                     aiSettings['fileUrl'] !== null){
                                     const fileUrl = aiSettings['fileUrl'];
                                     let fileStatus = null;
+                                    $("#job-starting").show();
                                     fileStatus = await doCorpusCheck(fileUrl, loSettings);
                                     if (fileStatus === false){
-                                        html.prop('disabled', false);
+                                        $btn.prop('disabled', false);
                                         return;
                                     } else if (loSettings['restrictCorpusToLo'] === true){
                                         aiSettings['fileList'] = [];
@@ -6717,20 +7611,28 @@ var EDITOR = (function ($, parent) {
                                 aiSettings['loSettings'] = loSettings;
 
                                 aiSettings['fullUrl'] = fullUrl;
+                                // Add a visual loading indicator to existing job sync bar, if any
+                                addLLMJobBar();
+                                const stopFake = startLLMFakeProgress();
 
                                 await ai_content_generator(aiSettings, constructorObject);
+                                stopFake();
+                                finishLLMOk();
                             }
                             catch (error) {
                                 console.log('Error occurred:', error);
+                                //stopFake();
                                 alert(language.vendorApi.genericAiAPiError);
                             } finally {
                                 // Re-enable the button after the function completes (success or failure)
-                                html.prop('disabled', false);
+                                $btn.prop('disabled', false);
                             }
                         } else {
-                            html.prop('disabled', false);
+                            $btn.prop('disabled', false);
                         }
-
+                        // Disable the job-ui as its no longer necessary sine the job finished
+                        $("#job-ui").remove();
+                        $btn.prop('disabled', false);
                     });
                 break;
         case 'toggleadvanced':
@@ -6747,7 +7649,7 @@ var EDITOR = (function ($, parent) {
 					.addClass('toggleAdvanced')
 					.click(() => {
 						window.showAdvanced[key] = !window.showAdvanced[key];
-						triggerRedrawForm(options.group, key, "", "redraw");
+						triggerRedrawForm(options.group, key, "", "initialize");
 					});
 				if(window.showAdvanced[key]){
 						html.attr("checked", "true");
@@ -6786,11 +7688,6 @@ var EDITOR = (function ($, parent) {
                         format: "csv"
                     }),
                     success: function(resp) {
-                        if (!resp?.corpus) {
-                            //alert('No corpus data found!');
-                            setAttributeValue(key, [name], ['|']);
-                            return;
-                        }
                         var gridId = '#' + resp.gridId + '_jqgrid';
                         $(gridId).jqGrid('clearGridData');
                         setAttributeValue(key, [resp.type], [resp.corpus]);
@@ -6803,7 +7700,6 @@ var EDITOR = (function ($, parent) {
                         if (resp.corpus && typeof resp.corpus === "string") {
                             // Remove leading/trailing whitespace, split on newlines, filter out empty lines
                             totalFiles = resp.corpus.trim().split('\n').filter(line => line.trim() !== '').length;
-                            //alert(`✅ AI context resources are up to date!`);
                         }
                     },
                     error: function(xhr, status, err) {
@@ -6829,6 +7725,204 @@ var EDITOR = (function ($, parent) {
                     .text('Open AI Settings');
 
                 break;
+            case 'aicontextselector':
+                var id = 'select_' + form_id_offset;
+                form_id_offset++;
+
+                html = $('<select>')
+                    .attr('id', id)
+                    .attr('name', name)
+                    .change({id:id, key:key, name:name, group:options.group, trigger:conditionTrigger}, function(event)
+                    {
+                        // store data in xml
+                        selectChanged(event.data.id, event.data.key, event.data.name, this.value, this);
+
+                        if (event.data.trigger)
+                        {
+                            // no lightbox so redraw entire page
+                            if (mode === "none") {
+                                triggerRedrawPage(event.data.key);
+                            } else {
+                                // lightbox so redraw only the lightbox form
+                                triggerRedrawForm(event.data.group, event.data.key, "", "redraw");
+                            }
+                        }
+                    });
+
+                html.append(
+                    $('<option>')
+                        .attr('value', '')
+                        .prop('selected', value === '')
+                        .text('Loading available files...')
+                );
+
+                (function(selectEl, currentValue) {
+
+                    function fetchAiCorpusForField() {
+                        const baseURL = rlopathvariable.substr(rlopathvariable.indexOf("USER-FILES"));
+                        $('body, .featherlight, .featherlight-content').css("cursor", "wait");
+
+                        return new Promise((resolve, reject) => {
+                            $.ajax({
+                                url: 'editor/ai/rag/getCorpus.php',
+                                method: 'POST',
+                                contentType: 'application/json',
+                                dataType: 'json',
+                                data: JSON.stringify({
+                                    name: "",
+                                    baseURL: baseURL,
+                                    type: "",
+                                    gridId: "",
+                                    format: "json"
+                                }),
+                                success: function(resp) {
+                                    if (!resp || !resp.corpus || !resp.corpus.hashes) {
+                                        reject(new Error('No corpus hashes returned'));
+                                        return;
+                                    }
+                                    resolve(resp.corpus.hashes);
+                                },
+                                error: function(xhr, status, err) {
+                                    console.error('Failed to fetch corpus:', err);
+                                    reject(err);
+                                },
+                                complete: function() {
+                                    $('body, .featherlight, .featherlight-content').css("cursor", "default");
+                                }
+                            });
+                        });
+                    }
+
+                    function normaliseToFileLocation(val) {
+                        if (!val) return '';
+
+                        val = String(val).trim();
+
+                        // already in FileLocation form
+                        if (val.indexOf("FileLocation + '") === 0) {
+                            return val;
+                        }
+
+                        // absolute/local URL -> FileLocation form
+                        if (typeof rlourlvariable !== 'undefined' && val.indexOf(rlourlvariable) === 0) {
+                            var relativePath = val.substring(rlourlvariable.length);
+
+                            // remove leading slash only if present
+                            if (relativePath.charAt(0) === '/') {
+                                relativePath = relativePath.substring(1);
+                            }
+
+                            return "FileLocation + '" + relativePath + "'";
+                        }
+
+                        // fallback if the value already contains the corpus path somewhere
+                        var ragMatch = val.match(/RAG\/corpus\/.+$/);
+                        if (ragMatch && ragMatch[0]) {
+                            return "FileLocation + '" + ragMatch[0] + "'";
+                        }
+
+                        return val;
+                    }
+
+                    function getOptionLabel(hash) {
+                        var metaName = (hash && hash.metaData && hash.metaData.name) ? hash.metaData.name.trim() : '';
+                        var fileName = (hash && hash.files && hash.files.length > 0 && hash.files[0]) ? hash.files[0].trim() : '';
+                        var source = (hash && hash.metaData && hash.metaData.source) ? hash.metaData.source : '';
+
+                        if (metaName !== '') return metaName;
+                        if (fileName !== '') return fileName;
+                        return source;
+                    }
+
+                    function getFallbackLabel(val) {
+                        var normalised = normaliseToFileLocation(val);
+                        var match = normalised.match(/RAG\/corpus\/([^']+)$/);
+
+                        if (match && match[1]) {
+                            return match[1].split('/').pop();
+                        }
+
+                        return normalised;
+                    }
+
+                    fetchAiCorpusForField()
+                        .then(function(hashes) {
+                            selectEl.empty();
+
+                            var seen = {};
+                            var foundCurrentValue = false;
+                            var firstValidValue = '';
+                            var currentValueNormalised = normaliseToFileLocation(currentValue);
+
+                            for (var i = 0; i < hashes.length; i++) {
+                                var hash = hashes[i];
+                                var source = (hash && hash.metaData && hash.metaData.source) ? hash.metaData.source : '';
+
+                                if (!source) {
+                                    continue;
+                                }
+
+                                source = normaliseToFileLocation(source);
+
+                                if (seen[source]) {
+                                    continue;
+                                }
+                                seen[source] = true;
+
+                                var label = getOptionLabel(hash);
+
+                                if (firstValidValue === '') {
+                                    firstValidValue = source;
+                                }
+
+                                var option = $('<option>')
+                                    .attr('value', source)
+                                    .text(label);
+
+                                if (source === currentValueNormalised) {
+                                    option.prop('selected', true);
+                                    foundCurrentValue = true;
+                                }
+
+                                selectEl.append(option);
+                            }
+
+                            if (currentValueNormalised !== '' && !foundCurrentValue) {
+                                selectEl.append(
+                                    $('<option>')
+                                        .attr('value', currentValueNormalised)
+                                        .prop('selected', true)
+                                        .text(getFallbackLabel(currentValueNormalised))
+                                );
+                            } else if (currentValueNormalised === '' && firstValidValue !== '') {
+                                selectEl.val(firstValidValue);
+
+                                // persist the default immediately
+                                selectChanged(id, key, name, firstValidValue, selectEl[0]);
+                            }
+
+                            if (selectEl.children().length === 0) {
+                                selectEl.append(
+                                    $('<option>')
+                                        .attr('value', '')
+                                        .prop('selected', true)
+                                        .text('No files could be returned')
+                                );
+                            }
+                        })
+                        .catch(function(err) {
+                            console.error('Failed to populate aiContextSelector:', err);
+                            selectEl.empty().append(
+                                $('<option>')
+                                    .attr('value', '')
+                                    .prop('selected', true)
+                                    .text('No files could be returned')
+                            );
+                        });
+
+                })(html, value);
+
+                break;
             case 'webpage':  //Not used??
             case 'xerteurl':
 			case 'xertelo':
@@ -6845,7 +7939,7 @@ var EDITOR = (function ($, parent) {
 						.attr('contenteditable', 'true');
 
                     // Do not always add a paragraph tag if the value already starts with a <p tag (with for example a class attribute)
-                    if (value.indexOf('<p') === 0) {
+                    if (value && value.indexOf('<p') === 0) {
                         html = html.append(value);
                     } else {
                         html = html.append('<p>' + value + '</p>');
@@ -6894,7 +7988,7 @@ var EDITOR = (function ($, parent) {
                                     triggerRedrawPage(event.data.key);
                                 } else {
                                     //lightbox so redraw only the lightbox form.
-                                    triggerRedrawForm(event.data.group, event.data.key, "", "redraw");
+                                    triggerRedrawForm(event.data.group, event.data.key, "", "initialize");
                                 }
                             }
 						})
@@ -6945,6 +8039,10 @@ var EDITOR = (function ($, parent) {
     my.evaluateCondition = evaluateCondition;
     my.displayParameter = displayParameter;
 	my.displayGroup = displayGroup;
+    my.displayInlineQFGroup = displayInlineQFGroup;
+    my.showInlineQFGroup = showInlineQFGroup;
+    my.sizeInlineQFPanel = sizeInlineQFPanel;
+    my.findQFGroupOption = findQFGroupOption;
     my.convertTextAreas = convertTextAreas;
     my.convertTextInputs = convertTextInputs;
     my.convertColorPickers = convertColorPickers;

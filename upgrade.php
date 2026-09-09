@@ -1625,16 +1625,6 @@ function upgrade_50()
 
 function upgrade_51()
 {
-    $roleTable = table_by_key("role");
-
-    $ok = db_query("insert into $roleTable(`roleid`, `name`) values (8, 'aiuser')");
-    $message = "Creating extra role aiuser - ok ? " . ($ok ? 'true' : 'false') . "<br>";
-
-    return $message;
-}
-
-function upgrade_52()
-{
     // Add disabled flag to logindetails
     if (! _db_field_exists('logindetails', 'disabled')) {
         $error1 = _db_add_field('logindetails', 'disabled', 'tinyint(1)', '0', 'surname');
@@ -1647,7 +1637,7 @@ function upgrade_52()
     }
 }
 
-function upgrade_53()
+function upgrade_52()
 {
     // Add the following extensions to the blacklisted extensions:
     //php1,php2,php3,php4,php5,php6,php7,php8,phar,phtml,inc,py,bat,cmd,ps,htaccess
@@ -1669,18 +1659,32 @@ function upgrade_53()
         }
     }
 }
+
+function upgrade_53()
+{
+    $roleTable = table_by_key("role");
+
+    $ok = db_query("insert into $roleTable(`roleid`, `name`) values (8, 'aiuser')");
+    $message = "Creating extra role aiuser - ok ? " . ($ok ? 'true' : 'false') . "<br>";
+
+    return $message;
+}
+
 function upgrade_54()
 {
     $message = "";
     if (!_table_exists("management_helper")) {
-        $ok = _upgrade_db_query("CREATE TABLE IF NOT EXISTS `management_helper` (
+        $table = table_by_key('management_helper');
+
+        $ok = _upgrade_db_query("CREATE TABLE IF NOT EXISTS $table (
         `interaction_id` int(11) NOT NULL AUTO_INCREMENT,
         `vendor` VARCHAR(16) NOT NULL,
         `label` VARCHAR(34) NOT NULL,
         `type` VARCHAR(16) NOT NULL,
         `needs_key` BOOLEAN NOT NULL,
         `enabled` BOOLEAN NOT NULL ,
-        `sub_options` TEXT,  
+        `sub_options` TEXT,
+        `preferred_model` TEXT,
         PRIMARY KEY (`interaction_id`)
       )"
         );
@@ -1688,21 +1692,21 @@ function upgrade_54()
         $message .= "Creating management helper table - ok ? " . ($ok ? 'true' : 'false') . "<br>";
 
         if ($ok) {
-            $ok = db_query("INSERT INTO `management_helper` VALUES 
-                                    (1, 'openai', 'GPT (Openai)', 'ai', 1, 0, '{\"generate image\":\"false\",\"image uploads\":\"false\"}'),
-                                    (2, 'anthropic', 'Claude (Anthropic)', 'ai', 1, 0, '{\"generate image\":\"false\"}'),
-                                    (3, 'mistral', 'Mistral AI', 'ai', 1, 0, '{\"generate image\":\"false\"}'),
-                                    (4, 'pexels', 'Pexels', 'image', 1, 0, '{}'),
-                                    (5, 'pixabay', 'Pixabay', 'image', 1, 0, '{}'),
-                                    (6, 'unsplash', 'Unsplash', 'image', 1, 0, '{}'),
-                                    (7, 'wikimedia', 'Wikimedia Foundation', 'image', 0, 0, '{}'),
-                                    (8, 'dalle2', 'DallE2 (Generative)', 'imagegen', 1, 0, '{}'),
-                                    (9, 'dalle3', 'DallE3 (Generative)', 'imagegen', 1, 0, '{}'),
-                                    (10, 'gpt1', 'GPT Image 1', 'imagegen', 1, 0, '{}'),
-                                    (11, 'gladia', 'Gladia (Transcription)', 'transcription', 1, 0, '{}'),
-                                    (12, 'openai', 'Open AI (Transcription)', 'transcription', 1, 0, '{}'),
-                                    (13, 'mistralenc', 'Mistral (Encoding)', 'encoding', 1, 0, '{}'),
-                                    (14, 'openaienc', 'OpenAI (Encoding)', 'encoding', 1, 0, '{}')
+            $ok = db_query("INSERT INTO $table VALUES 
+                                    (1, 'openai', 'GPT (Openai)', 'ai', 1, 0, '{}', ''),
+                                    (2, 'anthropic', 'Claude (Anthropic)', 'ai', 1, 0, '{}', ''),
+                                    (3, 'mistral', 'Mistral AI', 'ai', 1, 0, '{}', ''),
+                                    (4, 'pexels', 'Pexels', 'image', 1, 0, '{}', ''),
+                                    (5, 'pixabay', 'Pixabay', 'image', 1, 0, '{}', ''),
+                                    (6, 'unsplash', 'Unsplash', 'image', 1, 0, '{}', ''),
+                                    (7, 'wikimedia', 'Wikimedia Foundation', 'image', 0, 0, '{}', ''),
+                                    (8, 'dalle2', 'DallE2 (Generative)', 'imagegen', 1, 0, '{}', ''),
+                                    (9, 'dalle3', 'DallE3 (Generative)', 'imagegen', 1, 0, '{}', ''),
+                                    (10, 'gpt1', 'GPT Image 1', 'imagegen', 1, 0, '{}', ''),
+                                    (11, 'gladia', 'Gladia (Transcription)', 'transcription', 1, 0, '{}', ''),
+                                    (12, 'openai', 'Open AI (Transcription)', 'transcription', 1, 0, '{}', ''),
+                                    (13, 'mistralenc', 'Mistral (Encoding)', 'encoding', 1, 0, '{}', ''),
+                                    (14, 'openaienc', 'OpenAI (Encoding)', 'encoding', 1, 0, '{}', '')
                                     ");
             $message .= "Populating management helper table - ok ? " . ($ok ? 'true' : 'false') . "<br>";
         }
@@ -1720,7 +1724,9 @@ function upgrade_55()
 {
     $message = "";
     if (!_table_exists("ai_request_logs")) {
-        $ok = _upgrade_db_query("CREATE TABLE IF NOT EXISTS `ai_request_logs` (
+        $table = table_by_key('ai_request_logs');
+
+        $ok = _upgrade_db_query("CREATE TABLE IF NOT EXISTS $table (
   `id` BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
   `schema_version` VARCHAR(16) NOT NULL DEFAULT '1.0',
 
@@ -1752,24 +1758,7 @@ function upgrade_55()
   `cost_pricing_version` VARCHAR(32) DEFAULT NULL,
   `cost_total` DECIMAL(18,6) DEFAULT NULL,
 
-  PRIMARY KEY (`id`),
-
-  KEY `idx_when` (`occurred_at`),
-  KEY `idx_category_when` (`category`, `occurred_at`),
-  KEY `idx_service_when` (`service`, `occurred_at`),
-  KEY `idx_model_when` (`model`, `occurred_at`),
-  KEY `idx_status_when` (`status`, `occurred_at`),
-  KEY `idx_request_when` (`request_id`, `occurred_at`),
-
-  KEY `idx_user_when` (`actor_user_id`, `occurred_at`),
-  KEY `idx_workspace_when` (`actor_workspace_id`, `occurred_at`),
-
-  KEY `idx_tokens_when` (`total_tokens`, `occurred_at`),
-  KEY `idx_audio_when` (`audio_ms`, `occurred_at`),
-  KEY `idx_cost_when` (`cost_total`, `occurred_at`),
-  KEY `idx_images_when` (`images_requested`, `occurred_at`),
-  KEY `idx_images_rcv_when` (`images_received`, `occurred_at`),
-  KEY `idx_image_wh_when` (`image_width`, `image_height`, `occurred_at`)
+  PRIMARY KEY (`id`)
 );");
 
         $message .= "Creating ai_request_logs table - ok ? " . ($ok ? 'true' : 'false') . "<br>";
@@ -1790,65 +1779,167 @@ function upgrade_56(){
             $error1_returned = false;
         }
 
-        return "Tsugi directory field - ok ? " . ($error1_returned ? 'true' : 'false'). "<br>";
+        return "Logindetails preference field - ok ? " . ($error1_returned ? 'true' : 'false'). "<br>";
     }
     else
     {
-        return "Tsugi directory already exists - ok ? true". "<br>";
+        return "Logindetails preference field already exists - ok ? true". "<br>";
     }
 }
 
-function upgrade_57(){
-    if (! _db_field_exists('templaterights', 'favorite')) {
-        $error1 = _db_add_field('templaterights', 'favorite', 'text', '', '');
-        $error1_returned = true;
+function upgrade_57()
+{
+    $message = "";
+    if (!_table_exists("ai_settings")) {
+        $table = table_by_key('ai_settings');
 
+        $ok = _upgrade_db_query("CREATE TABLE IF NOT EXISTS $table (
+  `id` BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
+  `scope_type` ENUM('global','user') NOT NULL DEFAULT 'global',
+  `scope_id` BIGINT UNSIGNED NOT NULL DEFAULT 0,
 
-        if (($error1 === false)) {
-            $error1_returned = false;
+  `ai_model` VARCHAR(255) DEFAULT NULL,
+  `reading_level` VARCHAR(255) DEFAULT NULL,
+  `education_level` VARCHAR(255) DEFAULT NULL,
+  `tone_and_style` VARCHAR(255) DEFAULT NULL,
+
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `uniq_scope` (`scope_type`, `scope_id`)
+);");
+
+        $message .= "Creating ai_settings table - ok ? " . ($ok ? 'true' : 'false') . "<br>";
+
+        if ($ok) {
+            $insert_ok = _upgrade_db_query("INSERT INTO $table
+  (`scope_type`, `scope_id`, `ai_model`, `reading_level`, `education_level`, `tone_and_style`)
+VALUES
+  ('global', 0, 'Mistral AI', 'intermediate_b1', 'vocational', 'semi_formal');");
+
+            $message .= "Inserting default global ai_settings row - ok ? " . ($insert_ok ? 'true' : 'false') . "<br>";
         }
+    } else {
+        $message .= "Table ai_settings already exists - ok ? true<br>";
+    }
 
-        return "Tsugi directory field - ok ? " . ($error1_returned ? 'true' : 'false'). "<br>";
-    }
-    else
-    {
-        return "Tsugi directory already exists - ok ? true". "<br>";
-    }
+    return $message;
 }
 
 function upgrade_58()
 {
     $message = "";
+    if (!_table_exists("ai_settings_options")) {
+        $table = table_by_key('ai_settings_options');
 
-    if (!_table_exists("template_thumbnails")) {
+        $ok = _upgrade_db_query("CREATE TABLE IF NOT EXISTS $table (
+  `id` BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
+  `setting_key` VARCHAR(64) NOT NULL,
+  `option_values` TEXT DEFAULT NULL,
+
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `uniq_setting_key` (`setting_key`)
+);");
+
+        $message .= "Creating ai_settings_options table - ok ? " . ($ok ? 'true' : 'false') . "<br>";
+
+        if ($ok) {
+            $insert_ok = _upgrade_db_query("INSERT INTO $table
+  (`setting_key`, `option_values`) VALUES
+  ('reading_level', 'beginner_a1,beginner_a2,intermediate_b1,intermediate_b2,advanced_c1,advanced_c2'),
+  ('education_level', 'middle_school,high_school,vocational,bachelors,university,masters,phd'),
+  ('tone_and_style', 'formal,semi_formal,informal,active,passive');");
+
+            $message .= "Inserting default ai_settings_options rows - ok ? " . ($insert_ok ? 'true' : 'false') . "<br>";
+        }
+    } else {
+        $message .= "Table ai_settings_options already exists - ok ? true<br>";
+    }
+
+    return $message;
+}
+
+function upgrade_59()
+{
+    $table = table_by_key("management_helper");
+
+    $ok = db_query("
+        UPDATE $table
+        SET `label` = 'GPT Image'
+        WHERE `vendor` = 'gpt1'
+    ");
+
+    return "Updating gpt1 label to GPT Image - ok ? " . ($ok ? 'true' : 'false') . "<br>";
+}
+
+function upgrade_60()
+{
+    $table = table_by_key("management_helper");
+
+    $ok = db_query("
+        INSERT INTO $table
+            (`vendor`, `label`, `type`, `needs_key`, `enabled`, `sub_options`, `preferred_model`)
+        VALUES
+            ('gemini', 'Gemini (Google)', 'ai', 1, 0, '{}', 'gemini-3.6-flash')
+    ");
+
+    return "Adding Gemini to management_helper - ok ? " . ($ok ? 'true' : 'false') . "<br>";
+}
+
+function upgrade_61()
+{
+    $userGroupsRoleTable = table_by_key("user_group_role");
+    $message = '';
+
+    if (!_table_exists($userGroupsRoleTable)) {
+        $ok = _upgrade_db_query("CREATE TABLE IF NOT EXISTS `$userGroupsRoleTable` (
+          `groupid` int NOT NULL,
+          `userid` bigint(20) NOT NULL,
+          PRIMARY KEY (`userid`, `groupid`)
+        )");
+        $message .= "Creating user_group_role table - ok ? " . ($ok ? 'true' : 'false') . "<br>";
+    } else {
+        $message .= "Table user_group_role already exists - ok ? true<br>";
+    }
+
+    return $message;
+}
+
+// UI/UX branch migrations were originally numbered 57-59. They follow the
+// complete 3.16 migration sequence here to avoid colliding with upgrades 57-61.
+function upgrade_62()
+{
+    if (!_db_field_exists('templaterights', 'favorite')) {
+        $ok = _db_add_field('templaterights', 'favorite', 'text', '', '');
+        return "Adding templaterights favorite field - ok ? " . ($ok !== false ? 'true' : 'false') . "<br>";
+    }
+
+    return "Templaterights favorite field already exists - ok ? true<br>";
+}
+
+function upgrade_63()
+{
+    $message = "";
+    $table = table_by_key("template_thumbnails");
+
+    if (!_table_exists($table)) {
         $ok = _upgrade_db_query(
-            "CREATE TABLE IF NOT EXISTS `template_thumbnails` (
-                    `id` BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
-                    
-                    `template_id` BIGINT UNSIGNED NOT NULL,
-                    `page_link_id` VARCHAR(255) NOT NULL,
-                    `page_index` INT UNSIGNED NOT NULL DEFAULT 0,
-                    
-                    `revision` VARCHAR(64) NOT NULL,
-                    `mime_type` VARCHAR(32) NOT NULL DEFAULT 'image/jpeg',
-                    
-                    `image_data` MEDIUMBLOB NOT NULL,
-                    
-                    `width` SMALLINT UNSIGNED NOT NULL DEFAULT 0,
-                    `height` SMALLINT UNSIGNED NOT NULL DEFAULT 0,
-                    
-                    `updated_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
-                    ON UPDATE CURRENT_TIMESTAMP,
-                    
-                    PRIMARY KEY (`id`),
-                    
-                    UNIQUE KEY `idx_template_page` (`template_id`, `page_link_id`),
-                    KEY `idx_template_index` (`template_id`, `page_index`),
-                    KEY `idx_revision` (`revision`),
-                    KEY `idx_updated_at` (`updated_at`)
-                );"
+            "CREATE TABLE IF NOT EXISTS `$table` (
+                `id` BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
+                `template_id` BIGINT UNSIGNED NOT NULL,
+                `page_link_id` VARCHAR(255) NOT NULL,
+                `page_index` INT UNSIGNED NOT NULL DEFAULT 0,
+                `revision` VARCHAR(64) NOT NULL,
+                `mime_type` VARCHAR(32) NOT NULL DEFAULT 'image/jpeg',
+                `image_data` MEDIUMBLOB NOT NULL,
+                `width` SMALLINT UNSIGNED NOT NULL DEFAULT 0,
+                `height` SMALLINT UNSIGNED NOT NULL DEFAULT 0,
+                `updated_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+                PRIMARY KEY (`id`),
+                UNIQUE KEY `idx_template_page` (`template_id`, `page_link_id`),
+                KEY `idx_template_index` (`template_id`, `page_index`),
+                KEY `idx_revision` (`revision`),
+                KEY `idx_updated_at` (`updated_at`)
+            );"
         );
-
         $message .= "Creating template_thumbnails table - ok ? " . ($ok ? 'true' : 'false') . "<br>";
     } else {
         $message .= "Table template_thumbnails already exists - ok ? true<br>";
@@ -1857,14 +1948,15 @@ function upgrade_58()
     return $message;
 }
 
-function upgrade_59()
+function upgrade_64()
 {
-    global $xerte_toolkits_site;
-    $prefix = $xerte_toolkits_site->database_table_prefix;
     $message = "";
+    $metadata_table = table_by_key("folder_user_metadata");
+    $labels_table = table_by_key("folder_labels");
+    $assignments_table = table_by_key("folder_label_assignments");
 
-    if (!_table_exists("folder_user_metadata")) {
-        $ok = _upgrade_db_query("CREATE TABLE `{$prefix}folder_user_metadata` (
+    if (!_table_exists($metadata_table)) {
+        $ok = _upgrade_db_query("CREATE TABLE `$metadata_table` (
             `folder_id` BIGINT NOT NULL,
             `login_id` BIGINT NOT NULL,
             `colour` VARCHAR(24) DEFAULT NULL,
@@ -1877,8 +1969,8 @@ function upgrade_59()
         $message .= "Table folder_user_metadata already exists - ok ? true<br>";
     }
 
-    if (!_table_exists("folder_labels")) {
-        $ok = _upgrade_db_query("CREATE TABLE `{$prefix}folder_labels` (
+    if (!_table_exists($labels_table)) {
+        $ok = _upgrade_db_query("CREATE TABLE `$labels_table` (
             `label_id` BIGINT NOT NULL AUTO_INCREMENT,
             `login_id` BIGINT NOT NULL,
             `label_name` VARCHAR(100) NOT NULL,
@@ -1893,8 +1985,8 @@ function upgrade_59()
         $message .= "Table folder_labels already exists - ok ? true<br>";
     }
 
-    if (!_table_exists("folder_label_assignments")) {
-        $ok = _upgrade_db_query("CREATE TABLE `{$prefix}folder_label_assignments` (
+    if (!_table_exists($assignments_table)) {
+        $ok = _upgrade_db_query("CREATE TABLE `$assignments_table` (
             `label_id` BIGINT NOT NULL,
             `folder_id` BIGINT NOT NULL,
             PRIMARY KEY (`label_id`, `folder_id`),

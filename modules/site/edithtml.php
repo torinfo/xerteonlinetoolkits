@@ -21,6 +21,31 @@
 require_once (__DIR__ . "/../../website_code/php/themes_library.php");
 require_once (__DIR__ . "/../../website_code/php/editor_support_library.php");
 
+function addSessionData($url) {
+    if ( ini_get('session.use_cookies') != '0' ) return $url;
+    if ( stripos($url, '&'.session_name().'=') > 0 ||
+            stripos($url, '?'.session_name().'=') > 0 ) return $url;
+    $session_id = session_id();
+
+    // Don't add more than once...
+    $parameter = session_name().'=';
+    if ( strpos($url, $parameter) !== false ) return $url;
+
+    $url = add_url_parms($url, session_name(), $session_id);
+    return $url;
+}
+
+function add_url_parms($url, $key, $val) {
+    $url .= strpos($url,'?') === false ? '?' : '&';
+    $url .= urlencode($key) . '=' . urlencode($val);
+    return $url;
+}
+
+function getSessionData() {
+    if ( ini_get('session.use_cookies') != '0' ) return "";
+    $session_id = session_id();
+    return session_name().'=' . $session_id;
+}
 
 /**
  *
@@ -63,8 +88,7 @@ function output_editor_code($row_edit, $xerte_toolkits_site, $read_status, $vers
         copy($data, $preview);
         chmod($preview, 0777);
     }
-
-    $preview_url = $xerte_toolkits_site->users_file_area_short . $row_edit['template_id'] . "-" . $row_username['username'] . "-" . $row_edit['template_name'] . "/" . $preview_filename;
+    $previewxmlurl = $xerte_toolkits_site->users_file_area_short . $row_edit['template_id'] . "-" . $row_username['username'] . "-" . $row_edit['template_name'] . "/" . $preview_filename;
     $data_url = $xerte_toolkits_site->users_file_area_short . $row_edit['template_id'] . "-" . $row_username['username'] . "-" . $row_edit['template_name'] . "/data.xml";
     $rlo_url = $xerte_toolkits_site->site_url .  $xerte_toolkits_site->users_file_area_short . $row_edit['template_id'] . "-" . $row_username['username'] . "-" . $row_edit['template_name'];
     $xwd_url = "modules/" . $row_edit['template_framework'] . "/parent_templates/" . $row_edit['parent_template'] . "/";
@@ -197,7 +221,24 @@ function output_editor_code($row_edit, $xerte_toolkits_site, $read_status, $vers
     }
 
     $body_class = toolkits_editor_body_class_attr($xerte_toolkits_site->rights == 'elevated');
+    $upload_url = $xerte_toolkits_site->site_url .
+            (isset($_SESSION['lti_enabled']) && $_SESSION['lti_enabled'] && function_exists('addSessionData')
+                    ? addSessionData("editor/upload.php") . "&tsugisession=0" : "editor/upload.php");
+    $preview_url = $xerte_toolkits_site->site_url .
+            (
+            isset($_SESSION['lti_enabled']) && $_SESSION['lti_enabled'] && function_exists('addSessionData')
+                    ? addSessionData("preview.php") . "&tsugisession=0&"
+                    : "preview.php?"
+            ) .
+            "template_id=";
+    if (isset($_SESSION['lti_enabled']) && $_SESSION['lti_enabled']) {
+        $lti_session = getSessionData() . "&tsugisession=0";
+    } else {
+        $lti_session = "";
+    }
 
+    $base_ai_options = get_ai_base_settings_options();
+    $base_ai_defaults = get_ai_base_settings_defaults();
     $vendors = get_vendor_settings();
     $corpus_upload_types = array();
     if (array_key_exists('ai', $vendors )){
@@ -373,7 +414,7 @@ function output_editor_code($row_edit, $xerte_toolkits_site, $read_status, $vers
 
 <script>
     <?php
-    echo "previewxmlurl=\"" . $preview_url . "\";\n";
+    echo "previewxmlurl=\"" . $previewxmlurl . "\";\n";
     echo "dataxmlurl=\"" . $data_url . "\";\n";
     echo "mediavariable=\"" . $media_path . "\";\n";
     echo "rlourlvariable=\"" . $rlo_url . "/\";\n";
@@ -401,11 +442,17 @@ function output_editor_code($row_edit, $xerte_toolkits_site, $read_status, $vers
     echo "simple_lo_page=" . ($simple_lo_page ? "true" : "false") . ";\n";
     echo "disable_advanced=" . ($disable_advanced ? "true" : "false") . ";\n";
     echo "vendor_options=" . json_encode($vendors) . ";\n";
+    echo "base_ai_options=" . json_encode($base_ai_options) . ";\n";
+    echo "base_ai_defaults=" . json_encode($base_ai_defaults) . ";\n";
     echo "corpus_upload_types=" . json_encode($corpus_upload_types) . ";\n";
     echo "management_helper_table=" . json_encode($xerte_toolkits_site->management_helper_table) . ";\n";
 
     echo "oai_pmh_available=" . ($oai_pmh ? "true" : "false") . ";\n";
     echo "roles=" . json_encode($user_roles) . ";\n";
+    echo "var upload_url=\"" . $upload_url . "\";\n";
+    echo "var preview_url=\"" . $preview_url . "\";\n";
+    echo "var lti_session=\"" . $lti_session . "\";\n";
+
 
     // Some upgrade.php in teh past prevented the course_freetext_enabled column to be set correctly in the sitedetails table
     // If not present, set to true
@@ -417,7 +464,31 @@ function output_editor_code($row_edit, $xerte_toolkits_site, $read_status, $vers
         echo "course_freetext_enabled=" . ($xerte_toolkits_site->course_freetext_enabled == 'true' ? 'true' : 'false') . ";\n";
     }
     echo "templateframework=\"" . $row_edit['template_framework'] . "\";\n";
-    echo "theme_list=" . json_encode($ThemeList) . ";\n";
+    echo "var theme_list_encoded='" . base64_encode(json_encode($ThemeList)) . "';\n";
+    echo "var theme_list=JSON.parse(atob(theme_list_encoded));\n";
+
+    // Pass user preferences to JavaScript (similar to index.php)
+    require_once("library/Xerte/Authentication/Factory.php");
+    $authmech = Xerte_Authentication_Factory::create($xerte_toolkits_site->authentication_method);
+    
+    $user_preferences_json = "{}";
+    $user_has_preferences = "false";
+    
+    if (isset($_SESSION['toolkits_preferences']) && is_array($_SESSION['toolkits_preferences'])) {
+        $user_preferences_json = json_encode($_SESSION['toolkits_preferences']);
+        if ($authmech->hasUserPreferences()) {
+            $user_has_preferences = "true";
+        }
+    } else {
+        if (isset($authmech) && $authmech->hasUserPreferences()) {
+            $user_has_preferences = "true";
+        }
+    }
+    
+    echo "var user_preferences = {$user_preferences_json};\n";
+    echo "var user_has_preferences = {$user_has_preferences};\n";
+    echo "console.log('Editor: user_preferences loaded:', user_preferences);\n";
+    echo "console.log('Editor: user_has_preferences =', user_has_preferences);\n";
     ?>
 
     function bunload(){
@@ -426,7 +497,9 @@ function output_editor_code($row_edit, $xerte_toolkits_site, $read_status, $vers
 
         template = "<?PHP  echo $row_edit['template_id']; ?>";
 
-        if(typeof window_reference==="undefined"){
+        if (lti_session !== ""){
+            edit_window_close_lti(path);
+        }else if(typeof window_reference==="undefined"){
 
             window.opener.edit_window_close(path,template);
 

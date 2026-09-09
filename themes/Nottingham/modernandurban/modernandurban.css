@@ -4,8 +4,10 @@
   font-family: "Libre Franklin";
   font-style: normal;
   font-weight: 400;
-  src: url("fonts/libre-franklin-v12-latin-ext_latin-regular.eot"); /* IE9 Compat Modes */
-  src: local(""), url("fonts/libre-franklin-v12-latin-ext_latin-regular.eot?#iefix") format("embedded-opentype"), url("fonts/libre-franklin-v12-latin-ext_latin-regular.woff2") format("woff2"), url("fonts/libre-franklin-v12-latin-ext_latin-regular.woff") format("woff"), url("fonts/libre-franklin-v12-latin-ext_latin-regular.ttf") format("truetype"), url("fonts/libre-franklin-v12-latin-ext_latin-regular.svg#LibreFranklin") format("svg"); /* Legacy iOS */
+  src: url("fonts/libre-franklin-v12-latin-ext_latin-regular.eot");
+  /* IE9 Compat Modes */
+  src: local(""), url("fonts/libre-franklin-v12-latin-ext_latin-regular.eot?#iefix") format("embedded-opentype"), url("fonts/libre-franklin-v12-latin-ext_latin-regular.woff2") format("woff2"), url("fonts/libre-franklin-v12-latin-ext_latin-regular.woff") format("woff"), url("fonts/libre-franklin-v12-latin-ext_latin-regular.ttf") format("truetype"), url("fonts/libre-franklin-v12-latin-ext_latin-regular.svg#LibreFranklin") format("svg");
+  /* Legacy iOS */
 }
 /* default #2196F3;*/
 /*start here and set the default values for all the variables*/
@@ -243,7 +245,7 @@ div.infoHolder.ui-tabs.ui-widget.ui-widget-content.ui-corner-all {
 }
 
 .x_annotatedDiagram_page #infoHolder {
-  background: #ffffff;
+  /*background:$defaultpagebackground;*/
 }
 
 .target.ui-droppable.border.highlight {
@@ -251,8 +253,8 @@ div.infoHolder.ui-tabs.ui-widget.ui-widget-content.ui-corner-all {
 }
 
 .x_dragDropLabel_page #infoHolder {
-  padding: 20px;
-  margin-right: 20px;
+  /*padding:20px;
+  margin-right:20px;*/
 }
 
 .x_dragDropLabel_page .label.panel {
@@ -321,7 +323,7 @@ a.hotspot, a.hotspot.selected {
 }
 
 .hsinfo {
-  padding: 1%;
+  /*padding:1%;*/
 }
 
 .x_hotspotImage_page #infoHolder {
@@ -558,6 +560,16 @@ table.headerCol.shaded td.header {
 table.header.shaded th:not(:last-of-type),
 table.footer.shaded :not(thead) tr:last-of-type td:not(:last-of-type) {
   border-right-color: #F8F1E5;
+}
+
+.x_nav_page #pageContents.tab #infoHolder {
+  border-radius: 2vmin;
+  background: #F9BA32;
+}
+
+.x_mcq_page #pageContents .optionGroup.answerBtn.selected,
+.x_quiz_page #pageContents .optionGroup.answerBtn.selected {
+    background: #2F3131;
 }
 
 #x_footerBlock {
@@ -820,6 +832,7 @@ body:not(.sb_right):not(.sb_left) #x_footerBlock {
   #x_footerProgress {
     display: block;
   }
+
   #x_pageNo {
     vertical-align: top;
     text-align: center;
@@ -831,15 +844,18 @@ body:not(.sb_right):not(.sb_left) #x_footerBlock {
     z-index: 100;
     font-size: 12px;
   }
+
   #x_footerBlock button {
     /*font-size: 1em;
     width: 1em;*/
     margin-left: 5px;
   }
+
   .pbContainer {
     display: block;
     margin-top: 1.2em;
   }
+
   .pbTxt {
     display: block;
     text-align: center;
@@ -1494,7 +1510,8 @@ h3 {
 
 #x_mainHolder {
   background: #ffffff;
-  border: none !important; /*remove this to restore the default border*/
+  border: none !important;
+  /*remove this to restore the default border*/
 }
 
 body:not(.sb_right):not(.sb_left) #x_mainHolder {
@@ -1510,8 +1527,8 @@ body:not(.sb_right):not(.sb_left) #x_mainHolder {
 }
 
 #infoHolder {
-  border-radius: 2vmin;
-  background: #F9BA32;
+  /*border-radius:$mediumroundedcorners;
+  background: $brightcolor;*/
 }
 
 .panel {
@@ -1519,6 +1536,11 @@ body:not(.sb_right):not(.sb_left) #x_mainHolder {
   background: #F9BA32;
   box-shadow: none;
   border-color: #F9BA32;
+}
+
+.panel .panel.editorStyle {
+  background: #ffffff;
+  border-color: #ffffff;
 }
 
 .panelPage {

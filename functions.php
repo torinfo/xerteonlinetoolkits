@@ -76,6 +76,8 @@ function _load_language_file($file_path) {
     $languages = dirname(__FILE__) . '/languages/';
 
     if (isset($_REQUEST['language']) && is_dir($languages . $_REQUEST['language'])) {
+        // Check for path traversal
+        x_check_path_traversal($languages . $_REQUEST['language'], $languages, "Invalid language specified");
         $_SESSION['toolkits_language'] = $_REQUEST['language'];
     }
 
@@ -168,7 +170,7 @@ function refresh_toolkits_user_preferences_session() {
     }
     try {
         $authmech = Xerte_Authentication_Factory::create($xerte_toolkits_site->authentication_method);
-        if (!$authmech || !$authmech->hasUserPrefrences()) {
+        if (!$authmech || !$authmech->hasUserPreferences()) {
             return;
         }
     } catch (Exception $e) {
@@ -222,7 +224,7 @@ function ensure_toolkits_ui_theme_preference($persist = false) {
     if ($persist && $needsDefault && !empty($_SESSION['toolkits_logon_username']) && function_exists('db_query')) {
         try {
             $authmech = Xerte_Authentication_Factory::create($xerte_toolkits_site->authentication_method);
-            if ($authmech && $authmech->hasUserPrefrences()) {
+            if ($authmech && $authmech->hasUserPreferences()) {
                 $preferences_json = json_encode($_SESSION['toolkits_preferences']);
                 if ($preferences_json !== false) {
                     db_query(
@@ -466,6 +468,7 @@ function build_toolkits_index_page_config($authmech) {
         'search' => INDEX_SEARCH,
         'searchPlaceholder' => INDEX_SEARCH_PLACEHOLDER,
         'create' => INDEX_CREATE,
+        'aiTransparencyAlt' => defined('INDEX_XERTE_AI_LOGO_ALT') ? INDEX_XERTE_AI_LOGO_ALT : 'Xerte AI ethical use and transparency statement',
         'wcagAlt' => INDEX_WCAG_LOGO_ALT,
         'osiAlt' => INDEX_OSI_LOGO_ALT,
         'apereoAlt' => INDEX_APEREO_LOGO_ALT,
@@ -669,7 +672,13 @@ function _include_javascript_file($file_path) {
         $url_param=substr($file_path, $parpos);
         $file_path = substr($file_path, 0, $parpos);
     }
+    else
+    {
+        $url_param = "";
+    }
     if (isset($_GET['language']) && is_dir($languages . x_clean_input($_GET['language']))) {
+        // Check for path traversal
+        x_check_path_traversal($languages . x_clean_input($_GET['language']), $languages, "Invalid language specified");
         $_SESSION['toolkits_language'] = x_clean_input($_GET['language']);
     }
 
@@ -702,7 +711,7 @@ function _include_javascript_file($file_path) {
     _debug($real_file_path);
     _debug($en_gb_file_path);
     if (file_exists(dirname(__FILE__) . "/" . $en_gb_file_path)) {
-        echo "<script type=\"text/javascript\" language=\"javascript\" src=\"" . $xerte_toolkits_site->site_url . $en_gb_file_path . $url_param . "\"></script>";
+        echo "<script type=\"text/javascript\" language=\"javascript\" src=\"" . $en_gb_file_path . $url_param . "\"></script>";
     } else {
         // stuff will break at this point.
         //die("Where was $real_file_path?");
@@ -712,7 +721,7 @@ function _include_javascript_file($file_path) {
 
     if ($language != "en-GB") {
         if (file_exists(dirname(__FILE__) . "/" . $real_file_path)) {
-            echo "<script type=\"text/javascript\" language=\"javascript\" src=\"" . $xerte_toolkits_site->site_url . $real_file_path . $url_param . "\"></script>";
+            echo "<script type=\"text/javascript\" language=\"javascript\" src=\"" . $real_file_path . $url_param . "\"></script>";
         } else {
             // stuff will break at this point.
             //die("Where was $real_file_path?");
@@ -862,6 +871,26 @@ function x_clean_input($input, $expected_type = null, $specialcharsflags = ENT_Q
                 die("Expected numeric value, got " . htmlentities($sanitized, $specialcharsflags));
             }
         }
+        else if ($expected_type == 'bool') {
+            if (!is_bool($input)) {
+                die("Expected boolean, got " . htmlentities($sanitized, $specialcharsflags));
+            }
+            return $input; // do not modify booleans
+        }
+        else if ($expected_type == 'email') {
+            if (!filter_var($sanitized, FILTER_VALIDATE_EMAIL)) {
+                die("Expected email address, got " . htmlentities($sanitized, $specialcharsflags));
+            }
+        }
+        else if ($expected_type == 'url') {
+            if (!filter_var($sanitized, FILTER_VALIDATE_URL)) {
+                die("Expected URL, got " . htmlentities($sanitized, $specialcharsflags));
+            }
+         }
+        else
+        {
+            die("Invalid expected type '$expected_type' specified in x_clean_input: " . htmlentities($expected_type, $specialcharsflags));
+        }
     }
     return $sanitized;
 }
@@ -972,13 +1001,18 @@ function x_check_zip_file($file){
     x_check_zip($zip);
 }
 
-function x_check_path_traversal($path, $expected_path=null, $message=null, $soft_fail=false)
+function x_check_path_traversal($path, $expected_path=null, $message=null, $type='file', $soft_fail=false)
 {
     global $xerte_toolkits_site;
     $mesg = ($message != null ? $message : "Path traversal detected!");
     // Account for Windows, because realpath changes / to \
     if(DIRECTORY_SEPARATOR !== '/') {
         $rpath = str_replace('/', DIRECTORY_SEPARATOR, $path);
+        if (strpos($rpath, DIRECTORY_SEPARATOR) !== 0 && strpos($rpath, ':') !== 1){
+            // Relative path, so convert to absolute path
+            $rpath = str_replace('/',  DIRECTORY_SEPARATOR, $xerte_toolkits_site->root_file_path . $rpath);
+        }
+
         if ($expected_path != null) {
             $rexpected_path = str_replace('/', DIRECTORY_SEPARATOR, $expected_path);
         }
@@ -986,7 +1020,17 @@ function x_check_path_traversal($path, $expected_path=null, $message=null, $soft
     else
     {
         $rpath = $path;
+        if (strpos($rpath, '/') !== 0){
+            // Relative path, so convert to absolute path
+            $rpath = $xerte_toolkits_site->root_file_path . $rpath;
+        }
         $rexpected_path = $expected_path;
+    }
+    if ($type === 'folder') {
+        // Ensure that folder exists for realpath to work
+        if (!is_dir($rpath)) {
+            die($mesg);
+        }
     }
     // Trim dangling DIRECTORY_SEPARATOR
     $rpath = rtrim($rpath, '/\\');
@@ -1127,7 +1171,7 @@ function x_set_session_name()
 
 //
 //Function that ensures a folder exists in the learning object
-function verify_LO_folder($LO, $folder): void
+function verify_LO_folder($LO, $folder)
 {
     global $xerte_toolkits_site;
 

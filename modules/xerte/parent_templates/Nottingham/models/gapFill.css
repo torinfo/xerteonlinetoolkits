@@ -1,15 +1,11 @@
 /* gapFill.html */
 	
-	#pageContents .panel {
+	#pageContents #mainPanel.panel {
 		overflow:	auto;
 	}
 
-	#pageContents #dragDropHolder .panel {
+	#pageContents #dragDropHolder #mainPanel.panel {
 		overflow-x: hidden;
-	}
-	
-	#textHolder {
-		margin-bottom:	10px;
 	}
 	
 	#targetHolder .target {
@@ -215,6 +211,10 @@
 	background:#ffffff;
 	cursor: default;
 	padding:initial !important;
+}
+
+#targetHolder select[disabled] {
+	appearance: none;
 }
 
 /*gap fill: remove red crosses when show answers selected*/

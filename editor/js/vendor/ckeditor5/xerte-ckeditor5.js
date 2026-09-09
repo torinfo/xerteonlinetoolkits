@@ -7,6 +7,8 @@
 
 	window.__xerteCke5Instances = window.__xerteCke5Instances || {};
 	window.__xerteCke5Shims = window.__xerteCke5Shims || {};
+	/** Maps editor id → textarea element the instance was created on (detect stale reuse after wizard DOM rebuild). */
+	window.__xerteCke5SourceElements = window.__xerteCke5SourceElements || {};
 	window.__xerteCke5InlineCssInjected = window.__xerteCke5InlineCssInjected || false;
 	window.__xerteCke5UiCssInjected = window.__xerteCke5UiCssInjected || false;
 
@@ -19,21 +21,26 @@
 		cke.on = cke.on || function () {
 			// CKEditor 4 global events are not available in CKEditor 5.
 		};
-		cke.remove = cke.remove || function (id) {
-			var shim = window.__xerteCke5Shims[id];
-			if (shim && shim.destroy) {
-				return shim.destroy();
-			}
-			var nativeEd = window.__xerteCke5Instances[id];
-			if (nativeEd && nativeEd.destroy) {
-				return nativeEd.destroy().then(function () {
-					delete window.__xerteCke5Instances[id];
-					delete window.__xerteCke5Shims[id];
-				});
-			}
-			delete window.__xerteCke5Instances[id];
-			delete window.__xerteCke5Shims[id];
-		};
+			cke.remove = cke.remove || function (id) {
+				var shim = window.__xerteCke5Shims[id];
+				if (shim && shim.destroy) {
+					return shim.destroy();
+				}
+				var nativeEd = window.__xerteCke5Instances[id];
+				if (nativeEd && nativeEd.destroy) {
+					return nativeEd.destroy().then(function () {
+						if (window.__xerteCke5Instances[id] !== nativeEd) {
+							return;
+						}
+						delete window.__xerteCke5Instances[id];
+						delete window.__xerteCke5Shims[id];
+						delete window.__xerteCke5SourceElements[id];
+					});
+				}
+				delete window.__xerteCke5Instances[id];
+				delete window.__xerteCke5Shims[id];
+				delete window.__xerteCke5SourceElements[id];
+			};
 		window.CKEDITOR = cke;
 	}
 	ensureLegacyCkeditorGlobal();
@@ -87,6 +94,7 @@
 			Superscript: 'superscript',
 			RemoveFormat: 'removeFormat',
 			SpecialChar: 'specialCharacters',
+			FontAwesome: 'fontAwesome',
 			HorizontalRule: 'horizontalLine',
 			Mathjax: 'xerteMathJax',
 			Link: 'link',
@@ -109,19 +117,10 @@
 			return null;
 		}
 		if (!Array.isArray(toolbar) && toolbar.items && Array.isArray(toolbar.items)) {
-			var tbObj = {};
-			for (var key in toolbar) {
-				if (toolbar.hasOwnProperty(key)) {
-					tbObj[key] = toolbar[key];
-				}
-			}
-			if (tbObj.shouldNotGroupWhenFull === undefined) {
-				tbObj.shouldNotGroupWhenFull = true;
-			}
-			return tbObj;
+			return toolbar;
 		}
 		if (Array.isArray(toolbar) && toolbar.length && typeof toolbar[0] === 'string') {
-			return { items: toolbar, shouldNotGroupWhenFull: true };
+			return toolbar;
 		}
 		var flat = [];
 		function pushMapped(raw) {
@@ -150,7 +149,7 @@
 		while (flat.length && flat[flat.length - 1] === '|') {
 			flat.pop();
 		}
-		return flat.length ? { items: flat, shouldNotGroupWhenFull: true } : null;
+		return flat.length ? { items: flat, shouldNotGroupWhenFull: false } : null;
 	}
 
 	function mergeEditorConfig(user) {
@@ -239,8 +238,9 @@
 			editable.style.height = sourceHeight + 'px';
 			editable.style.overflowY = 'auto';
 		}
-		// Avoid minWidth from initial create-time width — it caused page-wide horizontal scroll.
 		if (root) {
+			// The wizard panel is resizable. A pixel min-width captured before CKEditor
+			// replaces the textarea prevents the editor (and its table cell) shrinking.
 			root.style.minWidth = '0';
 		}
 	}
@@ -290,13 +290,11 @@
 		}
 		// Keep CKEditor 5 UI constrained to container width (prevents toolbar going off-screen).
 		var css = ''
-			+ '.ck.ck-editor{max-width:100%!important;min-width:0!important;}'
+			+ '.ck.ck-editor{width:100%!important;min-width:0!important;max-width:100%!important;overflow:hidden;}'
+			+ '.ck.ck-editor__top{width:100%!important;min-width:0!important;max-width:100%!important;overflow:hidden;}'
 			+ '.ck.ck-editor__top,.ck.ck-editor__top *{box-sizing:border-box;}'
-			+ '.ck.ck-editor__top{max-width:100%!important;min-width:0!important;}'
-			+ '.ck.ck-editor__top .ck-sticky-panel__content{width:100%!important;max-width:100%!important;min-width:0!important;'
-			+ 'overflow-x:auto!important;overflow-y:visible!important;-webkit-overflow-scrolling:touch;}'
-			+ '.ck.ck-toolbar{max-width:100%!important;min-width:0!important;}'
-			+ '.ck.ck-toolbar .ck-toolbar__items{min-width:0!important;max-width:100%!important;}';
+			+ '.ck.ck-editor__top .ck-sticky-panel,.ck.ck-editor__top .ck-sticky-panel__content{width:100%!important;min-width:0!important;max-width:100%!important;}'
+			+ '.ck.ck-editor__top .ck-toolbar,.ck.ck-editor__top .ck-toolbar__items{min-width:0!important;max-width:100%!important;}';
 		var style = document.createElement('style');
 		style.type = 'text/css';
 		style.appendChild(document.createTextNode(css));
@@ -339,9 +337,15 @@
 			},
 			destroy: function () {
 				var id = domEl.id;
+				var nativeEditor = editor;
 				return editor.destroy().then(function () {
+					// A newer editor may already own this id (wizard rebuilt before this async finish).
+					if (window.__xerteCke5Instances[id] !== nativeEditor) {
+						return;
+					}
 					delete window.__xerteCke5Instances[id];
 					delete window.__xerteCke5Shims[id];
+					delete window.__xerteCke5SourceElements[id];
 					if ($ && $(domEl).removeData) {
 						$(domEl).removeData('xerteCke5Instance');
 					}
@@ -373,6 +377,7 @@
 		return Editor.create(domEl, cfg).then(function (editor) {
 			var id = domEl.id;
 			window.__xerteCke5Instances[id] = editor;
+			window.__xerteCke5SourceElements[id] = domEl;
 			if ($ && $(domEl).data) {
 				$(domEl).data('xerteCke5Instance', editor);
 			}
@@ -421,10 +426,15 @@
 			var ed = window.__xerteCke5Instances[id];
 			if (ed) {
 				return ed.destroy().then(function () {
+					if (window.__xerteCke5Instances[id] !== ed) {
+						return;
+					}
 					delete window.__xerteCke5Instances[id];
 					delete window.__xerteCke5Shims[id];
+					delete window.__xerteCke5SourceElements[id];
 				});
 			}
+			delete window.__xerteCke5SourceElements[id];
 			return Promise.resolve();
 		}
 	};
@@ -447,12 +457,29 @@
 			var deferred = $.Deferred();
 			promises.push(deferred.promise());
 			var existing = window.__xerteCke5Instances[id];
-			if (existing) {
+			var boundEl = window.__xerteCke5SourceElements[id];
+			// Reuse only if this jQuery node is the same element the editor was created on.
+			// After buildPage() replaces #mainPanel, ids repeat (e.g. textarea_1) but the node is new — stale maps must refresh.
+			if (existing && boundEl === el) {
 				var shim = apiShim(existing, el);
 				if (callback) {
 					callback.call(shim, el);
 				}
 				deferred.resolve();
+				return;
+			}
+			if (existing && boundEl !== el) {
+				window.XerteCKEditor5Facade.destroyById(id)
+					.then(function () {
+						return createInstance(el, config, callback);
+					})
+					.then(function () {
+						deferred.resolve();
+					})
+					.catch(function (err) {
+						console.error('[XerteCKEditor5]', err);
+						deferred.reject(err);
+					});
 				return;
 			}
 			createInstance(el, config, callback)

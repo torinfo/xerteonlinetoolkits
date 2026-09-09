@@ -16,7 +16,7 @@ function user_preferences_rest_save(array $params)
 
     try {
         $authmech = Xerte_Authentication_Factory::create($xerte_toolkits_site->authentication_method);
-        if (!$authmech || !$authmech->hasUserPrefrences()) {
+        if (!$authmech || !$authmech->hasUserPreferences()) {
             return array('ok' => false, 'status' => 400, 'code' => 'preferences_not_supported', 'message' => 'User preferences not supported');
         }
     } catch (Throwable $e) {

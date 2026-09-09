@@ -17,11 +17,12 @@ abstract class openaiImageApi extends BaseApi
     protected $rewriteTemperature = 0.9;
 
 
-    protected function rewritePrompt(string $query): string
+    protected function rewritePrompt($query)
     {
         global $xerte_toolkits_site;
         if (empty($this->rewriteSystemMessage)) {
-            return $query; // no rewrite requested by subclass
+            return $query; // no rewrite requested by subclass; if there is a rewriteSystemMessage defined in the subclass, we assume rewrites are necessary
+            //But some models like the GPT 1 ones rewrite the message by default so there's not much point; adding a system message to the subclass will enable the method
         }
         $chat = new AiChat($xerte_toolkits_site);
         $messages = [
@@ -50,7 +51,7 @@ abstract class openaiImageApi extends BaseApi
 
 
     /** Default generator expects URL-based results and downloads them. Subclasses can override. */
-    protected function generateAndSave(string $prompt, array $settings, string $baseDir, string $size, array &$downloadedPaths)
+    protected function generateAndSave($prompt, array $settings, $baseDir, $size, array &$downloadedPaths)
     {
         $payload = [
             'prompt' => strip_tags($prompt),
@@ -67,14 +68,24 @@ abstract class openaiImageApi extends BaseApi
         //Dalle3 is the only service which currently makes use of this; if more models are added, it may be necessary to pass which one for the log
         log_ai_request($res, 'imagegen', 'dalle3', $details);
         if (!$res->ok) {
-            $msg = $res->json->error->message ?? ($res->error ?? ('HTTP ' . $res->status));
+            if (isset($res->json) && isset($res->json->error) && isset($res->json->error->message)) {
+                $msg = $res->json->error->message;
+            } elseif (isset($res->error)) {
+                $msg = $res->error;
+            } else {
+                $msg = 'HTTP ' . $res->status;
+            }
             return (object)['status' => 'error', 'message' => $msg];
         }
-        foreach (($res->json->data ?? []) as $img) {
+        $data = (isset($res->json) && isset($res->json->data) && is_array($res->json->data))
+            ? $res->json->data
+            : array();
+
+        foreach ($data as $img) {
             if (!empty($img->url)) {
                 $dl = $this->downloadBinary($img->url, $baseDir, $this->prefix);
                 if ($dl->status !== 'success') {
-                    return (object)[ 'status' => 'error', 'message' => $dl->message ];
+                    return (object) array('status' => 'error', 'message' => $dl->message);
                 }
                 $downloadedPaths[] = $dl->path;
             }
@@ -82,7 +93,7 @@ abstract class openaiImageApi extends BaseApi
         return (object)['status' => 'success'];
     }
 
-    public function sh_request($query, $target, $interpretPrompt, $overrideSettings, $settings, $size = '1024x1024')
+    public function sh_request($query, $target, $interpretPrompt, $overrideSettings, $settings, $language, $size = '1024x1024')
     {
         $downloadedPaths = [];
         // Build exact save path style per subclass

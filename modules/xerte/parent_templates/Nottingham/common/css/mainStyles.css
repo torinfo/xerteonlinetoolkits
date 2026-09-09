@@ -76,6 +76,17 @@ a {
 	box-sizing: border-box;
 }
 
+#x_mainHolder.noBorder {
+	border: 0;
+}
+
+#x_mainHolder.x_verticalCentre:not(.x_noVerticalCentre) #x_pageHolder,
+#x_pageHolder.x_verticalCentre {
+	display: flex;
+	justify-content: safe center;
+	flex-direction: column;
+}
+
 #x_headerBlock {
 	color:			#FFFFFF;
 	background:		#010101;
@@ -88,6 +99,10 @@ a {
 
 #x_headerBlock div, #x_pageDiv {
 	padding:	10px;
+}
+
+.innerPage {
+	visibility: hidden;
 }
 
 #x_headerBlock img {
@@ -499,7 +514,6 @@ fieldset.noStyle legend {
 
 #x_pageDiv table,
 table#x_resourceTable {
-	text-align:			left;
 	border-collapse:	collapse;
 }
 
@@ -653,6 +667,10 @@ button.ui-button-icon-only .ui-icon[class*=" fa-"] {
 	height: auto;
 	margin-left: -0.3em;
 	margin-top: -0.45em;
+}
+
+button.ui-button-icon-only .ui-icon.fa-x-refresh {
+	margin-left: -0.5em;
 }
 
 /*styling for optional show/hider footer tools*/
@@ -1853,4 +1871,77 @@ button.resourceLink {
 
 .resourceContinueBtn {
 	margin-right: .5em;
+}
+
+/* split screen layout used in lots of page models */
+.splitScreen {
+	display: flex;
+	column-gap: 1em;
+	width: 100%;
+}
+
+.splitScreen.small .left { flex: 0 0 calc(20% - .5em); } /* using calc to exclude 1/2 of column-gap */
+.splitScreen.small .right {	flex: 0 1 calc(80% - .5em); }
+.splitScreen.medium2 .left { flex: 0 0 calc(30% - .5em); }
+.splitScreen.medium2 .right { flex: 0 1 calc(70% - .5em); }
+.splitScreen.medium .left {	flex: 0 0 calc(40% - .5em); }
+.splitScreen.medium .right { flex: 0 1 calc(60% - .5em); }
+.splitScreen.large .left { flex: 0 1 calc(60% - .5em); }
+.splitScreen.large .right { flex: 0 0 calc(40% - .5em); }
+.splitScreen.xlarge .left { flex: 0 1 calc(80% - .5em); }
+.splitScreen.xlarge .right { flex: 0 0 calc(20% - .5em); }
+
+/* add padding between text & panels when stacked vertically */
+.textTopHolder + .splitScreen,
+.textTopHolder + .splitScreen_A,
+.splitScreen + .textBottomHolder,
+.splitScreen .splitScreen_B .textTopHolder + .panelContent,
+.splitScreen .splitScreen_B .panelContent + .textBottomHolder,
+.splitScreen_A + .splitScreen_B.full,
+.splitScreen_B.full .textTopHolder + .panelContent,
+.splitScreen_B.full .textBottomHolder,
+.splitScreen_B.full + .textBottomHolder {
+	margin-top: 1em;
+}
+
+#x_mainHolder.x_verticalCentrePanel:not(.x_noVerticalCentre):not(.x_noVerticalCentrePanel) #x_pageHolder:not(.x_scrolling) .splitScreen_A,
+#x_mainHolder.x_verticalCentrePanel:not(.x_noVerticalCentre):not(.x_noVerticalCentrePanel) #x_pageHolder:not(.x_scrolling) .splitScreen_B,
+#x_pageHolder.x_verticalCentrePanel:not(.x_scrolling) .splitScreen_A,
+#x_pageHolder.x_verticalCentrePanel:not(.x_scrolling) .splitScreen_B {
+	display: flex;
+	justify-content: safe center;
+	flex-direction: column;
+}
+
+#x_pageHolder {
+	container-name: x_pageHolder;
+	container-type: inline-size;
+}
+
+@container x_pageHolder (max-width: 480px) {
+	/* split screen layout used in lots of page models - stack vertically on smaller screens */
+	.splitScreen {
+		flex-direction: column;
+		row-gap: 1em;
+	}
+
+	.splitScreen.small .left,
+	.splitScreen.small .right,
+	.splitScreen.medium2 .left,
+	.splitScreen.medium2 .right,
+	.splitScreen.medium .left,
+	.splitScreen.medium .right,
+	.splitScreen.large .left,
+	.splitScreen.large .right,
+	.splitScreen.xlarge .left,
+	.splitScreen.xlarge .right { flex: 0 0 100%; }
+
+	.splitScreen.custom .left,
+	.splitScreen.custom .right {
+		flex: 0 0 100% !important;
+	}
+
+	.splitScreen_B:not(.fullPanelH) .panelContent {
+		height: auto !important;
+	}
 }

@@ -5,21 +5,30 @@ namespace rag;
 class OpenAIRAG extends BaseRAG
 {
     private $apiKey;
+    private $preferredModel;
 
-    public function __construct($apiKey, $encodingDirectory, $chunkSize = 2048)
+    public function __construct($apiKey, $encodingDirectory, $preferredModel=null, $chunkSize = 2048)
     {
         parent::__construct($encodingDirectory, $chunkSize);
         $this->apiKey = $apiKey;
+        $this->preferredModel = $preferredModel;
     }
 
-    protected function supportsProviderEmbeddings(): bool { return true; }
+    protected function supportsProviderEmbeddings() { return true; }
 
     /* Retrieve an embedding for a single piece of text (OpenAI) */
     protected function getEmbedding($text)
     {
+        $model = "text-embedding-3-small";
+        $preferredModel = isset($this->preferredModel) ? trim((string)$this->preferredModel) : '';
+
+        if ($preferredModel !== '' && strtolower($preferredModel) !== 'default') {
+            $model = $preferredModel;
+        }
+
         $url = "https://api.openai.com/v1/embeddings";
         $payload = json_encode([
-            "model" => "text-embedding-3-small",
+            "model" => $model,
             "input" => $text
             // Optionally: "dimensions" => 1536, // or 512/1024 if you choose to reduce dims -- not recommended
             // "encoding_format" => "float",     // default is float, we use the same across all embedding models
@@ -47,10 +56,16 @@ class OpenAIRAG extends BaseRAG
 
         $decoded = json_decode($response, true);
         if (isset($decoded['error'])) {
-            throw new \RuntimeException('OpenAI error: ' . ($decoded['error']['message'] ?? 'unknown'));
+            throw new \RuntimeException(
+                'OpenAI error: ' . (isset($decoded['error']['message'])
+                    ? $decoded['error']['message']
+                    : 'unknown')
+            );
         }
 
-        $emb = $decoded["data"][0]["embedding"] ?? [];
+        $emb = isset($decoded['data'][0]['embedding'])
+            ? $decoded['data'][0]['embedding']
+            : [];
         if (empty($emb)) {
             throw new \RuntimeException('Embedding failed.');
         }
@@ -59,11 +74,18 @@ class OpenAIRAG extends BaseRAG
     }
 
     /* Retrieve embeddings in batches (OpenAI) */
-    protected function getEmbeddings(array $texts): array
+    protected function getEmbeddings(array $texts)
     {
+        $model = "text-embedding-3-small";
+        $preferredModel = isset($this->preferredModel) ? trim((string)$this->preferredModel) : '';
+
+        if ($preferredModel !== '' && strtolower($preferredModel) !== 'default') {
+            $model = $preferredModel;
+        }
+
         // For OpenAI, the limit is per-input (~8191 tokens for embeddings).
         // We use a simple per-item safety check plus a count-based batcher.
-        $approxTokens = function (string $s): int {
+        $approxTokens = function ($s) {
             // Rough heuristic: ~4 chars per token, similar to mistral
             return (int)ceil(strlen($s) / 4);
         };
@@ -98,7 +120,7 @@ class OpenAIRAG extends BaseRAG
         $all = [];
         foreach ($batches as $batch) {
             $payload = json_encode([
-                "model" => "text-embedding-3-small",
+                "model" => $model,
                 "input" => $batch
                 // Optionally: "dimensions" => 1536,
             ]);
@@ -120,13 +142,19 @@ class OpenAIRAG extends BaseRAG
 
             $decoded = json_decode($response, true);
             if (isset($decoded['error'])) {
-                throw new \RuntimeException('OpenAI error: ' . ($decoded['error']['message'] ?? 'unknown'));
+                throw new \RuntimeException(
+                    'OpenAI error: ' . (isset($decoded['error']['message'])
+                        ? $decoded['error']['message']
+                        : 'unknown')
+                );
             }
 
             if (isset($decoded["data"])) {
                 // OpenAI preserves order: data[i] corresponds to input[i]
                 foreach ($decoded["data"] as $row) {
-                    $all[] = $row["embedding"] ?? [];
+                    $all[] = isset($row['embedding'])
+                        ? $row['embedding']
+                        : [];
                 }
             }
         }

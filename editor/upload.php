@@ -21,6 +21,10 @@ if (!$result['ok']) {
     die($result['message']);
 }
 
+if (!empty($result['lti_stored'])) {
+    exit;
+}
+
 echo true;
 
 function is_ajax_request() {

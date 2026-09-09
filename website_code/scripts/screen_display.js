@@ -961,7 +961,6 @@ function init_workspace()
                     break;
                 default:
 
-
                     tree.deselect_all();
                     tree.select_node(id);
 

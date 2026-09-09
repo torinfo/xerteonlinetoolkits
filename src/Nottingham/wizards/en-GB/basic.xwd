@@ -12,8 +12,17 @@
 	<textSize type="ComboBox" options="10,12,14,16,18,24,36" label="Default Text Size" width="100" tooltip="The default text size will only be used when responsive text is turned off. It can also be overridden when a text size is directly set in the text editor" condition="responsive!='true'"/>
 	
 	<!-- OPTIONAL PROPERTIES -->
-	
-	<maxWidth optional="true" type="NumericStepper" min="800" max="2000" step="10" label="Max Width" defaultValue="1400" tooltip="Use this option to set the maximum width (in pixels) that the page contents will be displayed on larger displays"/>
+
+	<maxWidthGroup type="group" label="Maximum Width" optional="true" tooltip="Use these options to set the maximum width (in pixels) for the page contents on larger displays. A maximum width optional property is also available on each page where you can adjust these settings on a page by page basis.">
+		<maxWidth label="Max Width (in pixels)" optional="true" type="NumericStepper" min="800" max="2000" step="10" defaultValue="1400"/>
+		<horizontalAlign label="Horizontal Alignment" optional="true" defaultValue="centre" options="Right,Centre,Left" data="right,centre,left" type="ComboBox"/>
+	</maxWidthGroup>
+
+	<verticalAlignGroup type="group" label="Centre Content Vertically" optional="true" tooltip="Centre the content vertically on the page. Can be used alongside the 'Maximum Width' optional properties to also centre content horizontally. A centre content vertically optional property is also available on each page where you can adjust these settings on a page by page basis.">
+		<verticalAlign label="Centre Content Vertically" optional="true" type="CheckBox" defaultValue="true" conditionTrigger="true"/>
+		<verticalAlignPanel label="Centre Columns Individually" optional="true" type="CheckBox" defaultValue="true" condition="verticalAlign=='true'" tooltip="On pages that contain column layouts, e.g. page text next to a panel, centre each column vertically on the page"/>
+	</verticalAlignGroup>
+
 	<fixDisplay optional="true" type="TextInput" label="Fixed Display Size" defaultValue="800,600" condition="displayMode=='default'||(fixDisplay!=undefined&amp;&amp;fixDisplay!='')" tooltip="Sets the project dimensions (in pixels) when 'display mode' is set to 'fixed size'" />
 	
 	<fullScreenGroup type="group" label="Full Screen Button" optional="true" condition="displayMode=='default'||(fixDisplay!=undefined&amp;&amp;fixDisplay!='')" tooltip="Customise the tooltip descriptions and icons used on the full screen toggle button">
@@ -60,11 +69,20 @@
 			<tocNumbers optional="true" type="CheckBox" label="Page Numbering" defaultValue="true" condition="navigation!='Historic'"/>
 			<tocChapterNumbers optional="true" type="CheckBox" label="Chapter Numbering" defaultValue="false" condition="navigation!='Historic'"/>
 		</tocNumberGroup>
-		<menuImageGroup type="group" label="Menu Image" optional="true" condition="navigation=='Menu'||navigation=='Menu with Page Controls'" tooltip="Add an image to the menu page">
-			<menuImage optional="true" type="media" label="Image" defaultValue="" placeholder="Select an image" condition="navigation=='Menu'||navigation=='Menu with Page Controls'"/>
-			<menuImageAlt label="Description" type="TextInput" defaultValue="" placeholder="Enter a description for accessibility" condition="(navigation=='Menu'||navigation=='Menu with Page Controls')&amp;&amp;menuImageProperties=='Use Panel'" optional="true"/>
-			<menuImageProperties optional="true" type="ComboBox" label="Position" conditionTrigger="true" options="Panel,Background" data="Use Panel,Full Screen" width="100" defaultValue="Use Panel" condition="navigation=='Menu'||navigation=='Menu with Page Controls'"/>
-		</menuImageGroup>
+		<menuPageGroup type="group" label="Menu Page" optional="true" condition="navigation=='Menu'||navigation=='Menu with Page Controls'">
+			<menuText label="Page Text" type="TextArea" height="100" placeholder="Enter text for the page here" condition="(navigation=='Menu'||navigation=='Menu with Page Controls')&amp;&amp;menuPanelWidth!='Full'" optional="true" tooltip="Add text to the menu page (optional)"/>
+			<menuLayoutGroup label="Page Layout" type="group" optional="true" condition="navigation=='Menu'||navigation=='Menu with Page Controls'">
+				<menuPanelWidth label="Menu Width" options="Small,Medium,Large,Full,Custom" type="ComboBox" data="Small,Medium,Large,Full,Custom" defaultValue="Medium" conditionTrigger="true" condition="navigation=='Menu'||navigation=='Menu with Page Controls'" optional="true"/>
+				<menuPanelWidthCustom label="Custom Width (%)" type="NumericStepper" min="10" max="90" step="1" defaultValue="50" condition="(navigation=='Menu'||navigation=='Menu with Page Controls')&amp;&amp;menuPanelWidth=='Custom'" optional="true"/>
+				<menuAlign label="Menu Position" options="Right,Left" type="ComboBox" data="Right,Left" defaultValue="Left" condition="(navigation=='Menu'||navigation=='Menu with Page Controls')&amp;&amp;menuPanelWidth!='Full'" optional="true"/>
+				<menuPanelStyle label="Show in Panel" type="CheckBox" defaultValue="false" condition="navigation=='Menu'||navigation=='Menu with Page Controls'" optional="true"/>
+			</menuLayoutGroup>
+			<menuImageGroup type="group" label="Image" optional="true" condition="(navigation=='Menu'||navigation=='Menu with Page Controls')&amp;&amp;menuPanelWidth!='Full'" tooltip="Add an image to the menu page (optional)">
+				<menuImage optional="true" type="media" label="Image" defaultValue="" placeholder="Select an image" condition="(navigation=='Menu'||navigation=='Menu with Page Controls')&amp;&amp;menuPanelWidth!='Full'"/>
+				<menuImageAlt label="Description" type="TextInput" defaultValue="" placeholder="Enter a description for accessibility" condition="(navigation=='Menu'||navigation=='Menu with Page Controls')&amp;&amp;menuPanelWidth!='Full'&amp;&amp;menuImageProperties=='Use Panel'" optional="true"/>
+				<menuImageProperties optional="true" type="ComboBox" label="Position" conditionTrigger="true" options="Panel,Background" data="Use Panel,Full Screen" width="100" defaultValue="Use Panel" condition="(navigation=='Menu'||navigation=='Menu with Page Controls')&amp;&amp;menuPanelWidth!='Full'"/>
+			</menuImageGroup>
+		</menuPageGroup>
 	</toc>
 	
 	<homePageGroup type="group" label="Home Page" optional="true" tooltip="Customise which page is classed as the home page and create a link from the project title to the home page" info="The default home page is either the first page or the page menu (when navigation is menu or menu with page controls).">
@@ -107,13 +125,13 @@
 			<wcagHide label="Hide Logo &amp; Link" type="Checkbox" conditionTrigger='true' defaultValue="false" condition="accessibilityHide!='true'" optional="true"/>
 			<wcagAlt label="Logo Description" type="TextInput" defaultValue="WCAG WAI-AA logo" condition="accessibilityHide!='true'&amp;&amp;wcagHide=='false'" optional="true"/>
 			<wcagLinkTitle label="Link Tooltip" type="TextInput" defaultValue="View the Xerte accessibility statement" condition="accessibilityHide!='true'&amp;&amp;wcagHide=='false'" optional="true"/>
-			<wcagLink type="Media" label="Accessibility Statement Link" tooltip="Add a URL or browse to a file to link to your own accessibility statement. Leave empty to link to the accessibility statement on xerte.org.uk." condition="accessibilityHide!='true'&amp;&amp;wcagHide=='false'" optional="true" />
+			<wcagLink type="Media" label="Accessibility Statement Link" tooltip="Add a URL or browse to a file to link to your own accessibility statement. Leave empty to link to the accessibility statement on xerte.org.uk." condition="accessibilityHide!='true'&amp;&amp;wcagHide=='false'" enableImgSHTool="false" optional="true" />
 		</wcagGroup>
 		<accessibilityHide type="CheckBox" label="Hide Button" defaultValue="false" conditionTrigger="true" optional="true" tooltip="Use this option with caution! Although you can hide the Accessibility Options button from the project interface, think carefully before you do this. The accessibility options allow learners to easily change the look of the project to suit their needs and links to information on the accessibility of Xerte."/>
 	</accessibilityGroup>
 	
 	<helpGroup type="group" label="Help File" optional="true" tooltip="Add a Help button to the footer tools, which opens a file or URL when clicked">
-		<nfo label="File" type="media" optional="true" placeholder="Select a file (e.g. PDF) or enter a URL"/>
+		<nfo label="File" type="media" optional="true" placeholder="Select a file (e.g. PDF) or enter a URL" enableImgSHTool="false"/>
 		<helpTarget type="ComboBox" label="Open in" defaultValue="new" options="New window,Lightbox" data="new,lightbox" tooltip="Where the help file will open - by default it will open in a new browser tab/window" optional="true"/>
 		<helpLabel label="Tooltip" type="TextInput" defaultValue="Help" optional="true" tooltip="The tooltip description for the Help button"/>
 		<helpIc type="CheckBox" label="Customise Button Icon" defaultValue="false" conditionTrigger="true" optional="true" tooltip="Override the default icon used on the Help File button. When checked, you will see a further option allowing you to select the icon used. When left unchecked, the image/icon will be that specified by the theme."/>
@@ -124,11 +142,11 @@
 		<introType type="ComboBox" label="Content Type" defaultValue="text" options="Text,Image,Video,URL,File" data="text,image,video,url,file" conditionTrigger="true" optional="true" tooltip="The type of content used as an introduction for this project"/>
 		<intro label="Text" type="TextArea" height="100" defaultValue="" condition="introType=='text'||introType==undefined" optional="true"/>
 		<introImg label="Image" type="media" height="100" defaultValue="" condition="introType=='image'" optional="true" placeholder="Select an image"/>
-		<introVideo label="Video" type="media" height="100" defaultValue="" condition="introType=='video'" optional="true" placeholder="Select a video file or enter a URL/embed code"/>
+		<introVideo label="Video" type="media" height="100" defaultValue="" condition="introType=='video'" optional="true" placeholder="Select a video file or enter a URL/embed code" enableImgSHTool="false"/>
 		<introTip label="Description" type="TextInput" defaultValue="" placeholder="Enter a description for accessibility" condition="introType=='image'||introType=='video'" optional="true"/>
 		<introCaption label="Caption" type="TextInput" defaultValue="" wysiwyg="true" placeholder="Enter the caption text" condition="introType=='image'" optional="true" tooltip="Optional: add a caption below the image"/>
 		<introURL label="URL" type="TextInput" defaultValue="" condition="introType=='url'" optional="true" placeholder="Enter a URL"/>
-		<introFile label="File" type="media" height="100" defaultValue="" condition="introType=='file'" optional="true" placeholder="Select a file (e.g. PDF)"/>
+		<introFile label="File" type="media" height="100" defaultValue="" condition="introType=='file'" optional="true" placeholder="Select a file (e.g. PDF)" enableImgSHTool="false"/>
 		<introTitle type="CheckBox" label="Include Title" defaultValue="true" condition="introType=='text'||introType==undefined||introType=='image'" optional="true" tooltip="Include the project title above the introduction"/>
 		<introBtn type="CheckBox" label="Start Button" defaultValue="true" conditionTrigger="true" condition="introType=='text'||introType==undefined||introType=='image'" optional="true" tooltip="Include a 'start' button below the introduction that closes the lightbox when clicked"/>
 		<introBtnTxt label="Start Button Text" type="TextInput" defaultValue="Get Started" condition="introBtn=='true'&amp;&amp;(introType=='text'||introType==undefined||introType=='image')" wysiwyg="true" optional="true"/>
@@ -177,7 +195,7 @@
 	</resourceGroup>
 
 	<splashScreenGroup label="Video Splash Screen" type="group" optional="true" tooltip="Add a short, full screen 'splash' video that is shown and auto-played when the project first loads">
-	  <splashVideo label="File" type="media" defaultValue="" optional="true" placeholder="Select a video file"/>
+	  <splashVideo label="File" type="media" defaultValue="" optional="true" placeholder="Select a video file" enableImgSHTool="false"/>
 	  <splashShow label="Show" type="ComboBox" defaultValue="first" options="When project loads on first page only,When project loads on any page" data="first,always" optional="true" tooltip="Determines whether the splash screen is shown everytime the project loads (even if the first page shown is not page one) or only when the first page shown is page one."/>
 	  <splashBg type="ColourPicker" label="Background Colour" defaultValue="" optional="true"/>
 	</splashScreenGroup>
@@ -237,7 +255,7 @@
 		<backgroundGrey optional="true" type="CheckBox" label="Greyscale" defaultValue="false" tooltip="Add a filter to change the image from colour to greyscale"/>
 	</bg>
 	
-	<stylesheet optional="true" type="Media" label="Stylesheet" tooltip="Upload a CSS file to customise this project" placeholder="Select a CSS file"/>
+	<stylesheet optional="true" type="Media" label="Stylesheet" tooltip="Upload a CSS file to customise this project" placeholder="Select a CSS file" enableImgSHTool="false"/>
 	<styles optional="true" type="script" height="200" label="Styles" tooltip="Add bespoke CSS to this project"/>
 	<script label="Script" type="script" height="200" defaultValue="// JavaScript / jQuery" optional="true" tooltip="Add JavaScript to this project. The code will run after the project interface has been set up but before any pages have loaded."/>
 	
@@ -280,7 +298,7 @@
 		<glossaryIcon label="Icon" type="FontAwesome" iconList="hotspot" defaultValue="fas fa-book" condition="glossaryIc=='true'" optional="true"/>
 	</glossaryGroup>
 	
-	<varGroup type="group" label="Variables" optional="true" info="See the &lt;u&gt;&lt;a href='https://xot.xerte.org.uk/USER-FILES/156-fay-Nottingham/media/Variables_Documentation.pdf' target='_blank'&gt;Variables Guide&lt;/a&gt;&lt;/u&gt; for guidance on creating and using variables" tooltip="Create variables based on a series of parameters. Variables can be used to add variety to the data that is shown in projects, e.g. instead of including the sum 1+2=3, variables allow the sum a+b=c to be presented using a variety of numbers.">
+	<varGroup type="group" label="Variables" optional="true" info="See the &lt;u&gt;&lt;a href='https://xot.xerte.org.uk/play.php?template_id=636' target='_blank'&gt;Variables Guide&lt;/a&gt;&lt;/u&gt; for guidance on creating and using variables" tooltip="Create variables based on a series of parameters. Variables can be used to add variety to the data that is shown in projects, e.g. instead of including the sum 1+2=3, variables allow the sum a+b=c to be presented using a variety of numbers.">
 		<variables optional="true" label="Variable Data" conditionTrigger="true" type="DataGrid" columns="11" editable="1,1,1,1,1,1,1,1,1,1,1" controls="1" headers="Name,Fixed Value,Random,Min,Max,Step,DP,SF,Trailing Zeros,Exclude,Default" newRow="Name,Value,Random,Min,Max,Step,DP,SF,Trailing Zeros,Exclude,Default" defaultValue=" | | | | | | | |false| | " tooltip="The glossary terms and definitions. These can be entered manually or uploaded as a CSV file."/>
 	</varGroup>
 	
@@ -299,19 +317,18 @@
         </lightboxImgGroup>
 	</lightboxGroup>
 
-    <aiContextGroup type="group" label="AI Context Management" tooltip="Handle which resources are used in conjunction with AI generation here." subgroup="assistant" lightbox="form" condition="hasrole('aiuser')" optional="true">
+    <aiContextGroup type="group" label="AI Context Management" tooltip="Handle which resources are used in conjunction with AI generation here." subgroup="assistant" lightbox="form" condition="(vendor_is_available('ai', 'all')) &amp;&amp; (hasrole('aiuser'))" optional="true">
 		<corpus label="AI Context resources / links" type="CorpusGrid" gridTxt="Resources can be peertube, youtube or vimeo URLs or uploaded files. &lt;br/&gt;Upload a file or enter a video URL (vimeo, youtube or video.dlearning) to the resource link, then click 'submit' to add the resource to the table. Afterwards, when clicking 'sync corpus', all items in the table will be processed and ready to use as context for the different AI generations." columns="3" colWidths="20,15,50" editable="1,1,1" cellType="textInput,media,textArea" wysiwyg="false,false,true" controls="1" headers="Title,Resource,Description" newRow=",,," defaultValue="|" optional="true" tooltip="A place to manage and add resources to be used as context for AI generations. Press the '+' button to add a resource!" condition="hasrole('aiuser')"/>
 	</aiContextGroup>
 
-	  <baseAISettingsGroup type="group" label="Base AI Generation Settings" tooltip="These settings adjust the outputs for any AI generation you make in the different pages of this learning object. While these settings will be used as a baseline, they can be overwritten in each individual page if you see the need." lightbox="form" subgroup="assistant" condition="hasrole('aiuser')" optional="true">
+	  <baseAISettingsGroup type="group" label="Base AI Generation Settings" tooltip="These settings adjust the outputs for any AI generation you make in the different pages of this learning object. While these settings will be used as a baseline, they can be overwritten in each individual page if you see the need." lightbox="form" subgroup="assistant" condition="(vendor_is_available('ai', 'all')) &amp;&amp; (hasrole('aiuser'))" optional="true">
 		  <baseAiSelector label="AI model" type="comboBox_ai" defaultValue="mistral" width="120" conditionTrigger="true" optional="true"/>
-		  <baseRange label="Reading Level" type="comboBox" tooltip="The estimated age, grade, education or other qualifier for which the AI will attempt to curate the complexity of the language. Examples: students aged 12-16, grade 7 students in the Netherlands, university graduates, office workers in the education field, A2 level Dutch speakers, etc." options="Beginner A1,Beginner A2,Intermediate B1,Intermediate B2,Advanced C1,Advanced C2,Custom" defaultValue="Intermediate, B2" data="Beginner A1,Beginner A2,Intermediate B1,Intermediate B2,Advanced C1,Advanced C2,custom" conditionTrigger="true" optional="true"/>
-		  <baseRangeCustom label="Custom Reading Level" type="TextInput" defaultValuePh="Intermediate English B2" placeholder="Enter reading level. Defaults to 'Intermediate English, B2'" condition="baseRange=='custom'" optional="true"/>
-		  <baseEduLevel label="Education Level" type="comboBox" tooltip="The education level for which the content is intended. Examples: University students, HBO students in the Netherlands, Middle school students who already have learned the basics, etc." options="Middle School,High School,MBO,HBO,University,Masters,PhD,Custom" defaultValue="HBO" data="Middle School,High School,
-		  MBO,HBO,University,Masters,PhD,custom" conditionTrigger="true" optional="true"/>
-		  <baseEduLevelCustom label="Custom Education Level" type="TextInput" defaultValuePH="University" placeholder="Enter educational level. Defaults to 'University.'" condition="baseEduLevel=='custom'" optional="true"/>
-		  <baseTone label="Tone and Style" type="comboBox" tooltip = "Adjusts the tone and style of the generated content. Possibilities include: formal, semi-formal, informal, semi-informal, active, passive as well as combinations. Additional modifiers are possible, but may result in less consistent content. Examples: 'Semi-formal teaching, active voice', 'formal, passive voice, usage instructions'." options="Formal,Semi-formal,Informal,active,passive,Custom" defaultValue="Semi-formal" data="Formal,Semi-formal,Informal,active,passive,custom" conditionTrigger="true" optional="true"/>
-		  <baseToneCustom label="Custom Tone and Style" type="TextInput" defaultValuePH="Semi-formal" placeholder="Enter an indicator of tone. Defaults to 'Semi-formal.'" condition="baseTone=='custom'" optional="true"/>
+		  <baseRange label="Reading Level" type="comboBox_base_settings_rl" tooltip="The estimated age, grade, education, or other qualifier used by the AI to determine the appropriate reading level and linguistic complexity of the generated language. Examples include students aged 12-16, grade 7 students in the Netherlands, university graduates, office workers in the education field, or A2 level Dutch speakers, etc." conditionTrigger="true" optional="true"/>
+		  <baseRangeCustom label="Custom Reading Level" type="TextInput" defaultValuePh="Intermediate B2" placeholder="Enter reading level." condition="baseRange=='custom'" optional="true"/>
+		  <baseEduLevel label="Education Level" type="comboBox_base_settings_el" tooltip="The education level for which the content is intended. Examples: University students, Bachelors students in the Netherlands, Middle school students who have already learned the basics, etc." conditionTrigger="true" optional="true"/>
+		  <baseEduLevelCustom label="Custom Education Level" type="TextInput" defaultValuePH="Vocational" placeholder="Enter educational level." condition="baseEduLevel=='custom'" optional="true"/>
+		  <baseTone label="Tone and Style" type="comboBox_base_settings_ts" tooltip = "Adjusts the tone and style of the generated content. Possibilities include: formal, semi-formal, informal, semi-informal, active, passive (as well as combinations of these). Additional modifiers are possible, but may result in less consistent content. Examples: 'Semi-formal teaching, active voice', 'formal, passive voice, usage instructions'." conditionTrigger="true" optional="true"/>
+		  <baseToneCustom label="Custom Tone and Style" type="TextInput" defaultValuePH="Semi-formal" placeholder="Enter an indicator of tone." condition="baseTone=='custom'" optional="true"/>
 		  <closeBtn type="lightboxclosebutton" optional="true"/>
 	  </baseAISettingsGroup>
 
@@ -346,10 +363,10 @@
 	<resume label="Enable Resuming" type="CheckBox" defaultValue="false" optional="true" deprecated="This property is deprecated as the resume functionality is now available automatically"/>
 	
 	<mediaFile type="group" label="Media" optional="true" deprecated="This property is deprecated and no longer supported">
-		<media optional="true" type="media" label="File" defaultValue="Select an audio or video file"/>
+		<media optional="true" type="media" label="File" defaultValue="Select an audio or video file" enableImgSHTool="false"/>
 		<mediaImage optional="true" type="media" label="Image (Audio only)" defaultValue="Select an Image"/>
 		<mediaImageTip optional="true" label="Image Description" type="TextInput" defaultValue="" placeholder="Enter a description for accessibility"/>
-		<mediaTranscript optional="true" type="media" label="Transcript" defaultValue="Select a Timed Text Transcript File"/>
+		<mediaTranscript optional="true" type="media" label="Transcript" defaultValue="Select a Timed Text Transcript File" enableImgSHTool="false"/>
 		<mediaTiming optional="true" type="ComboBox" options="Current Caption Only,Keep Previous Captions,Show All Captions" data="current,previous,all" label="Caption Timing" defaultValue="current" width="175"/>
 		<mediaPosition optional="true" type="ComboBox" options="Below,Right,Subtitle - Top,Subtitle - Bottom" data="below,right,top,bottom" label="Caption Position" defaultValue="below" width="175"/>
 		<mediaAlign optional="true" type="ComboBox" options="Left,Centre,Right" data="left,center,right" label="Caption Align" defaultValue="left" width="100"/>

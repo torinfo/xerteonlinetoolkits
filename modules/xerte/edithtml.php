@@ -28,6 +28,34 @@
 require_once (__DIR__ . "/../../website_code/php/xmlInspector.php");
 require_once (__DIR__ . "/../../website_code/php/themes_library.php");
 require_once (__DIR__ . "/../../website_code/php/editor_support_library.php");
+
+
+function addSessionData($url) {
+    if ( ini_get('session.use_cookies') != '0' ) return $url;
+    if ( stripos($url, '&'.session_name().'=') > 0 ||
+            stripos($url, '?'.session_name().'=') > 0 ) return $url;
+    $session_id = session_id();
+
+    // Don't add more than once...
+    $parameter = session_name().'=';
+    if ( strpos($url, $parameter) !== false ) return $url;
+
+    $url = add_url_parms($url, session_name(), $session_id);
+    return $url;
+}
+
+function getSessionData() {
+    if ( ini_get('session.use_cookies') != '0' ) return "";
+    $session_id = session_id();
+    return session_name().'=' . $session_id;
+}
+
+function add_url_parms($url, $key, $val) {
+    $url .= strpos($url,'?') === false ? '?' : '&';
+    $url .= urlencode($key) . '=' . urlencode($val);
+    return $url;
+}
+
 /**
  *
  * Function output_editor_code
@@ -72,7 +100,7 @@ function output_editor_code($row_edit, $xerte_toolkits_site, $read_status, $vers
         chmod($preview, 0777);
     }
 
-    $preview_url = $xerte_toolkits_site->users_file_area_short . $row_edit['template_id'] . "-" . $row_username['username'] . "-" . $row_edit['template_name'] . "/" . $preview_filename;
+    $previewxmlurl = $xerte_toolkits_site->users_file_area_short . $row_edit['template_id'] . "-" . $row_username['username'] . "-" . $row_edit['template_name'] . "/" . $preview_filename;
     $data_url = $xerte_toolkits_site->users_file_area_short . $row_edit['template_id'] . "-" . $row_username['username'] . "-" . $row_edit['template_name'] . "/data.xml";
     $rlo_url = $xerte_toolkits_site->site_url .  $xerte_toolkits_site->users_file_area_short . $row_edit['template_id'] . "-" . $row_username['username'] . "-" . $row_edit['template_name'];
 
@@ -213,7 +241,16 @@ function output_editor_code($row_edit, $xerte_toolkits_site, $read_status, $vers
 
     $version = getVersion();
 
-    /* Set flag of whether oai-pmh harvesting is configured and available */
+    $editor_root = $xerte_toolkits_site->root_file_path;
+    $editor_js_mtime = function ($relativePath) use ($editor_root, $version) {
+        $path = $editor_root . str_replace('/', DIRECTORY_SEPARATOR, $relativePath);
+        return file_exists($path) ? filemtime($path) : $version;
+    };
+    $mtime_toolbox_js = $editor_js_mtime('editor/js/toolbox.js');
+    $mtime_language_js = $editor_js_mtime('editor/js/language.js');
+    $mtime_tree_js = $editor_js_mtime('editor/js/tree.js');
+    $mtime_layout_js = $editor_js_mtime('editor/js/layout.js');
+    $mtime_complex_css = $editor_js_mtime('editor/css/complex.css');
     $oai_pmh = file_exists($xerte_toolkits_site->root_file_path . "oai-pmh/oai_config.php");
     $user_roles = getRolesFromUser($_SESSION['toolkits_logon_id']);
     if ($_SESSION['toolkits_logon_id'] === "site_administrator")
@@ -222,6 +259,24 @@ function output_editor_code($row_edit, $xerte_toolkits_site, $read_status, $vers
     }
 
     $body_class = toolkits_editor_body_class_attr($xerte_toolkits_site->rights == 'elevated');
+
+    $upload_url = $xerte_toolkits_site->site_url .
+            (isset($_SESSION['lti_enabled']) && $_SESSION['lti_enabled'] && function_exists('addSessionData')
+                    ? addSessionData("editor/upload.php") . "&tsugisession=0" : "editor/upload.php");
+    $preview_url = $xerte_toolkits_site->site_url .
+            (
+            isset($_SESSION['lti_enabled']) && $_SESSION['lti_enabled'] && function_exists('addSessionData')
+                    ? addSessionData("preview.php") . "&tsugisession=0&"
+                    : "preview.php?"
+            ) .
+            "template_id=";
+    if (isset($_SESSION['lti_enabled']) && $_SESSION['lti_enabled']) {
+        $lti_session = getSessionData() . "&tsugisession=0";
+    } else {
+        $lti_session = "";
+    }
+    $base_ai_options = get_ai_base_settings_options();
+    $base_ai_defaults = get_ai_base_settings_defaults();
 
     $vendors = get_vendor_settings();
     $corpus_upload_types = array();
@@ -254,7 +309,7 @@ function output_editor_code($row_edit, $xerte_toolkits_site, $read_status, $vers
     <link rel="stylesheet" href="editor/css/jquery-ui.css?version=<?php echo $version;?>">
     <link rel="stylesheet" href="editor/js/vendor/themes/default/style.css?version=<?php echo $version;?>" />
     <link rel="stylesheet" type="text/css" href="website_code/styles/xerte_buttons.css?version=<?php echo $version;?>" />
-    <link rel="stylesheet" type="text/css" href="editor/css/complex.css?version=<?php echo $version;?>" />
+    <link rel="stylesheet" type="text/css" href="editor/css/complex.css?version=<?php echo $version;?>&m=<?php echo $mtime_complex_css;?>" />
     <link rel="stylesheet" type="text/css" href="editor/css/fonts.css?version=<?php echo $version;?>" />
     <link rel="stylesheet" type="text/css" href="modules/common/js/featherlight/featherlight.min.css?version=<?php echo $version;?>" />
     <link rel="stylesheet" type="text/css" href="editor/js/vendor/imgareaselect/imgareaselect-default.css?version=<?php echo $version;?>" />
@@ -412,70 +467,76 @@ function output_editor_code($row_edit, $xerte_toolkits_site, $read_status, $vers
 
 <script>
     <?php
-    echo "previewxmlurl=\"" . $preview_url . "\";\n";
-    echo "dataxmlurl=\"" . $data_url . "\";\n";
-    echo "mediavariable=\"" . $media_path . "\";\n";
-    echo "rlourlvariable=\"" . $rlo_url . "/\";\n";
-    echo "rlopathvariable=\"" . $rlo_path . "/\";\n";
-    echo "languagecodevariable=\""  . $_SESSION['toolkits_language'] . "\";\n";
-    echo "editorlanguagefile=\"" . getWizardfile($_SESSION['toolkits_language']) . "\";\n";
-    echo "originalpathvariable=\"" . $xwd_url . "\";\n";
-    echo "xwd_file_url=\"" . $xwd_file_url . "\";\n";
-    echo "wizard_xwd_use_rest_api=true;\n";
-    echo "moduleurlvariable=\"" . $module_url . "\";\n";
-    echo "template_id=\"" . $row_edit['template_id'] . "\";\n";
-    echo "template_height=\"" . $temp[1] . "\";\n";
-    echo "template_width=\"" . $temp[0] . "\";\n";
-    echo "read_and_write=\"" . $read_status . "\";\n";
-    echo "savepath=\"" . $xerte_toolkits_site->flash_save_path . "\";\n";
-    echo "upload_path=\"" . $xerte_toolkits_site->flash_upload_path . "\";\n";
-    echo "preview_path=\"" . $xerte_toolkits_site->flash_preview_check_path . "\";\n";
-    echo "site_url=\"" . $xerte_toolkits_site->site_url . "\";\n";
-    echo "rest_api_url=\"" . $xerte_toolkits_site->site_url . "website_code/api/v1/index.php\";\n";
-    echo "simple_mode=" . ($simple_mode ? "true" : "false") . ";\n";
-    echo "template_sub_pages=" . json_encode($template_sub_pages) . ";\n";
-    echo "simple_lo_page=" . ($simple_lo_page ? "true" : "false") . ";\n";
-    echo "disable_advanced=" . ($disable_advanced ? "true" : "false") . ";\n";
-    echo "category_list=" . json_encode($parsed_categories) . ";\n";
-    echo "educationlevel_list=" . json_encode($parsed_educationlevels) . ";\n";
-    echo "grouping_list=" . json_encode($grouping) . ";\n";
-    echo "course_list=" . json_encode($course) . ";\n";
+    echo "var previewxmlurl=\"" . $preview_url . "\";\n";
+    echo "var dataxmlurl=\"" . $data_url . "\";\n";
+    echo "var mediavariable=\"" . $media_path . "\";\n";
+    echo "var rlourlvariable=\"" . $rlo_url . "/\";\n";
+    echo "var rlopathvariable=\"" . $rlo_path . "/\";\n";
+    echo "var languagecodevariable=\""  . $_SESSION['toolkits_language'] . "\";\n";
+    echo "var editorlanguagefile=\"" . getWizardfile($_SESSION['toolkits_language']) . "\";\n";
+    echo "var originalpathvariable=\"" . $xwd_url . "\";\n";
+    echo "var xwd_file_url=\"" . $xwd_file_url . "\";\n";
+    echo "var wizard_xwd_use_rest_api=true;\n";
+    echo "var moduleurlvariable=\"" . $module_url . "\";\n";
+    echo "var template_id=\"" . $row_edit['template_id'] . "\";\n";
+    echo "var template_height=\"" . $temp[1] . "\";\n";
+    echo "var template_width=\"" . $temp[0] . "\";\n";
+    echo "var read_and_write=\"" . $read_status . "\";\n";
+    echo "var savepath=\"" . $xerte_toolkits_site->flash_save_path . "\";\n";
+    echo "var upload_path=\"" . $xerte_toolkits_site->flash_upload_path . "\";\n";
+    echo "var preview_path=\"" . $xerte_toolkits_site->flash_preview_check_path . "\";\n";
+    echo "var site_url=\"" . $xerte_toolkits_site->site_url . "\";\n";
+    echo "var rest_api_url=\"" . $xerte_toolkits_site->site_url . "website_code/api/v1/index.php\";\n";
+    echo "var simple_mode=" . ($simple_mode ? "true" : "false") . ";\n";
+    echo "var template_sub_pages=" . json_encode($template_sub_pages) . ";\n";
+    echo "var simple_lo_page=" . ($simple_lo_page ? "true" : "false") . ";\n";
+    echo "var disable_advanced=" . ($disable_advanced ? "true" : "false") . ";\n";
+    echo "var category_list=" . json_encode($parsed_categories) . ";\n";
+    echo "var educationlevel_list=" . json_encode($parsed_educationlevels) . ";\n";
+    echo "var grouping_list=" . json_encode($grouping) . ";\n";
+    echo "var course_list=" . json_encode($course) . ";\n";
     // Some upgrade.php in teh past prevented the course_freetext_enabled column to be set correctly in the sitedetails table
     // If not present, set to true
     if (!isset($xerte_toolkits_site->course_freetext_enabled))
     {
-        echo "course_freetext_enabled=true;\n";
+        echo "var course_freetext_enabled=true;\n";
     }
     else {
-        echo "course_freetext_enabled=" . ($xerte_toolkits_site->course_freetext_enabled == 'true' ? 'true' : 'false') . ";\n";
+        echo "var course_freetext_enabled=" . ($xerte_toolkits_site->course_freetext_enabled == 'true' ? 'true' : 'false') . ";\n";
     }
-    echo "templateframework=\"" . $row_edit['template_framework'] . "\";\n";
-    echo "oai_pmh_available=" . ($oai_pmh ? "true" : "false") . ";\n";
-    echo "roles=" . json_encode($user_roles) . ";\n";
-    echo "theme=\"" . $theme . "\";\n";
-    echo "theme_list=" . json_encode($ThemeList) . ";\n";
-    echo "vendor_options=" . json_encode($vendors) . ";\n";
-    echo "corpus_upload_types=" . json_encode($corpus_upload_types) . ";\n";
-    echo "management_helper_table=" . json_encode($xerte_toolkits_site->management_helper_table) . ";\n";
-    
+    echo "var templateframework=\"" . $row_edit['template_framework'] . "\";\n";
+    echo "var oai_pmh_available=" . ($oai_pmh ? "true" : "false") . ";\n";
+    echo "var roles=" . json_encode($user_roles) . ";\n";
+    echo "var theme=\"" . $theme . "\";\n";
+    echo "var theme_list_encoded='" . base64_encode(json_encode($ThemeList)) . "';\n";
+    echo "var theme_list=JSON.parse(atob(theme_list_encoded));\n";
+    echo "var upload_url=\"" . $upload_url . "\";\n";
+    echo "var preview_url=\"" . $preview_url . "\";\n";
+    echo "var lti_session=\"" . $lti_session . "\";\n";
+    echo "var vendor_options=" . json_encode($vendors) . ";\n";
+    echo "var base_ai_options=" . json_encode($base_ai_options) . ";\n";
+    echo "var base_ai_defaults=" . json_encode($base_ai_defaults) . ";\n";
+    echo "var corpus_upload_types=" . json_encode($corpus_upload_types) . ";\n";
+    echo "var management_helper_table=" . json_encode($xerte_toolkits_site->management_helper_table) . ";\n";
+
     // Pass user preferences to JavaScript (similar to index.php)
     require_once("library/Xerte/Authentication/Factory.php");
     $authmech = Xerte_Authentication_Factory::create($xerte_toolkits_site->authentication_method);
-    
+
     $user_preferences_json = "{}";
     $user_has_preferences = "false";
-    
+
     if (isset($_SESSION['toolkits_preferences']) && is_array($_SESSION['toolkits_preferences'])) {
         $user_preferences_json = json_encode($_SESSION['toolkits_preferences']);
-        if ($authmech->hasUserPrefrences()) {
+        if ($authmech->hasUserPreferences()) {
             $user_has_preferences = "true";
         }
     } else {
-        if (isset($authmech) && $authmech->hasUserPrefrences()) {
+        if (isset($authmech) && $authmech->hasUserPreferences()) {
             $user_has_preferences = "true";
         }
     }
-    
+
     echo "var user_preferences = {$user_preferences_json};\n";
     echo "var user_has_preferences = {$user_has_preferences};\n";
     echo "console.log('Editor: user_preferences loaded:', user_preferences);\n";
@@ -541,10 +602,11 @@ function output_editor_code($row_edit, $xerte_toolkits_site, $read_status, $vers
     ?>
 
     function bunload(){
-
         path = "<?PHP echo $row_edit['template_id'] . "-" . $row_username['username'] . "-" . $row_edit['template_name'] . "/";?>";
 
-        if(typeof window_reference==="undefined"){
+        if (lti_session !== ""){
+            edit_window_close_lti(path);
+        }else if(typeof window_reference==="undefined"){
 
             window.opener.edit_window_close(path);
 
@@ -565,10 +627,10 @@ function output_editor_code($row_edit, $xerte_toolkits_site, $read_status, $vers
 </script>
 <script type="text/javascript" src="editor/js/data.js?version=<?php echo $version;?>"></script>
 <script type="text/javascript" src="editor/js/application.js?version=<?php echo $version;?>"></script>
-<script type="text/javascript" src="editor/js/toolbox.js?version=<?php echo $version;?>"></script>
-<script type="text/javascript" src="editor/js/language.js?version=<?php echo $version;?>"></script>
-<script type="text/javascript" src="editor/js/layout.js?version=<?php echo $version;?>"></script>
-<script type="text/javascript" src="editor/js/tree.js?version=<?php echo $version;?>"></script>
+<script type="text/javascript" src="editor/js/toolbox.js?version=<?php echo $version;?>&m=<?php echo $mtime_toolbox_js;?>"></script>
+<script type="text/javascript" src="editor/js/language.js?version=<?php echo $version;?>&m=<?php echo $mtime_language_js;?>"></script>
+<script type="text/javascript" src="editor/js/layout.js?version=<?php echo $version;?>&m=<?php echo $mtime_layout_js;?>"></script>
+<script type="text/javascript" src="editor/js/tree.js?version=<?php echo $version;?>&m=<?php echo $mtime_tree_js;?>"></script>
 <?php
     if (function_exists('get_toolkits_ui_theme') && get_toolkits_ui_theme() === 'modern') {
         if (function_exists('_include_javascript_file')) {

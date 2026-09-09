@@ -36,6 +36,9 @@ body {
 	font-family: $mainfonts;
 	color:$fontcolorfordarkestcolor;
 }
+.ui-button.selected .ui-button-text {
+	color: $mainfontcolour;
+}
 .ui-button{
 	//default button background unless changed for specific pages
 	background:$darkestcolor;
@@ -73,8 +76,8 @@ body:not(.sb_right):not(.sb_left) #x_mainHolder {
 	padding-bottom:$defaultpagepadding;
 }
 #infoHolder{
-	border-radius:$mediumroundedcorners;
-	background: $brightcolor;
+	/*border-radius:$mediumroundedcorners;
+	background: $brightcolor;*/
 }
 /*****panel all pages with a panel*****/
 .panel {
@@ -82,6 +85,10 @@ body:not(.sb_right):not(.sb_left) #x_mainHolder {
 	background:$brightcolor;
 	box-shadow: none;
 	border-color: transparent;
+}
+.panel .panel.editorStyle {
+	background: $defaultpagebackground;
+	border-color: $defaultpagebackground;
 }
 .panelPage{
 	padding:1%;
