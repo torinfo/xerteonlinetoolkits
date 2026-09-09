@@ -467,7 +467,7 @@ function output_editor_code($row_edit, $xerte_toolkits_site, $read_status, $vers
 
 <script>
     <?php
-    echo "var previewxmlurl=\"" . $preview_url . "\";\n";
+    echo "var previewxmlurl=\"" . $previewxmlurl . "\";\n";
     echo "var dataxmlurl=\"" . $data_url . "\";\n";
     echo "var mediavariable=\"" . $media_path . "\";\n";
     echo "var rlourlvariable=\"" . $rlo_url . "/\";\n";

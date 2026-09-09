@@ -101,7 +101,10 @@ function closeUserbarDropdowns(except) {
 }
 
 $(function() {
-    $(".userbar-dropdown-toggle, .userbar-profile-btn").on("click", function(e) {
+    // The UI/UX theme layer injects the Nottingham shell after DOM ready, so
+    // delegate these 3.16 controls instead of binding only to initial markup.
+    $(document).off("click.userbarDropdown", ".userbar-dropdown-toggle, .userbar-profile-btn")
+        .on("click.userbarDropdown", ".userbar-dropdown-toggle, .userbar-profile-btn", function(e) {
         e.stopPropagation();
         var $dropdown = $(this).closest(".userbar-dropdown");
         if (!$dropdown.length) {
@@ -368,6 +371,107 @@ function clearPasswordForm($root) {
     $root.find('#result').html('');
 }
 
+function getNottinghamSettingsDialog() {
+    var $dialog = $('#change-password-dialog');
+    if (!$dialog.length) {
+        $dialog = $("<div id='change-password-dialog'></div>").appendTo('body');
+    } else if (!$.contains(document.documentElement, $dialog[0])) {
+        $dialog.appendTo('body');
+    }
+    return $dialog;
+}
+
+function populateNottinghamPreferencesForm($root) {
+    loadUserSettingsPreferences($root);
+}
+
+function saveNottinghamPreferencesForm($root) {
+    var prefs = {
+        toolkits_ui_theme: $root.find('#toolkits_ui_theme').val() || 'nottingham',
+        panel_east_open: $root.find('#panel_east_open').is(':checked'),
+        panel_south_open: $root.find('#panel_south_open').is(':checked'),
+        editor_panel_east_open: $root.find('#editor_panel_east_open').is(':checked'),
+        editor_show_language: $root.find('#editor_show_language').is(':checked'),
+        editor_show_toolbar: $root.find('#editor_show_toolbar').is(':checked'),
+        editor_expand_groups: $root.find('#editor_expand_groups').is(':checked'),
+        editor_expand_tree: $root.find('#editor_expand_tree').is(':checked'),
+        editor_open_mode: $root.find('input[name="editor_open_mode"]:checked').val() || 'popup'
+    };
+
+    if (typeof window.user_preferences === 'undefined' || window.user_preferences === null) {
+        window.user_preferences = {};
+    }
+    Object.keys(prefs).forEach(function(key) {
+        window.user_preferences[key] = prefs[key];
+        if (typeof save_user_preference === 'function') {
+            save_user_preference(key, prefs[key]);
+        }
+    });
+
+    if (typeof xerteinner_layout !== 'undefined') {
+        prefs.panel_east_open ? xerteinner_layout.open('east') : xerteinner_layout.close('east');
+    }
+    if (typeof xertemain_layout !== 'undefined') {
+        prefs.panel_south_open ? xertemain_layout.open('south') : xertemain_layout.close('south');
+    }
+    var expandTreeCb = $('#expand_tree');
+    if (expandTreeCb.length) {
+        expandTreeCb.prop('checked', prefs.editor_expand_tree).trigger('change');
+    }
+}
+
+function openNottingham316SettingsDialog(section) {
+    section = section === 'preferences' ? 'preferences' : 'details';
+    var isPreferences = section === 'preferences';
+    var $dialog = getNottinghamSettingsDialog();
+
+    if (!$dialog.data('ui-dialog')) {
+        $dialog.dialog({
+            autoOpen: false,
+            modal: true,
+            width: 560,
+            height: 'auto',
+            resizable: false,
+            title: '',
+            dialogClass: 'preferences-dialog workspace-dialog',
+            close: function() { clearPasswordForm($dialog); }
+        });
+    }
+
+    loadUserSettingsFormHtml(section, function(html) {
+        $dialog.html(html);
+        if (isPreferences) {
+            var $form = $dialog.find('#preferences-form');
+            populateNottinghamPreferencesForm($form);
+            $form.find('.preferences-modal-close, .preferences-btn-cancel').on('click', function() {
+                $dialog.dialog('close');
+            });
+            $form.find('.preferences-btn-save').on('click', function() {
+                saveNottinghamPreferencesForm($form);
+                $dialog.dialog('close');
+            });
+        } else {
+            var $passwordForm = $dialog.find('#password-form');
+            var username = $passwordForm.data('username') || '';
+            $passwordForm.find('.preferences-modal-close, .preferences-btn-cancel').on('click', function() {
+                $dialog.dialog('close');
+            });
+            $passwordForm.find('.password-btn-submit').on('click', function() {
+                if (username) { changePassword(username); }
+            });
+            $passwordForm.find('#passform').on('submit', function(e) {
+                e.preventDefault();
+                if (username) { changePassword(username); }
+            });
+            $passwordForm.find('#oldpass').trigger('focus');
+        }
+        $dialog.dialog('open');
+    }, function(xhr, status, error) {
+        console.error('Error loading user settings form:', error, xhr.responseText);
+        $dialog.html("<div style='padding: 20px; color: red;'>Error loading form. Please try again.</div>").dialog('open');
+    });
+}
+
 /**
  * Password change popup and form code:
  */
@@ -387,7 +491,7 @@ function changepasswordPopup(focusSection) {
         return;
     }
 
-    openLegacyUserSettingsDialog(focusSection);
+    openNottingham316SettingsDialog(focusSection);
 }
 
 function openLegacyUserSettingsDialog(focusSection) {

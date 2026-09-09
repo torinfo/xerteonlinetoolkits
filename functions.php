@@ -378,6 +378,7 @@ function build_toolkits_index_page_config($authmech) {
     global $xerte_toolkits_site;
 
     $root = $xerte_toolkits_site->root_file_path;
+    $uiTheme = get_toolkits_ui_theme();
     $logoLeft = file_exists($root . 'branding/logo_left.png')
         ? 'branding/logo_left.png'
         : 'website_code/images/logo.png';
@@ -386,7 +387,13 @@ function build_toolkits_index_page_config($authmech) {
         : 'website_code/images/apereoLogo.png';
 
     ob_start();
-    display_language_selectionform('general', false);
+    if ($uiTheme === 'nottingham') {
+        // Preserve the 3.16 Nottingham globe/code dropdown with flag rows.
+        display_language_userbar();
+    } else {
+        // Modern enhances the compact select into its own header control.
+        display_language_selectionform('general', false);
+    }
     $languageFormHtml = ob_get_clean();
 
     ob_start();
@@ -438,6 +445,8 @@ function build_toolkits_index_page_config($authmech) {
         'xapiPrint' => INDEX_XAPI_DASHBOARD_PRINT,
         'logoAlt' => INDEX_LOGO_ALT,
         'changePassword' => INDEX_CHANGE_PASSWORD,
+        'myPreferences' => INDEX_MY_PREFERENCES,
+        'loggedInAs' => INDEX_LOGGED_IN_AS,
         'modernPreferences' => defined('INDEX_MODERN_PREFERENCES') ? INDEX_MODERN_PREFERENCES : 'Preferences',
         'modernSettings' => defined('INDEX_MODERN_SETTINGS') ? INDEX_MODERN_SETTINGS : INDEX_SETTINGS_BUTTON,
         'modernMyDetails' => defined('INDEX_MODERN_USER_MENU_MY_DETAILS') ? INDEX_MODERN_USER_MENU_MY_DETAILS : 'My details',
@@ -631,7 +640,7 @@ function build_toolkits_index_page_config($authmech) {
     );
 
     return array(
-        'theme' => get_toolkits_ui_theme(),
+        'theme' => $uiTheme,
         'strings' => $strings,
         'user' => array(
             'displayName' => $displayName,

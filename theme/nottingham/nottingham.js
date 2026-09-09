@@ -32,23 +32,42 @@ function renderToolkitsIndexShell() {
         return;
     }
 
-    var userbarExtras = '';
+    var userMenuItems = '';
     if (user.canManageUser) {
-        userbarExtras += '<div class="settingsDropdown">' +
-            '<button onclick="changepasswordPopup()" title="' + s.changePassword + '" class="xerte_workspace_button settingsButton">' +
-            '<i class="fa fa-cog xerte-icon"></i></button></div>';
+        userMenuItems += '<li role="none"><button type="button" role="menuitem" class="userbar-dropdown-item userbar-user-item" onclick="changepasswordPopup(\'details\')">' +
+            '<i class="fa-solid fa-key userbar-user-item-icon" aria-hidden="true"></i>' +
+            '<span class="userbar-user-item-label">' + s.changePassword + '</span></button></li>';
     }
+    userMenuItems += '<li role="none"><button type="button" role="menuitem" class="userbar-dropdown-item userbar-user-item" onclick="changepasswordPopup(\'preferences\')">' +
+        '<i class="fa-solid fa-sliders userbar-user-item-icon" aria-hidden="true"></i>' +
+        '<span class="userbar-user-item-label">' + s.myPreferences + '</span></button></li>';
     if (user.hasManagementRole) {
-        userbarExtras += '<button onclick="javascript:elevate(\'management.php\')" title="' + s.toManagement + '" class="xerte_workspace_button ">' +
-            '<i class="fas fa-tools xerte-icon"></i></button>';
+        userMenuItems += '<li role="none"><button type="button" role="menuitem" class="userbar-dropdown-item userbar-user-item" onclick="javascript:elevate(\'management.php\')">' +
+            '<i class="fa-solid fa-screwdriver-wrench userbar-user-item-icon" aria-hidden="true"></i>' +
+            '<span class="userbar-user-item-label">' + s.toManagement + '</span></button></li>';
+    }
+    if (!user.isGuest) {
+        userMenuItems += '<li role="none"><button type="button" role="menuitem" class="userbar-dropdown-item userbar-user-item userbar-user-item--logout" ' +
+            'onclick="javascript:logout(' + (user.samlLogout ? 'true' : 'false') + ')">' +
+            '<i class="fa-solid fa-right-from-bracket userbar-user-item-icon" aria-hidden="true"></i>' +
+            '<span class="userbar-user-item-label">' + s.logout + '</span></button></li>';
     }
 
-    var logoutBtn = '';
-    if (!user.isGuest) {
-        logoutBtn = '<button title="' + s.logout + '" type="button" class="xerte_workspace_button" ' +
-            'onclick="javascript:logout(' + (user.samlLogout ? 'true' : 'false') + ')">' +
-            '<i class="fa fa-sign-out xerte-icon"></i></button>';
-    }
+    var userMenu = '<div class="userbar-item userbar-user">' +
+        '<div class="userbar-dropdown user-dropdown">' +
+            '<button type="button" class="userbar-dropdown-toggle" aria-haspopup="true" aria-expanded="false">' +
+                '<span class="userbar-dropdown-label">' + (user.firstName || user.displayName || '') + '</span>' +
+                '<i class="fa fa-chevron-down userbar-chevron" aria-hidden="true"></i>' +
+            '</button>' +
+            '<div class="userbar-dropdown-menu userbar-user-menu" id="user-menu" role="menu">' +
+                '<ul class="userbar-dropdown-list" id="user-menu-items">' + userMenuItems + '</ul>' +
+            '</div>' +
+        '</div>' +
+        '<button type="button" class="userbar-profile-btn" title="' + s.loggedInAs + ' ' + (user.firstName || user.displayName || '') + '" ' +
+            'aria-haspopup="true" aria-expanded="false" aria-controls="user-menu">' +
+            '<i class="fa fa-user" aria-hidden="true"></i>' +
+        '</button>' +
+    '</div>';
 
     var html =
         '<div class="folder_popup" id="message_box">' +
@@ -112,10 +131,8 @@ function renderToolkitsIndexShell() {
                 '<div class="buttonbar">' +
                     '<div class="file_mgt_area_top"></div>' +
                     '<div class="userbar">' +
-                        (user.displayName || '') +
-                        userbarExtras +
-                        '<div style="display: inline-block">' + (cfg.languageFormHtml || '') + '</div>' +
-                        logoutBtn +
+                        (cfg.languageFormHtml || '') +
+                        userMenu +
                     '</div>' +
                     '<div style="clear:both;"></div>' +
                     '<div class="separator"></div>' +

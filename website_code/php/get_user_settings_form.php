@@ -54,9 +54,110 @@ if (!in_array($section, array('all', 'password', 'settings', 'preferences'), tru
 
 $isModern = function_exists('get_toolkits_ui_theme') && get_toolkits_ui_theme() === 'modern';
 
-// Preferences section and modern card UI are modern-theme only.
-if (!$isModern && $section === 'preferences') {
-    $section = 'all';
+// Keep the 3.16 Nottingham dialogs intact. The modern theme uses the card-based
+// forms below, while Nottingham retains its separate password/preferences UI.
+if (!$isModern) {
+    $legacySection = ($section === 'preferences') ? 'preferences' : 'details';
+    ob_end_clean();
+
+    if ($legacySection === 'preferences') {
+        ?>
+        <div class="preferences-modal" id="preferences-form">
+            <div class="preferences-modal-header">
+                <h2 class="preferences-modal-title"><?php echo USER_SETTINGS_PREFERENCES_TITLE; ?></h2>
+                <button type="button" class="preferences-modal-close" aria-label="<?php echo USER_SETTINGS_CANCEL; ?>">&times;</button>
+            </div>
+            <div class="preferences-modal-body">
+                <section class="preferences-section">
+                    <h3 class="preferences-section-title"><?php echo USER_SETTINGS_UI_THEME_LABEL; ?></h3>
+                    <div class="preferences-options">
+                        <label for="toolkits_ui_theme"><?php echo USER_SETTINGS_UI_THEME_HELP; ?></label>
+                        <select id="toolkits_ui_theme" name="toolkits_ui_theme">
+                            <option value="nottingham" selected="selected"><?php echo USER_SETTINGS_UI_THEME_NOTTINGHAM; ?></option>
+                            <option value="modern"><?php echo USER_SETTINGS_UI_THEME_MODERN; ?></option>
+                        </select>
+                    </div>
+                </section>
+                <section class="preferences-section">
+                    <h3 class="preferences-section-title"><?php echo USER_SETTINGS_SECTION_EDITOR_OPEN; ?></h3>
+                    <div class="preferences-options">
+                        <?php foreach (array(
+                            'popup' => USER_SETTINGS_EDITOR_OPEN_MODE_POPUP,
+                            '_blank' => USER_SETTINGS_EDITOR_OPEN_MODE_BLANK,
+                            'lightbox' => USER_SETTINGS_EDITOR_OPEN_MODE_LIGHTBOX,
+                            '_self' => USER_SETTINGS_EDITOR_OPEN_MODE_SELF,
+                        ) as $mode => $label) { ?>
+                            <label class="preferences-option">
+                                <input type="radio" name="editor_open_mode" value="<?php echo $mode; ?>" class="preferences-input">
+                                <span class="preferences-control preferences-control--radio" aria-hidden="true"></span>
+                                <span class="preferences-option-text"><?php echo $label; ?></span>
+                            </label>
+                        <?php } ?>
+                    </div>
+                </section>
+                <section class="preferences-section">
+                    <h3 class="preferences-section-title"><?php echo USER_SETTINGS_SECTION_OVERVIEW; ?></h3>
+                    <div class="preferences-options">
+                        <?php foreach (array(
+                            'panel_east_open' => USER_SETTINGS_PANEL_EAST,
+                            'panel_south_open' => USER_SETTINGS_PANEL_SOUTH,
+                        ) as $id => $label) { ?>
+                            <label class="preferences-option">
+                                <input type="checkbox" id="<?php echo $id; ?>" class="preferences-input">
+                                <span class="preferences-control preferences-control--checkbox" aria-hidden="true"></span>
+                                <span class="preferences-option-text"><?php echo $label; ?></span>
+                            </label>
+                        <?php } ?>
+                    </div>
+                </section>
+                <section class="preferences-section">
+                    <h3 class="preferences-section-title"><?php echo USER_SETTINGS_SECTION_IN_EDITOR; ?></h3>
+                    <div class="preferences-options">
+                        <?php foreach (array(
+                            'editor_panel_east_open' => USER_SETTINGS_EDITOR_PANEL_EAST,
+                            'editor_show_language' => USER_SETTINGS_EDITOR_SHOW_LANGUAGE,
+                            'editor_show_toolbar' => USER_SETTINGS_EDITOR_SHOW_TOOLBAR,
+                            'editor_expand_groups' => USER_SETTINGS_EDITOR_EXPAND_GROUPS,
+                            'editor_expand_tree' => USER_SETTINGS_EDITOR_EXPAND_TREE,
+                        ) as $id => $label) { ?>
+                            <label class="preferences-option">
+                                <input type="checkbox" id="<?php echo $id; ?>" class="preferences-input">
+                                <span class="preferences-control preferences-control--checkbox" aria-hidden="true"></span>
+                                <span class="preferences-option-text"><?php echo $label; ?></span>
+                            </label>
+                        <?php } ?>
+                    </div>
+                </section>
+            </div>
+            <div class="preferences-modal-footer">
+                <button type="button" class="preferences-btn preferences-btn-cancel"><?php echo USER_SETTINGS_CANCEL; ?></button>
+                <button type="button" class="preferences-btn preferences-btn-save"><?php echo USER_SETTINGS_SAVE; ?></button>
+            </div>
+        </div>
+        <?php
+        exit;
+    }
+    ?>
+    <div class="preferences-modal password-modal" id="password-form" data-username="<?php echo htmlspecialchars($username, ENT_QUOTES, 'UTF-8'); ?>">
+        <div class="preferences-modal-header">
+            <h2 class="preferences-modal-title"><?php echo USER_SETTINGS_PASSWORD_TITLE; ?></h2>
+            <button type="button" class="preferences-modal-close" aria-label="<?php echo USER_SETTINGS_CANCEL; ?>">&times;</button>
+        </div>
+        <div class="preferences-modal-body">
+            <form id="passform" class="password-form-fields" autocomplete="off">
+                <div class="password-field"><label for="oldpass"><?php echo USER_SETTINGS_PASSWORD_OLD; ?></label><input type="password" id="oldpass" autocomplete="current-password"></div>
+                <div class="password-field"><label for="newpass"><?php echo USER_SETTINGS_PASSWORD_NEW; ?></label><input type="password" id="newpass" autocomplete="new-password"></div>
+                <div class="password-field"><label for="newpassrepeat"><?php echo USER_SETTINGS_PASSWORD_NEW_REPEAT; ?></label><input type="password" id="newpassrepeat" autocomplete="new-password"></div>
+            </form>
+            <div id="result" class="password-form-result" aria-live="polite"></div>
+        </div>
+        <div class="preferences-modal-footer">
+            <button type="button" class="preferences-btn preferences-btn-cancel"><?php echo USER_SETTINGS_CANCEL; ?></button>
+            <button type="button" class="preferences-btn preferences-btn-save password-btn-submit"><?php echo USER_SETTINGS_PASSWORD_SUBMIT; ?></button>
+        </div>
+    </div>
+    <?php
+    exit;
 }
 
 $showPassword = ($section === 'all' || $section === 'password');
