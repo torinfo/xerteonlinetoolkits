@@ -252,7 +252,10 @@
 		<Info label = "Warning: This will overwrite the current table, are you sure?"> </Info>
 		<Info2 label = "Warning: This will add the new table to the current table, are you sure? Please note that there might be duplicate entries after merge."> </Info2>
 		<mergeOld label = "Keep the old table when importing a CSV file:"/>
-	</UploadCSV>
+	</UploadCSV>>
+	<downloadCSV>
+		<downloadCSVBtn label="Download CSV"/>
+	</downloadCSV>>
 	<imageSelection>
 	    <title>Select every image you wish to keep, then press 'keep'. </title>
 		<keepButtonText>Keep</keepButtonText>
@@ -316,7 +319,7 @@
 			<LLMSyncAlreadySynced>File already synced!</LLMSyncAlreadySynced>
 		</AIGenerationStatus>
 		<quickfill>
-			<QFConfirmRequest>The specified nodes will be automatically generated with their default values. Proceed with request?</QFConfirmRequest>
+			<QFConfirmRequest>The specified items will be generated and populated with default values. Do you want to continue?</QFConfirmRequest>
 			<QFError>Something went wrong. Please try using the quick fill feature again.</QFError>
 		</quickfill>
 		<AIBaseSettingOptions>

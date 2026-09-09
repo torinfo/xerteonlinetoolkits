@@ -1883,3 +1883,22 @@ function upgrade_60()
 
     return "Adding Gemini to management_helper - ok ? " . ($ok ? 'true' : 'false') . "<br>";
 }
+
+function upgrade_61()
+{
+    $userGroupsRoleTable = table_by_key("user_group_role");
+    $message = '';
+
+    if (!_table_exists($userGroupsRoleTable)) {
+        $ok = _upgrade_db_query("CREATE TABLE IF NOT EXISTS `$userGroupsRoleTable` (
+          `groupid` int NOT NULL,
+          `userid` bigint(20) NOT NULL,
+          PRIMARY KEY (`userid`, `groupid`)
+        )");
+        $message .= "Creating user_group_role table - ok ? " . ($ok ? 'true' : 'false') . "<br>";
+    } else {
+        $message .= "Table user_group_role already exists - ok ? true<br>";
+    }
+
+    return $message;
+}

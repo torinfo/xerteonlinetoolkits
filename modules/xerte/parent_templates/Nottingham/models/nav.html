@@ -56,6 +56,7 @@
 		this.sizeChanged = function() {
 			// only need to do some resizing if not column page & panel fills the available space (rather than fits content)
 			if (x_currentPageXML.getAttribute("type") != "Col") {
+				//const panelH = XENITH.SPLITSCREEN.resizePanel();
 				if ($("#pageContents").hasClass("fill")) {
 					if (x_currentPageXML.getAttribute("type") == "Acc") {
 						// accordion
@@ -238,6 +239,12 @@
 				if (panelH === "fill" && ((x_addLineBreaks(x_currentPageXML.getAttribute("textTop")) != undefined && x_addLineBreaks(x_currentPageXML.getAttribute("textTop")).trim() !== "") || (x_addLineBreaks(x_currentPageXML.getAttribute("textBottom")) != undefined && x_addLineBreaks(x_currentPageXML.getAttribute("textBottom")).trim() !== "") || (x_currentPageXML.getAttribute("panelWidth") === "Full" && x_currentPageXML.getAttribute("removeTxt") === "false"))) {
 					panelH = "fit";
 				}
+				if (panelH === "fill" && (x_currentPageXML.getAttribute("type") === "Slide" || x_currentPageXML.getAttribute("type") === "Button") && x_currentPageXML.getAttribute("panelStyle") === "true") {
+					panelH = "fit";
+				}
+				if (panelH === "fit" && (x_currentPageXML.getAttribute("type") === "Slide" || x_currentPageXML.getAttribute("type") === "Button") && x_currentPageXML.getAttribute("buttonPos") === "Bottom") {
+					panelH = "fill";
+				}
 				$pageContents.addClass(panelH);
 
 				const attributes = {
@@ -327,7 +334,7 @@
 				});
 
 				// get the minimum width for the columns - columns will wrap onto a new row rather than be shown smaller than this
-				const minWidth = x_currentPageXML.getAttribute("minWidth") != undefined ? x_currentPageXML.getAttribute("minWidth") : "75";
+				const minWidth = x_currentPageXML.getAttribute("minWidth") != undefined ? x_currentPageXML.getAttribute("minWidth") : "100";
 
 				// now work out if columns are equal width or whether width % have been set
 				let equal = true;
@@ -357,7 +364,7 @@
 							grid-template-columns: ${cssString};
 						}
 
-						@media (max-width: ${Number(minWidth)*columnWidths.length + (Math.ceil(parseFloat($navHolder.css("gap"))) * columnWidths.length-1)}px) {
+						@media (max-width: ${Number(minWidth)*columnWidths.length + (Math.ceil(parseFloat($navHolder.css("gap"))) * columnWidths.length-1) + ($("body").width() - $("#navHolder").width())}px) {
 							#navHolder {
 								grid-template-columns: repeat(auto-fit, minmax(${minWidth}px, 1fr));
 							}
@@ -375,6 +382,7 @@
 				if (x_currentPageXML.getAttribute("columnPanelStyle") === "single") {
 					$navHolder.addClass("panel");
 				} else if (x_currentPageXML.getAttribute("columnPanelStyle") === "each") {
+					$navHolder.addClass("panelColumns");
 					$navHolder.find(".column").addClass("panel");
 				}
 			}

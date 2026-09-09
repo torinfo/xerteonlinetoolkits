@@ -15,8 +15,7 @@
 /*2vmin;*/
 /*3px 3px 5px grey*/
 /*define hr appearances*/
-/*start here and set the default values for all the variables*/
-/******Header******/
+/*start here and set the default values for all the variables*/ /******Header******/
 #x_headerBlock {
   color: #ffffff;
   background-repeat: no-repeat;
@@ -76,9 +75,7 @@ body:not(.sb_right):not(.sb_left) #x_headerBlock {
   color: #000000;
 }
 
-.x_columnPage_page #textHolder,
 .x_imageSequence_page #controlBar,
-.x_nav_page #pageContents.col #textHolder,
 .x_SictTimeline_page #pageContents .tl-text .tl-headline-date, .x_SictTimeline_page #pageContents .tl-text h3.tl-headline-date,
 .x_results_page #txtHolder {
   border-bottom: 3px solid #ebebeb;
@@ -474,6 +471,24 @@ body:not(.sb_right):not(.sb_left) #x_headerBlock {
 .x_list_page #listHolder a.listItem.highlight,
 .x_annotatedDiagram_page #listHolder a.listItem.highlight {
   background: #bdbdbd;
+}
+
+.x_list_page #infoHolderTop .closeBtn {
+  color: #222222;
+}
+
+.x_list_page #infoHolderTop .closeBtn:hover, .x_list_page #infoHolderTop .closeBtn:focus, .x_list_page #infoHolderTop .closeBtn:active {
+  color: #4078C0;
+}
+
+#x_mainHolder.x_nav_page #pageContents.col .textTopHolder + #navHolder:not(.panel):not(.panelColumns),
+#x_mainHolder.x_nav_page #pageContents.col #textHolder + #navHolder:not(.panel):not(.panelColumns),
+#x_mainHolder.x_nav_page #pageContents.col #navHolder:not(.panel):not(.panelColumns) + .textBottomHolder,
+#x_mainHolder.x_columnPage_page .textTopHolder + #columnHolder:not(.panel):not(.panelColumns),
+#x_mainHolder.x_columnPage_page #columnHolder:not(.panel):not(.panelColumns) + .textBottomHolder {
+  border-top: 3px solid #ebebeb;
+  margin-top: 1.5em;
+  padding-top: 1.5em;
 }
 
 #pageContents textarea {
@@ -1030,7 +1045,6 @@ table.glossary tr.shaded {
   #x_footerProgress {
     display: block;
   }
-
   #x_pageNo {
     vertical-align: top;
     text-align: center;
@@ -1042,22 +1056,18 @@ table.glossary tr.shaded {
     z-index: 100;
     font-size: 12px;
   }
-
   #x_footerBlock button {
     font-size: 1.4rem;
     margin-left: 5px;
   }
-
   #x_footerBlock .x_floatLeft button.customIconBtn, #x_footerBlock .x_floatRight button.customIconBtn {
     font-size: 1.4rem;
     margin-left: 5px;
   }
-
   .pbContainer {
     display: block;
     margin-top: 1.2em;
   }
-
   .pbTxt {
     display: block;
     text-align: center;
@@ -1076,7 +1086,6 @@ table.glossary tr.shaded {
   #x_footerProgress {
     display: block;
   }
-
   #x_pageNo {
     vertical-align: top;
     text-align: center;
@@ -1091,17 +1100,14 @@ table.glossary tr.shaded {
     z-index: 100;
     font-size: 12px;
   }
-
   #x_footerBlock button {
     font-size: 1.3em;
     width: 1.1em;
     margin-left: 5px;
   }
-
   .pbContainer {
     margin-top: 1.2em;
   }
-
   .pbTxt {
     text-align: center;
   }
@@ -1802,8 +1808,7 @@ a:hover {
 
 #x_mainHolder {
   background: #ffffff;
-  border: none !important;
-  /*remove this to restore the default border*/
+  border: none !important; /*remove this to restore the default border*/
 }
 
 body:not(.sb_right):not(.sb_left) #x_mainHolder {
@@ -1839,7 +1844,9 @@ body:not(.sb_right):not(.sb_left) #x_mainHolder {
   border-color: #ebebeb;
 }
 
-.panel .panel.editorStyle {
+.panel .panel.editorStyle,
+.ui-accordion-content .panel.editorStyle,
+.ui-tabs-panel .panel.editorStyle {
   background: #ffffff;
   border-color: #ffffff;
 }

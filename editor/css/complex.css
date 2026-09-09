@@ -507,6 +507,7 @@ span.button-close-east			{ background: url(../img/chevron-right_444444_15.png) n
 {
 	margin-top: 10px;
 	padding-left: 10px;
+	font-weight: bold;
 	text-align: left;
 }
 
@@ -618,6 +619,7 @@ div.ui-layout-north div.content {
 	margin:0 auto;
 	width:100%;
 	padding:0;
+	height: auto !important;
 }
 .elevated div.ui-layout-north div.content {
 	background-image: url(../img/warning.png);
@@ -720,19 +722,31 @@ form.csvUpload input[name=fileToUpload] {
 }
 
 #mainPanel input[name=csvUpload],
+#mainPanel input[name=csvDownload],
 form.csvUpload input[type=submit] {
 	background: #EFEFEF;
 	border: 1px solid #767676;
 	border-radius: 2px;
 	padding: 1px 8px;
-	float: right;
+}
+
+.csvBtnHolder {
+	display: flex;
+	gap: .5em;
+	justify-content: right;
+}
+
+.csvForm.featherlight .featherlight-content {
+	padding: 1em !important;
 }
 
 form.csvUpload input[type=submit] {
 	margin-top: 1em;
+	float: right;
 }
 
 #mainPanel input[name=csvUpload]:hover, #mainPanel input[name=csvUpload]:focus, #mainPanel input[name=csvUpload]:active,
+#mainPanel input[name=csvDownload]:hover, #mainPanel input[name=csvDownload]:focus, #mainPanel input[name=csvDownload]:active,
 form.csvUpload input[type=submit]:hover, form.csvUpload input[type=submit]:focus, form.csvUpload input[type=submit]:active {
 	background: #E5E5E5;
 	border: 1px solid #4F4F4F;
@@ -749,7 +763,8 @@ form.csvUpload input[name=merge] {
 
 #mainPanel .xerte_button.grid_col_btns,
 #mainPanel .xerte_button.disabled.grid_col_btns,
-#mainPanel input[name=csvUpload] {
+#mainPanel input[name=csvUpload],
+#mainPanel input[name=csvDownload] {
 	font-size: 0.8em;
 }
 
@@ -787,7 +802,6 @@ form.csvUpload input[name=merge] {
 table.wizard, table.wizardgroup_table{
     vertical-align: middle;
     width: 100%;
-	table-layout: fixed;
 }
 
 td.wizardparameter{

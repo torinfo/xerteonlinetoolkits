@@ -1277,20 +1277,20 @@ function x_cssSetUp(param) {
 	switch(param) {
         case "language":
 			if (x_params.kblanguage != undefined) {
-				x_insertCSS(x_templateLocation + "models/language.css", function() {x_cssSetUp("glossary")});
+				x_insertCSS(x_templateLocation + "models/language.css?version=" + x_Version, function() {x_cssSetUp("glossary")});
 			} else {
 				x_cssSetUp("glossary");
 			}
             break;
         case "glossary":
 			if (x_params.glossary != undefined) {
-				x_insertCSS(x_templateLocation + "models/glossary.css", function() {x_cssSetUp("saveSession")});
+				x_insertCSS(x_templateLocation + "models/glossary.css?version=" + x_Version, function() {x_cssSetUp("saveSession")});
 			} else {
 				x_cssSetUp("saveSession");
 			}
             break;
 		case "saveSession":
-			x_insertCSS(x_templateLocation + "models/saveSession.css", function() {x_cssSetUp("responsive")});
+			x_insertCSS(x_templateLocation + "models/saveSession.css?version=" + x_Version, function() {x_cssSetUp("responsive")});
 			break;
 		case "responsive":
             if (x_params.responsive == "true") {
@@ -2725,7 +2725,7 @@ function x_changePageApproved(x_gotoPage, addHistory) {
 
 			$x_mainHolder.addClass("x_" + modelfile + "_page");
 
-			x_insertCSS(x_templateLocation + "models/" + modelfile + ".css", function () {
+			x_insertCSS(x_templateLocation + "models/" + modelfile + ".css?version=" + x_Version, function () {
 				x_changePageStep2(x_gotoPage);
 			}, false, "page_model_css");
 		}
@@ -3247,7 +3247,7 @@ function x_changePageStep3() {
 				x_loadPage("", "success", "");
 			}
 			else {
-				$("#x_page" + x_currentPage).load(x_templateLocation + "models/" + modelfile + ".html", x_loadPage);
+				$("#x_page" + x_currentPage).load(x_templateLocation + "models/" + modelfile + ".html?version=" + x_Version, x_loadPage);
 			}
 		}
 
@@ -3992,7 +3992,7 @@ function x_openDialog(type, title, close, position, load, onclose) {
                     }
                     else
                     {
-                        $x_popupDialog.load(x_templateLocation + "models/" + type + ".html", function () {
+						$x_popupDialog.load(x_templateLocation + "models/" + type + ".html?version=" + x_Version, function () {
                             x_setDialogSize($x_popupDialog, position);
                         });
                     }
@@ -5372,7 +5372,7 @@ var XENITH = (function ($, parent) { var self = parent.GLOSSARY = {};
 
 						$.featherlight($(), {
 							contentFilters: 'ajax',
-							ajax: x_templateLocation + 'models/glossary.html',
+							ajax: x_templateLocation + 'models/glossary.html?version=' + x_Version,
 							variant: 'lightbox' + (x_browserInfo.mobile != true ? 'Medium' : 'Auto' )
 						});
 						
