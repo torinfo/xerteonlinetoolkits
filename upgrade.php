@@ -224,13 +224,12 @@ function _do_cleanup()
         'LTI/*',
         'play_html5.php',
         'play_site.php',
-        'setup/xampp.php',
-        'setup/xampp.txt',
-        'setup/xampp_database.txt',
         'rloObject.js',
         'package.json',
         'package-lock.json',
         'modules/xerte/parent_templates/Nottingham/common_html5/js/jsPDF/jspdf.min.js',
+        'webctlink.php',
+        'setup/*',
     );
 
     foreach ($filelist as $file)
@@ -1658,6 +1657,9 @@ function upgrade_52()
             return "Adding new extensions to the blacklisted extensions - ok ? false";
         }
     }
+    else{
+        return "Adding new extensions to the blacklisted extensions - NO PREVIOUS EXTENSIONS FOUND!";
+    }
 }
 
 function upgrade_53()
@@ -1866,6 +1868,29 @@ function upgrade_59()
     ");
 
     $message = "Adding Gemini to management_helper - ok ? " . ($ok ? 'true' : 'false') . "<br>";
+
+    return $message;
+}
+
+function upgrade_60()
+{
+    $UserGroupsRoleTable = table_by_key("user_group_role");
+
+    $message = '';
+
+    if (!_table_exists($UserGroupsRoleTable)) {
+        $ok = _upgrade_db_query("CREATE TABLE IF NOT EXISTS `$UserGroupsRoleTable` (
+        `groupid` int NOT NULL,
+        `userid` bigint(20) NOT NULL,
+        PRIMARY KEY (`roleid`, `groupid`)
+      )"
+        );
+
+        $message .= "Creating user_group_role table - ok ? " . ($ok ? 'true' : 'false') . "<br>";
+    }
+    else{
+        $message .= "Table user_group_role already exists - ok ? true". "<br>";
+    }
 
     return $message;
 }

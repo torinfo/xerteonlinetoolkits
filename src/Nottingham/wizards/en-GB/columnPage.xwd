@@ -2,7 +2,7 @@
   <pageWizard remove="true" duplicate="false">
     <newNodes>
       <columnPage><![CDATA[<columnPage name="Enter Page Title"
-      showTitles="true" minWidth="75" panelStyle="none"
+      showTitles="true" minWidth="100" panelStyle="none"
       />]]></columnPage>
     </newNodes>
   </pageWizard>
@@ -14,7 +14,7 @@
 
     <layoutGroup label="Page Layout" type="group">
         <showTitles label="Column Titles" type="CheckBox" defaultValue="false" mandatory="true"/>
-        <minWidth label="Minimum Column Width (px)" type="NumericStepper" min="20" max="1000" defaultValue="75" mandatory="true" tooltip="Columns will never be narrower than this width and will be wrapped onto a new line when required"/>
+        <minWidth label="Minimum Column Width (px)" type="NumericStepper" min="20" max="1000" defaultValue="100" mandatory="true" tooltip="Columns will never be narrower than this width and will be wrapped onto a new line when required"/>
         <panelStyle label="Panel" type="ComboBox" options="None,Single panel,Each column" data="none,single,each" defaultValue="none" mandatory="true"/>
     </layoutGroup>
 
@@ -23,7 +23,7 @@
     <textBottom label="Text Below Columns" type="TextArea" height="100" optional="true"/>
 
     <newNodes>
-      <nestedColumnPage><![CDATA[<nestedColumnPage name="Enter Title Here" text="Content for the pane" align="Top"/>]]></nestedColumnPage>
+      <nestedColumnPage><![CDATA[<nestedColumnPage name="Enter Title Here" text="" align="Top"/>]]></nestedColumnPage>
     </newNodes>
 
     <QFGroup type="group" lightbox="form" subgroup="assistant" label="Quick Fill" tooltip ="Generate an empty template based on the options you choose, ready to be populated with your content." optional="true">

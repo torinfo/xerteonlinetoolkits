@@ -76,6 +76,10 @@ a {
 	box-sizing: border-box;
 }
 
+#x_mainHolder.noBorder {
+	border: 0;
+}
+
 #x_mainHolder.x_verticalCentre:not(.x_noVerticalCentre) #x_pageHolder,
 #x_pageHolder.x_verticalCentre {
 	display: flex;
@@ -95,6 +99,10 @@ a {
 
 #x_headerBlock div, #x_pageDiv {
 	padding:	10px;
+}
+
+.innerPage {
+	visibility: hidden;
 }
 
 #x_headerBlock img {
@@ -506,7 +514,6 @@ fieldset.noStyle legend {
 
 #x_pageDiv table,
 table#x_resourceTable {
-	text-align:			left;
 	border-collapse:	collapse;
 }
 
@@ -660,6 +667,10 @@ button.ui-button-icon-only .ui-icon[class*=" fa-"] {
 	height: auto;
 	margin-left: -0.3em;
 	margin-top: -0.45em;
+}
+
+button.ui-button-icon-only .ui-icon.fa-x-refresh {
+	margin-left: -0.5em;
 }
 
 /*styling for optional show/hider footer tools*/
@@ -1902,7 +1913,12 @@ button.resourceLink {
 	flex-direction: column;
 }
 
-@media (max-width: 480px) {
+#x_pageHolder {
+	container-name: x_pageHolder;
+	container-type: inline-size;
+}
+
+@container x_pageHolder (max-width: 480px) {
 	/* split screen layout used in lots of page models - stack vertically on smaller screens */
 	.splitScreen {
 		flex-direction: column;

@@ -6147,10 +6147,35 @@ var EDITOR = (function ($, parent) {
 						.attr('id', id + '_addcolumns')
 						.addClass('jqgridAddColumnsContainer'));
 
-                // add button below grid - when clicked a lightbox opens where you can upload a CSV containing data for the grid
+                // add buttons below grid to upload / download csv files containing data for / from the grid
+                const $btnHolder = $('<div class="csvBtnHolder"></div>')
                 $('<input type="button" name="csvUpload" value="' + language.UploadCSV.UploadCSVBtn.$label + '">')
                     .click(function() { csvUploadLb(name, id); })
-                    .appendTo(html);
+                    .appendTo($btnHolder);
+
+                $('<input type="button" name="csvDownload" value="' + language.downloadCSV.downloadCSVBtn.$label + '">')
+                    .click(function() { csvDownload(name, id); })
+                    .appendTo($btnHolder);
+
+                $btnHolder.appendTo(html);
+
+                function csvDownload(name, id) {
+                    let csvContent = getAttributeValue(lo_data[key]['attributes'], name, [], key).value;
+                    // change the separators before download
+                    csvContent = csvContent.replace(/\|\|/g, '\n');
+                    csvContent = csvContent.replace(/\|/g, ',');
+                    const blob = new Blob([csvContent], {
+                        type: 'text/csv;charset=utf-8;'
+                    });
+                    const link = document.createElement('a');
+                    const url = URL.createObjectURL(blob);
+                    link.setAttribute('href', url);
+                    link.setAttribute('download', name + '_data.csv');
+                    document.body.appendChild(link);
+                    link.click();
+                    document.body.removeChild(link);
+                    URL.revokeObjectURL(url);
+                }
 
                 function csvUploadLb(name, id) {
                     var $excel_form =
@@ -6165,6 +6190,7 @@ var EDITOR = (function ($, parent) {
                     </form></div>`);
 
                     $.featherlight($excel_form, {
+                        variant: "csvForm",
                         afterOpen: function (e) {
                             // called if user has uploaded a file to populate a grid
                             this.$content.find('#excel_upload_' + name).submit(function (e) {
@@ -7686,7 +7712,7 @@ var EDITOR = (function ($, parent) {
 						.attr('contenteditable', 'true');
 
                     // Do not always add a paragraph tag if the value already starts with a <p tag (with for example a class attribute)
-                    if (value.indexOf('<p') === 0) {
+                    if (value && value.indexOf('<p') === 0) {
                         html = html.append(value);
                     } else {
                         html = html.append('<p>' + value + '</p>');

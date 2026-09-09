@@ -34,10 +34,9 @@ optional: end position* line
 		
 		return {
 			_setup: function(options) {
-				debugger;
 				// setup code, fire on initialisation
 				const closeBtn = '<button class="close-icon" aria-label="Close">✕</button>';
-				const txt = options.name != "" ? '<h4>' + options.name + '</h4>' + x_addLineBreaks(options.text) : x_addLineBreaks(options.text);
+				let txt = options.name != "" ? '<h4>' + options.name + '</h4>' + x_addLineBreaks(options.text) : x_addLineBreaks(options.text);
 
 				if (options.line == "true") {
 					if (options.position == "top") {
