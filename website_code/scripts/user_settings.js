@@ -76,7 +76,7 @@ function openUserbarDropdown($dropdown) {
     }
 
     $dropdown.addClass("open");
-    $dropdown.find(".userbar-dropdown-toggle").attr("aria-expanded", "true");
+    $dropdown.closest(".userbar-item").find(".userbar-dropdown-toggle, .userbar-profile-btn").attr("aria-expanded", "true");
     $menu.addClass("userbar-dropdown-menu--open");
     positionUserbarDropdownMenu($dropdown);
 }
@@ -84,7 +84,7 @@ function openUserbarDropdown($dropdown) {
 function closeUserbarDropdown($dropdown) {
     var $menu = getUserbarDropdownMenu($dropdown);
     $dropdown.removeClass("open");
-    $dropdown.find(".userbar-dropdown-toggle").attr("aria-expanded", "false");
+    $dropdown.closest(".userbar-item").find(".userbar-dropdown-toggle, .userbar-profile-btn").attr("aria-expanded", "false");
     $menu.removeClass("userbar-dropdown-menu--open").css({ top: "", right: "", left: "" });
 
     if ($menu.length && $menu.parent().is("body")) {
@@ -101,9 +101,12 @@ function closeUserbarDropdowns(except) {
 }
 
 $(function() {
-    $(".userbar-dropdown-toggle").on("click", function(e) {
+    $(".userbar-dropdown-toggle, .userbar-profile-btn").on("click", function(e) {
         e.stopPropagation();
         var $dropdown = $(this).closest(".userbar-dropdown");
+        if (!$dropdown.length) {
+            $dropdown = $(this).closest(".userbar-item").find(".userbar-dropdown").first();
+        }
         var isOpen = $dropdown.hasClass("open");
         closeUserbarDropdowns();
         if (!isOpen) {

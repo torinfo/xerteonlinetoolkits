@@ -559,6 +559,7 @@ div.ui-layout-north div.content {
     cursor: pointer;
     font-size: 1em;
     line-height: 1;
+    transform: translateY(-3px);
 }
 
 .userbar-profile-btn:hover,

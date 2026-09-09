@@ -653,51 +653,61 @@ var EDITOR = (function ($, parent) {
         return false;
     },
 
-        //Required for resolving xml conditionals for AI or other API-based services, please do not remove
-    vendor_is_available = function (vendorType, vendor = "all") {
-        // Helper: is a single row active?
-        const isRowActive = function (row) {
-            // Must match the type/category
-            if (row.type !== vendorType) {
-                return false;
-            }
+        // Required for resolving xml conditionals for AI or other API-based services, please do not remove
+        vendor_is_available = function (vendorType, vendor = "all") {
+            // Helper: is a single row active?
+            const isRowActive = function (row) {
+                // If vendorType is not "all", the row must match the type/category
+                if (vendorType !== "all" && row.type !== vendorType) {
+                    return false;
+                }
 
-            // Must be enabled
-            if (row.enabled != "1") {
-                return false;
-            }
+                // Must be enabled
+                if (row.enabled != "1") {
+                    return false;
+                }
 
-            // If this vendor doesn't require a key, it's active as-is
-            if (row.needs_key == "0") {
-                return true;
-            }
+                // If this vendor doesn't require a key, it's active as-is
+                if (row.needs_key == "0") {
+                    return true;
+                }
 
-            // If it *does* require a key, check via vendor_options
-            return vendorHasApiKey(vendorType, row.vendor);
-        };
+                // If it does require a key, check via vendor_options
+                return vendorHasApiKey(row.type, row.vendor);
+            };
 
-        // If we're checking a specific vendor in this category
-        if (vendor !== "all") {
-            for (let i = 0; i < management_helper_table.length; i++) {
-                const row = management_helper_table[i];
-                if (row.type === vendorType && row.vendor === vendor) {
+            // If we're checking a specific vendor
+            if (vendor !== "all") {
+                for (let i = 0; i < management_helper_table.length; i++) {
+                    const row = management_helper_table[i];
+
+                    // Match vendor name
+                    if (row.vendor !== vendor) {
+                        continue;
+                    }
+
+                    // If vendorType is specific, row must also match that type
+                    if (vendorType !== "all" && row.type !== vendorType) {
+                        continue;
+                    }
+
                     return isRowActive(row);
                 }
+
+                return false; // no matching row
             }
-            return false; // no matching row
-        }
 
-        // vendor === "all": is there at least one active vendor in this category?
-        for (let i = 0; i < management_helper_table.length; i++) {
-            const row = management_helper_table[i];
+            // vendor === "all": is there at least one active vendor in scope?
+            for (let i = 0; i < management_helper_table.length; i++) {
+                const row = management_helper_table[i];
 
-            if (isRowActive(row)) {
-                return true; // found at least one active vendor
+                if (isRowActive(row)) {
+                    return true; // found at least one active vendor
+                }
             }
-        }
 
-        return false; // none active
-    },
+            return false; // none active
+        },
 
     vendor_has_option = function(option, vendor = "all") {
         if(vendor == "all") {
@@ -2926,20 +2936,120 @@ var EDITOR = (function ($, parent) {
         setAttributeValue(key, [name], [theme.name]);
     }
 
+    getComboboxOptionsForBaseSetting = function (setting_key){
+        let labels = [];
+        let option = [];
+        let default_value = "";
+
+        if (base_ai_options.hasOwnProperty(setting_key)){
+            for (let i = 0; i < base_ai_options[setting_key].length; i++) {
+                let value = base_ai_options[setting_key][i];
+                let label = value;
+                let section = "";
+                let option_key = value.toUpperCase();
+
+                if (setting_key === "reading_level") {
+                    section = "ReadingLevel";
+                } else if (setting_key === "education_level") {
+                    section = "EducationLevel";
+                } else if (setting_key === "tone_and_style") {
+                    section = "ToneAndStyle";
+                }
+
+                try {
+                    if (
+                        section !== "" &&
+                        language &&
+                        language.assistents &&
+                        language.assistents.AIBaseSettingOptions &&
+                        language.assistents.AIBaseSettingOptions[section] &&
+                        language.assistents.AIBaseSettingOptions[section][option_key] &&
+                        language.assistents.AIBaseSettingOptions[section][option_key].$label
+                    ) {
+                        label = language.assistents.AIBaseSettingOptions[section][option_key].$label;
+                    }
+                } catch (e) {
+                    // fall back to raw db value
+                }
+
+                option.push(value);
+                labels.push(label);
+            }
+
+            // append custom option to preserve existing behaviour
+            option.push("custom");
+
+            try {
+                if (
+                    language &&
+                    language.assistents &&
+                    language.assistents.AIBaseSettingOptions &&
+                    language.assistents.AIBaseSettingOptions.Common &&
+                    language.assistents.AIBaseSettingOptions.Common.CUSTOM &&
+                    language.assistents.AIBaseSettingOptions.Common.CUSTOM.$label
+                ) {
+                    labels.push(language.assistents.AIBaseSettingOptions.Common.CUSTOM.$label);
+                } else {
+                    labels.push("custom");
+                }
+            } catch (e) {
+                labels.push("custom");
+            }
+        } else {
+            option.push("NaN");
+
+            try {
+                if (
+                    language &&
+                    language.assistents &&
+                    language.assistents.AIBaseSettingOptions &&
+                    language.assistents.AIBaseSettingOptions.Common &&
+                    language.assistents.AIBaseSettingOptions.Common.NO_OPTIONS_AVAILABLE &&
+                    language.assistents.AIBaseSettingOptions.Common.NO_OPTIONS_AVAILABLE.$label
+                ) {
+                    labels.push(language.assistents.AIBaseSettingOptions.Common.NO_OPTIONS_AVAILABLE.$label);
+                } else {
+                    labels.push("No options available");
+                }
+            } catch (e) {
+                labels.push("No options available");
+            }
+        }
+
+        if (base_ai_defaults.hasOwnProperty(setting_key)) {
+            default_value = base_ai_defaults[setting_key];
+        }
+
+        return [labels, option, default_value];
+    }
+
     getComboboxOptionsForVendor = function (type){
         let labels = [];
         let option = [];
+
         if (vendor_options.hasOwnProperty(type)){
             for (let vendor in vendor_options[type]) {
+                if (!vendorHasApiKey(type, vendor)) {
+                    continue;
+                }
+
                 option.push(vendor);
                 labels.push(vendor_options[type][vendor].label);
             }
         } else {
             //type is not in management helper table
             labels.push("No options available");
-            option.push("NaN")
+            option.push("NaN");
         }
         return [labels,option];
+    }
+
+    //Helper for determining whether a) a user has the ai user role and b) any of the assistant options are available,
+    checkAssistantFeatureStatus = function (){
+        if (vendor_is_available('all', 'all') && hasrole('aiuser')){
+            return true;
+        }
+        return false;
     }
 
     selectChanged = function (id, key, name, value, obj)
@@ -5593,9 +5703,13 @@ var EDITOR = (function ($, parent) {
             case 'combobox_image':
             case 'combobox_imagegen':
             case 'combobox_ai':
+            case 'combobox_base_settings_rl': //ai base settings, reading level
+            case 'combobox_base_settings_el': //education level and
+            case 'combobox_base_settings_ts': //tone and style.
             case 'combobox':
-				var id = 'select_' + form_id_offset;
-				form_id_offset++;
+                var id = 'select_' + form_id_offset;
+                form_id_offset++;
+
                 if (options.type.toLowerCase() === 'combobox') {
                     var s_options = options.options.split(',');
                     for (var i = 0; i < s_options.length; i++) {
@@ -5607,6 +5721,30 @@ var EDITOR = (function ($, parent) {
                     } else {
                         s_data = s_options;
                     }
+                } else if (options.type.toLowerCase() === 'combobox_base_settings_rl') {
+                    let base_setting_options = getComboboxOptionsForBaseSetting('reading_level');
+                    s_options = base_setting_options[0];
+                    s_data = base_setting_options[1];
+
+                    if (value === '' && base_setting_options[2] !== '') {
+                        value = base_setting_options[2];
+                    }
+                } else if (options.type.toLowerCase() === 'combobox_base_settings_el') {
+                    let base_setting_options = getComboboxOptionsForBaseSetting('education_level');
+                    s_options = base_setting_options[0];
+                    s_data = base_setting_options[1];
+
+                    if (value === '' && base_setting_options[2] !== '') {
+                        value = base_setting_options[2];
+                    }
+                } else if (options.type.toLowerCase() === 'combobox_base_settings_ts') {
+                    let base_setting_options = getComboboxOptionsForBaseSetting('tone_and_style');
+                    s_options = base_setting_options[0];
+                    s_data = base_setting_options[1];
+
+                    if (value === '' && base_setting_options[2] !== '') {
+                        value = base_setting_options[2];
+                    }
                 } else {
                     let vendor = options.type.split("_");
                     let vendor_options = getComboboxOptionsForVendor(vendor.length >= 2 ? vendor[1] : "");
@@ -5614,11 +5752,11 @@ var EDITOR = (function ($, parent) {
                     s_data = vendor_options[1];
                 }
 
-				html = $('<select>')
-					.attr('id', id)
+                html = $('<select>')
+                    .attr('id', id)
                     .attr('name', name)
-					.change({id:id, key:key, name:name, group:options.group ,trigger:conditionTrigger}, function(event)
-					{
+                    .change({id:id, key:key, name:name, group:options.group ,trigger:conditionTrigger}, function(event)
+                    {
                         //store data in xml
                         selectChanged(event.data.id, event.data.key, event.data.name, this.value, this);
                         if (event.data.trigger)
@@ -5631,24 +5769,24 @@ var EDITOR = (function ($, parent) {
                                 triggerRedrawForm(event.data.group, event.data.key, "", "redraw");
                             }
                         }
-					});
+                    });
 
                 if (value == '') {
-					html.append($('<option>').attr('value', '').prop('selected', true));
-				}
-				for (var i=0; i<s_options.length; i++) {
-					var option = $('<option>')
-						.attr('value', s_data[i]);
-					if (s_data[i]==value) {
-						option.prop('selected', true);
-					}
-					option.append(s_options[i]);
-					html.append(option);
-					if (value == '' && html.find('option:selected').index() > 0) {
-						html.find(option).eq(0).remove();
-					}
-				}
-				break;
+                    html.append($('<option>').attr('value', '').prop('selected', true));
+                }
+                for (var i=0; i<s_options.length; i++) {
+                    var option = $('<option>')
+                        .attr('value', s_data[i]);
+                    if (s_data[i]==value) {
+                        option.prop('selected', true);
+                    }
+                    option.append(s_options[i]);
+                    html.append(option);
+                    if (value == '' && html.find('option:selected').index() > 0) {
+                        html.find(option).eq(0).remove();
+                    }
+                }
+                break;
 			case 'text':
 			case 'script':
 			case 'html':
@@ -6467,19 +6605,20 @@ var EDITOR = (function ($, parent) {
 						previewFile(options.label, $(this).closest('tr').find('input')[0].value);
 					})
 					.append($('<i>').addClass('fa').addClass('fa-lg').addClass('fa-search').addClass('xerte-icon')));
-
-                if (vendor_is_available('image','all') || (vendor_is_available('imagegen','all') && hasrole('aiuser'))){
-                    btnHolder.append($('<button>')
-                        .attr('id', 'lightboxbutton_' + options.group)
-                        .attr('title', language.compai.$tooltip)
-                        .attr('type', 'button')
-                        .addClass("xerte_button")
-                        .click({id:id, key:key, name:name, group: options.group}, function(event)
-                        {
-                            triggerRedrawForm("imgSearchAndHelpGroup", key, "", "initialize", event.data.name);
-                        })
-                        .append($('<i>').addClass('fa').addClass('fa-lg').addClass('fa-wand-magic').addClass('xerte-icon')));
-                };
+                if(options?.enableImgSHTool!=="false") {
+                    if (vendor_is_available('image', 'all') || (vendor_is_available('imagegen', 'all') && hasrole('aiuser'))) {
+                        btnHolder.append($('<button>')
+                            .attr('id', 'lightboxbutton_' + options.group)
+                            .attr('title', language.compai.$tooltip)
+                            .attr('type', 'button')
+                            .addClass("xerte_button")
+                            .click({id: id, key: key, name: name, group: options.group}, function (event) {
+                                triggerRedrawForm("imgSearchAndHelpGroup", key, "", "initialize", event.data.name);
+                            })
+                            .append($('<i>').addClass('fa').addClass('fa-lg').addClass('fa-wand-magic').addClass('xerte-icon')));
+                    }
+                    ;
+                }
 
 				html = $('<div>')
 					.attr('id', 'container_' + id)
@@ -7012,7 +7151,7 @@ var EDITOR = (function ($, parent) {
                         //additional file/snippet stuff here
                         aiSettings['baseUrl'] = rlopathvariable.substr(rlopathvariable.indexOf("USER-FILES"));
 
-                        aiSettings['fileUrl'] = constructorObject['file'] ? constructorObject['file'] : null;
+                        aiSettings['fileUrl'] = constructorObject['file'] != null ? constructorObject['file'].trim() : null;
                         delete constructorObject.fileUrl;
 
                         aiSettings['updateLoOnRequest'] = constructorObject['updateLoOnRequest'] !== undefined ? constructorObject['updateLoOnRequest'] : null;
@@ -7031,6 +7170,10 @@ var EDITOR = (function ($, parent) {
                         delete constructorObject.textSnippet;
                         if (aiSettings['textSnippet'] === "Paste or write your snippet here..." || !aiSettings['textSnippet'] || aiSettings['textSnippet'].trim() === "") {
                             aiSettings['textSnippet'] = null;
+                        }
+
+                        if (uploadPrompt==='select'){
+                            aiSettings['fileUrl'] =constructorObject['fileSelection'] ? constructorObject['fileSelection'] : null;
                         }
 
                         // Update bar helpers
@@ -7554,6 +7697,204 @@ var EDITOR = (function ($, parent) {
                     .attr('class', 'lightboxbutton')
                     //.text('language.lightbox.settingsButton');
                     .text('Open AI Settings');
+
+                break;
+            case 'aicontextselector':
+                var id = 'select_' + form_id_offset;
+                form_id_offset++;
+
+                html = $('<select>')
+                    .attr('id', id)
+                    .attr('name', name)
+                    .change({id:id, key:key, name:name, group:options.group, trigger:conditionTrigger}, function(event)
+                    {
+                        // store data in xml
+                        selectChanged(event.data.id, event.data.key, event.data.name, this.value, this);
+
+                        if (event.data.trigger)
+                        {
+                            // no lightbox so redraw entire page
+                            if (mode === "none") {
+                                triggerRedrawPage(event.data.key);
+                            } else {
+                                // lightbox so redraw only the lightbox form
+                                triggerRedrawForm(event.data.group, event.data.key, "", "redraw");
+                            }
+                        }
+                    });
+
+                html.append(
+                    $('<option>')
+                        .attr('value', '')
+                        .prop('selected', value === '')
+                        .text('Loading available files...')
+                );
+
+                (function(selectEl, currentValue) {
+
+                    function fetchAiCorpusForField() {
+                        const baseURL = rlopathvariable.substr(rlopathvariable.indexOf("USER-FILES"));
+                        $('body, .featherlight, .featherlight-content').css("cursor", "wait");
+
+                        return new Promise((resolve, reject) => {
+                            $.ajax({
+                                url: 'editor/ai/rag/getCorpus.php',
+                                method: 'POST',
+                                contentType: 'application/json',
+                                dataType: 'json',
+                                data: JSON.stringify({
+                                    name: "",
+                                    baseURL: baseURL,
+                                    type: "",
+                                    gridId: "",
+                                    format: "json"
+                                }),
+                                success: function(resp) {
+                                    if (!resp || !resp.corpus || !resp.corpus.hashes) {
+                                        reject(new Error('No corpus hashes returned'));
+                                        return;
+                                    }
+                                    resolve(resp.corpus.hashes);
+                                },
+                                error: function(xhr, status, err) {
+                                    console.error('Failed to fetch corpus:', err);
+                                    reject(err);
+                                },
+                                complete: function() {
+                                    $('body, .featherlight, .featherlight-content').css("cursor", "default");
+                                }
+                            });
+                        });
+                    }
+
+                    function normaliseToFileLocation(val) {
+                        if (!val) return '';
+
+                        val = String(val).trim();
+
+                        // already in FileLocation form
+                        if (val.indexOf("FileLocation + '") === 0) {
+                            return val;
+                        }
+
+                        // absolute/local URL -> FileLocation form
+                        if (typeof rlourlvariable !== 'undefined' && val.indexOf(rlourlvariable) === 0) {
+                            var relativePath = val.substring(rlourlvariable.length);
+
+                            // remove leading slash only if present
+                            if (relativePath.charAt(0) === '/') {
+                                relativePath = relativePath.substring(1);
+                            }
+
+                            return "FileLocation + '" + relativePath + "'";
+                        }
+
+                        // fallback if the value already contains the corpus path somewhere
+                        var ragMatch = val.match(/RAG\/corpus\/.+$/);
+                        if (ragMatch && ragMatch[0]) {
+                            return "FileLocation + '" + ragMatch[0] + "'";
+                        }
+
+                        return val;
+                    }
+
+                    function getOptionLabel(hash) {
+                        var metaName = (hash && hash.metaData && hash.metaData.name) ? hash.metaData.name.trim() : '';
+                        var fileName = (hash && hash.files && hash.files.length > 0 && hash.files[0]) ? hash.files[0].trim() : '';
+                        var source = (hash && hash.metaData && hash.metaData.source) ? hash.metaData.source : '';
+
+                        if (metaName !== '') return metaName;
+                        if (fileName !== '') return fileName;
+                        return source;
+                    }
+
+                    function getFallbackLabel(val) {
+                        var normalised = normaliseToFileLocation(val);
+                        var match = normalised.match(/RAG\/corpus\/([^']+)$/);
+
+                        if (match && match[1]) {
+                            return match[1].split('/').pop();
+                        }
+
+                        return normalised;
+                    }
+
+                    fetchAiCorpusForField()
+                        .then(function(hashes) {
+                            selectEl.empty();
+
+                            var seen = {};
+                            var foundCurrentValue = false;
+                            var firstValidValue = '';
+                            var currentValueNormalised = normaliseToFileLocation(currentValue);
+
+                            for (var i = 0; i < hashes.length; i++) {
+                                var hash = hashes[i];
+                                var source = (hash && hash.metaData && hash.metaData.source) ? hash.metaData.source : '';
+
+                                if (!source) {
+                                    continue;
+                                }
+
+                                source = normaliseToFileLocation(source);
+
+                                if (seen[source]) {
+                                    continue;
+                                }
+                                seen[source] = true;
+
+                                var label = getOptionLabel(hash);
+
+                                if (firstValidValue === '') {
+                                    firstValidValue = source;
+                                }
+
+                                var option = $('<option>')
+                                    .attr('value', source)
+                                    .text(label);
+
+                                if (source === currentValueNormalised) {
+                                    option.prop('selected', true);
+                                    foundCurrentValue = true;
+                                }
+
+                                selectEl.append(option);
+                            }
+
+                            if (currentValueNormalised !== '' && !foundCurrentValue) {
+                                selectEl.append(
+                                    $('<option>')
+                                        .attr('value', currentValueNormalised)
+                                        .prop('selected', true)
+                                        .text(getFallbackLabel(currentValueNormalised))
+                                );
+                            } else if (currentValueNormalised === '' && firstValidValue !== '') {
+                                selectEl.val(firstValidValue);
+
+                                // persist the default immediately
+                                selectChanged(id, key, name, firstValidValue, selectEl[0]);
+                            }
+
+                            if (selectEl.children().length === 0) {
+                                selectEl.append(
+                                    $('<option>')
+                                        .attr('value', '')
+                                        .prop('selected', true)
+                                        .text('No files could be returned')
+                                );
+                            }
+                        })
+                        .catch(function(err) {
+                            console.error('Failed to populate aiContextSelector:', err);
+                            selectEl.empty().append(
+                                $('<option>')
+                                    .attr('value', '')
+                                    .prop('selected', true)
+                                    .text('No files could be returned')
+                            );
+                        });
+
+                })(html, value);
 
                 break;
             case 'webpage':  //Not used??

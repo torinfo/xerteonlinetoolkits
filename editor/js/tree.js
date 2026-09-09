@@ -1236,20 +1236,32 @@ var EDITOR = (function ($, parent) {
                 }
             }
 
-            if (table.find("tr").length > 0) {
-                if (menu_options.menu != undefined) {
-                    var tablerow = $('<tr>')
-                        .append('<td class="optPropTitle">' + menu_options.menuItem + '</td>');
-                    table.prepend(tablerow);
-                }
-                html.append(table);
-            }
+            //Used to make layout optional properties panel top-level title dynamic, since it switches depending on which table(s) are present
+            var optionaltitle = language.optionalPropHTML ? language.optionalPropHTML.$label : "Optional Properties";
+            var assistantTitle = language.optionalAssistantPropHTML && language.optionalAssistantPropHTML.$general ? language.optionalAssistantPropHTML.$general : "Assistants";
 
             if (tableLightbox.find("tr").length > 0) {
-                var tablerow = $('<tr>')
-                    .append('<td class="optPropTitle">' + (language.optionalAssistantPropHTML && language.optionalAssistantPropHTML.$general ? language.optionalAssistantPropHTML.$general : "Assistants") + '</td>');
-                tableLightbox.prepend(tablerow);
+                $("#optional_title").html(assistantTitle);
                 html.append(tableLightbox);
+            } else {
+                $("#optional_title").html(optionaltitle);
+            }
+
+            if (table.find("tr").length > 0) {
+                if (tableLightbox.find("tr").length > 0) {
+                    var optionaltitlerow = $('<tr>')
+                        .append('<td class="optMainTitle">' + (language.optionalPropHTML ? language.optionalPropHTML.$label : "Optional Properties") + '</td>');
+
+                    if (menu_options.menu != undefined) {
+                        var tablerow = $('<tr>')
+                            .append('<td class="optPropTitle">' + menu_options.menuItem + '</td>');
+                        table.prepend(tablerow);
+                    }
+
+                    table.prepend(optionaltitlerow);
+                }
+
+                html.append(table);
             }
 
             if (table2.find("tr").length > 0) {
@@ -2017,7 +2029,11 @@ img_search_and_help = function(query, api, url, interpretPrompt, overrideSetting
             success: function(data_json) {
 								image_preview.find(".img_search_loading").remove();
 								let header = $("<h1>" + language.imageSelection.title + "</h1>");
-								image_data = JSON.parse(data_json);
+								image_data = typeof data_json === "string" ? JSON.parse(data_json) : data_json;
+								if (image_data.status === "error") {
+									image_preview.text(language.imageSelection.retrievalError || "An error occurred while retrieving image results.");
+									return;
+								}
 								image_preview.append(header);
 								let image_preview_images = $("<div class=\"image_preview_images\"></div>");
 								image_preview.append(image_preview_images);
@@ -2087,7 +2103,8 @@ img_search_and_help = function(query, api, url, interpretPrompt, overrideSetting
                                     let container = $('<div class="img_search_container"></div>');
                                     image_preview_images.append(container);
                                     container.append(select_input).append(label);
-                                    // Enlarge button. Prevent the label/checkbox from toggling on click
+
+                                    //Button to enlarge the image
                                     let enlarge_button = $(
                                         '<button title="' + language.imageSelection.imgEnlargeCornerBtn + '" type="button" class="enlarge_button">' +
                                         '<i class="fa fa-lg fa-search xerte-icon"></i>' +
@@ -2098,6 +2115,29 @@ img_search_and_help = function(query, api, url, interpretPrompt, overrideSetting
                                         $.featherlight({image:image_url});
                                     });
 
+                                    //Button to copy the credits/copyright information for a specific image
+                                    let copy_credits_button = $(
+                                        '<button title="'+ language.imageSelection.imgCopyrightToClipboardBtn +'" type="button" class="copy_credits_button">' +
+                                        '<i class="fa fa-copyright xerte-icon"></i>' +
+                                        '</button>'
+                                    ).on("click", function (e) {
+                                        e.preventDefault();
+                                        e.stopPropagation();
+
+                                        navigator.clipboard.writeText(image_data.credits[i]).then(function () {
+                                            let copied_notice = $('<span class="copied_notice">'+ language.imageSelection.imgCopyrightToClipboardNotice +'</span>');
+
+                                            frame.append(copied_notice);
+
+                                            setTimeout(function () {
+                                                copied_notice.fadeOut(200, function () {
+                                                    $(this).remove();
+                                                });
+                                            }, 1500);
+                                        });
+                                    });
+
+                                    frame.append(copy_credits_button);
                                     frame.append(enlarge_button);
 
 										image.on("load", function () {
@@ -2117,7 +2157,7 @@ img_search_and_help = function(query, api, url, interpretPrompt, overrideSetting
             error: function(xhr, status, error) {
                 console.error("Error retrieving image results:", error);
 								image_preview.find(".img_search_loading").remove();
-								image_preview.text("an error occurred");
+								image_preview.text(language.imageSelection.retrievalError || "An error occurred while retrieving image results.");
             },
             complete: function() {
                 // This function runs after the AJAX request completes (whether success or error)

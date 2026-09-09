@@ -36,6 +36,8 @@ define("INDEX_LOGO_ALT", "Site logo");
 
 define("INDEX_WCAG_LOGO_ALT", "W3C logo");
 
+define("INDEX_XERTE_AI_LOGO_ALT", "Xerte AI logo");
+
 define("INDEX_OSI_LOGO_ALT", "Open Source Initiative logo");
 
 define("INDEX_APEREO_LOGO_ALT", "Apereo logo");

@@ -22,6 +22,8 @@
 
 	define("MANAGEMENT_WCAG_LOGO_ALT", "W3C logo");
 
+    define("MANAGEMENT_XERTE_AI_LOGO_ALT", "Xerte AI logo");
+
 	define("MANAGEMENT_OSI_LOGO_ALT", "Open Source Initiative logo");
 
 	define("MANAGEMENT_APEREO_LOGO_ALT", "Apereo logo");

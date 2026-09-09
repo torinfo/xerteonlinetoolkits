@@ -163,9 +163,15 @@ var EDITOR = (function ($, parent) {
             if (path.substr(path.length-1)=="#") path = path.substr(0,path.length-1);
             if (this.href.substr(this.href.length-1) == "#") this.href = path +"#";
         });
-		
+        //Choose between the two titles dynamically; if any AI vendors are enabled, use the Assistants top-level title on first load (this later changes by page)
+        //otherwise, use the general optional  properties title (the sub-title on table level will be skipped if no active assistants are detected on page level)
 		var optionaltitle = language.optionalPropHTML ? language.optionalPropHTML.$label : "Optional Properties";
-		$("#optional_title").html(optionaltitle);
+        var assistantTitle = language.optionalAssistantPropHTML && language.optionalAssistantPropHTML.$general ? language.optionalAssistantPropHTML.$general : "Assistants";
+        if (checkAssistantFeatureStatus()){
+            $("#optional_title").html(assistantTitle);
+        } else {
+            $("#optional_title").html(optionaltitle);
+        }
     };
 
     /*

@@ -390,6 +390,14 @@ Folder popup is the div that appears when creating a new folder
                                         <span class="userbar-user-item-label"><?php echo INDEX_MY_PREFERENCES; ?></span>
                                     </button>
                                 </li>
+                                <?php if (userHasAdminRights()) { ?>
+                                <li role="none">
+                                    <button type="button" role="menuitem" class="userbar-dropdown-item userbar-user-item" onclick="javascript:elevate('management.php')">
+                                        <i class="fa-solid fa-screwdriver-wrench userbar-user-item-icon" aria-hidden="true"></i>
+                                        <span class="userbar-user-item-label"><?php echo INDEX_TO_MANAGEMENT; ?></span>
+                                    </button>
+                                </li>
+                                <?php } ?>
                                 <?php if ($xerte_toolkits_site->authentication_method != "Guest") { ?>
                                 <li role="none">
                                     <button type="button" role="menuitem" class="userbar-dropdown-item userbar-user-item userbar-user-item--logout"
@@ -402,20 +410,16 @@ Folder popup is the div that appears when creating a new folder
                             </ul>
                         </div>
                     </div>
-                </div>
 
-                <?php
-                $profileTitle = INDEX_LOGGED_IN_AS . ' ' . $_SESSION['toolkits_firstname'];
-                if ($authmech->canManageUser($jsscript)) {
-                    $profileTitle = INDEX_CHANGE_PASSWORD;
-                }
-                ?>
-                <button type="button"
-                        class="userbar-profile-btn"
-                        title="<?php echo htmlspecialchars($profileTitle); ?>"
-                        <?php if ($authmech->canManageUser($jsscript)) { ?>onclick="changepasswordPopup('details')"<?php } ?>>
-                    <i class="fa fa-user" aria-hidden="true"></i>
-                </button>
+                    <button type="button"
+                            class="userbar-profile-btn"
+                            title="<?php echo htmlspecialchars(INDEX_LOGGED_IN_AS . ' ' . $_SESSION['toolkits_firstname']); ?>"
+                            aria-haspopup="true"
+                            aria-expanded="false"
+                            aria-controls="user-menu">
+                        <i class="fa fa-user" aria-hidden="true"></i>
+                    </button>
+                </div>
             </div>
             <div style="clear:both;"></div>
             <div class="separator"></div>
@@ -545,7 +549,7 @@ Folder popup is the div that appears when creating a new folder
 				<?php echo $xerte_toolkits_site->copyright; ?> <i class="fa fa-info-circle" aria-hidden="true" style="color:#f86718; cursor: help;" title="<?PHP $vtext = "version.txt";$lines = file($vtext);echo $lines[0];?>"></i>
 			</p>
 			<div class="footerlogos">
-				<a href="https://xot.xerte.org.uk/play.php?template_id=214#home" target="_blank" title="Xerte accessibility statement https://xot.xerte.org.uk/play.php?template_id=214"><img src="website_code/images/wcag2.2AA-blue.png" border="0" alt="<?php echo INDEX_WCAG_LOGO_ALT; ?>"></a><a href="https://opensource.org/" target="_blank" title="Open Source Initiative: https://opensource.org/"><img src="website_code/images/osiFooterLogo.png" border="0" alt="<?php echo INDEX_OSI_LOGO_ALT; ?>"></a><a href="https://www.apereo.org" target="_blank" title="Apereo: https://www.apereo.org"><img src="website_code/images/apereoFooterLogo.png" border="0" alt="<?php echo INDEX_APEREO_LOGO_ALT; ?>"></a><a href="https://xerte.org.uk" target="_blank" title="Xerte: https://xerte.org.uk"><img src="website_code/images/xerteFooterLogo.png" border="0" alt="<?php echo INDEX_XERTE_LOGO_ALT; ?>"></a>
+                <a href="https://xot.xerte.org.uk/play_653" target="_blank" title="Xerte AI Ethical Use and Transparency Statement https://xot.xerte.org.uk/play_653"><img src="website_code/images/XerteFooterAILogo.png" border="0" alt="<?php echo INDEX_XERTE_AI_LOGO_ALT; ?>"></a><a href="https://xot.xerte.org.uk/play.php?template_id=214#home" target="_blank" title="Xerte accessibility statement https://xot.xerte.org.uk/play.php?template_id=214"><img src="website_code/images/wcag2.2AA-blue.png" border="0" alt="<?php echo INDEX_WCAG_LOGO_ALT; ?>"></a><a href="https://opensource.org/" target="_blank" title="Open Source Initiative: https://opensource.org/"><img src="website_code/images/osiFooterLogo.png" border="0" alt="<?php echo INDEX_OSI_LOGO_ALT; ?>"></a><a href="https://www.apereo.org" target="_blank" title="Apereo: https://www.apereo.org"><img src="website_code/images/apereoFooterLogo.png" border="0" alt="<?php echo INDEX_APEREO_LOGO_ALT; ?>"></a><a href="https://xerte.org.uk" target="_blank" title="Xerte: https://xerte.org.uk"><img src="website_code/images/xerteFooterLogo.png" border="0" alt="<?php echo INDEX_XERTE_LOGO_ALT; ?>"></a>
 			</div>
 		</footer>
         <div style="clear:both;"></div>

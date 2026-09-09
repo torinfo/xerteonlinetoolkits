@@ -241,6 +241,8 @@ function output_editor_code($row_edit, $xerte_toolkits_site, $read_status, $vers
         $lti_session = "";
     }
 
+    $base_ai_options = get_ai_base_settings_options();
+    $base_ai_defaults = get_ai_base_settings_defaults();
     $vendors = get_vendor_settings();
     $corpus_upload_types = array();
     if (array_key_exists('ai', $vendors )){
@@ -438,6 +440,8 @@ function output_editor_code($row_edit, $xerte_toolkits_site, $read_status, $vers
     echo "simple_lo_page=" . ($simple_lo_page ? "true" : "false") . ";\n";
     echo "disable_advanced=" . ($disable_advanced ? "true" : "false") . ";\n";
     echo "vendor_options=" . json_encode($vendors) . ";\n";
+    echo "base_ai_options=" . json_encode($base_ai_options) . ";\n";
+    echo "base_ai_defaults=" . json_encode($base_ai_defaults) . ";\n";
     echo "corpus_upload_types=" . json_encode($corpus_upload_types) . ";\n";
     echo "management_helper_table=" . json_encode($xerte_toolkits_site->management_helper_table) . ";\n";
 
