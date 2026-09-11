@@ -26,8 +26,9 @@ error_reporting(E_ALL);
 ini_set('display_errors', 0);
 ini_set('log_errors', 1);
 
-require_once("../../config.php");
-require_once("user_library.php");
+require_once(dirname(__FILE__) . "/../../config.php");
+// user_library.php lives in the PHP library path, not next to this file
+require_once($xerte_toolkits_site->root_file_path . $xerte_toolkits_site->php_library_path . "user_library.php");
 
 // Set content type for JSON response
 header('Content-Type: application/json');

@@ -60,11 +60,16 @@ if ($xerte_toolkits_site->rights == 'elevated')
         <script type="text/javascript" language="javascript">
 
             var site_url = "<?php echo $xerte_toolkits_site->site_url; ?>";
+            var rest_api_url = "<?php echo $xerte_toolkits_site->site_url; ?>website_code/api/v1/index.php";
             var properties_ajax_php_path = "website_code/php/properties/";
             var management_ajax_php_path = "website_code/php/management/";
             var ajax_php_path = "website_code/php/";
 
         </script>
+        <?php
+        require_once dirname(__FILE__) . '/website_code/php/properties/properties_tab_js_constants.php';
+        properties_tab_echo_js_constants();
+        ?>
         <script type="text/javascript" language="javascript" src="website_code/scripts/validation.js"></script>
         <?php
         _include_javascript_file("website_code/scripts/import.js");
