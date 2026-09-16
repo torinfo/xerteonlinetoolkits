@@ -65,6 +65,7 @@ import { XerteMarkTag } from './plugins/xerte-mark-tag.js';
 import { XerteContextMenu } from './plugins/xerte-context-menu.js';
 import { XerteFontAwesome } from './plugins/xerte-fontawesome.js';
 import { XerteLineHeight } from './plugins/xerte-line-height.js';
+import { XerteRubyText } from './plugins/xerte-ruby-text.js';
 
 const toolbarItems = [
 	'undo', 'redo', '|',
@@ -74,7 +75,7 @@ const toolbarItems = [
 	'fontSize', 'fontFamily', 'fontColor', 'fontBackgroundColor', 'lineHeight', '|',
 	'textPartLanguage', '|',
 	'bold', 'italic', 'underline', 'strikethrough', 'subscript', 'superscript', 'code', 'removeFormat', '|',
-	'specialCharacters', 'emoji', 'fontAwesome', 'horizontalLine', 'xerteMathJax', '|',
+	'specialCharacters', 'emoji', 'fontAwesome', 'horizontalLine', 'xerteMathJax', 'xerteRubyText', '|',
 	'link', 'xotlink', 'insertImage', 'xerteBrowseMedia', 'mediaEmbed', 'insertTable', 'blockQuote', 'codeBlock', '|',
 	'alignment', '|',
 	'bulletedList', 'numberedList', 'outdent', 'indent', '|',
@@ -177,7 +178,8 @@ const xerteBuiltinPlugins = [
 	XerteMarkTag,
 	XerteContextMenu,
 	XerteFontAwesome,
-	XerteLineHeight
+	XerteLineHeight,
+	XerteRubyText
 ];
 
 const xerteDefaultConfig = {
