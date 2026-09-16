@@ -84,6 +84,10 @@
 			Format: 'heading',
 			Font: 'fontFamily',
 			FontSize: 'fontSize',
+			LineHeight: 'lineHeight',
+			lineheight: 'lineHeight',
+			lineHeight: 'lineHeight',
+			Language: 'textPartLanguage',
 			TextColor: 'fontColor',
 			BGColor: 'fontBackgroundColor',
 			Bold: 'bold',
@@ -92,6 +96,7 @@
 			Strike: 'strikethrough',
 			Subscript: 'subscript',
 			Superscript: 'superscript',
+			CodeSnippet: 'codeBlock',
 			RemoveFormat: 'removeFormat',
 			SpecialChar: 'specialCharacters',
 			FontAwesome: 'fontAwesome',
@@ -107,7 +112,8 @@
 			Outdent: 'outdent',
 			Indent: 'indent',
 			xotMarkWord: 'xotMarkWord',
-			Mark: 'xotMarkWord'
+			Mark: 'markTag',
+			markTag: 'markTag'
 		};
 		return map[item] || null;
 	}
@@ -159,7 +165,19 @@
 			lang = String(language.$code).substr(0, 2);
 		}
 		var base = {
-			language: { ui: lang, content: lang },
+			language: {
+				ui: lang,
+				content: lang,
+				textPartLanguage: [
+					{ title: 'English', languageCode: 'en' },
+					{ title: 'Dutch', languageCode: 'nl' },
+					{ title: 'German', languageCode: 'de' },
+					{ title: 'French', languageCode: 'fr' },
+					{ title: 'Spanish', languageCode: 'es' },
+					{ title: 'Arabic', languageCode: 'ar', textDirection: 'rtl' },
+					{ title: 'Hebrew', languageCode: 'he', textDirection: 'rtl' }
+				]
+			},
 			xerteUploadUrl: user.uploadUrl || defaultUploadUrl(),
 			xerteBrowseMediaUrl: user.browseMediaUrl || browseUrlForCke5(user.filebrowserBrowseUrl) || browseUrl('media')
 		};

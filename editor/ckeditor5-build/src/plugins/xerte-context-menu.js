@@ -4,6 +4,7 @@
  */
 import { Plugin } from '@ckeditor/ckeditor5-core';
 import { runXertePageLink } from './xerte-page-link.js';
+import { parseXertePageId } from './xerte-page-link-utils.js';
 import { runAutocolumnsDialog } from './xerte-autocolumns-dialog.js';
 import { runXerteMarkWord } from './xerte-mark-word.js';
 
@@ -119,21 +120,33 @@ async function pasteClipboard( editor, savedRanges ) {
 	}
 }
 
-function isInsideXertePageLink( editor ) {
+function getXertePageLink( editor, target ) {
 	const domRoot = editor.editing.view.getDomRoot();
-	const sel = window.getSelection();
-	if ( !domRoot || !sel || !sel.anchorNode ) {
-		return false;
+	if ( !domRoot || !target ) {
+		return null;
 	}
-	let node = sel.anchorNode.nodeType === Node.TEXT_NODE ? sel.anchorNode.parentElement : sel.anchorNode;
+	let node = target.nodeType === Node.TEXT_NODE ? target.parentElement : target;
 	while ( node && node !== domRoot ) {
 		if ( node.nodeName === 'A' ) {
-			const onclick = node.getAttribute( 'onclick' ) || '';
-			return onclick.indexOf( 'x_navigateToPage' ) !== -1;
+			const id = parseXertePageId(
+				node.getAttribute( 'onclick' ) ||
+				node.getAttribute( 'data-ck-unsafe-attribute-onclick' ) ||
+				node.getAttribute( 'data-cke-pa-onclick' )
+			);
+			if ( !id ) {
+				return null;
+			}
+			const viewLink = editor.editing.view.domConverter.domToView( node );
+			if ( !viewLink ) {
+				return null;
+			}
+			const viewRange = editor.editing.view.createRangeIn( viewLink );
+			const range = editor.editing.mapper.toModelRange( viewRange );
+			return range && !range.isCollapsed ? { id, range } : null;
 		}
 		node = node.parentElement;
 	}
-	return false;
+	return null;
 }
 
 function selectionHasText( savedRanges, editor ) {
@@ -173,6 +186,7 @@ export class XerteContextMenu extends Plugin {
 		let dismissCleanup = null;
 		let savedSelectionRanges = null;
 		let savedSelectionText = null;
+		let savedPageLink = null;
 
 		const hideMenu = () => {
 			if ( dismissCleanup ) {
@@ -241,7 +255,7 @@ export class XerteContextMenu extends Plugin {
 			menuEl.className = 'xerte-ck5-context-menu';
 
 			const hasText = selectionHasText( savedSelectionRanges, editor );
-			const editLink = isInsideXertePageLink( editor );
+			const editLink = savedPageLink;
 
 			addItem( menuEl, 'Cut', ranges => cutOrCopy( editor, 'cut', ranges ), hasText );
 			addItem( menuEl, 'Copy', ranges => cutOrCopy( editor, 'copy', ranges ), hasText );
@@ -251,7 +265,7 @@ export class XerteContextMenu extends Plugin {
 			sep.className = 'xerte-ctx-sep';
 			menuEl.appendChild( sep );
 
-			addItem( menuEl, editLink ? 'Edit Xerte Page Link' : 'Xerte Page Link', () => runXertePageLink( editor ) );
+			addItem( menuEl, editLink ? 'Edit Xerte Page Link' : 'Xerte Page Link', () => runXertePageLink( editor, editLink ) );
 			addItem( menuEl, 'Mark Word', () => {
 				runXerteMarkWord( editor, savedSelectionRanges, savedSelectionText );
 			}, hasText, true );
@@ -298,6 +312,7 @@ export class XerteContextMenu extends Plugin {
 			}
 
 			savedSelectionRanges = saveModelSelection( editor );
+			savedPageLink = getXertePageLink( editor, domEvent.target );
 			try {
 				savedSelectionText = editor.model.document.selection.getSelectedText() || '';
 			} catch ( e ) {
@@ -344,6 +359,7 @@ export class XerteContextMenu extends Plugin {
 			unbind();
 			savedSelectionRanges = null;
 			savedSelectionText = null;
+			savedPageLink = null;
 		} );
 	}
 }

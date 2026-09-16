@@ -6,6 +6,8 @@
 import { Plugin } from '@ckeditor/ckeditor5-core';
 import { ButtonView, MenuBarMenuListItemButtonView } from '@ckeditor/ckeditor5-ui';
 import { IconLink } from 'ckeditor5/src/icons.js';
+import { findAttributeRange } from 'ckeditor5/src/typing.js';
+import { parseXertePageId } from './xerte-page-link-utils.js';
 
 function escapeHtml( value ) {
 	return String( value )
@@ -40,7 +42,19 @@ function normalizePageItems( items ) {
 	return out;
 }
 
-function choosePageFromModal( pages ) {
+function getSelectedXertePageLink( editor ) {
+	const selection = editor.model.document.selection;
+	const htmlA = selection.getAttribute( 'htmlA' );
+	const id = parseXertePageId( htmlA && htmlA.attributes && htmlA.attributes.onclick );
+	const position = selection.getFirstPosition();
+	if ( !id || !position ) {
+		return null;
+	}
+	const range = findAttributeRange( position, 'htmlA', htmlA, editor.model );
+	return range.isCollapsed ? null : { id, range };
+}
+
+function choosePageFromModal( pages, currentPageId = null ) {
 	return new Promise( resolve => {
 		const overlay = document.createElement( 'div' );
 		overlay.style.position = 'fixed';
@@ -105,6 +119,9 @@ function choosePageFromModal( pages ) {
 			option.value = page.id;
 			option.textContent = page.label;
 			select.appendChild( option );
+		}
+		if ( currentPageId && pages.some( page => page.id === currentPageId ) ) {
+			select.value = currentPageId;
 		}
 		modal.appendChild( select );
 
@@ -203,14 +220,34 @@ function choosePageFromModal( pages ) {
 	} );
 }
 
-export async function runXertePageLink( editor ) {
+export async function runXertePageLink( editor, existingLink = null ) {
 	const pages = normalizePageItems( getPageItems() );
-	const pageId = await choosePageFromModal( pages );
+	const pageId = await choosePageFromModal( pages, existingLink && existingLink.id );
 	if ( !pageId ) {
 		return;
 	}
 	const trimmedId = String( pageId ).trim();
 	if ( !trimmedId ) {
+		return;
+	}
+	if ( existingLink && existingLink.range ) {
+		const onclick = `x_navigateToPage(false,{type:'linkID',ID:'${ trimmedId.replace( /['\\]/g, '\\$&' ) }'}); return false;`;
+		editor.model.change( writer => {
+			const items = Array.from( existingLink.range.getItems() );
+			for ( const item of items ) {
+				if ( !item.is( '$textProxy' ) ) {
+					continue;
+				}
+				const htmlA = item.getAttribute( 'htmlA' ) || {};
+				writer.setAttribute( 'htmlA', {
+					...htmlA,
+					attributes: { ...htmlA.attributes, onclick }
+				}, writer.createRange(
+					writer.createPositionAt( item.parent, item.startOffset ),
+					writer.createPositionAt( item.parent, item.endOffset )
+				) );
+			}
+		} );
 		return;
 	}
 
@@ -262,6 +299,63 @@ export class XertePageLink extends Plugin {
 
 	init() {
 		const editor = this.editor;
+		const linkCommand = editor.commands.get( 'link' );
+		const model = editor.model;
+
+		// Changing a page link's URL converts it to an ordinary link. Otherwise its
+		// legacy onclick handler would keep navigating to the old Xerte page.
+		model.document.registerPostFixer( writer => {
+			let changed = false;
+			for ( const change of model.document.differ.getChanges() ) {
+				if ( change.type !== 'attribute' || change.attributeKey !== 'linkHref' ||
+					change.attributeNewValue === '#' || change.attributeNewValue === null ) {
+					continue;
+				}
+				for ( const item of Array.from( change.range.getItems() ) ) {
+					if ( !item.is( '$textProxy' ) ) {
+						continue;
+					}
+					const htmlA = item.getAttribute( 'htmlA' );
+					if ( !htmlA || !parseXertePageId( htmlA.attributes && htmlA.attributes.onclick ) ) {
+						continue;
+					}
+					const attributes = { ...htmlA.attributes };
+					delete attributes.onclick;
+					const range = writer.createRange(
+						writer.createPositionAt( item.parent, item.startOffset ),
+						writer.createPositionAt( item.parent, item.endOffset )
+					);
+					if ( Object.keys( attributes ).length || htmlA.classes || htmlA.styles ) {
+						writer.setAttribute( 'htmlA', { ...htmlA, attributes }, range );
+					} else {
+						writer.removeAttribute( 'htmlA', range );
+					}
+					changed = true;
+				}
+			}
+			return changed;
+		} );
+
+		// The built-in pencil/edit function still edits the URL; this button edits the Xerte page target so that a new page link doesn't have to be added each time it needs to be changed.
+		editor.ui.componentFactory.add( 'xerteEditPageLink', locale => {
+			const view = new ButtonView( locale );
+			view.set( { label: 'Change Xerte page', icon: IconLink, tooltip: true } );
+			const update = () => {
+				view.isVisible = !!getSelectedXertePageLink( editor );
+				view.isEnabled = view.isVisible && linkCommand.isEnabled;
+			};
+			view.listenTo( editor.model.document.selection, 'change:range', update );
+			view.listenTo( editor.model.document.selection, 'change:attribute', update );
+			view.listenTo( linkCommand, 'change:isEnabled', update );
+			view.on( 'execute', () => {
+				const existingLink = getSelectedXertePageLink( editor );
+				if ( existingLink ) {
+					runXertePageLink( editor, existingLink );
+				}
+			} );
+			update();
+			return view;
+		} );
 
 		editor.ui.componentFactory.add( 'xotlink', locale => {
 			return createXertePageLinkButton( editor, ButtonView, locale );
