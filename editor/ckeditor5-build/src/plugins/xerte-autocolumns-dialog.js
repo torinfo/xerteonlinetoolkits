@@ -2,6 +2,10 @@
  * Autocolumns dialog (legacy xotcolumns behaviour).
  * @license Apache-2.0
  */
+import { Plugin } from '@ckeditor/ckeditor5-core';
+import { ButtonView } from '@ckeditor/ckeditor5-ui';
+import { Widget, toWidget, toWidgetEditable } from '@ckeditor/ckeditor5-widget';
+import { IconTableColumn } from 'ckeditor5/src/icons.js';
 
 const DEFAULT_SETTINGS = {
 	columns: 2,
@@ -14,22 +18,27 @@ const DEFAULT_SETTINGS = {
 
 function parseAutocolumnsSettings( element ) {
 	const settings = { ...DEFAULT_SETTINGS };
-	if ( !element || !element.classList ) {
+	if ( !element ) {
 		return settings;
 	}
+	if ( element.is?.( 'element', 'xerteAutocolumns' ) ) {
+		return { ...settings, ...element.getAttribute( 'autocolumnsSettings' ) };
+	}
+	const attributes = element.getAttribute( 'htmlDivAttributes' ) || {};
+	const classes = attributes.classes || [];
 	for ( let i = 1; i <= 5; i++ ) {
-		if ( element.classList.contains( 'autocolumns' + i ) ) {
+		if ( classes.includes( 'autocolumns' + i ) ) {
 			settings.columns = i;
 			break;
 		}
 	}
-	const style = element.getAttribute( 'style' ) || '';
-	const gapMatch = style.match( /column-gap:\s*([\d.]+)(em|px)/i );
+	const styles = attributes.styles || {};
+	const gapMatch = ( styles[ 'column-gap' ] || '' ).match( /([\d.]+)(em|px)/i );
 	if ( gapMatch ) {
 		settings.columnSpacing = parseFloat( gapMatch[ 1 ] );
 		settings.spacingUnits = gapMatch[ 2 ];
 	}
-	const ruleMatch = style.match( /column-rule:\s*([\d.]+)px\s+(\w+)\s+(#[0-9a-fA-F]{3,6}|rgb\([^)]+\)|\w+)/i );
+	const ruleMatch = ( styles[ 'column-rule' ] || '' ).match( /([\d.]+)px\s+(\w+)\s+(#[0-9a-fA-F]{3,6}|rgb\([^)]+\)|\w+)/i );
 	if ( ruleMatch ) {
 		settings.rulerThickness = parseFloat( ruleMatch[ 1 ] );
 		settings.rulerStyle = ruleMatch[ 2 ];
@@ -38,30 +47,134 @@ function parseAutocolumnsSettings( element ) {
 	return settings;
 }
 
-function buildAutocolumnsStyle( settings ) {
-	return `column-rule: ${ settings.rulerThickness }px ${ settings.rulerStyle } ${ settings.rulerColour };` +
-		`column-gap: ${ settings.columnSpacing }${ settings.spacingUnits };`;
-}
-
-function buildAutocolumnsHtml( innerHtml, settings ) {
-	return `<div class="autocolumns autocolumns${ settings.columns }" style="${ buildAutocolumnsStyle( settings ) }">${ innerHtml || '<p>&nbsp;</p>' }</div>`;
-}
-
-function findAutocolumnsElement( editor ) {
-	const domRoot = editor.editing.view.getDomRoot();
-	const selection = window.getSelection();
-	if ( !domRoot || !selection || !selection.anchorNode ) {
-		return null;
-	}
-	let node = selection.anchorNode;
-	if ( node.nodeType === Node.TEXT_NODE ) {
-		node = node.parentElement;
-	}
-	while ( node && node !== domRoot ) {
-		if ( node.nodeType === Node.ELEMENT_NODE && node.classList.contains( 'autocolumns' ) ) {
-			return node;
+function autocolumnsAttributes( settings, previous = {} ) {
+	return {
+		...previous,
+		classes: [ ...( previous.classes || [] ).filter( name => name !== 'autocolumns' && !/^autocolumns[1-5]$/.test( name ) ),
+			'autocolumns', `autocolumns${ settings.columns }` ],
+		styles: {
+			...( previous.styles || {} ),
+			'column-count': String( settings.columns ),
+			'column-rule': `${ settings.rulerThickness }px ${ settings.rulerStyle } ${ settings.rulerColour }`,
+			'column-gap': `${ settings.columnSpacing }${ settings.spacingUnits }`
 		}
-		node = node.parentElement;
+	};
+}
+
+function settingsFromView( viewElement ) {
+	const classes = Array.from( viewElement.getClassNames() );
+	const rule = viewElement.getStyle( 'column-rule' ) || [
+		viewElement.getStyle( 'column-rule-width' ),
+		viewElement.getStyle( 'column-rule-style' ),
+		viewElement.getStyle( 'column-rule-color' )
+	].filter( Boolean ).join( ' ' );
+	const styles = {
+		'column-gap': viewElement.getStyle( 'column-gap' ) || '',
+		'column-rule': rule
+	};
+	return parseAutocolumnsSettings( {
+		getAttribute: () => ( { classes, styles } )
+	} );
+}
+
+function viewAttributes( settings ) {
+	return {
+		class: `autocolumns autocolumns${ settings.columns }`,
+		style: `column-count: ${ settings.columns };` +
+			`column-rule: ${ settings.rulerThickness }px ${ settings.rulerStyle } ${ settings.rulerColour };` +
+			`column-gap: ${ settings.columnSpacing }${ settings.spacingUnits };`
+	};
+}
+
+export class XerteAutocolumns extends Plugin {
+	static get pluginName() {
+		return 'XerteAutocolumns';
+	}
+	static get requires() {
+		return [ Widget ];
+	}
+
+	init() {
+		const editor = this.editor;
+		editor.ui.componentFactory.add( 'autocolumns', locale => {
+			const button = new ButtonView( locale );
+			button.set( { label: 'Autocolumns', icon: IconTableColumn, tooltip: true } );
+			button.on( 'execute', () => {
+				runAutocolumnsDialog( editor ).catch( error => console.error( '[XerteAutocolumns]', error ) );
+			} );
+			return button;
+		} );
+		editor.model.schema.register( 'xerteAutocolumns', {
+			inheritAllFrom: '$container',
+			isBlock: true,
+			isObject: true,
+			allowAttributes: 'autocolumnsSettings'
+		} );
+		editor.conversion.for( 'upcast' ).elementToElement( {
+			view: { name: 'div', classes: 'autocolumns' },
+			model: ( viewElement, { writer } ) => writer.createElement( 'xerteAutocolumns', {
+				autocolumnsSettings: settingsFromView( viewElement )
+			} ),
+			converterPriority: 'high'
+		} );
+		editor.conversion.for( 'editingDowncast' ).elementToStructure( {
+			model: 'xerteAutocolumns',
+			view: ( modelElement, { writer } ) => {
+				const outer = writer.createContainerElement( 'div', { class: 'autocolumns-widget' } );
+				const inner = writer.createEditableElement( 'div',
+					viewAttributes( modelElement.getAttribute( 'autocolumnsSettings' ) || DEFAULT_SETTINGS ) );
+				writer.insert( writer.createPositionAt( inner, 0 ), writer.createSlot() );
+				writer.insert( writer.createPositionAt( outer, 0 ),
+					toWidgetEditable( inner, writer, { label: 'Autocolumns content' } ) );
+				return toWidget( outer, writer, { label: 'Autocolumns', hasSelectionHandle: true } );
+			}
+		} );
+		editor.conversion.for( 'dataDowncast' ).elementToElement( {
+			model: 'xerteAutocolumns',
+			view: ( modelElement, { writer } ) => writer.createContainerElement( 'div',
+				viewAttributes( modelElement.getAttribute( 'autocolumnsSettings' ) || DEFAULT_SETTINGS ) )
+		} );
+		for ( const pipeline of [ 'editingDowncast', 'dataDowncast' ] ) {
+			editor.conversion.for( pipeline ).add( dispatcher => {
+				dispatcher.on( 'attribute:autocolumnsSettings:xerteAutocolumns', ( evt, data, api ) => {
+					const mapped = api.mapper.toViewElement( data.item );
+					const viewElement = pipeline === 'editingDowncast'
+						? Array.from( mapped?.getChildren() || [] ).find( child => child.is( 'editableElement' ) )
+						: mapped;
+					if ( !viewElement ) {
+						return;
+					}
+					const attributes = viewAttributes( data.attributeNewValue || DEFAULT_SETTINGS );
+					if ( pipeline === 'editingDowncast' ) {
+						const oldClasses = Array.from( viewElement.getClassNames() ).filter( name =>
+							name === 'autocolumns' || /^autocolumns[1-5]$/.test( name ) );
+						if ( oldClasses.length ) {
+							api.writer.removeClass( oldClasses, viewElement );
+						}
+						api.writer.addClass( attributes.class.split( ' ' ), viewElement );
+					} else {
+						api.writer.setAttribute( 'class', attributes.class, viewElement );
+					}
+					api.writer.setAttribute( 'style', attributes.style, viewElement );
+				} );
+			} );
+		}
+	}
+}
+
+function findAutocolumnsElement( selection ) {
+	let element = selection.getFirstPosition() && selection.getFirstPosition().parent;
+	const selected = selection.getSelectedElement();
+	if ( selected ) {
+		element = selected;
+	}
+	while ( element && !element.is( 'rootElement' ) ) {
+		if ( element.is( 'element', 'xerteAutocolumns' ) ||
+			( element.is( 'element', 'htmlDiv' ) &&
+				( element.getAttribute( 'htmlDivAttributes' )?.classes || [] ).includes( 'autocolumns' ) ) ) {
+			return element;
+		}
+		element = element.parent;
 	}
 	return null;
 }
@@ -193,7 +306,9 @@ function chooseAutocolumnsFromModal( initialSettings, canRemove ) {
 }
 
 export async function runAutocolumnsDialog( editor ) {
-	const existing = findAutocolumnsElement( editor );
+	const selection = editor.model.document.selection;
+	const savedRange = selection.getFirstRange()?.clone();
+	const existing = findAutocolumnsElement( selection );
 	const initialSettings = existing ? parseAutocolumnsSettings( existing ) : DEFAULT_SETTINGS;
 	const result = await chooseAutocolumnsFromModal( initialSettings, !!existing );
 	if ( !result ) {
@@ -201,33 +316,63 @@ export async function runAutocolumnsDialog( editor ) {
 	}
 
 	if ( existing ) {
-		const innerHtml = existing.innerHTML;
-		const outerHtml = existing.outerHTML;
-		let currentData = editor.getData();
-
-		if ( result.remove ) {
-			if ( currentData.indexOf( outerHtml ) !== -1 ) {
-				editor.setData( currentData.replace( outerHtml, innerHtml ) );
+		editor.model.change( writer => {
+			if ( !existing.parent ) {
+				return;
 			}
-			return;
-		}
-
-		const replacement = buildAutocolumnsHtml( innerHtml, result );
-		if ( currentData.indexOf( outerHtml ) !== -1 ) {
-			editor.setData( currentData.replace( outerHtml, replacement ) );
-		}
+			if ( result.remove ) {
+				const position = writer.createPositionBefore( existing );
+				const children = Array.from( existing.getChildren() );
+				writer.move( writer.createRangeIn( existing ), position );
+				writer.remove( existing );
+				if ( children.length ) {
+					writer.setSelection( children[ 0 ], editor.model.schema.isObject( children[ 0 ] ) ? 'on' : 'in' );
+				} else {
+					writer.setSelection( position );
+				}
+			} else {
+				if ( existing.is( 'element', 'xerteAutocolumns' ) ) {
+					writer.setAttribute( 'autocolumnsSettings', result, existing );
+				} else {
+					writer.setAttribute( 'htmlDivAttributes',
+						autocolumnsAttributes( result, existing.getAttribute( 'htmlDivAttributes' ) ), existing );
+				}
+				if ( savedRange ) {
+					writer.setSelection( savedRange );
+				}
+			}
+		} );
+		editor.editing.view.focus();
 		return;
 	}
 
-	const selection = editor.model.document.selection;
-	const selectedContent = editor.model.getSelectedContent( selection );
-	const selectedView = editor.data.toView( selectedContent );
-	const innerHtml = editor.data.processor.toData( selectedView ).trim();
-	const html = buildAutocolumnsHtml( innerHtml, result );
-
-	editor.model.change( () => {
-		const viewFragment = editor.data.processor.toView( html );
-		const modelFragment = editor.data.toModel( viewFragment );
-		editor.model.insertContent( modelFragment, selection );
+	editor.model.change( writer => {
+		if ( savedRange ) {
+			writer.setSelection( savedRange );
+		}
+		if ( savedRange?.isCollapsed ) {
+			const block = editor.model.document.selection.getFirstPosition()?.parent;
+			if ( block?.is( 'element' ) && editor.model.schema.isBlock( block ) &&
+				editor.model.schema.checkChild( block.parent, 'xerteAutocolumns' ) ) {
+				writer.setSelection( writer.createRangeOn( block ) );
+			}
+		}
+		const content = editor.model.getSelectedContent( editor.model.document.selection );
+		const wrapper = writer.createElement( 'xerteAutocolumns', {
+			autocolumnsSettings: result
+		} );
+		if ( content.childCount ) {
+			if ( Array.from( content.getChildren() ).every( child => child.is( '$text' ) ) ) {
+				const paragraph = writer.createElement( 'paragraph' );
+				writer.insert( content, paragraph );
+				writer.insert( paragraph, wrapper );
+			} else {
+				writer.insert( content, wrapper );
+			}
+		} else {
+			writer.insert( writer.createElement( 'paragraph' ), wrapper );
+		}
+		editor.model.insertContent( wrapper, editor.model.document.selection );
 	} );
+	editor.editing.view.focus();
 }

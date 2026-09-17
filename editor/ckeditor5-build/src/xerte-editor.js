@@ -2,6 +2,7 @@
  * Xerte CKEditor 5 classic build (GPL-2.0+ via CKEditor packages).
  */
 import 'ckeditor5/ckeditor5.css';
+import './autocolumns.css';
 import { ClassicEditor } from '@ckeditor/ckeditor5-editor-classic';
 import { InlineEditor } from '@ckeditor/ckeditor5-editor-inline';
 import { Emoji } from '@ckeditor/ckeditor5-emoji';
@@ -63,6 +64,7 @@ import { XerteMarkWord } from './plugins/xerte-mark-word.js';
 import { XerteSpecialCharacters } from './plugins/xerte-special-characters.js';
 import { XerteMarkTag } from './plugins/xerte-mark-tag.js';
 import { XerteContextMenu } from './plugins/xerte-context-menu.js';
+import { XerteAutocolumns } from './plugins/xerte-autocolumns-dialog.js';
 import { XerteFontAwesome } from './plugins/xerte-fontawesome.js';
 import { XerteLineHeight } from './plugins/xerte-line-height.js';
 import { XerteRubyText } from './plugins/xerte-ruby-text.js';
@@ -78,7 +80,7 @@ const toolbarItems = [
 	'textPartLanguage', '|',
 	'bold', 'italic', 'underline', 'strikethrough', 'subscript', 'superscript', 'code', 'removeFormat', '|',
 	'specialCharacters', 'emoji', 'fontAwesome', 'horizontalLine', 'xerteMathJax', 'xerteRubyText', '|',
-	'link', 'xotlink', 'insertImage', 'xerteBrowseMedia', 'mediaEmbed', 'insertTable', 'blockQuote', 'codeBlock', '|',
+	'link', 'xotlink', 'insertImage', 'xerteBrowseMedia', 'mediaEmbed', 'insertTable', 'autocolumns', 'blockQuote', 'codeBlock', '|',
 	'alignment', '|',
 	'bulletedList', 'numberedList', 'outdent', 'indent', '|',
 	'xotMarkWord', 'markTag'
@@ -181,6 +183,7 @@ const xerteBuiltinPlugins = [
 	XerteSpecialCharacters,
 	XerteMarkTag,
 	XerteContextMenu,
+	XerteAutocolumns,
 	XerteFontAwesome,
 	XerteLineHeight,
 	XerteRubyText
