@@ -66,6 +66,8 @@ import { XerteContextMenu } from './plugins/xerte-context-menu.js';
 import { XerteFontAwesome } from './plugins/xerte-fontawesome.js';
 import { XerteLineHeight } from './plugins/xerte-line-height.js';
 import { XerteRubyText } from './plugins/xerte-ruby-text.js';
+import { XerteMediaEmbedRoundTrip } from './plugins/xerte-media-embed-roundtrip.js';
+import { XerteMediaResize } from './plugins/xerte-media-resize.js';
 
 const toolbarItems = [
 	'undo', 'redo', '|',
@@ -168,6 +170,8 @@ const xerteBuiltinPlugins = [
 	FindAndReplace,
 	CodeBlock,
 	MediaEmbed,
+	XerteMediaEmbedRoundTrip,
+	XerteMediaResize,
 	HtmlEmbed,
 	XerteUploadAdapter,
 	XerteBrowseMedia,
