@@ -1,0 +1,5 @@
+name: dlearning
+display name: DLearning
+description: DLearning theme designed as a reusable base for creating new customer themes more easily.
+enabled: yes
+preview: dlearning.jpg
