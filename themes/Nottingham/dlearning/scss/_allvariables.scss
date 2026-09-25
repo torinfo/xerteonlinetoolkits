@@ -58,9 +58,26 @@ $theme-header-resource-hover-background: #bdbdbd;
 $theme-header-resource-hover-text: #000000;
 
 
-//Footer
-$theme-footer-background: #00ff51;
+// Footer
+$theme-footer-background: #ffffff;
 $theme-footer-text: #000000;
+$theme-footer-background-image: none;
+$theme-footer-shadow: none;
+$theme-footer-radius: 0;
+
+// Footer buttons
+$theme-footer-button-text: #000000;
+$theme-footer-button-hover: $theme-accent;
+$theme-footer-button-focus: $theme-accent;
+$theme-footer-button-active: $theme-primary;
+
+// Footer tools
+$theme-footer-chevron-text: #000000;
+$theme-footer-chevron-hover: $theme-accent;
+
+// Progress
+$theme-progress-background: #ebebeb;
+$theme-progress-bar: #2196F3;
 
 
 

@@ -1,25 +1,52 @@
+// #x_footerBlock {
+//   font-size:		1em;
+//   color:			$theme-footer-text;
+//   background-image:	none;
+//   //margin-bottom:1%;
+//   background: $theme-footer-background;
+//   box-shadow: $interfaceboxshadow;
+// }
+// body:not(.sb_right):not(.sb_left) #x_footerBlock {
+//   width: 100%;
+//   border-bottom-left-radius: $largeroundedcorners;
+//   border-bottom-right-radius: $largeroundedcorners;
+// }
+// #x_footerBg {
+//   background-image:none;
+// }
+// #x_pageNo {
+//   background:	none;
+// }
+// .pbBar {
+//   background-color: $progressBarColor;
+// }
+
 #x_footerBlock {
-  font-size:		1em;
-  color:			$theme-footer-text;
-  background-image:	none;
-  //margin-bottom:1%;
-  background: $theme-footer-background;
-  box-shadow: $interfaceboxshadow;
+    font-size: 1em;
+    color: $theme-footer-text;
+    background-image: $theme-footer-background-image;
+    background-color: $theme-footer-background;
+    box-shadow: $theme-footer-shadow;
 }
+
 body:not(.sb_right):not(.sb_left) #x_footerBlock {
-  width: 100%;
-  border-bottom-left-radius: $largeroundedcorners;
-  border-bottom-right-radius: $largeroundedcorners;
+    width: 100%;
+    border-bottom-left-radius: $theme-footer-radius;
+    border-bottom-right-radius: $theme-footer-radius;
 }
+
 #x_footerBg {
-  background-image:none;
+    background-image: $theme-footer-background-image;
 }
+
 #x_pageNo {
-  background:	none;
+    background: none;
 }
+
 .pbBar {
-  background-color: $progressBarColor;
+    background-color: $theme-progress-bar;
 }
+
 /* these buttons will use font awesome icons instead of pngs */
 .ui-button .ui-icon.x_help { background-image: none; }
 .ui-button .ui-icon.x_info { background-image: none; }
