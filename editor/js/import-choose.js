@@ -18,7 +18,7 @@
  */
 
 function setup() {
-    console.log("Setting up merge layout...");
+    // Debug: console.log("Setting up merge layout...");
     var opentooltip = "Open this pane",
         closetooltip = "Close this pane",
         resizetooltip = "Resize this pane",
@@ -276,8 +276,8 @@ function init_workspace()
         this.text = this.text.replace(/_/g, ' ');
     });
 
-    console.log(node_types);
-    console.log(workspace.items);
+    // Debug: console.log(node_types);
+    // Debug: console.log(workspace.items);
 
     var tree = $.jstree.reference("#workspace");
     if (tree)

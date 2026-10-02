@@ -1038,6 +1038,9 @@ function x_check_path_traversal($path, $expected_path=null, $message=null, $type
     if ($type === 'folder') {
         // Ensure that folder exists for realpath to work
         if (!is_dir($rpath)) {
+            if ($soft_fail) {
+                return false;
+            }
             die($mesg);
         }
     }

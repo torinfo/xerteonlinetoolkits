@@ -823,7 +823,6 @@ td.wizardlabel {
 
 td.wizardvalue {
 	min-width: 0;
-	overflow: hidden;
 }
 
 td.wizardvalue .wizardvalue_inner,

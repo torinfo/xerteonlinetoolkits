@@ -4,6 +4,9 @@
  */
 (function (window, $) {
 	'use strict';
+	var bridgeScript = document.currentScript;
+	var languageAssetBase = bridgeScript && bridgeScript.src ?
+		bridgeScript.src.replace(/xerte-ckeditor5\.js(?:\?.*)?$/, '') : 'editor/js/vendor/ckeditor5/';
 
 	window.__xerteCke5Instances = window.__xerteCke5Instances || {};
 	window.__xerteCke5Shims = window.__xerteCke5Shims || {};
@@ -73,6 +76,109 @@
 			'&uploadURL=' + encodeURIComponent(u);
 	}
 
+	function defaultUploadAudioUrl() {
+		var u = typeof rlourlvariable !== 'undefined' ? rlourlvariable : '';
+		if (u.endsWith('/')) u = u.slice(0, -1);
+		return 'editor/uploadAudio.php?mode=record&uploadPath=' +
+			encodeURIComponent(typeof rlopathvariable !== 'undefined' ? rlopathvariable : '') +
+			'&uploadURL=' + encodeURIComponent(u);
+	}
+
+	function selectedLanguageCode() {
+		if (typeof language !== 'undefined' && language && language.$code) {
+			return String(language.$code).toLowerCase().split(/[-_]/)[0];
+		}
+		return 'en';
+	}
+
+	function supportedTextPartLanguages() {
+		var fallback = [
+			{ code: 'en-GB', name: 'English (en-GB)' },
+			{ code: 'nl-NL', name: 'Nederlands (nl-NL)' },
+			{ code: 'nl-BE', name: 'Vlaams (nl-BE)' },
+			{ code: 'fr-FR', name: 'Français (fr-FR)' },
+			{ code: 'es-ES', name: 'Español (es-ES)' },
+			{ code: 'cs-CZ', name: 'Czech (cs-CZ)' },
+			{ code: 'cy-GB', name: 'Cymraeg (cy-GB)' },
+			{ code: 'pl-PL', name: 'Polish (pl-PL)' },
+			{ code: 'ru-RU', name: 'Russian (ru-RU)' },
+			{ code: 'nb-NO', name: 'Norsk bokmål (nb-NO)' },
+			{ code: 'it-IT', name: 'Italiano (it-IT)' },
+			{ code: 'ja-JP', name: 'Japanese (ja-JP)' },
+			{ code: 'pt-BR', name: 'Portugues (pt-BR)' },
+			{ code: 'de-DE', name: 'Deutsch (de-DE)' },
+			{ code: 'tr-TR', name: 'Türkçe (tr-TR)' },
+			{ code: 'uk-UA', name: 'Українська (uk-UA)' },
+			{ code: 'el-GR', name: 'Ελληνικά (el-GR)' }
+		];
+		var configured = Array.isArray(window.installed_languages) && window.installed_languages.length ?
+			window.installed_languages.slice() : fallback.slice();
+		var rtlLanguages = { ar: 1, dv: 1, fa: 1, he: 1, ps: 1, ur: 1 };
+		var additionalSupportedLanguages = [
+			{ code: 'ar', name: 'Arabic' },
+			{ code: 'he', name: 'Hebrew' }
+		];
+		var configuredCodes = {};
+		configured.forEach(function (item) {
+			if (item && item.code) {
+				configuredCodes[String(item.code).toLowerCase()] = true;
+			}
+		});
+		additionalSupportedLanguages.forEach(function (item) {
+			if (!configuredCodes[item.code.toLowerCase()]) {
+				configured.push(item);
+			}
+		});
+
+		return configured.reduce(function (result, item) {
+			if (!item || !item.code) {
+				return result;
+			}
+			var code = String(item.code);
+			var language = {
+				title: item.name ? String(item.name) : code,
+				languageCode: code
+			};
+			if (rtlLanguages[code.toLowerCase().split(/[-_]/)[0]]) {
+				language.textDirection = 'rtl';
+			}
+			result.push(language);
+			return result;
+		}, []);
+	}
+
+	window.__xerteCke5LanguagePromises = window.__xerteCke5LanguagePromises || {};
+	function loadOptionalLanguageScript(key, url) {
+		if (window.__xerteCke5LanguagePromises[key]) {
+			return window.__xerteCke5LanguagePromises[key];
+		}
+		window.__xerteCke5LanguagePromises[key] = new Promise(function (resolve) {
+			var script = document.createElement('script');
+			script.src = url;
+			script.onload = function () { resolve(true); };
+			script.onerror = function () { resolve(false); };
+			document.head.appendChild(script);
+		});
+		return window.__xerteCke5LanguagePromises[key];
+	}
+
+	function loadSelectedLanguages(lang) {
+		if (lang === 'en') {
+			return Promise.resolve({ requestedLanguage: lang, uiLanguage: lang });
+		}
+		return Promise.all([
+			loadOptionalLanguageScript('ckeditor:' + lang,
+				languageAssetBase + 'translations/' + lang + '.js'),
+			loadOptionalLanguageScript('xerte:' + lang,
+				languageAssetBase + 'lang/' + lang + '.js')
+		]).then(function (loaded) {
+			return {
+				requestedLanguage: lang,
+				uiLanguage: loaded[0] ? lang : 'en'
+			};
+		});
+	}
+
 	function mapLegacyToolbarItem(item) {
 		var map = {
 			Undo: 'undo',
@@ -84,6 +190,10 @@
 			Format: 'heading',
 			Font: 'fontFamily',
 			FontSize: 'fontSize',
+			LineHeight: 'lineHeight',
+			lineheight: 'lineHeight',
+			lineHeight: 'lineHeight',
+			Language: 'textPartLanguage',
 			TextColor: 'fontColor',
 			BGColor: 'fontBackgroundColor',
 			Bold: 'bold',
@@ -92,11 +202,27 @@
 			Strike: 'strikethrough',
 			Subscript: 'subscript',
 			Superscript: 'superscript',
+			CodeSnippet: 'codeBlock',
 			RemoveFormat: 'removeFormat',
 			SpecialChar: 'specialCharacters',
 			FontAwesome: 'fontAwesome',
 			HorizontalRule: 'horizontalLine',
 			Mathjax: 'xerteMathJax',
+			rubytext: 'xerteRubyText',
+			RubyText: 'xerteRubyText',
+			html5audio: 'xerteAudio',
+			Audio: 'xerteAudio',
+			xotrecorder: 'xerteRecorder',
+			Recorder: 'xerteRecorder',
+			xotcolumns: 'autocolumns',
+			Autocolumns: 'autocolumns',
+			oembed: 'mediaEmbed',
+			Oembed: 'mediaEmbed',
+			Emoji: 'emoji',
+			ShowBlocks: 'showBlocks',
+			Maximize: 'fullscreen',
+			Styles: 'style',
+			Blockquote: 'blockQuote',
 			Link: 'link',
 			xotlink: 'xotlink',
 			Image: 'insertImage',
@@ -107,9 +233,32 @@
 			Outdent: 'outdent',
 			Indent: 'indent',
 			xotMarkWord: 'xotMarkWord',
-			Mark: 'xotMarkWord'
+			Mark: 'markTag',
+			markTag: 'markTag'
 		};
-		return map[item] || null;
+		var ckeditor5Items = {
+			undo: 1, redo: 1, findAndReplace: 1, sourceEditing: 1, showBlocks: 1, fullscreen: 1,
+			htmlEmbed: 1, heading: 1, style: 1, fontSize: 1, fontFamily: 1, fontColor: 1,
+			fontBackgroundColor: 1, lineHeight: 1, textPartLanguage: 1, bold: 1, italic: 1,
+			underline: 1, strikethrough: 1, subscript: 1, superscript: 1, code: 1, removeFormat: 1,
+			specialCharacters: 1, emoji: 1, fontAwesome: 1, horizontalLine: 1, xerteMathJax: 1,
+			xerteRubyText: 1, link: 1, xotlink: 1, insertImage: 1, xerteBrowseMedia: 1,
+			xerteAudio: 1, xerteRecorder: 1, mediaEmbed: 1, insertTable: 1, autocolumns: 1,
+			blockQuote: 1, codeBlock: 1, alignment: 1, bulletedList: 1, numberedList: 1,
+			outdent: 1, indent: 1, xotMarkWord: 1, markTag: 1
+		};
+		return map[item] || (ckeditor5Items[item] ? item : null);
+	}
+
+	var warnedToolbarItems = {};
+	function warnUnknownToolbarItem(item) {
+		if (!item || warnedToolbarItems[item]) {
+			return;
+		}
+		warnedToolbarItems[item] = true;
+		if (window.console && typeof window.console.warn === 'function') {
+			window.console.warn('[Xerte CKEditor 5] No toolbar mapping exists for CKEditor 4 item "' + item + '".');
+		}
 	}
 
 	function normalizeToolbar(toolbar) {
@@ -117,19 +266,44 @@
 			return null;
 		}
 		if (!Array.isArray(toolbar) && toolbar.items && Array.isArray(toolbar.items)) {
-			return toolbar;
-		}
-		if (Array.isArray(toolbar) && toolbar.length && typeof toolbar[0] === 'string') {
-			return toolbar;
+			var normalizedItems = normalizeToolbar(toolbar.items);
+			if (!normalizedItems) {
+				return null;
+			}
+			var normalizedObject = {};
+			for (var option in toolbar) {
+				if (toolbar.hasOwnProperty(option)) {
+					normalizedObject[option] = toolbar[option];
+				}
+			}
+			normalizedObject.items = normalizedItems.items;
+			return normalizedObject;
 		}
 		var flat = [];
 		function pushMapped(raw) {
-			var mapped = mapLegacyToolbarItem(String(raw));
+			if (raw === '|') {
+				if (flat.length && flat[flat.length - 1] !== '|') {
+					flat.push('|');
+				}
+				return;
+			}
+			var item = String(raw);
+			var mapped = mapLegacyToolbarItem(item);
 			if (mapped && flat.indexOf(mapped) === -1) {
 				flat.push(mapped);
+			} else if (!mapped) {
+				warnUnknownToolbarItem(item);
 			}
 		}
 		if (Array.isArray(toolbar)) {
+			if (!toolbar.length) {
+				return { items: [], shouldNotGroupWhenFull: false };
+			}
+			if (typeof toolbar[0] === 'string') {
+				for (var h = 0; h < toolbar.length; h++) {
+					pushMapped(toolbar[h]);
+				}
+			}
 			for (var i = 0; i < toolbar.length; i++) {
 				var group = toolbar[i];
 				if (Array.isArray(group)) {
@@ -152,21 +326,82 @@
 		return flat.length ? { items: flat, shouldNotGroupWhenFull: false } : null;
 	}
 
-	function mergeEditorConfig(user) {
-		user = user || {};
-		var lang = 'en';
-		if (typeof language !== 'undefined' && language && language.$code) {
-			lang = String(language.$code).substr(0, 2);
+	function normalizeToolbarGroups(groups) {
+		if (!Array.isArray(groups)) {
+			return null;
 		}
+		var groupItems = {
+			mode: [ 'sourceEditing' ],
+			clipboard: [ 'undo', 'redo' ],
+			undo: [ 'undo', 'redo' ],
+			find: [ 'findAndReplace' ],
+			spellchecker: [],
+			basicstyles: [ 'bold', 'italic', 'underline', 'strikethrough', 'subscript', 'superscript' ],
+			cleanup: [ 'removeFormat' ],
+			links: [ 'link', 'xotlink' ],
+			styles: [ 'heading', 'style', 'fontFamily', 'fontSize' ],
+			colors: [ 'fontColor', 'fontBackgroundColor' ],
+			insert: [ 'insertImage', 'xerteBrowseMedia', 'xerteAudio', 'xerteRecorder', 'mediaEmbed',
+				'insertTable', 'specialCharacters', 'fontAwesome', 'horizontalLine', 'xerteMathJax' ],
+			list: [ 'bulletedList', 'numberedList' ],
+			indent: [ 'outdent', 'indent' ],
+			blocks: [ 'blockQuote', 'codeBlock' ],
+			align: [ 'alignment' ],
+			bidi: [ 'textPartLanguage' ]
+		};
+		var result = [];
+		function append(items) {
+			for (var i = 0; i < items.length; i++) {
+				if (result.indexOf(items[i]) === -1) {
+					result.push(items[i]);
+				}
+			}
+		}
+		for (var i = 0; i < groups.length; i++) {
+			var descriptor = groups[i] || {};
+			var names = descriptor.groups && descriptor.groups.length ? descriptor.groups : [ descriptor.name ];
+			var before = result.length;
+			for (var j = 0; j < names.length; j++) {
+				if (groupItems[names[j]]) {
+					append(groupItems[names[j]]);
+				} else if (names[j]) {
+					warnUnknownToolbarItem('group:' + names[j]);
+				}
+			}
+			if (result.length > before && i < groups.length - 1) {
+				result.push('|');
+			}
+		}
+		while (result.length && result[result.length - 1] === '|') {
+			result.pop();
+		}
+		return result.length ? { items: result, shouldNotGroupWhenFull: false } : null;
+	}
+
+	function mergeEditorConfig(user, loadedLanguages) {
+		user = user || {};
+		var requestedLang = loadedLanguages && loadedLanguages.requestedLanguage || selectedLanguageCode();
+		var lang = loadedLanguages && loadedLanguages.uiLanguage || requestedLang;
 		var base = {
-			language: { ui: lang, content: lang },
+			language: {
+				ui: lang,
+				content: lang,
+				textPartLanguage: supportedTextPartLanguages()
+			},
 			xerteUploadUrl: user.uploadUrl || defaultUploadUrl(),
-			xerteBrowseMediaUrl: user.browseMediaUrl || browseUrlForCke5(user.filebrowserBrowseUrl) || browseUrl('media')
+			xerteUploadAudioUrl: user.uploadAudioUrl || defaultUploadAudioUrl(),
+			xerteBrowseMediaUrl: user.browseMediaUrl || browseUrlForCke5(user.filebrowserBrowseUrl) || browseUrl('media'),
+			xerteMathJaxLib: user.mathJaxLib || 'offline/js/mathjax/MathJax.js?config=TeX-MML-AM_HTMLorMML-full'
 		};
 		if (user.toolbar) {
 			var toolbar = normalizeToolbar(user.toolbar);
 			if (toolbar) {
 				base.toolbar = toolbar;
+			}
+		} else if (user.toolbarGroups) {
+			var groupedToolbar = normalizeToolbarGroups(user.toolbarGroups);
+			if (groupedToolbar) {
+				base.toolbar = groupedToolbar;
 			}
 		}
 		if (user.height) {
@@ -242,6 +477,37 @@
 			// The wizard panel is resizable. A pixel min-width captured before CKEditor
 			// replaces the textarea prevents the editor (and its table cell) shrinking.
 			root.style.minWidth = '0';
+			var updateToolbarPanelWidth = function () {
+				var toolbar = editor.ui && editor.ui.view && editor.ui.view.toolbar;
+				var toolbarElement = toolbar && toolbar.element;
+				if (toolbarElement && toolbarElement.closest('.ck-fullscreen__main-wrapper')) {
+					// Fullscreen moves the toolbar out of the editor root. Do not keep the
+					// original wizard-panel width as its max-width in the new container.
+					toolbar.maxWidth = undefined;
+					return;
+				}
+				var width = Math.floor(root.getBoundingClientRect().width);
+				if (width > 0) {
+					root.style.setProperty('--xerte-editor-width', width + 'px');
+					// CKEditor's grouping engine listens to maxWidth changes directly.
+					// Setting it on the ToolbarView makes the three-dot (extended toolbar options) calculation use
+					// the middle-pane width instead of the toolbar's intrinsic width.
+					if (toolbar) {
+						toolbar.maxWidth = width + 'px';
+					}
+				}
+			};
+			updateToolbarPanelWidth();
+			if (window.ResizeObserver) {
+				editor.__xerteToolbarResizeObserver = new ResizeObserver(updateToolbarPanelWidth);
+				editor.__xerteToolbarResizeObserver.observe(root);
+			}
+			var fullscreenCommand = editor.commands && editor.commands.get('toggleFullscreen');
+			if (fullscreenCommand) {
+				editor.listenTo(fullscreenCommand, 'change:value', function () {
+					window.requestAnimationFrame(updateToolbarPanelWidth);
+				});
+			}
 		}
 	}
 
@@ -269,6 +535,21 @@
 		}
 	}
 
+	function applyToolbarPreference(editor, show) {
+		if (!editor || !editor.ui || !editor.ui.view) {
+			return;
+		}
+		var stickyPanel = editor.ui.view.stickyPanel;
+		if (stickyPanel && stickyPanel.element) {
+			stickyPanel.element.style.display = show ? '' : 'none';
+			if (show && editor.ui.view.toolbar) {
+				window.requestAnimationFrame(function () {
+					editor.ui.view.toolbar.fire('change:maxWidth');
+				});
+			}
+		}
+	}
+
 	function ensureInlineEditorCssOverrides() {
 		if (window.__xerteCke5InlineCssInjected) {
 			return;
@@ -290,11 +571,16 @@
 		}
 		// Keep CKEditor 5 UI constrained to container width (prevents toolbar going off-screen).
 		var css = ''
-			+ '.ck.ck-editor{width:100%!important;min-width:0!important;max-width:100%!important;overflow:hidden;}'
-			+ '.ck.ck-editor__top{width:100%!important;min-width:0!important;max-width:100%!important;overflow:hidden;}'
+			+ '.ck.ck-editor{width:100%!important;min-width:0!important;max-width:100%!important;}'
+			+ '.ck.ck-editor__top{width:100%!important;min-width:0!important;max-width:100%!important;overflow:visible!important;}'
 			+ '.ck.ck-editor__top,.ck.ck-editor__top *{box-sizing:border-box;}'
-			+ '.ck.ck-editor__top .ck-sticky-panel,.ck.ck-editor__top .ck-sticky-panel__content{width:100%!important;min-width:0!important;max-width:100%!important;}'
-			+ '.ck.ck-editor__top .ck-toolbar,.ck.ck-editor__top .ck-toolbar__items{min-width:0!important;max-width:100%!important;}';
+			+ '.ck.ck-editor__top .ck-sticky-panel{width:100%!important;min-width:0!important;max-width:100%!important;}'
+			// Use the measured editor width rather than a percentage. Once this panel
+			// becomes position:fixed, percentage widths are relative to the viewport.
+			+ '.ck.ck-editor__top .ck-sticky-panel__content{width:var(--xerte-editor-width,100%)!important;min-width:0!important;max-width:calc(100vw - 24px)!important;box-sizing:border-box;}'
+			+ '.ck.ck-editor .ck-toolbar__grouped-dropdown>.ck-dropdown__panel{width:min(calc(var(--xerte-editor-width, 600px) - 8px),60vw)!important;max-width:calc(100vw - 24px)!important;}'
+			+ '.ck.ck-editor .ck-toolbar__grouped-dropdown .ck-toolbar_floating{width:100%!important;max-width:100%!important;}'
+			+ '.ck.ck-editor .ck-toolbar__grouped-dropdown .ck-toolbar_floating>.ck-toolbar__items{flex-wrap:wrap!important;}';
 		var style = document.createElement('style');
 		style.type = 'text/css';
 		style.appendChild(document.createTextNode(css));
@@ -338,6 +624,9 @@
 			destroy: function () {
 				var id = domEl.id;
 				var nativeEditor = editor;
+				if (editor.__xerteToolbarResizeObserver) {
+					editor.__xerteToolbarResizeObserver.disconnect();
+				}
 				return editor.destroy().then(function () {
 					// A newer editor may already own this id (wizard rebuilt before this async finish).
 					if (window.__xerteCke5Instances[id] !== nativeEditor) {
@@ -369,12 +658,15 @@
 		if (!Editor || typeof Editor.create !== 'function') {
 			throw new Error('XerteCKEditor5 editor class not available');
 		}
-		var cfg = mergeEditorConfig(userConfig || {});
 		var initialMetrics = {
 			width: domEl && domEl.getBoundingClientRect ? domEl.getBoundingClientRect().width : 0,
 			height: domEl && domEl.getBoundingClientRect ? domEl.getBoundingClientRect().height : 0
 		};
-		return Editor.create(domEl, cfg).then(function (editor) {
+		var lang = selectedLanguageCode();
+		return loadSelectedLanguages(lang).then(function (loadedLanguages) {
+			var cfg = mergeEditorConfig(userConfig || {}, loadedLanguages);
+			return Editor.create(domEl, cfg);
+		}).then(function (editor) {
 			var id = domEl.id;
 			window.__xerteCke5Instances[id] = editor;
 			window.__xerteCke5SourceElements[id] = domEl;
@@ -396,6 +688,8 @@
 					inlineEditable.style.overflowY = 'auto';
 				}
 				setupInlineToolbarVisibility(editor);
+			} else if (userConfig && typeof userConfig.toolbarStartupExpanded !== 'undefined') {
+				applyToolbarPreference(editor, !!userConfig.toolbarStartupExpanded);
 			}
 			if (userConfig && userConfig.startupMode === 'source') {
 				try {
@@ -425,6 +719,9 @@
 			}
 			var ed = window.__xerteCke5Instances[id];
 			if (ed) {
+				if (ed.__xerteToolbarResizeObserver) {
+					ed.__xerteToolbarResizeObserver.disconnect();
+				}
 				return ed.destroy().then(function () {
 					if (window.__xerteCke5Instances[id] !== ed) {
 						return;

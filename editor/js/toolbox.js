@@ -1193,6 +1193,23 @@ var EDITOR = (function ($, parent) {
 
     showToolBar = function(show){
         defaultToolBar = show;
+		// CKEditor 5 has no CKEditor 4-style toolbox collapser. Apply the same
+		// preference directly to each classic editor's toolbar container.
+		if (window.__xerteCke5Instances) {
+			Object.keys(window.__xerteCke5Instances).forEach(function(id) {
+				var editor = window.__xerteCke5Instances[id];
+				var view = editor && editor.ui && editor.ui.view;
+				var stickyPanel = view && view.stickyPanel;
+				if (stickyPanel && stickyPanel.element) {
+					stickyPanel.element.style.display = show ? '' : 'none';
+					if (show && view.toolbar) {
+						window.requestAnimationFrame(function() {
+							view.toolbar.fire('change:maxWidth');
+						});
+					}
+				}
+			});
+		}
         /*var tree = $.jstree.reference("#treeview");
         var ids = tree.get_selected();
         var id;

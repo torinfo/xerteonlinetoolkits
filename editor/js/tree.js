@@ -1965,7 +1965,7 @@ var EDITOR = (function ($, parent) {
                         parameters: parameters,
                     },
                     success: function(resp) {
-                        var data = (resp && resp.ok === true && resp.data) ? resp.data : resp;
+                        var payload = (resp && resp.ok === true && resp.data) ? resp.data : resp;
                         try {
                             xml_to_xerte_content(data, event.data.key, 'last', tree, parent);
                             $.featherlight.close();

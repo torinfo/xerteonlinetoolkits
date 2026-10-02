@@ -68,19 +68,19 @@ var EDITOR = (function ($, parent) {
     {
         if (step == 1)
         {
-            console.log("All language definitions loaded...");
+            // Debug: console.log("All language definitions loaded...");
             step1_languagesloaded = true;
         }
         else if (step == 2)
         {
-            console.log(previewxmlurl +  " is loaded...");
+            // Debug: console.log(previewxmlurl +  " is loaded...");
             step2_xmlloaded = true;
             step2_data = data;
 
         }
         if (step1_languagesloaded && step2_xmlloaded)
         {
-            console.log("Start processing of " + previewxmlurl);
+            // Debug: console.log("Start processing of " + previewxmlurl);
             process_data(step2_data);
         }
 

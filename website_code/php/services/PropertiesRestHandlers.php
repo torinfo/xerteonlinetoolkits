@@ -4,6 +4,7 @@
  */
 
 require_once dirname(__FILE__) . '/PropertiesRestService.php';
+require_once dirname(__FILE__) . '/../template_status.php';
 
 function properties_rest_route($method, $sub, array $params)
 {
