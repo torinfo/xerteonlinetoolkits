@@ -297,8 +297,6 @@ function edit_window(admin, edit, location) {
                             }
                         }
                     }
-                    console.log("Window open length: " + window_open.length);
-                    console.log("Window open parent: " + window_open.parent);
                     if (!window_open || window_open.parent == null) {
 
                         let size = node.editor_size.split(",");
@@ -843,7 +841,6 @@ function save_user_preference(key, value, onSuccess) {
 function load_user_preferences() {
     // This will be set from PHP session
     if (typeof user_preferences !== 'undefined' && user_preferences) {
-        console.log("Loaded user_preferences:", user_preferences);
 
         // Restore sort selector
         if (user_preferences.sort_type) {
@@ -856,7 +853,6 @@ function load_user_preferences() {
         // Restore east (right) panel state
         if (typeof xerteinner_layout !== 'undefined' && user_preferences.hasOwnProperty('panel_east_open')) {
             var eastOpen = user_preferences.panel_east_open;
-            console.log("Restoring panel_east_open:", eastOpen);
             if (eastOpen === false || eastOpen === 'false' || eastOpen === 0 || eastOpen === '0') {
                 xerteinner_layout.close('east');
             } else {
@@ -867,7 +863,6 @@ function load_user_preferences() {
         // Restore south (bottom) panel state
         if (typeof xertemain_layout !== 'undefined' && user_preferences.hasOwnProperty('panel_south_open')) {
             var southOpen = user_preferences.panel_south_open;
-            console.log("Restoring panel_south_open:", southOpen);
             if (southOpen === false || southOpen === 'false' || southOpen === 0 || southOpen === '0') {
                 xertemain_layout.close('south');
             } else {

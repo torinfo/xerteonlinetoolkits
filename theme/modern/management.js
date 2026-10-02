@@ -1350,10 +1350,8 @@ function load(modal)
 			url: xwd_url,
 			dataType: "text",
 			success: function(data) {
-				console.log($($.parseXML(data)).find("wizards"));
 			},
 			error: function(data){
-				console.log("error");
 			}
 		});
 	});

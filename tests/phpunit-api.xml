@@ -1,6 +1,6 @@
 <phpunit
     colors="true"
-    bootstrap="C:\xampp\htdocs\xerte\xerteonlinetoolkits\tests\bootstrap_api.php"
+    bootstrap="bootstrap_api.php"
     backupGlobals="false"
     backupStaticAttributes="false"
     beStrictAboutChangesToGlobalState="false"

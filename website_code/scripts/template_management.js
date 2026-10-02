@@ -855,21 +855,6 @@ function save_user_preference(key, value, onSuccess) {
     }
 
     var saveUrl = apiV1Url('user/preferences');
-    var legacyUrl = (typeof site_url !== 'undefined' ? site_url : '') + 'website_code/php/save_user_preferences.php';
-
-    function tryLegacySave() {
-        $.ajax({
-            type: 'POST',
-            url: legacyUrl,
-            dataType: 'json',
-            data: { key: key, value: value }
-        }).done(function(legacy) {
-            if (legacy && legacy.success) {
-                save_user_preference_apply(key, value, null, onSuccess);
-            }
-        });
-    }
-
     $.ajax({
         type: 'POST',
         url: saveUrl,
@@ -878,11 +863,14 @@ function save_user_preference(key, value, onSuccess) {
     })
     .done(function(response) {
         if (!save_user_preference_from_response(key, value, response, onSuccess)) {
-            tryLegacySave();
+            console.error('Failed to save preference:', response);
         }
     })
-    .fail(function() {
-        tryLegacySave();
+    .fail(function(xhr, status, error) {
+        var message = xhr.responseJSON && xhr.responseJSON.error
+            ? xhr.responseJSON.error.message
+            : error;
+        console.error('Failed to save preference:', message);
     });
 }
 
@@ -892,7 +880,7 @@ function save_user_preference(key, value, onSuccess) {
 function load_user_preferences() {
     // This will be set from PHP session
     if (typeof user_preferences !== 'undefined' && user_preferences) {
-        console.log("Loaded user_preferences:", user_preferences);
+        // Debug: console.log("Loaded user_preferences:", user_preferences);
 
         // Restore sort selector
         if (user_preferences.sort_type) {
@@ -905,7 +893,7 @@ function load_user_preferences() {
         // Restore east (right) panel state
         if (typeof xerteinner_layout !== 'undefined' && user_preferences.hasOwnProperty('panel_east_open')) {
             var eastOpen = user_preferences.panel_east_open;
-            console.log("Restoring panel_east_open:", eastOpen);
+            // Debug: console.log("Restoring panel_east_open:", eastOpen);
             if (eastOpen === false || eastOpen === 'false' || eastOpen === 0 || eastOpen === '0') {
                 xerteinner_layout.close('east');
             } else {
@@ -916,7 +904,7 @@ function load_user_preferences() {
         // Restore south (bottom) panel state
         if (typeof xertemain_layout !== 'undefined' && user_preferences.hasOwnProperty('panel_south_open')) {
             var southOpen = user_preferences.panel_south_open;
-            console.log("Restoring panel_south_open:", southOpen);
+            // Debug: console.log("Restoring panel_south_open:", southOpen);
             if (southOpen === false || southOpen === 'false' || southOpen === 0 || southOpen === '0') {
                 xertemain_layout.close('south');
             } else {

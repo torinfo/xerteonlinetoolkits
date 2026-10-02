@@ -475,6 +475,13 @@ abstract class BaseAiApi
             $p['responseLanguage'] = $this->languageName;
 
             $model_ver = $managementSettings['ai']['active_vendors'][$this->api]['preferred_model'];
+            // Older installations stored the literal value "default" before
+            // preferred models were populated with provider model IDs. Treat
+            // that legacy placeholder the same as no override so each provider
+            // can use the default declared by its model class.
+            if (!is_string($model_ver) || trim($model_ver) === '' || strtolower(trim($model_ver)) === 'default') {
+                $model_ver = null;
+            }
 
             $model = load_model($type, $this->api, $model_ver, $context, $subtype);
 
