@@ -30,6 +30,8 @@ DROP TABLE IF EXISTS `$role` ;
 DROP TABLE IF EXISTS `$logindetailsrole` ;
 DROP TABLE If EXISTS `$management_helper` ;
 DROP TABLE IF EXISTS `$ai_request_logs`;
+DROP TABLE IF EXISTS `$ai_settings_options`;
+DROP TABLE IF EXISTS `$ai_settings`;
 
 DROP TABLE IF EXISTS `$lti_context` ;
 DROP TABLE IF EXISTS `$lti_keys` ;
@@ -426,11 +428,42 @@ INSERT INTO `$management_helper` VALUES
                                     (7, 'wikimedia', 'Wikimedia Foundation', 'image', 0, 0, '{}', ''),
                                     (8, 'dalle2', 'DallE2 (Generative)', 'imagegen', 1, 0, '{}', ''),
                                     (9, 'dalle3', 'DallE3 (Generative)', 'imagegen', 1, 0, '{}', ''),
-                                    (10, 'gpt1', 'GPT Image 1', 'imagegen', 1, 0, '{}', ''),
+                                    (10, 'gpt1', 'GPT Image', 'imagegen', 1, 0, '{}', ''),
                                     (11, 'gladia', 'Gladia (Transcription)', 'transcription', 1, 0, '{}', ''),
                                     (12, 'openai', 'Open AI (Transcription)', 'transcription', 1, 0, '{}', ''),
                                     (13, 'mistralenc', 'Mistral (Encoding)', 'encoding', 1, 0, '{}', ''),
-                                    (14, 'openaienc', 'OpenAI (Encoding)', 'encoding', 1, 0, '{}', '');
+                                    (14, 'openaienc', 'OpenAI (Encoding)', 'encoding', 1, 0, '{}', ''),
+                                    (15, 'gemini', 'Gemini (Google)', 'ai', 1, 0, '{}', 'gemini-3.6-flash');
+
+CREATE TABLE IF NOT EXISTS `$ai_settings` (
+    `id` BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
+    `scope_type` ENUM('global','user') NOT NULL DEFAULT 'global',
+    `scope_id` BIGINT UNSIGNED NOT NULL DEFAULT 0,
+    `ai_model` VARCHAR(255) DEFAULT NULL,
+    `reading_level` VARCHAR(255) DEFAULT NULL,
+    `education_level` VARCHAR(255) DEFAULT NULL,
+    `tone_and_style` VARCHAR(255) DEFAULT NULL,
+    PRIMARY KEY (`id`),
+    UNIQUE KEY `uniq_scope` (`scope_type`, `scope_id`)
+) DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+
+INSERT INTO `$ai_settings`
+    (`scope_type`, `scope_id`, `ai_model`, `reading_level`, `education_level`, `tone_and_style`)
+VALUES
+    ('global', 0, 'mistral', 'intermediate_b1', 'vocational', 'semi_formal');
+
+CREATE TABLE IF NOT EXISTS `$ai_settings_options` (
+    `id` BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
+    `setting_key` VARCHAR(64) NOT NULL,
+    `option_values` TEXT DEFAULT NULL,
+    PRIMARY KEY (`id`),
+    UNIQUE KEY `uniq_setting_key` (`setting_key`)
+) DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+
+INSERT INTO `$ai_settings_options` (`setting_key`, `option_values`) VALUES
+    ('reading_level', 'beginner_a1,beginner_a2,intermediate_b1,intermediate_b2,advanced_c1,advanced_c2'),
+    ('education_level', 'middle_school,high_school,vocational,bachelors,university,masters,phd'),
+    ('tone_and_style', 'formal,semi_formal,informal,active,passive');
 
 
 CREATE TABLE IF NOT EXISTS `$ai_request_logs` (

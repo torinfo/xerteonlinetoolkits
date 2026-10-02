@@ -1903,8 +1903,6 @@ function upgrade_61()
     return $message;
 }
 
-// UI/UX branch migrations were originally numbered 57-59. They follow the
-// complete 3.16 migration sequence here to avoid colliding with upgrades 57-61.
 function upgrade_62()
 {
     if (!_db_field_exists('templaterights', 'favorite')) {
@@ -1996,6 +1994,218 @@ function upgrade_64()
     } else {
         $message .= "Table folder_label_assignments already exists - ok ? true<br>";
     }
+
+    return $message;
+}
+
+/**
+ * Repair AI tables after the UI/UX and AI branches reused migration numbers.
+ *
+ * As it was impossible to repair the management helper table if you'd already
+ * installed or ran the updates, especially things with the old schema,
+ * this upgrade reconciles everything and makes sure the latest settings are
+ * represented WITHOUT clearing any existing admin configuration.
+ */
+function upgrade_65()
+{
+    $message = "";
+    $management_table = table_by_key('management_helper');
+
+    if (!_table_exists('management_helper')) {
+        $ok = _upgrade_db_query("CREATE TABLE IF NOT EXISTS $management_table (
+            `interaction_id` int(11) NOT NULL AUTO_INCREMENT,
+            `vendor` VARCHAR(45) NOT NULL,
+            `label` VARCHAR(45) NOT NULL,
+            `type` VARCHAR(45) NOT NULL,
+            `needs_key` BOOLEAN NOT NULL,
+            `enabled` BOOLEAN NOT NULL,
+            `sub_options` TEXT,
+            `preferred_model` TEXT,
+            PRIMARY KEY (`interaction_id`)
+        ) DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;");
+        $message .= "Creating management_helper table - ok ? " . ($ok ? 'true' : 'false') . "<br>";
+    } elseif (!_db_field_exists('management_helper', 'preferred_model')) {
+        $ok = _db_add_field('management_helper', 'preferred_model', 'text', '', 'sub_options');
+        $message .= "Adding management_helper preferred_model field - ok ? " . ($ok ? 'true' : 'false') . "<br>";
+    }
+
+    // Early versions used VARCHAR(10), which silently truncates
+    // "transcription" to "transcript" and prevents the matching language
+    // constants (and everything rendered after that group) from loading.
+    $ok = _upgrade_db_query("ALTER TABLE $management_table
+        MODIFY `vendor` VARCHAR(45) NOT NULL,
+        MODIFY `label` VARCHAR(45) NOT NULL,
+        MODIFY `type` VARCHAR(45) NOT NULL;");
+    $message .= "Expanding management_helper vendor fields - ok ? " . ($ok ? 'true' : 'false') . "<br>";
+
+    // Older AI branches used different group names. Move those rows to the
+    // names used by the management page, retaining their configured values.
+    $ok = _upgrade_db_query("UPDATE $management_table legacy_row
+        LEFT JOIN $management_table canonical_row
+          ON canonical_row.vendor = legacy_row.vendor AND canonical_row.type = 'transcription'
+        SET legacy_row.type = 'transcription'
+        WHERE legacy_row.type = 'transcript' AND canonical_row.interaction_id IS NULL;");
+    $message .= "Normalising transcription vendor group - ok ? " . ($ok ? 'true' : 'false') . "<br>";
+
+    $ok = _upgrade_db_query("UPDATE $management_table legacy_row
+        LEFT JOIN $management_table canonical_row
+          ON canonical_row.vendor = legacy_row.vendor AND canonical_row.type = 'imagegen'
+        SET legacy_row.type = 'imagegen'
+        WHERE legacy_row.type = 'image'
+          AND legacy_row.vendor IN ('dalle2', 'dalle3', 'gpt1')
+          AND canonical_row.interaction_id IS NULL;");
+    $message .= "Normalising image-generation vendor group - ok ? " . ($ok ? 'true' : 'false') . "<br>";
+
+    // If upgrade_65 is deliberately replayed (i.e. by setting db version in config to older value) fold values
+    // from any legacy duplicates into the canonical rows before removing them.
+    $ok = _upgrade_db_query("UPDATE $management_table canonical_row
+        INNER JOIN $management_table legacy_row
+          ON legacy_row.vendor = canonical_row.vendor AND legacy_row.type = 'transcript'
+        SET canonical_row.enabled = GREATEST(canonical_row.enabled, legacy_row.enabled),
+            canonical_row.preferred_model = CASE
+                WHEN canonical_row.preferred_model IS NULL OR canonical_row.preferred_model = ''
+                THEN legacy_row.preferred_model ELSE canonical_row.preferred_model END
+        WHERE canonical_row.type = 'transcription';");
+    $message .= "Merging duplicate transcription vendor settings - ok ? " . ($ok ? 'true' : 'false') . "<br>";
+
+    $ok = _upgrade_db_query("DELETE legacy_row FROM $management_table legacy_row
+        INNER JOIN $management_table canonical_row
+          ON canonical_row.vendor = legacy_row.vendor AND canonical_row.type = 'transcription'
+        WHERE legacy_row.type = 'transcript';");
+    $message .= "Removing duplicate transcription vendors - ok ? " . ($ok ? 'true' : 'false') . "<br>";
+
+    $ok = _upgrade_db_query("UPDATE $management_table canonical_row
+        INNER JOIN $management_table legacy_row
+          ON legacy_row.vendor = canonical_row.vendor AND legacy_row.type = 'image'
+        SET canonical_row.enabled = GREATEST(canonical_row.enabled, legacy_row.enabled),
+            canonical_row.preferred_model = CASE
+                WHEN canonical_row.preferred_model IS NULL OR canonical_row.preferred_model = ''
+                THEN legacy_row.preferred_model ELSE canonical_row.preferred_model END
+        WHERE canonical_row.type = 'imagegen'
+          AND canonical_row.vendor IN ('dalle2', 'dalle3', 'gpt1');");
+    $message .= "Merging duplicate image-generation vendor settings - ok ? " . ($ok ? 'true' : 'false') . "<br>";
+
+    $ok = _upgrade_db_query("DELETE legacy_row FROM $management_table legacy_row
+        INNER JOIN $management_table canonical_row
+          ON canonical_row.vendor = legacy_row.vendor AND canonical_row.type = 'imagegen'
+        WHERE legacy_row.type = 'image'
+          AND legacy_row.vendor IN ('dalle2', 'dalle3', 'gpt1');");
+    $message .= "Removing duplicate image-generation vendors - ok ? " . ($ok ? 'true' : 'false') . "<br>";
+
+    $ok = _upgrade_db_query("INSERT INTO $management_table
+        (`vendor`, `label`, `type`, `needs_key`, `enabled`, `sub_options`, `preferred_model`)
+        SELECT defaults.vendor, defaults.label, defaults.type, defaults.needs_key,
+               defaults.enabled, defaults.sub_options, defaults.preferred_model
+        FROM (
+            SELECT 'openai' vendor, 'GPT (Openai)' label, 'ai' type, 1 needs_key, 0 enabled, '{}' sub_options, '' preferred_model
+            UNION ALL SELECT 'anthropic', 'Claude (Anthropic)', 'ai', 1, 0, '{}', ''
+            UNION ALL SELECT 'mistral', 'Mistral AI', 'ai', 1, 0, '{}', ''
+            UNION ALL SELECT 'pexels', 'Pexels', 'image', 1, 0, '{}', ''
+            UNION ALL SELECT 'pixabay', 'Pixabay', 'image', 1, 0, '{}', ''
+            UNION ALL SELECT 'unsplash', 'Unsplash', 'image', 1, 0, '{}', ''
+            UNION ALL SELECT 'wikimedia', 'Wikimedia Foundation', 'image', 0, 0, '{}', ''
+            UNION ALL SELECT 'dalle2', 'DallE2 (Generative)', 'imagegen', 1, 0, '{}', ''
+            UNION ALL SELECT 'dalle3', 'DallE3 (Generative)', 'imagegen', 1, 0, '{}', ''
+            UNION ALL SELECT 'gpt1', 'GPT Image', 'imagegen', 1, 0, '{}', ''
+            UNION ALL SELECT 'gladia', 'Gladia (Transcription)', 'transcription', 1, 0, '{}', ''
+            UNION ALL SELECT 'openai', 'Open AI (Transcription)', 'transcription', 1, 0, '{}', ''
+            UNION ALL SELECT 'mistralenc', 'Mistral (Encoding)', 'encoding', 1, 0, '{}', ''
+            UNION ALL SELECT 'openaienc', 'OpenAI (Encoding)', 'encoding', 1, 0, '{}', ''
+            UNION ALL SELECT 'gemini', 'Gemini (Google)', 'ai', 1, 0, '{}', 'gemini-3.6-flash'
+        ) defaults
+        WHERE NOT EXISTS (
+            SELECT 1 FROM $management_table existing
+            WHERE existing.vendor = defaults.vendor AND existing.type = defaults.type
+        );");
+    $message .= "Adding missing management_helper vendors - ok ? " . ($ok ? 'true' : 'false') . "<br>";
+
+    // A previous run against VARCHAR(10) may have inserted additional rows
+    // which were also truncated to "transcript". After normalisation, retain
+    // the oldest canonical row and fold enabled/model choices into it.
+    $ok = _upgrade_db_query("UPDATE $management_table canonical
+        INNER JOIN $management_table duplicate
+          ON duplicate.vendor = canonical.vendor
+         AND duplicate.type = canonical.type
+         AND duplicate.interaction_id > canonical.interaction_id
+        SET canonical.enabled = GREATEST(canonical.enabled, duplicate.enabled),
+            canonical.preferred_model = CASE
+                WHEN canonical.preferred_model IS NULL OR canonical.preferred_model = ''
+                THEN duplicate.preferred_model ELSE canonical.preferred_model END
+        WHERE canonical.type IN ('transcription', 'imagegen');");
+    $message .= "Merging repeated canonical vendor settings - ok ? " . ($ok ? 'true' : 'false') . "<br>";
+
+    $ok = _upgrade_db_query("DELETE duplicate FROM $management_table duplicate
+        INNER JOIN $management_table canonical
+          ON canonical.vendor = duplicate.vendor
+         AND canonical.type = duplicate.type
+         AND canonical.interaction_id < duplicate.interaction_id
+        WHERE duplicate.type IN ('transcription', 'imagegen');");
+    $message .= "Removing repeated canonical vendors - ok ? " . ($ok ? 'true' : 'false') . "<br>";
+
+    $ok = _upgrade_db_query("UPDATE $management_table
+        SET `sub_options` = '{}'
+        WHERE `type` = 'ai' AND `vendor` IN ('openai', 'anthropic', 'mistral');");
+    $message .= "Removing obsolete base AI vendor sub-options - ok ? " . ($ok ? 'true' : 'false') . "<br>";
+
+    $ok = _upgrade_db_query("UPDATE $management_table
+        SET `label` = 'GPT Image'
+        WHERE `vendor` = 'gpt1' AND `type` = 'imagegen';");
+    $message .= "Updating GPT Image label - ok ? " . ($ok ? 'true' : 'false') . "<br>";
+
+    $settings_table = table_by_key('ai_settings');
+    if (!_table_exists('ai_settings')) {
+        $ok = _upgrade_db_query("CREATE TABLE IF NOT EXISTS $settings_table (
+            `id` BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
+            `scope_type` ENUM('global','user') NOT NULL DEFAULT 'global',
+            `scope_id` BIGINT UNSIGNED NOT NULL DEFAULT 0,
+            `ai_model` VARCHAR(255) DEFAULT NULL,
+            `reading_level` VARCHAR(255) DEFAULT NULL,
+            `education_level` VARCHAR(255) DEFAULT NULL,
+            `tone_and_style` VARCHAR(255) DEFAULT NULL,
+            PRIMARY KEY (`id`),
+            UNIQUE KEY `uniq_scope` (`scope_type`, `scope_id`)
+        ) DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;");
+        $message .= "Creating ai_settings table - ok ? " . ($ok ? 'true' : 'false') . "<br>";
+    }
+
+    $ok = _upgrade_db_query("INSERT INTO $settings_table
+        (`scope_type`, `scope_id`, `ai_model`, `reading_level`, `education_level`, `tone_and_style`)
+        SELECT 'global', 0, 'mistral', 'intermediate_b1', 'vocational', 'semi_formal'
+        WHERE NOT EXISTS (
+            SELECT 1 FROM $settings_table WHERE `scope_type` = 'global' AND `scope_id` = 0
+        );");
+    $message .= "Ensuring global AI settings - ok ? " . ($ok ? 'true' : 'false') . "<br>";
+
+    // upgrade_57 stored the display label, but the UI and editor use vendor keys.
+    $ok = _upgrade_db_query("UPDATE $settings_table
+        SET `ai_model` = 'mistral'
+        WHERE `ai_model` = 'Mistral AI';");
+    $message .= "Normalising legacy global AI model value - ok ? " . ($ok ? 'true' : 'false') . "<br>";
+
+    $options_table = table_by_key('ai_settings_options');
+    if (!_table_exists('ai_settings_options')) {
+        $ok = _upgrade_db_query("CREATE TABLE IF NOT EXISTS $options_table (
+            `id` BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
+            `setting_key` VARCHAR(64) NOT NULL,
+            `option_values` TEXT DEFAULT NULL,
+            PRIMARY KEY (`id`),
+            UNIQUE KEY `uniq_setting_key` (`setting_key`)
+        ) DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;");
+        $message .= "Creating ai_settings_options table - ok ? " . ($ok ? 'true' : 'false') . "<br>";
+    }
+
+    $ok = _upgrade_db_query("INSERT INTO $options_table (`setting_key`, `option_values`)
+        SELECT defaults.setting_key, defaults.option_values
+        FROM (
+            SELECT 'reading_level' setting_key, 'beginner_a1,beginner_a2,intermediate_b1,intermediate_b2,advanced_c1,advanced_c2' option_values
+            UNION ALL SELECT 'education_level', 'middle_school,high_school,vocational,bachelors,university,masters,phd'
+            UNION ALL SELECT 'tone_and_style', 'formal,semi_formal,informal,active,passive'
+        ) defaults
+        WHERE NOT EXISTS (
+            SELECT 1 FROM $options_table existing
+            WHERE existing.setting_key = defaults.setting_key
+        );");
+    $message .= "Adding missing AI setting options - ok ? " . ($ok ? 'true' : 'false') . "<br>";
 
     return $message;
 }

@@ -84,12 +84,15 @@ if (is_user_admin()) {
 
     foreach ($blocks_groups as $group) {
         $groupHeader = 'MANAGEMENT_VENDOR_GROUP_'.strtoupper($group);
-        echo "<h2>" . constant($groupHeader) . MANAGEMENT_VENDOR . "</h2>";
+        $groupLabel = defined($groupHeader) ? constant($groupHeader) : ucfirst($group);
+        echo "<h2>" . htmlspecialchars($groupLabel, ENT_QUOTES, 'UTF-8') . MANAGEMENT_VENDOR . "</h2>";
         echo "<div class=\"admin_block\">";
         //generate vendor html
         foreach ($blocks[$group] as $vendor) {
             $vendorHeader = 'MANAGEMENT_VENDOR_' . strtoupper($group) . '_' . strtoupper($vendor->vendor);
-            echo "<h3>" . constant($vendorHeader) . MANAGEMENT_SETTINGS . "</h3>";
+            $vendorLabel = defined($vendorHeader) ? constant($vendorHeader) : $vendor->label;
+            $vendorLabel = htmlspecialchars($vendorLabel, ENT_QUOTES, 'UTF-8');
+            echo "<h3>" . $vendorLabel . MANAGEMENT_SETTINGS . "</h3>";
 
             //verify an api key is installed
             if ($vendor->needs_key && !$vendor->has_key) {
@@ -100,7 +103,7 @@ if (is_user_admin()) {
             $compound = $vendor->type . "_" . $vendor->vendor;
 
             $id = $compound. "_enabled";
-            echo "<p>" . MANAGEMENT_ENABLE_VENDOR . constant($vendorHeader) .
+            echo "<p>" . MANAGEMENT_ENABLE_VENDOR . $vendorLabel .
                 "<form><input type=\"checkbox\" id=\"" . $id . "\" name=\"" . $id . "\" " . ($vendor->enabled ? " checked" : "") . "/></form></p>";
 
             // Saved preferred model
@@ -154,7 +157,7 @@ if (is_user_admin()) {
             //next vendor if current has no sub options
             if ($vendor->has_no_sub_options() ) { continue; }
 
-            echo "<p>" . MANAGEMENT_ENABLE_SUBOPTIONS . constant($vendorHeader). "<form>";
+            echo "<p>" . MANAGEMENT_ENABLE_SUBOPTIONS . $vendorLabel . "<form>";
 
             //generate sub options html
             foreach ($vendor->sub_options as $sub_option=>$value) {
