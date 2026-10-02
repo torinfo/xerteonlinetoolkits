@@ -205,7 +205,7 @@ const xerteDefaultConfig = {
 	},
 	toolbar: {
 		items: toolbarItems,
-		shouldNotGroupWhenFull: true
+		shouldNotGroupWhenFull: false
 	},
 	heading: {
 		options: [
