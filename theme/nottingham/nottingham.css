@@ -1,3 +1,99 @@
 /**
  * Nottingham toolkits UI theme — optional overrides (classic layout uses frontpage.css).
  */
+
+/*
+ * The interface-theme choice is the only field added to the upstream 3.16
+ * preferences dialog. Keep its presentation local to Nottingham so the rest
+ * of the classic modal continues to use frontpage.css unchanged.
+ */
+body.toolkits-ui-theme-nottingham .preferences-modal label[for="toolkits_ui_theme"] {
+    display: block;
+    margin: 0 0 8px;
+    color: #222;
+    font-size: 1rem;
+    font-weight: 400;
+    line-height: 1.4;
+}
+
+body.toolkits-ui-theme-nottingham .preferences-modal #toolkits_ui_theme {
+    display: block;
+    width: 100%;
+    min-height: 42px;
+    box-sizing: border-box;
+    margin: 0;
+    padding: 8px 38px 8px 12px;
+    border: 1px solid #c8c8c8;
+    border-radius: 4px;
+    background-color: #fff;
+    color: #222;
+    font: inherit;
+    line-height: 1.4;
+}
+
+body.toolkits-ui-theme-nottingham .preferences-modal #toolkits_ui_theme:hover {
+    border-color: #999;
+}
+
+body.toolkits-ui-theme-nottingham .preferences-modal #toolkits_ui_theme:focus {
+    border-color: #f86718;
+    outline: 2px solid #f86718;
+    outline-offset: 1px;
+}
+
+/* Keep long preference forms usable on short and narrow screens. */
+body.toolkits-ui-theme-nottingham .preferences-dialog.ui-dialog {
+    width: min(560px, calc(100vw - 32px)) !important;
+    max-width: calc(100vw - 32px);
+    max-height: calc(100vh - 32px);
+}
+
+body.toolkits-ui-theme-nottingham .preferences-dialog .ui-dialog-content {
+    max-height: calc(100vh - 32px) !important;
+    overflow: hidden;
+}
+
+body.toolkits-ui-theme-nottingham .preferences-dialog .preferences-modal {
+    display: flex;
+    flex-direction: column;
+    max-height: calc(100vh - 32px);
+    min-height: 0;
+}
+
+body.toolkits-ui-theme-nottingham .preferences-dialog .preferences-modal-header,
+body.toolkits-ui-theme-nottingham .preferences-dialog .preferences-modal-footer {
+    flex: 0 0 auto;
+}
+
+body.toolkits-ui-theme-nottingham .preferences-dialog .preferences-modal-body {
+    flex: 1 1 auto;
+    min-height: 0;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    scrollbar-gutter: stable;
+}
+
+@media (max-width: 600px), (max-height: 620px) {
+    body.toolkits-ui-theme-nottingham .preferences-dialog.ui-dialog,
+    body.toolkits-ui-theme-nottingham .preferences-dialog .ui-dialog-content,
+    body.toolkits-ui-theme-nottingham .preferences-dialog .preferences-modal {
+        max-height: calc(100vh - 16px) !important;
+    }
+
+    body.toolkits-ui-theme-nottingham .preferences-dialog.ui-dialog {
+        width: calc(100vw - 16px) !important;
+        max-width: calc(100vw - 16px);
+    }
+
+    body.toolkits-ui-theme-nottingham .preferences-dialog .preferences-modal-header {
+        padding: 20px 20px 0;
+    }
+
+    body.toolkits-ui-theme-nottingham .preferences-dialog .preferences-modal-body {
+        padding: 18px 20px 6px;
+    }
+
+    body.toolkits-ui-theme-nottingham .preferences-dialog .preferences-modal-footer {
+        padding: 16px 20px 20px;
+    }
+}
