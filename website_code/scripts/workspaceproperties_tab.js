@@ -38,7 +38,7 @@
 
 function workspace_ajax_send_prepare(url){
 
-	console.warn('workspace_ajax_send_prepare is obsolete');
+	// Debug: console.warn('workspace_ajax_send_prepare is obsolete');
 }
 
 function workspacePropsApiBase() {

@@ -1280,7 +1280,7 @@ var EDITOR = (function ($, parent) {
                 $('#optionalParams').append(html);
             }
 
-            // Modern theme: replace plus-buttons with toggle preference cards
+            // Modern editor replaces the legacy add buttons with preference toggles.
             if (typeof window.modernEditorRenderOptionalPrefs === 'function') {
                 window.modernEditorRenderOptionalPrefs({
                     key: key,
@@ -1954,7 +1954,7 @@ var EDITOR = (function ($, parent) {
                 var tree = $.jstree.reference("#treeview");
                 // Show wait icon
                 $('body').css("cursor", "wait");
-                console.log("Start Quick Fill process, please wait...");
+                // Debug: console.log("Start Quick Fill process, please wait...");
                 var apiBase = (typeof rest_api_url !== 'undefined' && rest_api_url) ? rest_api_url : 'website_code/api/v1/index.php';
                 $.ajax({
                     url: apiBase + "?route=editor/quickfill",
@@ -1967,8 +1967,12 @@ var EDITOR = (function ($, parent) {
                     success: function(resp) {
                         var payload = (resp && resp.ok === true && resp.data) ? resp.data : resp;
                         try {
-                            xml_to_xerte_content(data, event.data.key, 'last', tree, parent);
+                            // xml_to_xerte_content still has the legacy Quick Fill setup/contract:
+                            // a JSON string containing { status, result }. jQuery has
+                            // already decoded the REST response, so re-encode its payload.
+                            xml_to_xerte_content(JSON.stringify(payload), event.data.key, 'last', tree, parent);
                             $.featherlight.close();
+                            resolve(payload);
                         } catch (error) {
                             console.log('Error occurred in success callback:', error);
                             reject(error);
@@ -1977,6 +1981,7 @@ var EDITOR = (function ($, parent) {
                     error: function(jqXHR, textStatus, errorThrown) {
                         // Handle any errors from the AJAX request and reject the promise
                         console.error("AJAX request failed:", textStatus, errorThrown);
+                        $('body').css("cursor", "default");
                         reject(new Error(`AJAX error: ${textStatus}`)); // Reject with an error
                     }
                 });
@@ -2177,7 +2182,7 @@ img_search_and_help = function(query, api, url, interpretPrompt, overrideSetting
             complete: function() {
                 // This function runs after the AJAX request completes (whether success or error)
                 $('body').css("cursor", "default");
-                console.log("Image API request completed.");
+                // Debug: console.log("Image API request completed.");
             }
         });
         },

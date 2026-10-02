@@ -189,8 +189,8 @@ $(document).ready(function() {
     }
     else {
 		var now = new Date().getTime();
-    	var apiBase = (typeof rest_api_url !== 'undefined' && rest_api_url) ? rest_api_url : 'website_code/api/v1/index.php';
-    	let url = apiBase + "?route=preview-xml&file=" + encodeURIComponent(x_projectXML) + "&time=" + now;
+		var apiBase = (typeof rest_api_url !== 'undefined' && rest_api_url) ? rest_api_url : 'website_code/api/v1/index.php';
+		let url = apiBase + "?route=preview-xml&file=" + encodeURIComponent(x_projectXML) + "&time=" + now;
     	if (typeof use_url !== "undefined" && use_url)
 		{
 			url = x_projectXML + "?time=" + now;

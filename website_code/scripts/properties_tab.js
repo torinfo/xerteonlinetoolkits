@@ -64,9 +64,6 @@ function propertiesApiPost(route, data, onOk, onFail) {
 		var msg = 'Request failed';
 		try {
 			var j = xhr.responseJSON;
-			if (!j && xhr.responseText) {
-				j = JSON.parse(xhr.responseText);
-			}
 			if (j && j.error && j.error.message) msg = j.error.message;
 		} catch (e) {}
 		if (onFail) onFail(null); else alert(msg);
@@ -469,7 +466,7 @@ function renderLtiPanel(d) {
 }
 
 function properties_ajax_send_prepare(url){
-	console.warn('properties_ajax_send_prepare is obsolete');
+	// Debug: console.warn('properties_ajax_send_prepare is obsolete');
 }
 
 function properties_stateChanged(response, tabId){

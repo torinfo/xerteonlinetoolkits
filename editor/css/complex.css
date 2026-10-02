@@ -1258,8 +1258,6 @@ div#bottom_buttons .xerte-icon,  div#top_buttons .xerte-icon {cursor: pointer;}
 div.wizardvalue_inner {
 /*	width: 95%*/
 	margin-right: 2em;
-	min-width: 0;
-	max-width: 100%;
 }
 
 .wizardgroup_table div.wizardvalue_inner {

@@ -2876,7 +2876,7 @@ var EDITOR = (function ($, parent) {
 
     changeLanguage = function(id, key, name, value, obj)
     {
-        if (value === language.$code)
+        if (value == language.$code)
         {
             // The same language is chosen as the selected XOT language
             // Do we want to replace all the language options with the default
@@ -8070,6 +8070,7 @@ var EDITOR = (function ($, parent) {
     my.showToolBar = showToolBar;
     my.getIcon = getIcon;
     my.insertOptionalProperty = insertOptionalProperty;
+    // Required by the modern editor's optional-property preference toggles.
     my.removeOptionalProperty = removeOptionalProperty;
     my.getPageList = getPageList;
     my.hideInlineEditor = hideInlineEditor;

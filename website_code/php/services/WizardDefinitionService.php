@@ -57,12 +57,8 @@ function wizard_evaluate_condition_expression($ctree)
  */
 function wizard_get_merged_xwd_xml($xwd_path)
 {
-    $lang = isset($_SESSION['toolkits_language']) && $_SESSION['toolkits_language'] !== ''
-        ? $_SESSION['toolkits_language']
-        : 'en-GB';
-
-    if (file_exists($xwd_path . "wizards/" . $lang . "/data.xwd")) {
-        $xwd_file_path = $xwd_path . "wizards/" . $lang . "/data.xwd";
+    if (file_exists($xwd_path . "wizards/" . $_SESSION['toolkits_language'] . "/data.xwd")) {
+        $xwd_file_path = $xwd_path . "wizards/" . $_SESSION['toolkits_language'] . "/data.xwd";
     } else if (file_exists($xwd_path . "wizards/en-GB/data.xwd")) {
         $xwd_file_path = $xwd_path . "wizards/en-GB/data.xwd";
     } else if (file_exists($xwd_path . "data.xwd")) {
@@ -72,8 +68,8 @@ function wizard_get_merged_xwd_xml($xwd_path)
     }
 
     $plugin_path = "";
-    if (file_exists($xwd_path . "wizards/plugins/" . $lang)) {
-        $plugin_path = $xwd_path . "wizards/plugins/" . $lang;
+    if (file_exists($xwd_path . "wizards/plugins/" . $_SESSION['toolkits_language'])) {
+        $plugin_path = $xwd_path . "wizards/plugins/" . $_SESSION['toolkits_language'];
     } else if (file_exists($xwd_path . "wizards/plugins/en-GB")) {
         $plugin_path = $xwd_path . "wizards/plugins/en-GB";
     }
