@@ -41,6 +41,15 @@
   /* Panels */
   --theme-panel-background: #ebebeb;
 
+  /*Drag and Drop label*/
+  --theme-label-panel-background: #007700;
+  --theme-label-panel-border: #00ffb3;
+
+  /*Thumbnail*/
+  --theme-thumbnail-selected-border: #ffff00;
+  --theme-thumbnail-next-button-hover: #dfdfdf;
+
+
   /* Buttons */
   --theme-button-background: var(--theme-secondary);
   --theme-button-text: #000000;
@@ -208,12 +217,12 @@ body:not(.sb_right):not(.sb_left) #x_headerBlock {
 }
 
 .x_imageSequence_page #seriesHolder .thumbs.selected {
-  background-color: var(--theme-accent);
+  background-color: var(--theme-thumbnail-selected-border);
 }
 
 .x_perspectives_page #thumbHolder .thumbBox.selected, .x_perspectives_page #thumbHolder .thumbBox.current,
 .x_thumbnailViewer_page #thumbHolder .thumbBox.selected, .x_thumbnailViewer_page #thumbHolder .thumbBox.current {
-  border-color: var(--theme-accent);
+  border-color: var(--theme-thumbnail-selected-border);
 }
 
 .x_imageSequence_page #seriesHolder .thumbs.highlighted,
@@ -592,11 +601,11 @@ body:not(.sb_right):not(.sb_left) #x_headerBlock {
 .x_dragDropLabel_page .label.panel,
 .x_gapFill_page #labelHolder .label.panel,
 .x_timeline_page .label.panel.ui-draggable {
-  background: var(--theme-background);
-  border: solid var(--theme-secondary);
-  -webkit-box-shadow: 0 10px 6px -6px var(--theme-secondary);
-  -moz-box-shadow: 0 10px 6px -6px var(--theme-secondary);
-  box-shadow: 0 10px 6px -6px var(--theme-secondary);
+  background: var(--theme-label-panel-background);
+  border: solid var(--theme-label-panel-border);
+  -webkit-box-shadow: 0 10px 6px -6px var(--theme-label-panel-border);
+  -moz-box-shadow: 0 10px 6px -6px var(--theme-label-panel-border);
+  box-shadow: 0 10px 6px -6px var(--theme-label-panel-border);
 }
 
 .x_gapFill_page #labelHolder .label.panel.selected {
