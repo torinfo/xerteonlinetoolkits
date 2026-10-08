@@ -15051,7 +15051,7 @@
         <thumbSrc label="Image" type="media" defaultValue="" placeholder="Select an image" optional="true"/>
         <thumbTooltip label="Description" type="TextInput" defaultValue="" placeholder="Enter a description for accessibility" optional="true"/>
     </thumbnail>
-	
+
 	<linkInfo type="group" label="Page Link" optional="true" tooltip="Include a Xerte page link after the text for this item">
 		<pageLink label="Page" type="pageList" optional="true"/>
 		<pageLinkTxt label="Text" type="textInput" wysiwyg="true" defaultValue="" tooltip="By default, the page title will be used as the page link text. Any text entered here will be used instead." optional="true"/>
@@ -18123,7 +18123,7 @@
 	  <feedback label="Text" type="TextArea" height="100" defaultValue="" placeholder="Enter feedback here" mandatory="true"/>
 	  <feedbackPos label="Position" type="combobox" options="Panel 1,Panel 2,Lightbox" data="panelA,panelB,lightbox" conditionTrigger="true" defaultValue="panelB" mandatory="true" tooltip="The position of the feedback text on the screen"/>
 	</feedbackGroup>
-	
+
 	<notesGroup type="group" label="Notes Area" condition="mode=='Notes'" tooltip="This text area is only shown when in note taking mode">
 	  <notesTitle label="Title" type="TextInput" wysiwyg="true" condition="mode=='Notes'" tooltip="Title to appear on tab and in downloaded document"/>
 	  <notesPos label="Position" type="combobox" options="Panel 1,Panel 2" data="panelA,panelB" condition="mode=='Notes'" tooltip="The position of the notes text on the screen"/>
@@ -18204,7 +18204,6 @@
   	<responseHeaderTxt label="Highlight Response Text" type="TextInput" wysiwyg="true" language="true" mandatory="true" defaultValue="Your response:"/>
   	<notesHeaderTxt label="Notes Response Text" type="TextInput" wysiwyg="true" language="true" mandatory="true" defaultValue="Your notes:"/>
   	<noAnswerHeaderTxt label="No Answer Text" type="TextInput" wysiwyg="true" language="true" mandatory="true" defaultValue="No response submitted"/>
-	
   <resources label="Resource files / links" type="DataGrid" gridTxt="Resources can be URLs, uploaded files or other pages within this resource.&lt;br/&gt;Either enter a URL / upload a file to the resource field or select a page from the Xerte page link drop down menu." columns="4" colWidths="20,15,15,50" editable="1,1,1,1" cellType="textInput,media,pageList,textArea" wysiwyg="false,false,false,true" controls="1" headers="Title,Resource,Xerte Page Link,Description" newRow=",,," defaultValue="|" optional="true" tooltip="A list of additional resources related to the page content" common="true"/><narrate type="group" label="Narration" optional="true" tooltip="Add an audio player to the bottom of the page" common="true">
 		<narration label="Audio File" type="media" defaultValue="" placeholder="Select an audio file" optional="true" enableImgSHTool="false"/>
 		<narrationTranscript label="Transcript" type="textArea" height="100" defaultValue="" optional="true" tooltip="A transcript button will be added to the audio bar when transcript text is included"/>    
