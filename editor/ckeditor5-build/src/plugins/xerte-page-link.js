@@ -6,6 +6,8 @@
 import { Plugin } from '@ckeditor/ckeditor5-core';
 import { ButtonView, MenuBarMenuListItemButtonView } from '@ckeditor/ckeditor5-ui';
 import { IconLink } from 'ckeditor5/src/icons.js';
+import { findAttributeRange } from 'ckeditor5/src/typing.js';
+import { parseXertePageId } from './xerte-page-link-utils.js';
 
 function escapeHtml( value ) {
 	return String( value )
@@ -40,7 +42,19 @@ function normalizePageItems( items ) {
 	return out;
 }
 
-function choosePageFromModal( pages ) {
+function getSelectedXertePageLink( editor ) {
+	const selection = editor.model.document.selection;
+	const htmlA = selection.getAttribute( 'htmlA' );
+	const id = parseXertePageId( htmlA && htmlA.attributes && htmlA.attributes.onclick );
+	const position = selection.getFirstPosition();
+	if ( !id || !position ) {
+		return null;
+	}
+	const range = findAttributeRange( position, 'htmlA', htmlA, editor.model );
+	return range.isCollapsed ? null : { id, range };
+}
+
+function choosePageFromModal( pages, currentPageId = null, t = value => value ) {
 	return new Promise( resolve => {
 		const overlay = document.createElement( 'div' );
 		overlay.style.position = 'fixed';
@@ -67,7 +81,7 @@ function choosePageFromModal( pages ) {
 		modal.style.color = '#111827';
 
 		const title = document.createElement( 'div' );
-		title.textContent = 'Xerte Page Link';
+		title.textContent = t( 'Xerte Page Link' );
 		title.style.fontWeight = '700';
 		title.style.fontSize = '17px';
 		title.style.letterSpacing = '0.2px';
@@ -75,14 +89,14 @@ function choosePageFromModal( pages ) {
 		modal.appendChild( title );
 
 		const subtitle = document.createElement( 'div' );
-		subtitle.textContent = 'Select a page to link to.';
+		subtitle.textContent = t( 'Select a page to link to.' );
 		subtitle.style.fontSize = '13px';
 		subtitle.style.color = '#6b7280';
 		subtitle.style.marginBottom = '14px';
 		modal.appendChild( subtitle );
 
 		const label = document.createElement( 'label' );
-		label.textContent = 'Choose a page';
+		label.textContent = t( 'Choose a page' );
 		label.style.display = 'block';
 		label.style.marginBottom = '8px';
 		label.style.fontSize = '13px';
@@ -106,6 +120,9 @@ function choosePageFromModal( pages ) {
 			option.textContent = page.label;
 			select.appendChild( option );
 		}
+		if ( currentPageId && pages.some( page => page.id === currentPageId ) ) {
+			select.value = currentPageId;
+		}
 		modal.appendChild( select );
 
 		const buttonRow = document.createElement( 'div' );
@@ -115,7 +132,7 @@ function choosePageFromModal( pages ) {
 
 		const cancelBtn = document.createElement( 'button' );
 		cancelBtn.type = 'button';
-		cancelBtn.textContent = 'Cancel';
+		cancelBtn.textContent = t( 'Cancel' );
 		cancelBtn.style.padding = '9px 14px';
 		cancelBtn.style.borderRadius = '8px';
 		cancelBtn.style.border = '1px solid #d1d5db';
@@ -127,7 +144,7 @@ function choosePageFromModal( pages ) {
 
 		const okBtn = document.createElement( 'button' );
 		okBtn.type = 'button';
-		okBtn.textContent = 'OK';
+		okBtn.textContent = t( 'OK' );
 		okBtn.style.padding = '9px 14px';
 		okBtn.style.borderRadius = '8px';
 		okBtn.style.border = '1px solid #2563eb';
@@ -203,14 +220,34 @@ function choosePageFromModal( pages ) {
 	} );
 }
 
-export async function runXertePageLink( editor ) {
+export async function runXertePageLink( editor, existingLink = null ) {
 	const pages = normalizePageItems( getPageItems() );
-	const pageId = await choosePageFromModal( pages );
+	const pageId = await choosePageFromModal( pages, existingLink && existingLink.id, editor.t );
 	if ( !pageId ) {
 		return;
 	}
 	const trimmedId = String( pageId ).trim();
 	if ( !trimmedId ) {
+		return;
+	}
+	if ( existingLink && existingLink.range ) {
+		const onclick = `x_navigateToPage(false,{type:'linkID',ID:'${ trimmedId.replace( /['\\]/g, '\\$&' ) }'}); return false;`;
+		editor.model.change( writer => {
+			const items = Array.from( existingLink.range.getItems() );
+			for ( const item of items ) {
+				if ( !item.is( '$textProxy' ) ) {
+					continue;
+				}
+				const htmlA = item.getAttribute( 'htmlA' ) || {};
+				writer.setAttribute( 'htmlA', {
+					...htmlA,
+					attributes: { ...htmlA.attributes, onclick }
+				}, writer.createRange(
+					writer.createPositionAt( item.parent, item.startOffset ),
+					writer.createPositionAt( item.parent, item.endOffset )
+				) );
+			}
+		} );
 		return;
 	}
 
@@ -236,7 +273,7 @@ export async function runXertePageLink( editor ) {
 function createXertePageLinkButton( editor, ButtonClass, locale ) {
 	const view = new ButtonClass( locale );
 	const buttonProps = {
-		label: 'Xerte Page Link',
+		label: editor.t( 'Xerte Page Link' ),
 		icon: IconLink
 	};
 
@@ -262,6 +299,63 @@ export class XertePageLink extends Plugin {
 
 	init() {
 		const editor = this.editor;
+		const linkCommand = editor.commands.get( 'link' );
+		const model = editor.model;
+
+		// Changing a page link's URL converts it to an ordinary link. Otherwise its
+		// legacy onclick handler would keep navigating to the old Xerte page.
+		model.document.registerPostFixer( writer => {
+			let changed = false;
+			for ( const change of model.document.differ.getChanges() ) {
+				if ( change.type !== 'attribute' || change.attributeKey !== 'linkHref' ||
+					change.attributeNewValue === '#' || change.attributeNewValue === null ) {
+					continue;
+				}
+				for ( const item of Array.from( change.range.getItems() ) ) {
+					if ( !item.is( '$textProxy' ) ) {
+						continue;
+					}
+					const htmlA = item.getAttribute( 'htmlA' );
+					if ( !htmlA || !parseXertePageId( htmlA.attributes && htmlA.attributes.onclick ) ) {
+						continue;
+					}
+					const attributes = { ...htmlA.attributes };
+					delete attributes.onclick;
+					const range = writer.createRange(
+						writer.createPositionAt( item.parent, item.startOffset ),
+						writer.createPositionAt( item.parent, item.endOffset )
+					);
+					if ( Object.keys( attributes ).length || htmlA.classes || htmlA.styles ) {
+						writer.setAttribute( 'htmlA', { ...htmlA, attributes }, range );
+					} else {
+						writer.removeAttribute( 'htmlA', range );
+					}
+					changed = true;
+				}
+			}
+			return changed;
+		} );
+
+		// The built-in pencil/edit function still edits the URL; this button edits the Xerte page target so that a new page link doesn't have to be added each time it needs to be changed.
+		editor.ui.componentFactory.add( 'xerteEditPageLink', locale => {
+			const view = new ButtonView( locale );
+			view.set( { label: editor.t( 'Change Xerte page' ), icon: IconLink, tooltip: true } );
+			const update = () => {
+				view.isVisible = !!getSelectedXertePageLink( editor );
+				view.isEnabled = view.isVisible && linkCommand.isEnabled;
+			};
+			view.listenTo( editor.model.document.selection, 'change:range', update );
+			view.listenTo( editor.model.document.selection, 'change:attribute', update );
+			view.listenTo( linkCommand, 'change:isEnabled', update );
+			view.on( 'execute', () => {
+				const existingLink = getSelectedXertePageLink( editor );
+				if ( existingLink ) {
+					runXertePageLink( editor, existingLink );
+				}
+			} );
+			update();
+			return view;
+		} );
 
 		editor.ui.componentFactory.add( 'xotlink', locale => {
 			return createXertePageLinkButton( editor, ButtonView, locale );
