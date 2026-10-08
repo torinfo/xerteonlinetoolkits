@@ -514,7 +514,6 @@ fieldset.noStyle legend {
 
 #x_pageDiv table,
 table#x_resourceTable {
-	text-align:			left;
 	border-collapse:	collapse;
 }
 
@@ -1057,6 +1056,47 @@ textarea {
 
 figure {
 	margin: 0;
+}
+
+/* Render CKEditor 5 image styles outside the editor. */
+figure.image {
+	display: table;
+	clear: both;
+	text-align: center;
+	margin: .9em auto;
+	min-width: 50px;
+}
+
+figure.image img {
+	display: block;
+	margin: 0 auto;
+	max-width: 100%;
+	min-width: 100%;
+	height: auto;
+}
+
+figure.image.image_resized {
+	max-width: 100%;
+	display: block;
+	box-sizing: border-box;
+}
+
+figure.image.image_resized img {
+	width: 100%;
+}
+
+img.image-inline {
+	max-width: 100%;
+}
+
+img.image_resized {
+	height: auto;
+}
+
+figure.image.image-style-side {
+	float: right;
+	margin-left: 1.5em;
+	max-width: 50%;
 }
 
 figcaption {

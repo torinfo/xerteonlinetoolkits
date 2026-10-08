@@ -48,6 +48,8 @@ import { XerteBrowseMedia } from './plugins/xerte-browse-media.js';
 import { XerteMathJaxSnippet } from './plugins/xerte-mathjax-snippet.js';
 import { XertePageLink } from './plugins/xerte-page-link.js';
 import { XerteMarkWord } from './plugins/xerte-mark-word.js';
+import { XerteContextMenu } from './plugins/xerte-context-menu.js';
+import { XerteFontAwesome } from './plugins/xerte-fontawesome.js';
 
 const toolbarItems = [
 	'undo', 'redo', '|',
@@ -56,7 +58,7 @@ const toolbarItems = [
 	'heading', '|',
 	'fontSize', 'fontFamily', 'fontColor', 'fontBackgroundColor', '|',
 	'bold', 'italic', 'underline', 'strikethrough', 'subscript', 'superscript', 'code', 'removeFormat', '|',
-	'specialCharacters', 'horizontalLine', 'xerteMathJax', '|',
+	'specialCharacters', 'fontAwesome', 'horizontalLine', 'xerteMathJax', '|',
 	'link', 'xotlink', 'insertImage', 'xerteBrowseMedia', 'mediaEmbed', 'insertTable', 'blockQuote', 'codeBlock', '|',
 	'alignment', '|',
 	'bulletedList', 'numberedList', 'outdent', 'indent', '|',
@@ -141,7 +143,9 @@ const xerteBuiltinPlugins = [
 	XerteBrowseMedia,
 	XerteMathJaxSnippet,
 	XertePageLink,
-	XerteMarkWord
+	XerteMarkWord,
+	XerteContextMenu,
+	XerteFontAwesome
 ];
 
 const xerteDefaultConfig = {
@@ -151,7 +155,7 @@ const xerteDefaultConfig = {
 	},
 	toolbar: {
 		items: toolbarItems,
-		shouldNotGroupWhenFull: false
+		shouldNotGroupWhenFull: true
 	},
 	image: {
 		toolbar: imageToolbar

@@ -47,6 +47,7 @@ Version 1.0
     <script type="text/javascript" language="javascript">
 
     var site_url = "<?php echo $xerte_toolkits_site->site_url;  ?>";
+    var rest_api_url = "<?php echo $xerte_toolkits_site->site_url; ?>website_code/api/v1/index.php";
     var properties_ajax_php_path = "website_code/php/properties/";
     var management_ajax_php_path = "website_code/php/management/";
     var ajax_php_path = "website_code/php/";

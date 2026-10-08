@@ -280,6 +280,8 @@ function output_editor_code($row_edit, $xerte_toolkits_site, $read_status, $vers
     } else {
         $lti_session = "";
     }
+    $base_ai_options = get_ai_base_settings_options();
+    $base_ai_defaults = get_ai_base_settings_defaults();
 
     $vendors = get_vendor_settings();
     $corpus_upload_types = array();
@@ -467,6 +469,7 @@ function output_editor_code($row_edit, $xerte_toolkits_site, $read_status, $vers
     echo "var editorlanguagefile=\"" . getWizardfile($_SESSION['toolkits_language']) . "\";\n";
     echo "var originalpathvariable=\"" . $xwd_url . "\";\n";
     echo "var xwd_file_url=\"" . $xwd_file_url . "\";\n";
+    echo "var wizard_xwd_use_rest_api=true;\n";
     echo "var moduleurlvariable=\"" . $module_url . "\";\n";
     echo "var template_id=\"" . $row_edit['template_id'] . "\";\n";
     echo "var template_height=\"" . $temp[1] . "\";\n";
@@ -476,6 +479,7 @@ function output_editor_code($row_edit, $xerte_toolkits_site, $read_status, $vers
     echo "var upload_path=\"" . $xerte_toolkits_site->flash_upload_path . "\";\n";
     echo "var preview_path=\"" . $xerte_toolkits_site->flash_preview_check_path . "\";\n";
     echo "var site_url=\"" . $xerte_toolkits_site->site_url . "\";\n";
+    echo "var rest_api_url=\"" . $xerte_toolkits_site->site_url . "website_code/api/v1/index.php\";\n";
     echo "var simple_mode=" . ($simple_mode ? "true" : "false") . ";\n";
     echo "var template_sub_pages=" . json_encode($template_sub_pages) . ";\n";
     echo "var simple_lo_page=" . ($simple_lo_page ? "true" : "false") . ";\n";
@@ -503,6 +507,8 @@ function output_editor_code($row_edit, $xerte_toolkits_site, $read_status, $vers
     echo "var preview_url=\"" . $preview_url . "\";\n";
     echo "var lti_session=\"" . $lti_session . "\";\n";
     echo "var vendor_options=" . json_encode($vendors) . ";\n";
+    echo "var base_ai_options=" . json_encode($base_ai_options) . ";\n";
+    echo "var base_ai_defaults=" . json_encode($base_ai_defaults) . ";\n";
     echo "var corpus_upload_types=" . json_encode($corpus_upload_types) . ";\n";
     echo "var management_helper_table=" . json_encode($xerte_toolkits_site->management_helper_table) . ";\n";
 

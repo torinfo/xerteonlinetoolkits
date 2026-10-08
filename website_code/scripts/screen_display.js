@@ -550,13 +550,13 @@ function setupMainLayout()
                 closable:               true,
                 // Save south pane (bottom) open/closed state in user preferences
                 onclose_end: function () {
-                    console.log("South pane closed via layout");
+                    // Debug: console.log("South pane closed via layout");
                     if (typeof save_user_preference === 'function') {
                         save_user_preference('panel_south_open', false);
                     }
                 },
                 onopen_end: function () {
-                    console.log("South pane opened via layout");
+                    // Debug: console.log("South pane opened via layout");
                     if (typeof save_user_preference === 'function') {
                         save_user_preference('panel_south_open', true);
                     }
@@ -638,13 +638,13 @@ function setupMainLayout()
                 resizable:              true,
                 // Save east pane (right) open/closed state in user preferences
                 onclose_end: function () {
-                    console.log("East pane closed via layout");
+                    // Debug: console.log("East pane closed via layout");
                     if (typeof save_user_preference === 'function') {
                         save_user_preference('panel_east_open', false);
                     }
                 },
                 onopen_end: function () {
-                    console.log("East pane opened via layout");
+                    // Debug: console.log("East pane opened via layout");
                     if (typeof save_user_preference === 'function') {
                         save_user_preference('panel_east_open', true);
                     }
@@ -672,7 +672,7 @@ function setupMainLayout()
             }
         };
 
-    console.log("Setting up MainLayout...");
+    // Debug: console.log("Setting up MainLayout...");
 
     xertemain_layout = $("body").layout( xertemain_layout_settings );
     xerteinner_layout = $("#pagecontainer").layout( xerteinner_layout_settings);
@@ -846,8 +846,8 @@ function init_workspace()
         this.text = this.text.replace(/_/g, ' ');
     });
 
-    console.log(node_types);
-    console.log(workspace.items);
+    // Debug: console.log(node_types);
+    // Debug: console.log(workspace.items);
     
     var tree = $.jstree.reference("#workspace");
     if (tree)
@@ -871,7 +871,7 @@ function init_workspace()
             },
             "dnd": {
                 "is_draggable" : function(node) {
-                    console.log('is_draggable called: ', node[0]);
+                    // Debug: console.log('is_draggable called: ', node[0]);
                     if (node[0].type.includes("_group") || (node[0].type.includes("folder_shared") && workspace.nodes[node[0].id].role !== "creator")) {
                         return false;
                     }
@@ -899,8 +899,8 @@ function init_workspace()
         .bind('move_node.jstree',function(event,data)
         {
 
-                console.log(event);
-                console.log(data);
+                // Debug: console.log(event);
+                // Debug: console.log(data);
                 copy_to_folder(data);
 
         });

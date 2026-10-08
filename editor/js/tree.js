@@ -80,11 +80,12 @@ var EDITOR = (function ($, parent) {
     {
         var now = new Date().getTime();
         setTimeout(function(){
+            var apiBase = (typeof rest_api_url !== 'undefined' && rest_api_url) ? rest_api_url : 'website_code/api/v1/index.php';
             $.ajax({
                 type: "GET",
-                url: "website_code/php/keepalive.php" + "?t=" + now,
+                url: apiBase + "?route=session/keepalive&t=" + now,
                 dataType: "json",
-                success: function (data) {
+                success: function (resp) {
                     keepalive();
                 }
             })
@@ -426,9 +427,9 @@ var EDITOR = (function ($, parent) {
             }
         }
         var new_tab = clickevent.ctrlKey;
-        upload_url ??= "editor/upload.php";
+        var apiBase = (typeof rest_api_url !== 'undefined' && rest_api_url) ? rest_api_url : 'website_code/api/v1/index.php';
         var ajax_call = $.ajax({
-                url: upload_url,
+                url: apiBase + "?route=learning-objects/save",
                 data: {
                     fileupdate: 0, //0= preview->preview.xml
                     filename: previewxmlurl,
@@ -474,9 +475,9 @@ var EDITOR = (function ($, parent) {
     		return;
     	}
         var json = build_json("treeroot");
-        upload_url ??= "editor/upload.php";
+        var apiBase = (typeof rest_api_url !== 'undefined' && rest_api_url) ? rest_api_url : 'website_code/api/v1/index.php';
         var ajax_call = $.ajax({
-                url: upload_url,
+                url: apiBase + "?route=learning-objects/save",
                 data: {
                     fileupdate: 1, // 1=publish -> data.xml
                     filename: dataxmlurl,
@@ -547,9 +548,9 @@ var EDITOR = (function ($, parent) {
     		return;
     	}
         var json = build_json("treeroot");
-        upload_url ??= "editor/upload.php";
+        var apiBase = (typeof rest_api_url !== 'undefined' && rest_api_url) ? rest_api_url : 'website_code/api/v1/index.php';
         var ajax_call = $.ajax({
-                url: upload_url,
+                url: apiBase + "?route=learning-objects/save",
                 data: {
                     fileupdate: 0, // 1=publish -> data.xml
                     filename: previewxmlurl,
@@ -1237,20 +1238,32 @@ var EDITOR = (function ($, parent) {
                 }
             }
 
-            if (table.find("tr").length > 0) {
-                if (menu_options.menu != undefined) {
-                    var tablerow = $('<tr>')
-                        .append('<td class="optPropTitle">' + menu_options.menuItem + '</td>');
-                    table.prepend(tablerow);
-                }
-                html.append(table);
-            }
+            //Used to make layout optional properties panel top-level title dynamic, since it switches depending on which table(s) are present
+            var optionaltitle = language.optionalPropHTML ? language.optionalPropHTML.$label : "Optional Properties";
+            var assistantTitle = language.optionalAssistantPropHTML && language.optionalAssistantPropHTML.$general ? language.optionalAssistantPropHTML.$general : "Assistants";
 
             if (tableLightbox.find("tr").length > 0) {
-                var tablerow = $('<tr>')
-                    .append('<td class="optPropTitle">' + (language.optionalAssistantPropHTML && language.optionalAssistantPropHTML.$general ? language.optionalAssistantPropHTML.$general : "Assistants") + '</td>');
-                tableLightbox.prepend(tablerow);
+                $("#optional_title").html(assistantTitle);
                 html.append(tableLightbox);
+            } else {
+                $("#optional_title").html(optionaltitle);
+            }
+
+            if (table.find("tr").length > 0) {
+                if (tableLightbox.find("tr").length > 0) {
+                    var optionaltitlerow = $('<tr>')
+                        .append('<td class="optMainTitle">' + (language.optionalPropHTML ? language.optionalPropHTML.$label : "Optional Properties") + '</td>');
+
+                    if (menu_options.menu != undefined) {
+                        var tablerow = $('<tr>')
+                            .append('<td class="optPropTitle">' + menu_options.menuItem + '</td>');
+                        table.prepend(tablerow);
+                    }
+
+                    table.prepend(optionaltitlerow);
+                }
+
+                html.append(table);
             }
 
             if (table2.find("tr").length > 0) {
@@ -1931,18 +1944,25 @@ var EDITOR = (function ($, parent) {
                 var tree = $.jstree.reference("#treeview");
                 // Show wait icon
                 $('body').css("cursor", "wait");
-                console.log("Start Quick Fill process, please wait...");
+                // Debug: console.log("Start Quick Fill process, please wait...");
+                var apiBase = (typeof rest_api_url !== 'undefined' && rest_api_url) ? rest_api_url : 'website_code/api/v1/index.php';
                 $.ajax({
-                    url: "editor/quickfill/quickfillAPI.php",
+                    url: apiBase + "?route=editor/quickfill",
                     type: "POST",
+                    dataType: "json",
                     data: {
                         type: node_type,
                         parameters: parameters,
                     },
-                    success: function(data) {
+                    success: function(resp) {
+                        var payload = (resp && resp.ok === true && resp.data) ? resp.data : resp;
                         try {
-                            xml_to_xerte_content(data, event.data.key, 'last', tree, parent);
+                            // xml_to_xerte_content still has the legacy Quick Fill setup/contract:
+                            // a JSON string containing { status, result }. jQuery has
+                            // already decoded the REST response, so re-encode its payload.
+                            xml_to_xerte_content(JSON.stringify(payload), event.data.key, 'last', tree, parent);
                             $.featherlight.close();
+                            resolve(payload);
                         } catch (error) {
                             console.log('Error occurred in success callback:', error);
                             reject(error);
@@ -1951,6 +1971,7 @@ var EDITOR = (function ($, parent) {
                     error: function(jqXHR, textStatus, errorThrown) {
                         // Handle any errors from the AJAX request and reject the promise
                         console.error("AJAX request failed:", textStatus, errorThrown);
+                        $('body').css("cursor", "default");
                         reject(new Error(`AJAX error: ${textStatus}`)); // Reject with an error
                     }
                 });
@@ -2018,7 +2039,11 @@ img_search_and_help = function(query, api, url, interpretPrompt, overrideSetting
             success: function(data_json) {
 								image_preview.find(".img_search_loading").remove();
 								let header = $("<h1>" + language.imageSelection.title + "</h1>");
-								image_data = JSON.parse(data_json);
+								image_data = typeof data_json === "string" ? JSON.parse(data_json) : data_json;
+								if (image_data.status === "error") {
+									image_preview.text(language.imageSelection.retrievalError || "An error occurred while retrieving image results.");
+									return;
+								}
 								image_preview.append(header);
 								let image_preview_images = $("<div class=\"image_preview_images\"></div>");
 								image_preview.append(image_preview_images);
@@ -2088,7 +2113,8 @@ img_search_and_help = function(query, api, url, interpretPrompt, overrideSetting
                                     let container = $('<div class="img_search_container"></div>');
                                     image_preview_images.append(container);
                                     container.append(select_input).append(label);
-                                    // Enlarge button. Prevent the label/checkbox from toggling on click
+
+                                    //Button to enlarge the image
                                     let enlarge_button = $(
                                         '<button title="' + language.imageSelection.imgEnlargeCornerBtn + '" type="button" class="enlarge_button">' +
                                         '<i class="fa fa-lg fa-search xerte-icon"></i>' +
@@ -2099,6 +2125,29 @@ img_search_and_help = function(query, api, url, interpretPrompt, overrideSetting
                                         $.featherlight({image:image_url});
                                     });
 
+                                    //Button to copy the credits/copyright information for a specific image
+                                    let copy_credits_button = $(
+                                        '<button title="'+ language.imageSelection.imgCopyrightToClipboardBtn +'" type="button" class="copy_credits_button">' +
+                                        '<i class="fa fa-copyright xerte-icon"></i>' +
+                                        '</button>'
+                                    ).on("click", function (e) {
+                                        e.preventDefault();
+                                        e.stopPropagation();
+
+                                        navigator.clipboard.writeText(image_data.credits[i]).then(function () {
+                                            let copied_notice = $('<span class="copied_notice">'+ language.imageSelection.imgCopyrightToClipboardNotice +'</span>');
+
+                                            frame.append(copied_notice);
+
+                                            setTimeout(function () {
+                                                copied_notice.fadeOut(200, function () {
+                                                    $(this).remove();
+                                                });
+                                            }, 1500);
+                                        });
+                                    });
+
+                                    frame.append(copy_credits_button);
                                     frame.append(enlarge_button);
 
 										image.on("load", function () {
@@ -2118,12 +2167,12 @@ img_search_and_help = function(query, api, url, interpretPrompt, overrideSetting
             error: function(xhr, status, error) {
                 console.error("Error retrieving image results:", error);
 								image_preview.find(".img_search_loading").remove();
-								image_preview.text("an error occurred");
+								image_preview.text(language.imageSelection.retrievalError || "An error occurred while retrieving image results.");
             },
             complete: function() {
                 // This function runs after the AJAX request completes (whether success or error)
                 $('body').css("cursor", "default");
-                console.log("Image API request completed.");
+                // Debug: console.log("Image API request completed.");
             }
         });
         },

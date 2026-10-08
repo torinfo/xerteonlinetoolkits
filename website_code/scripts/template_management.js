@@ -31,6 +31,19 @@ if (typeof(String.prototype.trim) === "undefined") {
         return String(this).replace(/^\s+|\s+$/g, '');
     };
 }
+
+function apiV1Url(route) {
+    var base = (typeof rest_api_url !== 'undefined' && rest_api_url) ? rest_api_url : ((typeof site_url !== 'undefined' && site_url) ? (site_url.replace(/\/$/, '') + '/website_code/api/v1/index.php') : 'website_code/api/v1/index.php');
+    return base + '?route=' + encodeURIComponent(route);
+}
+
+function apiUnpack(response) {
+    if (response && response.ok === true && typeof response.data !== 'undefined') {
+        return response.data;
+    }
+    return response;
+}
+
 var active_div = "";
 
 var edit_window_open = new Array();
@@ -593,15 +606,19 @@ function example_window(example_id) {
 
     if (example_id != 0) {
 
+        var apiBase = (typeof rest_api_url !== 'undefined') ? rest_api_url : 'website_code/api/v1/index.php';
         $.ajax({
             type: "POST",
-            url: "website_code/php/properties/screen_size_template.php",
+            url: apiBase + '?route=' + encodeURIComponent('properties/screen-size'),
             data: {
                 tutorial_id: example_id
-            }
+            },
+            dataType: 'json'
         })
-        .done(function (response) {
-            example_stateChanged(response);
+        .done(function (res) {
+            if (res && res.ok && res.data) {
+                example_stateChanged(res.data.width + '~' + res.data.height + '~' + res.data.templateId);
+            }
         });
 
     } else {
@@ -783,14 +800,14 @@ function refresh_workspace() {
     // }
     $.ajax({
         type: "POST",
-        url: "website_code/php/templates/get_templates_sorted.php",
+        url: apiV1Url('workspace/projects-sorted'),
         dataType: 'json',
         data: {
             sort_type: document.sorting.type.value
         }
     })
     .done(function(response){
-        workspace = response;
+        workspace = apiUnpack(response);
         // Clear the project details
         $("#project_information").html("");
         init_workspace();
@@ -806,31 +823,10 @@ function refresh_workspace() {
  * @param {string} value - The preference value
  */
 function save_user_preference(key, value) {
-    console.log("=== save_user_preference FUNCTION CALLED ===");
-    console.log("save_user_preference: key =", key);
-    console.log("save_user_preference: value =", value, "(type:", typeof value, ")");
-    console.log("save_user_preference: user_has_preferences =", typeof user_has_preferences !== 'undefined' ? user_has_preferences : 'undefined');
-    console.log("save_user_preference: user_preferences object =", typeof user_preferences !== 'undefined' ? user_preferences : 'undefined');
-    
     // Only save if user has preferences capability
     if (typeof user_has_preferences !== 'undefined' && user_has_preferences) {
-        console.log("save_user_preference: User has preferences enabled, proceeding with save...");
-        
-        // Use site_url if available, otherwise use relative path
-        var saveUrl = "website_code/php/save_user_preferences.php";
-        if (typeof site_url !== 'undefined' && site_url) {
-            // Remove trailing slash if present and construct full URL
-            var baseUrl = site_url.replace(/\/$/, '');
-            saveUrl = baseUrl + "/website_code/php/save_user_preferences.php";
-            console.log("save_user_preference: Using site_url to construct absolute URL");
-        } else {
-            console.log("save_user_preference: site_url not available, using relative path");
-        }
-        
-        console.log("save_user_preference: Final URL =", saveUrl);
-        console.log("save_user_preference: Making AJAX POST request...");
-        console.log("save_user_preference: Request data =", {key: key, value: value});
-        
+        var saveUrl = apiV1Url('user/preferences');
+
         $.ajax({
             type: "POST",
             url: saveUrl,
@@ -841,38 +837,23 @@ function save_user_preference(key, value) {
             }
         })
         .done(function(response) {
-            console.log("save_user_preference: AJAX request completed successfully");
-            console.log("save_user_preference: Response =", response);
-            if (response && response.success) {
-                console.log("✓✓✓ Preference saved successfully:", key, "=", value);
+            var r = apiUnpack(response);
+            if (r && r.success) {
                 // Update user_preferences object in memory
                 if (typeof user_preferences !== 'undefined') {
                     user_preferences[key] = value;
-                    console.log("save_user_preference: Updated in-memory user_preferences object");
                 }
             } else {
-                console.error("✗✗✗ Failed to save preference. Response:", response);
-                console.error("save_user_preference: Error message:", response ? response.message : "Unknown error");
+                console.error("Failed to save preference:", r && r.message ? r.message : response);
             }
         })
         .fail(function(xhr, status, error) {
-            console.error("✗✗✗ AJAX request FAILED");
-            console.error("save_user_preference: Status =", status);
-            console.error("save_user_preference: Error =", error);
-            console.error("save_user_preference: Response text =", xhr.responseText);
-            console.error("save_user_preference: Request URL =", saveUrl);
-            console.error("save_user_preference: Status code =", xhr.status);
-            console.error("save_user_preference: Full XHR object =", xhr);
+            var message = xhr.responseJSON && xhr.responseJSON.error
+                ? xhr.responseJSON.error.message
+                : error;
+            console.error("Failed to save preference:", message);
         });
-    } else {
-        console.warn("save_user_preference: User preferences NOT available - skipping save");
-        console.warn("save_user_preference: user_has_preferences =", typeof user_has_preferences !== 'undefined' ? user_has_preferences : 'undefined');
-        console.warn("save_user_preference: typeof user_has_preferences =", typeof user_has_preferences);
-        if (typeof user_has_preferences !== 'undefined') {
-            console.warn("save_user_preference: user_has_preferences value =", user_has_preferences, "(type:", typeof user_has_preferences, ")");
-        }
     }
-    console.log("=== save_user_preference FUNCTION END ===");
 }
 
 /**
@@ -881,7 +862,7 @@ function save_user_preference(key, value) {
 function load_user_preferences() {
     // This will be set from PHP session
     if (typeof user_preferences !== 'undefined' && user_preferences) {
-        console.log("Loaded user_preferences:", user_preferences);
+        // Debug: console.log("Loaded user_preferences:", user_preferences);
 
         // Restore sort selector
         if (user_preferences.sort_type) {
@@ -894,7 +875,7 @@ function load_user_preferences() {
         // Restore east (right) panel state
         if (typeof xerteinner_layout !== 'undefined' && user_preferences.hasOwnProperty('panel_east_open')) {
             var eastOpen = user_preferences.panel_east_open;
-            console.log("Restoring panel_east_open:", eastOpen);
+            // Debug: console.log("Restoring panel_east_open:", eastOpen);
             if (eastOpen === false || eastOpen === 'false' || eastOpen === 0 || eastOpen === '0') {
                 xerteinner_layout.close('east');
             } else {
@@ -905,7 +886,7 @@ function load_user_preferences() {
         // Restore south (bottom) panel state
         if (typeof xertemain_layout !== 'undefined' && user_preferences.hasOwnProperty('panel_south_open')) {
             var southOpen = user_preferences.panel_south_open;
-            console.log("Restoring panel_south_open:", southOpen);
+            // Debug: console.log("Restoring panel_south_open:", southOpen);
             if (southOpen === false || southOpen === 'false' || southOpen === 0 || southOpen === '0') {
                 xertemain_layout.close('south');
             } else {
@@ -926,12 +907,13 @@ function getProjectInformation(user_id, template_id) {
     // }
     $.ajax({
         type: "POST",
-        url: "website_code/php/templates/get_template_info.php",
+        url: apiV1Url('templates/info'),
         dataType: 'json',
         data: {user_id: user_id, template_id: template_id},
     })
-    .done(function(info) {
-        document.getElementById('project_information').innerHTML = info.properties;
+    .done(function(response) {
+        var info = apiUnpack(response);
+        document.getElementById('project_information').innerHTML = renderWorkspaceTemplateInfo(info);
         disableReadOnlyButtons(info);
         if (info.fetch_statistics) {
             url = site_url + info.template_id;
@@ -961,6 +943,34 @@ function getProjectInformation(user_id, template_id) {
     {
 
     });
+}
+
+function escapeHtml(s) {
+    if (s === null || s === undefined) return '';
+    return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+}
+
+function renderWorkspaceTemplateInfo(info) {
+    if (!info || !info.panels || !info.panels.project) {
+        return '';
+    }
+    var p = info.panels.project;
+    var h = '<div class="workspace_info">';
+    h += '<h3>' + escapeHtml(p.displayName || '') + '</h3>';
+    h += '<ul class="workspace_info_list">';
+    h += '<li><strong>ID</strong>: ' + escapeHtml(p.templateId) + '</li>';
+    if (p.dateCreated) h += '<li><strong>Created</strong>: ' + escapeHtml(p.dateCreated) + '</li>';
+    if (p.dateModified) h += '<li><strong>Modified</strong>: ' + escapeHtml(p.dateModified) + '</li>';
+    if (p.access) h += '<li><strong>Access</strong>: ' + escapeHtml(p.access) + '</li>';
+    if (p.playUrl) h += '<li><strong>URL</strong>: <a target="_blank" href="' + escapeHtml(p.playUrl) + '">' + escapeHtml(p.playUrl) + '</a></li>';
+    h += '</ul>';
+
+    // Stats placeholder for xAPIDashboard
+    if (info.fetch_statistics) {
+        h += '<div id="graph_' + escapeHtml(info.template_id) + '" class="statistics"><img src="editor/img/loading16.gif"/></div>';
+    }
+    h += '</div>';
+    return h;
 }
 
 function disableReadOnlyButtons(info){
@@ -1002,32 +1012,65 @@ function disableReadOnlyButtons(info){
 function getFolderInformation(user_id, folder_id) {
     $.ajax({
         type: "POST",
-        url: "website_code/php/folders/get_folder_info.php",
+        url: apiV1Url('folders/info'),
         data: {folder_id: folder_id},
         dataType: "json",
-        success: function (info) {
-            document.getElementById('project_information').innerHTML = info.properties;
+        success: function (response) {
+            var info = apiUnpack(response);
+            document.getElementById('project_information').innerHTML = renderWorkspaceFolderInfo(info);
             disableReadOnlyButtons(info);
 
         }
     });
 }
 
+function renderWorkspaceFolderInfo(info) {
+    if (!info) return '';
+    var h = '<div class="workspace_info">';
+    h += '<h3>' + escapeHtml(info.name || '') + '</h3>';
+    h += '<ul class="workspace_info_list">';
+    h += '<li><strong>ID</strong>: ' + escapeHtml(info.folder_id) + '</li>';
+    if (info.date_created) h += '<li><strong>Created</strong>: ' + escapeHtml(info.date_created) + '</li>';
+    if (info.date_modified) h += '<li><strong>Modified</strong>: ' + escapeHtml(info.date_modified) + '</li>';
+    h += '</ul></div>';
+    return h;
+}
+
 function getGroupInformation(user_id, group_name, group_id)
 {
     $.ajax({
         type: "POST",
-        url: "website_code/php/groups/get_group_info.php",
+        url: apiV1Url('groups/info'),
         data: {
             group_name: group_name,
             group_id: group_id
         },
         dataType: "json",
-        success: function (info) {
-            document.getElementById('project_information').innerHTML = info.properties;
+        success: function (response) {
+            var info = apiUnpack(response);
+            document.getElementById('project_information').innerHTML = renderWorkspaceGroupInfo(info);
             disableReadOnlyButtons(info);
         }
     });
+}
+
+function renderWorkspaceGroupInfo(info) {
+    if (!info) return '';
+    var h = '<div class="workspace_info">';
+    h += '<h3>' + escapeHtml(info.group_name || '') + '</h3>';
+    h += '<ul class="workspace_info_list">';
+    h += '<li><strong>ID</strong>: ' + escapeHtml(info.group_id) + '</li>';
+    h += '</ul>';
+    if (info.members && info.members.length) {
+        h += '<h4>Members</h4><ul class="group_members">';
+        for (var i = 0; i < info.members.length; i++) {
+            var m = info.members[i];
+            h += '<li>' + escapeHtml(m.firstname) + ' ' + escapeHtml(m.surname) + ' (' + escapeHtml(m.username) + ')</li>';
+        }
+        h += '</ul>';
+    }
+    h += '</div>';
+    return h;
 }
 
 /**

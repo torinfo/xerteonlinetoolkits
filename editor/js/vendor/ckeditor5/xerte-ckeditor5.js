@@ -94,6 +94,7 @@
 			Superscript: 'superscript',
 			RemoveFormat: 'removeFormat',
 			SpecialChar: 'specialCharacters',
+			FontAwesome: 'fontAwesome',
 			HorizontalRule: 'horizontalLine',
 			Mathjax: 'xerteMathJax',
 			Link: 'link',
@@ -237,8 +238,28 @@
 			editable.style.height = sourceHeight + 'px';
 			editable.style.overflowY = 'auto';
 		}
-		if (initialMetrics && initialMetrics.width && root) {
-			root.style.minWidth = parseInt(initialMetrics.width, 10) + 'px';
+		if (root) {
+			// The wizard panel is resizable. A pixel min-width captured before CKEditor
+			// replaces the textarea prevents the editor (and its table cell) shrinking.
+			root.style.minWidth = '0';
+			var updateToolbarPanelWidth = function () {
+				var width = Math.floor(root.getBoundingClientRect().width);
+				if (width > 0) {
+					root.style.setProperty('--xerte-editor-width', width + 'px');
+					// CKEditor's grouping engine listens to maxWidth changes directly.
+					// Setting it on the ToolbarView makes the three-dot (extended toolbar options) calculation use
+					// the middle-pane width instead of the toolbar's intrinsic width.
+					var toolbar = editor.ui && editor.ui.view && editor.ui.view.toolbar;
+					if (toolbar) {
+						toolbar.maxWidth = width + 'px';
+					}
+				}
+			};
+			updateToolbarPanelWidth();
+			if (window.ResizeObserver) {
+				editor.__xerteToolbarResizeObserver = new ResizeObserver(updateToolbarPanelWidth);
+				editor.__xerteToolbarResizeObserver.observe(root);
+			}
 		}
 	}
 
@@ -266,6 +287,21 @@
 		}
 	}
 
+	function applyToolbarPreference(editor, show) {
+		if (!editor || !editor.ui || !editor.ui.view) {
+			return;
+		}
+		var stickyPanel = editor.ui.view.stickyPanel;
+		if (stickyPanel && stickyPanel.element) {
+			stickyPanel.element.style.display = show ? '' : 'none';
+			if (show && editor.ui.view.toolbar) {
+				window.requestAnimationFrame(function () {
+					editor.ui.view.toolbar.fire('change:maxWidth');
+				});
+			}
+		}
+	}
+
 	function ensureInlineEditorCssOverrides() {
 		if (window.__xerteCke5InlineCssInjected) {
 			return;
@@ -287,9 +323,16 @@
 		}
 		// Keep CKEditor 5 UI constrained to container width (prevents toolbar going off-screen).
 		var css = ''
-			+ '.ck.ck-editor{max-width:100%!important;}'
+			+ '.ck.ck-editor{width:100%!important;min-width:0!important;max-width:100%!important;}'
+			+ '.ck.ck-editor__top{width:100%!important;min-width:0!important;max-width:100%!important;overflow:visible!important;}'
 			+ '.ck.ck-editor__top,.ck.ck-editor__top *{box-sizing:border-box;}'
-			+ '.ck.ck-editor__top .ck-sticky-panel__content{width:100%!important;max-width:100%!important;}';
+			+ '.ck.ck-editor__top .ck-sticky-panel{width:100%!important;min-width:0!important;max-width:100%!important;}'
+			// Use the measured editor width rather than a percentage. Once this panel
+			// becomes position:fixed, percentage widths are relative to the viewport.
+			+ '.ck.ck-editor__top .ck-sticky-panel__content{width:var(--xerte-editor-width,100%)!important;min-width:0!important;max-width:calc(100vw - 24px)!important;box-sizing:border-box;}'
+			+ '.ck.ck-editor .ck-toolbar__grouped-dropdown>.ck-dropdown__panel{width:min(calc(var(--xerte-editor-width, 600px) - 8px),60vw)!important;max-width:calc(100vw - 24px)!important;}'
+			+ '.ck.ck-editor .ck-toolbar__grouped-dropdown .ck-toolbar_floating{width:100%!important;max-width:100%!important;}'
+			+ '.ck.ck-editor .ck-toolbar__grouped-dropdown .ck-toolbar_floating>.ck-toolbar__items{flex-wrap:wrap!important;}';
 		var style = document.createElement('style');
 		style.type = 'text/css';
 		style.appendChild(document.createTextNode(css));
@@ -333,6 +376,9 @@
 			destroy: function () {
 				var id = domEl.id;
 				var nativeEditor = editor;
+				if (editor.__xerteToolbarResizeObserver) {
+					editor.__xerteToolbarResizeObserver.disconnect();
+				}
 				return editor.destroy().then(function () {
 					// A newer editor may already own this id (wizard rebuilt before this async finish).
 					if (window.__xerteCke5Instances[id] !== nativeEditor) {
@@ -391,6 +437,8 @@
 					inlineEditable.style.overflowY = 'auto';
 				}
 				setupInlineToolbarVisibility(editor);
+			} else if (userConfig && typeof userConfig.toolbarStartupExpanded !== 'undefined') {
+				applyToolbarPreference(editor, !!userConfig.toolbarStartupExpanded);
 			}
 			if (userConfig && userConfig.startupMode === 'source') {
 				try {
@@ -420,6 +468,9 @@
 			}
 			var ed = window.__xerteCke5Instances[id];
 			if (ed) {
+				if (ed.__xerteToolbarResizeObserver) {
+					ed.__xerteToolbarResizeObserver.disconnect();
+				}
 				return ed.destroy().then(function () {
 					if (window.__xerteCke5Instances[id] !== ed) {
 						return;

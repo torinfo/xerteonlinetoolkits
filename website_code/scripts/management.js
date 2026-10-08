@@ -25,10 +25,155 @@ var xwd_url = "http://localhost/xerteonlinetoolkits/modules/xerte/parent_templat
 
 if(typeof(String.prototype.trim) === "undefined")
 {
-    String.prototype.trim = function()
-    {
-        return String(this).replace(/^\s+|\s+$/g, '');
-    };
+	String.prototype.trim = function()
+	{
+		return String(this).replace(/^\s+|\s+$/g, '');
+	};
+}
+
+function apiV1Url(route) {
+    var base = (typeof rest_api_url !== 'undefined' && rest_api_url) ? rest_api_url : ((typeof site_url !== 'undefined' && site_url) ? (site_url.replace(/\/$/, '') + '/website_code/api/v1/index.php') : 'website_code/api/v1/index.php');
+    return base + '?route=' + encodeURIComponent(route);
+}
+
+function apiUnpack(response) {
+    if (response && response.ok === true && typeof response.data !== 'undefined') {
+        return response.data;
+    }
+    return response;
+}
+
+function escapeHtml(s) {
+    if (s === null || s === undefined) return '';
+    return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+}
+
+function managementApiGet(route, data, onOk, onFail) {
+    return $.ajax({
+        type: 'GET',
+        url: apiV1Url(route),
+        data: data || {},
+        dataType: 'json'
+    }).done(function (res) {
+        if (!res || !res.ok) {
+            if (onFail) onFail(res);
+            return;
+        }
+        if (onOk) onOk(res.data);
+    }).fail(function () {
+        if (onFail) onFail(null);
+    });
+}
+
+function managementApiPost(route, data, onOk, onFail) {
+    return $.ajax({
+        type: 'POST',
+        url: apiV1Url(route),
+        data: data || {},
+        dataType: 'json'
+    }).done(function (res) {
+        if (!res || !res.ok) {
+            if (onFail) onFail(res);
+            return;
+        }
+        if (onOk) onOk(res.data);
+    }).fail(function () {
+        if (onFail) onFail(null);
+    });
+}
+
+function renderTree(nodes, type) {
+    if (!nodes || !nodes.length) return '';
+    var h = '<ul class="mgmtTree">';
+    for (var i = 0; i < nodes.length; i++) {
+        var n = nodes[i];
+        h += '<li>';
+        h += '<span>' + escapeHtml(n.name) + '</span> ';
+        h += '<button type="button" class="xerte_button" onclick="javascript:remove_' + type + '(' + n.id + ')"><i class="fa fa-minus-circle"></i> ' + (typeof MANAGEMENT_LIBRARY_REMOVE_LABEL !== 'undefined' ? MANAGEMENT_LIBRARY_REMOVE_LABEL : 'Remove') + '</button>';
+        if (n.children && n.children.length) {
+            h += renderTree(n.children, type);
+        }
+        h += '</li>';
+    }
+    h += '</ul>';
+    return h;
+}
+
+function managementRenderPanel(d) {
+    if (!d || !d.panel) return '';
+    var h = '<h2>' + escapeHtml(d.title || '') + '</h2>';
+    if (d.panel === 'feeds') {
+        h += '<div class="admin_block"><table class="workspaceProjectsTable"><tr><th>ID</th><th>Name</th><th>RSS</th><th>Export</th><th>Syndication</th><th>Category</th></tr>';
+        for (var i = 0; i < (d.items || []).length; i++) {
+            var it = d.items[i];
+            h += '<tr><td>' + escapeHtml(it.templateId) + '</td><td>' + escapeHtml(it.name) + '</td>';
+            h += '<td>' + (it.rss ? '✓' : '-') + '</td><td>' + (it.export ? '✓' : '-') + '</td><td>' + (it.syndication ? '✓' : '-') + '</td><td>' + escapeHtml(it.category || '') + '</td></tr>';
+        }
+        h += '</table></div>';
+        return h;
+    }
+    if (d.panel === 'licenses') {
+        h += '<div class="admin_block"><p><textarea cols="100" rows="2" id="newlicense"></textarea></p>';
+        h += '<p><button class="xerte_button" type="button" onclick="javascript:new_license();"><i class="fa fa-plus-circle"></i> ' + (typeof MANAGEMENT_LIBRARY_NEW_LABEL !== 'undefined' ? MANAGEMENT_LIBRARY_NEW_LABEL : 'New') + '</button></p></div>';
+        h += '<div class="admin_block"><ul>';
+        for (var j = 0; j < (d.items || []).length; j++) {
+            var li = d.items[j];
+            h += '<li>' + escapeHtml(li.name) + ' <button type="button" class="xerte_button" onclick="javascript:remove_licenses(' + li.id + ')"><i class="fa fa-minus-circle"></i> ' + (typeof MANAGEMENT_LIBRARY_REMOVE_LABEL !== 'undefined' ? MANAGEMENT_LIBRARY_REMOVE_LABEL : 'Remove') + '</button></li>';
+        }
+        h += '</ul></div>';
+        return h;
+    }
+    if (d.panel === 'categories' || d.panel === 'educationlevels' || d.panel === 'grouping' || d.panel === 'course') {
+        var t = (d.panel === 'categories') ? 'category'
+            : (d.panel === 'educationlevels') ? 'educationlevel'
+                : (d.panel === 'grouping') ? 'grouping'
+                    : 'course';
+        var newId = (t === 'category') ? 'newcategory'
+            : (t === 'educationlevel') ? 'neweducationlevel'
+                : (t === 'grouping') ? 'newgrouping'
+                    : 'newcourse';
+        var newFn = (t === 'category') ? 'new_category'
+            : (t === 'educationlevel') ? 'new_educationlevel'
+                : (t === 'grouping') ? 'new_grouping'
+                    : 'new_course';
+        h += '<div class="admin_block"><p><textarea cols="100" rows="2" id="' + newId + '"></textarea></p>';
+        h += '<p><button class="xerte_button" type="button" onclick="javascript:' + newFn + '();"><i class="fa fa-plus-circle"></i> ' + (typeof MANAGEMENT_LIBRARY_NEW_LABEL !== 'undefined' ? MANAGEMENT_LIBRARY_NEW_LABEL : 'New') + '</button></p></div>';
+        h += '<div class="admin_block">' + renderTree(d.tree || [], t) + '</div>';
+        return h;
+    }
+    return h;
+}
+
+function renderGroupMembersFromApi(d) {
+    var i18n = d.i18n || {};
+    var members = d.members || [];
+    var h = '<h3>' + (i18n.headingPrefix || '') + (d.group_name || '') + '</h3>';
+    if (members.length === 0) {
+        h += '<p>' + (i18n.noMembers || '') + '</p>';
+        return h;
+    }
+    var cnt = members.length;
+    if (cnt === 1) {
+        h += '<p>' + (i18n.oneMember || '') + '</p>';
+    } else {
+        h += '<p>' + ((i18n.membersCount || '').replace('{n}', String(cnt))) + '</p>';
+    }
+    h += '<div class="indented">';
+    for (var i = 0; i < members.length; i++) {
+        var row = members[i];
+        var lid = row.login_id;
+        h += '<div class="template" id="' + row.username + '" savevalue="' + lid + '"><p>' + row.firstname + ' ' + row.surname +
+            ' <button type="button" class="xerte_button" id="' + row.username + '_btn" onclick="javascript:templates_display(\'' + row.username + '\')">' + (i18n.toggle || '') + '</button> ' +
+            '<button type="button" class="xerte_button" onclick="javascript:delete_member(\'' + lid + '\', \'group\')"><i class="fa fa-minus-circle"></i> ' + (i18n.removeMember || '') + '</button></p></div>';
+        h += '<div class="template_details" id="' + row.username + '_child">';
+        h += '<p>' + (i18n.usersId || '') + '<form><textarea id="user_id' + lid + '">' + lid + '</textarea></form></p>';
+        h += '<p>' + (i18n.usersFirst || '') + '<form><textarea id="firstname' + lid + '">' + row.firstname + '</textarea></form></p>';
+        h += '<p>' + (i18n.usersKnown || '') + '<form><textarea id="surname' + lid + '">' + row.surname + '</textarea></form></p>';
+        h += '<p>' + (i18n.usersUsername || '') + '<form><textarea id="username' + lid + '">' + row.username + '</textarea></form></p>';
+        h += '</div>';
+    }
+    h += '</div>';
+    return h;
 }
 
 // Function properties ajax send prepare
@@ -37,7 +182,7 @@ if(typeof(String.prototype.trim) === "undefined")
 
 function management_ajax_send_prepare(url){
 
-   	xmlHttp.open("post",management_ajax_php_path + url,true);
+	xmlHttp.open("post",management_ajax_php_path + url,true);
 	xmlHttp.onreadystatechange=management_stateChanged;
 	xmlHttp.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
 
@@ -78,7 +223,7 @@ function management_delete_sub_stateChanged(response){
 }
 
 function upload_template(){
-	
+
 }
 
 // Function feeds list
@@ -87,13 +232,8 @@ function upload_template(){
 
 function feeds_list(){
 	function_to_use="feeds";
-	$.ajax({
-		type: "POST",
-		url: "website_code/php/management/syndication.php",
-		data: {no_id: 1},
-	})
-	.done(function(response){
-		management_stateChanged(response);
+	managementApiGet('management/feeds', {}, function (d) {
+		document.getElementById('admin_area').innerHTML = managementRenderPanel(d);
 	});
 }
 
@@ -123,14 +263,9 @@ function remove_feed(id,type){
 				synd: 'setfalse'
 			}
 		}
-
-		$.ajax({
-			type: "POST",
-			url: "website_code/php/management/syndication_remove.php",
-			data: data
-		})
-		.done(function(response){
-			management_stateChanged(response);
+		data.template_id = id;
+		managementApiPost('management/feeds/remove', data, function () {
+			feeds_list();
 		});
 	}
 }
@@ -141,13 +276,8 @@ function remove_feed(id,type){
 
 function licenses_list(){
 	function_to_use="licenses";
-	$.ajax({
-		type: "POST",
-		url: "website_code/php/management/licenses.php",
-		data: {no_id: 1},
-	})
-	.done(function(response){
-		management_stateChanged(response);
+	managementApiGet('management/licenses', {}, function (d) {
+		document.getElementById('admin_area').innerHTML = managementRenderPanel(d);
 	});
 }
 
@@ -158,13 +288,8 @@ function licenses_list(){
 function remove_licenses(id){
 
 	if (confirm(REMOVE_PROMPT)) {
-		$.ajax({
-			type: "POST",
-			url: "website_code/php/management/remove_license.php",
-			data: {remove: id},
-		})
-		.done(function(response){
-			management_stateChanged(response);
+		managementApiPost('management/licenses/remove', {remove: id}, function () {
+			licenses_list();
 		});
 	}
 }
@@ -175,13 +300,8 @@ function remove_licenses(id){
 
 function categories_list(){
 	function_to_use="categories";
-	$.ajax({
-		type: "POST",
-		url: "website_code/php/management/categories.php",
-		data: {no_id: 1},
-	})
-	.done(function(response){
-		management_stateChanged(response);
+	managementApiGet('management/categories', {}, function (d) {
+		document.getElementById('admin_area').innerHTML = managementRenderPanel(d);
 	});
 }
 
@@ -191,14 +311,9 @@ function categories_list(){
 
 function educationlevel_list(){
 	function_to_use="educationlevel";
-	$.ajax({
-		type: "POST",
-		url: "website_code/php/management/educationlevel.php",
-		data: {no_id: 1},
-	})
-		.done(function(response){
-			management_stateChanged(response);
-		});
+	managementApiGet('management/educationlevels', {}, function (d) {
+		document.getElementById('admin_area').innerHTML = managementRenderPanel(d);
+	});
 }
 
 // Function grouping list
@@ -207,13 +322,8 @@ function educationlevel_list(){
 
 function grouping_list(){
 	function_to_use="grouping";
-    $.ajax({
-		type: "POST",
-		url: "website_code/php/management/grouping.php",
-		data: {no_id: 1},
-	})
-	.done(function(response){
-		management_stateChanged(response);
+	managementApiGet('management/grouping', {}, function (d) {
+		document.getElementById('admin_area').innerHTML = managementRenderPanel(d);
 	});
 }
 
@@ -223,13 +333,8 @@ function grouping_list(){
 
 function course_list(){
 	function_to_use="course";
-    $.ajax({
-		type: "POST",
-		url: "website_code/php/management/course.php",
-		data: {no_id: 1},
-	})
-	.done(function(response){
-		management_stateChanged(response);
+	managementApiGet('management/course', {}, function (d) {
+		document.getElementById('admin_area').innerHTML = managementRenderPanel(d);
 	});
 }
 
@@ -241,13 +346,8 @@ function course_list(){
 function remove_category(id){
 
     if (confirm(REMOVE_PROMPT)) {
-		$.ajax({
-			type: "POST",
-			url: "website_code/php/management/remove_category.php",
-			data: {remove: id},
-		})
-		.done(function(response){
-			management_stateChanged(response);
+		managementApiPost('management/categories/remove', {remove: id}, function () {
+			categories_list();
 		});
     }
 }
@@ -259,14 +359,9 @@ function remove_category(id){
 function remove_educationlevel(id){
 
 	if (confirm(REMOVE_PROMPT)) {
-		$.ajax({
-			type: "POST",
-			url: "website_code/php/management/remove_educationlevel.php",
-			data: {remove: id},
-		})
-			.done(function(response){
-				management_stateChanged(response);
-			});
+		managementApiPost('management/educationlevels/remove', {remove: id}, function () {
+			educationlevel_list();
+		});
 	}
 }
 function hide_show_children(children, id_prefix){
@@ -280,13 +375,8 @@ function hide_show_children(children, id_prefix){
 function remove_grouping(id){
 
     if (confirm(REMOVE_PROMPT)) {
-		$.ajax({
-			type: "POST",
-			url: "website_code/php/management/remove_grouping.php",
-			data: {remove: id},
-		})
-		.done(function(response){
-			management_stateChanged(response);
+		managementApiPost('management/grouping/remove', {remove: id}, function () {
+			grouping_list();
 		});
     }
 }
@@ -298,13 +388,8 @@ function remove_grouping(id){
 function remove_course(id){
 
     if (confirm(REMOVE_PROMPT)) {
-		$.ajax({
-			type: "POST",
-			url: "website_code/php/management/remove_course.php",
-			data: {remove: id},
-		})
-		.done(function(response){
-			management_stateChanged(response);
+		managementApiPost('management/course/remove', {remove: id}, function () {
+			course_list();
 		});
     }
 }
@@ -320,18 +405,18 @@ function user_templates_list(){
 		url: "website_code/php/management/user_templates.php",
 		data: {no_id: 1},
 	})
-	.done(function(response){
-		management_stateChanged(response);
-	});
+		.done(function(response){
+			management_stateChanged(response);
+		});
 }
 
 function register()
 {
-    // Open link to community website
-    // The way this is implemented, is to open register.php
-    // register.php will verify if a unique id for this installation already exists,
-    // If not, it will generate is, and then open the registration form on the community website
-    window.open("website_code/php/register.php");
+	// Open link to community website
+	// The way this is implemented, is to open register.php
+	// register.php will verify if a unique id for this installation already exists,
+	// If not, it will generate is, and then open the registration form on the community website
+	window.open("website_code/php/register.php");
 }
 
 // Function users list
@@ -345,9 +430,9 @@ function users_list(){
 		url: "website_code/php/management/users.php",
 		data: {no_id: 1},
 	})
-	.done(function(response){
-		management_stateChanged(response);
-	});
+		.done(function(response){
+			management_stateChanged(response);
+		});
 }
 
 // Function template_sync
@@ -360,9 +445,9 @@ function template_sync(){
 		url: "website_code/php/management/sync.php",
 		data: {no_id: 1},
 	})
-	.done(function(response){
-		management_stateChanged(response);
-	});
+		.done(function(response){
+			management_stateChanged(response);
+		});
 }
 
 // Show first tab that user has permission to see
@@ -382,9 +467,9 @@ function site_list(){
 		url: "website_code/php/management/site.php",
 		data: {no_id: 1},
 	})
-	.done(function(response){
-		management_stateChanged(response);
-	});
+		.done(function(response){
+			management_stateChanged(response);
+		});
 }
 
 // Function delete sharing template
@@ -398,9 +483,9 @@ function templates_list(){
 		url: "website_code/php/management/templates.php",
 		data: {no_id: 1},
 	})
-	.done(function(response){
-		management_stateChanged(response);
-	});
+		.done(function(response){
+			management_stateChanged(response);
+		});
 }
 
 function themes_list(){
@@ -410,9 +495,9 @@ function themes_list(){
 		url: "website_code/php/management/themes.php",
 		data: {no_id: 1},
 	})
-	.done(function(response){
-		management_stateChanged(response);
-	});
+		.done(function(response){
+			management_stateChanged(response);
+		});
 }
 
 function ai_list(){
@@ -498,9 +583,9 @@ function update_template(){
 			template_sub_pages: sub_pages
 		},
 	})
-	.done(function(response){
-		management_alert_stateChanged(response);
-	});
+		.done(function(response){
+			management_alert_stateChanged(response);
+		});
 
 }
 
@@ -519,9 +604,9 @@ function update_play_security(){
 			info    : document.getElementById(active_section + "info").value,
 		},
 	})
-	.done(function(response){
-		management_alert_stateChanged(response);
-	});
+		.done(function(response){
+			management_alert_stateChanged(response);
+		});
 }
 
 // Function remove security
@@ -540,9 +625,9 @@ function remove_security(){
 				url: "website_code/php/management/remove_play_security.php",
 				data: {play_id: active_section},
 			})
-			.done(function (response) {
-				management_stateChanged(response);
-			});
+				.done(function (response) {
+					management_stateChanged(response);
+				});
 		}
 	}
 }
@@ -634,9 +719,9 @@ function update_site() {
 			//default_theme_site: document.getElementById("default_theme_site").value
 		},
 	})
-	.done(function (response) {
-		management_alert_stateChanged(response);
-	});
+		.done(function (response) {
+			management_alert_stateChanged(response);
+		});
 }
 
 function update_themes() {
@@ -661,16 +746,16 @@ function update_themes() {
 // remove a share, and check who did it
 
 function update_course(){
-    $.ajax({
+	$.ajax({
 		type: "POST",
 		url: "website_code/php/management/course_details_management.php",
 		data: {
 			course_freetext_enabled: document.getElementById("course_freetext_enabled").value
 		},
 	})
-	.done(function (response) {
-		management_alert_stateChanged(response);
-	});
+		.done(function (response) {
+			management_alert_stateChanged(response);
+		});
 }
 
 
@@ -689,9 +774,9 @@ function user_template(){
 			username : document.getElementById("username"+active_section).value
 		},
 	})
-	.done(function (response) {
-		management_alert_stateChanged(response);
-	});
+		.done(function (response) {
+			management_alert_stateChanged(response);
+		});
 }
 
 // Function play security list
@@ -705,9 +790,9 @@ function play_security_list(template){
 		url: "website_code/php/management/play_security_list.php",
 		data: {logon_id: 1},
 	})
-	.done(function (response) {
-		management_stateChanged(response);
-	});
+		.done(function (response) {
+			management_stateChanged(response);
+		});
 }
 
 // Function new LTI Key
@@ -725,9 +810,9 @@ function new_LTI_key(){
 			lti_keys_context_id: document.getElementById("lti_keys_context_idNEW").value
 		},
 	})
-	.done(function (response) {
-		management_stateChanged(response);
-	});
+		.done(function (response) {
+			management_stateChanged(response);
+		});
 }
 
 // Function edit LTI Key
@@ -746,9 +831,9 @@ function edit_LTI_key(editltikey){
 			lti_keys_context_id: document.getElementById("lti_keys_context_id" + editltikey).value
 		},
 	})
-	.done(function (response) {
-		management_stateChanged(response);
-	});
+		.done(function (response) {
+			management_stateChanged(response);
+		});
 }
 
 // Function delete LTI Key
@@ -764,9 +849,9 @@ function delete_LTI_key(ltikey) {
 				lti_keys_id: ltikey
 			},
 		})
-		.done(function (response) {
-			management_stateChanged(response);
-		});
+			.done(function (response) {
+				management_stateChanged(response);
+			});
 	}
 }
 
@@ -784,9 +869,9 @@ function new_security(){
 			newdesc: document.getElementById("newdesc").value
 		},
 	})
-	.done(function (response) {
-		management_stateChanged(response);
-	});
+		.done(function (response) {
+			management_stateChanged(response);
+		});
 }
 
 // Function new category
@@ -794,16 +879,11 @@ function new_security(){
 // remove a share, and check who did it
 
 function new_category(parentID = ""){
-	$.ajax({
-		type: "POST",
-		url: "website_code/php/management/new_category.php",
-		data: {
-			newcategory: document.getElementById("newcategory").value,
-			parent: parentID
-		},
-	})
-	.done(function (response) {
-		management_stateChanged(response);
+	managementApiPost('management/categories/new', {
+		newcategory: document.getElementById("newcategory").value,
+		parent: parentID
+	}, function () {
+		categories_list();
 	});
 }
 
@@ -811,18 +891,12 @@ function new_category(parentID = ""){
 //
 // remove a share, and check who did it
 function new_educationlevel(parentID = ""){
-	$.ajax({
-		type: "POST",
-		url: "website_code/php/management/new_educationlevel.php",
-		data: {
-			parent: parentID,
-			educationlevel: document.getElementById("neweducationlevel").value
-
-		},
-	})
-		.done(function (response) {
-			management_stateChanged(response);
-		});
+	managementApiPost('management/educationlevels/new', {
+		parent: parentID,
+		neweducationlevel: document.getElementById("neweducationlevel").value
+	}, function () {
+		educationlevel_list();
+	});
 }
 
 // Function new grouping
@@ -830,15 +904,10 @@ function new_educationlevel(parentID = ""){
 // remove a share, and check who did it
 
 function new_grouping(){
-	$.ajax({
-		type: "POST",
-		url: "website_code/php/management/new_grouping.php",
-		data: {
-			newgrouping: document.getElementById("newgrouping").value
-		},
-	})
-	.done(function (response) {
-		management_stateChanged(response);
+	managementApiPost('management/grouping/new', {
+		newgrouping: document.getElementById("newgrouping").value
+	}, function () {
+		grouping_list();
 	});
 }
 
@@ -847,15 +916,10 @@ function new_grouping(){
 // remove a share, and check who did it
 
 function new_course(){
-	$.ajax({
-		type: "POST",
-		url: "website_code/php/management/new_course.php",
-		data: {
-			newcourse: document.getElementById("newcourse").value
-		},
-	})
-	.done(function (response) {
-		management_stateChanged(response);
+	managementApiPost('management/course/new', {
+		newcourse: document.getElementById("newcourse").value
+	}, function () {
+		course_list();
 	});
 }
 
@@ -864,15 +928,10 @@ function new_course(){
 // remove a share, and check who did it
 
 function new_license(){
-	$.ajax({
-		type: "POST",
-		url: "website_code/php/management/new_license.php",
-		data: {
-			newlicense: document.getElementById("newlicense").value
-		},
-	})
-	.done(function (response) {
-		management_stateChanged(response);
+	managementApiPost('management/licenses/new', {
+		newlicense: document.getElementById("newlicense").value
+	}, function () {
+		licenses_list();
 	});
 }
 
@@ -889,9 +948,9 @@ function errors_list(template){
 			logon_id: 1
 		},
 	})
-	.done(function (response) {
-		management_stateChanged(response);
-	});
+		.done(function (response) {
+			management_stateChanged(response);
+		});
 }
 
 // Function delete error logs
@@ -907,9 +966,9 @@ function delete_error_logs(){
 				logon_id: 1
 			},
 		})
-		.done(function (response) {
-			management_stateChanged(response);
-		});
+			.done(function (response) {
+				management_stateChanged(response);
+			});
 	}
 }
 
@@ -925,9 +984,9 @@ function delete_template(template){
 			template_id: template
 		},
 	})
-	.done(function (response) {
-		management_stateChanged(response);
-	});
+		.done(function (response) {
+			management_stateChanged(response);
+		});
 }
 
 
@@ -935,33 +994,33 @@ var iframe_language_interval = 0;
 
 function iframe_language_check_upload(){
 
-    if(window["upload_iframe"].document.body.innerHTML!=""){
+	if(window["upload_iframe"].document.body.innerHTML!=""){
 
-        if(window["upload_iframe"].document.body.innerHTML.indexOf("****")!=-1){
+		if(window["upload_iframe"].document.body.innerHTML.indexOf("****")!=-1){
 
-            clearInterval(iframe_language_interval);
+			clearInterval(iframe_language_interval);
 
-            string = window["upload_iframe"].document.body.innerHTML.substr(window["upload_iframe"].document.body.innerHTML.indexOf(">")+1);
+			string = window["upload_iframe"].document.body.innerHTML.substr(window["upload_iframe"].document.body.innerHTML.indexOf(">")+1);
 
-            string = string.substr(0,string.length-4);
+			string = string.substr(0,string.length-4);
 
-            alert(string);
+			alert(string);
 
-            refresh_languages();
+			refresh_languages();
 
-            window["upload_iframe"].document.body.innerHTML="";
+			window["upload_iframe"].document.body.innerHTML="";
 
-        }else{
+		}else{
 
-            clearInterval(iframe_language_interval);
+			clearInterval(iframe_language_interval);
 
-            string = window["upload_iframe"].document.body.innerHTML.substr(window["upload_iframe"].document.body.innerHTML.indexOf(">")+1);
+			string = window["upload_iframe"].document.body.innerHTML.substr(window["upload_iframe"].document.body.innerHTML.indexOf(">")+1);
 
-            alert(PHP_ERROR + " - " + string);
+			alert(PHP_ERROR + " - " + string);
 
-        }
+		}
 
-    }
+	}
 
 }
 
@@ -969,43 +1028,43 @@ var iframe_language_interval = 0;
 
 function iframe_language_check(){
 
-    if(window["upload_iframe"].document.body.innerHTML!=""){
+	if(window["upload_iframe"].document.body.innerHTML!=""){
 
-        if(window["upload_iframe"].document.body.innerHTML.indexOf("****")!=-1){
+		if(window["upload_iframe"].document.body.innerHTML.indexOf("****")!=-1){
 
-            clearInterval(iframe_language_interval);
+			clearInterval(iframe_language_interval);
 
-            string = window["upload_iframe"].document.body.innerHTML.substr(window["upload_iframe"].document.body.innerHTML.indexOf(">")+1);
+			string = window["upload_iframe"].document.body.innerHTML.substr(window["upload_iframe"].document.body.innerHTML.indexOf(">")+1);
 
-            string = string.substr(0,string.length-4);
+			string = string.substr(0,string.length-4);
 
-            alert(string);
+			alert(string);
 
-            if(typeof window_reference==="undefined"){
+			if(typeof window_reference==="undefined"){
 
-                //window.opener.screen_refresh();
-                window.opener.refresh_workspace();
+				//window.opener.screen_refresh();
+				window.opener.refresh_workspace();
 
-            }else{
+			}else{
 
-                //window_reference.screen_refresh();
-                window_reference.refresh_workspace();
+				//window_reference.screen_refresh();
+				window_reference.refresh_workspace();
 
-            }
+			}
 
-            window["upload_iframe"].document.body.innerHTML="";
+			window["upload_iframe"].document.body.innerHTML="";
 
-        }else{
+		}else{
 
-            clearInterval(iframe_language_interval);
+			clearInterval(iframe_language_interval);
 
-            string = window["upload_iframe"].document.body.innerHTML.substr(window["upload_iframe"].document.body.innerHTML.indexOf(">")+1);
+			string = window["upload_iframe"].document.body.innerHTML.substr(window["upload_iframe"].document.body.innerHTML.indexOf(">")+1);
 
-            alert(PHP_ERROR + " - " + string);
+			alert(PHP_ERROR + " - " + string);
 
-        }
+		}
 
-    }
+	}
 
 }
 
@@ -1019,13 +1078,13 @@ function iframe_language_check(){
 
 function iframe_upload_language_check_initialise(){
 
-    iframe_language_interval = setInterval("iframe_language_check_upload()",500);
+	iframe_language_interval = setInterval("iframe_language_check_upload()",500);
 
 }
 
 function iframe_language_check_initialise(){
 
-    iframe_language_interval = setInterval("iframe_language_check()",500);
+	iframe_language_interval = setInterval("iframe_language_check()",500);
 
 }
 
@@ -1050,9 +1109,9 @@ function management_languageChanged(response){
 }
 
 function delete_language(code){
-    var answer = confirm(MANAGEMENT_DELETE_LANGUAGE + code);
-    if (answer)
-    {
+	var answer = confirm(MANAGEMENT_DELETE_LANGUAGE + code);
+	if (answer)
+	{
 		$.ajax({
 			type: "POST",
 			url: "website_code/php/language/delete_language.php",
@@ -1060,10 +1119,10 @@ function delete_language(code){
 				code: code
 			},
 		})
-		.done(function (response) {
-			management_languageChanged(response);
-		});
-    }
+			.done(function (response) {
+				management_languageChanged(response);
+			});
+	}
 }
 
 function refresh_languages()
@@ -1072,9 +1131,9 @@ function refresh_languages()
 		type: "POST",
 		url: "website_code/php/language/refresh_language.php",
 	})
-	.done(function (response) {
-		management_languageChanged(response);
-	});
+		.done(function (response) {
+			management_languageChanged(response);
+		});
 }
 // Function give a project
 //
@@ -1132,11 +1191,11 @@ function templates_get_details(user_id, template_id)
 				'template_id': template_id,
 			}
 		})
-		.done(function (data) {
-			$('#' + child_tag).html(data);
-			document.getElementById(child_tag).style.display="block";
-			document.getElementById(button_tag).innerHTML = MANAGEMENT_HIDE;
-		});
+			.done(function (data) {
+				$('#' + child_tag).html(data);
+				document.getElementById(child_tag).style.display="block";
+				document.getElementById(button_tag).innerHTML = MANAGEMENT_HIDE;
+			});
 	}
 }
 
@@ -1145,17 +1204,17 @@ var active_section = null;
 function templates_display(tag){
 
 	var child_tag = tag + "_child";
-    var button_tag = tag + "_btn";
+	var button_tag = tag + "_btn";
 	active_section = document.getElementById(tag).getAttribute("savevalue");
 
 	if(document.getElementById(child_tag).style.display=="block"){
 
 		document.getElementById(child_tag).style.display="none";
-	    document.getElementById(button_tag).innerHTML = MANAGEMENT_SHOW;
+		document.getElementById(button_tag).innerHTML = MANAGEMENT_SHOW;
 	}else{
 
 		document.getElementById(child_tag).style.display="block";
-        document.getElementById(button_tag).innerHTML = MANAGEMENT_HIDE;
+		document.getElementById(button_tag).innerHTML = MANAGEMENT_HIDE;
 
 	}
 
@@ -1172,9 +1231,9 @@ function templates_delete_sub(id){
 				template_id: id
 			},
 		})
-		.done(function (response) {
-			management_delete_sub_stateChanged(response);
-		});
+			.done(function (response) {
+				management_delete_sub_stateChanged(response);
+			});
 	}
 }
 
@@ -1190,7 +1249,7 @@ function save_changes(){
 		case "users":user_template();
 			break;
 		case "playsecurity":update_play_security();
-			  break;
+			break;
 		case "course": update_course();
 			break;
 		case "ai": update_ai();
@@ -1216,7 +1275,7 @@ function theme_display(tag){
 
 function list_templates_for_user(tag){
 
-    var user = document.getElementById(tag).value;
+	var user = document.getElementById(tag).value;
 
 	$.ajax({
 		type: "POST",
@@ -1225,9 +1284,9 @@ function list_templates_for_user(tag){
 			user_id: user
 		},
 	})
-	.done(function (response) {
-		list_templates_for_user_stateChanged(response);
-	});
+		.done(function (response) {
+			list_templates_for_user_stateChanged(response);
+		});
 }
 
 function list_templates_for_user_stateChanged(response){
@@ -1240,15 +1299,15 @@ function list_templates_for_user_stateChanged(response){
 
 function loadModal() {
 
-    var modal = document.getElementById("nottingham_modal");
-    var btn = document.getElementById("nottingham_btn");
+	var modal = document.getElementById("nottingham_modal");
+	var btn = document.getElementById("nottingham_btn");
 
-    if (modal !== null) {
-        btn.onclick = function () {
-            modal.style.display = "block";
-            load(modal);
-        }
-    }
+	if (modal !== null) {
+		btn.onclick = function () {
+			modal.style.display = "block";
+			load(modal);
+		}
+	}
 }
 
 function load(modal)
@@ -1256,37 +1315,37 @@ function load(modal)
 	$.get("website_code/php/management/query_templates.php", {queryData: 'modal'}, function(data){
 		var x = data;
 
-        var span = document.getElementsByClassName("close");
-        var template_content = $(".template-content");
+		var span = document.getElementsByClassName("close");
+		var template_content = $(".template-content");
 
-        if(span.length !== 0)
-        {
-            span[0].onclick = function () {
-                modal.style.display = "none";
-                template_content.empty();
-            }
-        }
-
-        window.onclick = function(event)
-        {
-            if(event.target == modal)
-            {
-                modal.style.display = "none";
-                template_content.empty();
-            }
-        };
-
-        var templates = JSON.parse(x);
-        for (var i=0; i<templates.length; i++) {
-        	if(templates[i]["template_name"] === "Nottingham") {continue;}
-			else{
-                var paragraph = $("<p></p>");
-                paragraph.append(templates[i]["template_name"]);
-                template_content.append(paragraph, $("<br>"));
+		if(span.length !== 0)
+		{
+			span[0].onclick = function () {
+				modal.style.display = "none";
+				template_content.empty();
 			}
-        };
+		}
 
-        $.ajax({
+		window.onclick = function(event)
+		{
+			if(event.target == modal)
+			{
+				modal.style.display = "none";
+				template_content.empty();
+			}
+		};
+
+		var templates = JSON.parse(x);
+		for (var i=0; i<templates.length; i++) {
+			if(templates[i]["template_name"] === "Nottingham") {continue;}
+			else{
+				var paragraph = $("<p></p>");
+				paragraph.append(templates[i]["template_name"]);
+				template_content.append(paragraph, $("<br>"));
+			}
+		};
+
+		$.ajax({
 			type: "GET",
 			url: xwd_url,
 			dataType: "text",
@@ -1310,9 +1369,9 @@ function search_user_templates(tag){
 			search: search
 		},
 	})
-	.done(function (response) {
-		search_user_templates_stateChanged(response);
-	});
+		.done(function (response) {
+			search_user_templates_stateChanged(response);
+		});
 }
 
 function search_user_templates_stateChanged(response){
@@ -1333,9 +1392,9 @@ function transfer_user_templates(tag){
 			user_id: user
 		},
 	})
-	.done(function (response) {
-		transfer_user_templates_stateChanged(response);
-	});
+		.done(function (response) {
+			transfer_user_templates_stateChanged(response);
+		});
 }
 
 function transfer_user_templates_stateChanged(response){
@@ -1366,9 +1425,9 @@ function do_transfer_user_templates(user_id, tag_user_select, tag_transfer_priva
 			delete_user: delete_user
 		},
 	})
-	.done(function (response) {
-		do_transfer_user_templates_stateChanged(response);
-	});
+		.done(function (response) {
+			do_transfer_user_templates_stateChanged(response);
+		});
 }
 
 function do_transfer_user_templates_stateChanged(response){
@@ -1405,9 +1464,9 @@ function user_groups_list(){
 			no_id: 1
 		},
 	})
-	.done(function (response) {
-		management_usergroupStateChanged(response);
-	});
+		.done(function (response) {
+			management_usergroupStateChanged(response);
+		});
 }
 
 // Function management state changed update screen
@@ -1437,13 +1496,15 @@ function list_group_members(tag, id=-1){
 	if (group != "") {
 		$.ajax({
 			type: "POST",
-			url: "website_code/php/management/get_group_members.php",
+			url: apiV1Url('management/group-members'),
+			dataType: 'json',
 			data: {
 				group_id: group
 			},
 		})
 		.done(function (response) {
-			list_group_members_stateChanged(response);
+			var data = apiUnpack(response);
+			list_group_members_stateChanged(renderGroupMembersFromApi(data));
 		})
 		.fail(function(){
 			alert(USER_LIST_FAIL);
@@ -1474,12 +1535,12 @@ function add_member(login_id, group_id){
 				group_id: group
 			},
 		})
-		.done(function (response) {
-			list_group_members(group_id);
-		})
-		.fail(function(){
-			alert(ADD_MEMBER_FAIL);
-		});
+			.done(function (response) {
+				list_group_members(group_id);
+			})
+			.fail(function(){
+				alert(ADD_MEMBER_FAIL);
+			});
 	}
 }
 
@@ -1498,28 +1559,28 @@ function delete_member(login_id, group_id){
 				group_id: group,
 			},
 		})
-		.done(function(owns_templates) {
-			do_it = true;
-			if (owns_templates != "OK") {
-				do_it = confirm(owns_templates);
-			}
-			if (do_it) {
-				$.ajax({
-					type: "POST",
-					url: "website_code/php/management/delete_member.php",
-					data: {
-						login_id: login_id,
-						group_id: group
-					},
-				})
-				.done(function (response) {
-					list_group_members(group_id);
-				})
-				.fail(function () {
-					alert(DELETE_MEMBER_FAIL);
-				})
-			}
-		});
+			.done(function(owns_templates) {
+				do_it = true;
+				if (owns_templates != "OK") {
+					do_it = confirm(owns_templates);
+				}
+				if (do_it) {
+					$.ajax({
+						type: "POST",
+						url: "website_code/php/management/delete_member.php",
+						data: {
+							login_id: login_id,
+							group_id: group
+						},
+					})
+						.done(function (response) {
+							list_group_members(group_id);
+						})
+						.fail(function () {
+							alert(DELETE_MEMBER_FAIL);
+						})
+				}
+			});
 	}
 }
 
@@ -1555,15 +1616,17 @@ function add_new_group_stateChanged(response){
 		list_group_members('group', $("#group").val());
 	}else{
 		alert(GROUP_EXISTS);
-    }
+	}
 }
 
 
 function delete_group( group_tag ){
 	var group_id = document.getElementById(group_tag).value
+	var current_name = group.options[group.selectedIndex].text;
 	if (group_id != "")
 	{
-		if (confirm(DELETE_GROUP)) {
+		//if (confirm(DELETE_GROUP)) {
+		if (confirm(DELETE_GROUP + " (" + current_name + ")")) {
 			$.ajax({
 				type: "POST",
 				url: "website_code/php/management/delete_group.php",
@@ -1571,13 +1634,63 @@ function delete_group( group_tag ){
 					group_id: group_id,
 				},
 			})
-			.done(function (response) {
-				user_groups_list();
+				.done(function (response) {
+					user_groups_list();
+				})
+				.fail(function () {
+					alert(GROUP_DELETE_FAIL);
+					user_groups_list();
+				});
+		}
+	}
+}
+
+function rename_group(group_tag){
+
+	var group = document.getElementById(group_tag);
+	var group_id = group.value;
+
+	if (group_id != "") {
+
+		var current_name = group.options[group.selectedIndex].text;
+
+		var group_name = prompt(GROUP_RENAME + " (" + current_name + "):", current_name);
+
+		if (group_name != null && group_name.trim() != "") {
+
+			group_name = group_name.trim();
+
+			if (group_name == "") {
+				return;
+			}
+
+			if (group_name == current_name.trim()) {
+				return;
+			}
+
+			$.ajax({
+				type: "POST",
+				url: "website_code/php/management/rename_group.php",
+				data: {
+					group_id: group_id,
+					group_name: group_name
+				},
 			})
-			.fail(function () {
-				alert(GROUP_DELETE_FAIL);
-				user_groups_list();
-			});
+				.done(function(response){
+
+					if(response != ""){
+						$("#group").html(response).show();
+						list_group_members('group', $("#group").val());
+						alert(GROUP_RENAME_SUCCESS);
+					}else{
+						alert(GROUP_EXISTS);
+					}
+
+				})
+				.fail(function(){
+					alert(GROUP_RENAME_FAIL);
+				});
+
 		}
 	}
 }
@@ -1704,21 +1817,21 @@ function disable_users_based_on_last_login()
 	}
 }
 function changeUserSelection_user_roles(){
-		let role_user_select = document.getElementById("user_roles");
-		if(role_user_select){
-				$.ajax({
-						type: "POST",
-						url: "website_code/php/management/get_user_roles.php",
-						data : {
-								userid: role_user_select.value,
-						},
-				}).done(function (response){
-						document.getElementById("manage_user_roles").innerHTML = response;
-						$(".selectize").selectize();
-				}).fail(function (){
-						alert("something went wrong");
-				});
-		}
+	let role_user_select = document.getElementById("user_roles");
+	if(role_user_select){
+		$.ajax({
+			type: "POST",
+			url: "website_code/php/management/get_user_roles.php",
+			data : {
+				userid: role_user_select.value,
+			},
+		}).done(function (response){
+			document.getElementById("manage_user_roles").innerHTML = response;
+			$(".selectize").selectize();
+		}).fail(function (){
+			alert("something went wrong");
+		});
+	}
 }
 
 
@@ -1741,29 +1854,29 @@ function manage_user_roles_select(user_id)
 }
 
 function update_roles(userid){
-		// usage of fromdata because you don't have to hard code the roles
-		let formdata = new FormData(document.getElementById("roles"));
-		let data = {};
-		formdata.forEach((value, key) =>{
-				data[key] = value == "on"? true : value;
-		});
-		if(userid != null){
-				if(confirm("are you sure want to modify the roles of the user")){
-						data["id"]=userid;
-						$.ajax({
-								type: "POST",
-								url: "website_code/php/management/modify_roles.php",
-								data: data
-						}).done(function (response) {
-								alert(response);
-								users_list();
-						}).fail(function () {
-								alert("failed to load modify_roles.php");
-								users_list();
-						});
-						
-				}
+	// usage of fromdata because you don't have to hard code the roles
+	let formdata = new FormData(document.getElementById("roles"));
+	let data = {};
+	formdata.forEach((value, key) =>{
+		data[key] = value == "on"? true : value;
+	});
+	if(userid != null){
+		if(confirm("are you sure want to modify the roles of the user")){
+			data["id"]=userid;
+			$.ajax({
+				type: "POST",
+				url: "website_code/php/management/modify_roles.php",
+				data: data
+			}).done(function (response) {
+				alert(response);
+				users_list();
+			}).fail(function () {
+				alert("failed to load modify_roles.php");
+				users_list();
+			});
+
 		}
+	}
 }
 
 function template_submit()
@@ -1775,13 +1888,14 @@ function template_submit()
 		type: "POST",
 		processData: false,
 		contentType: false,
-		url: "website_code/php/management/upload.php",
+		url: apiV1Url('management/templates/upload'),
 		data: formData
 	})
 		.done(function(response){
 			//$("#upload-button").prop('disabled', false);
 			$("body").css("cursor", "default");
-			alert(response);
+			var d = apiUnpack(response);
+			alert(d && d.message ? d.message : 'Upload complete');
 			// Refresh templates list
 			templates_list();
 		})
@@ -1799,12 +1913,13 @@ function theme_submit(){
 		type: "POST",
 		processData: false,
 		contentType: false,
-		url: "website_code/php/management/upload_theme.php",
+		url: apiV1Url('management/themes/upload'),
 		data: formData
 	})
 		.done(function(response){
 			$("body").css("cursor", "default");
-			alert(response);
+			var d = apiUnpack(response);
+			alert(d && d.message ? d.message : 'Upload complete');
 			themes_list()
 		})
 		.fail(function(response){
@@ -1823,9 +1938,9 @@ function theme_disable(theme, type, displayname, btn_enable_txt, btn_disable_txt
 				type: type,
 			},
 		})
-		.done(function (response) {
-			$('#'+ type + '_' + theme).html("<s>" + displayname + " (" + theme + ")</s><button class='xerte_button theme_enable' onclick=\"javascript:theme_enable('" + theme + "','" + type + "','" + displayname + "','" + btn_enable_txt + "','" + btn_disable_txt + "')\">" + btn_enable_txt + "</button>");
-		});
+			.done(function (response) {
+				$('#'+ type + '_' + theme).html("<s>" + displayname + " (" + theme + ")</s><button class='xerte_button theme_enable' onclick=\"javascript:theme_enable('" + theme + "','" + type + "','" + displayname + "','" + btn_enable_txt + "','" + btn_disable_txt + "')\">" + btn_enable_txt + "</button>");
+			});
 	}
 }
 
@@ -1838,9 +1953,9 @@ function theme_enable(theme, type, displayname, btn_enable_txt, btn_disable_txt)
 			type: type,
 		},
 	})
-	.done(function (response) {
-		$('#'+ type + '_' + theme).html(displayname + " (" + theme + ")<button class='xerte_button theme_disable' onclick=\"javascript:theme_disable('" + theme + "','" + type + "','" + displayname + "','" + btn_enable_txt + "','" + btn_disable_txt + "')\">" + btn_disable_txt + "</button>");
-	});
+		.done(function (response) {
+			$('#'+ type + '_' + theme).html(displayname + " (" + theme + ")<button class='xerte_button theme_disable' onclick=\"javascript:theme_disable('" + theme + "','" + type + "','" + displayname + "','" + btn_enable_txt + "','" + btn_disable_txt + "')\">" + btn_disable_txt + "</button>");
+		});
 }
 
  

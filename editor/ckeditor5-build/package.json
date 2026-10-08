@@ -4,7 +4,8 @@
   "version": "1.0.0",
   "type": "module",
   "scripts": {
-    "build": "webpack --mode production --config webpack.config.js"
+    "generate:fontawesome": "node scripts/generate-fontawesome-icons.mjs",
+    "build": "npm run generate:fontawesome && webpack --mode production --config webpack.config.js"
   },
   "devDependencies": {
     "@ckeditor/ckeditor5-dev-translations": "^55.2.0",
@@ -28,6 +29,7 @@
     "@ckeditor/ckeditor5-core": "^47.6.1",
     "@ckeditor/ckeditor5-editor-classic": "^47.6.1",
     "@ckeditor/ckeditor5-editor-inline": "^47.6.1",
+    "@ckeditor/ckeditor5-engine": "^47.6.1",
     "@ckeditor/ckeditor5-essentials": "^47.6.1",
     "@ckeditor/ckeditor5-find-and-replace": "^47.6.1",
     "@ckeditor/ckeditor5-font": "^47.6.1",

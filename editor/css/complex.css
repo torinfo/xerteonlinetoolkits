@@ -507,6 +507,7 @@ span.button-close-east			{ background: url(../img/chevron-right_444444_15.png) n
 {
 	margin-top: 10px;
 	padding-left: 10px;
+	font-weight: bold;
 	text-align: left;
 }
 
@@ -618,6 +619,7 @@ div.ui-layout-north div.content {
 	margin:0 auto;
 	width:100%;
 	padding:0;
+	height: auto !important;
 }
 .elevated div.ui-layout-north div.content {
 	background-image: url(../img/warning.png);
@@ -762,7 +764,7 @@ form.csvUpload input[name=merge] {
 #mainPanel .xerte_button.grid_col_btns,
 #mainPanel .xerte_button.disabled.grid_col_btns,
 #mainPanel input[name=csvUpload],
-#mainPanel input[name=csvDownload]{
+#mainPanel input[name=csvDownload] {
 	font-size: 0.8em;
 }
 
@@ -820,6 +822,13 @@ td.wizardlabel {
 }
 
 td.wizardvalue {
+	min-width: 0;
+}
+
+td.wizardvalue .wizardvalue_inner,
+td.wizardvalue .ck-editor {
+	min-width: 0;
+	max-width: 100%;
 }
 
 fieldset.wizardgroup {
@@ -1578,22 +1587,44 @@ div.hotspot360Icon span.icon360Holder .icon360 {
 /* Enlarge/magnify button
    Places this button inside the image frame
 */
-.enlarge_button {
+.enlarge_button,
+.copy_credits_button {
 	position: absolute;
-	right: 8px;
 	bottom: 8px;
 	z-index: 3;
 	display: inline-flex;
 	align-items: center;
 	justify-content: center;
-	height: 1.9em;
-	min-width: 1.9em;
-	padding: 0 0.4em;
+	height: 1.75em;
+	min-width: 1.75em;
+	padding: 0 0.35em;
 	background: #fff;
 	border: 0;
 	border-radius: 6px;
 	box-shadow: 0 1px 4px rgba(0,0,0,.2);
 	cursor: pointer;
+	font-size: 0.9em;
+}
+
+.enlarge_button {
+	right: 8px;
+}
+
+.copy_credits_button {
+	right: 3.5em;
+}
+
+.copied_notice {
+	position: absolute;
+	right: 8px;
+	bottom: 3.2em;
+	z-index: 4;
+	padding: 4px 7px;
+	background: #fff;
+	border-radius: 4px;
+	box-shadow: 0 1px 4px rgba(0,0,0,.2);
+	font-size: 0.8em;
+	white-space: nowrap;
 }
 
 /* Keep/Submit button */
