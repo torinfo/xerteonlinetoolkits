@@ -1,0 +1,518 @@
+<?xml version="1.0"?>
+<wizard menus="website" runtime="preview_site.php">
+
+	<learningObject icon="icLayout" remove="false" duplicate="false">
+  
+		<name type="TextInput" label="Titel leerobject"/>
+		<theme type="ThemeList" label="Thema" mandatory="true" defaultValue="default"/>
+		<themeurl type="CheckBox" label="Zet thema url uit" defaultValue="true" optional="true" tooltip="Standaard kan het thema nu worden gewijzigd met een url-parameter, bijvoorbeeld &amp;amp;theme=default, wat om verschillende redenen handig is. Als auteur kun je deze optionele eigenschap echter gebruiken om deze functie aan te vinken en uit te schakelen, als je dat wil. De 'thema url-parameter' die moet worden gebruikt bij het wijzigen van een thema via deze methode, wordt weergegeven in de beschrijving van elk thema en is vaak korter en niet hetzelfde als de weergavenaam van het thema."/>
+		<language type="LanguageList" label="Taal" width="170" mandatory="true" defaultValue=""/>
+		
+		<searchGroup type="group" label="Zoeken" optional="true" tooltip="Voeg de mogelijkheid toe om te kunnen zoeken op relevantie secties binnen het project" info="&lt;p&gt;Bekijk hier de &lt;u&gt;&lt;a href=&quot;https://xot.12change.eu/USER-FILES/2420-inge-Nottingham/media/Zoekfunctie_bootstrap-handleiding_14102019.pdf&quot; target=&quot;_blank&quot;&gt;Bootstrap Zoek Handleiding&lt;/a&gt;&lt;/u&gt; voor uitleg over het opzetten en gebruiken van de zoek functionaliteit.&lt;/p&gt;">
+			<category label="Zoek categorie" type="CheckBox" defaultValue="false" tooltip="Vind relevante secties door een selectie te maken uit een aantal categorie&#xEB;n" optional="true"/>
+			<categoryInfo label="Categorie&#xEB;n" type="DataGrid" height="200" width="390" columns="2" colWidths="100,295" headers="Categorie naam,Opties" newRow="," defaultValue="|" optional="true" editable="1,1" wysiwyg="false,true" tooltip="Maak een lijst van categorie&#xEB;n die gebruikt worden om in te zoeken. De categorie&#xEB;n moeten een naam hebben en &#xE9;&#xE9;n of meer opties (iedere optie moet op een nieuwe regel geplaatst worden)"/>
+			<categoryTxt label="Tekst" type="TextArea" height="150" defaultValue="" optional="true" tooltip="Introductie tekst zoekfunctie"/>
+		</searchGroup>
+		
+		<glossaryGroup type="group" label="Woordenlijst" optional="true">
+			<glossary label="Woordenlijst" type="DataGrid" height="200" width="390" columns="2" colWidths="100,295" editable="1,1" controls="1" headers="Term,Definitie" newRow="term,definitie" defaultValue="term|definitie" optional="true" wysiwyg="false,true"/>
+			<glossaryHover label="Toon definitie bij mouseover" type="Checkbox" defaultValue="true" optional="true"/>
+			<glossaryPage label="Woordenlijst pagina" type="ComboBox" data="none,first,last" conditionTrigger="true" options="Geen,Eerste pagina,Laatste pagina" optional="true" defaultValue="none" width="175"/>
+			<glossaryPageGroup label="Woordenlijst pagina informatie" type="group" condition="glossaryPage!='none'" optional="true">
+				<glossaryTitle label="Titel" type="TextInput" defaultValue="Woordenlijst" optional="true" condition="glossaryPage!='none'"/>
+				<glossaryMenu label="Navigatie" type="ComboBox" data="both,menu,headings,neither" options="Menu en banner,Alleen menu,Alleen banner,Geen menu of banners" optional="true" defaultValue="both" width="175" condition="glossaryPage!='none'"/>
+				<glossaryPageID label="Pagina ID" type="TextInput" condition="glossaryPage!='none'" optional="true" tooltip="Maak een aangepaste URL naar de woordenlijst." defaultValue=""/>
+				<glossaryHeaderGroup type="group" label="Pagina header" optional="true" condition="glossaryPage!='none'">
+					<glossaryHeaderTitleAlign label="Positie titel" type="ComboBox" optional="true" condition="glossaryPage!='none'" data="left,center,right" options="Links,midden,Rechts" defaultValue="center" tooltip="De horizontale uitlijning van de titel."/>
+					<glossaryImgGroup type="group" label="Afbeelding" optional="true" condition="glossaryPage!='none'">
+					  <glossaryHeaderImage label="File" type="media" optional="true" condition="glossaryPage!='none'"/>
+					  <glossaryHeaderPos label="Position" type="ComboBox" data="left,center,right" condition="glossaryPage!='none'" options="Left,Centre,Right" optional="true" defaultValue="left" width="175"/>
+					  <glossaryHeaderRepeat label="Repeat" conditionTrigger="true" type="ComboBox" condition="glossaryPage!='none'" data="repeat,repeat-x,repeat-y,no-repeat" options="Horizontal and Vertical Repeat,Horizontal Repeat,Vertical Repeat,No Repeat" optional="true" defaultValue="repeat" width="175"/>
+					  <glossaryHeaderSize label="Size" type="ComboBox" data="not-set,auto,contain,cover" options="Do not set,Auto,Contain,Cover" optional="true" condition="glossaryPage!='none'&amp;&amp;headerRepeat=='no-repeat'" defaultValue="not-set" width="175" tooltip="Set the background image size options"/>
+					</glossaryImgGroup>
+				  <glossaryHeaderColours label="Kleuren aanpassen" type="group" optional="true" condition="glossaryPage!='none'">
+					  <glossaryHeaderColour label="Background" type="ColourPicker" optional="true" condition="glossaryPage!='none'" defaultVlaue=""/>
+					  <glossaryHeaderTextColour label="Text" type="ColourPicker" optional="true" condition="glossaryPage!='none'" defaultValue=""/>
+				  </glossaryHeaderColours>
+				  <glossrayBannerGroup type="group" label="Balk/header uiterlijk" optional="true" condition="glossaryPage!='none'">
+					  <glossaryHeaderBanner label="Header Style" type="ComboBox" conditionTrigger="true" condition="glossaryPage!='none'" data="fullscreen,fixedheight" options="Banner,Bar" optional="true" defaultValue="fixedheight" width="175" tooltip="Determines whether the header is shown as a bar at the top of the screen (default) or as full screen banner when the page is opened"/>
+					  <glossaryBannerCollapse label="Collapse to Bar on Scroll" type="CheckBox" conditionTrigger="true" condition="glossaryPage!='none'&amp;&amp;glossaryHeaderBanner=='fullscreen'" optional="true" defaultValue="true" tooltip="Collapse the banner to a bar when scrolling down"/>
+					  <glossaryHeaderHeightGroup type="group" label="Bar Height" optional="true" condition="glossaryPage!='none'&amp;&amp;(glossaryHeaderBanner=='fixedheight'||glossaryBannerCollapse=='true')">
+						  <glossaryBannerFixedHeight label="Fix Height" type="CheckBox" conditionTrigger="true" condition="glossaryPage!='none'&amp;&amp;(glossaryHeaderBanner=='fixedheight'||glossaryBannerCollapse=='true')" optional="true" defaultValue="false" tooltip="By default, the height of the header bar is based on the space needed to show the bar's contents. Check this box to enable a fixed height to be set instead."/>
+						  <glossaryBannerHeight label="Height (%)" type="NumericStepper" condition="glossaryPage!='none'&amp;&amp;glossaryBannerFixedHeight=='true'&amp;&amp;(glossaryHeaderBanner=='fixedheight'||glossaryBannerCollapse=='true')" min="10" max="100" step="1" width="100" optional="true" defaultValue="20" tooltip="The height (in %) of the fixed height bar"/>
+					  </glossaryHeaderHeightGroup>
+					  <glossaryBannerFullScrollGroup label="Scroll Down Hint" type="group" optional="true" condition="glossaryPage!='none'&amp;&amp;glossaryHeaderBanner=='fullscreen'">
+						  <glossaryBannerFullScrolldownInfo label="Add Hint" type="CheckBox" conditionTrigger="true" condition="glossaryPage!='none'&amp;&amp;glossaryHeaderBanner=='fullscreen'" optional="true" defaultValue="true" tooltip="Show an arrow and text, prompting users to scroll down, when the banner is full screen"/>
+						  <glossaryBannerFullScrolldownText label="Scroll Down Text" type="TextInput" wysiwyg="true" condition="glossaryPage!='none'&amp;&amp;glossaryHeaderBanner=='fullscreen'&amp;&amp;glossaryBannerFullScrolldownInfo=='true'" optional="true" defaultValue="" tooltip="Leave blank to use the default scroll down text or add your own text here to replace it"/>
+					  </glossaryBannerFullScrollGroup>
+					  <glossaryHeaderTopMargin label="Title Vertical Position (%)" type="NumericStepper" condition="glossaryPage!='none'&amp;&amp;glossaryHeaderBanner=='fullscreen'" min="2" max="60" step="1" defaultValue="20" optional="true" tooltip="The position of the titles as a percentage from the top of the full screen banner"/>
+				  </glossrayBannerGroup>
+				</glossaryHeaderGroup>
+			</glossaryPageGroup>
+		</glossaryGroup>
+		
+		<headerGroup type="group" label="Header" optional="true">
+			<headerHide label="Verberg header" type="Checkbox" defaultValue="false" optional="true" conditionTrigger="true"/>
+			<headerTitleAlign type="ComboBox" optional="true" label="Titel positie" data="left,center,right" options="Links,Midden,Rechts" defaultValue="center" tooltip="De horizontale uitlijning van de titel" condition="headerHide!='true'"/>
+			<headerImg type="group" label="Afbeelding" optional="true" condition="headerHide!='true'">
+				<header type="Media" optional="true" label="Bestand" placeholder="Selecteer afbeelding" condition="headerHide!='true'"/>
+				<headerPos type="ComboBox" data="left,center,right" options="Links,Midden,Rechts" optional="true" label="Positie" defaultValue="left" width="175" condition="headerHide!='true'"/>
+				<headerRepeat conditionTrigger="true" type="ComboBox" data="repeat,repeat-x,repeat-y,no-repeat" options="Horizontale en verticale herhaling,horizontale herhaling,verticale herhaling,geen herhaling" optional="true" label="Herhalen" defaultValue="repeat" width="175" condition="headerHide!='true'"/>
+				<headerSize type="ComboBox" data="not-set,auto,contain,cover" options="Niet gebruiken,Auto,Contain,Cover" optional="true" label="Grootte" condition="headerRepeat=='no-repeat'&amp;&amp;headerHide!='true'" defaultValue="not-set" width="175" tooltip="Stel de opties voor de achtergrondafbeeldinggrootte in."/>
+			</headerImg>
+			<headerColours type="group" label="Kleuren aanpassen" optional="true" condition="headerHide!='true'">
+				<headerColour type="ColourPicker" optional="true" label="Achtergrondkleur" condition="headerHide!='true'"/>
+				<headerTextColour type="ColourPicker" optional="true" label="Tekst kleur" condition="headerHide!='true'"/>
+			</headerColours>
+			<headerLogoR type="group" label="Rechter logo" optional="true" condition="headerHide!='true'">
+				<logoRHide label="Verberg standaard logo" type="Checkbox" defaultValue="false" optional="true" conditionTrigger="true" condition="headerHide!='true'"/>
+				<logoR type="Media" optional="true" label="Bestand" placeholder="Selecteer afbeelding" condition="logoRHide!='true'&amp;&amp;headerHide!='true'"/>
+				<logoRAlt label="Omschrijving" type="TextInput" placeholder="Voer een beschrijving in voor toegankelijkheid (accessibility)." optional="true" mandatory="true" condition="logoRHide!='true'&amp;&amp;headerHide!='true'"/>
+			</headerLogoR>
+			<headerLogoL type="group" label="Linker logo" optional="true" condition="headerHide!='true'">
+				<logoLHide label="Verberg standaard logo" type="Checkbox" defaultValue="false" optional="true" conditionTrigger="true" condition="headerHide!='true'"/>
+				<logoL type="Media" optional="true" label="Bestand" placeholder="Selecteer afbeelding" condition="logoLHide!='true'&amp;&amp;headerHide!='true'"/>
+				<logoLAlt label="Omschrijving" type="TextInput" placeholder="Voer een beschrijving in voor toegankelijkheid (accessibility)." optional="true" mandatory="true" condition="logoLHide!='true'&amp;&amp;headerHide!='true'"/>
+			</headerLogoL>
+		</headerGroup>
+        
+        <navbarGroup type="group" label="Navigatiebalk" optional="true">
+			<fixedheader type="Checkbox" defaultValue="false" conditionTrigger="false" optional="true" label="Navigatiebalk vastzetten" tooltip="De navigatiebalk is bovenaan in het venster vastgezet"/>
+			<navbarPos type="ComboBox" data="above,below" options="Boven header,Onder header" optional="true" label="Positie" defaultValue="above" width="175"/>
+			<navbarHide label="Navigatiebalk verbergen" type="Checkbox" defaultValue="false" optional="true" conditionTrigger="true"/>
+			<navBarColours type="group" label="Kleuren aanpassen" optional="true" condition="navbarHide!='true'">
+				<navbarColour type="ColourPicker" optional="true" label="Achtergrond" condition="navbarHide!='true'"/>
+				<navbarTextColour type="ColourPicker" optional="true" label="Tekst" condition="navbarHide!='true'"/>
+				<navbarTextHoverColour type="ColourPicker" optional="true" label="Tekst hover" condition="navbarHide!='true'"/>
+			</navBarColours>
+		</navbarGroup>
+		
+		<socialGroup type="group" label="Sociale iconen" optional="true" deprecated="Sociale iconen zijn momenteel niet beschikbaar" info="Selecteer hieronder welke sociale icons toegevoegd moeten worden aan het object. Verwijderen van de groep zorgt dat deze niet getoond wordt." tooltip="Verberg alle sociale iconen of vink specifieke iconen aan/uit." condition="footerHide!='true'">
+			<hidesocial label="Verberg alle sociale iconen" type="Checkbox" conditionTrigger="true" defaultValue="false" optional="true" condition="footerHide!='true'"/>
+			<socialBtnsGroup type="group" label="Knoppen" cols="3" optional="true">
+				<facebook label="Facebook" type="Checkbox" defaultValue="true" condition="hidesocial=='false'&amp;&amp;footerHide!='true'" optional="true"/>
+				<twitter label="Twitter" type="Checkbox" defaultValue="true" condition="hidesocial=='false'&amp;&amp;footerHide!='true'" optional="true"/>
+				<google label="Google+" type="Checkbox" defaultValue="true" condition="hidesocial=='false'&amp;&amp;footerHide!='true'" optional="true"/>
+				<linkedin label="LinkedIn" type="Checkbox" defaultValue="true" condition="hidesocial=='false'&amp;&amp;footerHide!='true'" optional="true"/>
+				<scoopit label="Scoop.it!" type="Checkbox" defaultValue="true" condition="hidesocial=='false'&amp;&amp;footerHide!='true'" optional="true"/>
+				<pinterest label="Pinterest" type="Checkbox" defaultValue="true" condition="hidesocial=='false'&amp;&amp;footerHide!='true'" optional="true"/>
+				<email label="Email" type="Checkbox" defaultValue="true" condition="hidesocial=='false'&amp;&amp;footerHide!='true'" optional="true"/>
+				<yammer label="Yammer" type="Checkbox" defaultValue="true" condition="hidesocial=='false'&amp;&amp;footerHide!='true'" optional="true"/>
+				<addthis label="AddThis" type="Checkbox" defaultValue="true" condition="hidesocial=='false'&amp;&amp;footerHide!='true'" optional="true"/>
+			</socialBtnsGroup>
+		</socialGroup>
+		
+        <footerGroup type="group" label="Voetbalk" optional="true">
+            <footerHide label="Verberg Voetbalk" type="Checkbox" defaultValue="false" optional="true" conditionTrigger="true"/>
+            <customFooter type="TextArea" height="60" label="Voetbalk eigen inhoud toevoegen" optional="true" condition="footerHide!='true'"/>
+			<footerPos type="ComboBox" deprecated="Sociale iconen zijn momenteel niet beschikbaar" data="above,below,replace" options="Boven sociale iconen,Onder sociale iconen" optional="true" label="Voetbalk eigen positie" defaultValue="above" width="175" condition="footerHide!='true'"/>
+            <footerColour type="ColourPicker" optional="true" label="Voetbalk achtergrond kleur" condition="footerHide!='true'"/>
+		</footerGroup>
+
+		<wcagGroup type="group" label="Toegankelijkheids logo en link" optional="true" tooltip="Verberg het toegankelijkheids logo en link of pas de link aan." condition="footerHide!='true'">
+			<wcagHide label="Verberg logo en link" type="Checkbox" conditionTrigger="true" defaultValue="false" optional="true" condition="footerHide!='true'"/>
+			<wcagAlt label="Logo beschrijving" type="TextInput" defaultValue="WCAG WAI-AA logo" condition="wcagHide=='false'&amp;&amp;footerHide!='true'" optional="true" placeholder="Voer een beschrijving in voor toegankelijkheid (accessibility)."/>
+			<wcagLinkTitle label="Link tooltip" type="TextInput" defaultValue="Bekijk de toegankelijkheids-verklaring" condition="wcagHide=='false'&amp;&amp;footerHide!='true'" optional="true"/>
+			<wcagLink type="Media" label="Link toegankelijkheidsverklaring" placeholder="Selecteer een bestand of voeg een url toe" tooltip="Voeg een url toe of blader naar een bestand om te linken naar je eigen toegankelijkheidsverklaring. Laat leeg om te linken naar de toegankelijkheidsverklaring op xerte.org.uk." condition="wcagHide=='false'&amp;&amp;footerHide!='true'" optional="true"/>
+			<wcagTarget type="ComboBox" label="Open in" data="_blank,_self,lightbox" options="Nieuw tabblad/venster,Dit tabblad,Lightbox" optional="true" defaultValue="_blank"/>
+		</wcagGroup>
+
+		<meta type="group" label="Metadata" optional="true">
+		    <explanation label="Let op: om dit project te delen via oai-pmh, moet je toestemming geven en de velden 'Categorie' en 'Onderwijsniveau' invullen." type="info" condition="oai_pmh_available" optional="true"/>
+			<course label="Cursus" type="Course" wysiwyg="false" defaultValue="" optional="true" tooltip="Label dat de cursus aangeeft waar dit leerobject deel van uitmaakt, gebruikt om metadata te maken in SCORM-objecten. Dit wordt ook opgeslagen in xAPI-gebeurtenissen."/>
+			<module label="Module" type="TextInput" wysiwyg="false" defaultValue="" optional="true" tooltip="Label dat de module/het onderwerp van dit leerobject aangeeft, gebruikt om metadata in SCORM-objecten te maken. Dit wordt ook opgeslagen in xAPI-gebeurtenissen."/>
+			<metaCategory label="Categorie" type="Category" optional="true" tooltip="Kies een categorie voor dit leerobject (bijvoorbeeld wiskunde)"/>
+			<metaDescription type="script" wysiwyg="false" label="Omschrijving" height="50" optional="true" defaultValue=""/>
+			<metaKeywords type="script" wysiwyg="false" label="Zoektermen" height="50" optional="true" defaultValue=""/>
+			<metaAuthor type="TextInput" wysiwyg="false" label="Auteur" defaultValue="" optional="true" tooltip="Noteer welke namen van auteurs getoond worden bij het publiceren van de metadata. Als er geen namen zijn ingevoerd worden de namen van de eigenaar en co-auteurs getoond."/>
+			<metaAuthorInclude type="CheckBox" label="Vermeld auteur bij harvesten" defaultValue="true" optional="true" tooltip="Of de auteursnaam wel of niet wordt opgenomen in de metadatarecord bij het publiceren van de metadata als oai-pmh (optionele functionaliteit)."/>
+			<metaEducation type="EducationLevelList" label="Opleidingsniveau" defaultValue="" optional="true" tooltip="Het opleidingsniveau (voortgezet onderwijs, mbo, hbo, universiteit)"/>
+			<metaThumbnail type="media" label="Miniatuurafbeelding" defaultValue="Kies afbeelding" placeholder="Selecteer afbeelding" optional="true" tooltip="De miniatuurafbeelding die getoond wordt bij de metadata."/>
+			<oaiPmhAgree label="Goedkeuren" extraCheckBoxLabel="Ik ga ermee akkoord dit project te delen via oai-pmh en ik bevestig dat er geen auteursrechtelijk beschermd materiaal in dit project wordt gebruikt." type="CheckBox" optional="true" defaultValue="false" tooltip="Het project wordt alleen gedeeld als dit is aangevinkt" condition="oai_pmh_available"/>
+		</meta>
+
+		<print type="CheckBox" label="Print knop" defaultValue="true" optional="true" tooltip="Voeg een printknop aan de navigatiebalk toe. Pagina's kunnen ook via de browser geprint worden wanneer deze niet aanwezig is."/>
+		<notes label="Notities" type="TextArea" height="150" defaultValue="" optional="true" tooltip="Aantekeningen bij het project. Deze worden niet getoond in het live project."/>
+		<libs type="DataGrid" label="JavaScript bibliotheek" optional="true" height="150" width="390" columns="1" colWidths="390" editable="1" controls="1" headers="Bibliotheek URL" newRow="Voeg URL toe" rendererOptions="geen" defaultValue="Voeg URL toe" tooltip="Voer JavaScript-bibliotheek-URL's in in de tabel met elke URL op een nieuwe rij."/>
+		<stylesheet type="Media" optional="true" label="Stylesheet" tooltip="Upload een CSS-bestand om dit project aan te passen." placeholder="Selecteer een CSS bestand"/>
+		<styles type="script" height="200" optional="true" label="Stijl" tooltip="Voeg aangepaste CSS toe aan dit project"/>
+		<script type="script" height="200" optional="true" label="Script" defaultValue="// JavaScript / jQuery" tooltip="Voeg JavaScript toe aan dit project. De code wordt uitgevoerd nadat de projectinterface is ingesteld, maar voordat er pagina's zijn geladen."/>
+		<authorSupport label="Auteur support" type="Checkbox" defaultValue="true" optional="true" tooltip="Toon aanvullende informatie (bijv. verborgen pagina's) wanneer het leerobject wordt bekeken om te helpen bij het bewerkingsproces. Er wordt geen informatie over auteursondersteuning weergegeven wanneer een openbare link naar het leerobject wordt bekeken."/>
+		
+		<lightboxGroup type="group" label="Lightbox" optional="true" tooltip="Standaard worden aangeklikte afbeeldingen geopend in een lightbox. Gebruik deze eigenschappen om de lightbox-functionaliteit voor het hele project in / uit te schakelen. Op elke pagina is ook een lightbox-eigenschap beschikbaar.">
+			<lightbox type="CheckBox" label="Lightbox afbeeldingen" defaultValue="true" optional="true" conditionTrigger="true"/>
+			<lightboxCaption type="ComboBox" label="Onderschrift" defaultValue="false" optional="true" options="Geen,Onder afbeelding,Boven afbeelding" data="false,below,above" condition="lightbox!='false'" tooltip="Voeg een onderschrift toe aan lightbox-afbeeldingen. De onderschrifttekst is afkomstig uit de velden 'Beschrijving' of 'Alt-tekst'."/>
+		</lightboxGroup>
+
+		<varGroup type="group" label="Variabelen" optional="true" info="&lt;p&gt;Bekijk de &lt;u&gt;&lt;a href=&quot;https://xot.xerte.org.uk/play.php?template_id=636&quot; target=&quot;_blank&quot;&gt;Variabelen handleiding&lt;/a&gt;&lt;/u&gt; voor hulp bij het aanmaken en werken met variabelen&lt;/p&gt;">
+			<variables optional="true" label="Variabelen data" type="DataGrid" columns="11" editable="1,1,1,1,1,1,1,1,1,1,1" controls="1" headers="Naam, Vaste waarde, Willekeurig, Min, Max, Stap, DP, SF, Decimalen, Uitsluiten, Standaard" newRow="Naam, Vaste waarde, Willekeurig, Min, Max, Stap, DP, SF, Decimalen, Uitsluiten, Standaard" defaultValue="| | | | | | | |fout| |"/>
+			<decimalseparator label="Decimaal scheidingsteken" type="ComboBox" options="Punt,Komma" data="period,comma" width="100" defaultValue="period" optional="true" tooltip="Het teken dat als decimaal scheidingsteken wordt gebruikt wanneer numerieke variabelen worden gebruikt."/>
+		</varGroup>
+		
+		<globalVars type="CheckBox" label="Toon globale variabelen" defaultValue="true" optional="true" tooltip="Sta het tonen van globale variabelen toe met het gebruik van format {variableName}"/>
+
+				<alternatingSections type="CheckBox" label="Afwisselende secties" defaultValue="false" optional="true" tooltip="Schakel afwisselende secties op alle pagina's in. Indien ingeschakeld, worden extra opvulling, ronde hoeken en een subtiele verandering van achtergrondkleur weergegeven voor oneven en even secties. Opmerking: als je een aangepast thema gebruikt, zijn de standaard achtergrondkleuren mogelijk niet geschikt. Deze kunnen worden gewijzigd met de stijlen .oddSection en .evenSection."/>
+		
+		<topBtnGroup type="group" label="Terug naar boven knop" optional="true" tooltip="Verberg of pas de Terug naar boven knop aan">
+			<topBtnHide label="Verberg knoppen" type="Checkbox" defaultValue="false" conditionTrigger="true" optional="true" tooltip="Verberg de Terug naar boven knop op alle pagina's"/>
+			<topBtnRound label="Uiterlijk" type="ComboBox" options="'Top' tekst,Cirkel met pijl naar boven" data="false,true" defaultValue="false" condition="topBtnHide=='false'" conditionTrigger="true" optional="true" tooltip="Wijzig de standaard Terug naar boven knop in een cirkel met een pijl omhoog"/>
+			<topBtnColourGroup type="group" label="Kleuren aanpassen" optional="true">
+				<topBtnRoundColour type="ColourPicker" optional="true" condition="topBtnHide=='false'&amp;&amp;topBtnRound=='true'" label="Achtergrond" tooltip="De standaardkleur van de cirkel wijzigen (optioneel)"/>
+				<topBtnRoundHoverColour type="ColourPicker" optional="true" condition="topBtnHide=='false'&amp;&amp;topBtnRound=='true'" label="Hover en focus" tooltip="Wijzig de standaard hover- en focuskleur van de cirkel (optioneel)"/>
+				<topBtnRoundIconColour type="ColourPicker" optional="true" condition="topBtnHide=='false'&amp;&amp;topBtnRound=='true'" label="Pijl" tooltip="De standaardkleur van de naar-boven-pijl wijzigen (optioneel)"/>
+			</topBtnColourGroup>
+		</topBtnGroup>
+
+		<twittercard type="group" label="Twitter card" optional="true" tooltip="Activeer een Twitter-kaart wanneer een openbare link naar dit project via Twitter wordt gedeeld.">
+            <tcoption label="Twitter card inschakelen" type="CheckBox" conditionTrigger="true" defaultValue="true" optional="true"/>
+			<tcRequired type="group" label="Verplicht" optional="true" condition="tcoption!='false'">
+				<tcmode optional="true" label="Kaart modus" width="250" type="ComboBox" options="Samenvatting grote afbeelding, Samenvatting miniatuurafbeelding" data="summary_large_image,summary" defaultValue="summary_large_image" tooltip="De optie 'Samenvatting grote afbeelding' geeft een grotere afbeelding weer die de breedte van de tweet beslaat en de optie 'Samenvatting thumbnail afbeelding' geeft een kleinere miniatuurafbeelding weer." condition="tcoption!='false'"/>
+				<tctitle optional="true" label="Titel" width="250" type="TextInput" defaultValue="" tooltip="Vereist: Titel van deze content die moet worden weergegeven op de Twitter-kaart." condition="tcoption!='false'"/>
+				<tcimageGroup type="group" label="Afbeelding" optional="true" condition="tcoption!='false'" tooltip="Vereist: strikt genomen is dit optioneel, maar het is wel de bedoeling van het toevoegen van deze Twitter-kaartfunctionaliteit. Bijvoorbeeld om automatisch een klikbare afbeeldingslink te tonen wanneer er een link naar dit leerobject wordt getweet.">
+					<tcimage optional="true" type="media" label="Bestand" defaultValue="" placeholder="Selecteer afbeelding" condition="tcoption!='false'"/>
+					<tcimagealt optional="true" type="TextInput" label="Omschrijving" defaultValue="" placeholder="Voer een beschrijving in voor toegankelijkheid (accessibility)." condition="tcoption!='false'"/>
+				</tcimageGroup>
+			</tcRequired>
+
+			<tcOptional type="group" label="Optioneel" optional="true" condition="tcoption!='false'">
+				<tcsite optional="true" label="Locatie" width="250" type="TextInput" defaultValue="" tooltip="Optioneel: De Twitter @gebruikersnaam waaraan de kaart moet worden toegekend, bijvoorbeeld @jouworganisatie." condition="tcoption!='false'"/>
+				<tccreator optional="true" label="Auteur" width="250" type="TextInput" defaultValue="" tooltip="Optioneel: Twitter-account voor de auteur, bijvoorbeeld @jouwtwittergebruikersnaam" condition="tcoption!='false'"/>
+				<tcdescription optional="true" label="Omschrijving" width="250" type="TextInput" defaultValue="" tooltip="Optioneel: Beschrijving van de content die op de Twitter-kaart moet worden weergegeven." condition="tcoption!='false'"/>
+			</tcOptional>
+        </twittercard>
+		
+		<newNodes>
+		<page><![CDATA[<page name="Voeg pagina titel toe" subtitle="Voeg hier de ondertitel toe"/>]]></page></newNodes>
+
+	</learningObject>
+<page menu="website" hint="Voeg een nieuwe lege pagina toe. Pagina's kunnen een aantal secties bevatten, elk met een of meer blokken met inhoud." icon="icLayoutContent" remove="true" duplicate="true" menuItem="Pagina" deepLink="true">
+
+		<name type="TextInput" label="Pagina titel" wysiwyg="true"/>
+		<subtitle type="TextInput" label="Pagina ondertitel" wysiwyg="true"/>
+
+		<newNodes>
+			<section><![CDATA[<section name="Voeg titel sectie toe"/>]]></section>
+		</newNodes>
+
+	<notes label="Notities" type="TextArea" height="150" defaultValue="" optional="true" tooltip="Aantekeningen bij deze pagina. Deze worden niet getoond in het live project." common="true"/><headerGroup type="group" label="Header" optional="true" common="true">
+		<headerTitleAlign type="ComboBox" optional="true" label="Titel positie" data="left,center,right" options="Links,Midden,Rechts" defaultValue="center" tooltip="De horizontale uitlijning van de titel"/>
+		<headerImg type="group" label="Afbeelding" optional="true">
+			<header type="Media" optional="true" label="Bestand" placeholder="Selecteer afbeelding"/>
+			<headerPos type="ComboBox" data="left,center,right" options="Links,Midden,Rechts" optional="true" label="Positie" defaultValue="left" width="175"/>
+			<headerRepeat conditionTrigger="true" type="ComboBox" data="repeat,repeat-x,repeat-y,no-repeat" options="Horizontaal en verticaal herhalen, Horizontaal herhalen, Verticaal herhalen, Niet herhalen" optional="true" label="Herhaal" defaultValue="repeat" width="175"/>
+			<headerSize type="ComboBox" data="not-set,auto,contain,cover" options="Niet gebruiken,Auto,Contain,Cover" optional="true" label="Grootte" condition="headerRepeat=='no-repeat'" defaultValue="not-set" width="175" tooltip="Stel de opties voor de achtergrondafbeelding grootte in"/>
+		</headerImg>
+		<headerColours type="group" label="Kleuren aanpassen" optional="true">
+			<headerColour type="ColourPicker" optional="true" label="Achtergrond"/>
+			<headerTextColour type="ColourPicker" optional="true" label="Tekst"/>
+		</headerColours>
+		<headerBannerGroup type="group" label="Header/Banner uiterlijk" optional="true">
+			<headerBanner label="Header stijl" type="ComboBox" conditionTrigger="true" data="fullscreen,fixedheight" options="Banner,Balk" optional="true" defaultValue="fixedheight" width="175" tooltip="Bepaalt of de header wordt getoond als een balk bovenaan het scherm (standaard) of als een schermvullende banner wanneer de pagina wordt geopend."/>
+			<bannerCollapse label="Inklappen tot balk bij scrollen" type="CheckBox" conditionTrigger="true" condition="headerBanner=='fullscreen'" optional="true" defaultValue="true" tooltip="Vouw de banner in tot een balk bij het naar beneden scrollen."/>
+			<headerHeightGroup type="group" label="Balkhoogte" optional="true" condition="headerBanner=='fixedheight'||bannerCollapse=='true'">
+				<bannerFixedHeight label="Fix Height" type="CheckBox" conditionTrigger="true" condition="headerBanner=='fixedheight'||bannerCollapse=='true'" optional="true" defaultValue="false" tooltip="By default, the height of the header bar is based on the space needed to show the bar's contents. Check this box to enable a fixed height to be set instead."/>
+				<bannerHeight label="Height (%)" type="NumericStepper" condition="(headerBanner=='fixedheight'||bannerCollapse=='true')&amp;&amp;bannerFixedHeight=='true'" min="10" max="100" step="1" width="100" optional="true" defaultValue="20" tooltip="The height (in %) of the fixed height bar"/>
+			</headerHeightGroup>
+			<bannerFullScrollGroup label="Hint naar beneden scrollen" type="group" optional="true" condition="headerBanner=='fullscreen'">
+				<bannerFullScrolldownInfo type="CheckBox" conditionTrigger="true" condition="headerBanner=='fullscreen'" label="Add Hint" optional="true" defaultValue="true" tooltip="Show an arrow and text, prompting users to scroll down, when the banner is full screen"/>
+				<bannerFullScrolldownText type="TextInput" wysiwyg="true" condition="headerBanner=='fullscreen'&amp;&amp;bannerFullScrolldownInfo=='true'" label="Scroll Down Text" optional="true" defaultValue="" tooltip="Leave blank to use the default scroll down text or add your own text here to replace it"/>
+			</bannerFullScrollGroup>
+			<headerTopMargin type="NumericStepper" label="Titel verticale positie (%)" condition="headerBanner=='fullscreen'" min="2" max="60" step="1" defaultValue="20" optional="true" tooltip="De positie van de titels als percentage vanaf de bovenkant van de volledige banner."/>
+		</headerBannerGroup>
+	</headerGroup><pageLink label="Pagina link" type="TextInput" wysiwyg="true" defaultValue="" optional="true" tooltip="De linktekst voor het paginamenu (standaard is dit de paginatitel)" common="true"/><hideShow type="group" label="Verberg/Toon pagina" optional="true" tooltip="Verberg de pagina volledig of verberg/toon de begina tussen bepaalde data" info="Verberg deze pagina  altijd of gebruik de velden 'Van' en 'Tot' om aan te geven wanneer deze beschikbaar moet zijn" common="true">
+		<hidePage label="Verberg pagina" type="CheckBox" defaultValue="false" optional="true"/>
+		<hideOnDate label="Van" type="DateField" defaultValue="" optional="true" allowBlank="true" preventPrev="true" tooltip="Gebruik de kalender om een datum te selecteren (formaat JJJJ-MM-DD)"/>
+		<hideOnTime label="Van (uu:mm)" type="TextInput" placeholder="00:00" optional="true"/>
+		<hideUntilDate label="Tot" type="DateField" defaultValue="" optional="true" allowBlank="true" preventPrev="true" tooltip="Gebruik de kalender om een datum te selecteren (formaat JJJJ-MM-DD)"/>
+		<hideUntilTime label="Tot (uu:mm)" type="TextInput" placeholder="00:00" optional="true"/>
+	</hideShow><linkGroup type="group" label="Stand alone pagina" optional="true" tooltip="Pagina verwijderen uit paginamenu zodat deze alleen toegankelijk is via Xerte-paginalinks" common="true">
+		<linkPage label="Verwijder uit pagina menu" type="CheckBox" defaultValue="true" optional="true" conditionTrigger="true"/>
+		<newWindow label="Open in nieuw venster" type="CheckBox" defaultValue="false" optional="true" condition="linkPage=='true'" tooltip="Links naar deze pagina worden geopend in een nieuw browservenster"/>
+		<headerHide label="Verberg header" type="Checkbox" defaultValue="false" optional="true" condition="linkPage=='true'"/>
+		<navbarHide label="Navigatiebalk" type="ComboBox" data="default,back,hidden" options="Standaard,Alleen Terugknop,Verborgen" defaultValue="back" optional="true" condition="linkPage=='true'"/>
+	</linkGroup><sectionGroup type="group" label="Sectie menu opties" optional="true" tooltip="Verberg de inhoudsopgave voor deze pagina en geef aan of de inhoud al dan niet de gehele breedte van de pagina moet gebruiken" common="true">
+        <sectionMenu label="Verberg menu" type="CheckBox" defaultValue="false" optional="true" conditionTrigger="true" tooltip="Verberg inhoudsopgave voor deze pagina"/>
+        <expandMain label="Gebruik volledige breedte" type="CheckBox" defaultValue="false" optional="true" condition="sectionMenu=='true'" tooltip="Als de inhoudsopgave is ingesteld op verborgen, vouw dan ook de inhoud uit tot de breedte van de pagina"/>
+    </sectionGroup><customLinkGroup type="group" label="Pagina ID" optional="true" tooltip="Maak een aangepaste URL naar deze pagina" info="&lt;p&gt;Maak een link rechtstreeks naar deze pagina door #uwPaginaID toe te voegen aan het einde van de project-URL&lt;br&gt;Gebruik geen spaties en de woorden 'pagina' en 'sectie' in pagina-ID's en zorg ervoor dat elke ID uniek is binnen het hele leerobject. Houd er ook rekening mee dat sectie-ID's en pagina-ID's hoofdlettergevoelig zijn.&lt;/p&gt;" common="true">
+		<customLinkID label="Pagina ID" type="TextInput" optional="true"/>
+	</customLinkGroup><passwordGroup type="group" label="Toegangscode" optional="true" tooltip="De toegang tot deze pagina is beperkt tot dat een toegangscode is ingevoerd. Let op: om jouw project veilig te beschermen, moet je het leerobject beveiligen via het tabblad 'Toegang' bij de projecteigenschappen (i-tje) in plaats van deze optionele eigenschap te gebruiken." common="true">
+		<password label="Toeganscode(s)" type="TextInput" optional="true" defaultValue="" tooltip="Een door komma's gescheiden lijst met wachtwoorden die toegang geven tot deze pagina"/>
+		<passwordCase label="Hoofdlettergevoelig" type="CheckBox" optional="true" defaultValue="true" tooltip="Wachtwoorden zijn hoofdlettergevoelig wanneer deze optie is aangevinkt"/>
+		<passwordInfo label="Instructies" type="TextArea" height="50" optional="true" defaultValue="Enter an access code below to view the page:" tooltip="The instructies die verschijnen in het toegangscode blok"/>
+		<passwordError label="Error bericht" type="TextArea" height="50" optional="true" defaultValue="Invalid access code" tooltip="Het error bericht dat verschijnt wanneer de onjuiste toegangscode wordt ingevoerd"/>
+		<passwordSubmit label="Label knop" type="TextInput" optional="true" defaultValue="Inleveren" tooltip="Het label op de knop voor het verzenden van de toegangscode"/>
+	</passwordGroup><filter type="CategoryList" label="Zoekfilter categorie&#xEB;n" target="categoryInfo" defaultValue="" optional="true" tooltip="Gebruik in combinatie met de optionele eigenschap&amp;nbsp;'Zoeken' op projectniveau. . Selecteer de relevante filter onderwerpen die gebruikt worden in bij het zoeken in categorie&#xEB;n." common="true"/><lightboxGroup type="group" label="Lightbox" optional="true" tooltip="Standaard worden aangeklikte afbeeldingen geopend in een lightbox. Gebruik deze eigenschappen om de lightbox-functionaliteit alleen voor deze pagina in / uit te schakelen" common="true">
+		<lightbox type="CheckBox" label="Lightbox afbeeldingen" defaultValue="true" optional="true"/>
+		<lightboxCaption type="ComboBox" label="Onderschrift" defaultValue="false" optional="true" options="Geen,Onder afbeelding,Boven afbeelding" data="false,below,above" tooltip="Voeg een onderschrift toe aan lightbox-afbeeldingen op deze pagina. De onderschrifttekst is afkomstig uit de velden 'Beschrijving' of 'Alt-tekst'."/>
+	</lightboxGroup><variables type="group" label="Variabelen" optional="true" tooltip="Gebruik samen met de optionele eigenschap 'Variabelen' op project niveau" common="true">
+		<varConfirm label="Antwoorden inleveren" type="TextInput" defaultValue="Bedankt voor de antwoorden" optional="true" tooltip="Bericht dat getoond wordt nadat de nieuwe variabelen waarden door de eindgebruiker zijn toegevoegd"/>
+		<varUpdate label="Update variabelen" type="CheckBox" defaultValue="true" optional="true" tooltip="Werk alle variabelen op deze pagina bij nadat de eindgebruiker nieuwe variabelewaarden heeft ingediend"/>
+	</variables></page><section icon="icPageWhite" remove="true" duplicate="true" menuItem="Sectie">
+
+		<name type="TextInput" label="Sectie titel" wysiwyg="true"/>
+
+		<hideShow type="group" label="Verberg/Toon sectie" optional="true" tooltip="Verberg de sectie volledig of verberg/toon de sectie tussen bepaalde data" info="Verberg deze sectie altijd of gebruik de velden 'Van' en 'Tot' om aan te geven wanneer deze beschikbaar moet zijn.">
+			<hidePage label="Verberg sectie" type="CheckBox" defaultValue="false" optional="true"/>
+			<hideOnDate label="Van" type="DateField" defaultValue="" optional="true" allowBlank="true" preventPrev="true" tooltip="Gebruik de kalender om een datum te selecteren (formaat JJJJ-MM-DD)"/>
+			<hideOnTime label="Van (uu:mm)" type="TextInput" placeholder="00:00" optional="true"/>
+			<hideUntilDate label="Tot" type="DateField" defaultValue="" optional="true" allowBlank="true" preventPrev="true" tooltip="Gebruik de kalender om een datum te selecteren (formaat JJJJ-MM-DD)"/>
+			<hideUntilTime label="Tot (uu:mm)" type="TextInput" placeholder="00:00" optional="true"/>
+		</hideShow>
+
+		<customSectionLinkGroup type="group" label="Sectie ID" optional="true" tooltip="Maak een aangepaste URL naar deze sectie" info="&lt;p&gt;Maak een directe link naar deze sectie door #yourSectionID toe te voegen aan het einde van de project-URL&lt;br /&gt;Vermijd het gebruik van spaties en de woorden 'pagina' en 'sectie' in pagina-ID's en zorg ervoor dat elke ID uniek is binnen het hele leerobject. Houd er ook rekening mee dat sectie-ID's en pagina-ID's hoofdlettergevoelig zijn.&lt;/p&gt;">
+            <customLinkID label="Sectie ID" type="TextInput" optional="true"/>
+        </customSectionLinkGroup>
+
+		<passwordGroup type="group" label="Toegangscode" optional="true" tooltip="De toegang tot dit gedeelte is niet mogelijk tot dat de juiste toegangscode is ingevoerd">
+			<password label="Toegangscode(s)" type="TextInput" optional="true" defaultValue="" tooltip="Een door komma's gescheiden lijst met toegangscodes die toegang geven tot deze sectie"/>
+			<passwordCase label="Hoofdlettergevoelig" type="CheckBox" optional="true" defaultValue="true" tooltip="Toegangscodes zijn hoofdlettergevoelig wanneer deze optie is aangevinkt"/>
+			<passwordInfo label="Instructies" type="TextArea" height="50" optional="true" defaultValue="Enter an access code below to view this section:" tooltip="De instructies die in het toegangscodeblok verschijnen"/>
+			<passwordError label="Error bericht" type="TextArea" height="50" optional="true" defaultValue="Invalid access code" tooltip="THet error bericht dat verschijnt wanneer een onjuiste toeganscode wordt ingevoerd"/>
+			<passwordSubmit label="Label knop" type="TextInput" optional="true" defaultValue="Inleveren" tooltip="Het label op de toegangscode inleverknop"/>
+		</passwordGroup>
+		
+		<links label="Subsectie links" type="ComboBox" width="80" options="Geen,Horizontale lijst,Vertikale lijst" data="none,hlist,vlist" defaultValue="hlist" optional="true" tooltip="Voeg een lijst met sub-sectie links toe onder de sectie titel. Alleen subsecties waar de titel niet verborgen is zullen meegenomen worden."/>
+		
+		<lightboxGroup type="group" label="Lightbox" optional="true" tooltip="Standaard worden aangeklikte afbeeldingen geopend in een lightbox. Gebruik deze eigenschappen om de lightbox-functionaliteit alleen voor deze sectie in / uit te schakelen">
+			<lightbox type="CheckBox" label="Lightbox afbeeldingen" defaultValue="true" optional="true"/>
+			<lightboxCaption type="ComboBox" label="Onderschrift" defaultValue="false" optional="true" options="Geen,Onder afbeelding,Boven afbeelding" data="false,below,above" tooltip="Voeg een onderschrift toe aan lightbox-afbeeldingen aan deze sectie. De onderschrifttekst is afkomstig uit de velden 'Beschrijving' of 'Alt-tekst'."/>
+		</lightboxGroup>
+		
+		<filter type="CategoryList" label="zoekfilter categorie&#xEB;n" target="categoryInfo" defaultValue="" optional="true" tooltip="Gebruik in combinatie met de optionele eigenschap 'Zoeken' op projectniveau. Selecteer de relevante filter onderwerpen die gebruikt worden in het zoeken in de categorie&#xEB;n"/>
+
+		<newNodes>
+			<xot><![CDATA[<xot name="Titel" showTitleFix="true" link="" header="false" footer="false"/>]]></xot>
+			<pdf><![CDATA[<pdf name="Titel" showTitleFix="true" url="" width="500" height="350" openPDF="Open de pdf in een nieuw tabblad"/>]]></pdf>
+			<markup><![CDATA[<markup name="Titel" showTitle="true">&lt;!--Enter HTML Code--&gt;</markup>]]></markup>
+			<canvas><![CDATA[<canvas name="Titel" showTitle="true" id="" width="500" height="350"/>]]></canvas>
+			<script><![CDATA[<script name="Titel">//javascript</script>]]></script>
+			<link><![CDATA[<link name="Voeg linktekst toe" url="" target="_self"/>]]></link>
+			<navigator><![CDATA[<navigator name="Titel" showTitle="true" type="Tabs"/>]]></navigator>
+			<video><![CDATA[<video name="Titel" showTitleFix="true" url=""/>]]></video>
+			<audio><![CDATA[<audio name="Titel" showTitleFix="true" url=""/>]]></audio>
+			<image><![CDATA[<image name="Titel" showTitleFix="true" url="" alt=""/>]]></image>
+			<text><![CDATA[<text name="Titel" showTitleFix="true">Voeg tekst toe</text>]]></text>
+		</newNodes>
+
+	</section><link icon="icLink" menuItem="Link" remove="true">
+
+		<name type="TextInput" label="Titel" wysiwyg="true"/>
+		<url type="TextInput" label="URL" placeholder="bijvoorbeeld: https://www.xerte.org.uk"/>
+		<target type="ComboBox" label="Open in" data="_blank,_self,lightbox" options="Nieuw tabblad/venster,Dit tabblad,Lightbox" mandatory="true" defaultValue="_blank"/>
+
+		<windowName type="TextInput" label="Naam venster" optional="true" deprecated="Deze eigenschap is verouderd."/>
+		<width label="Breedte" type="textInput" optional="true" placeholder="800" deprecated="Deze eigenschap is verouderd."/>
+		<height label="Hoogte" type="textInput" optional="true" placeholder="600" deprecated="Deze eigenschap is verouderd."/>
+		<scrollbars type="ComboBox" width="80" options="Ja,Nee" data="yes,no" label="Scrollbars" optional="true" deprecated="Deze eigenschap is verouderd."/>
+		<location type="ComboBox" width="80" options="Ja,Nee" data="yes,no" label="Lokatie" optional="true" deprecated="Deze eigenschap is verouderd."/>
+		<status type="ComboBox" width="80" options="Ja,Nee" data="yes,no" label="Status" optional="true" deprecated="Deze eigenschap is verouderd."/>
+		<titlebar type="ComboBox" width="80" options="Ja,Nee" data="yes,no" label="Titelbalk" optional="true" deprecated="Deze eigenschap is verouderd."/>
+		<toolbar type="ComboBox" width="80" options="Ja,Nee" data="yes,no" label="Toolbar" optional="true" deprecated="Deze eigenschap is verouderd."/>
+		<resizable type="ComboBox" width="80" options="Ja,Nee" data="yes,no" label="Herschaalbaar" optional="true" deprecated="Deze eigenschap is verouderd."/>
+
+	    <hideShow type="group" label="Verberg/Toon link" optional="true" tooltip="Verberg de link of verberg/toon de link tussen de genoemde data." info="Verberg deze link altijd of gebruik de 'Van' &amp; 'Tot' velden om aan te geven wanneer de link beschikbaar is.">
+        <hideContent label="Verberg link" type="CheckBox" defaultValue="false" optional="true"/>
+        <hideOnDate label="Van" type="DateField" defaultValue="" optional="true" allowBlank="true" preventPrev="true" tooltip="Gebruik de kalender om een datum te selecteren (formaat JJJJ-MM-DD)"/>
+        <hideOnTime label="Van (uu:mm)" type="TextInput" placeholder="00:00" optional="true"/>
+        <hideUntilDate label="Tot" type="DateField" defaultValue="" optional="true" allowBlank="true" preventPrev="true" tooltip="Gebruik de kalender om een datum te selecteren (formaat JJJJ-MM-DD)"/>
+        <hideUntilTime label="Tot (uu:mm)" type="TextInput" placeholder="00:00" optional="true"/>
+        </hideShow>
+
+	</link><markup icon="icTag" type="html" height="300" menuItem="HTML Code" label="HTML Code" remove="true" advanced="true">
+
+		<name type="TextInput" label="Titel" wysiwyg="true"/>
+		<showTitle label="Toon titel" type="CheckBox" defaultValue="false" mandatory="true"/>
+		
+		<url type="Media" label="HTML bestand" optional="true" placeholder="Selecteer een HTML bestand"/>
+
+		<hideShow type="group" label="Verberg/Toon HTML" optional="true" tooltip="Verberg de HTML of verberg/toon de HTML tussen de genoemde data." info="Verberg deze HTML altijd of gebruik de 'Van' &amp; 'Tot' velden om aan te geven wanneer de HTML beschikbaar is.">
+                                			<hideContent label="Verberg HTML" type="CheckBox" defaultValue="false" optional="true"/>
+                                			<hideOnDate label="Van" type="DateField" defaultValue="" optional="true" allowBlank="true" preventPrev="true" tooltip="Gebruik de kalender om een datum te selecteren (formaat JJJJ-MM-DD)"/>
+                                			<hideOnTime label="Van (uu:mm)" type="TextInput" placeholder="00:00" optional="true"/>
+                                			<hideUntilDate label="Tot" type="DateField" defaultValue="" optional="true" allowBlank="true" preventPrev="true" tooltip="Gebruik de kalender om een datum te selecteren (formaat JJJJ-MM-DD)"/>
+                                			<hideUntilTime label="Tot (uu:mm)" type="TextInput" placeholder="00:00" optional="true"/>
+                                		</hideShow>
+
+	</markup><text icon="icFont" type="text" height="300" menuItem="Tekst" label="Tekst" remove="true" placeholder="Voeg hier tekst toe">
+
+		<name type="TextInput" label="Titel" wysiwyg="true"/>
+		<showTitle label="Toon titel" type="CheckBox"/>
+		<showTitleFix label="Toon titel" type="CheckBox"/>
+		
+		<disableGlossary label="Deactiveer woordenlijst" defaultValue="true" type="CheckBox" optional="true"/>
+
+		<hideShow type="group" label="Verberg/Toon tekst" optional="true" tooltip="Verberg de tekst of verberg/toon de tekst tussen de genoemde data." info="Verberg deze tekst altijd of gebruik de 'Van' &amp; 'Tot' velden om aan te geven wanneer de tekst beschikbaar is.">
+        			<hideContent label="Verberg tekst" type="CheckBox" defaultValue="false" optional="true"/>
+        			<hideOnDate label="Van" type="DateField" defaultValue="" optional="true" allowBlank="true" preventPrev="true" tooltip="Gebruik de kalender om een datum te selecteren (formaat JJJJ-MM-DD)"/>
+        			<hideOnTime label="Van (uu:mm)" type="TextInput" placeholder="00:00" optional="true"/>
+        			<hideUntilDate label="Tot" type="DateField" defaultValue="" optional="true" allowBlank="true" preventPrev="true" tooltip="Gebruik de kalender om een datum te selecteren (formaat JJJJ-MM-DD)"/>
+        			<hideUntilTime label="Tot (uu:mm)" type="TextInput" placeholder="00:00" optional="true"/>
+        		</hideShow>
+
+	</text><pdf icon="icPDF" menuItem="PDF Document" remove="true">
+
+		<name type="TextInput" label="Titel" wysiwyg="true"/>
+		<url type="Media" label="PDF Document Bestand" placeholder="Selecteer een pdf bestand"/>
+		<showTitle label="Toon titel" type="CheckBox"/>
+		<showTitleFix label="Toon titel" type="CheckBox"/>
+		<openPDF type="TextInput" label="Open PDF Label" defaultValue="Open PDF in nieuwe tab" wysiwyg="true" mandatory="true" language="true"/>
+
+		<hideShow type="group" label="Verberg/Toon PDF" optional="true" tooltip="Verberg de PDF of verberg/toon de PDF tussen de genoemde data." info="Verberg deze pdf altijd of gebruik de 'Van' &amp; 'Tot' velden om aan te geven wanneer de pdf beschikbaar is.">
+                			<hideContent label="Verberg PDF" type="CheckBox" defaultValue="false" optional="true"/>
+                			<hideOnDate label="Van" type="DateField" defaultValue="" optional="true" allowBlank="true" preventPrev="true" tooltip="Gebruik de kalender om een datum te selecteren (formaat JJJJ-MM-DD)"/>
+                			<hideOnTime label="Van (uu:mm)" type="TextInput" placeholder="00:00" optional="true"/>
+                			<hideUntilDate label="Tot" type="DateField" defaultValue="" optional="true" allowBlank="true" preventPrev="true" tooltip="Gebruik de kalender om een datum te selecteren (formaat JJJJ-MM-DD)"/>
+                			<hideUntilTime label="Tot (uu:mm)" type="TextInput" placeholder="00:00" optional="true"/>
+                		</hideShow>
+
+	</pdf><canvas icon="icPallette" menuItem="Canvas" remove="true" advanced="true">
+
+		<name type="TextInput" label="Titel" wysiwyg="true"/>
+		<id type="TextInput" label="ID" placeholder="Voeg de ID hier toe" tooltip="De HTML-id die aan het canvas-element wordt toegewezen."/>
+		<width type="TextInput" label="Breedte"/>
+		<height type="TextInput" label="Hoogte"/>
+		<showTitle label="Toon titel" type="CheckBox" defaultValue="false" mandatory="true"/>
+		
+		<class type="TextInput" label="Class" optional="true" tooltip="De namen van alle CSS-klassen die aan het canvas-element worden toegewezen."/>
+		<style type="TextInput" label="Stijlen" optional="true" tooltip="CSS-stijlen die inline op het canvas-element worden toegepast."/>
+
+		<hideShow type="group" label="Verberg/Toon canvas" optional="true" tooltip="Verberg het canvas of verberg/toon het canvas tussen de genoemde data." info="Verberg het canvas altijd of gebruik de 'Van' &amp; 'Tot' velden om aan te geven wanneer het canvas beschikbaar is.">
+                			<hideContent label="Verberg canvas" type="CheckBox" defaultValue="false" optional="true"/>
+                			<hideOnDate label="Van" type="DateField" defaultValue="" optional="true" allowBlank="true" preventPrev="true" tooltip="Gebruik de kalender om een datum te selecteren (formaat JJJJ-MM-DD)"/>
+                			<hideOnTime label="Van (uu:mm)" type="TextInput" placeholder="00:00" optional="true"/>
+                			<hideUntilDate label="Tot" type="DateField" defaultValue="" optional="true" allowBlank="true" preventPrev="true" tooltip="Gebruik de kalender om een datum te selecteren (formaat JJJJ-MM-DD)"/>
+                			<hideUntilTime label="Tot (uu:mm)" type="TextInput" placeholder="00:00" optional="true"/>
+                		</hideShow>
+
+	</canvas><script icon="icCog" type="script" height="400" menuItem="Script" label="Script" remove="true" divider="true" advanced="true">
+
+		<name type="TextInput" label="Titel"/>
+
+	</script><image icon="icImage" height="250" menuItem="Afbeelding" remove="true">
+
+		<name type="TextInput" label="Titel" wysiwyg="true"/>
+		<imgGroup type="group" label="Afbeelding">
+			<url type="Media" label="Bestand" placeholder="Selecteer afbeelding"/>
+			<alt type="TextInput" label="Omschrijving" placeholder="Voer een beschrijving in voor toegankelijkheid (accessibility)."/>
+		</imgGroup>
+		<showTitle label="Toon titel" type="CheckBox"/>
+		<showTitleFix label="Toon titel" type="CheckBox"/>
+		<caption label="Onderschrift" type="TextInput" defaultValue="" wysiwyg="true" optional="true" tooltip="Voeg onderschrift toe onder de afbeelding"/>
+
+		<hideShow type="group" label="Verberg/Toon afbeelding" optional="true" tooltip="Verberg de afbeelding of verberg/toon de afbeelding tussen de genoemde data." info="Verberg deze afbeelding altijd of gebruik de 'Van' &amp; 'Tot' velden om aan te geven wanneer de afbeelding beschikbaar is.">
+                        			<hideContent label="Verberg afbeelding" type="CheckBox" defaultValue="false" optional="true"/>
+                        			<hideOnDate label="Van" type="DateField" defaultValue="" optional="true" allowBlank="true" preventPrev="true" tooltip="Gebruik de kalender om een datum te selecteren (formaat JJJJ-MM-DD)"/>
+                        			<hideOnTime label="Van (uu:mm)" type="TextInput" placeholder="00:00" optional="true"/>
+                        			<hideUntilDate label="Tot" type="DateField" defaultValue="" optional="true" allowBlank="true" preventPrev="true" tooltip="Gebruik de kalender om een datum te selecteren (formaat JJJJ-MM-DD)"/>
+                        			<hideUntilTime label="Tot (uu:mm)" type="TextInput" placeholder="00:00" optional="true"/>
+                        		</hideShow>
+
+	</image><audio icon="icSound" height="250" menuItem="Audio" remove="true">
+
+		<name type="TextInput" label="Titel" wysiwyg="true"/>
+		<url type="Media" label="Audio" placeholder="Selecteer een audio bestand"/>
+		<showTitle label="Toon titel" type="CheckBox"/>
+		<showTitleFix label="Toon titel" type="CheckBox"/>
+		<transcript label="Transcript" type="textArea" height="100" defaultValue="" optional="true" tooltip="Er wordt een transcriptknop toegevoegd aan de audiobalk wanneer transcripttekst is opgenomen"/>
+
+		<hideShow type="group" label="Verberg/Toon audio" optional="true" tooltip="Verberg de audio of verberg/toon de audio ussen de genoemde data." info="Verberg deze audio altijd of gebruik de 'Van' &amp; 'Tot' velden om aan te geven wanneer de audio beschikbaar is.">
+                        			<hideContent label="Verberg audio" type="CheckBox" defaultValue="false" optional="true"/>
+                        			<hideOnDate label="Van" type="DateField" defaultValue="" optional="true" allowBlank="true" preventPrev="true" tooltip="Gebruik de kalender om een datum te selecteren (formaat JJJJ-MM-DD)"/>
+                        			<hideOnTime label="Van (uu:mm)" type="TextInput" placeholder="00:00" optional="true"/>
+                        			<hideUntilDate label="Tot" type="DateField" defaultValue="" optional="true" allowBlank="true" preventPrev="true" tooltip="Gebruik de kalender om een datum te selecteren (formaat JJJJ-MM-DD)"/>
+                        			<hideUntilTime label="Tot (uu:mm)" type="TextInput" placeholder="00:00" optional="true"/>
+                        		</hideShow>
+
+	</audio><video icon="icFilm" height="250" menuItem="Video" remove="true">
+
+		<name type="TextInput" label="Titel" wysiwyg="true"/>
+		<url type="Media" label="Video" placeholder="Selecteer een videobestand of voer een url/embedcode in"/>
+		<showTitle label="Toon titel" type="CheckBox"/>
+		<showTitleFix label="Toon titel" type="CheckBox"/>
+		
+		<iframeRatio label="iframe beeldverhouding" type="TextInput" placeholder="16:9" tooltip="Beeldverhouding voor videos van externe sites (bijvoorbeeld YouTube, Vimeo, Mediasite)" optional="true"/>
+
+		<hideShow type="group" label="Verberg/Toon video" optional="true" tooltip="Verberg de video of verberg/toon de video tussen de genoemde data." info="Verberg deze video altijd of gebruik de 'Van' &amp; 'Tot' velden om aan te geven wanneer de video beschikbaar is.">
+                        			<hideContent label="Verberg video" type="CheckBox" defaultValue="false" optional="true"/>
+                        			<hideOnDate label="Van" type="DateField" defaultValue="" optional="true" allowBlank="true" preventPrev="true" tooltip="Gebruik de kalender om een datum te selecteren (formaat JJJJ-MM-DD)"/>
+                        			<hideOnTime label="Van (uu:mm)" type="TextInput" placeholder="00:00" optional="true"/>
+                        			<hideUntilDate label="Tot" type="DateField" defaultValue="" optional="true" allowBlank="true" preventPrev="true" tooltip="Gebruik de kalender om een datum te selecteren (formaat JJJJ-MM-DD)"/>
+                        			<hideUntilTime label="Tot (uu:mm)" type="TextInput" placeholder="00:00" optional="true"/>
+                        		</hideShow>
+
+	</video><navigator icon="icPages" menuItem="Navigator" remove="true">
+
+		<name type="TextInput" label="Titel" wysiwyg="true"/>
+		<type type="ComboBox" label="Type" options="Accordeon,Carousel,Knoppen,Tabs" data="Accordion,Carousel,Pills,Tabs" width="120" conditionTrigger="true"/>
+		<showTitle label="Toon titel" type="CheckBox" defaultValue="false" mandatory="true"/>
+
+		<collapse label="Acordeon inklappen" type="CheckBox" defaultValue="false" optional="true" tooltip="Alle accordeonpanelen standaard ingeklapt " condition="type=='Accordion'"/>
+		
+		<autoPlayCarousel type="group" label="Automatisch afspelen" optional="true" condition="type=='Carousel'">
+			<autoPlay label="Automatisch afspelen" type="CheckBox" defaultValue="true" optional="true" conditionTrigger="true" condition="type=='Carousel'"/>
+			<delaySecs label="Vertragen (seconden)" type="NumericStepper" min="1" max="20" step="1" width="100" defaultValue="4" optional="true" condition="type=='Carousel'&amp;&amp;autoPlay=='true'"/>
+		</autoPlayCarousel>
+		<hideShow type="group" label="Verberg/Toon navigator" optional="true" tooltip="Verberg de navigator of verberg/toon de navigator tussen de genoemde data." info="Verberg deze navigator altijd of gebruik de 'Van' &amp; 'Tot' velden om aan te geven wanneer de navigator beschikbaar is.">
+                        			<hideContent label="Verberg navigator" type="CheckBox" defaultValue="false" optional="true"/>
+                        			<hideOnDate label="Van" type="DateField" defaultValue="" optional="true" allowBlank="true" preventPrev="true" tooltip="Gebruik de kalender om een datum te selecteren (formaat JJJJ-MM-DD)"/>
+                        			<hideOnTime label="Van (uu:mm)" type="TextInput" placeholder="00:00" optional="true"/>
+                        			<hideUntilDate label="Tot" type="DateField" defaultValue="" optional="true" allowBlank="true" preventPrev="true" tooltip="Gebruik de kalender om een datum te selecteren (formaat JJJJ-MM-DD)"/>
+                        			<hideUntilTime label="Tot (uu:mm)" type="TextInput" placeholder="00:00" optional="true"/>
+                        		</hideShow>
+
+		<newNodes>
+
+			<pane><![CDATA[<pane name="Naam"/>]]></pane>
+
+		</newNodes>
+
+	</navigator><pane icon="icPageWhite" remove="true" duplicate="true" menuItem="Paneel">
+
+		<name type="TextInput" label="Paneel titel" wysiwyg="true"/>
+
+		<customPaneLinkGroup type="group" label="Paneel ID" optional="true" tooltip="Maak een aangepaste URL voor dit paneel." info="&lt;p&gt;Maak een link rechtstreeks naar dit navigatorpaneel door een unieke ID toe te voegen en vervolgens #jouwPaneeID toe te voegen aan het einde van de project-URL.&lt;br /&gt;Vermijd het gebruik van spaties en de woorden 'pagina' en 'sectie' in ID's en zorg ervoor dat elke ID uniek is in het hele project.&lt;br /&gt;Houd er ook rekening mee dat ID's hoofdlettergevoelig zijn.&lt;/p&gt;">
+            <customLinkID label="Paneel ID" type="TextInput" optional="true"/>
+        </customPaneLinkGroup>
+
+		<newNodes>
+			
+			<xot><![CDATA[<xot name="Titel" showTitleFix="true" link="" header="false" footer="false"/>]]></xot>
+			<pdf><![CDATA[<pdf name="Titel" showTitleFix="true" url="" width="500" height="350" openPDF="Open de pdf in een nieuw tabblad"/>]]></pdf>
+			<link><![CDATA[<link name="Voeg linktekst toe" url="" target="_self"/>]]></link>
+			<video><![CDATA[<video name="Titel" showTitleFix="true" url=""/>]]></video>
+			<audio><![CDATA[<audio name="Titel" showTitleFix="true" url=""/>]]></audio>
+			<image><![CDATA[<image name="Titel" showTitleFix="true" url="" alt=""/>]]></image>
+			<text><![CDATA[<text name="Titel" showTitleFix="true">Voeg tekst toe</text>]]></text>
+
+		</newNodes>
+	</pane><xot icon="icXot" menuItem="XOT Project" remove="true">
+
+		<name type="TextInput" label="Titel" wysiwyg="true"/>
+		<link type="TextInput" label="Xerte Project link" placeholder="Voeg project url toe" tooltip="De toegangsinstelling van het project mag niet op 'priv&#xE9;' worden gezet."/>
+		<header label="Verberg header" type="CheckBox"/>
+		<footer label="Verberg Voetbalk" type="CheckBox"/>
+		<showTitle label="Toon titel" type="CheckBox"/>
+		<showTitleFix label="Toon titel" type="CheckBox"/>
+		
+		<pageNum label="Pagina" type="TextInput" optional="true" tooltip="Insluiten van een specifieke pagina van het XOT leerobject door een paginanummer of pagina-ID in te voeren."/>
+
+		<dimensions label="Dimensies" type="group" optional="true" tooltip="De afmetingen van het ingesloten leerobject.">
+			<width label="Breedte" type="TextInput" placeholder="100%" optional="true"/>
+			<height label="Hoogte" type="TextInput" placeholder="600" optional="true"/>
+		</dimensions>
+
+		<xotLinkGroup type="group" label="Link toevoegen" optional="true" tooltip="Voeg een link toe om het Xerte leerobject te openen in een lightbox of een nieuw tabblad/venster">
+			<showLink label="Toon link" type="CheckBox" conditionTrigger="true" defaultValue="true" optional="true"/>
+			<linkText label="Link tekst" type="TextInput" wysiwyg="true" defaultValue="" condition="showLink=='true'" optional="true"/>
+			<displayOptions label="Open in" type="ComboBox" data="newwindow,thiswindow,lightbox" options="Nieuw tabblad/venster,Dit tabblad,Lightbox" defaultValue="newwindow" condition="showLink=='true'" optional="true"/>
+			<showEmbed label="Insluiten" type="CheckBox" defaultValue="true" condition="showLink=='true'" optional="true" tooltip="Wanneer een link wordt getoond, kan deze optie worden gebruikt om het ingesloten Xerte leerobject van de pagina te verwijderen. Zowel het ingesloten leerobject als de link kunnen indien nodig worden getoond."/>
+		</xotLinkGroup>
+		<hideShow type="group" label="Toon/Verberg XOT" optional="true" tooltip="Verberg deze XOT of verberg/toon de XOT tussen bepaalde data." info="Verberg deze XOT altijd of gebruik de 'Van' &amp; 'Tot' velden om aan te geven wanneer de XOT beschikbaar is.">
+                                			<hideContent label="Verberg XOT" type="CheckBox" defaultValue="false" optional="true"/>
+                                			<hideOnDate label="Van" type="DateField" defaultValue="" optional="true" allowBlank="true" preventPrev="true" tooltip="Gebruik de kalender om een datum te selecteren (formaat JJJJ-MM-DD)"/>
+                                			<hideOnTime label="Van (uu:mm)" type="TextInput" placeholder="00:00" optional="true"/>
+                                			<hideUntilDate label="Tot" type="DateField" defaultValue="" optional="true" allowBlank="true" preventPrev="true" tooltip="Gebruik de kalender om een datum te selecteren (formaat JJJJ-MM-DD)"/>
+                                			<hideUntilTime label="Tot (uu:mm)" type="TextInput" placeholder="00:00" optional="true"/>
+                                		</hideShow>
+
+	</xot></wizard>
