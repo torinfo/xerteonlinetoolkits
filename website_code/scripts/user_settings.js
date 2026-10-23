@@ -397,7 +397,23 @@ function changepasswordPopup(section) {
     var formUrl = (typeof ajax_php_path !== 'undefined' ? ajax_php_path : 'website_code/php/') +
         'get_user_settings_form.php?section=' + encodeURIComponent(section) + '&_=' + Date.now();
 
+    function fitPreferencesDialog($settingsDialog) {
+        var viewportWidth = $(window).width();
+        var dialogWidth = Math.max(1, Math.min(560, viewportWidth - 32));
+        $settingsDialog.dialog("option", {
+            width: dialogWidth,
+            position: {
+                my: "center",
+                at: "center",
+                of: window,
+                collision: "fit"
+            }
+        });
+    }
+
     var $dialog = getSettingsDialogElement();
+
+    $(window).off(".preferencesSettingsDialog");
 
     if (!$dialog.data("ui-dialog")) {
         $dialog.dialog({
@@ -407,16 +423,17 @@ function changepasswordPopup(section) {
             height: "auto",
             resizable: false,
             title: "",
-            dialogClass: useStyledModal ? "preferences-dialog workspace-dialog" : "workspace-dialog",
+            dialogClass: useStyledModal ? "preferences-dialog " + (isPreferencesModal ? "preferences-settings-dialog " : "") + "workspace-dialog" : "workspace-dialog",
             close: function() {
+                $(window).off(".preferencesSettingsDialog");
                 clearPasswordForm($dialog);
             }
         });
     }
 
     $dialog.dialog("option", {
-        width: useStyledModal ? 560 : 450,
-        dialogClass: useStyledModal ? "preferences-dialog workspace-dialog" : "workspace-dialog",
+        width: isPreferencesModal ? Math.max(1, Math.min(560, $(window).width() - 32)) : (useStyledModal ? 560 : 450),
+        dialogClass: useStyledModal ? "preferences-dialog " + (isPreferencesModal ? "preferences-settings-dialog " : "") + "workspace-dialog" : "workspace-dialog",
         title: ""
     });
 
@@ -447,7 +464,15 @@ function changepasswordPopup(section) {
                 }
             }
 
+            if (isPreferencesModal) {
+                fitPreferencesDialog($dialog);
+            }
             $dialog.dialog("open");
+            if (isPreferencesModal) {
+                $(window).on("resize.preferencesSettingsDialog orientationchange.preferencesSettingsDialog", function() {
+                    fitPreferencesDialog($dialog);
+                });
+            }
         },
         error: function(xhr, status, error) {
             console.error("Error loading settings form:", error, xhr.responseText);

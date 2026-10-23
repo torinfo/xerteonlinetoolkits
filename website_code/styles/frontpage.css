@@ -593,6 +593,61 @@ div.ui-layout-north div.content {
     background: #fff;
 }
 
+.preferences-settings-dialog.ui-dialog {
+    max-height: calc(100vh - 32px);
+    max-width: calc(100vw - 32px);
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+}
+
+.preferences-settings-dialog .ui-dialog-content {
+    display: flex;
+    flex: 1 1 auto;
+    min-height: 0;
+}
+
+.preferences-settings-dialog .preferences-modal {
+    display: flex;
+    flex: 1 1 auto;
+    min-height: 0;
+    flex-direction: column;
+}
+
+.preferences-settings-dialog .preferences-modal-header,
+.preferences-settings-dialog .preferences-modal-footer {
+    flex: 0 0 auto;
+}
+
+.preferences-settings-dialog .preferences-modal-body {
+    flex: 1 1 auto;
+    min-height: 0;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+}
+
+@media (max-width: 420px) {
+    .preferences-settings-dialog .preferences-modal-header {
+        padding-right: 20px;
+        padding-left: 20px;
+    }
+
+    .preferences-settings-dialog .preferences-modal-body {
+        padding-right: 20px;
+        padding-left: 20px;
+    }
+
+    .preferences-settings-dialog .preferences-modal-footer {
+        flex-wrap: wrap;
+        padding-right: 20px;
+        padding-left: 20px;
+    }
+
+    .preferences-settings-dialog .preferences-btn {
+        flex: 1 1 120px;
+    }
+}
+
 .preferences-modal {
     background: #fff;
     color: #222;

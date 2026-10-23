@@ -79,7 +79,7 @@ import { XerteAccessibilityChecker } from './plugins/xerte-accessibility-checker
 const toolbarItems = [
 	'undo', 'redo', '|',
 	'findAndReplace', '|',
-	'sourceEditing', 'showBlocks', 'accessibilityChecker', 'fullscreen', 'htmlEmbed', '|',
+	'sourceEditing', 'accessibilityChecker', 'fullscreen', 'htmlEmbed', '|',
 	'heading', 'style', '|',
 	'fontSize', 'fontFamily', 'fontColor', 'fontBackgroundColor', 'lineHeight', '|',
 	'textPartLanguage', '|',
@@ -88,7 +88,7 @@ const toolbarItems = [
 	'link', 'xotlink', 'insertImage', 'xerteBrowseMedia', 'xerteAudio', 'xerteRecorder', 'mediaEmbed', 'insertTable', 'autocolumns', 'blockQuote', 'codeBlock', '|',
 	'alignment', '|',
 	'bulletedList', 'numberedList', 'outdent', 'indent', '|',
-	'xotMarkWord', 'markTag'
+	'markTag', 'showBlocks'
 ];
 
 const imageToolbar = [

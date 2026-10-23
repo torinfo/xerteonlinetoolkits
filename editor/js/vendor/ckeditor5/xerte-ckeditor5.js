@@ -232,7 +232,6 @@
 			BulletedList: 'bulletedList',
 			Outdent: 'outdent',
 			Indent: 'indent',
-			xotMarkWord: 'xotMarkWord',
 			Mark: 'markTag',
 			markTag: 'markTag'
 		};
@@ -245,7 +244,7 @@
 			xerteRubyText: 1, link: 1, xotlink: 1, insertImage: 1, xerteBrowseMedia: 1,
 			xerteAudio: 1, xerteRecorder: 1, mediaEmbed: 1, insertTable: 1, autocolumns: 1,
 			blockQuote: 1, codeBlock: 1, alignment: 1, bulletedList: 1, numberedList: 1,
-			outdent: 1, indent: 1, xotMarkWord: 1, markTag: 1
+			outdent: 1, indent: 1, markTag: 1
 		};
 		return map[item] || (ckeditor5Items[item] ? item : null);
 	}
@@ -288,6 +287,11 @@
 				return;
 			}
 			var item = String(raw);
+			// Mark Word remains available from Xerte's context menu, but is intentionally
+			// omitted from both default and legacy-configured toolbars.
+			if (item === 'xotMarkWord') {
+				return;
+			}
 			var mapped = mapLegacyToolbarItem(item);
 			if (mapped && flat.indexOf(mapped) === -1) {
 				flat.push(mapped);

@@ -2253,6 +2253,10 @@ var EDITOR = (function ($, parent) {
         }
     },
 
+    removeTrailingLineBreak = function (value) {
+        return String(value).replace(/(?:\r\n|\r|\n)$/, '');
+    },
+
     convertTextInputs = function () {
         lti_session = lti_session !== "" ? "&" + lti_session : "";
         $.each(textinputs_options, function (i, options) {
@@ -2263,16 +2267,15 @@ var EDITOR = (function ($, parent) {
                         sizeInlineQFPanel($('#mainPanel .qf-inline-row'));
                     }
                     this.on('change', function(){
-                        var thisValue = this.getData();
-                        thisValue = thisValue.substr(0, thisValue.length-1); // Remove the extra linebreak
+                        var thisValue = removeTrailingLineBreak(this.getData());
                         inputChanged(options.id, options.key, options.name, thisValue, this);
                     });
                     var lastValue = "";
                     this.on('change', function(event) {
                         if (options.name == 'name') {
-                            var thisValue = this.getData();
+                            var thisValue = removeTrailingLineBreak(this.getData());
                             var thisText = getTextFromHTML(thisValue);
-                            thisValue = stripP(thisValue.substr(0, thisValue.length-1));
+                            thisValue = stripP(thisValue);
                             if (lastValue != thisValue) {
                                 lastValue = thisValue;
 
