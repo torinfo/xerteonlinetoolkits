@@ -125,7 +125,7 @@ export class XerteAudio extends Plugin {
 	}
 }
 
-function openAudioDialog( editor ) {
+export function openAudioDialog( editor ) {
 	const t = editor.t;
 	const initial = { ...defaults, ...editor.commands.get( 'insertXerteAudio' ).value };
 	const overlay = document.createElement( 'div' );
