@@ -1959,6 +1959,23 @@ button.resourceLink {
 	container-type: inline-size;
 }
 
+/* CKEditor 5 stores its default font sizes as classes rather than inline styles. */
+.text-tiny {
+	font-size: 0.7em;
+}
+
+.text-small {
+	font-size: 0.85em;
+}
+
+.text-big {
+	font-size: 1.4em;
+}
+
+.text-huge {
+	font-size: 1.8em;
+}
+
 @container x_pageHolder (max-width: 480px) {
 	/* split screen layout used in lots of page models - stack vertically on smaller screens */
 	.splitScreen {

@@ -143,7 +143,7 @@ function openPicker( initial, t ) {
 		updateColourState();
 		const size = document.createElement( 'select' );
 		size.style.cssText = 'width:100%;padding:7px;';
-		[ '', 'fa-xs', 'fa-sm', 'fa-lg', 'fa-2x', 'fa-3x', 'fa-4x', 'fa-5x', 'fa-10x' ].forEach( value => size.add( new Option( value || t( 'Normal' ), value ) ) );
+		[ '', 'fa-xs', 'fa-sm', 'fa-lg', 'fa-2x', 'fa-3x', 'fa-4x', 'fa-5x', 'fa-10x' ].forEach( value => size.add( new Option( value || t( 'Match surrounding text' ), value ) ) );
 		size.value = initial.size || '';
 		const rotation = document.createElement( 'select' );
 		rotation.style.cssText = 'width:100%;padding:7px;';
@@ -238,7 +238,16 @@ async function editFontAwesomeIcon( editor, existing = selectedIcon( editor ) ) 
 			writer.remove( existing );
 			writer.setSelection( replacement, 'on' );
 		} else {
-			editor.model.insertObject( writer.createElement( 'fontAwesomeIcon', result ), null, null, { setSelection: 'on' } );
+			// Inline objects do not automatically receive the active text attributes.
+			// Copy them explicitly so formatting spans can continue across the icon.
+			const textAttributes = Object.fromEntries(
+				Array.from( editor.model.document.selection.getAttributes() )
+					.filter( ( [ key ] ) => editor.model.schema.checkAttribute( 'fontAwesomeIcon', key ) )
+			);
+			editor.model.insertObject( writer.createElement( 'fontAwesomeIcon', {
+				...textAttributes,
+				...result
+			} ), null, null, { setSelection: 'on' } );
 		}
 	} );
 }
@@ -249,7 +258,8 @@ class XerteFontAwesomeEditing extends Plugin {
 		const editor = this.editor;
 		editor.model.schema.register( 'fontAwesomeIcon', {
 			isInline: true, isObject: true, allowWhere: '$text',
-			allowAttributes: [ 'iconClass', 'iconTitle', 'iconStyle' ]
+			allowAttributes: [ 'iconClass', 'iconTitle', 'iconStyle' ],
+			allowAttributesOf: '$text'
 		} );
 		editor.conversion.for( 'upcast' ).elementToElement( {
 			view: { name: 'span', classes: 'fav2' },
