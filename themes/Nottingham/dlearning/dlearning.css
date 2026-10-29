@@ -23,389 +23,440 @@
 
 
   /*
-  BRAND -Algemene kleuren van de huisstijl. Andere componentvariabelen kunnen hiernaar verwijzen
+  BRAND -General brand colors. Other component variables can reference these
   */
 
   
 
   
-  --theme-primary: #7a0000; /* Primaire huisstijlkleur. Wordt gebruikt als basis voor belangrijke onderdelen.*/
+  --theme-primary: #7a0000; /* Primary brand color. Used as the basis for key elements.*/
 
  
-  --theme-accent: #f86718;  /* Accentkleur voor hover, active en highlights */
+  --theme-accent: #f86718;  /* Accent color for hover, active states and highlights */
 
   --theme-secondary: #8400ff;
 
   /*
-  GENERAL - Algemene styling voor het volledige Nottingham-thema
+  GENERAL - General styling for the entire Nottingham theme
   */
 
-  /* Algemene achtergrondkleur van het thema */
+  /* General background color of the theme */
   --theme-background: #ffffff;
 
   
-  --theme-black-text: #222222; /*Algemene tekst kleur */
+  --theme-black-text: #222222; /*General text color */
 
-  --theme-white-text: #ffffff; /*Algemene tekst kleur */
+  --theme-white-text: #ffffff; /*General text color */
 
 
 
   
-  --theme-font: Arial, sans-serif; /* Hoofdlettertype van het thema*/
+  --theme-font: Arial, sans-serif; /* Main font of the theme*/
 
 
   /*
-    BUTTONS -Algemene Xerte .
+    BUTTONS -General Xerte .
   */
 
-  --theme-button-background: #cfcfcf;  /*Achtergrondkleur van algemene buttons.*/
-  --theme-button-text: #000000;  /*Tekstkleur van algemene buttons.*/
-  --theme-button-border: var(--theme-accent);  /*Randkleur van algemene buttons.*/
+  --theme-button-background: #cfcfcf;  /*Background color of general buttons.*/
+  --theme-button-text: #000000;  /*Text color of general buttons.*/
+  --theme-button-border: var(--theme-accent);  /*Border color of general buttons.*/
 
-  --theme-button-hover-background: #bdbdbd; /*Achtergrondkleur bij hover/focus/active.*/
-  --theme-button-hover-text: #000000; /*Tekstkleur bij hover/focus/active.*/
-  --theme-button-hover-border: var(--theme-accent); /*Randkleur bij hover/focus/active.*/
+  --theme-button-hover-background: #bdbdbd; /*Background color on hover/focus/active.*/
+  --theme-button-hover-text: #000000; /*Text color on hover/focus/active.*/
+  --theme-button-hover-border: var(--theme-accent); /*Border color on hover/focus/active.*/
 
-  --theme-button-active-background: var(--theme-accent);  /*Achtergrondkleur van algemene buttons bij active.*/
-  --theme-button-active-text: var(--theme-text);  /*Tekstkleur van algemene buttons bij active.*/
-  --theme-button-active-border: var(--theme-accent);  /*Randkleur van algemene buttons bij active.*/
+  --theme-button-active-background: var(--theme-accent);  /*Background color of general buttons when active.*/
+  --theme-button-active-text: var(--theme-text);  /*Text color of general buttons when active.*/
+  --theme-button-active-border: var(--theme-accent);  /*Border color of general buttons when active.*/
   
 
   /* 
-     HEADER - Bovenbalk van het Nottingham thema
+     HEADER - Top bar of the Nottingham theme
   */
 
-  --theme-header-background: #222222;  /*Achtergrondkleur van de header.*/
-  --theme-header-text: #ffffff;  /*Tekst en icoonkleur in de header*/
+  --theme-header-background: #222222;  /*Background color of the header.*/
+  --theme-header-text: #ffffff;  /*Text and icon color in the header*/
 
 
   
   /*
-     FOOTER -Navigatiebalk onderaan het project
+     FOOTER -Navigation bar at the bottom of the project
   */
 
-  --theme-footer-background: #ffffff; /* Achtergrondkleur van de footer*/
-  --theme-footer-text: #000000; /*Tekst en icoonkleur van de footer*/
-  --theme-footer-hover: var(--theme-accent); /*Hoverkleur van de footerknoppen.*/
+  --theme-footer-background: #ffffff; /* Background color of the footer*/
+  --theme-footer-text: #000000; /*Text and icon color of the footer*/
+  --theme-footer-hover: var(--theme-accent); /*Hover color of the footer buttons.*/
 
   /*
-     PANELS - Algemene panelen in het thema.
+     PANELS - General panels in the theme.
   */
 
-  --theme-panel-background: #ebebeb; /*Achtergrondkleur van de algemene panels*/
-  --theme-panel-text: #000000; /*Tekstkleur van de algemene panels*/
-  --theme-panel-border: var(--theme-accent); /*Randkleur van de algemene panels*/
+  --theme-panel-background: #ebebeb; /*Background color of the general panels*/
+  --theme-panel-text: #000000; /*Text color of the general panels*/
+  --theme-panel-border: var(--theme-accent); /*Border color of the general panels*/
+
+  --theme-panel-text-holder-background: #ebebeb; /*Background color of the text holder panels*/
+
   
 
   /*
-     ACCORDION - Algemene accordion panels in het thema.
+     ACCORDION - General accordion panels in the theme.
   */
 
-  --theme-navigation-background: var(--theme-panel-background);  /*Achtergrondkleur van de navigatie items*/
-  --theme-navigation-text: var(--theme-text); /*Tekstkleur van de navigatie items*/
-  --theme-navigation-hover: var(--theme-accent); /*Achtergrondkleur van de navigatie items bij hover/focus/active*/
+  --theme-navigation-background: var(--theme-panel-background);  /*Background color of the navigation items*/
+  --theme-navigation-text: var(--theme-text); /*Text color of the navigation items*/
+  --theme-navigation-hover: #cfcfcf; /*Background color of the navigation items on hover/focus/active*/
 
-  --theme-navigation-active-background: var(--theme-accent); /*Achtergrondkleur van het actieve navigatie item*/
-  --theme-navigation-active-text: var(--theme-text); /*Tekstkleur van het actieve navigatie item*/
+  --theme-navigation-icon-color: #000000; /*Color of the navigation icons*/
 
-  --theme-navigation-content-background: var(--theme-panel-background); /*Achtergrondkleur van content onder tabs/accordion*/
-  --theme-navigation-content-text: var(--theme-text); /*Tekstkleur van content onder tabs/accordion*/
+  --theme-navigation-active-background: #bdbdbd; /*Background color of the active navigation item*/
+  --theme-navigation-active-text: var(--theme-text); /*Text color of the active navigation item*/
 
-  --theme-tab-navigator-content-background: var(--theme-panel-background); /*Achtergrondkleur van content onder tab navigator*/
+  --theme-navigation-content-background: var(--theme-panel-background); /*Background color of content below tabs/accordion*/
+  --theme-navigation-content-text: var(--theme-text); /*Text color of content below tabs/accordion*/
+
+  --theme-tab-navigator-content-background: var(--theme-panel-background); /*Background color of content below the tab navigator*/
+
+  
   
  
   /*
-    PROGRESS BAR FOOTER - Algemene voortgangsbalk in het thema
+    PROGRESS BAR FOOTER - General progress bar in the theme
   */
 
-  --theme-progress-footer-background: #ebebeb; /*Achtergrondkleur van de voortgangsbalk*/
-  --theme-progress-footer-text: #000000; /*Tekstkleur van de voortgangsbalk*/
-  --theme-progress-footer-border: #ebebeb; /*Randkleur van de voortgangsbalk*/
-  --theme-progress-footer-complete: #2196F3; /*Kleur van de voortgangsbalk*/
+  --theme-progress-footer-background: #ebebeb; /*Background color of the progress bar*/
+  --theme-progress-footer-text: #000000; /*Text color of the progress bar*/
+  --theme-progress-footer-border: #ebebeb; /*Border color of the progress bar*/
+  --theme-progress-footer-complete: #2196F3; /*Color of the progress bar*/
   
 
 
     /*
-    PROGRESS BAR HEADER - Algemene voortgangsbalk in het thema
+    PROGRESS BAR HEADER - General progress bar in the theme
   */
 
-  --theme-progress-header-background: #222222; /*Achtergrondkleur van de voortgangsbalk*/
-  --theme-progress-header-text: #ffffff; /*Tekstkleur van de voortgangsbalk*/
-  --theme-progress-header-border: #ebebeb; /*Randkleur van de voortgangsbalk*/
-  --theme-progress-header-complete: #2196F3; /*Kleur van de voortgangsbalk*/
+  --theme-progress-header-background: #222222; /*Background color of the progress bar*/
+  --theme-progress-header-text: #ffffff; /*Text color of the progress bar*/
+  --theme-progress-header-border: #ebebeb; /*Border color of the progress bar*/
+  --theme-progress-header-complete: #2196F3; /*Color of the progress bar*/
 
 
   
 
   /*
-    UI ICONS BUTTONS -Algemene Xerte / jQuery UI icon buttons.
+    UI ICONS BUTTONS -General Xerte / jQuery UI icon buttons.
   */
 
-  --theme-ui-button-background: var(--theme-accent);  /*Achtergrondkleur van algemene icon buttons.*/
-  --theme-ui-button-text: var(--theme-text);  /*Tekstkleur van algemene icon buttons.*/
-  --theme-ui-button-border: var(--theme-accent);  /*Randkleur van algemene icon buttons.*/
+  --theme-ui-button-background: #000000;  /*Background color of general icon buttons.*/
+  --theme-ui-button-text: #ffffff;  /*Text color of general icon buttons.*/
+  --theme-ui-button-border: none;  /*Border color of general icon buttons.*/
 
-  --theme-ui-button-hover-background: var(--theme-secondary);  /*Achtergrondkleur van algemene icon buttons bij hover/focus.*/
-  --theme-ui-button-hover-text: var(--theme-text);  /*Tekstkleur van algemene icon buttons bij hover/focus.*/
-  --theme-ui-button-hover-border: var(--theme-accent);  /*Randkleur van algemene icon buttons bij hover/focus.*/
+  --theme-ui-button-hover-background: var(--theme-accent);  /*Background color of general icon buttons on hover/focus.*/
+  --theme-ui-button-hover-text: #ffffff;  /*Text color of general icon buttons on hover/focus.*/
+  --theme-ui-button-hover-border: none;  /*Border color of general icon buttons on hover/focus.*/
 
-  --theme-ui-button-active-background: var(--theme-accent);  /*Achtergrondkleur van algemene icon buttons bij active.*/
-  --theme-ui-button-active-text: var(--theme-text);  /*Tekstkleur van algemene icon buttons bij active.*/
-  --theme-ui-button-active-border: var(--theme-accent);  /*Randkleur van algemene icon buttons bij active.*/
+  --theme-ui-button-active-background: var(--theme-accent);  /*Background color of general icon buttons when active.*/
+  --theme-ui-button-active-text: #ffffff;  /*Text color of general icon buttons when active.*/
+  --theme-ui-button-active-border: none;  /*Border color of general icon buttons when active.*/
 
 
   /*
-    Labels -Algemene labels in het thema.
+    Labels -General labels in the theme.
   */
 
-  --theme-label-background: var(--theme-accent);  /*Achtergrondkleur van labels.*/
-  --theme-label-text: var(--theme-text);  /*Tekstkleur van labels.*/
-  --theme-label-border: var(--theme-accent);  /*Randkleur van labels.*/
+  --theme-label-background: var(--theme-accent);  /*Background color of labels.*/
+  --theme-label-text: var(--theme-text);  /*Text color of labels.*/
+  --theme-label-border: var(--theme-accent);  /*Border color of labels.*/
 
-  --theme-label-selected-background: var(--theme-accent);  /*Achtergrondkleur van geselecteerde labels.*/
-  --theme-label-selected-text: var(--theme-text);  /*Tekstkleur van geselecteerde labels.*/
-  --theme-label-selected-border: var(--theme-accent);  /*Randkleur van geselecteerde labels.*/
+  --theme-label-selected-background: var(--theme-accent);  /*Background color of selected labels.*/
+  --theme-label-selected-text: var(--theme-text);  /*Text color of selected labels.*/
+  --theme-label-selected-border: var(--theme-accent);  /*Border color of selected labels.*/
 
-  --theme-label-dragging-background: var(--theme-accent);  /*Achtergrondkleur van labels tijdens drag and drop.*/
-  --theme-label-dragging-text: var(--theme-text);  /*Tekstkleur van labels tijdens drag and drop.*/
-  --theme-label-dragging-border: var(--theme-accent);  /*Randkleur van labels tijdens drag and drop.*/
+  --theme-label-dragging-background: var(--theme-accent);  /*Background color of labels during drag and drop.*/
+  --theme-label-dragging-text: var(--theme-text);  /*Text color of labels during drag and drop.*/
+  --theme-label-dragging-border: var(--theme-accent);  /*Border color of labels during drag and drop.*/
 
-  --theme-label-disabled-background: var(--theme-accent);  /*Achtergrondkleur van uitgeschakelde labels.*/
-  --theme-label-disabled-text: var(--theme-text);  /*Tekstkleur van uitgeschakelde labels.*/
-  --theme-label-disabled-border: var(--theme-accent);  /*Randkleur van uitgeschakelde labels.*/
+  --theme-label-disabled-background: var(--theme-accent);  /*Background color of disabled labels.*/
+  --theme-label-disabled-text: var(--theme-text);  /*Text color of disabled labels.*/
+  --theme-label-disabled-border: var(--theme-accent);  /*Border color of disabled labels.*/
 
 
   /*
-    THUMBNAILS -Algemene thumbnails in het thema.
+    THUMBNAILS -General thumbnails in the theme.
   */
 
-  --theme-thumbnail-item-background: var(--theme-accent);  /*Achtergrondkleur van thumbnails.*/
-  --theme-thumbnail-item-text: var(--theme-text);  /*Tekstkleur van thumbnails.*/
-  --theme-thumbnail-item-border: var(--theme-accent);  /*Randkleur van thumbnails.*/
+  --theme-thumbnail-item-background: none;  /*Background color of thumbnails.*/
+  --theme-thumbnail-item-text: none;  /*Text color of thumbnails.*/
+  --theme-thumbnail-item-border: none;  /*Border color of thumbnails.*/
 
-  --theme-thumbnail-current-background: var(--theme-accent);  /*Achtergrondkleur van de huidige thumbnail.*/
-  --theme-thumbnail-current-text: var(--theme-text);  /*Tekstkleur van de huidige thumbnail.*/
-  --theme-thumbnail-current-border: var(--theme-accent);  /*Randkleur van de huidige thumbnail.*/
+  --theme-thumbnail-current-background: #418545;  /*Background color of the current thumbnail.*/
+  --theme-thumbnail-current-text: none;  /*Text color of the current thumbnail.*/
+  --theme-thumbnail-current-border: #418545;  /*Border color of the current thumbnail.*/
 
-  --theme-thumbnail-highlight-background: var(--theme-accent);  /*Achtergrondkleur van de gemarkeerde thumbnail.*/
-  --theme-thumbnail-highlight-text: var(--theme-text);  /*Tekstkleur van de gemarkeerde thumbnail.*/
-  --theme-thumbnail-highlight-border: var(--theme-accent);  /*Randkleur van de gemarkeerde thumbnail.*/
 
-  --theme-thumbnail-control-background: var(--theme-accent);  /*Achtergrondkleur van de thumbnail controls.*/
-  --theme-thumbnail-control-text: var(--theme-text);  /*Tekstkleur van de thumbnail controls.*/
-  --theme-thumbnail-control-border: var(--theme-accent);  /*Randkleur van de thumbnail controls.*/
-  --theme-thumbnail-control-hover-background: var(--theme-accent);  /*Achtergrondkleur van de thumbnail controls bij hover/focus/active.*/
-  --theme-thumbnail-control-hover-text: var(--theme-text);  /*Tekstkleur van de thumbnail controls bij hover/focus/active.*/
-  --theme-thumbnail-control-hover-border: var(--theme-accent);  /*Randkleur van de thumbnail controls bij hover/focus/active.*/
+  
+  --theme-thumbnail-highlight-background: #f86718 ;  /*Background color of the highlighted thumbnail.*/
+  --theme-thumbnail-highlight-text: none;  /*Text color of the highlighted thumbnail.*/
+  --theme-thumbnail-highlight-border: #f86718 ;  /*Border color of the highlighted thumbnail.*/
+
+
+  --theme-thumbnail-viewer-panel-background: #cfcfcf;  /*Background color of the thumbnail viewer panel.*/
+  --theme-thumbnail-viewer-panel-text: #000000;  /*Text color of the thumbnail viewer panel.*/
+
+  
+  /*CHECKEN - Deze regels hoeven niet ingsteld te worden, want de thumbnail controls zijn al ingesteld in de algemene button styling.*/
+  --theme-thumbnail-control-background: var(--theme-accent);  /*Background color of the thumbnail controls.*/
+  --theme-thumbnail-control-text: var(--theme-text);  /*Text color of the thumbnail controls.*/
+  --theme-thumbnail-control-border: var(--theme-accent);  /*Border color of the thumbnail controls.*/
+  --theme-thumbnail-control-hover-background: var(--theme-accent);  /*Background color of the thumbnail controls on hover/focus/active.*/
+  --theme-thumbnail-control-hover-text: var(--theme-text);  /*Text color of the thumbnail controls on hover/focus/active.*/
+  --theme-thumbnail-control-hover-border: var(--theme-accent);  /*Border color of the thumbnail controls on hover/focus/active.*/
 
 
   /*
-   TABLES -Algemene tabellen in het thema.
+   TABLES -General tables in the theme.
   */
 
-  --theme-table-header-background: var(--theme-accent);  /*Achtergrondkleur van de tabelkop.*/
-  --theme-table-header-text: var(--theme-text);  /*Tekstkleur van de tabelkop.*/
+  --theme-table-header-background: var(--theme-accent);  /*Background color of the table header.*/
+  --theme-table-header-text: var(--theme-text);  /*Text color of the table header.*/
 
-  --theme-table-alternate-background: var(--theme-secondary);  /*Achtergrondkleur van de afwisselende rijen in de tabel.*/
-  --theme-table-alternate-text: var(--theme-text);  /*Tekstkleur van de afwisselende rijen in de tabel.*/
+  --theme-table-alternate-background: var(--theme-secondary);  /*Background color of the alternating rows in the table.*/
+  --theme-table-alternate-text: var(--theme-text);  /*Text color of the alternating rows in the table.*/
 
-  --theme-table-background: var(--theme-panel-background);  /*Achtergrondkleur van de tabel.*/
-  --theme-table-text: var(--theme-text);  /*Tekstkleur van de tabel.*/
-  --theme-table-border: var(--theme-accent);  /*Randkleur van de tabel.*/
+  --theme-table-background: var(--theme-panel-background);  /*Background color of the table.*/
+  --theme-table-text: var(--theme-text);  /*Text color of the table.*/
+  --theme-table-border: var(--theme-accent);  /*Border color of the table.*/
 
 
   /*
-   FEEDBACK -Algemene feedback in het thema.
+   FEEDBACK -General feedback in the theme.
   */
 
-  --theme-feedback-correct-background: green;  /*Achtergrondkleur van de feedbackvlak*/
-  --theme-feedback-correct-text: var(--theme-text);  /*Tekstkleur van de feedbackvlak.*/
-  --theme-feedback-content-border: var(--theme-accent);  /*Randkleur van de feedbackvlak.*/
+  --theme-feedback-correct-background: green;  /*Background color of the feedback area*/
+  --theme-feedback-correct-text: var(--theme-text);  /*Text color of the feedback area.*/
+  --theme-feedback-content-border: var(--theme-accent);  /*Border color of the feedback area.*/
 
-  --theme-feedback-selected-background: var(--theme-accent);  /*Achtergrondkleur van de geselecteerde feedbackvlak*/
-  --theme-feedback-selected-text: var(--theme-text);  /*Tekstkleur van de geselecteerde feedbackvlak.*/
-  --theme-feedback-selected-border: var(--theme-accent);  /*Randkleur van de geselecteerde feedbackvlak.*/
+  --theme-feedback-selected-background: var(--theme-accent);  /*Background color of the selected feedback area*/
+  --theme-feedback-selected-text: var(--theme-text);  /*Text color of the selected feedback area.*/
+  --theme-feedback-selected-border: var(--theme-accent);  /*Border color of the selected feedback area.*/
 
-  --theme-feedback-correct-background: green;  /*Achtergrondkleur van de correcte feedbackvlak*/
-  --theme-feedback-correct-text: var(--theme-text);  /*Tekstkleur van de correcte feedbackvlak.*/
-  --theme-feedback-correct-border: var(--theme-accent);  /*Randkleur van de correcte feedbackvlak.*/
+  --theme-feedback-correct-background: green;  /*Background color of the correct feedback area*/
+  --theme-feedback-correct-text: var(--theme-text);  /*Text color of the correct feedback area.*/
+  --theme-feedback-correct-border: var(--theme-accent);  /*Border color of the correct feedback area.*/
 
-  --theme-feedback-incorrect-background: red;  /*Achtergrondkleur van de incorrecte feedbackvlak*/
-  --theme-feedback-incorrect-text: var(--theme-text);  /*Tekstkleur van de incorrecte feedbackvlak.*/
-  --theme-feedback-incorrect-border: var(--theme-accent);  /*Randkleur van de incorrecte feedbackvlak.*/
+  --theme-feedback-incorrect-background: red;  /*Background color of the incorrect feedback area*/
+  --theme-feedback-incorrect-text: var(--theme-text);  /*Text color of the incorrect feedback area.*/
+  --theme-feedback-incorrect-border: var(--theme-accent);  /*Border color of the incorrect feedback area.*/
 
-  --theme-feedback-highlight-background: var(--theme-accent);  /*Achtergrondkleur van de highlight feedbackvlak*/
-  --theme-feedback-highlight-text: var(--theme-text);  /*Tekstkleur van de highlight feedbackvlak.*/
-  --theme-feedback-highlight-border: var(--theme-accent);  /*Randkleur van de highlight feedbackvlak.*/
+  --theme-feedback-highlight-background: var(--theme-accent);  /*Background color of the highlighted feedback area*/
+  --theme-feedback-highlight-text: var(--theme-text);  /*Text color of the highlighted feedback area.*/
+  --theme-feedback-highlight-border: var(--theme-accent);  /*Border color of the highlighted feedback area.*/
 
 
   /*
-    LINKS -Algemene links binnen het thema
+    LINKS -General links within the theme
   */
  
-  --theme-link: #4078C0;  /*Normale linkkleur.*/
-  --theme-link-hover: var(--theme-accent); /*Linkkleur bij hover/focus.*/
-  --theme-link-visited: green; /*Linkkleur bij geoepende links*/
+  --theme-link: #4078C0;  /*Normal link color.*/
+  --theme-link-hover: var(--theme-accent); /*Link color on hover/focus.*/
+  --theme-link-visited: green; /*Link color for visited links*/
 
 
   /*
-  MENU / TABLE OF Contents - Het menu of Table of Contents is het menu waar pagina’s en hoofdstukken worden weergeven
+  MENU / TABLE OF Contents - The menu or Table of Contents is the menu where pages and chapters are displayed
   */
 
-  /*Achtergrondkleur van de items*/
-  --theme-menuitem-background: grey;  /* Achtergrondkleur van menu-items */
-  --theme-menuitem-text: var(--theme-text);  /* Tekstkleur van menu-items */
-  --theme-menuitem-hover-background: var(--theme-accent);  /* Achtergrondkleur van menu-items bij hover/focus */
-  --theme-menuitem-hover-text: var(--theme-text);  /* Tekstkleur van menu-items bij hover/focus */
-  --theme-menuitem-active-background: var(--theme-accent);  /* Achtergrondkleur van actieve menu-items */
-  --theme-menuitem-active-text: var(--theme-text);  /* Tekstkleur van actieve menu-items */
-  --theme-menuitem-active-border: var(--theme-accent);  /* Randkleur van het huidige/geselecteerde menu-item */
+  /*Background color of the items*/
+  --theme-menuitem-background: grey;  /* Background color of menu-items */
+  --theme-menuitem-text: var(--theme-text);  /* Text color of menu-items */
+  --theme-menuitem-hover-background: var(--theme-accent);  /* Background color of menu-items on hover/focus */
+  --theme-menuitem-hover-text: var(--theme-text);  /* Text color of menu-items on hover/focus */
+  --theme-menuitem-active-background: var(--theme-accent);  /* Background color of active menu items */
+  --theme-menuitem-active-text: var(--theme-text);  /* Text color of active menu items */
+  --theme-menuitem-active-border: var(--theme-accent);  /* Border color of the current/selected menu item */
 
   
 /*
-    SIDEBAR - De sidebar is een extra navigatiebalk die aan de zijkant van het project kan worden weergegeven
+    SIDEBAR - The sidebar is an additional navigation bar that can be displayed at the side of the project
 */
 
-  --theme-sidebar-background: var(--theme-button-background);  /* Achtergrondkleur van de sidebar */
-  --theme-sidebar-text: var(--theme-button-text);  /* Tekstkleur van de sidebar */
-  --theme-sidebar-hover-background: var(--theme-button-hover-background);  /* Achtergrondkleur van de sidebar bij hover/focus */
+  --theme-sidebar-background: var(--theme-button-background);  /* Background color of the sidebar */
+  --theme-sidebar-text: var(--theme-button-text);  /* Text color of the sidebar */
+  --theme-sidebar-hover-background: var(--theme-button-hover-background);  /* Background color of the sidebar on hover/focus */
 
 
-  --theme-sidebaritem-background: var(--theme-menuitem-background);  /* Achtergrondkleur van de item in de sidebar */
-  --theme-sidebaritem-text: var(--theme-menuitem-text);  /* Tekstkleur van de item in de sidebar */
-  --theme-sidebaritem-hover-background: var(--theme-menuitem-hover-background);  /* Achtergrondkleur van de item in de sidebar bij hover/focus */
-  --theme-sidebaritem-hover-text: var(--theme-menuitem-hover-text);  /* Tekstkleur van de item in de sidebar bij hover/focus */
-  --theme-sidebaritem-active-background: var(--theme-menuitem-active-background);  /* Achtergrondkleur van de item in de sidebar */
-  --theme-sidebaritem-active-text: var(--theme-menuitem-active-text);  /* Tekstkleur van de item in de sidebar */
-  --theme-sidebaritem-active-border: var(--theme-menuitem-active-border);  /* Randkleur van de item in de sidebar */
-
+  --theme-sidebaritem-background: var(--theme-menuitem-background);  /* Background color of the item in the sidebar */
+  --theme-sidebaritem-text: var(--theme-menuitem-text);  /* Text color of the item in the sidebar */
+  --theme-sidebaritem-hover-background: var(--theme-menuitem-hover-background);  /* Background color of the item in the sidebar on hover/focus */
+  --theme-sidebaritem-hover-text: var(--theme-menuitem-hover-text);  /* Text color of the item in the sidebar on hover/focus */
+  --theme-sidebaritem-active-background: var(--theme-menuitem-active-background);  /* Background color of the item in the sidebar */
+  --theme-sidebaritem-active-text: var(--theme-menuitem-active-text);  /* Text color of the item in the sidebar */
+  --theme-sidebaritem-active-border: var(--theme-menuitem-active-border);  /* Border color of the item in the sidebar */
 
 
   /*
-   EXTRA EIGENSCHAPPEN - Extra eigenschappen van het leerobject
+    OPINION - General styling of the opinion page in the theme
   */
 
-  /*
-   LIGHTBOX - Algemene lightbox in het thema
-  */
+  --theme-opinion-background: var(--theme-panel-background);  /*Background color of the opinion page*/
+  --theme-opinion-text: none;  /*Text color of the opinion page*/
+  --theme-opinion-border: none;  /*Border color of the opinion page*/
 
-  --theme-lightbox-background: var(--theme-panel-background);  /*Achtergrondkleur van de lightbox*/
-  --theme-lightbox-text: var(--theme-text);  /*Tekstkleur van de lightbox*/
-  --theme-lightbox-border: var(--theme-accent);  /*Randkleur van de lightbox*/
-  --theme-lightbox-close-background: var(--theme-accent);  /*Achtergrondkleur van de lightbox sluitknop*/
-  --theme-lightbox-close-text: var(--theme-text);  /*Tekstkleur van de lightbox sluitknop*/
-  --theme-lightbox-close-border: var(--theme-accent);  /*Randkleur van de lightbox sluitknop*/
-  --theme-lightbox-close-hover-background: var(--theme-secondary);  /*Achtergrondkleur van de lightbox sluitknop bij hover/focus*/
-  --theme-lightbox-close-hover-text: var(--theme-text);  /*Tekstkleur van de lightbox sluitknop bij hover/focus*/
-  --theme-lightbox-close-hover-border: var(--theme-accent);  /*Randkleur van de lightbox sluitknop bij hover/focus*/
-
-  /*
-   DIALOG - Algemene dialoogvensters in het thema
-  */
-
-  --theme-dialog-background: var(--theme-panel-background);  /*Achtergrondkleur van de dialoogvenster*/
-  --theme-dialog-text: var(--theme-text);  /*Tekstkleur van de dialoogvenster*/
-  --theme-dialog-border: var(--theme-accent);  /*Randkleur van de dialoogvenster*/
-
-  --theme-dialog-header-background: var(--theme-accent);  /*Achtergrondkleur van de dialoogvenster header*/
-  --theme-dialog-header-text: var(--theme-text);  /*Tekstkleur van de dialoogvenster header*/
+  --theme-opinion-icon-background: var(--theme-accent);  /*Background color of the opinion icon*/
+  --theme-opinion-icon-border: #ffffff;  /*Border color of the opinion icon*/
   
-  --theme-dialog-close-background: var(--theme-accent);  /*Achtergrondkleur van de dialoogvenster sluitknop*/
-  --theme-dialog-close-text: var(--theme-text);  /*Tekstkleur van de dialoogvenster sluitknop*/
-  --theme-dialog-close-border: var(--theme-accent);  /*Randkleur van de dialoogvenster sluitknop*/
-  --theme-dialog-close-hover-background: var(--theme-secondary);  /*Achtergrondkleur van de dialoogvenster sluitknop bij hover/focus*/
-  --theme-dialog-close-hover-text: var(--theme-text);  /*Tekstkleur van de dialoogvenster sluitknop bij hover/focus*/
-  --theme-dialog-close-hover-border: var(--theme-accent);  /*Randkleur van de dialoogvenster sluitknop bij hover/focus*/
+  --theme-opinion-icon-hover-background: var(--theme-accent);  /*Background color of the opinion icon on hover/focus/active*/
+  --theme-opinion-icon-hover-border:#000000;  /*Border color of the opinion icon on hover/focus/active*/
+
+  --theme-opinion-separator-background: #ffffff;  /*Background color of the opinion separator*/
 
 
   /*
-    RESOURCES - Algemene styling van de resources in het thema
+    MEDIA TRANSCRIPTS - General styling of the media transcripts in the theme
   */
-
-  --theme-resources-button-icon: white;  /*Tekstkleur van de resourceknop in de header*/
-  --theme-resources-badge-background: #f86718;  /*Achtergrondkleur van de teller/badge van de resourceknop in de header*/
-  --theme-resources-badge-text: #000000;  /*Tekstkleur van de teller/badge van de resourceknop in de header*/
-  --theme-resources-badge-hover-background: #bdbdbd;  /*Achtergrondkleur van de teller/badge van de resourceknop in de header bij hover/focus/active*/
-  --theme-resources-badge-hover-text: #000000;  /*Tekstkleur van de teller/badge van de resourceknop in de header bij hover/focus/active*/
+  --theme-media-transcript-highlight-background: #cfcfcf;  /*Background color of the highlighted transcript*/
+  --theme-media-transcript-highlight-border: red;  /*Border color of the highlighted transcript*/
+  /* checken wanneer je een highlight selecteerd veranderd de kleur heel even naar rood en dan weer terug naar de highlight kleur. */
 
 
   /*
-   GLOSSARY - Algemene woordenlijst in het thema
+    MEDIA IMAGE SEQUENCE, HOTSPOT QUESTION - General styling of the media image sequence and hotspot question in the theme
   */
 
-  --theme-glossary-background: black;  /*Achtergrondkleur van de woordenlijst*/
-  --theme-glossary-text: white;  /*Tekstkleur van de woordenlijst*/
+  --theme-media-image-sequence-hotspot-question-background: var(--theme-background);  /*Background color of the media image sequence and hotspot question*/
+  --theme-media-image-sequence-hotspot-question-text: none;  /*Text color of the media image sequence and hotspot question*/
+  --theme-media-image-sequence-hotspot-question-border: none;  /*Border color of the media image sequence and hotspot question*/
 
+  --theme-media-image-sequence-search-off-background: #bdbdbd;  /*Background color of the search off button in the media image sequence*/
+
+
+
+  /*
+   EXTRA PROPERTIES - Additional properties of the learning object
+  */
+
+  /*
+   LIGHTBOX - General lightbox in the theme
+  */
+
+  --theme-lightbox-background: var(--theme-panel-background);  /*Background color of the lightbox*/
+  --theme-lightbox-text: var(--theme-text);  /*Text color of the lightbox*/
+  --theme-lightbox-border: var(--theme-accent);  /*Border color of the lightbox*/
+  --theme-lightbox-close-background: var(--theme-accent);  /*Background color of the lightbox close button*/
+  --theme-lightbox-close-text: var(--theme-text);  /*Text color of the lightbox close button*/
+  --theme-lightbox-close-border: var(--theme-accent);  /*Border color of the lightbox close button*/
+  --theme-lightbox-close-hover-background: var(--theme-secondary);  /*Background color of the lightbox close button on hover/focus*/
+  --theme-lightbox-close-hover-text: var(--theme-text);  /*Text color of the lightbox close button on hover/focus*/
+  --theme-lightbox-close-hover-border: var(--theme-accent);  /*Border color of the lightbox close button on hover/focus*/
+
+  /*
+   DIALOG - General dialogs in the theme
+  */
+
+  --theme-dialog-background: var(--theme-panel-background);  /*Background color of the dialog*/
+  --theme-dialog-text: var(--theme-text);  /*Text color of the dialog*/
+  --theme-dialog-border: var(--theme-accent);  /*Border color of the dialog*/
+
+  --theme-dialog-header-background: var(--theme-accent);  /*Background color of the dialog header*/
+  --theme-dialog-header-text: var(--theme-text);  /*Text color of the dialog header*/
   
-  /*
-   AUDIO - Algemene audio balk in het thema
-  */
-
-  --theme-audio-background: black;  /*Achtergrondkleur van de audio balk*/
-
-  
-  /*
-    Pagina timer - Algemene timer in het thema
-  */
-
-  --theme-timer-background: grey;  /*Achtergrondkleur van de timer*/
-  --theme-timer-text: black;  /*Tekstkleur van de timer*/
-
-  /*NOG DOEN: TOEGANGSCODE*/
-
+  --theme-dialog-close-background: var(--theme-accent);  /*Background color of the dialog close button*/
+  --theme-dialog-close-text: var(--theme-text);  /*Text color of the dialog close button*/
+  --theme-dialog-close-border: var(--theme-accent);  /*Border color of the dialog close button*/
+  --theme-dialog-close-hover-background: var(--theme-secondary);  /*Background color of the dialog close button on hover/focus*/
+  --theme-dialog-close-hover-text: var(--theme-text);  /*Text color of the dialog close button on hover/focus*/
+  --theme-dialog-close-hover-border: var(--theme-accent);  /*Border color of the dialog close button on hover/focus*/
 
 
   /*
-    HOTSPOT OPTIES MARKERING - Algemene markering van hotspot opties in het thema
+    RESOURCES - General styling of the resources in the theme
   */
 
-  --theme-hotspot-option-background: var(--theme-accent);  /*Achtergrondkleur van de hotspot optie markering*/
-  --theme-hotspot-option-text: var(--theme-text);  /*Tekstkleur van de hotspot optie markering*/
-  --theme-hotspot-option-border: var(--theme-accent);  /*Randkleur van de hotspot optie markering*/
-  --theme-hotspot-option-hover-border: rgb(194, 246, 255);  /*Randkleur van de hotspot optie markering bij hover/focus/active*/
+  --theme-resources-button-icon: white;  /*Text color of the resource button in the header*/
+  --theme-resources-badge-background: #f86718;  /*Background color of the counter/badge of the resource button in the header*/
+  --theme-resources-badge-text: #000000;  /*Text color of the counter/badge of the resource button in the header*/
+  --theme-resources-badge-hover-background: #bdbdbd;  /*Background color of the counter/badge of the resource button in the header on hover/focus/active*/
+  --theme-resources-badge-hover-text: #000000;  /*Text color of the counter/badge of the resource button in the header on hover/focus/active*/
 
 
   /*
-    AFBEELDING REEKS: BEKIJK MENU - Algemene styling van het menu in de afbeelding reeks 
-  */
-  
-  --theme-thumbnail-menu-background: var(--theme-accent);  /*Achtergrondkleur van het menu van een thumbnail in de afbeelding reeks*/
-  --theme-thumbnail-menu-selected-border: var(--theme-accent);  /*Randkleur van het menu van een thumbnail in de afbeelding reeks*/
-
-
-  /*
-    Afbeelding vergrootglas - Algemene styling van het vergrootglas in de afbeelding
+   GLOSSARY - General glossary in the theme
   */
 
-  --theme-image-magnifier-border: var(--theme-accent);  /*Randkleur van het vergrootglas in de afbeelding*/
-
-  /*
-    CHEKCEN - TOOLBOX
-  */
+  --theme-glossary-background: black;  /*Background color of the glossary*/
+  --theme-glossary-text: white;  /*Text color of the glossary*/
 
   
   /*
-    SPEEL ALLES AF - Algemene styling van de speel alles af knop
+   AUDIO - General audio bar in the theme
   */
 
-  --theme-playall-thumbnail-border: var(--theme-accent);  /*Randkleur van de speel alles af knop*/
-  --theme-playall-thumbnail-hover-border: var(--theme-accent);  /*Randkleur van de speel alles af knop bij hover/focus/active*/
-  --theme-playall-thumbnail-selected-border: var(--theme-accent);  /*Randkleur van de speel alles af knop bij geselecteerd*/
+  --theme-audio-background: black;  /*Background color of the audio bar*/
+
+  
+  /*
+    Page timer - General timer in the theme
+  */
+
+  --theme-timer-background: grey;  /*Background color of the timer*/
+  --theme-timer-text: black;  /*Text color of the timer*/
+
+  /*TODO: ACCESS CODE*/
+
 
 
   /*
-    SUB-PAGINA NAVIGATIE - Algemene styling van de sub-pagina navigatie
+    HOTSPOT OPTION HIGHLIGHTING - General highlighting of hotspot options in the theme
   */
 
-  --theme-subpage-navigation-background: none;  /*Achtergrondkleur van de sub-pagina navigatie*/
-  --theme-subpage-navigation-text: var(--theme-text);  /*Tekstkleur van de sub-pagina navigatie*/
-  --theme-subpage-navigation-selected-background: black;  /*Achtergrondkleur van de geselecteerde sub-pagina navigatie*/
+  --theme-hotspot-option-background: var(--theme-accent);  /*Background color of the hotspot option highlight*/
+  --theme-hotspot-option-text: var(--theme-text);  /*Text color of the hotspot option highlight*/
+  --theme-hotspot-option-border: var(--theme-accent);  /*Border color of the hotspot option highlight*/
+  --theme-hotspot-option-hover-border: rgb(194, 246, 255);  /*Border color of the hotspot option highlight on hover/focus/active*/
+
+
+  /*
+    IMAGE SEQUENCE: VIEW MENU - General styling of the menu in the image sequence 
+  */
+  
+  --theme-thumbnail-menu-background: var(--theme-accent);  /*Background color of the menu of a thumbnail in the image sequence*/
+  --theme-thumbnail-menu-selected-border: var(--theme-accent);  /*Border color of the menu of a thumbnail in the image sequence*/
+
+
+  /*
+    Image magnifier - General styling of the magnifier in the image
+  */
+
+  --theme-image-magnifier-border: var(--theme-accent);  /*Border color of the magnifier in the image*/
+
+  /*
+    CHECK - TOOLBOX
+  */
+
+  
+  /*
+    PLAY ALL - General styling of the play all button
+  */
+
+  --theme-playall-thumbnail-border: var(--theme-accent);  /*Border color of the play all button*/
+  --theme-playall-thumbnail-hover-border: var(--theme-accent);  /*Border color of the play all button on hover/focus/active*/
+  --theme-playall-thumbnail-selected-border: var(--theme-accent);  /*Border color of the play all button when selected*/
+
+
+  /*
+    SUBPAGE NAVIGATION - General styling of the subpage navigation
+  */
+
+  --theme-subpage-navigation-background: none;  /*Background color of the subpage navigation*/
+  --theme-subpage-navigation-text: var(--theme-text);  /*Text color of the subpage navigation*/
+  --theme-subpage-navigation-selected-background: black;  /*Background color of the selected subpage navigation*/
 
 
 
 }
 
-/* Header / bovenbalk van het leerobject */
+/* Header / top bar of the learning object */
 #x_headerBlock {
   color: var(--theme-header-text); 
   background-repeat: no-repeat;
@@ -422,74 +473,74 @@ body:not(.sb_right):not(.sb_left) #x_headerBlock {
   border-top-left-radius: 0;
 }
 
-/* Pagina-introductieknop in de header */
+/* Page introduction button in the header */
 #x_headerBlock #x_pageIntroBtn {
   color: var(--theme-header-text);
 }
 
-/* Pagina-introductieknop met achtergrond in de header */
+/* Page introduction button with a background in the header */
 #x_headerBlock #x_pageIntroBtn.pageIntroBg {
   color: var(--theme-header-text); 
   background-color: var(--theme-button-background); 
 }
 
-/* Pagina-introductieknop in de header bij hover/focus in actieve state */
+/* Page introduction button in the header on hover/focus in the active state */
 #x_headerBlock #x_pageIntroBtn.ui-button.ui-state-hover, #x_headerBlock #x_pageIntroBtn.ui-button.ui-state-focus, #x_headerBlock #x_pageIntroBtn.ui-state-active {
   color: var(--theme-button-hover-text); /* --theme-button-hover-text */
 }
 
-/* Pagina-introductieknop met achtergrond in de header bij hover/focus in actieve state */
+/* Page introduction button with a background in the header on hover/focus in the active state */
 #x_headerBlock #x_pageIntroBtn.pageIntroBg.ui-button.ui-state-hover, #x_headerBlock #x_pageIntroBtn.pageIntroBg.ui-button.ui-state-focus, #x_headerBlock #x_pageIntroBtn.pageIntroBg.ui-state-active {
   color: var(--theme-button-hover-text); /* --theme-button-hover-text */
   background-color: var(--theme-button-hover-background); /* --theme-button-hover-background */
 }
 
 /* progress bar */
-/* Markering van de voortgangsbalk in de header */
+/* Progress bar marker in the header */
 #x_headerProgress .progressMarker {
   border-color: var(--theme-progress-header-border); 
   background-color: var(--theme-progress-header-background); 
 }
 
-/* Voltooide markering van de voortgangsbalk in de header */
+/* Completed marker of the progress bar in the header */
 #x_headerProgress .progressMarker.complete {
   border-color: var(--theme-progress-header-complete); 
 }
 
 /* page resources */
-/* Pagina-bronnenknop in de header */
+/* Page resources button in the header */
 #x_pageResourcesBtn.ui-button-icon-only {
   background: none;
   color: var(--theme-resources-button-icon); 
 }
 
-/* Teller/badge van Pagina bronnen */
+/* Page resources counter/badge */
 #x_pageResourcesBtn .resourceNumber {
   background: var(--theme-resources-badge-background); /* --theme-resources-badge-background */
   color: var(--theme-resources-badge-text); /* --theme-resources-badge-text */
 }
 
-/* Pagina-bronnenknop in de header bij hover/focus in actieve state */
+/* Page resources button in the header on hover/focus in the active state */
 #x_pageResourcesBtn.ui-button-icon-only:hover .resourceNumber, #x_pageResourcesBtn.ui-button-icon-only:active .resourceNumber, #x_pageResourcesBtn.ui-button-icon-only:focus .resourceNumber {
   background: var(--theme-resources-badge-hover-background); /* --theme-resources-badge-hover-background */
   color: var(--theme-resources-badge-hover-text); /* --theme-resources-badge-text */
 }
 
-/* Styling voor Afbeelding reeks, Tijdlijn media, Resultatenpagina */
+/* Styling for Image sequence, Media timeline, Results page */
 .x_imageSequence_page #controlBar,
 .x_SictTimeline_page #pageContents .tl-text .tl-headline-date, .x_SictTimeline_page #pageContents .tl-text h3.tl-headline-date,
 .x_results_page #txtHolder {
   border-bottom: 3px solid #ebebeb; /* --theme-panel-border */
 }
 
-/* Interactiviteit: Interactieve tekst */
+/* Interactivity: Interactive text */
 .x_interactiveText_page #groupInfo h3,
 .x_interactiveText_page #questionHolder,
 .x_results_page #general_summary + #specific {
   border-top: 3px solid #ebebeb; /* --theme-panel-border */
 }
 
-/* Interactiviteit: Interactieve tekst */
+/* Interactivity: Interactive text */
 .x_textGraphics_page #imgCaption.transcript,
 .x_nav_page #pageContents.slide #btnHolder.top,
 .x_tabNavExtra_page .paneList,
@@ -506,7 +557,7 @@ body:not(.sb_right):not(.sb_left) #x_headerBlock {
   border-bottom: 3px solid #ffffff; /* --theme-panel-border */
 }
 
-/* Interactiviteit: Interactieve tekst */
+/* Interactivity: Interactive text */
 .x_table_page #footnote,
 .x_nav_page #pageContents.slide #btnHolder:not(.top),
 .x_gapFill_page #labelHolder,
@@ -518,260 +569,262 @@ body:not(.sb_right):not(.sb_left) #x_headerBlock {
   border-top: 3px solid #ffffff; /* --theme-table-border */
 }
 
-/* Interactiviteit: Hotspot afbeelding */
+/* Interactivity: Hotspot image */
 .x_dragDropLabel_page #textHolder hr,
 .x_hotspotImage_page #infoHolder hr,
 .x_hotSpotQuestion_page #infoHolder hr,
 .x_inventory_page .chart hr,
 .x_modelAnswerResults_page #textHolder hr {
   height: 3px;
-  background: #ebebeb; /* --theme-panel-background */
+  background: var(--theme-panel-text-holder-background);
   border: 0;
 }
 
-/* Formulier/Documentatie-pagina */
+/* Opinion page */
 .x_opinion_page .qSeparator hr,
 .x_documentation_page #pages .item hr,
 .x_mediaLesson_page .contentBlock hr {
   height: 3px;
-  background: #ffffff; /* --theme-background */
+  background: var(--theme-opinion-separator-background);
   border: 0;
 }
 
-/* CSS-regel voor dit Xerte-interfaceonderdeel */
+/* highlight - General styling for highlights - CHECKEN*/
 .highlight {
-  background: #cfcfcf; /* --theme-secondary */
+  background:   var(--theme-media-transcript-highlight-background) !important; /* !important - CHECKEN*/
+  border: 1px solid var(--theme-media-transcript-highlight-border) !important; /* !important - CHECKEN of deze regel code erbij mag, want de border kleur automatisch rood zonder deze regel code*/
+  
 }
 
-/* Styling voor Audio slideshow */
+/* Styling for Audio slideshow */
 .x_audioSlideshow_page .slide {
   margin-left: 5px;
 }
 
-/* Styling voor Afbeelding reeks, Hotspot vraag */
+/* Styling for Image sequence, Hotspot question */
 .x_imageSequence_page #infoHolder, .x_hotSpotQuestion_page #infoHolder {
-  background: #ffffff; /* --theme-background */
+  background: var(--theme-media-image-sequence-hotspot-question-background); 
 }
 
-/* Navigatie-/controlknoppen van Flitskaarten */
+/* Navigation/control buttons of Flashcards */
 .x_imageSequence_page #seriesBtnLeft, .x_imageSequence_page #seriesBtnRight,
 .x_perspectives_page #prevBtn, .x_perspectives_page #nextBtn,
 .x_thumbnailViewer_page #prevBtn, .x_thumbnailViewer #nextBtn,
 .x_perspectives_page #mainInfoHolder #gridBack,
 .x_flashCards_page #cardCtrls .btnHolder button {
-  color: #000000; /* --theme-thumbnail-control-text */
+  color: var(--theme-ui-button-background); 
 }
 
-/* Ronde controlknop van Flitskaarten */
+/* Round control button of Flashcards */
 .x_flashCards_page .circleBtn.ui-button {
-  background-color: #000000; /* --theme-ui-button-background */
+  background-color: var(--theme-ui-button-background); /* --theme-ui-button-background */
 }
 
-/* Navigatie-/controlknoppen van Flitskaarten bij hover/focus in actieve state */
+/* Navigation/control buttons of Flashcards and presentations thumbnail on hover/focus in the active state */
 .x_imageSequence_page #seriesBtnLeft:hover, .x_imageSequence_page #seriesBtnRight:hover, .x_imageSequence_page #seriesBtnLeft:focus, .x_imageSequence_page #seriesBtnRight:focus, .x_imageSequence_page #seriesBtnLeft:active, .x_imageSequence_page #seriesBtnRight:active,
 .x_perspectives_page #prevBtn:hover, .x_perspectives_page #nextBtn:hover, .x_perspectives_page #prevBtn:focus, .x_perspectives_page #nextBtn:focus, .x_perspectives_page #nextBtn:active, .x_perspectives_page #nextBtn:active,
 .x_thumbnailViewer_page #prevBtn:hover, .x_thumbnailViewer_page #nextBtn:hover, .x_thumbnailViewer_page #prevBtn:focus, .x_thumbnailViewer_page #nextBtn:focus, .x_thumbnailViewer_page #nextBtn:active, .x_thumbnailViewer_page #nextBtn:active,
 .x_perspectives_page #mainInfoHolder #gridBack:hover, .x_perspectives_page #mainInfoHolder #gridBack:focus, .x_perspectives_page #mainInfoHolder #gridBack:active,
 .x_flashCards_page #cardCtrls .btnHolder button:hover, .x_flashCards_page #cardCtrls .btnHolder button:focus, .x_flashCards_page #cardCtrls .btnHolder button:active {
-  color: #f86718; /* --theme-thumbnail-control-hover-text */
+  color: var(--theme-ui-button-hover-background); 
 }
 
-/* Ronde controlknop van Flitskaarten bij hover/focus in actieve state */
+/* Round control button of Flashcardson hover/focus in the active state */
 .x_flashCards_page .circleBtn.ui-button:hover, .x_flashCards_page .circleBtn.ui-button:focus, .x_flashCards_page .circleBtn.ui-button:active {
-  background-color: #f86718; /* --theme-ui-button-hover-background */
+  background-color: var(--theme-ui-button-hover-background); /* --theme-ui-button-hover-background */
 }
 
-/* Geselecteerde thumbnail in Afbeelding reeks */
+/* Selected thumbnail in Image sequence */
 .x_imageSequence_page #seriesHolder .thumbs.selected {
-  background-color: #418545; /* --theme-thumbnail-current-background */
+  background-color: var(--theme-thumbnail-current-background) !important; /* !important CHECKEN*/
 }
 
-/* Thumbnails van Meerdere perspectieven in geselecteerde state */
+/* Thumbnails of Multiple perspectives in the selected state */
 .x_perspectives_page #thumbHolder .thumbBox.selected, .x_perspectives_page #thumbHolder .thumbBox.current,
 .x_thumbnailViewer_page #thumbHolder .thumbBox.selected, .x_thumbnailViewer_page #thumbHolder .thumbBox.current {
-  border-color: #418545; /* --theme-thumbnail-current-border */
+  border-color: var(--theme-thumbnail-current-border); 
 }
 
-/* Gemarkeerde thumbnail in Afbeelding reeks */
+/* Highlighted thumbnail in Image sequence */
 .x_imageSequence_page #seriesHolder .thumbs.highlighted,
 .x_perspectives_page #thumbBar .thumbs.highlighted,
 .x_thumbnailViewer_page #thumbHolder .thumbs.highlighted {
-  background-color: #f86718; /* --theme-thumbnail-highlight-background */
+  background-color: var(--theme-thumbnail-highlight-background) !important; /* !important checken */
 }
 
-/* Tekstpaneel van Presentatie thumbnails */
+/* Text panel of Presentation thumbnails */
 .x_thumbnailViewer_page #panelTxt {
   overflow: hidden;
 }
 
-/* Tekstpaneel van Presentatie thumbnails */
+/* Text panel of Presentation thumbnails */
 .x_thumbnailViewer_page #panelTxt div {
-  background: #cfcfcf; /* --theme-panel-background */
+  background: var(--theme-thumbnail-viewer-panel-background); 
   width: 100%;
-  color: #000000; /* --theme-panel-text */
+  color: var(--theme-thumbnail-viewer-panel-text); 
 }
 
-/* Styling voor YouTube Feed */
+/* Styling for YouTube Feed */
 .x_youtuberss_page #resultsHolder div {
   background: none;
 }
 
-/* Styling voor Gesynchroniseerde video */
+/* Styling for Synchronized video */
 #x_mainHolder.x_videoSynch_page .right {
   padding-top: 10px;
   padding-left: 20px;
 }
 
-/* Actief/gemarkeerd transcriptfragment in Transcriptlezer */
+/* Active/highlighted transcript segment in Transcript reader */
 .x_transcriptReader_page .highlight {
-  background: rgba(255, 255, 255, 0.9);
+  background: rgba(255, 255, 255, 0.9); /* CHECKEN - dubbel highlight code*/
 }
 
-/* Vorige/volgende navigatie van Tijdlijn media */
+/* Previous/next navigation of Media timeline */
 #x_mainHolder.x_SictTimeline_page .tl-slidenav-next .tl-slidenav-icon:before,
 #x_mainHolder.x_SictTimeline_page .tl-slidenav-previous .tl-slidenav-icon:before {
-  color: #000000; /* --theme-ui-button-text */
+  color: var(--theme-ui-button-background);
   font-family: "Font Awesome 5 Free", sans-serif;
   font-weight: 900;
   font-size: 1.5em;
 }
 
-/* Vorige/volgende navigatie van Tijdlijn media */
+/* Previous/next navigation of Media timeline */
 #x_mainHolder.x_SictTimeline_page .tl-slidenav-next .tl-slidenav-icon:before {
   content: "\f054";
 }
 
-/* Vorige/volgende navigatie van Tijdlijn media */
+/* Previous/next navigation of Media timeline */
 #x_mainHolder.x_SictTimeline_page .tl-slidenav-previous .tl-slidenav-icon:before {
   content: "\f053";
 }
 
-/* Vorige/volgende navigatie van Tijdlijn media bij hover/focus in actieve state */
+/* Previous/next navigation of Media timeline on hover/focus in the active state */
 #x_mainHolder.x_SictTimeline_page .tl-slidenav-next:hover .tl-slidenav-icon:before, #x_mainHolder.x_SictTimeline_page .tl-slidenav-previous:hover .tl-slidenav-icon:before,
 #x_mainHolder.x_SictTimeline_page .tl-slidenav-next:focus .tl-slidenav-icon:before, #x_mainHolder.x_SictTimeline_page .tl-slidenav-previous:focus .tl-slidenav-icon:before,
 #x_mainHolder.x_SictTimeline_page .tl-slidenav-next:active .tl-slidenav-icon:before, #x_mainHolder.x_SictTimeline_page .tl-slidenav-previous:active .tl-slidenav-icon:before {
-  color: #f86718; /* --theme-ui-button-hover-text */
+  color: var(--theme-ui-button-hover-background);
 }
 
-/* Knop/handle van de jQuery UI-slider */
+/* jQuery UI slider handle */
 .x_imageSequence_page .sliderBar.ui-slider .ui-slider-handle {
   margin-left: -2px;
 }
 
-/* Algemene Xerte/jQuery UI-knop */
+/* General Xerte/jQuery UI button */
 .x_imageSequence_page .resetBtn .ui-button-icon-secondary {
   margin-left: -0.45em !important;
 }
 
-/* Styling voor Afbeelding reeks */
+/* Styling for Image sequence */
 .x_imageSequence_page .slider.round {
-  background: #bdbdbd; /* --theme-secondary */
+  background: var(--theme-media-image-sequence-search-off-background);
 }
 
-/* Styling voor Afbeelding reeks */
+/* Styling for Image sequence */
 .x_imageSequence_page #viewHolder #viewOption button.highlighted {
-  border-color: #f86718; /* --theme-accent */
+  border-color: #f86718; /*Nog op terug komen */
 }
 
-/* Styling voor Mediales */
+/* Styling for Media lesson */
 .x_mediaLesson_page #panelHolder .layoutPanel.panel {
   overflow-x: hidden;
 }
 
-/* CSS-regel voor dit Xerte-interfaceonderdeel */
+/* CSS rule for this Xerte interface element */
 .x_pdf_page #pdfPage hr {
   height: 0;
   margin: 0;
 }
 
-/* PDF openen/downloaden-knop */
+/* Open/download PDF button */
 .x_pdf_page #pdfPage #pdfLink {
   text-decoration: none;
   padding: 0.2em 1em;
   border-radius: 0;
-  background: #cfcfcf; /* --theme-button-background */
-  color: #000000; /* --theme-button-text */
+  background: var(--theme-button-background); 
+  color: var(--theme-button-text);
 }
 
-/* PDF openen/downloaden-knop bij hover/focus in actieve state */
+/* Open/download PDF button on hover/focus in the active state */
 .x_pdf_page #pdfPage #pdfLink:hover, .x_pdf_page #pdfPage #pdfLink:focus, .x_pdf_page #pdfPage #pdfLink:active {
   border-radius: 0;
-  background: #bdbdbd; /* --theme-button-hover-background */
-  color: #000000; /* --theme-button-hover-text */
+  background: var( --theme-button-hover-background);
+  color: var(--theme-button-hover-text);
 }
 
-/* CSS-regel voor dit Xerte-interfaceonderdeel */
+/* CSS rule for this Xerte interface element */
 .x_pdf_page #pdfPage #link {
   text-align: right;
   margin-top: 0.8em;
 }
 
-/* Accordeon Navigator */
+/* Accordion Navigator */
 #x_mainHolder.x_nav_page #pageContents.acc #infoHolder {
   background: none;
 }
 
-/* Accordeon Navigator */
+/* Accordion Navigator */
 #x_mainHolder.x_nav_page #pageContents.acc #infoHolder .navChild,
 #x_mainHolder.x_nav_page #pageContents.tab #infoHolder .navChild {
   padding: 1em;
 }
 
-/* Accordeon Navigator */
+/* Accordion Navigator */
 #x_mainHolder.x_nav_page #pageContents.acc #infoHolder .navChildTitle {
   border-radius: 0;
 }
 
-/* Accordeon Navigator */
+/* Accordion Navigator */
 #x_mainHolder.x_nav_page #pageContents.acc #infoHolder .navChildTitle,
 #x_mainHolder.x_nav_page #pageContents.acc #infoHolder .navChild {
-  background: none #ebebeb; /* --theme-navigation-content-background */
-  border: 0; /* --theme-navigation-active-background */
+  background: none #ebebeb; /* Nog op terug komen, want er staat none en dan de kleur code */
+  border: 0; 
 }
 
-/* Accordeon Navigator */
+/* Accordion Navigator */
 #x_mainHolder.x_nav_page #pageContents.acc #infoHolder .navChildTitle:not(.ui-accordion-header-active):not(:last-of-type),
 #x_mainHolder.x_nav_page #pageContents.acc #infoHolder .navChild {
   margin-bottom: 0.2em;
 }
 
-/* Accordeon Navigator */
+/* Accordion Navigator */
 #x_mainHolder.x_nav_page #pageContents.acc .ui-accordion .ui-accordion-header {
   margin-top: 0;
 }
 
-/* Accordeon Navigator */
+/* Accordion Navigator */
 #x_mainHolder.x_nav_page #pageContents.acc #infoHolder .navChildTitle a {
   padding: 10px 15px 10px 35px;
-  background: none;
+  background: none; /* op terug komen, want er staat none */
   border-radius: 0;
-  border: 0; /* --theme-navigation-active-background */
+  border: 0; 
 }
 
-/* Accordeon Navigator */
+/* Accordion Navigator */
 #x_mainHolder.x_nav_page #pageContents.acc #infoHolder .navChildTitle .ui-icon {
   left: 15px;
-  color: #000000; /* --theme-navigation-text */
+  color: var(--theme-navigation-icon-color);
 }
 
-/* Accordeon Navigator */
+/* Accordion Navigator */
 #x_mainHolder.x_nav_page #pageContents.acc #infoHolder .navChildTitle.ui-accordion-header-active {
-  background: #bdbdbd; /* --theme-navigation-active-background */
+  background: var(--theme-navigation-active-background); 
 }
 
-/* Accordeon Navigator bij hover/focus */
+/* Accordion Navigator on hover/focus */
 #x_mainHolder.x_nav_page #pageContents.acc #infoHolder .navChildTitle.ui-state-hover:not(.ui-accordion-header-active),
 #x_mainHolder.x_nav_page #pageContents.acc #infoHolder .navChildTitle.ui-state-focus:not(.ui-accordion-header-active) {
-  background: #cfcfcf; /* --theme-navigation-active-background */
+  background: var( --theme-navigation-hover); /
 }
 
-/* Accordeon Navigator */
+/* Accordion Navigator */
 #x_mainHolder.x_nav_page #pageContents.acc .ui-accordion-content {
   border-bottom-left-radius: 0;
   border-bottom-right-radius: 0;
 }
 
-/* Algemene Xerte/jQuery UI-knop */
+/* General Xerte/jQuery UI button */
 .ui-button, .ui-widget-content .ui-button {
   border-radius: 0;
   background: #cfcfcf; /* --theme-button-background */
@@ -779,13 +832,13 @@ body:not(.sb_right):not(.sb_left) #x_headerBlock {
   color: #000000; /* --theme-button-text */
 }
 
-/* Knoppen binnen een algemene buttonset */
+/* Buttons within a general button set */
 .ui-buttonset .ui-button {
   margin-left: 0;
   margin-right: 0.2em;
 }
 
-/* Algemene Xerte/jQuery UI-knop bij hover/focus in actieve state */
+/* General Xerte/jQuery UI button on hover/focus in the active state */
 .ui-button.ui-state-active, .ui-button.ui-state-hover, .ui-button:focus,
 .ui-widget-content .ui-button.ui-state-active, .ui-widget-content .ui-button.ui-state-hover, .ui-widget-content .ui-button:focus,
 #x_pagePswdBtn:active, #x_pagePswdBtn:hover, #x_pagePswdBtn:focus {
@@ -795,37 +848,37 @@ body:not(.sb_right):not(.sb_left) #x_headerBlock {
   color: #000000; /* --theme-button-hover-text */
 }
 
-/* Styling voor Navigatorpagina */
+/* Styling for Navigator page */
 .x_nav_page #pageContents.button button.selected {
   background-color: #ffffff; /* --theme-background */
 }
 
-/* Ronde controlknop van Flitskaarten */
+/* Round control button of Flashcards */
 .x_flashCards_page .circleBtn.ui-button {
   border-radius: 100%;
 }
 
-/* Links op de Hyperlinks-pagina */
+/* Links on the Hyperlinks page */
 .x_links_page #linkHolder a {
   color: blue; /* --theme-link */
 }
 
-/* Links op de Hyperlinks-pagina */
+/* Links on the Hyperlinks page */
 .x_links_page #linkHolder a:visited {
   color: green; /* --theme-link-visited */
 }
 
-/* Links op de Hyperlinks-pagina bij hover/focus */
+/* Links on the Hyperlinks page on hover/focus */
 .x_links_page #linkHolder a:hover {
   color: red; /* --theme-link-hover */
 }
 
-/* CSS-regel voor dit Xerte-interfaceonderdeel */
+/* CSS rule for this Xerte interface element */
 #pageContents.button button.selected {
   background-color: #cfcfcf; /* --theme-secondary */
 }
 
-/* Algemene tabs */
+/* General tabs */
 .ui-tabs {
   background: none !important; /* --theme-navigation-background */
   border: 0; /* --theme-navigation-active-background */
@@ -833,7 +886,7 @@ body:not(.sb_right):not(.sb_left) #x_headerBlock {
   padding: 0;
 }
 
-/* Tabnavigatie / tabknoppen */
+/* Tab navigation / tab buttons */
 .ui-tabs .ui-tabs-nav,
 #x_mainHolder.x_nav_page #pageContents.tab #tabHolder {
   border: 0; /* --theme-navigation-active-background */
@@ -844,23 +897,23 @@ body:not(.sb_right):not(.sb_left) #x_headerBlock {
   padding: 0;
 }
 
-/* Tabnavigatie / tabknoppen */
+/* Tab navigation / tab buttons */
 .ui-tabs .ui-tabs-nav li.ui-state-default {
   top: 0;
 }
 
-/* Contentpaneel onder tabs */
+/* Content panel below tabs */
 .ui-tabs .ui-tabs-panel {
   background: #ebebeb; /* --theme-tab-navigator-content-background */
 }
 
-/* Contenthouder van tabs */
+/* Tab content holder */
 .ui-tabs #paneHolder, .ui-tabs .paneHolder {
   border-bottom-left-radius: 0;
   border-bottom-right-radius: 0;
 }
 
-/* Tabnavigatie / tabknoppen */
+/* Tab navigation / tab buttons */
 .ui-tabs .ui-tabs-nav > li.ui-state-default {
   margin: 0;
   border: 0 !important; /* --theme-navigation-active-background */
@@ -869,7 +922,7 @@ body:not(.sb_right):not(.sb_left) #x_headerBlock {
   padding: 0;
 }
 
-/* Tabnavigatie / tabknoppen */
+/* Tab navigation / tab buttons */
 .ui-tabs .ui-tabs-nav > li.ui-state-default a {
   color: #000000; /* --theme-navigation-text */
   background: #ebebeb; /* --theme-navigation-background */
@@ -881,23 +934,23 @@ body:not(.sb_right):not(.sb_left) #x_headerBlock {
   margin-right: 5px;
 }
 
-/* Algemene tabs */
+/* General tabs */
 .ui-tabs #tabHolder.ui-tabs-nav > li.navChildTitle.ui-state-default.ui-tabs-active {
   border-bottom: 0 !important; /* --theme-navigation-active-background */
 }
 
-/* Tabnavigatie / tabknoppen */
+/* Tab navigation / tab buttons */
 .ui-tabs .ui-tabs-nav > li.ui-state-default.ui-tabs-active a {
   background: #bdbdbd; /* --theme-navigation-active-background */
 }
 
-/* Tabnavigatie / tabknoppen bij hover/focus */
+/* Tab navigation / tab buttons on hover/focus */
 .ui-tabs .ui-tabs-nav > li.ui-state-default.ui-state-hover:not(.ui-tabs-active) a,
 .ui-tabs .ui-tabs-nav > li.ui-state-default.ui-state-focus:not(.ui-tabs-active) a {
   background: #cfcfcf; /* --theme-navigation-active-background */
 }
 
-/* CSS-regel voor dit Xerte-interfaceonderdeel */
+/* CSS rule for this Xerte interface element */
 .ui-state-active a, .ui-state-active a:link, .ui-state-active a:visited {
   text-decoration: none;
   background: #ffffff; /* --theme-background */
@@ -906,7 +959,7 @@ body:not(.sb_right):not(.sb_left) #x_headerBlock {
   border: solid #ebebeb; /* --theme-panel-border */
 }
 
-/* Navigatie-items van Tab navigator extra */
+/* Navigation items of Tab navigator extra */
 .x_tabNavExtra_page a.topic,
 .x_list_page #listHolder a.listItem,
 .x_annotatedDiagram_page #listHolder a.listItem {
@@ -919,7 +972,7 @@ body:not(.sb_right):not(.sb_left) #x_headerBlock {
   margin-bottom: 5px;
 }
 
-/* Navigatie-items van Tab navigator extra bij hover/focus in actieve state */
+/* Navigation items of Tab navigator extra on hover/focus in the active state */
 .x_tabNavExtra_page a.topic:hover, .x_tabNavExtra_page a.topic:focus, .x_tabNavExtra_page a.topic:active,
 .x_annotatedDiagram_page #listHolder a.listItem:hover, .x_annotatedDiagram_page #listHolder a.listItem:focus, .x_annotatedDiagram_page #listHolder a.listItem:active,
 .x_list_page #listHolder a.listItem:hover, .x_list_page #listHolder a.listItem:focus, .x_list_page #listHolder a.listItem:active {
@@ -928,24 +981,24 @@ body:not(.sb_right):not(.sb_left) #x_headerBlock {
   color: #000000; /* --theme-navigation-text */
 }
 
-/* Navigatie-items van Tab navigator extra */
+/* Navigation items of Tab navigator extra */
 .x_tabNavExtra_page a.topic.highlight,
 .x_list_page #listHolder a.listItem.highlight,
 .x_annotatedDiagram_page #listHolder a.listItem.highlight {
   background: #bdbdbd; /* --theme-navigation-active-background */
 }
 
-/* Sluitknop van informatiepaneel bij Interactieve lijst */
+/* Information panel close button for Interactive list */
 .x_list_page #infoHolderTop .closeBtn {
   color: #222222; /* --theme-text */
 }
 
-/* Sluitknop van informatiepaneel bij Interactieve lijst bij hover/focus in actieve state */
+/* Information panel close button for Interactive list on hover/focus in the active state */
 .x_list_page #infoHolderTop .closeBtn:hover, .x_list_page #infoHolderTop .closeBtn:focus, .x_list_page #infoHolderTop .closeBtn:active {
   color: #4078C0; /* --theme-link */
 }
 
-/* Styling voor Navigatorpagina */
+/* Styling for Navigator page */
 #x_mainHolder.x_nav_page #pageContents.col .textTopHolder + #navHolder:not(.panel):not(.panelColumns),
 #x_mainHolder.x_nav_page #pageContents.col #textHolder + #navHolder:not(.panel):not(.panelColumns),
 #x_mainHolder.x_nav_page #pageContents.col #navHolder:not(.panel):not(.panelColumns) + .textBottomHolder,
@@ -956,84 +1009,84 @@ body:not(.sb_right):not(.sb_left) #x_headerBlock {
   padding-top: 1.5em;
 }
 
-/* Algemene tekstvelden in pagina-inhoud */
+/* General text fields in page content */
 #pageContents textarea {
   border-radius: 0;
   padding: 10px;
 }
 
-/* Algemene invoervelden in pagina-inhoud */
+/* General input fields in page content */
 #pageContents input {
   border-radius: 0;
   padding-left: 10px;
 }
 
-/* Interactiviteit: Interactieve tekst */
+/* Interactivity: Interactive text */
 .x_interactiveText_page #pageContents a.listItem {
   background-color: #cfcfcf; /* --theme-secondary */
   padding: 0.2em 1em;
   border-radius: 0;
 }
 
-/* Interactiviteit: Interactieve tekst bij hover/focus */
+/* Interactivity: Interactive text on hover/focus */
 .x_interactiveText_page #passageHolder a.listItem:hover:not(.highlight),
 .x_interactiveText_page #passageHolder a.listItem:focus:not(.highlight) {
   background-color: #bdbdbd; /* --theme-secondary */
 }
 
-/* Interactiviteit: Interactieve tekst */
+/* Interactivity: Interactive text */
 .x_interactiveText_page #passageHolder a.listItem.highlight {
   background-color: #ffffff; /* --theme-background */
 }
 
-/* Interactiviteit: Interactieve tekst */
+/* Interactivity: Interactive text */
 .x_interactiveText_page #pageContents.show .listItem,
 .x_interactiveText_page #pageContents.find .listItem,
 .x_interactiveText_page #pageContents.find2 .listItem {
   margin-right: 0.5em;
 }
 
-/* Interactiviteit: Interactieve tekst */
+/* Interactivity: Interactive text */
 .x_interactiveText_page #more, .x_interactiveText_page #more:visited {
   color: #000000; /* --theme-text */
 }
 
-/* Interactiviteit: Interactieve tekst bij hover/focus in actieve state */
+/* Interactivity: Interactive text on hover/focus in the active state */
 .x_interactiveText_page #more:active, .x_interactiveText_page #more:focus, .x_interactiveText_page #more:hover {
   color: #f86718; /* --theme-accent */
 }
 
-/* Formulier/Documentatie-pagina */
+/* Form/Documentation page */
 .x_documentation_page #pages fieldset {
   border: 3px solid #ffffff; /* --theme-background / component-border */
 }
 
-/* CSS-regel voor dit Xerte-interfaceonderdeel */
+/* CSS rule for this Xerte interface element */
 #listholder a.listitem, a:visited {
   color: #4078C0; /* --theme-link */
 }
 
-/* Interactiviteit: Geannoteerde hotspot */
+/* Interactivity: Annotated hotspot */
 .x_annotatedDiagram_page .highlight {
   background: #ebebeb; /* --theme-panel-background */
 }
 
-/* Interactiviteit: Geannoteerde hotspot */
+/* Interactivity: Annotated hotspot */
 .x_annotatedDiagram_page .hotspot {
   background: none;
 }
 
-/* Interactiviteit: Geannoteerde hotspot */
+/* Interactivity: Annotated hotspot */
 .x_annotatedDiagram_page #infoHolder {
   background: #ffffff; /* --theme-background */
 }
 
-/* Interactiviteit: Categorieën */
+/* Interactivity: Categories */
 #categoryHolder .category {
   border-radius: 0;
 }
 
-/* Labels bij Categorieën, Sleepoefening, Invuloefening en Tijdlijn/Paren */
+/* Labels for Categories, Drag-and-drop exercise, Gap-fill exercise and Timeline/Pairs */
 .x_categories_page .label.panel,
 .x_dragDropLabel_page .label.panel,
 .x_gapFill_page #labelHolder .label.panel,
@@ -1045,59 +1098,59 @@ body:not(.sb_right):not(.sb_left) #x_headerBlock {
   box-shadow: 0 10px 6px -6px #bdbdbd; /* --theme-label-border */
 }
 
-/* Geselecteerd label bij Invuloefening */
+/* Selected label for Gap-fill exercise */
 .x_gapFill_page #labelHolder .label.panel.selected {
   border-color: green; /* --theme-label-selected-border */
 }
 
-/* Uitgeschakeld label na drag-and-drop */
+/* Disabled label after drag-and-drop */
 .x_dragDropLabel_page .label.panel.ui-draggable-disabled {
   -webkit-box-shadow: none; /* --theme-label-disabled-border */
   -moz-box-shadow: none; /* --theme-label-disabled-border */
   box-shadow: none; /* --theme-label-disabled-border */
 }
 
-/* Gemarkeerd dropdoel bij Sleepoefening */
+/* Highlighted drop target for Drag-and-drop exercise */
 .x_dragDropLabel_page #targetHolder .target.highlight {
   background: rgba(255, 255, 255, 0.2);
 }
 
-/* Interactiviteit: Categorieën */
+/* Interactivity: Categories */
 #categoryHolder .highlight {
   border-radius: 0;
   background: #ebebeb; /* --theme-panel-background */
 }
 
-/* Interactiviteit: Categorieën */
+/* Interactivity: Categories */
 #categoryHolder .highlight.highlightDark, .x_gapFill_page #targetHolder .highlight.highlightDark {
   background: #cfcfcf; /* --theme-secondary */
 }
 
-/* Styling voor Sleepoefening */
+/* Styling for Drag-and-drop exercise */
 .x_dragDropLabel_page #infoHolder {
   padding: 0;
   margin: 1em 0 0 0;
   background: none;
 }
 
-/* Correct antwoord/doel bij Invuloefening */
+/* Correct answer/target for Gap-fill exercise */
 .x_gapFill_page .target.correct {
   color: green; /* --theme-feedback-correct-text */
   font-weight: bold;
   background-color: rgba(255, 255, 255, 0.2); /* --theme-feedback-correct-background */
 }
 
-/* Interactiviteit: Beslisboom */
+/* Interactivity: Decision tree */
 .x_decision_page .highlight {
   background: #cfcfcf; /* --theme-secondary */
 }
 
-/* Interactiviteit: Beslisboom */
+/* Interactivity: Decision tree */
 .x_decision_page #newBtn .ui-button-icon-primary {
   margin-left: -0.45em;
 }
 
-/* Interactiviteit: Dictee */
+/* Interactivity: Dictation */
 .x_dictation_page #answerTxt {
   width: 98%;
   margin-bottom: 10px;
@@ -1105,92 +1158,92 @@ body:not(.sb_right):not(.sb_left) #x_headerBlock {
   padding: 10px;
 }
 
-/* Algemeen dropdoel bij sleep-/koppeloefeningen */
+/* General drop target for drag-and-drop/matching exercises */
 #targetHolder .target {
   border-radius: 0;
 }
 
-/* Gemarkeerd dropdoel bij sleep-/koppeloefeningen */
+/* Highlighted drop target for drag-and-drop/matching exercises */
 #targetHolder .highlight {
   background: #ffffff; /* --theme-background */
 }
 
-/* Hotspot en geselecteerde hotspot */
+/* Hotspot and selected hotspot */
 a.hotspot, a.hotspot.selected {
   background: none;
 }
 
-/* Informatie bij een hotspot */
+/* Information for a hotspot */
 .hsinfo {
   /*padding:1%;*/
 }
 
-/* Interactiviteit: Hotspot afbeelding */
+/* Interactivity: Hotspot image */
 .x_hotspotImage_page #infoHolder {
   background: none;
 }
 
-/* Interactiviteit: Inventarisatie */
+/* Interactivity: Inventory */
 .x_inventory_page #buttonHolder {
   margin-top: 1em;
 }
 
-/* Drag-and-dropgebied van Koppelen */
+/* Drag-and-drop area of Matching */
 .x_textMatch_page #dragDropHolder {
   background: #ebebeb; /* --theme-panel-background */
   padding: 10px;
   border-radius: 0;
 }
 
-/* Labels binnen Koppelen */
+/* Labels within Matching */
 .x_textMatch_page .label.panel {
   background: #cfcfcf; /* --theme-panel-background */
   border: 2px solid #cfcfcf; /* --theme-panel-border */
 }
 
-/* Interactiviteit: Model antwoord */
+/* Interactivity: Model answer */
 .x_modelAnswer_page #answer {
   overflow: auto;
 }
 
-/* Algemene invoervelden in pagina-inhoud */
+/* General input fields in page content */
 .x_opinion_page #pageContents input {
   padding-left: 0;
 }
 
-/* Interactiviteit: Opinie */
+/* Interactivity: Opinion */
 .x_opinion_page .labelHolder table tr {
   background: none;
 }
 
-/* Algemeen vraagpaneel */
+/* General question panel */
 .qPanel {
   overflow-x: hidden;
 }
 
-/* Labels bij slider-/schaalvragen */
+/* Labels for slider/scale questions */
 .sliderHolder .labelHolder a p {
   color: #000000; /* --theme-text */
 }
 
-/* Spelletjes: Woordzoeker */
+/* Games: Word search */
 .x_wordsearch_page #puzzle {
   border-radius: 0;
   border: 0;
   background: #ffffff; /* --theme-background */
 }
 
-/* Spelletjes: Memory */
+/* Games: Memory */
 .x_memory_page #cardTopHolder .card.focus {
   border-width: 2px;
 }
 
-/* Spelletjes: Memory */
+/* Games: Memory */
 .x_memory_page #cardTopHolder .card {
   background-image: url("card_back.svg") !important;
 }
 
-/* Spelletjes: Memory */
+/* Games: Memory */
 .x_memory_page #pageContents .card {
   border-radius: 0;
   border: 2px solid #bdbdbd;
@@ -1199,51 +1252,51 @@ a.hotspot, a.hotspot.selected {
   box-shadow: 0 10px 6px -6px #bdbdbd;
 }
 
-/* Spelletjes: Memory */
+/* Games: Memory */
 .x_memory_page #cardTopHolder .card {
   border: 2px solid #bdbdbd;
 }
 
-/* Spelletjes: Kruiswoordpuzzel */
+/* Games: Crossword */
 .x_crossword_page #attempt, .x_crossword_page #attempt h3 {
   padding-top: 1em;
 }
 
-/* Spelletjes: Kruiswoordpuzzel */
+/* Games: Crossword */
 .x_crossword_page #attempt p:first-child {
   border-top: 0;
   padding-top: 0;
 }
 
-/* Spelletjes: Galgje */
+/* Games: Hangman */
 .x_hangman_page #clue .dash {
   border-bottom-width: 2px;
 }
 
-/* Weergave van een korte URL */
+/* Display of a short URL */
 div#shorturltodisplay a {
   color: #222222; /* --theme-text */
 }
 
-/* RSS Feed / RSS download resultaten */
+/* RSS Feed / RSS download results */
 .x_rss_page #resultsHolder div,
 .x_rssdownload_page #resultsHolder > div {
   width: 99.2%;
 }
 
-/* RSS Feed / RSS download resultaten */
+/* RSS Feed / RSS download results */
 .x_rss_page #resultsHolder .s,
 .x_rssdownload_page #resultsHolder > div {
   background-color: #ebebeb; /* --theme-panel-background */
   padding-left: 0.5em;
 }
 
-/* RSS Feed / RSS download resultaten */
+/* RSS Feed / RSS download results */
 .x_rss_page #resultsHolder div p {
   color: #000000; /* --theme-text */
 }
 
-/* RSS Feed / RSS download resultaten */
+/* RSS Feed / RSS download results */
 .x_rss_page #resultsHolder .shadedDiv,
 .x_rssdownload_page #resultsHolder .shadedDiv {
   background-color: #ebebeb !important;
@@ -1251,19 +1304,19 @@ div#shorturltodisplay a {
   margin-top: 0.5em;
 }
 
-/* Verwijderknop bij Audio recorder */
+/* Delete button for Audio recorder */
 .x_audioRecord_page .deleteClipBtn {
   color: #000000; /* --theme-text */
 }
 
 @media (min-width: 768px) {
-/* CSS-regel voor dit Xerte-interfaceonderdeel */
+/* CSS rule for this Xerte interface element */
   .tick, img.result {
     width: 2.5vmin;
   }
 }
 
-/* Footer / navigatiebalk onderaan het leerobject */
+/* Footer / navigation bar at the bottom of the learning object */
 #x_footerBlock {
   font-size: 1em;
   color: #000000; /* --theme-footer-text */
@@ -1272,170 +1325,170 @@ div#shorturltodisplay a {
   box-shadow: none;
 }
 
-/* Footer / navigatiebalk onderaan het leerobject */
+/* Footer / navigation bar at the bottom of the learning object */
 body:not(.sb_right):not(.sb_left) #x_footerBlock {
   width: 100%;
   border-bottom-left-radius: 0;
   border-bottom-right-radius: 0;
 }
 
-/* Achtergrondlaag van de footer */
+/* Footer background layer */
 #x_footerBg {
   background-image: none;
 }
 
-/* Paginateller in de footer */
+/* Page counter in the footer */
 #x_pageNo {
   background: none;
 }
 
-/* Ingevulde gedeelte van de voortgangsbalk */
+/* Filled portion of the progress bar */
 .pbBar {
   background-color: #2196F3; /* --theme-progress-bar */
 }
 
 /* these buttons will use font awesome icons instead of pngs */
-/* Help-icoon */
+/* Help icon */
 .ui-button .ui-icon.x_help {
   background-image: none;
 }
 
-/* Informatie-icoon */
+/* Information icon */
 .ui-button .ui-icon.x_info {
   background-image: none;
 }
 
-/* Home/menu-icoon */
+/* Home/menu icon */
 .ui-button .ui-icon.x_home {
   background-image: none;
 }
 
-/* Woordenlijst-icoon */
+/* Glossary icon */
 .ui-button .ui-icon.x_glossary {
   background-image: none;
 }
 
-/* Maximaliseren-icoon */
+/* Maximize icon */
 .ui-button .ui-icon.x_maximise {
   background-image: none;
 }
 
-/* Minimaliseren-icoon */
+/* Minimize icon */
 .ui-button .ui-icon.x_minimise {
   background-image: none;
 }
 
-/* Media-icoon */
+/* Media icon */
 .ui-button .ui-icon.x_media {
   background-image: none;
 }
 
-/* Volgende-pagina-icoon */
+/* Next page icon */
 .ui-button .ui-icon.x_next {
   background-image: none;
 }
 
-/* Vorige-pagina-icoon */
+/* Previous page icon */
 .ui-button .ui-icon.x_prev {
   background-image: none;
 }
 
-/* Vorige geschiedenis-icoon */
+/* Previous history icon */
 .ui-button .ui-icon.x_prev_hist {
   background-image: none;
 }
 
-/* Kleur/toegankelijkheids-icoon */
+/* Color/accessibility icon */
 .ui-button .ui-icon.x_colourChanger {
   background-image: none;
 }
 
-/* Introductie leerobject-icoon */
+/* Learning object introduction icon */
 .ui-button .ui-icon.x_projectIntro {
   background-image: none;
 }
 
-/* Sessie opslaan-icoon */
+/* Save session icon */
 .ui-button .ui-icon.x_saveSession {
   background-image: none;
 }
 
-/* Volgende-knop in de footer */
+/* Next button in the footer */
 #x_nextBtn:not(.customIconBtn) .ui-icon:before {
   content: "\f138";
 }
 
-/* Vorige-knop in de footer */
+/* Previous button in the footer */
 #x_prevBtn:not(.customIconBtn) .ui-icon:before {
   content: "\f137";
 }
 
-/* Vergroten/verkleinen-knop in de footer */
+/* Enlarge/reduce button in the footer */
 #x_cssBtn:not(.customIconBtn) .ui-icon:before {
   content: "\f066";
 }
 
-/* Toegankelijkheid/kleurwissel-knop in de footer */
+/* Accessibility/color toggle button in the footer */
 #x_colourChangerBtn:not(.customIconBtn) .ui-icon:before {
   content: "\f042";
 }
 
-/* Media-knop in de footer */
+/* Media button in the footer */
 #x_mediaBtn:not(.customIconBtn) .ui-icon:before {
   content: "\f16a";
 }
 
-/* Woordenlijstknop in de footer */
+/* Glossary button in the footer */
 #x_glossaryBtn:not(.customIconBtn) .ui-icon:before {
   content: "\f02d";
 }
 
-/* Helpknop in de footer */
+/* Help button in the footer */
 #x_helpBtn:not(.customIconBtn) .ui-icon:before {
   content: "\f128";
 }
 
-/* Introductie-/informatieknop in de footer */
+/* Introduction/information button in the footer */
 #x_introBtn:not(.customIconBtn) .ui-icon:before {
   content: "\f129";
 }
 
-/* Inhoudsopgave/menu- of homeknop in de footer */
+/* Table of contents/menu or home button in the footer */
 #x_menuBtn:not(.x_home):not(.customIconBtn) .ui-icon:before {
   content: "\f0c9";
 }
 
-/* Inhoudsopgave/menu- of homeknop in de footer */
+/* Table of contents/menu or home button in the footer */
 #x_menuBtn.x_home:not(.customIconBtn) .ui-icon:before {
   content: "\f015";
 }
 
-/* Sessie opslaan-knop in de footer */
+/* Save session button in the footer */
 #x_saveSessionBtn:not(.customIconBtn) .ui-icon:before {
   content: "\f0c7";
 }
 
-/* Footer / navigatiebalk onderaan het leerobject */
+/* Footer / navigation bar at the bottom of the learning object */
 #x_footerBlock button {
   color: #000000; /* --theme-footer-text */
 }
 
-/* Footer / navigatiebalk onderaan het leerobject bij hover/focus */
+/* Footer / navigation bar at the bottom of the learning object on hover/focus */
 #x_footerBlock button.ui-state-hover {
   color: #f86718; /* --theme-footer-hover */
 }
 
-/* Footer / navigatiebalk onderaan het leerobject bij hover/focus */
+/* Footer / navigation bar at the bottom of the learning object on hover/focus */
 #x_footerBlock button.ui-state-focus {
   color: #f86718; /* --theme-footer-hover */
 }
 
-/* Footer / navigatiebalk onderaan het leerobject in actieve state */
+/* Footer / navigation bar at the bottom of the learning object in the active state */
 #x_footerBlock button.ui-state-active {
   color: #222222; /* --theme-primary */
 }
 
-/* Footer / navigatiebalk onderaan het leerobject */
+/* Footer / navigation bar at the bottom of the learning object */
 #x_footerBlock button {
   font-family: "Font Awesome 5 Free", sans-serif;
   font-weight: 900;
@@ -1445,36 +1498,36 @@ body:not(.sb_right):not(.sb_left) #x_footerBlock {
   margin-left: 5px;
 }
 
-/* Footer / navigatiebalk onderaan het leerobject */
+/* Footer / navigation bar at the bottom of the learning object */
 #x_footerBlock button span.ui-button-text {
   display: none;
 }
 
-/* Footer / navigatiebalk onderaan het leerobject */
+/* Footer / navigation bar at the bottom of the learning object */
 #x_footerBlock .x_floatLeft button, #x_footerBlock .x_floatRight button {
   padding: 0;
 }
 
 /*****footer tools chevron*****/
-/* Chevron voor extra footertools */
+/* Chevron for additional footer tools */
 #x_footerChevron {
   color: #000000; /* --theme-footer-text */
 }
 
-/* Chevron voor extra footertools bij hover/focus */
+/* Chevron for additional footer tools on hover/focus */
 #x_footerChevron:hover, #x_footerChevron:focus {
   color: #f86718; /* --theme-footer-hover */
 }
 
 /*****TOC****/
-/* Algemeen dialoogvenster / inhoudsopgavevenster */
+/* General dialog / table of contents window */
 .ui-dialog.ui-widget {
   padding: 0;
   border: 1px solid #222222; /* --theme-dialog-border */
   border-radius: 0;
 }
 
-/* Titelbalk van algemene dialoogvensters */
+/* Title bar of general dialogs */
 .ui-dialog .ui-widget-header {
   border: 1px solid #222222; /* --theme-dialog-border */
   background: #222222; /* --theme-dialog-header-background */
@@ -1483,38 +1536,38 @@ body:not(.sb_right):not(.sb_left) #x_footerBlock {
   border-radius: 0;
 }
 
-/* Sluitknop van algemene dialoogvensters */
+/* Close button of general dialogs */
 .ui-dialog .ui-dialog-titlebar button.ui-widget {
   background: #222222; /* --theme-dialog-close-background */
   border: 0; /* --theme-dialog-close-border */
   color: #ffffff; /* --theme-dialog-close-text */
 }
 
-/* Sluitknop van algemene dialoogvensters bij hover/focus in actieve state */
+/* Close button of general dialogs on hover/focus in the active state */
 .ui-dialog .ui-dialog-titlebar button.ui-widget:hover, .ui-dialog .ui-dialog-titlebar button.ui-widget:focus, .ui-dialog .ui-dialog-titlebar button.ui-widget:active {
   color: #f86718; /* --theme-dialog-close-hover-text */
   border: 0; /* --theme-dialog-close-hover-border */
   padding: 0;
 }
 
-/* Inhoud van algemene dialoogvensters */
+/* Content of general dialogs */
 .ui-dialog .ui-dialog-content {
   padding: 0.5em;
 }
 
-/* Pagina-items in de inhoudsopgave */
+/* Page items in the table of contents */
 #menuItems .menuItem {
   background: #ebebeb; /* --theme-menuitem-background */
   border: 2px solid #ebebeb; /* --theme-menuitem-background */
 }
 
-/* Pagina-items in de inhoudsopgave */
+/* Page items in the table of contents */
 #menuItems .menuItem, #menuItems .chapterItem {
   color: #000000; /* --theme-menuitem-text */
   border-radius: 0;
 }
 
-/* Pagina-items in de inhoudsopgave bij hover/focus in actieve state */
+/* Page items in the table of contents on hover/focus in the active state */
 #menuItems .menuItem:hover, #menuItems .menuItem:focus, #menuItems .menuItem:active,
 #menuItems .chapterItem:hover, #menuItems .chapterItem:focus, #menuItems .chapterItem:active {
   background: #cfcfcf; /* --theme-menuitem-hover-background */
@@ -1522,110 +1575,110 @@ body:not(.sb_right):not(.sb_left) #x_footerBlock {
   border-color: #cfcfcf; /* --theme-menuitem-hover-background */
 }
 
-/* Huidige pagina in de inhoudsopgave */
+/* Current page in the table of contents */
 #menuItems .menuItem.current {
   border: 2px solid #000000; /* --theme-menuitem-active-border */
 }
 
-/* Pagina-inhoud binnen hoofdstuk in de inhoudsopgave */
+/* Page content within a chapter in the table of contents */
 #menuItems .chapterHolder .chapterPageHolder {
   border-radius: 0;
   padding: 0;
 }
 
-/* Hoofdstukitem in de inhoudsopgave */
+/* Chapter item in the table of contents */
 #menuItems .chapterHolder .chapterItem a {
   background: #cfcfcf; /* --theme-menuitem-background */
   border-color: #cfcfcf; /* --theme-menuitem-background */
   color: #000000; /* --theme-menuitem-text */
 }
 
-/* Hoofdstukitem in de inhoudsopgave in actieve state */
+/* Chapter item in the table of contents in the active state */
 #menuItems .chapterHolder .chapterItem.ui-state-active {
   background: #cfcfcf; /* --theme-menuitem-active-background */
   border-color: #cfcfcf; /* --theme-menuitem-hover-background */
 }
 
-/* Pagina-inhoud binnen hoofdstuk in de inhoudsopgave */
+/* Page content within a chapter in the table of contents */
 #menuItems .chapterHolder .chapterPageHolder.ui-accordion-content-active {
   padding-top: 5px;
 }
 
-/* Tabel van de woordenlijst */
+/* Glossary table */
 table.glossary tr td:first-child {
   border-right-color: #ebebeb; /* --theme-table-border */
 }
 
-/* Tabel van de woordenlijst */
+/* Glossary table */
 table.glossary tr.shaded {
   background: #ebebeb; /* --theme-glossary-background */
 }
 
-/* Sidebar / navigatiebalk aan de zijkant */
+/* Sidebar / side navigation bar */
 #x_sideBar {
   background-color: #ffffff; /* --theme-sidebar-background */
   color: #000000; /* --theme-sidebar-text */
 }
 
-/* Knop om de sidebar te openen/sluiten */
+/* Button to open/close the sidebar */
 #x_sideBarToggleBtn {
   background-color: #cfcfcf; /* --theme-sidebar-background */
   color: #000000; /* --theme-sidebar-text */
 }
 
-/* Knop om de sidebar te openen/sluiten bij hover/focus in actieve state */
+/* Button to open/close the sidebar on hover/focus in the active state */
 #x_sideBarToggleBtn:hover, #x_sideBarToggleBtn:focus, #x_sideBarToggleBtn:active {
   background-color: #bdbdbd; /* --theme-sidebar-hover-background */
   color: #000000; /* --theme-sidebar-text */
 }
 
-/* Functie-/navigatieknoppen in de sidebar */
+/* Function/navigation buttons in the sidebar */
 #x_sideBarBtnHolder button {
   color: #000000; /* --theme-sidebaritem-text */
 }
 
-/* Functie-/navigatieknoppen in de sidebar bij hover/focus in actieve state */
+/* Function/navigation buttons in the sidebar on hover/focus in the active state */
 #x_sideBar.sideBarSmall #x_sideBarBtnHolder button:hover, #x_sideBar.sideBarSmall #x_sideBarBtnHolder button:focus, #x_sideBar.sideBarSmall #x_sideBarBtnHolder button:active {
   color: #000000; /* --theme-sidebaritem-hover-text */
   background: #bdbdbd; /* --theme-sidebaritem-hover-background */
 }
 
-/* Functie-/navigatieknoppen in de sidebar */
+/* Function/navigation buttons in the sidebar */
 #x_sideBar.sideBarLarge #x_sideBarBtnHolder button span.ui-icon {
   background: none;
   border: 2px solid #cfcfcf; /* --theme-sidebaritem-active-border */
 }
 
-/* Functie-/navigatieknoppen in de sidebar bij hover/focus in actieve state */
+/* Function/navigation buttons in the sidebar on hover/focus in the active state */
 #x_sideBar.sideBarLarge #x_sideBarBtnHolder button:hover span.ui-icon, #x_sideBar.sideBarLarge #x_sideBarBtnHolder button:focus span.ui-icon, #x_sideBar.sideBarLarge #x_sideBarBtnHolder button:active span.ui-icon {
   background: #bdbdbd; /* --theme-sidebaritem-hover-background */
   color: #000000; /* --theme-sidebaritem-hover-text */
   border: 2px solid #bdbdbd; /* --theme-sidebaritem-active-border */
 }
 
-/* Pagina timer */
+/* Page timer */
 #x_pageTimer {
   background: #cfcfcf; /* --theme-timer-background */
   padding: 0.5em;
 }
 
 /* progress bar */
-/* Container/achtergrond van de voortgangsbalk */
+/* Progress bar container/background */
 .pbContainer {
   background-color: #ebebeb; /* --theme-progress-background */
 }
 
-/* Ingevulde gedeelte van de voortgangsbalk */
+/* Filled portion of the progress bar */
 .pbBar {
   background-color: #2196F3; /* --theme-progress-bar */
 }
 
 @media only screen and (max-width: 600px) {
-/* CSS-regel voor dit Xerte-interfaceonderdeel */
+/* CSS rule for this Xerte interface element */
   #x_footerProgress {
     display: block;
   }
-/* Paginateller in de footer */
+/* Page counter in the footer */
   #x_pageNo {
     vertical-align: top;
     text-align: center;
@@ -1637,34 +1690,34 @@ table.glossary tr.shaded {
     z-index: 100;
     font-size: 12px;
   }
-/* Footer / navigatiebalk onderaan het leerobject */
+/* Footer / navigation bar at the bottom of the learning object */
   #x_footerBlock button {
     font-size: 1.4rem;
     margin-left: 5px;
   }
-/* Footer / navigatiebalk onderaan het leerobject */
+/* Footer / navigation bar at the bottom of the learning object */
   #x_footerBlock .x_floatLeft button.customIconBtn, #x_footerBlock .x_floatRight button.customIconBtn {
     font-size: 1.4rem;
     width: 1em;
     margin-left: 5px;
   }
-/* Container/achtergrond van de voortgangsbalk */
+/* Progress bar container/background */
   .pbContainer {
     display: block;
     margin-top: 1.2em;
   }
-/* CSS-regel voor dit Xerte-interfaceonderdeel */
+/* CSS rule for this Xerte interface element */
   .pbTxt {
     display: block;
     text-align: center;
   }
 }
 @media only screen and (max-width: 320px) {
-/* CSS-regel voor dit Xerte-interfaceonderdeel */
+/* CSS rule for this Xerte interface element */
   #x_footerProgress {
     display: block;
   }
-/* Paginateller in de footer */
+/* Page counter in the footer */
   #x_pageNo {
     vertical-align: top;
     text-align: center;
@@ -1679,22 +1732,22 @@ table.glossary tr.shaded {
     z-index: 100;
     font-size: 12px;
   }
-/* Footer / navigatiebalk onderaan het leerobject */
+/* Footer / navigation bar at the bottom of the learning object */
   #x_footerBlock button {
     font-size: 1.3em;
     width: 1.1em;
     margin-left: 5px;
   }
-/* Container/achtergrond van de voortgangsbalk */
+/* Progress bar container/background */
   .pbContainer {
     margin-top: 1.2em;
   }
-/* CSS-regel voor dit Xerte-interfaceonderdeel */
+/* CSS rule for this Xerte interface element */
   .pbTxt {
     text-align: center;
   }
 }
-/* CSS-regel voor dit Xerte-interfaceonderdeel */
+/* CSS rule for this Xerte interface element */
 #x_pageHolder {
   /*.label.panel.ui-draggable{
 
@@ -1753,7 +1806,7 @@ table.glossary tr.shaded {
 
 /*start here and set the default values for all the variables*/
 /*You should not edit the editorstyles.css file directly or change values directly unless you wish to override something*/
-/* Editor/contentstijl Panel 1 */
+/* Editor/content style Panel 1 */
 .panel1 {
   border-radius: 0;
   display: table;
@@ -1763,12 +1816,12 @@ table.glossary tr.shaded {
   color: #ffffff; /* --theme-header-text / component-text */
 }
 
-/* Links binnen Editor/contentstijl Panel 1 */
+/* Links within Editor/content style Panel 1 */
 .panel1 a {
   color: white !important;
 }
 
-/* Editor/contentstijl Panel 2 */
+/* Editor/content style Panel 2 */
 .panel2 {
   border-radius: 0;
   display: table;
@@ -1778,12 +1831,12 @@ table.glossary tr.shaded {
   color: #ffffff; /* --theme-header-text / component-text */
 }
 
-/* Links binnen Editor/contentstijl Panel 2 */
+/* Links within Editor/content style Panel 2 */
 .panel2 a {
   color: white !important;
 }
 
-/* Editor/contentstijl Panel 3 */
+/* Editor/content style Panel 3 */
 .panel3 {
   border-radius: 0;
   display: table;
@@ -1793,12 +1846,12 @@ table.glossary tr.shaded {
   color: #ffffff; /* --theme-header-text / component-text */
 }
 
-/* Links binnen Editor/contentstijl Panel 3 */
+/* Links within Editor/content style Panel 3 */
 .panel3 a {
   color: white !important;
 }
 
-/* Editor/contentstijl Panel 4 */
+/* Editor/content style Panel 4 */
 .panel4 {
   border-radius: 0;
   display: table;
@@ -1808,28 +1861,28 @@ table.glossary tr.shaded {
   color: #000000; /* --theme-text */
 }
 
-/* Links binnen Editor/contentstijl Panel 4 */
+/* Links within Editor/content style Panel 4 */
 .panel4 a {
   color: black !important;
 }
 
-/* Editor/contentstijl Panel 5 */
+/* Editor/content style Panel 5 */
 .panel5 {
   border-radius: 0;
   display: table;
   padding: 10px;
   font-style: normal;
-  background-color: #222222; /* --theme-primary / --theme-text (afhankelijk van component) */
+  background-color: #222222; /* --theme-primary / --theme-text (depending on the component) */
   color: #ffffff; /* --theme-header-text / component-text */
   display: table;
 }
 
-/* Links binnen Editor/contentstijl Panel 5 */
+/* Links within Editor/content style Panel 5 */
 .panel5 a {
   color: white !important;
 }
 
-/* Editor/contentstijl Panel 6 */
+/* Editor/content style Panel 6 */
 .panel6 {
   border-radius: 0;
   display: table;
@@ -1839,12 +1892,12 @@ table.glossary tr.shaded {
   color: #ffffff; /* --theme-header-text / component-text */
 }
 
-/* Links binnen Editor/contentstijl Panel 6 */
+/* Links within Editor/content style Panel 6 */
 .panel6 a {
   color: white !important;
 }
 
-/* Editor/contentstijl Highlight 1 */
+/* Editor/content style Highlight 1 */
 .highlight1 {
   font-family: Arial, sans-serif;
   background: #fff; /* --theme-background */
@@ -1859,7 +1912,7 @@ table.glossary tr.shaded {
   border-color: #C4551F;
 }
 
-/* Editor/contentstijl Highlight 2 */
+/* Editor/content style Highlight 2 */
 .highlight2 {
   font-family: Arial, sans-serif;
   background: #fff; /* --theme-background */
@@ -1874,7 +1927,7 @@ table.glossary tr.shaded {
   border-color: #418545;
 }
 
-/* Editor/contentstijl Highlight 3 */
+/* Editor/content style Highlight 3 */
 .highlight3 {
   font-family: Arial, sans-serif;
   background: #fff; /* --theme-background */
@@ -1889,7 +1942,7 @@ table.glossary tr.shaded {
   border-color: #4078C0;
 }
 
-/* Editor/contentstijl Highlight 4 */
+/* Editor/content style Highlight 4 */
 .highlight4 {
   font-family: Arial, sans-serif;
   background: #fff; /* --theme-background */
@@ -1905,7 +1958,7 @@ table.glossary tr.shaded {
   border-color: #f86718; /* --theme-accent */
 }
 
-/* Editor/contentstijl Highlight 5 */
+/* Editor/content style Highlight 5 */
 .highlight5 {
   font-family: Arial, sans-serif;
   background: #fff; /* --theme-background */
@@ -1920,7 +1973,7 @@ table.glossary tr.shaded {
   border-color: #222222; /* --theme-table-border / component-border */
 }
 
-/* Editor/contentstijl Highlight 6 */
+/* Editor/content style Highlight 6 */
 .highlight6 {
   font-family: Arial, sans-serif;
   background: #fff; /* --theme-background */
@@ -1935,7 +1988,7 @@ table.glossary tr.shaded {
   border-color: #D13759;
 }
 
-/* Algemene blokquote/citaatstijl */
+/* General blockquote/quotation style */
 blockquote {
   font: 400 14px/24px Arial, sans-serif;
   border-left: 10px solid;
@@ -1946,7 +1999,7 @@ blockquote {
   border-color: #ccc;
 }
 
-/* Openingsaanhalingsteken van een blokquote */
+/* Opening quotation mark of a blockquote */
 blockquote:before {
   content: open-quote;
   font-size: 4rem;
@@ -1956,12 +2009,12 @@ blockquote:before {
   color: #ccc;
 }
 
-/* Tekst binnen een blokquote */
+/* Text inside a blockquote */
 blockquote p {
   display: inline;
 }
 
-/* Afsluitend aanhalingsteken van een blokquote */
+/* Closing quotation mark of a blockquote */
 blockquote:after {
   content: close-quote;
   font-size: 4rem;
@@ -1971,12 +2024,12 @@ blockquote:after {
   color: #ccc;
 }
 
-/* Blokquotevariant 1 */
+/* Blockquote variant 1 */
 .bq1 {
   border-color: #C4551F;
 }
 
-/* Blokquotevariant 1 openings-/sluitingsteken */
+/* Blockquote variant 1 opening/closing quotation mark */
 .bq1:after {
   content: close-quote;
   font-size: 4rem;
@@ -1986,7 +2039,7 @@ blockquote:after {
   color: #C4551F;
 }
 
-/* Blokquotevariant 1 openings-/sluitingsteken */
+/* Blockquote variant 1 opening/closing quotation mark */
 .bq1:before {
   content: open-quote;
   font-size: 4rem;
@@ -1996,12 +2049,12 @@ blockquote:after {
   color: #C4551F;
 }
 
-/* Blokquotevariant 2 */
+/* Blockquote variant 2 */
 .bq2 {
   border-color: #418545;
 }
 
-/* Blokquotevariant 2 openings-/sluitingsteken */
+/* Blockquote variant 2 opening/closing quotation mark */
 .bq2:after {
   content: close-quote;
   font-size: 4rem;
@@ -2011,7 +2064,7 @@ blockquote:after {
   color: #418545;
 }
 
-/* Blokquotevariant 2 openings-/sluitingsteken */
+/* Blockquote variant 2 opening/closing quotation mark */
 .bq2:before {
   content: open-quote;
   font-size: 4rem;
@@ -2021,12 +2074,12 @@ blockquote:after {
   color: #418545;
 }
 
-/* Blokquotevariant 3 */
+/* Blockquote variant 3 */
 .bq3 {
   border-color: #4078C0;
 }
 
-/* Blokquotevariant 3 openings-/sluitingsteken */
+/* Blockquote variant 3 opening/closing quotation mark */
 .bq3:after {
   content: close-quote;
   font-size: 4rem;
@@ -2036,7 +2089,7 @@ blockquote:after {
   color: #4078C0; /* --theme-link */
 }
 
-/* Blokquotevariant 3 openings-/sluitingsteken */
+/* Blockquote variant 3 opening/closing quotation mark */
 .bq3:before {
   content: open-quote;
   font-size: 4rem;
@@ -2046,12 +2099,12 @@ blockquote:after {
   color: #4078C0; /* --theme-link */
 }
 
-/* Blokquotevariant 4 */
+/* Blockquote variant 4 */
 .bq4 {
   border-color: #f86718; /* --theme-accent */
 }
 
-/* Blokquotevariant 4 openings-/sluitingsteken */
+/* Blockquote variant 4 opening/closing quotation mark */
 .bq4:after {
   content: close-quote;
   font-size: 4rem;
@@ -2061,7 +2114,7 @@ blockquote:after {
   color: #f86718; /* --theme-accent */
 }
 
-/* Blokquotevariant 4 openings-/sluitingsteken */
+/* Blockquote variant 4 opening/closing quotation mark */
 .bq4:before {
   content: open-quote;
   font-size: 4rem;
@@ -2071,12 +2124,12 @@ blockquote:after {
   color: #f86718; /* --theme-accent */
 }
 
-/* Blokquotevariant 5 */
+/* Blockquote variant 5 */
 .bq5 {
   border-color: #222222; /* --theme-table-border / component-border */
 }
 
-/* Blokquotevariant 5 openings-/sluitingsteken */
+/* Blockquote variant 5 opening/closing quotation mark */
 .bq5:after {
   content: close-quote;
   font-size: 4rem;
@@ -2086,7 +2139,7 @@ blockquote:after {
   color: #222222; /* --theme-text */
 }
 
-/* Blokquotevariant 5 openings-/sluitingsteken */
+/* Blockquote variant 5 opening/closing quotation mark */
 .bq5:before {
   content: open-quote;
   font-size: 4rem;
@@ -2096,12 +2149,12 @@ blockquote:after {
   color: #222222; /* --theme-text */
 }
 
-/* Blokquotevariant 6 */
+/* Blockquote variant 6 */
 .bq6 {
   border-color: #D13759;
 }
 
-/* Blokquotevariant 6 openings-/sluitingsteken */
+/* Blockquote variant 6 opening/closing quotation mark */
 .bq6:after {
   content: close-quote;
   font-size: 4rem;
@@ -2111,7 +2164,7 @@ blockquote:after {
   color: #D13759;
 }
 
-/* Blokquotevariant 6 openings-/sluitingsteken */
+/* Blockquote variant 6 opening/closing quotation mark */
 .bq6:before {
   content: open-quote;
   font-size: 4rem;
@@ -2121,96 +2174,96 @@ blockquote:after {
   color: #D13759;
 }
 
-/* Tekstballonvariant 1 */
+/* Speech bubble variant 1 */
 .speech-bubble1 {
   background: #C4551F;
   color: white; /* --theme-header-text / component-text */
 }
 
-/* Tekstballonvariant 1 pijltje */
+/* Speech bubble variant 1 arrow */
 .speech-bubble1:after {
   border-right-color: #C4551F;
 }
 
-/* Tekstballonvariant 2 */
+/* Speech bubble variant 2 */
 .speech-bubble2 {
   background: #418545;
   color: white; /* --theme-header-text / component-text */
 }
 
-/* Tekstballonvariant 2 pijltje */
+/* Speech bubble variant 2 arrow */
 .speech-bubble2:after {
   border-left-color: #418545;
 }
 
-/* Tekstballonvariant 3 */
+/* Speech bubble variant 3 */
 .speech-bubble3 {
   background: #4078C0;
   color: white; /* --theme-header-text / component-text */
 }
 
-/* Tekstballonvariant 3 pijltje */
+/* Speech bubble variant 3 arrow */
 .speech-bubble3:after {
   border-right-color: #4078C0;
 }
 
-/* Tekstballonvariant 4 */
+/* Speech bubble variant 4 */
 .speech-bubble4 {
   background: #f86718; /* --theme-accent */
   color: black; /* --theme-text */
 }
 
-/* Tekstballonvariant 4 pijltje */
+/* Speech bubble variant 4 arrow */
 .speech-bubble4:after {
   border-left-color: #f86718; /* --theme-accent */
 }
 
-/* Tekstballonvariant 5 */
+/* Speech bubble variant 5 */
 .speech-bubble5 {
-  background: #222222; /* --theme-primary / --theme-text (afhankelijk van component) */
+  background: #222222; /* --theme-primary / --theme-text (depending on the component) */
   color: white; /* --theme-header-text / component-text */
 }
 
-/* Tekstballonvariant 5 pijltje */
+/* Speech bubble variant 5 arrow */
 .speech-bubble5:after {
   border-top-color: #222222; /* --theme-table-border / component-border */
 }
 
-/* Tekstballonvariant 6 */
+/* Speech bubble variant 6 */
 .speech-bubble6 {
   background: #D13759;
   color: white; /* --theme-header-text / component-text */
 }
 
-/* Tekstballonvariant 6 pijltje */
+/* Speech bubble variant 6 arrow */
 .speech-bubble6:after {
   font-family: Arial, sans-serif;
   border-top-color: #D13759;
 }
 
-/* Tekstballonvariant 1 links */
+/* Speech bubble variant 1 links */
 .speech-bubble1 a, .speech-bubble2 a, .speech-bubble3 a, .speech-bubble5 a, .speech-bubble6 a {
   color: white !important;
   text-decoration: underline;
 }
 
-/* Tekstballonvariant 4 links */
+/* Speech bubble variant 4 links */
 .speech-bubble4 a {
   color: black !important;
   text-decoration: underline;
 }
 
-/* Gemarkeerde tekststijl uit de editor */
+/* Highlighted text style from the editor */
 .marker {
   font-family: Arial, sans-serif;
-  background-color: #222222; /* --theme-primary / --theme-text (afhankelijk van component) */
+  background-color: #222222; /* --theme-primary / --theme-text (depending on the component) */
   color: #cfcfcf;
   border-radius: 0;
   display: table;
   padding: 10px;
 }
 
-/* Variabele/codeachtige tekststijl */
+/* Variable/code-like text style */
 var {
   font-family: Arial, sans-serif;
   background-color: #C4551F;
@@ -2221,7 +2274,7 @@ var {
   padding: 10px;
 }
 
-/* Keyboard-/toetsenbordtekststijl */
+/* Keyboard text style */
 kbd {
   font-family: Arial, sans-serif;
   background-color: #cfcfcf; /* --theme-secondary */
@@ -2232,7 +2285,7 @@ kbd {
   padding: 10px;
 }
 
-/* Voorbeeldoutput/code-outputstijl */
+/* Sample output/code output style */
 samp {
   font-family: Arial, sans-serif;
   background-color: #4078C0;
@@ -2243,7 +2296,7 @@ samp {
   padding: 10px;
 }
 
-/* Inline citaat */
+/* Inline quotation */
 q {
   border-bottom: 1px solid #ccc;
   border-top: 1px solid #ccc;
@@ -2252,7 +2305,7 @@ q {
   padding: 10px;
 }
 
-/* Bronvermelding/citatie */
+/* Source reference/citation */
 cite {
   font-family: Arial, sans-serif;
   font-size: 14px;
@@ -2260,7 +2313,7 @@ cite {
   padding: 10px;
 }
 
-/* Monospace/teletype tekststijl */
+/* Monospace/teletype text style */
 tt {
   font-family: Arial, sans-serif;
   background-color: #2196F3;
@@ -2271,18 +2324,18 @@ tt {
   padding: 10px;
 }
 
-/* CSS-regel voor dit Xerte-interfaceonderdeel */
+/* CSS rule for this Xerte interface element */
 tt a, kbd a, samp a, code a, .marker a, var a {
   color: white !important;
   text-decoration: underline;
 }
 
-/* Algemene scrollbar */
+/* General scrollbar */
 ::-webkit-scrollbar {
   width: 12px;
 }
 
-/* Achtergrondspoor van de scrollbar */
+/* Scrollbar background track */
 ::-webkit-scrollbar-track {
   background: rgba(255, 255, 255, 0.8);
   -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
@@ -2290,7 +2343,7 @@ tt a, kbd a, samp a, code a, .marker a, var a {
   border-radius: 10px;
 }
 
-/* Schuifgedeelte van de scrollbar */
+/* Scrollbar thumb */
 ::-webkit-scrollbar-thumb {
   -webkit-border-radius: 10px;
   border-radius: 10px;
@@ -2298,42 +2351,42 @@ tt a, kbd a, samp a, code a, .marker a, var a {
   -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.5);
 }
 
-/* Inactief schuifgedeelte van de scrollbar */
+/* Inactive scrollbar thumb */
 ::-webkit-scrollbar-thumb:window-inactive {
   background: rgba(255, 255, 255, 0.4);
 }
 
-/* Algemene HTML range-slider */
+/* General HTML range-slider */
 [type=range] {
   -webkit-appearance: none;
   margin: 12px 0;
 }
-/* HTML range-slider bij focus */
+/* HTML range-slider on focus */
 [type=range]:focus {
   outline: 0;
 }
-/* Knop/thumb van de HTML range-slider */
+/* HTML range slider thumb */
 [type=range]:focus::-webkit-slider-thumb {
   border-color: #000000; /* --theme-table-border / component-border */
 }
-/* Knop/thumb van de HTML range-slider */
+/* HTML range slider thumb */
 [type=range]:active::-webkit-slider-thumb {
   border-color: #000000; /* --theme-table-border / component-border */
 }
-/* Knop/thumb van de HTML range-slider */
+/* HTML range slider thumb */
 [type=range]:hover::-webkit-slider-thumb {
   border-color: #000000; /* --theme-table-border / component-border */
 }
-/* Spoor/vulling van de HTML range-slider */
+/* HTML range slider track/fill */
 [type=range]::-webkit-slider-runnable-track {
   cursor: pointer;
   height: 8px;
   transition: all 0.2s ease;
   box-shadow: 1px 1px 1px rgba(0, 0, 0, 0.2), 0 0 1px rgba(13, 13, 13, 0.2);
-  background: #222222; /* --theme-primary / --theme-text (afhankelijk van component) */
+  background: #222222; /* --theme-primary / --theme-text (depending on the component) */
   border-radius: 5px;
 }
-/* Knop/thumb van de HTML range-slider */
+/* HTML range slider thumb */
 [type=range]::-webkit-slider-thumb {
   box-shadow: 4px 4px 4px rgba(0, 0, 0, 0.2), 0 0 4px rgba(13, 13, 13, 0.2);
   background: #f86718; /* --theme-accent */
@@ -2345,17 +2398,17 @@ tt a, kbd a, samp a, code a, .marker a, var a {
   -webkit-appearance: none;
   margin-top: -10px;
 }
-/* Spoor/vulling van de HTML range-slider */
+/* HTML range slider track/fill */
 [type=range]::-moz-range-track {
   cursor: pointer;
   height: 8px;
   transition: all 0.2s ease;
   box-shadow: 1px 1px 1px rgba(0, 0, 0, 0.2), 0 0 1px rgba(13, 13, 13, 0.2);
-  background: #222222; /* --theme-primary / --theme-text (afhankelijk van component) */
+  background: #222222; /* --theme-primary / --theme-text (depending on the component) */
   border: 2px solid #222222; /* --theme-table-border / component-border */
   border-radius: 5px;
 }
-/* Knop/thumb van de HTML range-slider */
+/* HTML range slider thumb */
 [type=range]::-moz-range-thumb {
   box-shadow: 4px 4px 4px rgba(0, 0, 0, 0.2), 0 0 4px rgba(13, 13, 13, 0.2);
   background: #f86718; /* --theme-accent */
@@ -2365,7 +2418,7 @@ tt a, kbd a, samp a, code a, .marker a, var a {
   height: 24px;
   width: 24px;
 }
-/* Spoor/vulling van de HTML range-slider */
+/* HTML range slider track/fill */
 [type=range]::-ms-track {
   cursor: pointer;
   height: 8px;
@@ -2375,21 +2428,21 @@ tt a, kbd a, samp a, code a, .marker a, var a {
   border-width: 12px 0;
   color: transparent;
 }
-/* Spoor/vulling van de HTML range-slider */
+/* HTML range slider track/fill */
 [type=range]::-ms-fill-lower {
   box-shadow: 1px 1px 1px rgba(0, 0, 0, 0.2), 0 0 1px rgba(13, 13, 13, 0.2);
   background: #151515;
   border: 2px solid #222222; /* --theme-table-border / component-border */
   border-radius: 10px;
 }
-/* Spoor/vulling van de HTML range-slider */
+/* HTML range slider track/fill */
 [type=range]::-ms-fill-upper {
   box-shadow: 1px 1px 1px rgba(0, 0, 0, 0.2), 0 0 1px rgba(13, 13, 13, 0.2);
-  background: #222222; /* --theme-primary / --theme-text (afhankelijk van component) */
+  background: #222222; /* --theme-primary / --theme-text (depending on the component) */
   border: 2px solid #222222; /* --theme-table-border / component-border */
   border-radius: 10px;
 }
-/* Knop/thumb van de HTML range-slider */
+/* HTML range slider thumb */
 [type=range]::-ms-thumb {
   box-shadow: 4px 4px 4px rgba(0, 0, 0, 0.2), 0 0 4px rgba(13, 13, 13, 0.2);
   background: #f86718; /* --theme-accent */
@@ -2401,18 +2454,18 @@ tt a, kbd a, samp a, code a, .marker a, var a {
   margin-top: 0;
 }
 
-/* Algemene jQuery UI-slider */
+/* General jQuery UI-slider */
 .ui-slider {
   cursor: pointer;
   height: 8px;
   transition: all 0.2s ease;
   box-shadow: 1px 1px 1px rgba(0, 0, 0, 0.2), 0 0 1px rgba(13, 13, 13, 0.2);
-  background: #222222; /* --theme-primary / --theme-text (afhankelijk van component) */
+  background: #222222; /* --theme-primary / --theme-text (depending on the component) */
   border: 0;
   border-radius: 5px;
 }
 
-/* Knop/handle van de jQuery UI-slider */
+/* jQuery UI slider handle */
 .ui-slider .ui-slider-handle,
 .x_imageSequence_page .sliderBar.ui-slider .ui-slider-handle {
   border: 0;
@@ -2428,12 +2481,12 @@ tt a, kbd a, samp a, code a, .marker a, var a {
   margin-top: -4px;
 }
 
-/* Knop/handle van de jQuery UI-slider */
+/* jQuery UI slider handle */
 .ui-slider .ui-slider-handle:hover, .ui-slider .ui-slider-handle:focus, .ui-slider .ui-slider-handle:active {
   border-color: #000000; /* --theme-table-border / component-border */
 }
 
-/* Verticale jQuery UI-slider */
+/* Vertical jQuery UI-slider */
 .sliderBar.ui-slider-vertical {
   width: 8px;
   height: auto;
@@ -2442,74 +2495,74 @@ tt a, kbd a, samp a, code a, .marker a, var a {
 /* Important note: unlike some other Xerte themes this theme has been developed using sass and scss files */
 /*You should not edit the .css files directly or change values directly unless you wish to override something*/
 /*Use SASS and the file in the scss folder name _allvariables.scss to start any customisation*/
-/* Algemene pagina/body van het thema */
+/* General page/body of the theme */
 body {
   background: #BFBFBF; /* --theme-background */
   color: #222222; /* --theme-text */
   font-family: Arial, sans-serif;
 }
 
-/* Inhoudsgebied van de CKEditor-editor */
+/* Content area of the CKEditor editor */
 .cke_editable {
   background: #ffffff; /* --theme-table-background */
 }
 
-/* Algemene Xerte/jQuery UI-knop */
+/* General Xerte/jQuery UI button */
 .ui-button .ui-button-text {
   font-family: Arial, sans-serif;
 }
 
 /*Note: these font-sizes will be ignored when responsive text is on*/
-/* Algemene alineatekst */
+/* General paragraph text */
 p {
   font-size: 1.1em;
 }
 
-/* Koptekst niveau 1 */
+/* Heading level 1 */
 h1 {
   font-size: 1em;
   margin: 0;
 }
 
-/* Koptekst niveau 2 */
+/* Heading level 2 */
 h2 {
   font-size: 1.2em;
   margin: 5px 0 0 0;
 }
 
-/* Koptekst niveau 3 */
+/* Heading level 3 */
 h3 {
   font-size: 1.2em;
   margin: 0;
 }
 
-/* Algemene links */
+/* General links */
 a {
   color: blue; /* --theme-link */
 }
 
-/* Bezochte algemene links */
+/* Visited general links */
 a:visited {
   color: green; /* --theme-link-visited */
 }
 
-/* Algemene links bij hover */
+/* General links on hover */
 a:hover {
   color: red; /* --theme-link-hover */
 }
 
-/* Hoofdcontainer van het Xerte-leerobject */
+/* Main container of the Xerte learning object */
 #x_mainHolder {
   background: #ffffff; /* --theme-background */
   border: none !important; /*remove this to restore the default border*/
 }
 
-/* CSS-regel voor dit Xerte-interfaceonderdeel */
+/* CSS rule for this Xerte interface element */
 body:not(.sb_right):not(.sb_left) #x_mainHolder {
   border-radius: 0;
 }
 
-/* Hoofdcontainer van het Xerte-leerobject */
+/* Main container of the Xerte learning object */
 #x_mainHolder {
   margin: auto;
   position: absolute;
@@ -2519,7 +2572,7 @@ body:not(.sb_right):not(.sb_left) #x_mainHolder {
   right: 0;
 }
 
-/* Container van de huidige Xerte-pagina */
+/* Container of the current Xerte page */
 #x_pageDiv {
   padding-top: 1%;
   padding-left: 1%;
@@ -2527,13 +2580,13 @@ body:not(.sb_right):not(.sb_left) #x_mainHolder {
   padding-bottom: 10px;
 }
 
-/* Algemeen informatie-/contentpaneel */
+/* General information/content panel */
 #infoHolder {
   /*border-radius:$mediumroundedcorners;
   background: $lightgrey;*/
 }
 
-/* Algemene panelstijl */
+/* General panel style */
 .panel {
   border-radius: 0;
   background: #ebebeb; /* --theme-panel-background */
@@ -2541,7 +2594,7 @@ body:not(.sb_right):not(.sb_left) #x_mainHolder {
   border-color: #ebebeb; /* --theme-panel-border */
 }
 
-/* Algemene tabs */
+/* General tabs */
 .panel .panel.editorStyle,
 .ui-accordion-content .panel.editorStyle,
 .ui-tabs-panel .panel.editorStyle {
@@ -2549,71 +2602,71 @@ body:not(.sb_right):not(.sb_left) #x_mainHolder {
   border-color: #ffffff; /* --theme-navigation-active-background */
 }
 
-/* Paneel dat een volledige contentsectie/pagina vormt */
+/* Panel forming an entire content section/page */
 .panelPage {
   padding: 1%;
 }
 
-/* Algemene afbeeldingen */
+/* General images */
 img {
   border-radius: 0;
 }
 
-/* Toegankelijke focusrand */
+/* Accessible focus border */
 .focusBorder {
   border-color: #f86718; /* --theme-accent */
 }
 
-/* Afwisselende/zebra-tabelrij */
+/* Alternating/zebra table row */
 table tr.shaded {
   background: #cfcfcf; /* --theme-table-alternate-background */
 }
 
-/* Volledige tabel met celranden */
+/* Full table with cell borders */
 table.full td {
   border-color: #222222; /* --theme-table-border */
 }
 
-/* Header/footer van een shaded tabel */
+/* Header/footer of a shaded table */
 table.full.shaded th,
 table.footer.shaded.full tbody tr:last-child td {
   border-color: #ebebeb; /* --theme-table-border */
 }
 
-/* Eenvoudige tabelstijl */
+/* Simple table style */
 table.simple {
   border-top-color: #222222; /* --theme-table-border */
   border-bottom-color: #222222; /* --theme-table-border */
 }
 
-/* Horizontale tabelvariant */
+/* Horizontal table variant */
 table.horizontal tr {
   border-bottom-color: #222222; /* --theme-table-border */
 }
 
-/* Verticale tabelvariant */
+/* Vertical table variant */
 table.vertical td {
   border-right-color: #222222; /* --theme-table-border */
 }
 
-/* Header/footer van een shaded tabel */
+/* Header/footer of a shaded table */
 table.vertical.shaded th,
 table.footer.shaded.vertical tbody tr:last-child td {
   border-right-color: lightgrey; /* --theme-table-border */
 }
 
-/* Tabel met alleen buitenrand */
+/* Table with an outer border only */
 table.outside {
   border-color: #222222; /* --theme-table-border */
 }
 
-/* Algemene tabelrij */
+/* General table row */
 table tr {
   background: #ffffff; /* --theme-table-background */
   color: #000000; /* --theme-table-text */
 }
 
-/* Header/footer van een shaded tabel */
+/* Header/footer of a shaded table */
 table.header.shaded thead tr:first-child,
 table.header.shaded tr.header,
 table.header.shaded :not(tbody) > tr:first-child,
@@ -2622,14 +2675,14 @@ table.footer.shaded tbody tr:last-child {
   color: #ffffff; /* --theme-table-header-text */
 }
 
-/* Headerkolom van een shaded tabel */
+/* Header column of a shaded table */
 table.headerCol.shaded td.header {
   background-color: inherit;
 }
 
 @media (min-width: 1366px) {
   /*tablet and above css below here*/
-/* CSS-regel voor dit Xerte-interfaceonderdeel */
+/* CSS rule for this Xerte interface element */
   body:not(.sb_right):not(.sb_left) #x_mainHolder {
     margin: auto;
     position: absolute;
@@ -2640,7 +2693,7 @@ table.headerCol.shaded td.header {
   }
 }
 @media only screen and (min-device-width: 768px) and (max-device-width: 1024px) and (orientation: portrait) {
-/* CSS-regel voor dit Xerte-interfaceonderdeel */
+/* CSS rule for this Xerte interface element */
   body:not(.sb_right):not(.sb_left) #x_mainHolder {
     margin: auto;
     position: absolute;
