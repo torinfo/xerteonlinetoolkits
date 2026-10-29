@@ -111,6 +111,16 @@ if ($section === 'preferences') {
                     <span class="preferences-option-text"><?php echo USER_SETTINGS_EDITOR_SHOW_LANGUAGE; ?></span>
                 </label>
                 <label class="preferences-option">
+                    <input type="checkbox" id="editor_fixed_toolbar" name="editor_fixed_toolbar" class="preferences-input">
+                    <span class="preferences-control preferences-control--checkbox" aria-hidden="true"></span>
+                    <span class="preferences-option-text"><?php echo USER_SETTINGS_EDITOR_FIXED_TOOLBAR; ?></span>
+                </label>
+                <label class="preferences-option preferences-option--sub" id="editor_fixed_toolbar_expanded_option">
+                    <input type="checkbox" id="editor_fixed_toolbar_expanded" name="editor_fixed_toolbar_expanded" class="preferences-input">
+                    <span class="preferences-control preferences-control--checkbox" aria-hidden="true"></span>
+                    <span class="preferences-option-text"><?php echo USER_SETTINGS_EDITOR_EXPAND_TOOLBAR; ?></span>
+                </label>
+                <label class="preferences-option">
                     <input type="checkbox" id="editor_expand_groups" name="editor_expand_groups" class="preferences-input">
                     <span class="preferences-control preferences-control--checkbox" aria-hidden="true"></span>
                     <span class="preferences-option-text"><?php echo USER_SETTINGS_EDITOR_EXPAND_GROUPS; ?></span>

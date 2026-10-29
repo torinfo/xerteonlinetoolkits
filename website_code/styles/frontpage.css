@@ -723,6 +723,10 @@ div.ui-layout-north div.content {
     position: relative;
 }
 
+.preferences-option--sub {
+    margin-left: 38px;
+}
+
 .preferences-input {
     position: absolute;
     left: 0;

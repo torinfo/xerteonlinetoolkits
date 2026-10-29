@@ -168,6 +168,9 @@ function populatePreferencesForm($root) {
     $root.find('#panel_south_open').prop('checked', preferenceIsTruthy(prefs.panel_south_open, true));
     $root.find('#editor_panel_east_open').prop('checked', preferenceIsTruthy(prefs.editor_panel_east_open, true));
     $root.find('#editor_show_language').prop('checked', preferenceIsTruthy(prefs.editor_show_language, false));
+    var fixedToolbar = preferenceIsTruthy(prefs.editor_fixed_toolbar, false);
+    $root.find('#editor_fixed_toolbar').prop('checked', fixedToolbar);
+    $root.find('#editor_fixed_toolbar_expanded').prop('checked', fixedToolbar && preferenceIsTruthy(prefs.editor_fixed_toolbar_expanded, false));
     $root.find('#editor_expand_groups').prop('checked', preferenceIsTruthy(prefs.editor_expand_groups, false));
     $root.find('#editor_expand_tree').prop('checked', preferenceIsTruthy(prefs.editor_expand_tree, false));
 
@@ -196,11 +199,14 @@ function applyWorkspacePanelPreferences(prefs) {
 }
 
 function savePreferencesFromForm($root) {
+    var fixedToolbar = $root.find('#editor_fixed_toolbar').is(':checked');
     var prefs = {
         panel_east_open: $root.find('#panel_east_open').is(':checked'),
         panel_south_open: $root.find('#panel_south_open').is(':checked'),
         editor_panel_east_open: $root.find('#editor_panel_east_open').is(':checked'),
         editor_show_language: $root.find('#editor_show_language').is(':checked'),
+        editor_fixed_toolbar: fixedToolbar,
+        editor_fixed_toolbar_expanded: fixedToolbar && $root.find('#editor_fixed_toolbar_expanded').is(':checked'),
         editor_expand_groups: $root.find('#editor_expand_groups').is(':checked'),
         editor_expand_tree: $root.find('#editor_expand_tree').is(':checked'),
         editor_open_mode: $root.find('input[name="editor_open_mode"]:checked').val() || 'popup'
@@ -221,6 +227,13 @@ function savePreferencesFromForm($root) {
     });
 
     applyWorkspacePanelPreferences(prefs);
+
+    if (typeof window.setXerteCke5FixedToolbarPreference === 'function') {
+        window.setXerteCke5FixedToolbarPreference(prefs.editor_fixed_toolbar);
+    }
+    if (typeof window.setXerteCke5FixedToolbarExpanded === 'function') {
+        window.setXerteCke5FixedToolbarExpanded(prefs.editor_fixed_toolbar_expanded);
+    }
 
     var expandTreeCb = $('#expand_tree');
     if (expandTreeCb.length > 0) {
@@ -319,6 +332,34 @@ function bindLegacyPreferencesHandlers() {
         }
     });
 
+    $("#change-password-dialog #editor_fixed_toolbar").on('change', function() {
+        var fixed = $(this).is(':checked');
+        if (typeof save_user_preference === 'function') {
+            save_user_preference('editor_fixed_toolbar', fixed);
+        }
+        if (typeof window.setXerteCke5FixedToolbarPreference === 'function') {
+            window.setXerteCke5FixedToolbarPreference(fixed);
+        }
+        if (!fixed) {
+            $(this).closest('#change-password-dialog').find('#editor_fixed_toolbar_expanded').prop('checked', false);
+            if (typeof save_user_preference === 'function') {
+                save_user_preference('editor_fixed_toolbar_expanded', false);
+            }
+            if (typeof window.setXerteCke5FixedToolbarExpanded === 'function') {
+                window.setXerteCke5FixedToolbarExpanded(false);
+            }
+        }
+    });
+
+    $("#change-password-dialog #editor_fixed_toolbar_expanded").on('change', function() {
+        if (typeof save_user_preference === 'function') {
+            save_user_preference('editor_fixed_toolbar_expanded', $(this).is(':checked'));
+        }
+        if (typeof window.setXerteCke5FixedToolbarExpanded === 'function') {
+            window.setXerteCke5FixedToolbarExpanded($(this).is(':checked'));
+        }
+    });
+
     $("#change-password-dialog #editor_expand_groups").on('change', function() {
         if (typeof save_user_preference === 'function') {
             save_user_preference('editor_expand_groups', $(this).is(':checked'));
@@ -366,6 +407,18 @@ function populateLegacyPreferencesForm($dialog) {
     var editorShowLanguageCheckbox = $dialog.find("#editor_show_language");
     if (editorShowLanguageCheckbox.length) {
         editorShowLanguageCheckbox.prop('checked', preferenceIsTruthy(user_preferences.editor_show_language, false));
+    }
+
+    var editorFixedToolbarCheckbox = $dialog.find("#editor_fixed_toolbar");
+    var fixedToolbar = false;
+    if (editorFixedToolbarCheckbox.length) {
+        fixedToolbar = preferenceIsTruthy(user_preferences.editor_fixed_toolbar, false);
+        editorFixedToolbarCheckbox.prop('checked', fixedToolbar);
+    }
+
+    var editorFixedToolbarExpandedCheckbox = $dialog.find("#editor_fixed_toolbar_expanded");
+    if (editorFixedToolbarExpandedCheckbox.length) {
+        editorFixedToolbarExpandedCheckbox.prop('checked', fixedToolbar && preferenceIsTruthy(user_preferences.editor_fixed_toolbar_expanded, false));
     }
 
     var editorExpandGroupsCheckbox = $dialog.find("#editor_expand_groups");
