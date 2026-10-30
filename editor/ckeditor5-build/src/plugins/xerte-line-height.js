@@ -29,6 +29,24 @@ export const XERTE_LINE_HEIGHT_VALUES = [
 
 const LINE_HEIGHT_ICON = '<svg viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M6 4h11v2H6V4zm0 5h11v2H6V9zm0 5h11v2H6v-2zM2.7 3l2 2-2 2V5.7H1V4.3h1.7V3zm0 10l2 2-2 2v-1.3H1v-1.4h1.7V13z"/></svg>';
 
+function constrainDropdownPanelToViewport( dropdown ) {
+	const panel = dropdown.panelView.element;
+	const button = dropdown.buttonView.element;
+
+	if ( !panel || !button ) {
+		return;
+	}
+
+	const buttonRect = button.getBoundingClientRect();
+	const opensAbove = dropdown.panelView.position.startsWith( 'n' );
+	const availableHeight = opensAbove ? buttonRect.top : window.innerHeight - buttonRect.bottom;
+	const viewportHeightLimit = window.innerHeight * 0.6;
+
+	panel.style.maxHeight = `${ Math.max( 0, Math.floor( Math.min( availableHeight - 8, viewportHeightLimit ) ) ) }px`;
+	panel.style.overflowY = 'auto';
+	panel.style.overscrollBehavior = 'contain';
+}
+
 class LineHeightCommand extends Command {
 	refresh() {
 		const model = this.editor.model;
@@ -127,6 +145,14 @@ export class XerteLineHeight extends Plugin {
 			const command = editor.commands.get( LINE_HEIGHT );
 			const dropdown = createDropdown( locale );
 			const items = new Collection();
+			const defaultModel = new UIModel( {
+				label: editor.t( 'Default' ),
+				lineHeight: undefined,
+				role: 'menuitemradio',
+				withText: true
+			} );
+			defaultModel.bind( 'isOn' ).to( command, 'value', current => !current );
+			items.add( { type: 'button', model: defaultModel } );
 
 			for ( const value of XERTE_LINE_HEIGHT_VALUES ) {
 				const model = new UIModel( {
@@ -149,6 +175,11 @@ export class XerteLineHeight extends Plugin {
 				tooltip: true
 			} );
 			dropdown.bind( 'isEnabled' ).to( command, 'isEnabled' );
+			dropdown.on( 'change:isOpen', () => {
+				if ( dropdown.isOpen ) {
+					constrainDropdownPanelToViewport( dropdown );
+				}
+			}, { priority: 'low' } );
 			dropdown.on( 'execute', event => {
 				const value = event.source.lineHeight;
 				editor.execute( LINE_HEIGHT, {
