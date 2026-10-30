@@ -3,6 +3,7 @@
  */
 import 'ckeditor5/ckeditor5.css';
 import './autocolumns.css';
+import './dropdowns.css';
 import { ClassicEditor } from '@ckeditor/ckeditor5-editor-classic';
 import { InlineEditor } from '@ckeditor/ckeditor5-editor-inline';
 import { Emoji } from '@ckeditor/ckeditor5-emoji';
