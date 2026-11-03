@@ -26,15 +26,6 @@
   BRAND -General brand colors. Other component variables can reference these
   */
 
-  
-
-  
-  --theme-primary: #7a0000; /* Primary brand color. Used as the basis for key elements.*/
-
- 
-  --theme-accent: #f86718;  /* Accent color for hover, active states and highlights */
-
-  --theme-secondary: #8400ff;
 
   /*
   GENERAL - General styling for the entire Nottingham theme
@@ -60,7 +51,7 @@
 
   --theme-button-background: #cfcfcf;  /*Background color of general buttons.*/
   --theme-button-text: #000000;  /*Text color of general buttons.*/
-  --theme-button-border: var(--theme-accent);  /*Border color of general buttons.*/
+  --theme-button-border: none;  /*Border color of general buttons.*/
 
   --theme-button-hover-background: #bdbdbd; /*Background color on hover/focus/active.*/
   --theme-button-hover-text: #000000; /*Text color on hover/focus/active.*/
@@ -94,14 +85,14 @@
 
   --theme-panel-background: #ebebeb; /*Background color of the general panels*/
   --theme-panel-text: #000000; /*Text color of the general panels*/
-  --theme-panel-border: var(--theme-accent); /*Border color of the general panels*/
+  --theme-panel-border: #ebebeb; /*Border color of the general panels*/
 
   --theme-panel-text-holder-background: #ebebeb; /*Background color of the text holder panels*/
 
   
 
   /*
-     ACCORDION - General accordion panels in the theme.
+     Navigators, tabs, accordions and interactive lists - General styling of the navigators, tabs, accordions and interactive lists in the theme
   */
 
   --theme-navigation-background: var(--theme-panel-background);  /*Background color of the navigation items*/
@@ -116,30 +107,61 @@
   --theme-navigation-content-background: var(--theme-panel-background); /*Background color of content below tabs/accordion*/
   --theme-navigation-content-text: var(--theme-text); /*Text color of content below tabs/accordion*/
 
+  --theme-tab-navigator-background: #ebebeb; /*Background color of the tab navigator*/
+  --theme-tab-navigator-text: #000000; /*Text color of the tab navigator*/
   --theme-tab-navigator-content-background: var(--theme-panel-background); /*Background color of content below the tab navigator*/
+  --theme-tab-navigator-border: none; /*Border color of the tab navigator*/
+  --theme-tab-navigator-border-bottom: #bdbdbd; /*Border color of the tab navigator*/
+  --theme-tab-navigator-active-background: #bdbdbd; /*Background color of the active tab in the tab navigator*/
+  --theme-tab-navigator-hover-background: #cfcfcf; /*Background color of the tab in the tab navigator on hover/focus/active*/
+
+  --theme-button-navigator-background-selected: #ffffff; /*Background color of the selected button in the button navigator*/
+
+  --theme-navigator-interactive-list-item-background: #ebebeb; /*Background color of the navigator and interactive list*/
+  --theme-navigator-interactive-list-item-text: #000000; /*Text color of the navigator and interactive list*/
+  --theme-navigator-interactive-list-item-hover-background: #cfcfcf; /*Background color of the navigator and interactive list on hover/focus/active*/
+  --theme-navigator-interactive-list-item-hover-text: #000000; /*Text color of the navigator and interactive list on hover/focus/active*/
+
+  --theme-multi-navigator-text-holder-border: #ebebeb; /*Border color of the text holder in the multi navigator*/
+
+
+
+  /*
+    Interactivity - General styling of the interactivity in the theme
+  */
+
+  --theme-interactivity-interactive-video-link-background: #ffffff; /*Background color of the link to video in the interactive video page*/
+  --theme-interactivity-interactive-video-link-text: #000000; /*Text color of the link to video in the interactive video page*/
+  --theme-interactivity-interactive-video-link-border: #ebebeb; /*Border color of the link to video in the interactive video page*/
+
+  --theme-interactivity-interactive-text-list-item-background: #cfcfcf; /*Background color of the list item in the interactive text*/
+  --theme-interactivity-interactive-text-list-item-hover-background: #bdbdbd; /*Background color of the list item in the interactive text on hover/focus/active*/
+
+  --theme-interactivity-interactive-selected-background: #cfcfcf; /*Background color of the selected item in the interactive pages*/
+
+  --theme-interactivity-interactive-target-background: #ffffff; /*Background color of the target in the interactive pages*/
+
+  --theme-interactivity-matching-text-holder-background: #ebebeb; /*Background color of the text holder in the matching text page*/
+  --theme-interactivity-matching-text-label-background: #cfcfcf; /*Background color of the label in the matching text page*/
+  --theme-interactivity-matching-text-label-border: #cfcfcf; /*Border color of the label in the matching text page*/
+
+  --theme-interactivity-audio-recorder-delete-button-color: #000000; /*Color of the delete button in the audio recorder page*/
+  
+ 
 
   
   
  
   /*
-    PROGRESS BAR FOOTER - General progress bar in the theme
+    PROGRESS BAR - General styling of the progress bar in the theme
   */
 
-  --theme-progress-footer-background: #ebebeb; /*Background color of the progress bar*/
-  --theme-progress-footer-text: #000000; /*Text color of the progress bar*/
-  --theme-progress-footer-border: #ebebeb; /*Border color of the progress bar*/
-  --theme-progress-footer-complete: #2196F3; /*Color of the progress bar*/
+  --theme-progress--background: #ebebeb; /*Background color of the progress bar*/
+  --theme-progress-complete: #2196F3; /*Color of the progress bar*/
   
 
 
-    /*
-    PROGRESS BAR HEADER - General progress bar in the theme
-  */
-
-  --theme-progress-header-background: #222222; /*Background color of the progress bar*/
-  --theme-progress-header-text: #ffffff; /*Text color of the progress bar*/
-  --theme-progress-header-border: #ebebeb; /*Border color of the progress bar*/
-  --theme-progress-header-complete: #2196F3; /*Color of the progress bar*/
+   
 
 
   
@@ -152,11 +174,12 @@
   --theme-ui-button-text: #ffffff;  /*Text color of general icon buttons.*/
   --theme-ui-button-border: none;  /*Border color of general icon buttons.*/
 
-  --theme-ui-button-hover-background: var(--theme-accent);  /*Background color of general icon buttons on hover/focus.*/
+  --theme-ui-button-hover-background: #f86718;  /*Background color of general icon buttons on hover/focus.*/
   --theme-ui-button-hover-text: #ffffff;  /*Text color of general icon buttons on hover/focus.*/
   --theme-ui-button-hover-border: none;  /*Border color of general icon buttons on hover/focus.*/
 
-  --theme-ui-button-active-background: var(--theme-accent);  /*Background color of general icon buttons when active.*/
+  --theme-ui-button-active-state-color: #222222;  /*Color of general icon buttons in the active state.*/
+  /* --theme-ui-button-active-background: #f86718;  Background color of general icon buttons when active. */
   --theme-ui-button-active-text: #ffffff;  /*Text color of general icon buttons when active.*/
   --theme-ui-button-active-border: none;  /*Border color of general icon buttons when active.*/
 
@@ -165,13 +188,14 @@
     Labels -General labels in the theme.
   */
 
-  --theme-label-background: var(--theme-accent);  /*Background color of labels.*/
+  --theme-label-background: #ffffff;  /*Background color of labels.*/
   --theme-label-text: var(--theme-text);  /*Text color of labels.*/
-  --theme-label-border: var(--theme-accent);  /*Border color of labels.*/
+  --theme-label-border: #bdbdbd;  /*Border color of labels.*/
+  --theme-label-box-shadow: #bdbdbd;  /*Box shadow of labels.*/
 
   --theme-label-selected-background: var(--theme-accent);  /*Background color of selected labels.*/
   --theme-label-selected-text: var(--theme-text);  /*Text color of selected labels.*/
-  --theme-label-selected-border: var(--theme-accent);  /*Border color of selected labels.*/
+  --theme-label-selected-border: green;  /*Border color of selected labels.*/
 
   --theme-label-dragging-background: var(--theme-accent);  /*Background color of labels during drag and drop.*/
   --theme-label-dragging-text: var(--theme-text);  /*Text color of labels during drag and drop.*/
@@ -180,6 +204,7 @@
   --theme-label-disabled-background: var(--theme-accent);  /*Background color of disabled labels.*/
   --theme-label-disabled-text: var(--theme-text);  /*Text color of disabled labels.*/
   --theme-label-disabled-border: var(--theme-accent);  /*Border color of disabled labels.*/
+  --theme-label-disabled-box-shadow: none;  /*Box shadow of disabled labels.*/
 
 
   /*
@@ -241,8 +266,8 @@
   --theme-feedback-selected-text: var(--theme-text);  /*Text color of the selected feedback area.*/
   --theme-feedback-selected-border: var(--theme-accent);  /*Border color of the selected feedback area.*/
 
-  --theme-feedback-correct-background: green;  /*Background color of the correct feedback area*/
-  --theme-feedback-correct-text: var(--theme-text);  /*Text color of the correct feedback area.*/
+  --theme-feedback-correct-background:  rgba(255, 255, 255, 0.2);  /*Background color of the correct feedback area*/
+  --theme-feedback-correct-text: green;  /*Text color of the correct feedback area.*/
   --theme-feedback-correct-border: var(--theme-accent);  /*Border color of the correct feedback area.*/
 
   --theme-feedback-incorrect-background: red;  /*Background color of the incorrect feedback area*/
@@ -258,8 +283,8 @@
     LINKS -General links within the theme
   */
  
-  --theme-link: #4078C0;  /*Normal link color.*/
-  --theme-link-hover: var(--theme-accent); /*Link color on hover/focus.*/
+  --theme-link: blue;  /*Normal link color.*/
+  --theme-link-hover: red; /*Link color on hover/focus.*/
   --theme-link-visited: green; /*Link color for visited links*/
 
 
@@ -281,18 +306,29 @@
     SIDEBAR - The sidebar is an additional navigation bar that can be displayed at the side of the project
 */
 
-  --theme-sidebar-background: var(--theme-button-background);  /* Background color of the sidebar */
-  --theme-sidebar-text: var(--theme-button-text);  /* Text color of the sidebar */
+  --theme-sidebar-background: #ffffff;  /* Background color of the sidebar */
+  --theme-sidebar-text: #000000;  /* Text color of the sidebar */
   --theme-sidebar-hover-background: var(--theme-button-hover-background);  /* Background color of the sidebar on hover/focus */
 
+  --theme-sidebar-toggle-button-background: #cfcfcf;  /* Background color of the sidebar toggle button */
+  --theme-sidebar-toggle-button-text: #000000;  /* Text color of the sidebar toggle button */
 
-  --theme-sidebaritem-background: var(--theme-menuitem-background);  /* Background color of the item in the sidebar */
-  --theme-sidebaritem-text: var(--theme-menuitem-text);  /* Text color of the item in the sidebar */
-  --theme-sidebaritem-hover-background: var(--theme-menuitem-hover-background);  /* Background color of the item in the sidebar on hover/focus */
-  --theme-sidebaritem-hover-text: var(--theme-menuitem-hover-text);  /* Text color of the item in the sidebar on hover/focus */
-  --theme-sidebaritem-active-background: var(--theme-menuitem-active-background);  /* Background color of the item in the sidebar */
-  --theme-sidebaritem-active-text: var(--theme-menuitem-active-text);  /* Text color of the item in the sidebar */
-  --theme-sidebaritem-active-border: var(--theme-menuitem-active-border);  /* Border color of the item in the sidebar */
+  --theme-sidebar-toggle-button-hover-background: #bdbdbd;  /* Background color of the sidebar toggle button on hover/focus */
+  --theme-sidebar-toggle-button-hover-text: #000000;  /* Text color of the sidebar toggle button on hover/focus */
+
+  --theme-sidebar-holder-button-text: #000000;  /* Text color of the sidebar holder button */
+  
+  --theme-sidebar-holder-button-hover-background: #bdbdbd;  /* Background color of the sidebar holder button on hover/focus */
+  --theme-sidebar-holder-button-hover-text: #000000;  /* Text color of the sidebar holder button on hover/focus */
+
+
+  --theme-sidebar-item-background: var(--theme-menuitem-background);  /* Background color of the item in the sidebar */
+  --theme-sidebar-item-text: var(--theme-menuitem-text);  /* Text color of the item in the sidebar */
+  --theme-sidebar-item-hover-background: var(--theme-menuitem-hover-background);  /* Background color of the item in the sidebar on hover/focus */
+  --theme-sidebar-item-hover-text: var(--theme-menuitem-hover-text);  /* Text color of the item in the sidebar on hover/focus */
+  --theme-sidebar-item-active-background: var(--theme-menuitem-active-background);  /* Background color of the item in the sidebar */
+  --theme-sidebar-item-active-text: var(--theme-menuitem-active-text);  /* Text color of the item in the sidebar */
+  --theme-sidebar-item-active-border: var(--theme-menuitem-active-border);  /* Border color of the item in the sidebar */
 
 
   /*
@@ -302,6 +338,8 @@
   --theme-opinion-background: var(--theme-panel-background);  /*Background color of the opinion page*/
   --theme-opinion-text: none;  /*Text color of the opinion page*/
   --theme-opinion-border: none;  /*Border color of the opinion page*/
+
+  --theme-opinion-slider-label-text: #000000;  /*Text color of the slider label in the opinion page*/
 
   --theme-opinion-icon-background: var(--theme-accent);  /*Background color of the opinion icon*/
   --theme-opinion-icon-border: #ffffff;  /*Border color of the opinion icon*/
@@ -331,6 +369,31 @@
   --theme-media-image-sequence-search-off-background: #bdbdbd;  /*Background color of the search off button in the media image sequence*/
 
 
+  /*
+    HIGHLIGHT - General styling of the highlight in the theme
+  */
+
+  --theme-highlight-background: #cfcfcf;  /*Background color of the highlight*/
+
+
+  /*
+    GAMES - General styling of the games in the theme
+  */
+  --theme-game-word-search-background: #ffffff;  /*Background color of the word search game*/
+
+  --theme-game-memory-border: #bdbdbd;  /*Border color of the memory game*/
+
+
+  /*
+    LINKS / FEEDS - General styling of the links and feeds in the theme
+  */
+
+  --theme-link-feed-qr-code-link-text: #222222;  /*Color of the link to the QR code in the links and feeds page*/
+
+  --theme-link-feed-rss-feed-results-holder-background: #ebebeb;  /*Background color of the RSS feed results holder in the links and feeds page*/
+  --theme-link-feed-rss-feed-results-holder-text: #000000;  /*Text color of the RSS feed results holder in the links and feeds page*/
+
+
 
   /*
    EXTRA PROPERTIES - Additional properties of the learning object
@@ -356,17 +419,24 @@
 
   --theme-dialog-background: var(--theme-panel-background);  /*Background color of the dialog*/
   --theme-dialog-text: var(--theme-text);  /*Text color of the dialog*/
-  --theme-dialog-border: var(--theme-accent);  /*Border color of the dialog*/
+  --theme-dialog-border: #222222;  /*Border color of the dialog*/
 
-  --theme-dialog-header-background: var(--theme-accent);  /*Background color of the dialog header*/
-  --theme-dialog-header-text: var(--theme-text);  /*Text color of the dialog header*/
+  --theme-dialog-header-background: #222222;  /*Background color of the dialog header*/
+  --theme-dialog-header-text: #ffffff;  /*Text color of the dialog header*/
   
-  --theme-dialog-close-background: var(--theme-accent);  /*Background color of the dialog close button*/
-  --theme-dialog-close-text: var(--theme-text);  /*Text color of the dialog close button*/
-  --theme-dialog-close-border: var(--theme-accent);  /*Border color of the dialog close button*/
-  --theme-dialog-close-hover-background: var(--theme-secondary);  /*Background color of the dialog close button on hover/focus*/
-  --theme-dialog-close-hover-text: var(--theme-text);  /*Text color of the dialog close button on hover/focus*/
-  --theme-dialog-close-hover-border: var(--theme-accent);  /*Border color of the dialog close button on hover/focus*/
+  --theme-dialog-close-background:#222222;  /*Background color of the dialog close button*/
+  --theme-dialog-close-text: #ffffff;  /*Text color of the dialog close button*/
+  --theme-dialog-close-border: none;  /*Border color of the dialog close button*/
+  --theme-dialog-close-hover-text: #f86718;  /*Text color of the dialog close button on hover/focus*/
+
+  --theme-dialog-menu-item-background: #ebebeb;  /*Background color of the dialog menu item*/
+  --theme-dialog-menu-item-text: #000000;  /*Text color of the dialog menu item*/
+  --theme-dialog-menu-item-border: #ebebeb;  /*Border color of the dialog menu item*/
+
+  --theme-dialog-menu-item-hover-background: #cfcfcf;  /*Background color of the dialog menu item on hover/focus/active*/
+  --theme-dialog-menu-item-hover-text: #000000;  /*Text color of the dialog menu item on hover/focus/active*/
+  --theme-dialog-menu-item-hover-border: #cfcfcf;  /*Border color of the dialog menu item on hover/focus/active*/
+  --theme-dialog-menu-item-current-border: #000000;  /*Border color of the current/selected dialog menu item*/
 
 
   /*
@@ -387,6 +457,9 @@
   --theme-glossary-background: black;  /*Background color of the glossary*/
   --theme-glossary-text: white;  /*Text color of the glossary*/
 
+  --theme-glossary-tr-border: #ebebeb;  /*Border color of the rows in the glossary*/
+  --theme-glossary-td-shaded-background: #ebebeb;  /*Background color of the shaded cells in the glossary*/
+
   
   /*
    AUDIO - General audio bar in the theme
@@ -399,8 +472,8 @@
     Page timer - General timer in the theme
   */
 
-  --theme-timer-background: grey;  /*Background color of the timer*/
-  --theme-timer-text: black;  /*Text color of the timer*/
+  --theme-timer-background: #cfcfcf;  /*Background color of the timer*/
+  /* --theme-timer-text: black;  Text color of the timer */
 
   /*TODO: ACCESS CODE*/
 
@@ -589,10 +662,10 @@ body:not(.sb_right):not(.sb_left) #x_headerBlock {
   border: 0;
 }
 
-/* highlight - General styling for highlights - CHECKEN*/
+/* highlight - General styling for highlights - CHECKEN */
 .highlight {
-  background:   var(--theme-media-transcript-highlight-background) !important; /* !important - CHECKEN*/
-  border: 1px solid var(--theme-media-transcript-highlight-border) !important; /* !important - CHECKEN of deze regel code erbij mag, want de border kleur automatisch rood zonder deze regel code*/
+  background:   var(--theme-highlight-background); /* !important - CHECKEN*/
+  /* border: 1px solid var(--theme-media-transcript-highlight-border) !important; !important - CHECKEN of deze regel code erbij mag, want de border kleur automatisch rood zonder deze regel code */
   
 }
 
@@ -815,7 +888,7 @@ body:not(.sb_right):not(.sb_left) #x_headerBlock {
 /* Accordion Navigator on hover/focus */
 #x_mainHolder.x_nav_page #pageContents.acc #infoHolder .navChildTitle.ui-state-hover:not(.ui-accordion-header-active),
 #x_mainHolder.x_nav_page #pageContents.acc #infoHolder .navChildTitle.ui-state-focus:not(.ui-accordion-header-active) {
-  background: var( --theme-navigation-hover); /
+  background: var( --theme-navigation-hover); 
 }
 
 /* Accordion Navigator */
@@ -824,12 +897,12 @@ body:not(.sb_right):not(.sb_left) #x_headerBlock {
   border-bottom-right-radius: 0;
 }
 
-/* General Xerte/jQuery UI button */
+/* General Xerte  button */
 .ui-button, .ui-widget-content .ui-button {
   border-radius: 0;
-  background: #cfcfcf; /* --theme-button-background */
-  border: none; /* --theme-button-border */
-  color: #000000; /* --theme-button-text */
+  background: var(--theme-button-background); 
+  border: var(--theme-button-border); 
+  color: var(--theme-button-text); 
 }
 
 /* Buttons within a general button set */
@@ -843,14 +916,14 @@ body:not(.sb_right):not(.sb_left) #x_headerBlock {
 .ui-widget-content .ui-button.ui-state-active, .ui-widget-content .ui-button.ui-state-hover, .ui-widget-content .ui-button:focus,
 #x_pagePswdBtn:active, #x_pagePswdBtn:hover, #x_pagePswdBtn:focus {
   border-radius: 0;
-  background: #bdbdbd; /* --theme-button-hover-background */
-  border: none; /* --theme-button-hover-border */
-  color: #000000; /* --theme-button-hover-text */
+  background: var(--theme-button-hover-background); 
+  border: var(--theme-button-hover-border); 
+  color: var(--theme-button-hover-text); 
 }
 
-/* Styling for Navigator page */
+/* Styling for Button Navigator page */
 .x_nav_page #pageContents.button button.selected {
-  background-color: #ffffff; /* --theme-background */
+  background-color: var(--theme-button-navigator-background-selected); 
 }
 
 /* Round control button of Flashcards */
@@ -860,28 +933,28 @@ body:not(.sb_right):not(.sb_left) #x_headerBlock {
 
 /* Links on the Hyperlinks page */
 .x_links_page #linkHolder a {
-  color: blue; /* --theme-link */
+  color: var(--theme-link); 
 }
 
 /* Links on the Hyperlinks page */
 .x_links_page #linkHolder a:visited {
-  color: green; /* --theme-link-visited */
+  color: var(--theme-link-visited); 
 }
 
 /* Links on the Hyperlinks page on hover/focus */
 .x_links_page #linkHolder a:hover {
-  color: red; /* --theme-link-hover */
+  color: var(--theme-link-hover); 
 }
 
 /* CSS rule for this Xerte interface element */
 #pageContents.button button.selected {
-  background-color: #cfcfcf; /* --theme-secondary */
+  background-color: #cfcfcf; /* CHECKEN - Deze regel heeft dezelfde werking als: .x_nav_page #pageContents.button button.selected en heeft een andere kleur  */
 }
 
 /* General tabs */
 .ui-tabs {
-  background: none !important; /* --theme-navigation-background */
-  border: 0; /* --theme-navigation-active-background */
+  background: none !important; 
+  border: 0; 
   border-radius: 0 !important;
   padding: 0;
 }
@@ -889,8 +962,8 @@ body:not(.sb_right):not(.sb_left) #x_headerBlock {
 /* Tab navigation / tab buttons */
 .ui-tabs .ui-tabs-nav,
 #x_mainHolder.x_nav_page #pageContents.tab #tabHolder {
-  border: 0; /* --theme-navigation-active-background */
-  border-bottom: 6px solid #bdbdbd; /* --theme-navigation-active-background */
+  border: 0; 
+  border-bottom: 6px solid var(--theme-tab-navigator-border-bottom);
   margin-bottom: 0;
   border-radius: 0;
   background: none;
@@ -904,7 +977,7 @@ body:not(.sb_right):not(.sb_left) #x_headerBlock {
 
 /* Content panel below tabs */
 .ui-tabs .ui-tabs-panel {
-  background: #ebebeb; /* --theme-tab-navigator-content-background */
+  background: var(--theme-tab-navigator-content-background);
 }
 
 /* Tab content holder */
@@ -924,10 +997,10 @@ body:not(.sb_right):not(.sb_left) #x_headerBlock {
 
 /* Tab navigation / tab buttons */
 .ui-tabs .ui-tabs-nav > li.ui-state-default a {
-  color: #000000; /* --theme-navigation-text */
-  background: #ebebeb; /* --theme-navigation-background */
+  color: var(--theme-tab-navigator-text); 
+  background: var(--theme-tab-navigator-background);
   padding: 10px 15px 4px 15px;
-  border: 0; /* --theme-navigation-active-background */
+  border: 0; 
   border-radius: 0;
   border-top-right-radius: 0;
   border-top-left-radius: 0;
@@ -941,25 +1014,25 @@ body:not(.sb_right):not(.sb_left) #x_headerBlock {
 
 /* Tab navigation / tab buttons */
 .ui-tabs .ui-tabs-nav > li.ui-state-default.ui-tabs-active a {
-  background: #bdbdbd; /* --theme-navigation-active-background */
+  background: var(--theme-tab-navigator-active-background); 
 }
 
 /* Tab navigation / tab buttons on hover/focus */
 .ui-tabs .ui-tabs-nav > li.ui-state-default.ui-state-hover:not(.ui-tabs-active) a,
 .ui-tabs .ui-tabs-nav > li.ui-state-default.ui-state-focus:not(.ui-tabs-active) a {
-  background: #cfcfcf; /* --theme-navigation-active-background */
+  background: var(--theme-tab-navigator-hover-background); 
 }
 
-/* CSS rule for this Xerte interface element */
+/* Ui state for Interactive video page */
 .ui-state-active a, .ui-state-active a:link, .ui-state-active a:visited {
   text-decoration: none;
-  background: #ffffff; /* --theme-background */
-  color: #000000 !important;
+  background: var(--theme-interactivity-interactive-video-background) !important; 
+  color: var(--theme-interactivity-interactive-video-link-text) !important;
   border-radius: 0;
-  border: solid #ebebeb; /* --theme-panel-border */
+  border: solid var(--theme-interactivity-link-video-border); 
 }
 
-/* Navigation items of Tab navigator extra */
+/* Navigation items of Tab navigator extra and Interactive list */
 .x_tabNavExtra_page a.topic,
 .x_list_page #listHolder a.listItem,
 .x_annotatedDiagram_page #listHolder a.listItem {
@@ -967,44 +1040,44 @@ body:not(.sb_right):not(.sb_left) #x_headerBlock {
   text-decoration: none;
   padding: 0.2em 1em;
   border-radius: 0;
-  background: #ebebeb; /* --theme-navigation-background */
-  color: #000000; /* --theme-navigation-text */
+  background: var(--theme-navigator-interactive-list-item-background); 
+  color: var(--theme-navigator-interactive-list-item-text); 
   margin-bottom: 5px;
 }
 
-/* Navigation items of Tab navigator extra on hover/focus in the active state */
+/* Navigation items of Tab navigator extra and in Interactive list on hover/focus in the active state */
 .x_tabNavExtra_page a.topic:hover, .x_tabNavExtra_page a.topic:focus, .x_tabNavExtra_page a.topic:active,
 .x_annotatedDiagram_page #listHolder a.listItem:hover, .x_annotatedDiagram_page #listHolder a.listItem:focus, .x_annotatedDiagram_page #listHolder a.listItem:active,
 .x_list_page #listHolder a.listItem:hover, .x_list_page #listHolder a.listItem:focus, .x_list_page #listHolder a.listItem:active {
   border-radius: 0;
-  background: #cfcfcf; /* --theme-navigation-hover */
-  color: #000000; /* --theme-navigation-text */
+  background: var(--theme-navigator-interactive-list-item-hover-background); 
+  color: var(--theme-navigator-interactive-list-item-hover-text); 
 }
 
-/* Navigation items of Tab navigator extra */
+/* Navigation items and interactive list items of Tab navigator extra and interactive list pages */
 .x_tabNavExtra_page a.topic.highlight,
 .x_list_page #listHolder a.listItem.highlight,
 .x_annotatedDiagram_page #listHolder a.listItem.highlight {
-  background: #bdbdbd; /* --theme-navigation-active-background */
+  background: #bdbdbd; /* CHECKEN - zelfde werking als deze regel: 986 */
 }
 
 /* Information panel close button for Interactive list */
 .x_list_page #infoHolderTop .closeBtn {
-  color: #222222; /* --theme-text */
+  color: #222222; /* CHECKEN - geen close button zichtbaar, nog onderzoeken */
 }
 
 /* Information panel close button for Interactive list on hover/focus in the active state */
 .x_list_page #infoHolderTop .closeBtn:hover, .x_list_page #infoHolderTop .closeBtn:focus, .x_list_page #infoHolderTop .closeBtn:active {
-  color: #4078C0; /* --theme-link */
+  color: #4078C0; /* CHECKEN - geen close button zichtbaar, nog onderzoeken */
 }
 
-/* Styling for Navigator page */
+/* Styling for Navigator page (multi-navigator) */
 #x_mainHolder.x_nav_page #pageContents.col .textTopHolder + #navHolder:not(.panel):not(.panelColumns),
 #x_mainHolder.x_nav_page #pageContents.col #textHolder + #navHolder:not(.panel):not(.panelColumns),
 #x_mainHolder.x_nav_page #pageContents.col #navHolder:not(.panel):not(.panelColumns) + .textBottomHolder,
 #x_mainHolder.x_columnPage_page .textTopHolder + #columnHolder:not(.panel):not(.panelColumns),
 #x_mainHolder.x_columnPage_page #columnHolder:not(.panel):not(.panelColumns) + .textBottomHolder {
-  border-top: 3px solid #ebebeb; /* --theme-panel-border */
+  border-top: 3px solid var(--theme-multi-navigator-text-holder-border); 
   margin-top: 1.5em;
   padding-top: 1.5em;
 }
@@ -1023,7 +1096,7 @@ body:not(.sb_right):not(.sb_left) #x_headerBlock {
 
 /* Interactivity: Interactive text */
 .x_interactiveText_page #pageContents a.listItem {
-  background-color: #cfcfcf; /* --theme-secondary */
+  background-color: var(--theme-interactivity-interactive-text-list-item-background); 
   padding: 0.2em 1em;
   border-radius: 0;
 }
@@ -1031,12 +1104,12 @@ body:not(.sb_right):not(.sb_left) #x_headerBlock {
 /* Interactivity: Interactive text on hover/focus */
 .x_interactiveText_page #passageHolder a.listItem:hover:not(.highlight),
 .x_interactiveText_page #passageHolder a.listItem:focus:not(.highlight) {
-  background-color: #bdbdbd; /* --theme-secondary */
+  background-color: var(--theme-interactivity-interactive-text-list-item-hover-background);
 }
 
 /* Interactivity: Interactive text */
 .x_interactiveText_page #passageHolder a.listItem.highlight {
-  background-color: #ffffff; /* --theme-background */
+  background-color: #ffffff; /* CHECKEN - Deze regel code: 1053 heeft dezelfde codewerking en werkt alleen met !i */
 }
 
 /* Interactivity: Interactive text */
@@ -1048,12 +1121,12 @@ body:not(.sb_right):not(.sb_left) #x_headerBlock {
 
 /* Interactivity: Interactive text */
 .x_interactiveText_page #more, .x_interactiveText_page #more:visited {
-  color: #000000; /* --theme-text */
+  color: #000000; /* CHECKEN- "more" is niet zichtbaar*/
 }
 
 /* Interactivity: Interactive text on hover/focus in the active state */
 .x_interactiveText_page #more:active, .x_interactiveText_page #more:focus, .x_interactiveText_page #more:hover {
-  color: #f86718; /* --theme-accent */
+  color: #f86718; /* CHECKEN- "more" is niet zichtbaar */
 }
 
 /* Form/Documentation page */
@@ -1063,12 +1136,12 @@ body:not(.sb_right):not(.sb_left) #x_headerBlock {
 
 /* CSS rule for this Xerte interface element */
 #listholder a.listitem, a:visited {
-  color: #4078C0; /* --theme-link */
+  color: #4078C0; /* CHECKEN - werkt alleen met !important en veranderd alle linkkleuren van list items en linkjes */
 }
 
 /* Interactivity: Annotated hotspot */
 .x_annotatedDiagram_page .highlight {
-  background: #ebebeb; /* --theme-panel-background */
+  background: #ebebeb; /* CHECKEN - ik zie geen verandering bij wijzing dus ik kom hier nog op. En er is geen Annotated hotspot pagina*/
 }
 
 /* Interactivity: Annotated hotspot */
@@ -1078,7 +1151,7 @@ body:not(.sb_right):not(.sb_left) #x_headerBlock {
 
 /* Interactivity: Annotated hotspot */
 .x_annotatedDiagram_page #infoHolder {
-  background: #ffffff; /* --theme-background */
+  background: #ffffff; /* CHECKEN - Annotated hotspot pagina vinden */
 }
 
 /* Interactivity: Categories */
@@ -1091,31 +1164,31 @@ body:not(.sb_right):not(.sb_left) #x_headerBlock {
 .x_dragDropLabel_page .label.panel,
 .x_gapFill_page #labelHolder .label.panel,
 .x_timeline_page .label.panel.ui-draggable {
-  background: #ffffff; /* --theme-label-background */
-  border: solid #bdbdbd; /* --theme-label-border */
-  -webkit-box-shadow: 0 10px 6px -6px #bdbdbd; /* --theme-label-border */
-  -moz-box-shadow: 0 10px 6px -6px #bdbdbd; /* --theme-label-border */
-  box-shadow: 0 10px 6px -6px #bdbdbd; /* --theme-label-border */
+  background: var(--theme-label-background); /* CHECKEN - regel: 1161 wordt de background op none gezet */
+  border: solid  var(--theme-label-border);
+  -webkit-box-shadow: 0 10px 6px -6px var(--theme-label-box-shadow);  
+  -moz-box-shadow: 0 10px 6px -6px var(--theme-label-box-shadow); 
+  box-shadow: 0 10px 6px -6px var(--theme-label-box-shadow); 
 }
 
 /* Selected label for Gap-fill exercise */
 .x_gapFill_page #labelHolder .label.panel.selected {
-  border-color: green; /* --theme-label-selected-border */
+  border-color: var(--theme-label-selected-border); 
 }
 
 /* Disabled label after drag-and-drop */
 .x_dragDropLabel_page .label.panel.ui-draggable-disabled {
-  -webkit-box-shadow: none; /* --theme-label-disabled-border */
-  -moz-box-shadow: none; /* --theme-label-disabled-border */
-  box-shadow: none; /* --theme-label-disabled-border */
+  -webkit-box-shadow: var(--theme-label-disabled-box-shadow); /* CHECKEN - of dit altijd disabled blijft ook in andere thema's */
+  -moz-box-shadow: var(--theme-label-disabled-box-shadow); /* CHECKEN - of dit altijd disabled blijft ook in andere thema's */
+  box-shadow: var(--theme-label-disabled-box-shadow); /* CHECKEN - of dit altijd disabled blijft ook in andere thema's*/
 }
 
 /* Highlighted drop target for Drag-and-drop exercise */
 .x_dragDropLabel_page #targetHolder .target.highlight {
-  background: rgba(255, 255, 255, 0.2);
+  background: rgba(255, 255, 255, 0.2); /* CHECKEN - Waar deze regel wordt gebruikt */
 }
 
-/* Interactivity: Categories */
+/* CHECKPOINT 30-10-2026 - Interactivity: Categories */
 #categoryHolder .highlight {
   border-radius: 0;
   background: #ebebeb; /* --theme-panel-background */
@@ -1123,26 +1196,26 @@ body:not(.sb_right):not(.sb_left) #x_headerBlock {
 
 /* Interactivity: Categories */
 #categoryHolder .highlight.highlightDark, .x_gapFill_page #targetHolder .highlight.highlightDark {
-  background: #cfcfcf; /* --theme-secondary */
+  background: var(--theme-interactivity-interactive-selected-background);
 }
 
 /* Styling for Drag-and-drop exercise */
 .x_dragDropLabel_page #infoHolder {
   padding: 0;
   margin: 1em 0 0 0;
-  background: none;
+  background: none; /* hier wordt de achtergrondkleur van de infoholder van de drag-and-drop oefening aangepast, waardoor de achtergrond kleur niet zichtbaar wordt bij regel: 1122 */
 }
 
 /* Correct answer/target for Gap-fill exercise */
 .x_gapFill_page .target.correct {
-  color: green; /* --theme-feedback-correct-text */
+  color: green; /* CHECKEN - Deze regel werkt niet wordt, omdat die wordt overruled door een andere regel en werkt alleen met !important */
   font-weight: bold;
-  background-color: rgba(255, 255, 255, 0.2); /* --theme-feedback-correct-background */
+  background-color: var(--theme-feedback-correct-background); 
 }
 
 /* Interactivity: Decision tree */
 .x_decision_page .highlight {
-  background: #cfcfcf; /* --theme-secondary */
+  background: var(--theme-interactivity-interactive-selected-background); 
 }
 
 /* Interactivity: Decision tree */
@@ -1165,7 +1238,7 @@ body:not(.sb_right):not(.sb_left) #x_headerBlock {
 
 /* Highlighted drop target for drag-and-drop/matching exercises */
 #targetHolder .highlight {
-  background: #ffffff; /* --theme-background */
+  background: var(--theme-interactivity-interactive-target-background); 
 }
 
 /* Hotspot and selected hotspot */
@@ -1188,17 +1261,17 @@ a.hotspot, a.hotspot.selected {
   margin-top: 1em;
 }
 
-/* Drag-and-drop area of Matching */
+/* Interactivity: Matching texts */
 .x_textMatch_page #dragDropHolder {
-  background: #ebebeb; /* --theme-panel-background */
+  background: var(--theme-interactivity-matching-text-holder-background);
   padding: 10px;
   border-radius: 0;
 }
 
-/* Labels within Matching */
+/* Interactivity: Matching texts */
 .x_textMatch_page .label.panel {
-  background: #cfcfcf; /* --theme-panel-background */
-  border: 2px solid #cfcfcf; /* --theme-panel-border */
+  background: var(--theme-interactivity-matching-text-label-background); 
+  border: 2px solid var(--theme-interactivity-matching-text-label-border); 
 }
 
 /* Interactivity: Model answer */
@@ -1221,16 +1294,16 @@ a.hotspot, a.hotspot.selected {
   overflow-x: hidden;
 }
 
-/* Labels for slider/scale questions */
+/* Interactivity: Opinion for slider label */
 .sliderHolder .labelHolder a p {
-  color: #000000; /* --theme-text */
+  color: var(--theme-opinion-slider-label-text);
 }
 
 /* Games: Word search */
 .x_wordsearch_page #puzzle {
   border-radius: 0;
   border: 0;
-  background: #ffffff; /* --theme-background */
+  background: var(--theme-game-word-search-background);
 }
 
 /* Games: Memory */
@@ -1246,15 +1319,15 @@ a.hotspot, a.hotspot.selected {
 /* Games: Memory */
 .x_memory_page #pageContents .card {
   border-radius: 0;
-  border: 2px solid #bdbdbd;
-  -webkit-box-shadow: 0 10px 6px -6px #bdbdbd;
-  -moz-box-shadow: 0 10px 6px -6px #bdbdbd;
-  box-shadow: 0 10px 6px -6px #bdbdbd;
+  border: 2px solid var(--theme-game-memory-border);
+  -webkit-box-shadow: 0 10px 6px -6px var(--theme-game-memory-border);
+  -moz-box-shadow: 0 10px 6px -6px var(--theme-game-memory-border);
+  box-shadow: 0 10px 6px -6px var(--theme-game-memory-border);
 }
 
 /* Games: Memory */
 .x_memory_page #cardTopHolder .card {
-  border: 2px solid #bdbdbd;
+  border: 2px solid var(--theme-game-memory-border);
 }
 
 /* Games: Crossword */
@@ -1273,9 +1346,9 @@ a.hotspot, a.hotspot.selected {
   border-bottom-width: 2px;
 }
 
-/* Display of a short URL */
+/* Links / Feeds: QR Code */
 div#shorturltodisplay a {
-  color: #222222; /* --theme-text */
+  color: var(--theme-link-feed-qr-code-link-text); 
 }
 
 /* RSS Feed / RSS download results */
@@ -1287,26 +1360,26 @@ div#shorturltodisplay a {
 /* RSS Feed / RSS download results */
 .x_rss_page #resultsHolder .s,
 .x_rssdownload_page #resultsHolder > div {
-  background-color: #ebebeb; /* --theme-panel-background */
+  background-color: var(--theme-link-feed-rss-feed-results-holder-background); 
   padding-left: 0.5em;
 }
 
 /* RSS Feed / RSS download results */
 .x_rss_page #resultsHolder div p {
-  color: #000000; /* --theme-text */
+  color: var(--theme-link-feed-rss-feed-results-holder-text); 
 }
 
 /* RSS Feed / RSS download results */
 .x_rss_page #resultsHolder .shadedDiv,
 .x_rssdownload_page #resultsHolder .shadedDiv {
-  background-color: #ebebeb !important;
+  background-color: var(--theme-link-feed-rss-feed-results-holder-background) !important; /* CHEKCHEN - Waarom hier !important staat. */
   margin-bottom: 0.5em;
   margin-top: 0.5em;
 }
 
 /* Delete button for Audio recorder */
 .x_audioRecord_page .deleteClipBtn {
-  color: #000000; /* --theme-text */
+  color: var(--theme-interactivity-audio-recorder-delete-button-color); 
 }
 
 @media (min-width: 768px) {
@@ -1319,9 +1392,9 @@ div#shorturltodisplay a {
 /* Footer / navigation bar at the bottom of the learning object */
 #x_footerBlock {
   font-size: 1em;
-  color: #000000; /* --theme-footer-text */
+  color: var(--theme-footer-text);
   background-image: none;
-  background: #ffffff; /* --theme-footer-background */
+  background: var(--theme-footer-background); 
   box-shadow: none;
 }
 
@@ -1344,7 +1417,7 @@ body:not(.sb_right):not(.sb_left) #x_footerBlock {
 
 /* Filled portion of the progress bar */
 .pbBar {
-  background-color: #2196F3; /* --theme-progress-bar */
+  background-color: var(--theme-progress-complete); 
 }
 
 /* these buttons will use font awesome icons instead of pngs */
@@ -1470,22 +1543,22 @@ body:not(.sb_right):not(.sb_left) #x_footerBlock {
 
 /* Footer / navigation bar at the bottom of the learning object */
 #x_footerBlock button {
-  color: #000000; /* --theme-footer-text */
+  color: var(--theme-ui-button-background);
 }
 
 /* Footer / navigation bar at the bottom of the learning object on hover/focus */
 #x_footerBlock button.ui-state-hover {
-  color: #f86718; /* --theme-footer-hover */
+  color: var(--theme-ui-button-hover-background); 
 }
 
 /* Footer / navigation bar at the bottom of the learning object on hover/focus */
 #x_footerBlock button.ui-state-focus {
-  color: #f86718; /* --theme-footer-hover */
+  color: var(--theme-ui-button-hover-background); 
 }
 
 /* Footer / navigation bar at the bottom of the learning object in the active state */
 #x_footerBlock button.ui-state-active {
-  color: #222222; /* --theme-primary */
+  color: var(--theme-ui-button-active-state-color); 
 }
 
 /* Footer / navigation bar at the bottom of the learning object */
@@ -1511,42 +1584,42 @@ body:not(.sb_right):not(.sb_left) #x_footerBlock {
 /*****footer tools chevron*****/
 /* Chevron for additional footer tools */
 #x_footerChevron {
-  color: #000000; /* --theme-footer-text */
+  color: #000000; /* CHECKEN - Deze regelt werkt alleen met !important  */
 }
 
 /* Chevron for additional footer tools on hover/focus */
 #x_footerChevron:hover, #x_footerChevron:focus {
-  color: #f86718; /* --theme-footer-hover */
+  color: #f86718; /* CHECKEN - Deze regelt werkt alleen met !important */
 }
 
 /*****TOC****/
 /* General dialog / table of contents window */
 .ui-dialog.ui-widget {
   padding: 0;
-  border: 1px solid #222222; /* --theme-dialog-border */
+  border: 1px solid var(--theme-dialog-border); 
   border-radius: 0;
 }
 
-/* Title bar of general dialogs */
+/* Header of general dialogs */
 .ui-dialog .ui-widget-header {
-  border: 1px solid #222222; /* --theme-dialog-border */
-  background: #222222; /* --theme-dialog-header-background */
-  color: #ffffff; /* --theme-dialog-header-text */
+  border: 1px solid var(--theme-dialog-border); 
+  background: var(--theme-dialog-header-background); 
+  color: var(--theme-dialog-header-text); 
   font-weight: bold;
   border-radius: 0;
 }
 
 /* Close button of general dialogs */
 .ui-dialog .ui-dialog-titlebar button.ui-widget {
-  background: #222222; /* --theme-dialog-close-background */
-  border: 0; /* --theme-dialog-close-border */
-  color: #ffffff; /* --theme-dialog-close-text */
+  background: var(--theme-dialog-close-background);
+  border: 0; 
+  color: var(--theme-dialog-close-text); 
 }
 
 /* Close button of general dialogs on hover/focus in the active state */
 .ui-dialog .ui-dialog-titlebar button.ui-widget:hover, .ui-dialog .ui-dialog-titlebar button.ui-widget:focus, .ui-dialog .ui-dialog-titlebar button.ui-widget:active {
-  color: #f86718; /* --theme-dialog-close-hover-text */
-  border: 0; /* --theme-dialog-close-hover-border */
+  color: var(  --theme-dialog-close-hover-text); 
+  border: 0; 
   padding: 0;
 }
 
@@ -1557,27 +1630,27 @@ body:not(.sb_right):not(.sb_left) #x_footerBlock {
 
 /* Page items in the table of contents */
 #menuItems .menuItem {
-  background: #ebebeb; /* --theme-menuitem-background */
-  border: 2px solid #ebebeb; /* --theme-menuitem-background */
+  background: var( --theme-dialog-menu-item-background);
+  border: 2px solid var( --theme-dialog-menu-item-border);
 }
 
 /* Page items in the table of contents */
 #menuItems .menuItem, #menuItems .chapterItem {
-  color: #000000; /* --theme-menuitem-text */
+  color: var( --theme-dialog-menu-item-text); 
   border-radius: 0;
 }
 
 /* Page items in the table of contents on hover/focus in the active state */
 #menuItems .menuItem:hover, #menuItems .menuItem:focus, #menuItems .menuItem:active,
 #menuItems .chapterItem:hover, #menuItems .chapterItem:focus, #menuItems .chapterItem:active {
-  background: #cfcfcf; /* --theme-menuitem-hover-background */
-  color: #000000; /* --theme-menuitem-hover-text */
-  border-color: #cfcfcf; /* --theme-menuitem-hover-background */
+  background: var( --theme-dialog-menu-item-hover-background); /* --theme-menuitem-hover-background */
+  color: var( --theme-dialog-menu-item-hover-text); /* --theme-menuitem-hover-text */
+  border-color: var( --theme-dialog-menu-item-hover-border); /* --theme-menuitem-hover-background */
 }
 
 /* Current page in the table of contents */
 #menuItems .menuItem.current {
-  border: 2px solid #000000; /* --theme-menuitem-active-border */
+  border: 2px solid var( --theme-dialog-menu-item-current-border); 
 }
 
 /* Page content within a chapter in the table of contents */
@@ -1586,17 +1659,17 @@ body:not(.sb_right):not(.sb_left) #x_footerBlock {
   padding: 0;
 }
 
-/* Chapter item in the table of contents */
+/* Chapter item in the table of contents CHEKCEN - Geen chapter item zichtbaar in de table of contents */
 #menuItems .chapterHolder .chapterItem a {
-  background: #cfcfcf; /* --theme-menuitem-background */
-  border-color: #cfcfcf; /* --theme-menuitem-background */
-  color: #000000; /* --theme-menuitem-text */
+  background: #cfcfcf; 
+  border-color: #cfcfcf; 
+  color: #000000;
 }
 
-/* Chapter item in the table of contents in the active state */
+/* Chapter item in the table of contents in the active state CHEKCEN - Geen chapter item zichtbaar in de table of contents */
 #menuItems .chapterHolder .chapterItem.ui-state-active {
-  background: #cfcfcf; /* --theme-menuitem-active-background */
-  border-color: #cfcfcf; /* --theme-menuitem-hover-background */
+  background: #cfcfcf; 
+  border-color: #cfcfcf;
 }
 
 /* Page content within a chapter in the table of contents */
@@ -1606,71 +1679,71 @@ body:not(.sb_right):not(.sb_left) #x_footerBlock {
 
 /* Glossary table */
 table.glossary tr td:first-child {
-  border-right-color: #ebebeb; /* --theme-table-border */
+  border-right-color: var(--theme-glossary-tr-border);
 }
 
 /* Glossary table */
 table.glossary tr.shaded {
-  background: #ebebeb; /* --theme-glossary-background */
+  background: var(--theme-glossary-td-shaded-background); 
 }
 
 /* Sidebar / side navigation bar */
 #x_sideBar {
-  background-color: #ffffff; /* --theme-sidebar-background */
-  color: #000000; /* --theme-sidebar-text */
+  background-color: var(--theme-sidebar-background); 
+  color: #000000; /* CHECKEN - Kleur veranderd niet wanneer ik het*/
 }
 
 /* Button to open/close the sidebar */
 #x_sideBarToggleBtn {
-  background-color: #cfcfcf; /* --theme-sidebar-background */
-  color: #000000; /* --theme-sidebar-text */
+  background-color: var(  --theme-sidebar-toggle-button-background); 
+  color: var( --theme-sidebar-toggle-button-text);
 }
 
 /* Button to open/close the sidebar on hover/focus in the active state */
 #x_sideBarToggleBtn:hover, #x_sideBarToggleBtn:focus, #x_sideBarToggleBtn:active {
-  background-color: #bdbdbd; /* --theme-sidebar-hover-background */
-  color: #000000; /* --theme-sidebar-text */
+  background-color: var(--theme-sidebar-toggle-button-hover-background); 
+  color: var(--theme-sidebar-toggle-button-hover-text); 
 }
 
 /* Function/navigation buttons in the sidebar */
 #x_sideBarBtnHolder button {
-  color: #000000; /* --theme-sidebaritem-text */
+  color: var(--theme-sidebar-holder-button-text); /* CHEKCEN - Werkt alleen met !important */
 }
 
 /* Function/navigation buttons in the sidebar on hover/focus in the active state */
 #x_sideBar.sideBarSmall #x_sideBarBtnHolder button:hover, #x_sideBar.sideBarSmall #x_sideBarBtnHolder button:focus, #x_sideBar.sideBarSmall #x_sideBarBtnHolder button:active {
-  color: #000000; /* --theme-sidebaritem-hover-text */
-  background: #bdbdbd; /* --theme-sidebaritem-hover-background */
+  color: var(--theme-sidebar-holder-button-hover-text); 
+  background: var(--theme-sidebar-holder-button-hover-background); 
 }
 
 /* Function/navigation buttons in the sidebar */
 #x_sideBar.sideBarLarge #x_sideBarBtnHolder button span.ui-icon {
   background: none;
-  border: 2px solid #cfcfcf; /* --theme-sidebaritem-active-border */
+  border: 2px solid #cfcfcf; /* CHECKEN -  Kleur veranderd niet wanneer ik het verander */
 }
 
 /* Function/navigation buttons in the sidebar on hover/focus in the active state */
 #x_sideBar.sideBarLarge #x_sideBarBtnHolder button:hover span.ui-icon, #x_sideBar.sideBarLarge #x_sideBarBtnHolder button:focus span.ui-icon, #x_sideBar.sideBarLarge #x_sideBarBtnHolder button:active span.ui-icon {
-  background: #bdbdbd; /* --theme-sidebaritem-hover-background */
-  color: #000000; /* --theme-sidebaritem-hover-text */
-  border: 2px solid #bdbdbd; /* --theme-sidebaritem-active-border */
+  background: #bdbdbd; /* CHECKEN - Kleur veranderd niet wanneer ik het verander */
+  color: #000000; /* CHECKEN - Kleur veranderd niet wanneer ik het verander */
+  border: 2px solid #bdbdbd; /* CHECKEN - Kleur veranderd niet wanneer ik het verander */
 }
 
 /* Page timer */
 #x_pageTimer {
-  background: #cfcfcf; /* --theme-timer-background */
+  background: var(--theme-timer-background); 
   padding: 0.5em;
 }
 
-/* progress bar */
-/* Progress bar container/background */
+
+/* Header progress bar container/background */
 .pbContainer {
-  background-color: #ebebeb; /* --theme-progress-background */
+  background-color: var(--theme-progress-background); 
 }
 
 /* Filled portion of the progress bar */
 .pbBar {
-  background-color: #2196F3; /* --theme-progress-bar */
+  background-color: var( --theme-progress-complete); 
 }
 
 @media only screen and (max-width: 600px) {
@@ -2538,17 +2611,17 @@ h3 {
 
 /* General links */
 a {
-  color: blue; /* --theme-link */
+  color: var(--theme-link); 
 }
 
 /* Visited general links */
 a:visited {
-  color: green; /* --theme-link-visited */
+  color: var(--theme-link-visited); 
 }
 
 /* General links on hover */
 a:hover {
-  color: red; /* --theme-link-hover */
+  color: var(--theme-link-hover); 
 }
 
 /* Main container of the Xerte learning object */
@@ -2589,9 +2662,9 @@ body:not(.sb_right):not(.sb_left) #x_mainHolder {
 /* General panel style */
 .panel {
   border-radius: 0;
-  background: #ebebeb; /* --theme-panel-background */
+  background: var(--theme-panel-background); /* --theme-panel-background */
   box-shadow: none;
-  border-color: #ebebeb; /* --theme-panel-border */
+  border-color: var(--theme-panel-border); /* --theme-panel-border */
 }
 
 /* General tabs */
