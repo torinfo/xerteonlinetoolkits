@@ -680,15 +680,15 @@ body:not(.sb_right):not(.sb_left) #x_headerBlock {
   box-shadow: var(--theme-label-disabled-box-shadow); /* CHECKEN - of dit altijd disabled blijft ook in andere thema's*/
 }
 
-/* Highlighted drop target for Drag-and-drop exercise */
+/* Highlighted drop target for Drag-and-drop labelling */
 .x_dragDropLabel_page #targetHolder .target.highlight {
-  background: rgba(255, 255, 255, 0.2); /* CHECKEN - Waar deze regel wordt gebruikt */
+  background: var(--theme-interactivity-drag-and-drop-labelling-background); 
 }
 
-/* CHECKPOINT 30-10-2026 - Interactivity: Categories */
+/* Interactivity: Categories */
 #categoryHolder .highlight {
   border-radius: 0;
-  background: #ebebeb; /* --theme-panel-background */
+  background: var(--interactivity-categories-holder-background);
 }
 
 /* Interactivity: Categories */
@@ -869,7 +869,7 @@ div#shorturltodisplay a {
 /* RSS Feed / RSS download results */
 .x_rss_page #resultsHolder .shadedDiv,
 .x_rssdownload_page #resultsHolder .shadedDiv {
-  background-color: var(--theme-link-feed-rss-feed-results-holder-background) !important; /* CHEKCHEN - Waarom hier !important staat. */
+  background-color: var(--theme-link-feed-rss-feed-results-holder-background) !important; 
   margin-bottom: 0.5em;
   margin-top: 0.5em;
 }
@@ -1140,9 +1140,9 @@ body:not(.sb_right):not(.sb_left) #x_footerBlock {
 /* Page items in the table of contents on hover/focus in the active state */
 #menuItems .menuItem:hover, #menuItems .menuItem:focus, #menuItems .menuItem:active,
 #menuItems .chapterItem:hover, #menuItems .chapterItem:focus, #menuItems .chapterItem:active {
-  background: var( --theme-dialog-menu-item-hover-background); /* --theme-menuitem-hover-background */
-  color: var( --theme-dialog-menu-item-hover-text); /* --theme-menuitem-hover-text */
-  border-color: var( --theme-dialog-menu-item-hover-border); /* --theme-menuitem-hover-background */
+  background: var( --theme-dialog-menu-item-hover-background); 
+  color: var( --theme-dialog-menu-item-hover-text); 
+  border-color: var( --theme-dialog-menu-item-hover-border); 
 }
 
 /* Current page in the table of contents */
@@ -1158,7 +1158,7 @@ body:not(.sb_right):not(.sb_left) #x_footerBlock {
 
 /* Chapter item in the table of contents CHEKCEN - Geen chapter item zichtbaar in de table of contents */
 #menuItems .chapterHolder .chapterItem a {
-  background: #f84d4d; 
+  background: #cfcfcf;
   border-color: #cfcfcf; 
   color: #000000;
 }
@@ -1187,12 +1187,12 @@ table.glossary tr.shaded {
 /* Sidebar / side navigation bar */
 #x_sideBar {
   background-color: var(--theme-sidebar-background); 
-  color: #000000; /* CHECKEN - Kleur veranderd niet wanneer ik het*/
+  color: #000000; /* CHECKEN - Kleur veranderd niet wanneer je het aanpast*/
 }
 
 /* Button to open/close the sidebar */
 #x_sideBarToggleBtn {
-  background-color: var(  --theme-sidebar-toggle-button-background); 
+  background-color: var(--theme-sidebar-toggle-button-background); 
   color: var( --theme-sidebar-toggle-button-text);
 }
 
@@ -1790,19 +1790,19 @@ blockquote:after {
 
 /* Speech bubble variant 5 */
 .speech-bubble5 {
-  background: #222222; /* --theme-primary / --theme-text (depending on the component) */
-  color: white; /* --theme-header-text / component-text */
+  background: #222222; 
+  color: white; 
 }
 
 /* Speech bubble variant 5 arrow */
 .speech-bubble5:after {
-  border-top-color: #222222; /* --theme-table-border / component-border */
+  border-top-color: #222222; 
 }
 
 /* Speech bubble variant 6 */
 .speech-bubble6 {
   background: #D13759;
-  color: white; /* --theme-header-text / component-text */
+  color: white; 
 }
 
 /* Speech bubble variant 6 arrow */
@@ -1913,6 +1913,7 @@ tt a, kbd a, samp a, code a, .marker a, var a {
   border-radius: 10px;
 }
 
+/*scrollbar thumb*/
 ::-webkit-scrollbar-thumb {
   -webkit-border-radius: 10px;
   border-radius: 10px;
@@ -2039,7 +2040,7 @@ tt a, kbd a, samp a, code a, .marker a, var a {
 
 /* jQuery UI slider handle */
 .ui-slider .ui-slider-handle:hover, .ui-slider .ui-slider-handle:focus, .ui-slider .ui-slider-handle:active {
-  border-color: var(--theme-media-image-sequence-ui-slider-handle-hover-border); /* --theme-table-border / component-border */
+  border-color: var(--theme-media-image-sequence-ui-slider-handle-hover-border); 
 }
 
 /* Vertical jQuery UI-slider */

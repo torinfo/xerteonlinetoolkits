@@ -1,0 +1,33 @@
+:root{
+
+    --color-primary:  #007899; /* Primary color for the navbar */
+
+    /* NAVBAR */
+    --navbar-inverse-inner-background-color: var(--color-primary); /* Background color of the navbar */
+    --navbar-inverse-inner-background-image: none; /* Background image of the navbar */
+    --navbar-inverse-inner-border-color: var(--color-primary); /* Border color of the navbar */
+
+    --navbar-inverse-inner-nav-li-a-text-color: #ffffff; /* Text color of the navbar links */
+
+    --navbar-inverse-inner-nav-li-a-hover-text-color: #ffffff; /* Text color of the navbar links on hover */
+    --navbar-inverse-inner-nav-li-a-hover-background-color: #005172; /* Background color of the navbar links on hover */
+
+    --navbar-inverse-inner-nav-li-a-dropdown-hover-text-color: #ffffff; /* Text color of the navbar dropdown links on hover */
+    --navbar-inverse-inner-nav-li-a-dropdown-hover-background-color: #005172; /* Background color of the navbar dropdown links on hover */
+
+    --navbar-inverse-inner-nav-li-active-page-background-color: #005172; /* Background color of the active page link in the navbar */
+
+
+    /* JUMBOTRON */
+    --jumbotron-background-color: #095675; /* Background color of the jumbotron */
+    --jumbotron-text-color: #ffffff; /* Text color of the jumbotron */
+    --jumbotron-h1-color: #ffffff; /* Color of the h1 in the jumbotron */
+
+    
+    /*TABLE OF CONTENTS*/
+    --toc-navigator-sidebar-background-color: #f4f4f4; /* Background color of the sidebar in the navigator */
+    --toc-navigator-sidebar-border-color: #007899; /* Border color of the sidebar in the navigator */
+    --toc-navigator-nav-list-active-background-color: #007899; /* Background color of the active link in the navigator */
+
+    
+}

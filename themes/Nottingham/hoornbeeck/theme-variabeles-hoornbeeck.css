@@ -2,7 +2,24 @@
   /*
   BRAND -General brand colors. Other component variables can reference these
   */
+  --color-primary: #00A9A3;         /* Main brand color */
+  --color-secondary: #F5BA36;       /* Supporting brand color */
+
+  --color-background: #FFFFFF;     /* Main page background */
+  --color-surface: #E1F4FD;         /* Background for cards and sections */
+
+  --color-text: #202020;           /* Default body text */
+  --color-text-heading: #00A9A3;    /* Heading text */
+  --color-text-on-primary: #FFFFFF; /* Text on primary-colored backgrounds */
   
+
+  --color-accent-1: #0092FF;        /* Additional accent color 1 */
+  --color-accent-2: #6F41AB;        /* Additional accent color 2 */
+  --color-accent-3: #EF8B07;        /* Additional accent color 3 */
+  --color-accent-4: #98C455;        /* Additional accent color 4 */
+  --color-accent-5: #DF5A53;        /* Additional accent color 5 */
+  --color-accent-6: #A73D8E;        /* Additional accent color 6 */
+  --color-accent-7: #084887;        /* Additional accent color 7 */
 
 
   /*
@@ -30,7 +47,7 @@
   /*
     BUTTONS -General Xerte .
   */
-  --theme-button-background: #00A9A3;  /*Background color of general buttons.*/
+  --theme-button-background:  var(--color-primary);  /*Background color of general buttons.*/
   --theme-button-text: var(--theme-primary-text);  /*Text color of general buttons.*/
   --theme-button-border: none;  /*Border color of general buttons.*/
 
@@ -46,34 +63,34 @@
   /* 
      HEADER - Top bar of the Nottingham theme
   */
-  --theme-header-background: #009A9A;  /*Background color of the header.*/
-  --theme-header-text: #ffffff;  /*Text and icon color in the header*/
+  --theme-header-background: var(--color-primary);  /*Background color of the header.*/
+  --theme-header-text: var(--color-text);  /*Text and icon color in the header*/
 
 
    /*
     HEADER INTRO BUTTON - The button in the header that opens the project introduction
   */
-  --theme-header-page-intro-button-text: #ffffff; /* Text color without a background */
-  --theme-header-page-intro-button-hover-text: #f86718; /* Text color without a background on hover, focus or active */
+  --theme-header-page-intro-button-text: var(--color-text); /* Text color without a background */
+  --theme-header-page-intro-button-hover-text: var(--color-secondary);  /* Text color without a background on hover, focus or active */
 
-  --theme-header-page-intro-button-background: #ffffff; /* Background color of the button with a background */
-  --theme-header-page-intro-button-with-background-text: #000000; /* Text color of the button with a background */
-  --theme-header-page-intro-button-hover-background: #f86718; /* Background color on hover, focus or active */
-  --theme-header-page-intro-button-with-background-hover-text: #000000; /* Text color of the button with a background on hover, focus or active */
+  --theme-header-page-intro-button-background: var(--color-primary); /* Background color of the button with a background */
+  --theme-header-page-intro-button-with-background-text: var(--color-text); /* Text color of the button with a background */
+  --theme-header-page-intro-button-hover-background: var(--color-secondary);  /* Background color on hover, focus or active */
+  --theme-header-page-intro-button-with-background-hover-text: var(--color-text); /* Text color of the button with a background on hover, focus or active */
 
   
   /*
      FOOTER -Navigation bar at the bottom of the project
   */
-  --theme-footer-background: #009A9A; /* Background color of the footer*/
-  --theme-footer-text: #FFFFFF; /*Text and icon color of the footer*/
+  --theme-footer-background: var(--color-primary); /* Background color of the footer*/
+  --theme-footer-text: var(--color-text); /*Text and icon color of the footer*/
 
   /*
      PANELS - General panels in the theme.
   */
-  --theme-panel-background: #99DDDA; /*Background color of the general panels*/
-  --theme-panel-text: var(--theme-primary-text); /*Text color of the general panels*/
-  --theme-panel-border: #ebebeb; /*Border color of the general panels*/
+  --theme-panel-background: var(--color-surface); /*Background color of the general panels*/
+  --theme-panel-text: var(--color-text); /*Text color of the general panels*/
+  --theme-panel-border: var(--color-surface); /*Border color of the general panels*/
 
   --theme-panel-divider-background: #ebebeb; /*Background color of the divider in the general panels*/
 
@@ -82,12 +99,12 @@
   /*
      Navigators, tabs, accordions and interactive lists - General styling of the navigators, tabs, accordions and interactive lists in the theme
   */
-  --theme-navigator-accordion-background: #00A9A3; /*Background color of the navigator accordion*/
-  --theme-navigation-accordion-text: #FFFFFF; /*Text color of the navigator accordion*/
+  --theme-navigator-accordion-background: var(--color-primary); /*Background color of the navigator accordion*/
+  --theme-navigation-accordion-text: var(--color-text); /*Text color of the navigator accordion*/
   --theme-navigation-accordion-hover-background: #00908A; /*Background color of the navigator accordion on hover/focus/active*/
-  --theme-navigation-accordion-active-background: #bdbdbd; /*Background color of the active navigation item*/
-  --theme-navigation-accordion-active-text: var(--theme-primary-text); /*Text color of the active navigation item*/
-  --theme-navigation-accordion-icon-color: var(--theme-primary-text); /*Color of the icon in the navigator accordion*/
+  --theme-navigation-accordion-active-background: #00908A; /*Background color of the active navigation item*/
+  --theme-navigation-accordion-active-text: var(--color-text); /*Text color of the active navigation item*/
+  --theme-navigation-accordion-icon-color: var(--color-text); /*Color of the icon in the navigator accordion*/
 
 
   --theme-navigation-content-background: var(--theme-panel-background); /*Background color of content below tabs/accordion*/
@@ -96,19 +113,22 @@
   --theme-tab-navigator-tab-holder-background: none; /*Background color of the tab holder in the tab navigator*/
   --theme-tab-navigator-tab-holder-border-bottom: #bdbdbd; /*Border color of the tab holder in the tab navigator*/
   
-  --theme-tab-navigator-background: #00a9a3; /*Background color of the tab navigator*/
-  --theme-tab-navigator-text: #ffffff; /*Text color of the tab navigator*/
+  --theme-tab-navigator-background: var(--color-primary); /*Background color of the tab navigator*/
+  --theme-tab-navigator-text: var(--color-text); /*Text color of the tab navigator*/
   --theme-tab-navigator-content-background: var(--theme-panel-background); /*Background color of content below the tab navigator*/
   --theme-tab-navigator-border: none; /*Border color of the tab navigator*/
-  --theme-tab-navigator-active-background: #bdbdbd; /*Background color of the active tab in the tab navigator*/
-  --theme-tab-navigator-hover-background: #cfcfcf; /*Background color of the tab in the tab navigator on hover/focus/active*/
+  --theme-tab-navigator-active-background: #00908A; /*Background color of the active tab in the tab navigator*/
+  --theme-tab-navigator-hover-background: #00908A; /*Background color of the tab in the tab navigator on hover/focus/active*/
+
+  --theme-interactivity-interactive-text-list-item-background: var(--color-primary);/*Background color of the list item in the interactive text*/
+  --theme-interactivity-interactive-text-list-item-hover-background: #00908A;  /*Background color of the list item in the interactive text on hover/focus/active*/
 
   --theme-button-navigator-background-selected: #ffffff; /*Background color of the selected button in the button navigator*/
 
-  --theme-navigator-interactive-list-item-background: #009A9A; /*Background color of the navigator and interactive list*/
-  --theme-navigator-interactive-list-item-text: #FFFFFF; /*Text color of the navigator and interactive list*/
+  --theme-navigator-interactive-list-item-background: var(--color-primary); /*Background color of the navigator and interactive list*/
+  --theme-navigator-interactive-list-item-text: var(--color-text); /*Text color of the navigator and interactive list*/
   --theme-navigator-interactive-list-item-hover-background: #00908A; /*Background color of the navigator and interactive list on hover/focus/active*/
-  --theme-navigator-interactive-list-item-hover-text: #FFFFFF; /*Text color of the navigator and interactive list on hover/focus/active*/
+  --theme-navigator-interactive-list-item-hover-text: var(--color-text); /*Text color of the navigator and interactive list on hover/focus/active*/
 
   --theme-multi-navigator-text-holder-border: #ebebeb; /*Border color of the text holder in the multi navigator*/
 
@@ -122,20 +142,22 @@
   --theme-interactivity-interactive-video-link-text: var(--theme-primary-text); /*Text color of the link to video in the interactive video page*/
   --theme-interactivity-interactive-video-link-border: #ebebeb; /*Border color of the link to video in the interactive video page*/
 
-  --theme-interactivity-interactive-text-list-item-background: #cfcfcf; /*Background color of the list item in the interactive text*/
-  --theme-interactivity-interactive-text-list-item-hover-background: #bdbdbd; /*Background color of the list item in the interactive text on hover/focus/active*/
 
   --theme-interactivity-interactive-selected-background: #cfcfcf; /*Background color of the selected item in the interactive pages*/
 
   --theme-interactivity-interactive-target-background: #ffffff; /*Background color of the target in the interactive pages*/
 
-  --theme-interactivity-matching-text-holder-background: #ebebeb; /*Background color of the text holder in the matching text page*/
-  --theme-interactivity-matching-text-label-background: #cfcfcf; /*Background color of the label in the matching text page*/
-  --theme-interactivity-matching-text-label-border: #cfcfcf; /*Border color of the label in the matching text page*/
+  --theme-interactivity-matching-text-holder-background: #E1F4FD; /*Background color of the text holder in the matching text page*/
+  --theme-interactivity-matching-text-label-background: var(--color-secondary); /*Background color of the label in the matching text page*/
+  --theme-interactivity-matching-text-label-border: #202020#; /*Border color of the label in the matching text page*/
 
   --theme-interactivity-audio-recorder-delete-button-color: var(--theme-primary-text); /*Color of the delete button in the audio recorder page*/
   
   --theme-interactivity-interactive-text-divider-background: #ffffff; /*Background color of the divider in the interactive text page*/
+
+   --theme-interactivity-drag-and-drop-labelling-background: #ebebeb; /*Background color of the labeling in the drag and drop page*/
+
+    --interactivity-categories-holder-background: var(--color-surface); /*Background color of the categories holder in the interactivity page*/
  
    /*
     PROGRESS BAR - General styling of the progress bar in the theme
@@ -150,11 +172,11 @@
   /*
     UI ICONS BUTTONS -General Xerte / jQuery UI icon buttons.
   */
-  --theme-ui-button-background: #FFFFFF;  /*Background color of general icon buttons.*/
-  --theme-ui-button-text: #ffffff;  /*Text color of general icon buttons.*/
+  --theme-ui-button-background:  var(--color-text);  /*Background color of general icon buttons.*/
+  --theme-ui-button-text: var(--color-text);  /*Text color of general icon buttons.*/
   --theme-ui-button-border: none;  /*Border color of general icon buttons.*/
 
-  --theme-ui-button-hover-background: #F4B21E;  /*Background color of general icon buttons on hover/focus.*/
+  --theme-ui-button-hover-background: var(--color-secondary);   /*Background color of general icon buttons on hover/focus.*/
   --theme-ui-button-hover-text: #ffffff;  /*Text color of general icon buttons on hover/focus.*/
   --theme-ui-button-hover-border: none;  /*Border color of general icon buttons on hover/focus.*/
 
@@ -167,21 +189,21 @@
   /*
     Labels -General labels in the theme.
   */
-  --theme-label-background: #ffffff;  /*Background color of labels.*/
-  --theme-label-text: var(--theme-primary-text);  /*Text color of labels.*/
-  --theme-label-border: #bdbdbd;  /*Border color of labels.*/
-  --theme-label-box-shadow: #bdbdbd;  /*Box shadow of labels.*/
+  --theme-label-background: var(--color-secondary);  /*Background color of labels.*/
+  --theme-label-text: var(--color-text);  /*Text color of labels.*/
+  --theme-label-border: #222222;  /*Border color of labels.*/
+  --theme-label-box-shadow: #222222;  /*Box shadow of labels.*/
 
-  --theme-label-selected-background: #ffffff;  /*Background color of selected labels.*/
-  --theme-label-selected-text: var(--theme-primary-text);  /*Text color of selected labels.*/
-  --theme-label-selected-border: #F4B21E;  /*Border color of selected labels.*/
+  --theme-label-selected-background: var(--color-secondary); /*Background color of selected labels.*/
+  --theme-label-selected-text:  var(--color-text);  /*Text color of selected labels.*/
+  --theme-label-selected-border: var(--color-secondary);  /*Border color of selected labels.*/
 
   --theme-label-dragging-background: var(--theme-accent);  /*Background color of labels during drag and drop.*/
-  --theme-label-dragging-text: var(--theme-primary-text);  /*Text color of labels during drag and drop.*/
+  --theme-label-dragging-text: var(--color-text);  /*Text color of labels during drag and drop.*/
   --theme-label-dragging-border: var(--theme-accent);  /*Border color of labels during drag and drop.*/
 
-  --theme-label-disabled-background: var(--theme-accent);  /*Background color of disabled labels.*/
-  --theme-label-disabled-text: var(--theme-primary-text);  /*Text color of disabled labels.*/
+  --theme-label-disabled-background: ;  /*Background color of disabled labels.*/
+  --theme-label-disabled-text:  var(--color-text);  /*Text color of disabled labels.*/
   --theme-label-disabled-border: ;  /*Border color of disabled labels.*/
   --theme-label-disabled-box-shadow: none;  /*Box shadow of disabled labels.*/
 
@@ -193,61 +215,61 @@
   --theme-thumbnail-item-text: none;  /*Text color of thumbnails.*/
   --theme-thumbnail-item-border: none;  /*Border color of thumbnails.*/
 
-  --theme-thumbnail-current-background: #418545;  /*Background color of the current thumbnail.*/
+  --theme-thumbnail-current-background: var(--color-secondary);   /*Background color of the current thumbnail.*/
   --theme-thumbnail-current-text: none;  /*Text color of the current thumbnail.*/
-  --theme-thumbnail-current-border: #F4B21E;  /*Border color of the current thumbnail.*/
+  --theme-thumbnail-current-border: var(--color-secondary);  /*Border color of the current thumbnail.*/
   
-  --theme-thumbnail-highlight-background: #f86718 ;  /*Background color of the highlighted thumbnail.*/
+  --theme-thumbnail-highlight-background: var(--color-secondary);   /*Background color of the highlighted thumbnail.*/
   --theme-thumbnail-highlight-text: none;  /*Text color of the highlighted thumbnail.*/
-  --theme-thumbnail-highlight-border: #f86718 ;  /*Border color of the highlighted thumbnail.*/
+  --theme-thumbnail-highlight-border: var(--color-secondary);  /*Border color of the highlighted thumbnail.*/
 
-  --theme-thumbnail-viewer-panel-background: #99DDDA;  /*Background color of the thumbnail viewer panel.*/
-  --theme-thumbnail-viewer-panel-text: var(--theme-primary-text);  /*Text color of the thumbnail viewer panel.*/
+  --theme-thumbnail-viewer-panel-background: var(--theme-panel-background);  /*Background color of the thumbnail viewer panel.*/
+  --theme-thumbnail-viewer-panel-text: var(--color-text); /*Text color of the thumbnail viewer panel.*/
 
   
   /*CHECKEN - Deze regels hoeven niet ingsteld te worden, want de thumbnail controls zijn al ingesteld in de algemene button styling.*/
   --theme-thumbnail-control-background: var(--theme-ui-button-background);  /*Background color of the thumbnail controls.*/
-  --theme-thumbnail-control-text: var(--theme-primary-text);  /*Text color of the thumbnail controls.*/
+  --theme-thumbnail-control-text: var(--color-text);  /*Text color of the thumbnail controls.*/
   /* --theme-thumbnail-control-border: var();  Border color of the thumbnail controls. */
   --theme-thumbnail-control-hover-background: var(--theme-ui-button-hover-background);  /*Background color of the thumbnail controls on hover/focus/active.*/
-  --theme-thumbnail-control-hover-text: var(--theme-primary-text);  /*Text color of the thumbnail controls on hover/focus/active.*/
+  --theme-thumbnail-control-hover-text: var(--color-text);  /*Text color of the thumbnail controls on hover/focus/active.*/
   /* --theme-thumbnail-control-hover-border: var();  Border color of the thumbnail controls on hover/focus/active. */
 
 
   /*
    TABLES -General tables in the theme. 
   */
-  --theme-table-header-footer-background: #009A9A;  /*Background color of the table header.*/
+  --theme-table-header-footer-background: var(--color-primary);  /*Background color of the table header.*/
   --theme-table-header-footer-text: #ffffff;  /*Text color of the table header.*/
 
 
   --theme-table-tr-background: #ffffff;  /*Background color of the table rows.*/
   --theme-table-tr-text: var(--theme-primary-text);  /*Text color of the table rows.*/
-  --theme-table-tr-shaded-background: #99DDDA;  /*Background color of the shaded rows in the table.*/
+  --theme-table-tr-shaded-background: var(--color-surface);  /*Background color of the shaded rows in the table.*/
 
-  --theme-table-vertical-td-border-right-color: #222222;  /*Border color of the right side of the table cells in the vertical table.*/
+  --theme-table-vertical-td-border-right-color: var(--color-primary);  /*Border color of the right side of the table cells in the vertical table.*/
   --theme-table-vertical-shaded-th-tr-last-child-border-right-color: lightgrey;  /*Border color of the last child of the shaded rows in the vertical table.*/
 
-  --theme-table-outside-border-color: #222222;  /*Border color of the outside of the table.*/
+  --theme-table-outside-border-color: var(--color-primary);  /*Border color of the outside of the table.*/
 
-  --theme-table-full-grid-border-color: #222222;  /*Border color of the full grid table.*/
+  --theme-table-full-grid-border-color: var(--color-primary);  /*Border color of the full grid table.*/
   --theme-table-full-grid--shaded-th-tr-last-child-td-border-color: #ebebeb;  /*Border color of the last child of the shaded rows in the full grid table.*/
 
-  --theme-table-simple-border-top-color: #222222;  /*Border color of the top of the simple table.*/
-  --theme-table-simple-border-bottom-color: #222222;  /*Border color of the bottom of the simple table.*/
+  --theme-table-simple-border-top-color: var(--color-primary);  /*Border color of the top of the simple table.*/
+  --theme-table-simple-border-bottom-color: var(--color-primary);  /*Border color of the bottom of the simple table.*/
 
-  --theme-table-horizontal-tr-border-bottom-color: #222222;  /*Border color of the bottom of the horizontal table rows.*/
+  --theme-table-horizontal-tr-border-bottom-color: var(--color-primary);  /*Border color of the bottom of the horizontal table rows.*/
 
 
   /*
    FEEDBACK -General feedback in the theme.
   */
   --theme-feedback-correct-background: green;  /*Background color of the feedback area*/
-  --theme-feedback-correct-text: var(--theme-primary-text);  /*Text color of the feedback area.*/
+  --theme-feedback-correct-text: var(--color-text);   /*Text color of the feedback area.*/
   --theme-feedback-content-border:  ; /*Border color of the feedback area.*/
 
   --theme-feedback-selected-background: ;  /*Background color of the selected feedback area*/
-  --theme-feedback-selected-text: var(--theme-primary-text);  /*Text color of the selected feedback area.*/
+  --theme-feedback-selected-text: var(--color-text);   /*Text color of the selected feedback area.*/
   --theme-feedback-selected-border: ;  /*Border color of the selected feedback area.*/
 
   --theme-feedback-correct-background:  rgba(255, 255, 255, 0.2);  /*Background color of the correct feedback area*/
@@ -255,11 +277,11 @@
   --theme-feedback-correct-border: ;  /*Border color of the correct feedback area.*/
 
   --theme-feedback-incorrect-background: red;  /*Background color of the incorrect feedback area*/
-  --theme-feedback-incorrect-text: var(--theme-primary-text);  /*Text color of the incorrect feedback area.*/
+  --theme-feedback-incorrect-text: var(--color-text);  /*Text color of the incorrect feedback area.*/
   --theme-feedback-incorrect-border: ;  /*Border color of the incorrect feedback area.*/
 
   --theme-feedback-highlight-background: ;  /*Background color of the highlighted feedback area*/
-  --theme-feedback-highlight-text: var(--theme-primary-text);  /*Text color of the highlighted feedback area.*/
+  --theme-feedback-highlight-text: var(--color-text);  /*Text color of the highlighted feedback area.*/
   --theme-feedback-highlight-border: ;  /*Border color of the highlighted feedback area.*/
 
 
@@ -274,19 +296,19 @@
     SIDEBAR - The sidebar is an additional navigation bar that can be displayed at the side of the project
 */
   --theme-sidebar-background: #ffffff;  /* Background color of the sidebar */
-  --theme-sidebar-text: #000000;  /* Text color of the sidebar */
+  --theme-sidebar-text: var(--color-text);   /* Text color of the sidebar */
   --theme-sidebar-hover-background: var(--theme-button-hover-background);  /* Background color of the sidebar on hover/focus */
 
   --theme-sidebar-toggle-button-background: #cfcfcf;  /* Background color of the sidebar toggle button */
-  --theme-sidebar-toggle-button-text: #000000;  /* Text color of the sidebar toggle button */
+  --theme-sidebar-toggle-button-text: var(--color-text);  /* Text color of the sidebar toggle button */
 
   --theme-sidebar-toggle-button-hover-background: #bdbdbd;  /* Background color of the sidebar toggle button on hover/focus */
-  --theme-sidebar-toggle-button-hover-text: #000000;  /* Text color of the sidebar toggle button on hover/focus */
+  --theme-sidebar-toggle-button-hover-text: var(--color-text);  /* Text color of the sidebar toggle button on hover/focus */
 
-  --theme-sidebar-holder-button-text: #000000;  /* Text color of the sidebar holder button */
+  --theme-sidebar-holder-button-text: var(--color-text);  /* Text color of the sidebar holder button */
   
   --theme-sidebar-holder-button-hover-background: #bdbdbd;  /* Background color of the sidebar holder button on hover/focus */
-  --theme-sidebar-holder-button-hover-text: #000000;  /* Text color of the sidebar holder button on hover/focus */
+  --theme-sidebar-holder-button-hover-text: var(--color-text);   /* Text color of the sidebar holder button on hover/focus */
 
 
   --theme-sidebar-item-background: var(--theme-menuitem-background);  /* Background color of the item in the sidebar */
@@ -305,13 +327,13 @@
   --theme-opinion-text: none;  /*Text color of the opinion page*/
   --theme-opinion-border: none;  /*Border color of the opinion page*/
 
-  --theme-opinion-slider-label-text: #000000;  /*Text color of the slider label in the opinion page*/
+  --theme-opinion-slider-label-text: var(--color-text);  /*Text color of the slider label in the opinion page*/
 
-  --theme-opinion-icon-background: var(--theme-accent);  /*Background color of the opinion icon*/
+  --theme-opinion-icon-background: var(--color-secondary);  /*Background color of the opinion icon*/
   --theme-opinion-icon-border: #ffffff;  /*Border color of the opinion icon*/
   
   --theme-opinion-icon-hover-background: var(--theme-accent);  /*Background color of the opinion icon on hover/focus/active*/
-  --theme-opinion-icon-hover-border:#000000;  /*Border color of the opinion icon on hover/focus/active*/
+  --theme-opinion-icon-hover-border: var(--color-text);   /*Border color of the opinion icon on hover/focus/active*/
 
   --theme-opinion-separator-background: #ffffff;  /*Background color of the opinion separator*/
 
@@ -320,7 +342,7 @@
     MEDIA TRANSCRIPT READER - General styling of the media transcript reader in the theme
   */
    --theme-media-transcript-reader-selected-background: rgba(255, 255, 255, 0.9);  /*Background color of the selected highlighted transcript*/
-   --theme-media-transcript-reader-border: #f86718;  /*Border color of the highlighted transcript*/
+   --theme-media-transcript-reader-border: var(--color-secondary);  /*Border color of the highlighted transcript*/
  
 
 
@@ -333,7 +355,7 @@
 
   --theme-media-image-sequence-ui-slider-background: #222222;  /*Background color of the UI slider in the media image sequence*/
   --theme-media-image-sequence-ui-slider-box-shadow: 1px 1px 1px rgba(0, 0, 0, 0.2), 0 0 1px rgba(13, 13, 13, 0.2);  /*Box shadow of the UI slider in the media image sequence*/
-  --theme-media-image-sequence-ui-slider-handle-background: #F4B21E;  /*Background color of the UI slider handle in the media image sequence*/
+  --theme-media-image-sequence-ui-slider-handle-background: var(--color-secondary);  /*Background color of the UI slider handle in the media image sequence*/
   --theme-media-image-sequence-ui-slider-handle-border:  2px solid #ffffff;  /*Border color of the UI slider handle in the media image sequence*/
   --theme-media-image-sequence-ui-slider-handle-box-shadow: 4px 4px 4px rgba(0, 0, 0, 0.2), 0 0 4px rgba(13, 13, 13, 0.2);  /*Box shadow of the UI slider handle in the media image sequence*/
   
@@ -395,9 +417,9 @@
   --theme-dialog-border: #222222;  /*Border color of the dialog*/
   
   --theme-dialog-close-background:#009a9a;  /*Background color of the dialog close button*/
-  --theme-dialog-close-text: #ffffff;  /*Text color of the dialog close button*/
+  --theme-dialog-close-text: #202020;  /*Text color of the dialog close button*/
   --theme-dialog-close-border: none;  /*Border color of the dialog close button*/
-  --theme-dialog-close-hover-text: #f4b2;  /*Text color of the dialog close button on hover/focus*/
+  --theme-dialog-close-hover-text: #ffffff;  /*Text color of the dialog close button on hover/focus*/
 
   --theme-dialog-menu-item-background: #99DDDA;  /*Background color of the dialog menu item*/
   --theme-dialog-menu-item-text: #000000;  /*Text color of the dialog menu item*/
@@ -413,8 +435,8 @@
     RESOURCES - General styling of the resources in the theme
   */
   --theme-resources-button-icon: white;  /*Text color of the resource button in the header*/
-  --theme-resources-badge-background: #f4b21e;  /*Background color of the counter/badge of the resource button in the header*/
-  --theme-resources-badge-text: #000000;  /*Text color of the counter/badge of the resource button in the header*/
+  --theme-resources-badge-background: var(--color-secondary);   /*Background color of the counter/badge of the resource button in the header*/
+  --theme-resources-badge-text: var(--color-text);  /*Text color of the counter/badge of the resource button in the header*/
   --theme-resources-badge-hover-background: #bdbdbd;  /*Background color of the counter/badge of the resource button in the header on hover/focus/active*/
   --theme-resources-badge-hover-text: #000000;  /*Text color of the counter/badge of the resource button in the header on hover/focus/active*/
 
@@ -478,7 +500,7 @@
     SUBPAGE NAVIGATION - General styling of the subpage navigation
   */
   --theme-subpage-navigation-background: none;  /*Background color of the subpage navigation*/
-  --theme-subpage-navigation-text: var(--theme-text);  /*Text color of the subpage navigation*/
+  --theme-subpage-navigation-text: var(--color-text);  /*Text color of the subpage navigation*/
   --theme-subpage-navigation-selected-background: black;  /*Background color of the selected subpage navigation*/
 
 

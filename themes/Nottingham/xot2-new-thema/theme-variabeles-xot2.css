@@ -101,6 +101,9 @@
   --theme-tab-navigator-active-background: #bdbdbd; /*Background color of the active tab in the tab navigator*/
   --theme-tab-navigator-hover-background: #cfcfcf; /*Background color of the tab in the tab navigator on hover/focus/active*/
 
+   --theme-interactivity-interactive-text-list-item-background: #cfcfcf; /*Background color of the list item in the interactive text*/
+   --theme-interactivity-interactive-text-list-item-hover-background: #bdbdbd; /*Background color of the list item in the interactive text on hover/focus/active*/
+
   --theme-button-navigator-background-selected: #ffffff; /*Background color of the selected button in the button navigator*/
 
   --theme-navigator-interactive-list-item-background: #ebebeb; /*Background color of the navigator and interactive list*/
@@ -120,8 +123,6 @@
   --theme-interactivity-interactive-video-link-text: var(--theme-primary-text); /*Text color of the link to video in the interactive video page*/
   --theme-interactivity-interactive-video-link-border: #ebebeb; /*Border color of the link to video in the interactive video page*/
 
-  --theme-interactivity-interactive-text-list-item-background: #cfcfcf; /*Background color of the list item in the interactive text*/
-  --theme-interactivity-interactive-text-list-item-hover-background: #bdbdbd; /*Background color of the list item in the interactive text on hover/focus/active*/
 
   --theme-interactivity-interactive-selected-background: #cfcfcf; /*Background color of the selected item in the interactive pages*/
 
@@ -134,6 +135,10 @@
   --theme-interactivity-audio-recorder-delete-button-color: var(--theme-primary-text); /*Color of the delete button in the audio recorder page*/
   
   --theme-interactivity-interactive-text-divider-background: #ffffff; /*Background color of the divider in the interactive text page*/
+
+   --theme-interactivity-drag-and-drop-labelling-background: #ebebeb; /*Background color of the labeling in the drag and drop page*/
+
+    --interactivity-categories-holder-background: #ebebeb; /*Background color of the categories holder in the interactivity page*/
  
   /*
     PROGRESS BAR - General styling of the progress bar in the theme

@@ -17,7 +17,7 @@
 /*define hr appearances*/
 /*start here and set the default values for all the variables*/ /******Header******/
 
-@import url("./theme-variabeles-dlearning.css");
+@import url("./theme-variabeles-hoornbeeck.css");
 
 
 /* Header / top bar of the learning object */
@@ -680,15 +680,15 @@ body:not(.sb_right):not(.sb_left) #x_headerBlock {
   box-shadow: var(--theme-label-disabled-box-shadow); /* CHECKEN - of dit altijd disabled blijft ook in andere thema's*/
 }
 
-/* Highlighted drop target for Drag-and-drop exercise */
+/* Highlighted drop target for Drag-and-drop labelling */
 .x_dragDropLabel_page #targetHolder .target.highlight {
-  background: rgba(255, 255, 255, 0.2); /* CHECKEN - Waar deze regel wordt gebruikt */
+  background: var(--theme-interactivity-drag-and-drop-labelling-background);
 }
 
-/* CHECKPOINT 30-10-2026 - Interactivity: Categories */
+/*  Interactivity: Categories */
 #categoryHolder .highlight {
   border-radius: 0;
-  background: #ebebeb; /* --theme-panel-background */
+  background: var(--interactivity-categories-holder-background);
 }
 
 /* Interactivity: Categories */
