@@ -1,14 +1,15 @@
 @charset "UTF-8";
 
 @import url("./variables.css");
+@import url(./editorstyles-variables.css);
 /*start here and set the default values for all the variables*/
 .panel1 {
   border-radius: 1vmin;
   display: table;
   padding: 10px;
   font-style: normal;
-  background-color: #007899;
-  color: #ffffff;
+  background-color: var(--panel-1-background-color);
+  color: var(--panel-1-text-color);
 }
 
 .panel2 {
@@ -16,8 +17,8 @@
   display: table;
   padding: 10px;
   font-style: normal;
-  background-color: #4e9794;
-  color: #ffffff;
+  background-color: var(--panel-2-background-color);
+  color: var(--panel-2-text-color);
 }
 
 .panel3 {
@@ -25,8 +26,8 @@
   display: table;
   padding: 10px;
   font-style: normal;
-  background-color: #005172;
-  color: #ffffff;
+  background-color: var(--panel-3-background-color);
+  color: var(--panel-3-text-color);
 }
 
 .panel4 {
@@ -34,8 +35,8 @@
   display: table;
   padding: 10px;
   font-style: normal;
-  background-color: #00A1A3;
-  color: #ffffff;
+  background-color: var(--panel-4-background-color);
+  color: var(--panel-4-text-color);
 }
 
 .panel5 {
@@ -43,8 +44,8 @@
   display: table;
   padding: 10px;
   font-style: normal;
-  background-color: #3C3C3C;
-  color: #ffffff;
+  background-color: var(--panel-5-background-color);
+  color: var(--panel-5-text-color);
   display: table;
 }
 
@@ -53,16 +54,16 @@
   display: table;
   padding: 10px;
   font-style: normal;
-  background-color: #D13759;
-  color: #ffffff;
+  background-color: var(--panel-6-background-color);
+  color: var(--panel-6-text-color);
 }
 
 .panel.editorStyle {
   margin: 1em 0;
   padding: 14px 19px;
-  background-color: #007899;
-  border: 1px solid #ffffff;
-  color: #ffffff;
+  background-color: var(--panel-editor-style-background-color);
+  border: 1px solid var(--panel-editor-style-border-color);
+  color: var(--panel-editor-style-text-color);
   -webkit-border-radius: 4px;
   -moz-border-radius: 4px;
   border-radius: 4px;
@@ -73,97 +74,97 @@
 }
 
 .highlight1 {
-  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-  background: #fff;
+  font-family: var(--font-family);
+  background: var(--highlight-1-background-color);
   display: table;
   font-weight: normal;
   margin-bottom: 7px;
   margin-top: 5px;
   padding: 10px;
   border-left: 5px solid;
-  -webkit-box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
-  border-color: #007899;
+  -webkit-box-shadow: var(--highlight-1-box-shadow-color);
+  box-shadow: var(--highlight-1-box-shadow-color);
+  border-color: var(--highlight-1-border-color);
 }
 
 .highlight2 {
-  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-  background: #fff;
+  font-family: var(--font-family);
+  background: var(--highlight-2-background-color);
   display: table;
   font-weight: normal;
   margin-bottom: 7px;
   margin-top: 5px;
   padding: 10px;
   border-left: 5px solid;
-  -webkit-box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
-  border-color: #4e9794;
+  -webkit-box-shadow: 0 1px 3px var(--highlight-2-box-shadow-color);
+  box-shadow: 0 1px 3px var(--highlight-2-box-shadow-color);
+  border-color: var(--highlight-2-border-color);
 }
 
 .highlight3 {
-  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-  background: #fff;
+  font-family: var(--font-family);
+  background: var(--highlight-3-background-color);
   display: table;
   font-weight: normal;
   margin-bottom: 7px;
   margin-top: 5px;
   padding: 10px;
   border-left: 5px solid;
-  -webkit-box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
-  border-color: #005172;
+  -webkit-box-shadow: 0 1px 3px var(--highlight-3-box-shadow-color);
+  box-shadow: 0 1px 3px var(--highlight-3-box-shadow-color);
+  border-color: var(--highlight-3-border-color);
 }
 
 .highlight4 {
-  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-  background: #fff;
+  font-family: var(--font-family);
+  background: var(--highlight-4-background-color);
   display: table;
   font-weight: normal;
   margin-bottom: 7px;
   margin-top: 5px;
   padding: 10px;
   border-left: 5px solid;
-  -webkit-box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
-  border-color: #00A1A3;
+  -webkit-box-shadow: 0 1px 3px var(--highlight-4-box-shadow-color);
+  box-shadow: 0 1px 3px var(--highlight-4-box-shadow-color);
+  border-color: var(--highlight-4-border-color);
 }
 
 .highlight5 {
-  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-  background: #fff;
+  font-family: var(--font-family);
+  background: var(--highlight-5-background-color);
   display: table;
   font-weight: normal;
   margin-bottom: 7px;
   margin-top: 5px;
   padding: 10px;
   border-left: 5px solid;
-  -webkit-box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
-  border-color: #3C3C3C;
+  -webkit-box-shadow: 0 1px 3px var(--highlight-5-box-shadow-color);
+  box-shadow: 0 1px 3px var(--highlight-5-box-shadow-color);
+  border-color: var(--highlight-5-border-color);
 }
 
 .highlight6 {
-  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-  background: #fff;
+  font-family: var(--font-family);
+  background: var(--highlight-6-background-color);
   display: table;
   font-weight: normal;
   margin-bottom: 7px;
   margin-top: 5px;
   padding: 10px;
   border-left: 5px solid;
-  -webkit-box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
-  border-color: #D13759;
+  -webkit-box-shadow: 0 1px 3px var(--highlight-6-box-shadow-color);
+  box-shadow: 0 1px 3px var(--highlight-6-box-shadow-color);
+  border-color: var(--highlight-6-border-color);
 }
 
 blockquote {
-  font: 400 14px/24px "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font: 400 14px/24px var(--font-family);
   border-left: 10px solid;
   margin: 1.5em 10px;
   padding: 0.5em 10px;
   quotes: "“" "”";
-  background: #f9f9f9;
-  border-color: #ccc;
+  background: var(--blockquote-background-color);
+  border-color: var(--blockquote-border-color);
 }
 
 blockquote:before {
@@ -172,7 +173,7 @@ blockquote:before {
   line-height: 0.1em;
   margin-right: 0.25em;
   vertical-align: -0.4em;
-  color: #ccc;
+  color: var(--blockquote-border-color);
 }
 
 blockquote p {
@@ -185,11 +186,11 @@ blockquote:after {
   line-height: 0.1em;
   margin-left: 0.1em;
   vertical-align: -0.6em;
-  color: #ccc;
+  color: var(--blockquote-border-color);
 }
 
 .bq1 {
-  border-color: #007899;
+  border-color: var(--bq-1-border-color);
 }
 
 .bq1:after {
@@ -198,7 +199,7 @@ blockquote:after {
   line-height: 0.1em;
   margin-left: 0.1em;
   vertical-align: -0.6em;
-  color: #007899;
+  color: var(--bq-1-after-color);
 }
 
 .bq1:before {
@@ -207,11 +208,11 @@ blockquote:after {
   line-height: 0.1em;
   margin-right: 0.25em;
   vertical-align: -0.4em;
-  color: #007899;
+  color: var(--bq-1-before-color);
 }
 
 .bq2 {
-  border-color: #4e9794;
+  border-color: var(--bq-2-border-color);
 }
 
 .bq2:after {
@@ -220,7 +221,7 @@ blockquote:after {
   line-height: 0.1em;
   margin-left: 0.1em;
   vertical-align: -0.6em;
-  color: #4e9794;
+  color: var(--bq-2-after-color);
 }
 
 .bq2:before {
@@ -229,11 +230,11 @@ blockquote:after {
   line-height: 0.1em;
   margin-right: 0.25em;
   vertical-align: -0.4em;
-  color: #4e9794;
+  color: var(--bq-2-before-color);
 }
 
 .bq3 {
-  border-color: #005172;
+  border-color: var(--bq-3-border-color);
 }
 
 .bq3:after {
@@ -242,7 +243,7 @@ blockquote:after {
   line-height: 0.1em;
   margin-left: 0.1em;
   vertical-align: -0.6em;
-  color: #005172;
+  color: var(--bq-3-after-color);
 }
 
 .bq3:before {
@@ -251,11 +252,11 @@ blockquote:after {
   line-height: 0.1em;
   margin-right: 0.25em;
   vertical-align: -0.4em;
-  color: #005172;
+  color: var(--bq-3-before-color);
 }
 
 .bq4 {
-  border-color: #00A1A3;
+  border-color: var(--bq-4-border-color);
 }
 
 .bq4:after {
@@ -264,7 +265,7 @@ blockquote:after {
   line-height: 0.1em;
   margin-left: 0.1em;
   vertical-align: -0.6em;
-  color: #00A1A3;
+  color: var(--bq-4-after-color);
 }
 
 .bq4:before {
@@ -273,11 +274,11 @@ blockquote:after {
   line-height: 0.1em;
   margin-right: 0.25em;
   vertical-align: -0.4em;
-  color: #00A1A3;
+  color: var(--bq-4-before-color);
 }
 
 .bq5 {
-  border-color: #3C3C3C;
+  border-color: var(--bq-5-border-color);
 }
 
 .bq5:after {
@@ -286,7 +287,7 @@ blockquote:after {
   line-height: 0.1em;
   margin-left: 0.1em;
   vertical-align: -0.6em;
-  color: #3C3C3C;
+  color: var(--bq-5-after-color);
 }
 
 .bq5:before {
@@ -295,11 +296,11 @@ blockquote:after {
   line-height: 0.1em;
   margin-right: 0.25em;
   vertical-align: -0.4em;
-  color: #3C3C3C;
+  color: var(--bq-5-before-color);
 }
 
 .bq6 {
-  border-color: #D13759;
+  border-color: var(--bq-6-border-color);
 }
 
 .bq6:after {
@@ -308,7 +309,7 @@ blockquote:after {
   line-height: 0.1em;
   margin-left: 0.1em;
   vertical-align: -0.6em;
-  color: #D13759;
+  color: var(--bq-6-after-color);
 }
 
 .bq6:before {
@@ -317,74 +318,74 @@ blockquote:after {
   line-height: 0.1em;
   margin-right: 0.25em;
   vertical-align: -0.4em;
-  color: #D13759;
+  color: var(--bq-6-before-color);
 }
 
 .speech-bubble1 {
-  background: #007899;
-  color: white;
+  background: var(--speech-bubble-1-background-color);
+  color: var(--speech-bubble-1-text-color);
 }
 
 .speech-bubble1:after {
-  border-right-color: #007899;
+  border-right-color: var(--speech-bubble-1-border-right-color);
 }
 
 .speech-bubble2 {
-  background: #4e9794;
-  color: white;
+  background: var(--speech-bubble-2-background-color);
+  color: var(--speech-bubble-2-text-color);
 }
 
 .speech-bubble2:after {
-  border-left-color: #4e9794;
+  border-left-color: var(--speech-bubble-2-border-left-color);
 }
 
 .speech-bubble3 {
-  background: #005172;
-  color: white;
+  background: var(--speech-bubble-3-background-color);
+  color: var(--speech-bubble-3-text-color);
 }
 
 .speech-bubble3:after {
-  border-right-color: #005172;
+  border-right-color: var(--speech-bubble-3-border-right-color);
 }
 
 .speech-bubble4 {
-  background: #00A1A3;
-  color: white;
+  background: var(--speech-bubble-4-background-color);
+  color: var(--speech-bubble-4-text-color);
 }
 
 .speech-bubble4:after {
-  border-left-color: #00A1A3;
+  border-left-color: var(--speech-bubble-4-border-left-color);
 }
 
 .speech-bubble5 {
-  background: #3C3C3C;
-  color: white;
+  background: var(--speech-bubble-5-background-color);
+  color: var(--speech-bubble-5-text-color);
 }
 
 .speech-bubble5:after {
-  border-top-color: #3C3C3C;
+  border-top-color: var(--speech-bubble-5-border-top-color);
 }
 
 .speech-bubble6 {
-  background: #D13759;
-  color: white;
+  background: var(--speech-bubble-6-background-color);
+  color: var(--speech-bubble-6-text-color);
 }
 
 .speech-bubble6:after {
-  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-  border-top-color: #D13759;
+  font-family: var(--font-family);
+  border-top-color: var(--speech-bubble-6-border-top-color);
 }
 
 q {
-  border-bottom: 1px solid #ccc;
-  border-top: 1px solid #ccc;
-  color: #333;
+  border-bottom: 1px solid var(--quote-border-bottom-color);
+  border-top: 1px solid var(--quote-border-top-color);
+  color: var(--quote-text-color);
   display: block;
   padding: 10px;
 }
 
 cite {
-  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-family: var(--font-family);
   font-size: 14px;
   font-style: normal;
   /*font-weight:400;
@@ -399,8 +400,8 @@ cite {
 
 /* Track */
 ::-webkit-scrollbar-track {
-  background: rgba(255, 255, 255, 0.8);
-  -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
+  background: var(--scrollbar-track-background-color);
+  -webkit-box-shadow: inset 0 0 6px var(--scrollbar-track-box-shadow-color);
   -webkit-border-radius: 10px;
   border-radius: 10px;
 }
@@ -409,12 +410,12 @@ cite {
 ::-webkit-scrollbar-thumb {
   -webkit-border-radius: 10px;
   border-radius: 10px;
-  background: rgba(255, 255, 255, 0.8);
-  -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.5);
+  background: var(--scrollbar-thumb-background-color);
+  -webkit-box-shadow: inset 0 0 6px var(--scrollbar-thumb-box-shadow-color);
 }
 
 ::-webkit-scrollbar-thumb:window-inactive {
-  background: rgba(255, 255, 255, 0.4);
+  background: var(--scrollbar-thumb-inactive-background-color);
 }
 
 /**
@@ -436,26 +437,26 @@ cite {
 * limitations under the License.
 */
 body {
-  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-  color: #3C3C3C;
-  background-color: #F4F4F4;
+  font-family: var(--font-family);
+  color: var(--body-text-color);
+  background-color: var(--body-background-color);
 }
 
 /*--Heading and other text changes---------------------------------------*/
 h1, h2.sectionTitle {
-  color: #007899;
+  color: var(--h1-h2-section-title-color);
 }
 
 h2, h3, h4, h5, h6 {
-  color: #3C3C3C;
+  color: var(--h2-h3-h4-h5-h6-text-color);
 }
 
 a {
-  color: #007899;
+  color: var(--link-color);
 }
 
 a:hover {
-  color: #005172;
+  color: var(--link-hover-color);
 }
 
 /* --JUMBOTRON-------------------------------------------------------------------- */
@@ -463,8 +464,8 @@ a:hover {
   color: var(--jumbotron-text-color);
   background: var(--jumbotron-background-color);
   /* Old browsers */
-  background-color: #005172;
-  background-image: linear-gradient(3deg, #005172 0%, #005172 100%);
+  background-color: var(--jumbotron-background-color); /*CHECKEN - of dit nog gebruikt kan worden*/
+  background-image: linear-gradient(3deg, var(--jumbotron-background-color) 0%, var(--jumbotron-background-color) 100%); /*CHECKEN - of dit nog gebruikt kan worden*/
 }
 
 .jumbotron h1 {
@@ -479,8 +480,8 @@ a:hover {
 }
 
 .navbar-inverse .brand, .navbar-inverse .nav > li > a {
-  color: #ffffff;
-  text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.25);
+  color: var(--navbar-inverse-text-color);
+  text-shadow: 0 -1px 0 var(--navbar-inverse-text-shadow-color);
 }
 
 .navbar-inverse .nav-collapse .nav > li > a, .navbar-inverse .nav-collapse .dropdown-menu a {
@@ -539,15 +540,15 @@ a:hover {
 
 /*CHECKEN - of dit nog gebruikt kan worden*/
 .bs-docs-sidenav > .active > a {
-  text-shadow: 0 1px 0 rgba(0, 0, 0, 0.15);
-  -webkit-box-shadow: inset 1px 0 0 rgba(0, 0, 0, 0.1), inset -1px 0 0 rgba(0, 0, 0, 0.1);
-  -moz-box-shadow: inset 1px 0 0 rgba(0, 0, 0, 0.1), inset -1px 0 0 rgba(0, 0, 0, 0.1);
-  box-shadow: inset 1px 0 0 rgba(0, 0, 0, 0.1), inset -1px 0 0 rgba(0, 0, 0, 0.1);
+  text-shadow: 0 1px 0 var(--toc-active-text-shadow-color);
+  -webkit-box-shadow: inset 1px 0 0 var(--toc-active-box-shadow-left-color), inset -1px 0 0 var(--toc-active-box-shadow-right-color);
+  -moz-box-shadow: inset 1px 0 0 var(--toc-active-box-shadow-left-color), inset -1px 0 0 var(--toc-active-box-shadow-right-color);
+  box-shadow: inset 1px 0 0 var(--toc-active-box-shadow-left-color), inset -1px 0 0 var(--toc-active-box-shadow-right-color);
 }
 
 .bs-docs-sidenav > li > a:hover {
-  background-color: #005172;
-  color: #ffffff;
+  background-color: var(--toc-navigator-nav-list-hover-background-color);
+  color: var(--toc-navigator-nav-list-hover-text-color);
 }
 
 .bs-docs-sidenav a:hover .icon-chevron-right {
@@ -570,8 +571,8 @@ a:hover {
 
 .accordion-heading a {
   border-bottom: 0;
-  background: #007899;
-  color: #ffffff;
+  background: var( --accordion-heading-background-color);
+  color: var(--accordion-heading-text-color);
 }
 
 .accordion-group {
@@ -580,59 +581,59 @@ a:hover {
 }
 
 .table-striped tbody > tr:nth-child(odd) > td, .table-striped tbody > tr:nth-child(odd) > th {
-  background-color: #007899;
-  color: #ffffff;
+  background-color: var(--table-striped-background-color);
+  color: var(--table-striped-text-color);
 }
 
 .nav-tabs > .active > a, .nav-tabs > .active > a:hover, .nav-tabs > .active > a:focus {
-  color: #ffffff;
+  color: var(--nav-tabs-text-color);
   cursor: default;
-  background-color: #007899;
-  border: 1px solid #007899;
+  background-color: var(--nav-tabs-background-color);
+  border: 1px solid var(--nav-tabs-background-color);
   border-bottom-color: transparent;
 }
 
 /* --PANELS-------------------------------------------------------------- */
 .panel:not(.editorStyle) {
-  background-color: #007899;
-  border: 1px solid #ffffff;
+  background-color: var(--panel-background-color);
+  border: 1px solid var(--panel-border-color);
   -webkit-border-radius: 4px;
   -moz-border-radius: 4px;
   border-radius: 4px;
-  color: #ffffff;
+  color: var(--panel-text-color);
 }
 
 /* Echo out a label for the example */
 .panel:not(.editorStyle):after {
   font-size: 12px;
   font-weight: bold;
-  background-color: #007899;
-  border: 1px solid #ffffff;
-  color: #ffffff;
+  background-color: var(--panel-background-color);
+  border: 1px solid var(--panel-border-color);
+  color: var(--panel-text-color);
   -webkit-border-radius: 4px 0 4px 0;
   -moz-border-radius: 4px 0 4px 0;
   border-radius: 4px 0 4px 0;
 }
 
 .well {
-  background-color: #005172;
-  border: 1px solid #005172;
-  color: #ffffff;
+  background-color: var(--well-background-color);
+  border: 1px solid var(--well-border-color);
+  color: var(--well-text-color);
 }
 
 /* --FOOTER-------------------------------------------------------------- */
 .footer {
-  border-top: 1px solid #ffffff;
-  background-color: #005172;
-  background-image: linear-gradient(3deg, #005172 0%, #005172 100%);
+  border-top: 1px solid var(--footer-border-color);
+  background-color: var(--footer-background-color);
+  background-image: linear-gradient(3deg, var(--footer-background-color) 0%, var(--footer-background-color) 100%); /*CHECKEN - of dit nog gebruikt kan worden*/
 }
 
 .footer p {
-  color: #ffffff;
+  color: var(--footer-text-color);
 }
 
 .footer a {
-  color: #ffffff;
+  color: var(--footer-link-color);
 }
 
 .alertMsg {
@@ -641,37 +642,36 @@ a:hover {
 
 /* --GLOSSARY-------------------------------------------------------------- */
 a.glossary:link, a.glossary:visited, a.glossary:hover, a.glossary:active {
-  color: #3C3C3C;
+  color: var(--glossary-link-color);
 }
 
 .glossaryTip {
-  background-color: #005172;
-  color: #ffffff;
+  background-color: var(--glossary-background-color);
+  color: var(--glossary-text-color);
 }
 
 .nav-pills > .active > a, .nav-pills > .active > a:hover, .nav-pills > .active > a:focus {
-  color: #ffffff;
-  background-color: #007899;
+  color: var(--nav-pills-active-text-color);
+  background-color: var(--nav-pills-active-background-color);
 }
 
 .top-round {
-  color: #575757;
-  background: #e5e5e5;
+  color: var(--top-round-text-color);
+  background: var(--top-round-background-color);
 }
 
 .top-round:hover,
 .top-round:focus {
-  background: #e0e0e0;
-  color: #424242;
+  background: var(--top-round-hover-background-color);
+  color: var(--top-round-hover-text-color);
 }
 
-/*alternating section changes for this theme*/
+/* alternating section backgrounds */
 .evenSection {
-  background: #fbfbfb;
+  background: var(--section-even-background-color);
 }
 
 .oddSection {
-  background: #e9e9e9;
+  background: var(--section-odd-background-color);
 }
-
-/*# sourceMappingURL=bluegrey.css.map */
+/*# sourceMappingURL=new-bootstrap-theme.css.map */

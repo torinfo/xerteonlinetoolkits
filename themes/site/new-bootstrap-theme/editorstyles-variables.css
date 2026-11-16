@@ -1,0 +1,115 @@
+:root{
+
+
+    /* EDITOR STYLES */
+    
+    /* PANELS */
+    --panel-1-background-color: #007899; /* Background color of the first panel in editor styles */
+    --panel-1-text-color: #ffffff; /* Text color of the first panel in editor styles */
+
+    --panel-2-background-color: #4e9794; /* Background color of the second panel in editor styles */
+    --panel-2-text-color: #ffffff; /* Text color of the second panel in editor styles */
+
+    --panel-3-background-color: #005172; /* Background color of the third panel in editor styles */
+    --panel-3-text-color: #ffffff; /* Text color of the third panel in editor styles */
+
+    --panel-4-background-color: #00A1A3; /* Background color of the fourth panel in editor styles */
+    --panel-4-text-color: #ffffff; /* Text color of the fourth panel in editor styles */
+
+    --panel-5-background-color: #3C3C3C; /* Background color of the fifth panel in editor styles */
+    --panel-5-text-color: #ffffff; /* Text color of the fifth panel in editor styles */
+
+    --panel-6-background-color: #D13759; /* Background color of the sixth panel in editor styles */
+    --panel-6-text-color: #ffffff; /* Text color of the sixth panel in  editor styles */
+
+    --panel-editor-style-background-color: #007899; /* Background color of the panel in editor styles */
+    --panel-editor-style-text-color: #ffffff; /* Text color of the panel in editor styles */
+    --panel-editor-style-border-color: #ffffff; /* Border color of the panel in editor styles */
+
+    /* HIGHLIGHT */
+    --highlight-1-background-color: #fff; /* Background color of the first highlight */
+    --highlight-1-box-shadow-color: rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24); /* Box shadow color of the first highlight */
+    --highlight-1-border-color: #007899; /* Border color of the first highlight */
+
+
+    --highlight-2-background-color: #fff; /* Background color of the second highlight */
+    --highlight-2-box-shadow-color: rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24); /* Box shadow color of the second highlight */
+    --highlight-2-border-color: #4e9794; /* Border color of the second highlight */
+
+    --highlight-3-background-color: #fff; /* Background color of the third highlight */
+    --highlight-3-box-shadow-color: rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24); /* Box shadow color of the third highlight */
+    --highlight-3-border-color: #005172; /* Border color of the third highlight */
+
+    --highlight-4-background-color: #fff; /* Background color of the fourth highlight */
+    --highlight-4-box-shadow-color: rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24); /* Box shadow color of the fourth highlight */
+    --highlight-4-border-color: #00A1A3; /* Border color of the fourth highlight */
+
+    --highlight-5-background-color: #fff; /* Background color of the fifth highlight */
+    --highlight-5-box-shadow-color: rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24); /* Box shadow color of the fifth highlight */
+    --highlight-5-border-color: #3C3C3C; /* Border color of the fifth highlight */
+
+    --highlight-6-background-color: #fff; /* Background color of the sixth highlight */
+    --highlight-6-box-shadow-color: rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24); /* Box shadow color of the sixth highlight */
+    --highlight-6-border-color: #D13759; /* Border color of the sixth highlight */
+
+
+    /* BLOCKQUOTE */
+    --blockquote-background-color: #f9f9f9; /* Background color of blockquotes */
+    --blockquote-border-color: #ccc; /* Border color of blockquotes */
+
+   /* BLOCKQUOTE VARIANTS */
+    --bq-1-border-color: #007899; /* Border color of blockquote 1 */
+    --bq-1-after-color: #007899;  /* Closing quotation mark color of blockquote 1 */
+    --bq-1-before-color: #007899; /* Opening quotation mark color of blockquote 1 */
+
+    --bq-2-border-color: #4e9794; /* Border color of blockquote 2 */
+    --bq-2-after-color: #4e9794;  /* Closing quotation mark color of blockquote 2 */
+    --bq-2-before-color: #4e9794; /* Opening quotation mark color of blockquote 2 */
+
+    --bq-3-border-color: #005172; /* Border color of blockquote 3 */
+    --bq-3-after-color: #005172;  /* Closing quotation mark color of blockquote 3 */
+    --bq-3-before-color: #005172; /* Opening quotation mark color of blockquote 3 */
+
+    --bq-4-border-color: #00A1A3; /* Border color of blockquote 4 */
+    --bq-4-after-color: #00A1A3;  /* Closing quotation mark color of blockquote 4 */
+    --bq-4-before-color: #00A1A3; /* Opening quotation mark color of blockquote 4 */
+
+    --bq-5-border-color: #3C3C3C; /* Border color of blockquote 5 */
+    --bq-5-after-color: #3C3C3C;  /* Closing quotation mark color of blockquote 5 */
+    --bq-5-before-color: #3C3C3C; /* Opening quotation mark color of blockquote 5 */
+
+    --bq-6-border-color: #D13759; /* Border color of blockquote 6 */
+    --bq-6-after-color: #D13759;  /* Closing quotation mark color of blockquote 6 */
+    --bq-6-before-color: #D13759; /* Opening quotation mark color of blockquote 6 */
+
+    /* SPEECH BUBBLES */
+    --speech-bubble-1-background-color: #007899;   /* Background color of speech bubble 1 */
+    --speech-bubble-1-text-color: #ffffff;         /* Text color of speech bubble 1 */
+    --speech-bubble-1-border-right-color: #007899; /* Right border color of speech bubble 1 arrow */
+
+    --speech-bubble-2-background-color: #4e9794;  /* Background color of speech bubble 2 */
+    --speech-bubble-2-text-color: #ffffff;        /* Text color of speech bubble 2 */
+    --speech-bubble-2-border-left-color: #4e9794; /* Left border color of speech bubble 2 arrow */
+
+    --speech-bubble-3-background-color: #005172;   /* Background color of speech bubble 3 */
+    --speech-bubble-3-text-color: #ffffff;         /* Text color of speech bubble 3 */
+    --speech-bubble-3-border-right-color: #005172; /* Right border color of speech bubble 3 arrow */
+
+    --speech-bubble-4-background-color: #00A1A3;  /* Background color of speech bubble 4 */
+    --speech-bubble-4-text-color: #ffffff;        /* Text color of speech bubble 4 */
+    --speech-bubble-4-border-left-color: #00A1A3; /* Left border color of speech bubble 4 arrow */
+
+    --speech-bubble-5-background-color: #3C3C3C; /* Background color of speech bubble 5 */
+    --speech-bubble-5-text-color: #ffffff;       /* Text color of speech bubble 5 */
+    --speech-bubble-5-border-top-color: #3C3C3C; /* Top border color of speech bubble 5 arrow */
+
+    --speech-bubble-6-background-color: #D13759; /* Background color of speech bubble 6 */
+    --speech-bubble-6-text-color: #ffffff;       /* Text color of speech bubble 6 */
+    --speech-bubble-6-border-top-color: #D13759; /* Top border color of speech bubble 6 arrow */
+
+    /* QUOTATIONS */
+    --quote-border-bottom-color: #ccc; /* Bottom border color of quotations */
+    --quote-border-top-color: #ccc;    /* Top border color of quotations */
+    --quote-text-color: #333;          /* Text color of quotations */
+
+}

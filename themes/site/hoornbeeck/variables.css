@@ -1,0 +1,152 @@
+:root{
+
+    /* COLOR VARIABLES OF THIS THEME */
+    --color-primary:  #00a9a3; /* Primary color */
+    --color-primary-white: #ffffff; /* Primary color white */
+    --color-secondary: #f5ba36; /* Secondary color */
+
+    --color-surface: #e0ecec;  /* Background for cards and sections */
+
+    --color-dark-text: #000000; /* Dark text color */
+
+    --color-accent-1: #0092FF;        /* Additional accent color 1 */
+    --color-accent-2: #6F41AB;        /* Additional accent color 2 */
+    --color-accent-3: #EF8B07;        /* Additional accent color 3 */
+    --color-accent-4: #98C455;        /* Additional accent color 4 */
+    --color-accent-5: #DF5A53;        /* Additional accent color 5 */
+    --color-accent-6: #A73D8E;        /* Additional accent color 6 */
+    --color-accent-7: #084887;        /* Additional accent color 7 */
+    --color-accent-8: #e1f4fd;        /* Additional accent color 8 */
+
+
+
+
+
+
+
+
+
+    /* GENERAL */
+    --body-background-color: #f4f4f4; /* Background color of the body */
+    --body-text-color: var(--color-dark-text); /* Text color of the body */
+    --font-family:  "Marselis Pro", Helvetica, Arial, sans-serif; /* Font family for the body text */
+
+    /* SCROLLBARS */
+    --scrollbar-track-background-color: rgba(255, 255, 255, 0.8); /* Scrollbar track background */
+    --scrollbar-track-box-shadow-color: rgba(0, 0, 0, 0.3);      /* Scrollbar track shadow */
+
+    --scrollbar-thumb-background-color: rgba(255, 255, 255, 0.8); /* Scrollbar thumb background */
+    --scrollbar-thumb-box-shadow-color: rgba(0, 0, 0, 0.5);      /* Scrollbar thumb shadow */
+
+    --scrollbar-thumb-inactive-background-color: rgba(255, 255, 255, 0.4); /* Inactive window scrollbar thumb background */
+
+
+
+
+    /* NAVBAR */
+    --navbar-inverse-inner-background-color: var(--color-primary); /* Background color of the navbar */
+    --navbar-inverse-inner-background-image: none; /* Background image of the navbar */
+    --navbar-inverse-inner-border-color: var(--color-primary); /* Border color of the navbar */
+
+    --navbar-inverse-inner-nav-li-a-text-color: var(--color-primary-white); /* Text color of the navbar links */
+
+    --navbar-inverse-inner-nav-li-a-hover-text-color: var(--color-primary-white); /* Text color of the navbar links on hover */
+    --navbar-inverse-inner-nav-li-a-hover-background-color: var(--color-secondary); /* Background color of the navbar links on hover */
+
+    --navbar-inverse-inner-nav-li-a-dropdown-hover-text-color: var(--color-primary-white); /* Text color of the navbar dropdown links on hover */
+    --navbar-inverse-inner-nav-li-a-dropdown-hover-background-color: var(--color-secondary); /* Background color of the navbar dropdown links on hover */
+
+    --navbar-inverse-inner-nav-li-active-page-background-color: var(--color-secondary);; /* Background color of the active page link in the navbar */
+
+    --navbar-inverse-text-color: var(--color-primary-white); /* Brand and navigation link text color */
+    --navbar-inverse-text-shadow-color: rgba(0, 0, 0, 0.25); /* Brand and navigation link text shadow 
+
+
+    /* JUMBOTRON */
+    --jumbotron-background-color: #009a9a; /* Background color of the jumbotron */
+    --jumbotron-text-color: var(  --color-primary-white); /* Text color of the jumbotron */
+    --jumbotron-h1-color: var(  --color-primary-white);/* Color of the h1 in the jumbotron */
+
+    
+    /*TABLE OF CONTENTS*/
+    --toc-navigator-sidebar-background-color: #f4f4f4; /* Background color of the sidebar in the navigator */
+    --toc-navigator-sidebar-border-color: var(--color-primary); /* Border color of the sidebar in the navigator */
+
+    --toc-active-text-shadow-color: rgba(0, 0, 0, 0.15); /* Active link text shadow color */
+    --toc-active-box-shadow-left-color: rgba(0, 0, 0, 0.1); /* Active link left inner shadow color */
+    --toc-active-box-shadow-right-color: rgba(0, 0, 0, 0.1); /* Active link right inner shadow color */
+
+    --toc-navigator-nav-list-active-background-color: var(--color-primary); /* Background color of the active link in the navigator */
+    
+    --toc-navigator-nav-list-hover-background-color: var(--color-secondary); /* Background color of the link on hover in the navigator */
+    --toc-navigator-nav-list-hover-text-color: var(--color-primary-white); /* Text color of the link on hover in the navigator */
+
+    /*Heading and other text changes*/
+    --h1-h2-section-title-color: var(--color-primary); /* Color of h1 and h2 section titles */
+    --h2-h3-h4-h5-h6-text-color: var(--color-dark-text); /* Color of h2, h3, h4, h5, and h6 headings */
+    --link-color: var(--color-primary); /* Color of links */
+    --link-hover-color: var(--color-secondary); /* Color of links on hover */
+
+
+    /* ACCORDION */
+    --accordion-heading-background-color: var(--color-primary); /* Background color of the accordion heading */
+    --accordion-heading-text-color: var(--color-primary-white); /* Text color of the accordion heading */
+
+    /* TABS */
+    --nav-tabs-background-color: var(--color-primary); /* Background color of the tabs */
+    --nav-tabs-text-color: var(--color-primary-white); /* Text color of the tabs */
+    --nav-tabs-border-color: var(--color-primary); /* Border color of the tabs */
+
+    /* FOOTER */
+    --footer-background-color: var(--color-primary); /* Background color of the footer */
+    --footer-text-color: var(--color-primary-white); /* Text color of the footer */
+    --footer-link-color: var(--color-primary-white); /* Color of links in the footer */
+    --footer-border-color: #ffffff; /* Border color of the footer */
+
+    /* NAV-PILLS */
+    --nav-pills-active-background-color: var(--color-primary); /* Background color of the active pill */
+    --nav-pills-active-text-color: var(--color-primary-white); /* Text color of the active pill */
+    --nav-pills-hover-background-color: var(--color-secondary); /* Background color of the hover pill */
+    --nav-pills-hover-text-color: var(--color-primary-white); /* Text color of the hover pill */
+
+
+    /* PANEL */
+    --panel-background-color: var(--color-primary); /* Background color of the panel */
+    --panel-text-color:var(--color-primary-white); /* Text color of the panel */
+    --panel-border-color: #ffffff; /* Border color of the panel */
+
+    /* WELL */
+    --well-background-color: var(--color-secondary); /* Background color of the well */
+    --well-text-color: var(--color-primary-white); /* Text color of the well */
+    --well-border-color: var(--color-secondary); /* Border color of the well */
+
+
+
+    /* EXTRA PROPERTIES */
+
+    /*TOP-ROUND*/
+    --top-round-background-color: #e5e5e5; /* Background color of the top-round element */
+    --top-round-text-color: #575757; /* Text color of the top-round element */
+
+    --top-round-hover-background-color: #e0e0e0; /* Background color of the top-round element on hover */
+    --top-round-hover-text-color: #424242; /* Text color of the top-round element on hover */
+
+    /* GLOSSARY */
+    --glossary-link-color: var(--color-accent-3); /* Color of glossary links */
+
+    --glossary-background-color: var(--color-primary); /* Background color of glossary tips */
+    --glossary-text-color: var(--color-primary-white); /* Text color of glossary tips */
+
+    /* TABLE */
+    --table-striped-background-color: var(--color-primary); /* Background color of striped table rows */
+    --table-striped-text-color: var(--color-primary-white); /* Text color of striped table rows */
+
+    /* ALTERNATING SECTIONS */
+    --section-even-background-color: #fbfbfb; /* Even section background color */
+    --section-odd-background-color: #e9e9e9;  /* Odd section background color */
+
+
+    
+
+    
+}

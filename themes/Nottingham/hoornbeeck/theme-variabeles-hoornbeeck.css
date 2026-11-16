@@ -6,10 +6,9 @@
   --color-secondary: #F5BA36;       /* Supporting brand color */
 
   --color-background: #FFFFFF;     /* Main page background */
-  --color-surface: #E1F4FD;         /* Background for cards and sections */
+  --color-surface: #e0ecec;         /* Background for cards and sections */
 
-  --color-text: #202020;           /* Default body text */
-  --color-text-heading: #00A9A3;    /* Heading text */
+  --color-text: #000000;           /* Default body text */
   --color-text-on-primary: #FFFFFF; /* Text on primary-colored backgrounds */
   
 
@@ -20,6 +19,8 @@
   --color-accent-5: #DF5A53;        /* Additional accent color 5 */
   --color-accent-6: #A73D8E;        /* Additional accent color 6 */
   --color-accent-7: #084887;        /* Additional accent color 7 */
+  --color-accent-8: #E1F4FD;        /* Additional accent color 8 */
+
 
 
   /*
@@ -33,7 +34,7 @@
 
   --theme-secondary-text: #ffffff; /*General text color */
 
-  --theme-font-family: Arial, sans-serif; /* Main font of the theme*/
+  --theme-font-family: "Marselis Pro", Arial, sans-serif; /* Main font of the theme*/
   --theme-secondary-font-family: "Font Awesome 5 Free", sans-serif; /* Secondary font of the theme*/
   
   --theme-webkit-scrollbar-track-background: rgba(255, 255, 255, 0.8); /*General scrollbar track background color*/
@@ -51,11 +52,11 @@
   --theme-button-text: var(--theme-primary-text);  /*Text color of general buttons.*/
   --theme-button-border: none;  /*Border color of general buttons.*/
 
-  --theme-button-hover-background: #00908A; /*Background color on hover/focus/active.*/
+  --theme-button-hover-background: var(--color-secondary); /*Background color on hover/focus/active.*/
   --theme-button-hover-text: var(--theme-primary-text); /*Text color on hover/focus/active.*/
   --theme-button-hover-border: none; /*Border color on hover/focus/active.*/
 
-  --theme-button-active-background: #ffffff;  /*Background color of general buttons when active.*/
+  --theme-button-active-background: var(--color-secondary);  /*Background color of general buttons when active.*/
   --theme-button-active-text: var(--theme-primary-text);  /*Text color of general buttons when active.*/
   --theme-button-active-border: none;  /*Border color of general buttons when active.*/
   
@@ -101,8 +102,8 @@
   */
   --theme-navigator-accordion-background: var(--color-primary); /*Background color of the navigator accordion*/
   --theme-navigation-accordion-text: var(--color-text); /*Text color of the navigator accordion*/
-  --theme-navigation-accordion-hover-background: #00908A; /*Background color of the navigator accordion on hover/focus/active*/
-  --theme-navigation-accordion-active-background: #00908A; /*Background color of the active navigation item*/
+  --theme-navigation-accordion-hover-background: var(--color-secondary);/*Background color of the navigator accordion on hover/focus/active*/
+  --theme-navigation-accordion-active-background: var(--color-secondary);/*Background color of the active navigation item*/
   --theme-navigation-accordion-active-text: var(--color-text); /*Text color of the active navigation item*/
   --theme-navigation-accordion-icon-color: var(--color-text); /*Color of the icon in the navigator accordion*/
 
@@ -117,17 +118,17 @@
   --theme-tab-navigator-text: var(--color-text); /*Text color of the tab navigator*/
   --theme-tab-navigator-content-background: var(--theme-panel-background); /*Background color of content below the tab navigator*/
   --theme-tab-navigator-border: none; /*Border color of the tab navigator*/
-  --theme-tab-navigator-active-background: #00908A; /*Background color of the active tab in the tab navigator*/
-  --theme-tab-navigator-hover-background: #00908A; /*Background color of the tab in the tab navigator on hover/focus/active*/
+  --theme-tab-navigator-active-background: var(--color-secondary); /*Background color of the active tab in the tab navigator*/
+  --theme-tab-navigator-hover-background: var(--color-secondary); /*Background color of the tab in the tab navigator on hover/focus/active*/
 
   --theme-interactivity-interactive-text-list-item-background: var(--color-primary);/*Background color of the list item in the interactive text*/
-  --theme-interactivity-interactive-text-list-item-hover-background: #00908A;  /*Background color of the list item in the interactive text on hover/focus/active*/
+  --theme-interactivity-interactive-text-list-item-hover-background: var(--color-secondary); /*Background color of the list item in the interactive text on hover/focus/active*/
 
-  --theme-button-navigator-background-selected: #ffffff; /*Background color of the selected button in the button navigator*/
+  --theme-button-navigator-background-selected: var(--color-secondary); /*Background color of the selected button in the button navigator*/
 
   --theme-navigator-interactive-list-item-background: var(--color-primary); /*Background color of the navigator and interactive list*/
   --theme-navigator-interactive-list-item-text: var(--color-text); /*Text color of the navigator and interactive list*/
-  --theme-navigator-interactive-list-item-hover-background: #00908A; /*Background color of the navigator and interactive list on hover/focus/active*/
+  --theme-navigator-interactive-list-item-hover-background: var(--color-secondary); /*Background color of the navigator and interactive list on hover/focus/active*/
   --theme-navigator-interactive-list-item-hover-text: var(--color-text); /*Text color of the navigator and interactive list on hover/focus/active*/
 
   --theme-multi-navigator-text-holder-border: #ebebeb; /*Border color of the text holder in the multi navigator*/
@@ -143,13 +144,15 @@
   --theme-interactivity-interactive-video-link-border: #ebebeb; /*Border color of the link to video in the interactive video page*/
 
 
-  --theme-interactivity-interactive-selected-background: #cfcfcf; /*Background color of the selected item in the interactive pages*/
+
+  --theme-interactivity-interactive-selected-background: var(--color-accent-8); /*Background color of the selected item in the interactive pages*/
 
   --theme-interactivity-interactive-target-background: #ffffff; /*Background color of the target in the interactive pages*/
 
-  --theme-interactivity-matching-text-holder-background: #E1F4FD; /*Background color of the text holder in the matching text page*/
-  --theme-interactivity-matching-text-label-background: var(--color-secondary); /*Background color of the label in the matching text page*/
-  --theme-interactivity-matching-text-label-border: #202020#; /*Border color of the label in the matching text page*/
+  --theme-interactivity-matching-text-holder-background: var(--color-surface); /*Background color of the text holder in the matching text page*/
+
+  --theme-interactivity-matching-text-label-background: #ffffff; /*Background color of the label in the matching text page*/
+  --theme-interactivity-matching-text-label-border: var(--color-primary); /*Border color of the label in the matching text page*/
 
   --theme-interactivity-audio-recorder-delete-button-color: var(--theme-primary-text); /*Color of the delete button in the audio recorder page*/
   
@@ -189,18 +192,18 @@
   /*
     Labels -General labels in the theme.
   */
-  --theme-label-background: var(--color-secondary);  /*Background color of labels.*/
+  --theme-label-background: #ffffff;  /*Background color of labels.*/
   --theme-label-text: var(--color-text);  /*Text color of labels.*/
-  --theme-label-border: #222222;  /*Border color of labels.*/
-  --theme-label-box-shadow: #222222;  /*Box shadow of labels.*/
+  --theme-label-border: var(--color-primary);  /*Border color of labels.*/
+  --theme-label-box-shadow: none;  /*Box shadow of labels.*/
 
-  --theme-label-selected-background: var(--color-secondary); /*Background color of selected labels.*/
+  --theme-label-selected-background: #ffffff; /*Background color of selected labels.*/
   --theme-label-selected-text:  var(--color-text);  /*Text color of selected labels.*/
   --theme-label-selected-border: var(--color-secondary);  /*Border color of selected labels.*/
 
-  --theme-label-dragging-background: var(--theme-accent);  /*Background color of labels during drag and drop.*/
+  --theme-label-dragging-background: #ffffff;  /*Background color of labels during drag and drop.*/
   --theme-label-dragging-text: var(--color-text);  /*Text color of labels during drag and drop.*/
-  --theme-label-dragging-border: var(--theme-accent);  /*Border color of labels during drag and drop.*/
+  --theme-label-dragging-border: var(--color-primary);  /*Border color of labels during drag and drop.*/
 
   --theme-label-disabled-background: ;  /*Background color of disabled labels.*/
   --theme-label-disabled-text:  var(--color-text);  /*Text color of disabled labels.*/
@@ -288,9 +291,9 @@
   /*
     LINKS -General links within the theme
   */
-  --theme-link: blue;  /*Normal link color.*/
-  --theme-link-hover: red; /*Link color on hover/focus.*/
-  --theme-link-visited: green; /*Link color for visited links*/
+  --theme-link: var(--color-accent-1); /*Normal link color.*/
+  --theme-link-hover: var(--color-accent-5); /*Link color on hover/focus.*/
+  --theme-link-visited: var(--color-accent-4); /*Link color for visited links*/
   
 /*
     SIDEBAR - The sidebar is an additional navigation bar that can be displayed at the side of the project
@@ -299,7 +302,7 @@
   --theme-sidebar-text: var(--color-text);   /* Text color of the sidebar */
   --theme-sidebar-hover-background: var(--theme-button-hover-background);  /* Background color of the sidebar on hover/focus */
 
-  --theme-sidebar-toggle-button-background: #cfcfcf;  /* Background color of the sidebar toggle button */
+  --theme-sidebar-toggle-button-background: var(--color-secondary);   /* Background color of the sidebar toggle button */
   --theme-sidebar-toggle-button-text: var(--color-text);  /* Text color of the sidebar toggle button */
 
   --theme-sidebar-toggle-button-hover-background: #bdbdbd;  /* Background color of the sidebar toggle button on hover/focus */
@@ -332,10 +335,27 @@
   --theme-opinion-icon-background: var(--color-secondary);  /*Background color of the opinion icon*/
   --theme-opinion-icon-border: #ffffff;  /*Border color of the opinion icon*/
   
-  --theme-opinion-icon-hover-background: var(--theme-accent);  /*Background color of the opinion icon on hover/focus/active*/
+  --theme-opinion-icon-hover-background: var(--color-secondary);  /*Background color of the opinion icon on hover/focus/active*/
   --theme-opinion-icon-hover-border: var(--color-text);   /*Border color of the opinion icon on hover/focus/active*/
 
   --theme-opinion-separator-background: #ffffff;  /*Background color of the opinion separator*/
+
+  /* MEDIA IMAGE 360 - General styling of the media image 360 in the theme */
+
+  --theme-media-image-360-button-scene-link-holder-background:  rgb(255 255 255 / 50%);  /*Background color of the scene link button holder in the media image 360*/
+
+  --theme-media-image-360-button-scene-link-background:  rgba(205,205,205,0.7);  /*Background color of the scene link button in the media image 360*/
+  --theme-media-image-360-button-scene-link-hover-border-bottom:  rgba(245,245,245,0.7);  /*Border color of the scene link button in the media image 360 on hover/focus/active*/
+
+  --theme-media-image-360-button-scene-link-hover-background:  rgba(245,245,245,0.7);  /*Background color of the scene link button in the media image 360 on hover/focus/active*/
+  --theme-media-image-360-button-scene-link-current-hover-background:  rgba(145,145,145,0.7);  /*Background color of the current scene link button in the media image 360 on hover/focus/active*/
+
+  --theme-media-image-360-button-scene-link-current-background:  rgba(105,105,105,0.7);  /*Background color of the current scene link button in the media image 360*/
+  --theme-media-image-360-button-scene-link-current-text:  white;  /*Text color of the current scene link button in the media image 360*/
+
+  --theme-media-image-360-pannellum-control-background:  #ffffff;  /*Background color of the pannellum control in the media image 360*/
+  --theme-media-image-360-pannellum-control-border:  #999;  /*Border color of the pannellum control in the media image 360*/
+  --theme-media-image-360-pannellum-control-border-color:  rgba(0,0,0,0.4);  /*Border color of the pannellum control in the media image 360*/
 
 
   /*
@@ -444,8 +464,12 @@
   /*
    GLOSSARY - General glossary in the theme
   */
-  --theme-glossary-background: black;  /*Background color of the glossary*/
-  --theme-glossary-text: white;  /*Text color of the glossary*/
+  --theme-glossary-tooltip-background: var(--color-primary);  /*Background color of the glossary tooltip*/
+  --theme-glossary-tooltip-text: var(--color-text);  /*Text color of the glossary tooltip*/
+  --theme-glossary-tooltip-border: var(--color-primary);  /*Border color of the glossary tooltip*/
+
+  --theme-glossary-text: #010101;  /*Text color of the glossary*/
+  --theme-glossary-hover-background: #010101;  /*Background color of the glossary on hover*/
 
   --theme-glossary-tr-border: #ebebeb;  /*Border color of the rows in the glossary*/
   --theme-glossary-td-shaded-background: #ebebeb;  /*Background color of the shaded cells in the glossary*/

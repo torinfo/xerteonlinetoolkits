@@ -321,6 +321,23 @@
 
   --theme-opinion-separator-background: #ffffff;  /*Background color of the opinion separator*/
 
+   /* MEDIA IMAGE 360 - General styling of the media image 360 in the theme */
+
+  --theme-media-image-360-button-scene-link-holder-background:  rgb(255 255 255 / 50%);  /*Background color of the scene link button holder in the media image 360*/
+
+  --theme-media-image-360-button-scene-link-background:  rgba(205,205,205,0.7);  /*Background color of the scene link button in the media image 360*/
+  --theme-media-image-360-button-scene-link-hover-border-bottom:  rgba(245,245,245,0.7);  /*Border color of the scene link button in the media image 360 on hover/focus/active*/
+
+  --theme-media-image-360-button-scene-link-hover-background:  rgba(245,245,245,0.7);  /*Background color of the scene link button in the media image 360 on hover/focus/active*/
+  --theme-media-image-360-button-scene-link-current-hover-background:  rgba(145,145,145,0.7);  /*Background color of the current scene link button in the media image 360 on hover/focus/active*/
+
+  --theme-media-image-360-button-scene-link-current-background:  rgba(105,105,105,0.7);  /*Background color of the current scene link button in the media image 360*/
+  --theme-media-image-360-button-scene-link-current-text:  white;  /*Text color of the current scene link button in the media image 360*/
+
+  --theme-media-image-360-pannellum-control-background:  #ffffff;  /*Background color of the pannellum control in the media image 360*/
+  --theme-media-image-360-pannellum-control-border:  #999;  /*Border color of the pannellum control in the media image 360*/
+  --theme-media-image-360-pannellum-control-border-color:  rgba(0,0,0,0.4);  /*Border color of the pannellum control in the media image 360*/
+
 
   /*
     MEDIA TRANSCRIPT READER - General styling of the media transcript reader in the theme
@@ -424,12 +441,15 @@
   --theme-resources-badge-hover-background: #bdbdbd;  /*Background color of the counter/badge of the resource button in the header on hover/focus/active*/
   --theme-resources-badge-hover-text: #000000;  /*Text color of the counter/badge of the resource button in the header on hover/focus/active*/
 
-
-  /*
+ /*
    GLOSSARY - General glossary in the theme
   */
-  --theme-glossary-background: black;  /*Background color of the glossary*/
-  --theme-glossary-text: white;  /*Text color of the glossary*/
+  --theme-glossary-tooltip-background: #161616;  /*Background color of the glossary tooltip*/
+  --theme-glossary-tooltip-text: #fff;  /*Text color of the glossary tooltip*/
+  --theme-glossary-tooltip-border: #333;  /*Border color of the glossary tooltip*/
+
+  --theme-glossary-text: #010101;  /*Text color of the glossary*/
+  --theme-glossary-hover-background: #010101;  /*Background color of the glossary on hover*/
 
   --theme-glossary-tr-border: #ebebeb;  /*Border color of the rows in the glossary*/
   --theme-glossary-td-shaded-background: #ebebeb;  /*Background color of the shaded cells in the glossary*/

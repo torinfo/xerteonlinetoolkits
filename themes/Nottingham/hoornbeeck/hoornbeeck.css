@@ -19,6 +19,51 @@
 
 @import url("./theme-variabeles-hoornbeeck.css");
 
+/* Regular font */
+@font-face {
+  font-family: "Marselis Pro";
+  src: url("./fonts/MarselisPro-Regular.otf") format("opentype");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* Bold font */
+@font-face {
+  font-family: "Marselis Pro";
+  src: url("./fonts/MarselisPro-Bold.otf") format("opentype");
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* Italic font */
+@font-face {
+  font-family: "Marselis Pro";
+  src: url("./fonts/MarselisPro-Italic.otf") format("opentype");
+  font-weight: 400;
+  font-style: italic;
+  font-display: swap;
+}
+
+/* Bold italic font */
+@font-face {
+  font-family: "Marselis Pro";
+  src: url("./fonts/MarselisPro-BoldItalic.otf") format("opentype");
+  font-weight: 700;
+  font-style: italic;
+  font-display: swap;
+}
+
+/* Black font */
+@font-face {
+  font-family: "Marselis Pro";
+  src: url("./fonts/MarselisPro-Black.otf") format("opentype");
+  font-weight: 900;
+  font-style: normal;
+  font-display: swap;
+}
+
 
 /* Header / top bar of the learning object */
 #x_headerBlock {
@@ -504,6 +549,12 @@ body:not(.sb_right):not(.sb_left) #x_headerBlock {
   margin-right: 5px;
 }
 
+.ui-state-default a, .ui-state-default a:link, .ui-state-default a:visited {
+    color: var(--theme-tab-navigator-text);
+    text-decoration: none;
+}
+
+
 /* General tabs */
 .ui-tabs #tabHolder.ui-tabs-nav > li.navChildTitle.ui-state-default.ui-tabs-active {
   border-bottom: 0 !important; 
@@ -511,7 +562,7 @@ body:not(.sb_right):not(.sb_left) #x_headerBlock {
 
 /* Tab navigation / tab buttons */
 .ui-tabs .ui-tabs-nav > li.ui-state-default.ui-tabs-active a {
-  background: var(--theme-tab-navigator-active-background); 
+  background: var(--theme-tab-navigator-active-background) !important; 
 }
 
 /* Tab navigation / tab buttons on hover/focus */
@@ -555,7 +606,7 @@ body:not(.sb_right):not(.sb_left) #x_headerBlock {
 .x_tabNavExtra_page a.topic.highlight,
 .x_list_page #listHolder a.listItem.highlight,
 .x_annotatedDiagram_page #listHolder a.listItem.highlight {
-  background: #bdbdbd; /* CHECKEN - zelfde werking als deze regel: 986 */
+  background: var(--theme-tab-navigator-active-background); 
 }
 
 /* Information panel close button for Interactive list */
@@ -1182,6 +1233,33 @@ table.glossary tr td:first-child {
 /* Glossary table */
 table.glossary tr.shaded {
   background: var(--theme-glossary-td-shaded-background); 
+}
+
+/* GLOSSARY */
+#x_pageDiv span.x_glossary {
+	font-weight:		bold;
+	text-decoration:	none;
+	color:				var(--theme-glossary-text)  ;
+	border-bottom:		1px dotted;
+}
+
+#x_pageDiv span.x_glossary:link, #x_pageDiv span.x_glossary:visited, #x_pageDiv span.x_glossary:hover, #x_pageDiv span.x_glossary:active {
+	color: var(--theme-glossary-hover-background);
+}
+
+#x_glossaryHover {
+	position: fixed;
+	display:			none;
+	max-width:			200px;
+}
+
+.x_tooltip {
+	position:			absolute;
+	border:				1px solid var(--theme-glossary-tooltip-border);
+	background-color:	var(--theme-glossary-tooltip-background);
+	border-radius:		4px;
+	padding:			2px 5px;
+	color:				var(--theme-glossary-tooltip-text);
 }
 
 /* Sidebar / side navigation bar */
@@ -2236,6 +2314,59 @@ table.headerCol.shaded td.header {
   background-color: inherit;
 }
 
+#sceneLinkHolder {
+		position: absolute;
+		background: var(--theme-media-image-360-button-scene-link-holder-background);
+	}
+
+button.pannellumBtn.sceneMenu .sceneLink {
+		display: block;
+		width: 100%;
+		text-align: left;
+		background-color: var(--theme-media-image-360-button-scene-link-background);
+		border: none;
+		box-sizing: border-box;
+		padding: 4px 6px;
+		cursor: pointer;
+		outline: none;
+	}
+	
+	button.pannellumBtn.sceneMenu .sceneLink:not(:last-of-type) {
+		border-bottom: 1px solid var(--theme-media-image-360-button-scene-link-hover-border-bottom);
+	}
+	
+	button.pannellumBtn.sceneMenu .sceneLink.current {
+		background-color: var(--theme-media-image-360-button-scene-link-current-background);
+		color: var(--theme-media-image-360-button-scene-link-current-text);
+	}
+	
+	button.pannellumBtn.sceneMenu .sceneLink:hover, button.pannellumBtn.sceneMenu .sceneLink:focus {
+		background-color: var(--theme-media-image-360-button-scene-link-hover-background);
+	}
+	
+	button.pannellumBtn.sceneMenu .sceneLink.current:hover, button.pannellumBtn.sceneMenu .sceneLink.current:focus {
+		background-color: var(--theme-media-image-360-button-scene-link-current-hover-background);
+	}
+	
+	button.pannellumBtn.fullScreen .pnlm-control, button.pannellumBtn.sceneMenu .pnlm-control {
+		margin-top: 0px;
+	}
+
+  .pnlm-controls {
+    margin-top: 4px;
+    background-color: var(--theme-media-image-360-pannellum-control-background);
+    border: 1px solid var(--theme-media-image-360-pannellum-control-border);
+    border-color: var(--theme-media-image-360-pannellum-control-border-color);
+    border-radius: 3px;
+    cursor: pointer;
+    z-index: 2;
+    -webkit-transform: translateZ(9999px);
+    transform: translateZ(9999px)
+}
+  
+
+	
+
 @media (min-width: 1366px) {
   /*tablet and above css below here*/
 /* CSS rule for this Xerte interface element */
@@ -2258,6 +2389,7 @@ table.headerCol.shaded td.header {
     bottom: 0;
     right: 0;
   }
+  
 }
 
 /*# sourceMappingURL=xot1.css.map */
