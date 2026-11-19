@@ -701,7 +701,7 @@ function properties_rest_share_search(array $params)
     }
     $groups = db_query("SELECT group_id, group_name from {$prefix}user_groups WHERE group_name like ? AND group_id NOT IN ( SELECT group_id from {$prefix}template_group_rights where template_id = ? ) ORDER BY group_name ASC", array('%' . $search . '%', $tutorial_id));
     $names = db_query("select login_id, firstname, surname, username from {$prefix}logindetails WHERE "
-        . '((firstname like ?) or (surname like ?) or (username like ?)) AND disabled=0 AND login_id NOT IN ( SELECT user_id from {$prefix}templaterights where template_id = ? ) ORDER BY firstname ASC', array("$search%", "$search%", "$search%", $tutorial_id));
+        . "((firstname like ?) or (surname like ?) or (username like ?)) AND disabled=0 AND login_id NOT IN ( SELECT user_id from {$prefix}templaterights where template_id = ? ) ORDER BY firstname ASC", array("$search%", "$search%", "$search%", $tutorial_id));
 
     $out_groups = array();
     foreach ($groups as $row) {
@@ -737,7 +737,7 @@ function properties_rest_gift_search(array $params)
     $rows = db_query(
         "SELECT login_id, firstname, surname, username from {$prefix}logindetails WHERE "
         . '((firstname like ? ) or (surname like ?) or (username like ?) ) '
-        . 'AND disabled=0 AND login_id not in( SELECT creator_id from {$prefix}templatedetails where template_id= ? ) ORDER BY firstname ASC',
+        . "AND disabled=0 AND login_id not in( SELECT creator_id from {$prefix}templatedetails where template_id= ? ) ORDER BY firstname ASC",
         array("$search%", "$search%", "$search%", $tutorial_id)
     );
     $users = array();
