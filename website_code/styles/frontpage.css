@@ -866,6 +866,22 @@ div.ui-layout-north div.content {
     margin-top: 20px;
 }
 
+#preferences-form .preferences-modal-footer {
+    flex-wrap: wrap;
+}
+
+.preferences-save-status {
+    flex: 1 0 100%;
+    min-height: 1.3em;
+    font-size: 0.875rem;
+    text-align: right;
+    color: #276738;
+}
+
+.preferences-save-status--error {
+    color: #a12622;
+}
+
 .preferences-btn {
     min-width: 110px;
     padding: 10px 18px;

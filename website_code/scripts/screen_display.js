@@ -440,8 +440,8 @@ function button_check(){
 
                 previewbtn.removeAttribute("disabled");
                 previewbtn.className = "xerte_workspace_button";
-                previewbtn.onclick = function () {
-                    preview_window()
+                previewbtn.onclick = function (e) {
+                    preview_window(false, e);
                 };
 
                 deletebtn.removeAttribute("disabled");

@@ -173,7 +173,8 @@ var userPreferenceDefaults = {
     editor_quickfill_assistants_only: false,
     editor_expand_groups: false,
     editor_expand_tree: false,
-    editor_open_mode: 'popup'
+    editor_open_mode: 'popup',
+    preview_open_mode: 'popup'
 };
 
 function getDefaultUserPreferences() {
@@ -202,6 +203,12 @@ function populatePreferencesForm($root, preferenceValues) {
         editorOpenMode = 'popup';
     }
     $root.find('input[name="editor_open_mode"][value="' + editorOpenMode + '"]').prop('checked', true);
+
+    var previewOpenMode = prefs.preview_open_mode;
+    if (previewOpenMode !== 'popup' && previewOpenMode !== '_blank' && previewOpenMode !== 'lightbox') {
+        previewOpenMode = 'popup';
+    }
+    $root.find('input[name="preview_open_mode"][value="' + previewOpenMode + '"]').prop('checked', true);
 }
 
 function applyWorkspacePanelPreferences(prefs) {
@@ -236,27 +243,46 @@ function savePreferencesFromForm($root) {
         editor_quickfill_assistants_only: $root.find('#editor_quickfill_assistants_only').is(':checked'),
         editor_expand_groups: $root.find('#editor_expand_groups').is(':checked'),
         editor_expand_tree: $root.find('#editor_expand_tree').is(':checked'),
-        editor_open_mode: $root.find('input[name="editor_open_mode"]:checked').val() || 'popup'
+        editor_open_mode: $root.find('input[name="editor_open_mode"]:checked').val() || 'popup',
+        preview_open_mode: $root.find('input[name="preview_open_mode"]:checked').val() || 'popup'
     };
 
-    if (typeof window.user_preferences === 'undefined' || window.user_preferences === null) {
-        window.user_preferences = {};
-    }
+    var $status = $root.find('.preferences-save-status');
+    var $saveButton = $root.find('.preferences-btn-save');
+    $status.empty().removeClass('preferences-save-status--error');
+    $saveButton.prop('disabled', true);
 
     var saveUrl = (typeof apiV1Url === 'function')
         ? apiV1Url('user/preferences')
         : 'website_code/api/v1/index.php?route=' + encodeURIComponent('user/preferences');
-    $.ajax({
+    return $.ajax({
         type: 'POST',
         url: saveUrl,
         dataType: 'json',
         data: {preferences: prefs}
+    }).done(function(response) {
+        var result = typeof apiUnpack === 'function' ? apiUnpack(response) : response;
+        if (!result || result.success !== true) {
+            $status.addClass('preferences-save-status--error').text($status.attr('data-error-message'));
+            return;
+        }
+        applyUserPreferences(prefs);
+        $status.text($status.attr('data-saved-message'));
     }).fail(function(xhr, status, error) {
         var message = xhr.responseJSON && xhr.responseJSON.error
             ? xhr.responseJSON.error.message
             : error;
         console.error('Failed to save preferences:', message);
+        $status.addClass('preferences-save-status--error').text($status.attr('data-error-message'));
+    }).always(function() {
+        $saveButton.prop('disabled', false);
     });
+}
+
+function applyUserPreferences(prefs) {
+    if (typeof window.user_preferences === 'undefined' || window.user_preferences === null) {
+        window.user_preferences = {};
+    }
 
     Object.keys(prefs).forEach(function(key) {
         window.user_preferences[key] = prefs[key];
@@ -297,11 +323,15 @@ function bindPreferencesModalHandlers($dialog) {
 
     $root.find('.preferences-btn-reset').off('click.prefs').on('click.prefs', function() {
         populatePreferencesForm($root, getDefaultUserPreferences());
+        $root.find('.preferences-save-status').empty().removeClass('preferences-save-status--error');
+    });
+
+    $root.off('change.prefs').on('change.prefs', '.preferences-input', function() {
+        $root.find('.preferences-save-status').empty().removeClass('preferences-save-status--error');
     });
 
     $root.find('.preferences-btn-save').off('click.prefs').on('click.prefs', function() {
         savePreferencesFromForm($root);
-        $dialog.dialog('close');
     });
 }
 

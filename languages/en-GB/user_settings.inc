@@ -30,11 +30,16 @@
     define("USER_SETTINGS_EDITOR_OPEN_MODE", "Open editor in");
     define("USER_SETTINGS_EDITOR_OPEN_MODE_POPUP", "Open in a separate window");
     define("USER_SETTINGS_EDITOR_OPEN_MODE_BLANK", "Open in a new tab");
-    define("USER_SETTINGS_EDITOR_OPEN_MODE_LIGHTBOX", "Open in an overlay on the overview page");
+    define("USER_SETTINGS_EDITOR_OPEN_MODE_LIGHTBOX", "Open in an overlay on the workspace");
+
+    define("USER_SETTINGS_PREVIEW_OPEN_MODE_POPUP", "Open in a separate window");
+    define("USER_SETTINGS_PREVIEW_OPEN_MODE_BLANK", "Open in a new tab");
+    define("USER_SETTINGS_PREVIEW_OPEN_MODE_LIGHTBOX", "Open in an overlay on the workspace");
 
     define("USER_SETTINGS_PREFERENCES_TITLE", "My preferences");
     define("USER_SETTINGS_REFRESH_TOOLTIP", "Refresh the page after saving to apply all preference changes.");
-    define("USER_SETTINGS_SECTION_EDITOR_OPEN", "When I open a learning object");
+    define("USER_SETTINGS_SECTION_EDITOR_OPEN", "When I open the editor");
+    define("USER_SETTINGS_SECTION_PREVIEW_OPEN", "When I preview a learning object");
     define("USER_SETTINGS_SECTION_OVERVIEW", "On my workspace");
     define("USER_SETTINGS_SECTION_IN_EDITOR", "In the editor");
     define("USER_SETTINGS_PANEL_EAST", "Show project templates on the right");
@@ -53,5 +58,7 @@
     define("USER_SETTINGS_CANCEL", "Cancel");
     define("USER_SETTINGS_RESET_DEFAULTS", "Reset to defaults");
     define("USER_SETTINGS_SAVE", "Save");
+    define("USER_SETTINGS_PREFERENCES_SAVED", "Your preferences have been saved.");
+    define("USER_SETTINGS_PREFERENCES_SAVE_FAILED", "Your preferences could not be saved. Please try again.");
 
 ?>

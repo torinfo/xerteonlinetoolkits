@@ -647,7 +647,37 @@ function example_window(example_id) {
  * @author Patrick Lockley
  */
 
-function preview_window(admin) {
+function getPreviewOpenModePreference(event) {
+    if (event && (event.ctrlKey || event.metaKey)) {
+        return '_blank';
+    }
+    if (event && event.altKey) {
+        return 'lightbox';
+    }
+    var prefs = (typeof user_preferences !== 'undefined' && user_preferences) ? user_preferences : {};
+    var mode = prefs.preview_open_mode;
+    return mode === '_blank' || mode === 'lightbox' ? mode : 'popup';
+}
+
+function openPreviewWindow(url, name, features, openMode) {
+    openMode = openMode || getPreviewOpenModePreference();
+    if (openMode === '_blank') {
+        return window.open(url, '_blank');
+    }
+    if (openMode === 'lightbox' && typeof $.featherlight === 'function') {
+        return $.featherlight({
+            iframe: url,
+            iframeWidth: '95%',
+            iframeHeight: '95%',
+            closeOnClick: false
+        });
+    }
+    return window.open(url, name, features);
+}
+
+function preview_window(admin, event) {
+    event = event || window.event;
+    var openMode = getPreviewOpenModePreference(event);
 
     if (!admin) {
 
@@ -661,19 +691,19 @@ function preview_window(admin) {
                 var node = workspace.nodes[ids[i]];
 
                 if (node.xot_type == "file") {
-                    var mode = (window.event && window.event.shiftKey ? 'play' : 'preview');
-                    size = node.preview_size.split(",");
+                    var mode = (event && event.shiftKey ? 'play' : 'preview');
+                    var size = node.preview_size.split(",");
                     if (size.length != 1) {
 
 
-                        var PreviewWindow = window.open(site_url + url_return(mode, node.xot_id), "previewwindow" + node.id, "height=" + size[1] +
-                            ", width=" + size[0] + ", scrollbars=yes,resizable=yes");
+                        openPreviewWindow(site_url + url_return(mode, node.xot_id), "previewwindow" + node.id, "height=" + size[1] +
+                            ", width=" + size[0] + ", scrollbars=yes,resizable=yes", openMode);
 
                     } else {
 
 
-                        var PreviewWindow = window.open(site_url + url_return(mode, node.xot_id), "previewwindow" + node.id,
-                            "height=768,width=1024,scrollbars=yes,resizable=yes");
+                        openPreviewWindow(site_url + url_return(mode, node.xot_id), "previewwindow" + node.id,
+                            "height=768,width=1024,scrollbars=yes,resizable=yes", openMode);
 
                     }
 
@@ -689,7 +719,7 @@ function preview_window(admin) {
 
     } else {
 
-        var PreviewWindow = window.open(site_url + url_return("preview", admin), "previewwindow" + admin, "scrollbars=yes");
+        openPreviewWindow(site_url + url_return("preview", admin), "previewwindow" + admin, "scrollbars=yes", openMode);
 
     }
 

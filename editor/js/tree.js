@@ -429,7 +429,7 @@ var EDITOR = (function ($, parent) {
         // ***************** TEMPORARY ****************
 
         var json = build_json("treeroot");
-        var clickevent = e || window.event;
+        var clickevent = e || window.event || {};
         var urlparam = "";
         if (clickevent.shiftKey)
         {
@@ -439,7 +439,9 @@ var EDITOR = (function ($, parent) {
                 urlparam = '&linkID='+id;
             }
         }
-        var new_tab = clickevent.ctrlKey;
+        var previewOpenMode = getPreviewOpenModePreference(clickevent);
+        // Reserve the tab during the click so saving asynchronously does not block it.
+        var previewTab = previewOpenMode === '_blank' ? window.open('', '_blank') : null;
         var apiBase = (typeof rest_api_url !== 'undefined' && rest_api_url) ? rest_api_url : 'website_code/api/v1/index.php';
         var ajax_call = $.ajax({
                 url: apiBase + "?route=learning-objects/save",
@@ -465,15 +467,17 @@ var EDITOR = (function ($, parent) {
             // We would also launch the preview window from here
             preview_url ??= "preview.php?template_id="
             $('#loader').hide();
-            if (new_tab)
-            {
-                window.open(preview_url + template_id + urlparam, "_blank");
-            }
-            else {
-                window.open(preview_url + template_id + urlparam, "previewwindow" + template_id, "height=" + template_height + ", width=" + template_width + ", resizable=yes, scrollbars=1");
+            var url = preview_url + template_id + urlparam;
+            if (previewTab && !previewTab.closed) {
+                previewTab.location = url;
+            } else {
+                openPreviewWindow(url, "previewwindow" + template_id, "height=" + template_height + ", width=" + template_width + ", resizable=yes, scrollbars=1", previewOpenMode);
             }
         })
         .fail(function(data, status, error) {
+            if (previewTab && !previewTab.closed) {
+                previewTab.close();
+            }
             $('#loader').hide();
 			// alert from play button click
 			var sessionError = language.Alert.sessionError;

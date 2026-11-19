@@ -87,6 +87,27 @@ if ($section === 'preferences') {
         </section>
 
         <section class="preferences-section">
+            <h3 class="preferences-section-title"><?php echo USER_SETTINGS_SECTION_PREVIEW_OPEN; ?></h3>
+            <div class="preferences-options">
+                <label class="preferences-option">
+                    <input type="radio" name="preview_open_mode" value="popup" id="preview_open_mode_popup" class="preferences-input">
+                    <span class="preferences-control preferences-control--radio" aria-hidden="true"></span>
+                    <span class="preferences-option-text"><?php echo USER_SETTINGS_PREVIEW_OPEN_MODE_POPUP; ?></span>
+                </label>
+                <label class="preferences-option">
+                    <input type="radio" name="preview_open_mode" value="_blank" id="preview_open_mode_blank" class="preferences-input">
+                    <span class="preferences-control preferences-control--radio" aria-hidden="true"></span>
+                    <span class="preferences-option-text"><?php echo USER_SETTINGS_PREVIEW_OPEN_MODE_BLANK; ?></span>
+                </label>
+                <label class="preferences-option">
+                    <input type="radio" name="preview_open_mode" value="lightbox" id="preview_open_mode_lightbox" class="preferences-input">
+                    <span class="preferences-control preferences-control--radio" aria-hidden="true"></span>
+                    <span class="preferences-option-text"><?php echo USER_SETTINGS_PREVIEW_OPEN_MODE_LIGHTBOX; ?></span>
+                </label>
+            </div>
+        </section>
+
+        <section class="preferences-section">
             <h3 class="preferences-section-title"><?php echo USER_SETTINGS_SECTION_OVERVIEW; ?></h3>
             <div class="preferences-options">
                 <label class="preferences-option">
@@ -163,6 +184,7 @@ if ($section === 'preferences') {
     </div>
 
     <div class="preferences-modal-footer">
+        <div class="preferences-save-status" role="status" aria-live="polite" data-saved-message="<?php echo htmlspecialchars(USER_SETTINGS_PREFERENCES_SAVED, ENT_QUOTES, 'UTF-8'); ?>" data-error-message="<?php echo htmlspecialchars(USER_SETTINGS_PREFERENCES_SAVE_FAILED, ENT_QUOTES, 'UTF-8'); ?>"></div>
         <button type="button" class="preferences-btn preferences-btn-reset"><?php echo USER_SETTINGS_RESET_DEFAULTS; ?></button>
         <button type="button" class="preferences-btn preferences-btn-cancel"><?php echo USER_SETTINGS_CANCEL; ?></button>
         <button type="button" class="preferences-btn preferences-btn-save"><?php echo USER_SETTINGS_SAVE; ?></button>
