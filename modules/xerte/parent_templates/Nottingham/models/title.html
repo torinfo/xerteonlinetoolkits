@@ -367,6 +367,7 @@
             const $mediaHolder = $('#mediaHolder.pageVideo');
             let tempW = $mediaHolder.data('max-width');
             let tempH = $mediaHolder.data('max-height');
+            if (!(tempW > 0 && tempH > 0)) return;
             const dimensions = this.getMaxDimensions();
 
             if (tempW > dimensions[0]) {
@@ -386,7 +387,14 @@
                 'height':tempH
             });
 
-            if (Math.round(prevW) != Math.round(tempW)) {
+            const player = $mediaHolder.find('video').data('mediaelementplayer');
+            if (player) {
+                // MediaElement 4 listens for native resize events; jQuery's synthetic resize can leave a zero-height frame.
+                // Its video renderer keeps a separate pixel size, so resize both the frame and renderer.
+                player.setPlayerSize(tempW, tempH);
+                player.media.setSize(tempW, tempH);
+                player.setControlsSize();
+            } else if (Math.round(prevW) != Math.round(tempW)) {
                 // force the mediaplayer resize to occur
                 $x_window.resize();
             }

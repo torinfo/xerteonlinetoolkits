@@ -120,6 +120,8 @@
 					tracksText:			x_mediaText[4].label,
 					enableKeyboard:		false,
 					enablePluginDebug:  false,
+					// Preserve existing page-model and theme selectors; the player template loads matching legacy CSS.
+					classPrefix: 'mejs-',
 					
 					success: function (mediaElement, domObject) {
 						// forces Jaws screen reader to find label for button
@@ -153,7 +155,7 @@
 							if (e.volume != undefined) {
 								x_volume = e.volume;
 							} else {
-								x_volume = e.target.player.getVolume();
+								x_volume = mediaElement.volume;
 							}
 							$("audio,video").each(function() {
 								if (this != domObject) {
@@ -213,16 +215,19 @@
 								}
 							});
 
-							mediaElement.addEventListener("loadedmetadata", function() {
+							mediaElement.addEventListener("loadedmetadata", function(e) {
+								// MediaElement 4 forwards the native video through detail.target, without binding callback `this`.
+								var $video = $((e.detail && e.detail.target) || e.target || domObject);
+								var dimensions = [$video.prop('videoWidth'), $video.prop('videoHeight')];
 								if (x_templateLocation.indexOf("modules/decision") != -1) { // decision tree template
-									mediaMetadata($(this), [$(this).prop('videoWidth'), $(this).prop('videoHeight')]);
+									mediaMetadata($video, dimensions);
 								} else if (opts.pageName == "introVideo" || opts.pageName == "splashVideo" || opts.pageName == "resourceVideo") { // it's a video from project/page intro, page resource or a splash video
 									if (mimeType.toLowerCase() === 'video/mp4') {
-										x_introMediaMetadata($(this), [$(this).prop('videoWidth'), $(this).prop('videoHeight')])
+										x_introMediaMetadata($video, dimensions)
 									}
 								} else {
 									try {
-										eval(x_pageInfo[x_currentPage].type).mediaMetadata($(this), [$(this).prop('videoWidth'), $(this).prop('videoHeight')]); // send dimensions details back to page
+										eval(x_pageInfo[x_currentPage].type).mediaMetadata($video, dimensions); // send dimensions details back to page
 									} catch(e) {};
 								}
 							});

@@ -4833,6 +4833,7 @@ function x_saveSessionBtnIsStyled() {
 
 // video has loaded to intro lightbox - make sure it's sized correctly (MP4 only)
 function x_introMediaMetadata($video, wh) {
+	if (!(wh[0] > 0 && wh[1] > 0)) return;
 	$video.data({
 		width: wh[0],
 		height: wh[1]
@@ -4843,11 +4844,23 @@ function x_introMediaMetadata($video, wh) {
 		"maxHeight": wh[1] + 'px'
 	});
 	
-	// resize if the media is the wrong size for its holder
-	// this is done by manually triggering the window resize event (mediaelement.js listens to this event)
-	$('.featherlight-content').addClass('max');
-	$x_window.resize();
-	$('.featherlight-content').removeClass('max');
+	var $lightbox = $video.closest('.featherlight-content');
+	var player = $video.data('mediaelementplayer');
+	$lightbox.addClass('max');
+	if (player) {
+		// Size within the temporary viewport bounds: MediaElement 4 does not receive jQuery's synthetic resize event.
+		var scale = Math.min(1, $lightbox.width() / wh[0], $lightbox.height() / wh[1]);
+		var width = Math.floor(wh[0] * scale);
+		var height = Math.floor(wh[1] * scale);
+		player.setPlayerSize(width, height);
+		// MediaElement 4 sizes the frame and video renderer separately. Update both
+		// or the video can keep its initial tiny pixel size inside the enlarged frame.
+		player.media.setSize(width, height);
+		player.setControlsSize();
+	} else {
+		$x_window.resize();
+	}
+	$lightbox.removeClass('max');
 }
 
 

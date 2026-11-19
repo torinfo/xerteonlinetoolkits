@@ -1236,6 +1236,14 @@ button.customIconBtn:after {
 	opacity: 0;
 }
 
+/* A one-time hide can be undone by player/focus handlers rewriting inline styles;
+   splash controls must remain hidden, including when the player gains focus. */
+.featherlight-content.splashVideo .mejs-controls,
+.featherlight-content.splashVideo .mejs-overlay-button,
+.featherlight-content.splashVideo .mejs-overlay-loading {
+	display: none !important;
+}
+
 .featherlight-content.pageIntroVideo.youTube .mejs-layers, .featherlight-content.pageIntroVideo.youTube .mejs-controls,
 .featherlight-content.resourceVideo.youTube .mejs-layers, .featherlight-content.resourceVideo.youTube .mejs-controls,
 .featherlight-content.splashVideo.youTube .mejs-layers, .featherlight-content.splashVideo.youTube .mejs-controls {
