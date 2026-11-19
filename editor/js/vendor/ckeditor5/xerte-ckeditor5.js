@@ -821,6 +821,18 @@
 		window.__xerteCke5UiCssInjected = true;
 	}
 
+	function syncSourceData(editor) {
+		if (editor.state !== 'ready') return;
+		if (editor.plugins.has('SourceEditing')) {
+			var source = editor.plugins.get('SourceEditing');
+			if (source.isSourceEditingMode) {
+				// This fires change:data so the wizard receives the pending HTML,
+				// while leaving the Source textarea and its selection untouched.
+				source.updateEditorData();
+			}
+		}
+	}
+
 	function apiShim(editor, domEl) {
 		var self = {
 			getData: function () {
@@ -933,6 +945,18 @@
 			} else if (!(userConfig && userConfig.inlineEditor)) {
 				setupFixedToolbar(editor);
 			}
+			if (editor.plugins.has('SourceEditing')) {
+				var source = editor.plugins.get('SourceEditing');
+				editor.listenTo(source, 'change:isSourceEditingMode', function () {
+					if (!source.isSourceEditingMode) return;
+					for (var root of editor.model.document.roots) {
+						var textarea = editor.ui.getEditableElement('sourceEditing:' + root.rootName);
+						if (textarea) {
+							textarea.addEventListener('blur', function () { syncSourceData(editor); });
+						}
+					}
+				}, { priority: 'low' });
+			}
 			if (userConfig && userConfig.startupMode === 'source') {
 				try {
 					editor.execute('sourceEditing');
@@ -955,6 +979,11 @@
 		create: createInstance,
 		getInstance: function (id) {
 			return window.__xerteCke5Instances[id] || null;
+		},
+		syncSourceData: function () {
+			Object.keys(window.__xerteCke5Instances).forEach(function (id) {
+				syncSourceData(window.__xerteCke5Instances[id]);
+			});
 		},
 		destroyById: function (id) {
 			var shim = window.__xerteCke5Shims[id];

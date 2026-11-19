@@ -396,6 +396,12 @@ var EDITOR = (function ($, parent) {
 
 
     build_json = function (node_id) {
+        // Preview, publish and save all serialize from lo_data. Commit pending
+        // Source edits through the normal change handlers before copying it.
+        if (node_id === 'treeroot' && window.XerteCKEditor5Facade &&
+            typeof window.XerteCKEditor5Facade.syncSourceData === 'function') {
+            window.XerteCKEditor5Facade.syncSourceData();
+        }
         var tree = $.jstree.reference("#treeview");
         var node = tree.get_node(node_id, false);
         var obj = {};
