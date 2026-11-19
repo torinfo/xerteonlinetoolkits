@@ -4,9 +4,26 @@
  */
 import { displayDimension, normalizeDimension } from './xerte-image-dimensions.js';
 
+export const xerteVideoProvider = {
+	name: 'xerteVideo',
+	url: /^((?:https?:\/\/|\/\/|(?![a-z][a-z\d+.-]*:))[^?#\s]+\.(?:mp4|webm|ogv|ogg|m4v|mov)(?:[?#][^\s]*)?)$/i,
+	html: match => `<video controls preload="metadata" style="display:block;width:100%;height:auto" src="${ escapeAttribute( match[ 0 ] ) }"></video>`
+};
+
+function escapeAttribute( value ) {
+	return value.replace( /&/g, '&amp;' ).replace( /"/g, '&quot;' ).replace( /</g, '&lt;' ).replace( />/g, '&gt;' );
+}
+
+function normalizeVideoUrl( url ) {
+	if ( !xerteVideoProvider.url.test( url ) ) return url;
+	// CKEditor's media registry otherwise treats relative paths as remote hosts.
+	try { return new URL( url, document.baseURI ).href; }
+	catch { return ''; }
+}
+
 let dialogSequence = 0;
 
-export function showMediaPropertiesDialog( editor, media ) {
+export function showMediaPropertiesDialog( editor, media, browseMedia = null ) {
 	return new Promise( resolve => {
 		const previouslyFocused = document.activeElement;
 		const overlay = document.createElement( 'div' );
@@ -25,8 +42,15 @@ export function showMediaPropertiesDialog( editor, media ) {
 		const body = document.createElement( 'div' ); body.style.cssText = 'padding:14px';
 		form.appendChild( body );
 		media = media || { getAttribute: name => name === 'mediaWidth' ? '100%' : '' };
-		const url = addField( body, editor.t( 'URL' ), media.getAttribute( 'url' ) || '' );
+		const urlRow = document.createElement( 'div' );
+		urlRow.style.cssText = 'display:grid;grid-template-columns:minmax(0,1fr) auto;gap:10px;align-items:end';
+		body.appendChild( urlRow );
+		const url = addField( urlRow, editor.t( 'URL' ), media.getAttribute( 'url' ) || '' );
 		url.required = true;
+		const browse = makeButton( editor.t( 'Browse Server' ), 'button' );
+		browse.style.cssText = 'height:34px';
+		browse.disabled = !browseMedia;
+		urlRow.appendChild( browse );
 		const title = addField( body, editor.t( 'Title' ), media.getAttribute( 'mediaTitle' ) || '' );
 		const aria = addField( body, editor.t( 'ARIA label' ), media.getAttribute( 'mediaAriaLabel' ) || '' );
 		const dimensions = document.createElement( 'div' );
@@ -71,7 +95,7 @@ export function showMediaPropertiesDialog( editor, media ) {
 		};
 		const onKeydown = event => {
 			if ( event.key === 'Tab' ) {
-				const controls = Array.from( form.querySelectorAll( 'input:not([type=radio]), input[type=radio]:checked, select, button' ) );
+				const controls = Array.from( form.querySelectorAll( 'input:not([type=radio]), input[type=radio]:checked, select, button:not(:disabled)' ) );
 				const first = controls[ 0 ], last = controls[ controls.length - 1 ];
 				if ( event.shiftKey && document.activeElement === first ) {
 					event.preventDefault(); last.focus();
@@ -85,10 +109,22 @@ export function showMediaPropertiesDialog( editor, media ) {
 			finish( null );
 		};
 		reset.addEventListener( 'click', () => { width.value = '100%'; height.value = ''; } );
+		browse.addEventListener( 'click', async () => {
+			browse.disabled = true;
+			try {
+				const chosen = await browseMedia();
+				if ( finished ) return;
+				if ( chosen ) { url.value = chosen; url.setCustomValidity( '' ); }
+				url.focus();
+			} finally {
+				browse.disabled = false;
+			}
+		} );
 		cancel.addEventListener( 'click', () => finish( null ) );
 		form.addEventListener( 'submit', event => {
 			event.preventDefault();
-			if ( !editor.plugins.get( 'MediaEmbedEditing' ).registry.hasMedia( url.value.trim() ) ) {
+			const source = normalizeVideoUrl( url.value.trim() );
+			if ( !source || !editor.plugins.get( 'MediaEmbedEditing' ).registry.hasMedia( source ) ) {
 				url.setCustomValidity( editor.t( 'This media URL is not supported.' ) );
 				url.reportValidity();
 				return;
@@ -98,7 +134,7 @@ export function showMediaPropertiesDialog( editor, media ) {
 				return;
 			}
 			finish( {
-				url: url.value.trim(),
+				url: source,
 				mediaTitle: title.value.trim(), mediaAriaLabel: aria.value.trim(),
 				mediaWidth: normalizeDimension( width.value ), mediaHeight: normalizeDimension( height.value ),
 				mediaAlign: form.elements[ 'xerte-media-alignment' ].value

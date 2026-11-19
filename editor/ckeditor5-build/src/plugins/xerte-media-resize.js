@@ -7,7 +7,8 @@ import { ButtonView, MenuBarMenuListItemButtonView } from '@ckeditor/ckeditor5-u
 import { MediaEmbed, MediaEmbedToolbar } from '@ckeditor/ckeditor5-media-embed';
 import { WidgetResize } from '@ckeditor/ckeditor5-widget';
 import { IconMedia, IconPencil } from 'ckeditor5/src/icons.js';
-import { showMediaPropertiesDialog } from './xerte-media-properties-dialog.js';
+import { showMediaPropertiesDialog, xerteVideoProvider } from './xerte-media-properties-dialog.js';
+import { browseMedia } from './xerte-browse-media.js';
 
 const mediaAttributes = [ 'mediaWidth', 'mediaHeight', 'mediaAlign', 'mediaTitle', 'mediaAriaLabel' ];
 const originalRenderers = new WeakMap();
@@ -15,6 +16,14 @@ const originalRenderers = new WeakMap();
 export class XerteMediaResize extends Plugin {
 	static get pluginName() { return 'XerteMediaResize'; }
 	static get requires() { return [ MediaEmbed, MediaEmbedToolbar, WidgetResize ]; }
+
+	init() {
+		// Add file playback alongside configured providers, including custom ones.
+		const registry = this.editor.plugins.get( 'MediaEmbedEditing' ).registry;
+		if ( !( this.editor.config.get( 'mediaEmbed.removeProviders' ) || [] ).includes( xerteVideoProvider.name ) ) {
+			registry.providerDefinitions.push( xerteVideoProvider );
+		}
+	}
 
 	afterInit() {
 		const editor = this.editor;
@@ -109,6 +118,11 @@ function refreshMediaPreview( writer, figure, media ) {
 				iframe.style.height = values.mediaHeight;
 			}
 		}
+		for ( const video of dom.querySelectorAll( 'video' ) ) {
+			if ( values.mediaTitle ) video.setAttribute( 'title', values.mediaTitle );
+			if ( values.mediaAriaLabel ) video.setAttribute( 'aria-label', values.mediaAriaLabel );
+			if ( values.mediaHeight ) video.style.height = values.mediaHeight;
+		}
 	} );
 	for ( const [ key, value ] of preview.getCustomProperties() ) writer.setCustomProperty( key, value, replacement );
 	originalRenderers.set( replacement, render );
@@ -120,7 +134,8 @@ export async function openMediaPropertiesDialog( editor, media = editor.model.do
 	if ( editor.isReadOnly ) return;
 	if ( !media?.is( 'element', 'media' ) ) media = null;
 	const ranges = Array.from( editor.model.document.selection.getRanges(), range => range.clone() );
-	const values = await showMediaPropertiesDialog( editor, media );
+	const browseUrl = editor.config.get( 'xerteBrowseMediaUrl' );
+	const values = await showMediaPropertiesDialog( editor, media, browseUrl ? () => browseMedia( browseUrl ) : null );
 	if ( values && !editor.isReadOnly && ( !media || media.root.rootName !== '$graveyard' ) ) {
 		editor.model.change( writer => {
 			writer.setSelection( media || ranges, media ? 'on' : undefined );
