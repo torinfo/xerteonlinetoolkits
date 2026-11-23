@@ -18,6 +18,7 @@
 /*start here and set the default values for all the variables*/ /******Header******/
 
 @import url("./theme-variabeles-hoornbeeck.css");
+@import url("./editorstyles.css");
 
 /* Regular font */
 @font-face {
@@ -244,7 +245,7 @@ body:not(.sb_right):not(.sb_left) #x_headerBlock {
 
 /* Round control button of Flashcardson hover/focus in the active state */
 .x_flashCards_page .circleBtn.ui-button:hover, .x_flashCards_page .circleBtn.ui-button:focus, .x_flashCards_page .circleBtn.ui-button:active {
-  background-color: var(--theme-ui-button-hover-background); /* --theme-ui-button-hover-background */
+  background-color: var(--theme-ui-button-hover-background); 
 }
 
 /* Selected thumbnail in Image sequence */
@@ -337,7 +338,7 @@ body:not(.sb_right):not(.sb_left) #x_headerBlock {
 
 /* Styling for Image sequence */
 .x_imageSequence_page #viewHolder #viewOption button.highlighted {
-  border-color: #f86718; /*Nog op terug komen, want deze kleur is nergens te zien op de pagina */
+  border-color: var(--theme-thumbnail-highlight-border); /*Nog op terug komen, want deze kleur is nergens te zien op de pagina */
 }
 
 /* Styling for Media lesson */
@@ -490,7 +491,7 @@ body:not(.sb_right):not(.sb_left) #x_headerBlock {
 
 /* CSS rule for this Xerte interface element */
 #pageContents.button button.selected {
-  background-color: #cfcfcf; /* CHECKEN - Deze regel heeft dezelfde werking als: .x_nav_page #pageContents.button button.selected en heeft een andere kleur  */
+  background-color: var(--theme-button-navigator-content-selected-background); /* CHECKEN - Deze regel heeft dezelfde werking als: .x_nav_page #pageContents.button button.selected en heeft een andere kleur  */
 }
 
 /* General tabs */
@@ -548,7 +549,6 @@ body:not(.sb_right):not(.sb_left) #x_headerBlock {
   border-top-left-radius: 0;
   margin-right: 5px;
 }
-
 .ui-state-default a, .ui-state-default a:link, .ui-state-default a:visited {
     color: var(--theme-tab-navigator-text);
     text-decoration: none;
@@ -606,17 +606,17 @@ body:not(.sb_right):not(.sb_left) #x_headerBlock {
 .x_tabNavExtra_page a.topic.highlight,
 .x_list_page #listHolder a.listItem.highlight,
 .x_annotatedDiagram_page #listHolder a.listItem.highlight {
-  background: var(--theme-tab-navigator-active-background); 
+ background: var(--theme-tab-navigator-active-background); 
 }
 
 /* Information panel close button for Interactive list */
 .x_list_page #infoHolderTop .closeBtn {
-  color: #222222; /* CHECKEN - geen close button zichtbaar, nog onderzoeken */
+  color: var(--theme-navigation-list-close-button-text); /* CHECKEN - geen close button zichtbaar, nog onderzoeken */
 }
 
 /* Information panel close button for Interactive list on hover/focus in the active state */
 .x_list_page #infoHolderTop .closeBtn:hover, .x_list_page #infoHolderTop .closeBtn:focus, .x_list_page #infoHolderTop .closeBtn:active {
-  color: #4078C0; /* CHECKEN - geen close button zichtbaar, nog onderzoeken */
+  color: var(--theme-navigation-list-close-button-hover-text); /* CHECKEN - geen close button zichtbaar, nog onderzoeken */
 }
 
 /* Styling for Navigator page (multi-navigator) */
@@ -657,7 +657,7 @@ body:not(.sb_right):not(.sb_left) #x_headerBlock {
 
 /* Interactivity: Interactive text */
 .x_interactiveText_page #passageHolder a.listItem.highlight {
-  background-color: #ffffff; /* CHECKEN - Deze regel code: 1053 heeft dezelfde codewerking en werkt alleen met !i */
+  background-color: var(--theme-interactivity-interactive-text-highlight-background); /* CHECKEN - Deze regel code: 1053 heeft dezelfde codewerking en werkt alleen met !i */
 }
 
 /* Interactivity: Interactive text */
@@ -669,27 +669,27 @@ body:not(.sb_right):not(.sb_left) #x_headerBlock {
 
 /* Interactivity: Interactive text */
 .x_interactiveText_page #more, .x_interactiveText_page #more:visited {
-  color: #000000; /* CHECKEN- "more" is niet zichtbaar*/
+  color: var(--theme-interactivity-interactive-text-more-link-text); /* CHECKEN- "more" is niet zichtbaar*/
 }
 
 /* Interactivity: Interactive text on hover/focus in the active state */
 .x_interactiveText_page #more:active, .x_interactiveText_page #more:focus, .x_interactiveText_page #more:hover {
-  color: #f86718; /* CHECKEN- "more" is niet zichtbaar */
+  color: var(--theme-interactivity-interactive-text-more-link-hover-text); /* CHECKEN- "more" is niet zichtbaar */
 }
 
 /* Form/Documentation page */
 .x_documentation_page #pages fieldset {
-  border: 3px solid #ffffff; /* --theme-background / component-border */
+  border: 3px solid var(--theme-interactivity-documentation-fieldset-border-color); ; /* --theme-background / component-border */
 }
 
 /* CSS rule for this Xerte interface element */
 #listholder a.listitem, a:visited {
-  color: #4078C0; /* CHECKEN - werkt alleen met !important en veranderd alle linkkleuren van list items en linkjes */
+  color: var(--theme-navigation-list-visited-link-text); /* CHECKEN - werkt alleen met !important en veranderd alle linkkleuren van list items en linkjes */
 }
 
 /* Interactivity: Annotated hotspot */
 .x_annotatedDiagram_page .highlight {
-  background: #ebebeb; /* CHECKEN - ik zie geen verandering bij wijzing dus ik kom hier nog op. En er is geen Annotated hotspot pagina*/
+  background: var(--theme-interactivity-annotated-diagram-highlight-background); /* CHECKEN - ik zie geen verandering bij wijzing dus ik kom hier nog op. En er is geen Annotated hotspot pagina*/
 }
 
 /* Interactivity: Annotated hotspot */
@@ -699,7 +699,7 @@ body:not(.sb_right):not(.sb_left) #x_headerBlock {
 
 /* Interactivity: Annotated hotspot */
 .x_annotatedDiagram_page #infoHolder {
-  background: #ffffff; /* CHECKEN - Annotated hotspot pagina vinden */
+  background: var(--theme-interactivity-annotated-diagram-info-holder-background); /* CHECKEN - Annotated hotspot pagina vinden */
 }
 
 /* Interactivity: Categories */
@@ -733,10 +733,18 @@ body:not(.sb_right):not(.sb_left) #x_headerBlock {
 
 /* Highlighted drop target for Drag-and-drop labelling */
 .x_dragDropLabel_page #targetHolder .target.highlight {
-  background: var(--theme-interactivity-drag-and-drop-labelling-background);
+  background: var(--theme-interactivity-drag-and-drop-labelling-background); 
 }
 
-/*  Interactivity: Categories */
+#labelHolder .label.focus {
+    border:		2px solid var(--theme-label-selected-border);
+}
+
+#labelHolder .label.selected {
+    border:		2px solid var(--theme-label-selected-border);
+}
+
+/* Interactivity: Categories */
 #categoryHolder .highlight {
   border-radius: 0;
   background: var(--interactivity-categories-holder-background);
@@ -756,7 +764,7 @@ body:not(.sb_right):not(.sb_left) #x_headerBlock {
 
 /* Correct answer/target for Gap-fill exercise */
 .x_gapFill_page .target.correct {
-  color: green; /* CHECKEN - Deze regel werkt niet wordt, omdat die wordt overruled door een andere regel en werkt alleen met !important */
+  color: var(--theme-feedback-correct-text); /* CHECKEN - Deze regel werkt niet wordt, omdat die wordt overruled door een andere regel en werkt alleen met !important */
   font-weight: bold;
   background-color: var(--theme-feedback-correct-background); 
 }
@@ -920,7 +928,7 @@ div#shorturltodisplay a {
 /* RSS Feed / RSS download results */
 .x_rss_page #resultsHolder .shadedDiv,
 .x_rssdownload_page #resultsHolder .shadedDiv {
-  background-color: var(--theme-link-feed-rss-feed-results-holder-background) !important; /* CHEKCHEN - Waarom hier !important staat. */
+  background-color: var(--theme-link-feed-rss-feed-results-holder-background) !important; 
   margin-bottom: 0.5em;
   margin-top: 0.5em;
 }
@@ -1132,7 +1140,7 @@ body:not(.sb_right):not(.sb_left) #x_footerBlock {
 /*****footer tools chevron*****/
 /* Chevron for additional footer tools */
 #x_footerChevron {
-  color: #000000; /* CHECKEN - Deze regelt werkt alleen met !important  */
+  color:  var(--theme-footer-chevron-text);/* CHECKEN - Deze regelt werkt alleen met !important  */
 }
 
 /* Chevron for additional footer tools on hover/focus */
@@ -1191,9 +1199,9 @@ body:not(.sb_right):not(.sb_left) #x_footerBlock {
 /* Page items in the table of contents on hover/focus in the active state */
 #menuItems .menuItem:hover, #menuItems .menuItem:focus, #menuItems .menuItem:active,
 #menuItems .chapterItem:hover, #menuItems .chapterItem:focus, #menuItems .chapterItem:active {
-  background: var( --theme-dialog-menu-item-hover-background); /* --theme-menuitem-hover-background */
-  color: var( --theme-dialog-menu-item-hover-text); /* --theme-menuitem-hover-text */
-  border-color: var( --theme-dialog-menu-item-hover-border); /* --theme-menuitem-hover-background */
+  background: var( --theme-dialog-menu-item-hover-background); 
+  color: var( --theme-dialog-menu-item-hover-text); 
+  border-color: var( --theme-dialog-menu-item-hover-border); 
 }
 
 /* Current page in the table of contents */
@@ -1209,15 +1217,15 @@ body:not(.sb_right):not(.sb_left) #x_footerBlock {
 
 /* Chapter item in the table of contents CHEKCEN - Geen chapter item zichtbaar in de table of contents */
 #menuItems .chapterHolder .chapterItem a {
-  background: #f84d4d; 
-  border-color: #cfcfcf; 
-  color: #000000;
+  background: var(--theme-dialog-menu-chapter-link-background);
+  border-color: var(--theme-dialog-menu-chapter-link-border-color);
+  color: var(--theme-dialog-menu-chapter-link-text);
 }
 
 /* Chapter item in the table of contents in the active state CHEKCEN - Geen chapter item zichtbaar in de table of contents */
 #menuItems .chapterHolder .chapterItem.ui-state-active {
-  background: #cfcfcf; 
-  border-color: #cfcfcf;
+  background:  var(--theme-dialog-menu-chapter-active-background); 
+  border-color: var(--theme-dialog-menu-chapter-active-border-color);
 }
 
 /* Page content within a chapter in the table of contents */
@@ -1265,12 +1273,12 @@ table.glossary tr.shaded {
 /* Sidebar / side navigation bar */
 #x_sideBar {
   background-color: var(--theme-sidebar-background); 
-  color: #000000; /* CHECKEN - Kleur veranderd niet wanneer ik het*/
+  color: var(--theme-sidebar-text); /* CHECKEN - Kleur veranderd niet wanneer je het aanpast*/
 }
 
 /* Button to open/close the sidebar */
 #x_sideBarToggleBtn {
-  background-color: var(  --theme-sidebar-toggle-button-background); 
+  background-color: var(--theme-sidebar-toggle-button-background); 
   color: var( --theme-sidebar-toggle-button-text);
 }
 
@@ -1294,14 +1302,14 @@ table.glossary tr.shaded {
 /* Function/navigation buttons in the sidebar */
 #x_sideBar.sideBarLarge #x_sideBarBtnHolder button span.ui-icon {
   background: none;
-  border: 2px solid #cfcfcf; /* CHECKEN -  Kleur veranderd niet wanneer ik het verander */
+  border: 2px solid var(--theme-sidebar-large-button-icon-border-color); /* CHECKEN -  Kleur veranderd niet wanneer ik het verander */
 }
 
 /* Function/navigation buttons in the sidebar on hover/focus in the active state */
 #x_sideBar.sideBarLarge #x_sideBarBtnHolder button:hover span.ui-icon, #x_sideBar.sideBarLarge #x_sideBarBtnHolder button:focus span.ui-icon, #x_sideBar.sideBarLarge #x_sideBarBtnHolder button:active span.ui-icon {
-  background: #bdbdbd; /* CHECKEN - Kleur veranderd niet wanneer ik het verander */
-  color: #000000; /* CHECKEN - Kleur veranderd niet wanneer ik het verander */
-  border: 2px solid #bdbdbd; /* CHECKEN - Kleur veranderd niet wanneer ik het verander */
+  background: var(--theme-sidebar-large-button-icon-hover-background); /* CHECKEN - Kleur veranderd niet wanneer ik het verander */
+  color: var(--theme-sidebar-large-button-icon-hover-text); /* CHECKEN - Kleur veranderd niet wanneer ik het verander */
+  border: 2px solid var(--theme-sidebar-large-button-icon-hover-border-color); /* CHECKEN - Kleur veranderd niet wanneer ik het verander */
 }
 
 /* Page timer */
@@ -1460,13 +1468,13 @@ table.glossary tr.shaded {
   display: table;
   padding: 10px;
   font-style: normal;
-  background-color: #C4551F;
-  color: #ffffff; /* --theme-header-text / component-text */
+  background-color:  var(--theme-panel-1-background);
+  color: var(--theme-panel-1-text); /* --theme-header-text / component-text */
 }
 
 /* Links within Editor/content style Panel 1 */
 .panel1 a {
-  color: white !important;
+  color: var(--theme-panel-1-link-text) !important;
 }
 
 /* Editor/content style Panel 2 */
@@ -1475,13 +1483,13 @@ table.glossary tr.shaded {
   display: table;
   padding: 10px;
   font-style: normal;
-  background-color: #418545;
-  color: #ffffff; /* --theme-header-text / component-text */
+  background-color: var(--theme-panel-2-background);
+  color: var(--theme-panel-2-text); /* --theme-header-text / component-text */
 }
 
 /* Links within Editor/content style Panel 2 */
 .panel2 a {
-  color: white !important;
+  color: var(--theme-panel-2-link-text) !important;
 }
 
 /* Editor/content style Panel 3 */
@@ -1490,13 +1498,13 @@ table.glossary tr.shaded {
   display: table;
   padding: 10px;
   font-style: normal;
-  background-color: #4078C0;
-  color: #ffffff; /* --theme-header-text / component-text */
+  background-color: var(--theme-panel-3-background);
+  color: var(--theme-panel-3-text); /* --theme-header-text / component-text */
 }
 
 /* Links within Editor/content style Panel 3 */
 .panel3 a {
-  color: white !important;
+  color: var(--theme-panel-3-link-text) !important;
 }
 
 /* Editor/content style Panel 4 */
@@ -1505,13 +1513,13 @@ table.glossary tr.shaded {
   display: table;
   padding: 10px;
   font-style: normal;
-  background-color: #f86718; 
-  color: #000000; 
+  background-color: var(--theme-panel-4-background); 
+  color: var(--theme-panel-4-text); 
 }
 
 /* Links within Editor/content style Panel 4 */
 .panel4 a {
-  color: black !important;
+  color: var(--theme-panel-4-link-text) !important;
 }
 
 /* Editor/content style Panel 5 */
@@ -1520,14 +1528,14 @@ table.glossary tr.shaded {
   display: table;
   padding: 10px;
   font-style: normal;
-  background-color: #222222; /* --theme-primary / --theme-text (depending on the component) */
-  color: #ffffff; /* --theme-header-text / component-text */
+  background-color: var(--theme-panel-5-background); /* --theme-primary / --theme-text (depending on the component) */
+  color: var(--theme-panel-5-text); /* --theme-header-text / component-text */
   display: table;
 }
 
 /* Links within Editor/content style Panel 5 */
 .panel5 a {
-  color: white !important;
+  color: var(--theme-panel-5-link-text) !important;
 }
 
 /* Editor/content style Panel 6 */
@@ -1536,104 +1544,104 @@ table.glossary tr.shaded {
   display: table;
   padding: 10px;
   font-style: normal;
-  background-color: #D13759;
-  color: #ffffff; /* --theme-header-text / component-text */
+  background-color: var(--theme-panel-6-background);
+  color: var(--theme-panel-6-text); /* --theme-header-text / component-text */
 }
 
 /* Links within Editor/content style Panel 6 */
 .panel6 a {
-  color: white !important;
+  color: var(--theme-panel-6-link-text) !important;
 }
 
 /* Editor/content style Highlight 1 */
 .highlight1 {
   font-family: var(--theme-font-family);
-  background: #fff; /* --theme-background */
+  background: var(--theme-highlight-1-background); /* --theme-background */
   display: table;
   font-weight: normal;
   margin-bottom: 7px;
   margin-top: 5px;
   padding: 10px;
   border-left: 5px solid;
-  -webkit-box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
-  border-color: #C4551F;
+  -webkit-box-shadow: 0 1px 3px var(--theme-highlight-1-box-shadow-color-1), 0 1px 2px var(--theme-highlight-1-box-shadow-color-2);
+  box-shadow: 0 1px 3px var(--theme-highlight-1-box-shadow-color-1), 0 1px 2px var(--theme-highlight-1-box-shadow-color-2);
+  border-color: var(--theme-highlight-2-border-color); 
 }
 
 /* Editor/content style Highlight 2 */
 .highlight2 {
   font-family:var(--theme-font-family);
-  background: #fff; /* --theme-background */
+  background: var(--theme-highlight-2-background); /* --theme-background */
   display: table;
   font-weight: normal;
   margin-bottom: 7px;
   margin-top: 5px;
   padding: 10px;
   border-left: 5px solid;
-  -webkit-box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
-  border-color: #418545;
+  -webkit-box-shadow: 0 1px 3px var(--theme-highlight-2-box-shadow-color-1), 0 1px 2px var(--theme-highlight-2-box-shadow-color-2);
+  box-shadow: 0 1px 3px var(--theme-highlight-2-box-shadow-color-1), 0 1px 2px var(--theme-highlight-2-box-shadow-color-2);
+  border-color: var(--theme-highlight-2-border-color);
 }
 
 /* Editor/content style Highlight 3 */
 .highlight3 {
   font-family: var(--theme-font-family);
-  background: #fff; 
+  background: var(--theme-highlight-3-background); /* --theme-background */
   display: table;
   font-weight: normal;
   margin-bottom: 7px;
   margin-top: 5px;
   padding: 10px;
   border-left: 5px solid;
-  -webkit-box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
-  border-color: #4078C0;
+  -webkit-box-shadow: 0 1px 3px var(--theme-highlight-3-box-shadow-color-1), 0 1px 2px var(--theme-highlight-3-box-shadow-color-2);
+  box-shadow: 0 1px 3px var(--theme-highlight-3-box-shadow-color-1), 0 1px 2px var(--theme-highlight-3-box-shadow-color-2);
+  border-color: var(--theme-highlight-3-border-color);
 }
 
 /* Editor/content style Highlight 4 */
 .highlight4 {
   font-family: var(--theme-font-family);
-  background: #fff;
+  background: var(--theme-highlight-4-background); /* --theme-background */
   display: table;
   font-weight: normal;
   margin-bottom: 7px;
   margin-top: 5px;
   padding: 10px;
   border-left: 5px solid;
-  -webkit-box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
+  -webkit-box-shadow: 0 1px 3px var(--theme-highlight-4-box-shadow-color-1), 0 1px 2px var(--theme-highlight-4-box-shadow-color-2);
+  box-shadow: 0 1px 3px var(--theme-highlight-4-box-shadow-color-1), 0 1px 2px var(--theme-highlight-4-box-shadow-color-2);
   color: #000000; 
-  border-color: #f86718; 
+  border-color: var(--theme-highlight-4-border-color); 
 }
 
 /* Editor/content style Highlight 5 */
 .highlight5 {
   font-family: var(--theme-font-family);
-  background: #fff;
+  background: var(--theme-highlight-5-background); /* --theme-background */
   display: table;
   font-weight: normal;
   margin-bottom: 7px;
   margin-top: 5px;
   padding: 10px;
   border-left: 5px solid;
-  -webkit-box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
-  border-color: #222222; /* --theme-table-border / component-border */
+  -webkit-box-shadow: 0 1px 3px var(--theme-highlight-5-box-shadow-color-1), 0 1px 2px var(--theme-highlight-5-box-shadow-color-2);
+  box-shadow: 0 1px 3px var(--theme-highlight-5-box-shadow-color-1), 0 1px 2px var(--theme-highlight-5-box-shadow-color-2);
+  border-color: var(--theme-highlight-5-border-color);
 }
 
 /* Editor/content style Highlight 6 */
 .highlight6 {
   font-family:var(--theme-font-family);
-  background: #fff;
+  background: var(--theme-highlight-6-background); /* --theme-background */
   display: table;
   font-weight: normal;
   margin-bottom: 7px;
   margin-top: 5px;
   padding: 10px;
   border-left: 5px solid;
-  -webkit-box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
-  border-color: #D13759;
+  -webkit-box-shadow: 0 1px 3px var(--theme-highlight-6-box-shadow-color-1), 0 1px 2px var(--theme-highlight-6-box-shadow-color-2);
+  box-shadow: 0 1px 3px var(--theme-highlight-6-box-shadow-color-1), 0 1px 2px var(--theme-highlight-6-box-shadow-color-2);
+  border-color: var(--theme-highlight-6-border-color);
 }
 
 /* General blockquote/quotation style */
@@ -1643,8 +1651,8 @@ blockquote {
   margin: 1.5em 10px;
   padding: 0.5em 10px;
   quotes: "“" "”";
-  background: #f9f9f9;
-  border-color: #ccc;
+  background: var(--theme-blockquote-background);
+  border-color: var(--theme-blockquote-border-color);
 }
 
 /* Opening quotation mark of a blockquote */
@@ -1654,7 +1662,7 @@ blockquote:before {
   line-height: 0.1em;
   margin-right: 0.25em;
   vertical-align: -0.4em;
-  color: #ccc;
+  color: var(--theme-blockquote-opening-quote-text);
 }
 
 /* Text inside a blockquote */
@@ -1669,12 +1677,12 @@ blockquote:after {
   line-height: 0.1em;
   margin-left: 0.1em;
   vertical-align: -0.6em;
-  color: #ccc;
+  color: var(--theme-blockquote-closing-quote-text); 
 }
 
 /* Blockquote variant 1 */
 .bq1 {
-  border-color: #C4551F;
+  border-color: var(--theme-blockquote-1-border-color);
 }
 
 /* Blockquote variant 1 opening/closing quotation mark */
@@ -1684,7 +1692,7 @@ blockquote:after {
   line-height: 0.1em;
   margin-left: 0.1em;
   vertical-align: -0.6em;
-  color: #C4551F;
+  color: var(--theme-blockquote-1-closing-quote-text);
 }
 
 /* Blockquote variant 1 opening/closing quotation mark */
@@ -1694,12 +1702,12 @@ blockquote:after {
   line-height: 0.1em;
   margin-right: 0.25em;
   vertical-align: -0.4em;
-  color: #C4551F;
+  color: var(--theme-blockquote-1-opening-quote-text);
 }
 
 /* Blockquote variant 2 */
 .bq2 {
-  border-color: #418545;
+  border-color: var(--theme-blockquote-2-border-color);
 }
 
 /* Blockquote variant 2 opening/closing quotation mark */
@@ -1709,7 +1717,7 @@ blockquote:after {
   line-height: 0.1em;
   margin-left: 0.1em;
   vertical-align: -0.6em;
-  color: #418545;
+  color: var(--theme-blockquote-2-closing-quote-text);
 }
 
 /* Blockquote variant 2 opening/closing quotation mark */
@@ -1719,12 +1727,12 @@ blockquote:after {
   line-height: 0.1em;
   margin-right: 0.25em;
   vertical-align: -0.4em;
-  color: #418545;
+  color: var(--theme-blockquote-2-opening-quote-text);
 }
 
 /* Blockquote variant 3 */
 .bq3 {
-  border-color: #4078C0;
+  border-color:  var(--theme-blockquote-3-border-color);
 }
 
 /* Blockquote variant 3 opening/closing quotation mark */
@@ -1734,7 +1742,7 @@ blockquote:after {
   line-height: 0.1em;
   margin-left: 0.1em;
   vertical-align: -0.6em;
-  color: #4078C0; /* --theme-link */
+  color: var(--theme-blockquote-3-closing-quote-text); /* --theme-link */
 }
 
 /* Blockquote variant 3 opening/closing quotation mark */
@@ -1744,12 +1752,12 @@ blockquote:after {
   line-height: 0.1em;
   margin-right: 0.25em;
   vertical-align: -0.4em;
-  color: #4078C0; /* --theme-link */
+  color: var(--theme-blockquote-3-opening-quote-text); /* --theme-link */
 }
 
 /* Blockquote variant 4 */
 .bq4 {
-  border-color: #f86718; 
+  border-color: var(--theme-blockquote-4-border-color);
 }
 
 /* Blockquote variant 4 opening/closing quotation mark */
@@ -1759,7 +1767,7 @@ blockquote:after {
   line-height: 0.1em;
   margin-left: 0.1em;
   vertical-align: -0.6em;
-  color: #f86718; 
+  color: var(--theme-blockquote-4-closing-quote-text);
 }
 
 /* Blockquote variant 4 opening/closing quotation mark */
@@ -1769,12 +1777,12 @@ blockquote:after {
   line-height: 0.1em;
   margin-right: 0.25em;
   vertical-align: -0.4em;
-  color: #f86718; 
+  color: var(--theme-blockquote-4-opening-quote-text);
 }
 
 /* Blockquote variant 5 */
 .bq5 {
-  border-color: #222222; /* --theme-table-border / component-border */
+  border-color: var(--theme-blockquote-5-border-color);
 }
 
 /* Blockquote variant 5 opening/closing quotation mark */
@@ -1784,7 +1792,7 @@ blockquote:after {
   line-height: 0.1em;
   margin-left: 0.1em;
   vertical-align: -0.6em;
-  color: #222222; /* --theme-text */
+  color: var(--theme-blockquote-5-closing-quote-text);
 }
 
 /* Blockquote variant 5 opening/closing quotation mark */
@@ -1794,12 +1802,12 @@ blockquote:after {
   line-height: 0.1em;
   margin-right: 0.25em;
   vertical-align: -0.4em;
-  color: #222222; /* --theme-text */
+  color: var(--theme-blockquote-5-opening-quote-text);
 }
 
 /* Blockquote variant 6 */
 .bq6 {
-  border-color: #D13759;
+  border-color: var(--theme-blockquote-6-border-color);
 }
 
 /* Blockquote variant 6 opening/closing quotation mark */
@@ -1809,7 +1817,7 @@ blockquote:after {
   line-height: 0.1em;
   margin-left: 0.1em;
   vertical-align: -0.6em;
-  color: #D13759;
+  color: var(--theme-blockquote-6-closing-quote-text);
 }
 
 /* Blockquote variant 6 opening/closing quotation mark */
@@ -1819,93 +1827,93 @@ blockquote:after {
   line-height: 0.1em;
   margin-right: 0.25em;
   vertical-align: -0.4em;
-  color: #D13759;
+  color: var(--theme-blockquote-6-opening-quote-text);
 }
 
 /* Speech bubble variant 1 */
 .speech-bubble1 {
-  background: #C4551F;
-  color: white; /* --theme-header-text / component-text */
+  background: var(--theme-speech-bubble-1-background);
+  color: var(--theme-speech-bubble-1-text); 
 }
 
 /* Speech bubble variant 1 arrow */
 .speech-bubble1:after {
-  border-right-color: #C4551F;
+  border-right-color: var(--theme-speech-bubble-1-arrow-border-right-color);
 }
 
 /* Speech bubble variant 2 */
 .speech-bubble2 {
-  background: #418545;
-  color: white; /* --theme-header-text / component-text */
+  background:  var(--theme-speech-bubble-2-background);
+  color: var(--theme-speech-bubble-2-text);
 }
 
 /* Speech bubble variant 2 arrow */
 .speech-bubble2:after {
-  border-left-color: #418545;
+  border-left-color:  var(--theme-speech-bubble-2-arrow-border-left-color);
 }
 
 /* Speech bubble variant 3 */
 .speech-bubble3 {
-  background: #4078C0;
-  color: white; /* --theme-header-text / component-text */
+  background: var(--theme-speech-bubble-3-background); 
+  color: var(--theme-speech-bubble-3-text); /* --theme-header-text / component-text */
 }
 
 /* Speech bubble variant 3 arrow */
 .speech-bubble3:after {
-  border-right-color: #4078C0;
+  border-right-color: var(--theme-speech-bubble-3-arrow-border-right-color);
 }
 
 /* Speech bubble variant 4 */
 .speech-bubble4 {
-  background: #f86718; 
-  color: black; /* --theme-text */
+  background:  var(--theme-speech-bubble-4-background); 
+  color: var(--theme-speech-bubble-4-text);/* --theme-text */
 }
 
 /* Speech bubble variant 4 arrow */
 .speech-bubble4:after {
-  border-left-color: #f86718; 
+  border-left-color: var(--theme-speech-bubble-4-arrow-border-left-color);
 }
 
 /* Speech bubble variant 5 */
 .speech-bubble5 {
-  background: #222222; /* --theme-primary / --theme-text (depending on the component) */
-  color: white; /* --theme-header-text / component-text */
+  background: var(--theme-speech-bubble-5-background); 
+  color: var(--theme-speech-bubble-5-text); 
 }
 
 /* Speech bubble variant 5 arrow */
 .speech-bubble5:after {
-  border-top-color: #222222; /* --theme-table-border / component-border */
+  border-top-color: var(--theme-speech-bubble-5-arrow-border-top-color); 
 }
 
 /* Speech bubble variant 6 */
 .speech-bubble6 {
-  background: #D13759;
-  color: white; /* --theme-header-text / component-text */
+  background: var(--theme-speech-bubble-6-background);
+  color: var(--theme-speech-bubble-6-text); 
 }
 
 /* Speech bubble variant 6 arrow */
 .speech-bubble6:after {
   font-family:var(--theme-font-family);
-  border-top-color: #D13759;
+  border-top-color: var(--theme-speech-bubble-6-arrow-border-top-color);
 }
 
 /* Speech bubble variant 1 links */
 .speech-bubble1 a, .speech-bubble2 a, .speech-bubble3 a, .speech-bubble5 a, .speech-bubble6 a {
-  color: white !important;
+  color: var(--theme-speech-bubble-link-text) !important;
   text-decoration: underline;
 }
 
 /* Speech bubble variant 4 links */
 .speech-bubble4 a {
-  color: black !important;
+  color: var(--theme-speech-bubble-4-link-text) !important;
   text-decoration: underline;
 }
 
 /* Highlighted text style from the editor */
 .marker {
   font-family: var(--theme-font-family);
-  background-color: #222222; /* --theme-primary / --theme-text (depending on the component) */
-  color: #cfcfcf;
+  background-color: var(--theme-marker-background);
+  color: var(--theme-marker-text); 
   border-radius: 0;
   display: table;
   padding: 10px;
@@ -1914,8 +1922,8 @@ blockquote:after {
 /* Variable/code-like text style */
 var {
   font-family: var(--theme-font-family);
-  background-color: #C4551F;
-  color: #ffffff; /* --theme-header-text / component-text */
+  background-color: var(--theme-code-variable-background);
+  color: var(--theme-code-variable-text); 
   display: table;
   border-radius: 0;
   font-style: normal;
@@ -1925,8 +1933,8 @@ var {
 /* Keyboard text style */
 kbd {
   font-family: var(--theme-font-family);
-  background-color: #cfcfcf; /* --theme-secondary */
-  color: #222222; /* --theme-text */
+  background-color: var(--theme-code-keyboard-background); 
+  color: var(--theme-code-keyboard-text);  /* --theme-text */
   display: table;
   border-radius: 0;
   font-style: normal;
@@ -1936,8 +1944,8 @@ kbd {
 /* Sample output/code output style */
 samp {
   font-family: var(--theme-font-family);
-  background-color: #4078C0;
-  color: #ffffff; /* --theme-header-text / component-text */
+  background-color: var(--theme-code-sample-background);
+  color:  var(--theme-code-sample-text); 
   display: table;
   border-radius: 0;
   font-style: normal;
@@ -1946,9 +1954,9 @@ samp {
 
 /* Inline quotation */
 q {
-  border-bottom: 1px solid #ccc;
-  border-top: 1px solid #ccc;
-  color: #333;
+  border-bottom: 1px solid var(--theme-inline-quote-border-bottom-color);
+  border-top: 1px solid var(--theme-inline-quote-border-top-color);
+  color: var(--theme-inline-quote-text);
   display: block;
   padding: 10px;
 }
@@ -1964,8 +1972,8 @@ cite {
 /* Monospace/teletype text style */
 tt {
   font-family: var(--theme-font-family);
-  background-color: #2196F3;
-  color: #ffffff; /* --theme-header-text / component-text */
+  background-color: var(--theme-code-teletype-background);
+  color: var(--theme-code-teletype-text); /* --theme-header-text / component-text */
   display: table;
   border-radius: 0;
   font-style: normal;
@@ -1974,7 +1982,7 @@ tt {
 
 /* CSS rule for this Xerte interface element */
 tt a, kbd a, samp a, code a, .marker a, var a {
-  color: white !important;
+  color: var(--theme-code-link-text) !important;
   text-decoration: underline;
 }
 
@@ -1991,6 +1999,7 @@ tt a, kbd a, samp a, code a, .marker a, var a {
   border-radius: 10px;
 }
 
+/*scrollbar thumb*/
 ::-webkit-scrollbar-thumb {
   -webkit-border-radius: 10px;
   border-radius: 10px;
@@ -1999,7 +2008,7 @@ tt a, kbd a, samp a, code a, .marker a, var a {
 }
 
 ::-webkit-scrollbar-thumb:window-inactive {
-  background: rgba(255, 255, 255, 0.4);
+  background: var(--theme-webkit-scrollbar-thumb-inactive); 
 }
 
 [type=range] {
@@ -2010,26 +2019,26 @@ tt a, kbd a, samp a, code a, .marker a, var a {
   outline: 0;
 }
 [type=range]:focus::-webkit-slider-thumb {
-  border-color: #000000;
+  border-color: var(--theme-input-range-thumb-focus-border-color);
 }
 [type=range]:active::-webkit-slider-thumb {
-  border-color: #000000;
+  border-color: var(--theme-input-range-thumb-active-border-color);
 }
 [type=range]:hover::-webkit-slider-thumb {
-  border-color: #000000;
+  border-color: var(--theme-input-range-thumb-hover-border-color);
 }
 [type=range]::-webkit-slider-runnable-track {
   cursor: pointer;
   height: 8px;
   transition: all 0.2s ease;
-  box-shadow: 1px 1px 1px rgba(0, 0, 0, 0.2), 0 0 1px rgba(13, 13, 13, 0.2);
-  background: #222222;
+   box-shadow: 1px 1px 1px var(--theme-input-range-track-box-shadow-color-1), 0 0 1px var(--theme-input-range-track-box-shadow-color-2);
+  background: var(--theme-input-range-track-background);
   border-radius: 5px;
 }
 [type=range]::-webkit-slider-thumb {
-  box-shadow: 4px 4px 4px rgba(0, 0, 0, 0.2), 0 0 4px rgba(13, 13, 13, 0.2);
-  background: #f86718;
-  border: 2px solid #ffffff;
+  box-shadow: 4px 4px 4px var(--theme-input-range-thumb-box-shadow-color-1), 0 0 4px var(--theme-input-range-thumb-box-shadow-color-2);
+  background: var(--theme-input-range-thumb-background);
+  border: 2px solid var(--theme-input-range-thumb-border-color);
   border-radius: 12px;
   cursor: pointer;
   height: 24px;
@@ -2041,15 +2050,15 @@ tt a, kbd a, samp a, code a, .marker a, var a {
   cursor: pointer;
   height: 8px;
   transition: all 0.2s ease;
-  box-shadow: 1px 1px 1px rgba(0, 0, 0, 0.2), 0 0 1px rgba(13, 13, 13, 0.2);
-  background: #222222;
-  border: 2px solid #222222;
+  box-shadow: 1px 1px 1px var(--theme-input-range-track-box-shadow-color-1), 0 0 1px var(--theme-input-range-track-box-shadow-color-2);
+  background: var(--theme-input-range-track-background);
+  border: 2px solid var(--theme-input-range-track-border-color);
   border-radius: 5px;
 }
 [type=range]::-moz-range-thumb {
-  box-shadow: 4px 4px 4px rgba(0, 0, 0, 0.2), 0 0 4px rgba(13, 13, 13, 0.2);
-  background: #f86718;
-  border: 2px solid #ffffff;
+  box-shadow: 4px 4px 4px var(--theme-input-range-thumb-box-shadow-color-1), 0 0 4px var(--theme-input-range-thumb-box-shadow-color-2);
+  background: var(--theme-input-range-thumb-background);
+  border: 2px solid var(--theme-input-range-thumb-border-color);
   border-radius: 12px;
   cursor: pointer;
   height: 24px;
@@ -2059,27 +2068,27 @@ tt a, kbd a, samp a, code a, .marker a, var a {
   cursor: pointer;
   height: 8px;
   transition: all 0.2s ease;
-  background: transparent;
-  border-color: transparent;
+  background: var(--theme-input-range-legacy-track-background);
+  border-color: var(--theme-input-range-legacy-track-border-color); 
   border-width: 12px 0;
-  color: transparent;
+  color: var(--theme-input-range-legacy-track-text);
 }
 [type=range]::-ms-fill-lower {
-  box-shadow: 1px 1px 1px rgba(0, 0, 0, 0.2), 0 0 1px rgba(13, 13, 13, 0.2);
-  background: #151515;
-  border: 2px solid #222222;
+  box-shadow: 1px 1px 1px var(--theme-input-range-legacy-fill-lower-box-shadow-color-1), 0 0 1px var(--theme-input-range-legacy-fill-lower-box-shadow-color-2);
+  background: var(--theme-input-range-legacy-fill-lower-background); 
+  border: 2px solid var(--theme-input-range-legacy-fill-lower-border-color);
   border-radius: 10px;
 }
 [type=range]::-ms-fill-upper {
-  box-shadow: 1px 1px 1px rgba(0, 0, 0, 0.2), 0 0 1px rgba(13, 13, 13, 0.2);
-  background: #222222;
-  border: 2px solid #222222;
+  box-shadow: 1px 1px 1px var(--theme-input-range-legacy-fill-upper-box-shadow-color-1), 0 0 1px var(--theme-input-range-legacy-fill-upper-box-shadow-color-2);
+  background: var(--theme-input-range-legacy-fill-upper-background);
+  border: 2px solid var(--theme-input-range-legacy-fill-upper-border-color);
   border-radius: 10px;
 }
 [type=range]::-ms-thumb {
-  box-shadow: 4px 4px 4px rgba(0, 0, 0, 0.2), 0 0 4px rgba(13, 13, 13, 0.2);
-  background: #f86718;
-  border: 2px solid #ffffff;
+  box-shadow: 4px 4px 4px var(--theme-input-range-legacy-thumb-box-shadow-color-1), 0 0 4px var(--theme-input-range-legacy-thumb-box-shadow-color-2);
+  background: var(--theme-input-range-legacy-thumb-background); 
+  border: 2px solid var(--theme-input-range-legacy-thumb-border-color); 
   border-radius: 12px;
   cursor: pointer;
   height: 24px;
@@ -2117,7 +2126,7 @@ tt a, kbd a, samp a, code a, .marker a, var a {
 
 /* jQuery UI slider handle */
 .ui-slider .ui-slider-handle:hover, .ui-slider .ui-slider-handle:focus, .ui-slider .ui-slider-handle:active {
-  border-color: var(--theme-media-image-sequence-ui-slider-handle-hover-border); /* --theme-table-border / component-border */
+  border-color: var(--theme-media-image-sequence-ui-slider-handle-hover-border); 
 }
 
 /* Vertical jQuery UI-slider */
@@ -2131,14 +2140,14 @@ tt a, kbd a, samp a, code a, .marker a, var a {
 /*Use SASS and the file in the scss folder name _allvariables.scss to start any customisation*/
 /* General page/body of the theme */
 body {
-  background: #BFBFBF; 
-  color: #222222; 
+  background: var(--theme-body-background);
+  color: var(--theme-body-text);
   font-family: var(--theme-font-family);
 }
 
 /* Content area of the CKEditor editor */
 .cke_editable {
-  background: #ffffff; 
+  background: var(--theme-editor-content-background);
 }
 
 /* General Xerte/jQuery UI button */
@@ -2232,8 +2241,8 @@ body:not(.sb_right):not(.sb_left) #x_mainHolder {
 .panel .panel.editorStyle,
 .ui-accordion-content .panel.editorStyle,
 .ui-tabs-panel .panel.editorStyle {
-  background: #ffffff; 
-  border-color: #ffffff; 
+  background: var(--theme-panel-nested-editor-background);
+  border-color: var(--theme-panel-nested-editor-border-color);
 }
 
 /* Panel forming an entire content section/page */
@@ -2363,9 +2372,6 @@ button.pannellumBtn.sceneMenu .sceneLink {
     -webkit-transform: translateZ(9999px);
     transform: translateZ(9999px)
 }
-  
-
-	
 
 @media (min-width: 1366px) {
   /*tablet and above css below here*/
@@ -2389,8 +2395,6 @@ button.pannellumBtn.sceneMenu .sceneLink {
     bottom: 0;
     right: 0;
   }
-  
 }
 
 /*# sourceMappingURL=xot1.css.map */
-

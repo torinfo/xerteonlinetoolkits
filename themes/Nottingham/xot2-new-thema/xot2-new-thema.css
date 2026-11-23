@@ -18,6 +18,7 @@
 /*start here and set the default values for all the variables*/ /******Header******/
 
 @import url("./theme-variabeles-xot2.css");
+@import url("./editorstyles.css");
 
 
 /* Header / top bar of the learning object */
@@ -251,7 +252,7 @@ body:not(.sb_right):not(.sb_left) #x_headerBlock {
 
 /* Styling for Image sequence */
 .x_imageSequence_page #viewHolder #viewOption button.highlighted {
-  border-color: #f86718; /*Nog op terug komen, want deze kleur is nergens te zien op de pagina */
+  border-color: var(--theme-thumbnail-highlight-border); /*Nog op terug komen, want deze kleur is nergens te zien op de pagina */
 }
 
 .x_mediaLesson_page #panelHolder .layoutPanel.panel {
@@ -421,7 +422,7 @@ body:not(.sb_right):not(.sb_left) #x_headerBlock {
 
 /* CSS rule for this Xerte interface element */
 #pageContents.button button.selected {
-  background-color: #cfcfcf; /* CHECKEN - Deze regel heeft dezelfde werking als: .x_nav_page #pageContents.button button.selected en heeft een andere kleur  */
+  background-color: var(--theme-button-navigator-content-selected-background); /* CHECKEN - Deze regel heeft dezelfde werking als: .x_nav_page #pageContents.button button.selected en heeft een andere kleur  */
 }
 
 .ui-tabs {
@@ -538,12 +539,12 @@ body:not(.sb_right):not(.sb_left) #x_headerBlock {
 
 /* Information panel close button for Interactive list */
 .x_list_page #infoHolderTop .closeBtn {
-   color: #222222; /* CHECKEN - geen close button zichtbaar, nog onderzoeken */
+   color: var(--theme-navigation-list-close-button-text); /* CHECKEN - geen close button zichtbaar, nog onderzoeken */
 }
 
 /* Information panel close button for Interactive list on hover/focus in the active state */
 .x_list_page #infoHolderTop .closeBtn:hover, .x_list_page #infoHolderTop .closeBtn:focus, .x_list_page #infoHolderTop .closeBtn:active {
-  color: #4078C0; /* CHECKEN - geen close button zichtbaar, nog onderzoeken */
+  color: var(--theme-navigation-list-close-button-hover-text); /* CHECKEN - geen close button zichtbaar, nog onderzoeken */
 }
 
 /* Styling for Navigator page (multi-navigator) */
@@ -582,7 +583,7 @@ body:not(.sb_right):not(.sb_left) #x_headerBlock {
 
 /* Interactivity: Interactive text */
 .x_interactiveText_page #passageHolder a.listItem.highlight {
-  background-color: #ffffff; /* CHECKEN - Deze regel code: 1053 heeft dezelfde codewerking en werkt alleen met !i */
+  background-color: var(--theme-interactivity-interactive-text-highlight-background); /* CHECKEN - Deze regel code: 1053 heeft dezelfde codewerking en werkt alleen met !i */
 }
 
 .x_interactiveText_page #pageContents.show .listItem,
@@ -593,27 +594,27 @@ body:not(.sb_right):not(.sb_left) #x_headerBlock {
 
 /* Interactivity: Interactive text */
 .x_interactiveText_page #more, .x_interactiveText_page #more:visited {
-  color: #000000;  /* CHECKEN- "more" is niet zichtbaar*/
+  color: var(--theme-interactivity-interactive-text-more-link-text);  /* CHECKEN- "more" is niet zichtbaar*/
 }
 
 /* Interactivity: Interactive text on hover/focus in the active state */
 .x_interactiveText_page #more:active, .x_interactiveText_page #more:focus, .x_interactiveText_page #more:hover {
-  color: #f86718; /* CHECKEN- "more" is niet zichtbaar */
+  color: var(--theme-interactivity-interactive-text-more-link-hover-text); /* CHECKEN- "more" is niet zichtbaar */
 }
 
 /* Form/Documentation page */
 .x_documentation_page #pages fieldset {
-  border: 3px solid #ffffff; /* --theme-background / component-border */
+  border: 3px solid var(--theme-interactivity-documentation-fieldset-border-color); /* --theme-background / component-border */
 }
 
 /* CSS rule for this Xerte interface element */
 #listholder a.listitem, a:visited {
-  color: #4078C0; /* CHECKEN - werkt alleen met !important en veranderd alle linkkleuren van list items en linkjes */
+  color: var(--theme-navigation-list-visited-link-text); /* CHECKEN - werkt alleen met !important en veranderd alle linkkleuren van list items en linkjes */
 }
 
 /* Interactivity: Annotated hotspot */
 .x_annotatedDiagram_page .highlight {
-  background: #ebebeb; /* CHECKEN - ik zie geen verandering bij wijzing dus ik kom hier nog op. En er is geen Annotated hotspot pagina*/
+  background: var(--theme-interactivity-annotated-diagram-highlight-background); /* CHECKEN - ik zie geen verandering bij wijzing dus ik kom hier nog op. En er is geen Annotated hotspot pagina*/
 }
 
 .x_annotatedDiagram_page .hotspot {
@@ -622,7 +623,7 @@ body:not(.sb_right):not(.sb_left) #x_headerBlock {
 
 /* Interactivity: Annotated hotspot */
 .x_annotatedDiagram_page #infoHolder {
-  background: #ffffff; /* CHECKEN - Annotated hotspot pagina vinden */
+  background: var(--theme-interactivity-annotated-diagram-info-holder-background); /* CHECKEN - Annotated hotspot pagina vinden */
 }
 
 #categoryHolder .category {
@@ -657,6 +658,14 @@ body:not(.sb_right):not(.sb_left) #x_headerBlock {
  background: var(--theme-interactivity-drag-and-drop-labelling-background); 
 }
 
+#labelHolder .label.focus {
+    border:		2px solid var(--theme-label-selected-border);
+}
+
+#labelHolder .label.selected {
+    border:		2px solid var(--theme-label-selected-border);
+}
+
 /*Interactivity: Categories */
 #categoryHolder .highlight {
   border-radius: 1vmin;
@@ -676,7 +685,7 @@ body:not(.sb_right):not(.sb_left) #x_headerBlock {
 
 /* Correct answer/target for Gap-fill exercise */
 .x_gapFill_page .target.correct {
-  color: green; /* CHECKEN - Deze regel werkt niet wordt, omdat die wordt overruled door een andere regel en werkt alleen met !important */
+  color: var(--theme-feedback-correct-text); /* CHECKEN - Deze regel werkt niet wordt, omdat die wordt overruled door een andere regel en werkt alleen met !important */
   font-weight: bold;
   background-color: var(--theme-feedback-correct-background); 
 }
@@ -1000,7 +1009,7 @@ body:not(.sb_right):not(.sb_left) #x_footerBlock {
 /*****footer tools chevron*****/
 /* Chevron for additional footer tools */
 #x_footerChevron {
-  color: #000000; /* CHECKEN - Deze regelt werkt alleen met !important  */
+  color: var(--theme-footer-chevron-text); /* CHECKEN - Deze regelt werkt alleen met !important  */
 }
 
 /* Chevron for additional footer tools on hover/focus */
@@ -1047,7 +1056,7 @@ body:not(.sb_right):not(.sb_left) #x_footerBlock {
 #menuItems .menuItem, #menuItems .chapterItem {
   color:  var( --theme-dialog-menu-item-text); 
   border-radius: 10px;
-  background: #ebebeb; /* CHECKEN - Deze regel staat alleen in xot2 en niet in xot1 en de regel veranderd niks*/
+  background: var( --theme-dialog-menu-item-background); /* CHECKEN - Deze regel staat alleen in xot2 en niet in xot1 en de regel veranderd niks*/
 }
 
 /* Page items in the table of contents on hover/focus in the active state */
@@ -1082,16 +1091,16 @@ body:not(.sb_right):not(.sb_left) #x_footerBlock {
 
 /* Chapter item in the table of contents CHEKCEN - Geen chapter item zichtbaar in de table of contents */
 #menuItems .chapterHolder .chapterItem a {
-  background: #cfcfcf;
-  border-color: #cfcfcf;
-  color: #000000;
+  background: var(--theme-dialog-menu-chapter-link-background);
+  border-color: var(--theme-dialog-menu-chapter-link-border-color);
+  color: var(--theme-dialog-menu-chapter-link-text);
   border-radius: inherit;
 }
 
 /* Chapter item in the table of contents in the active state CHEKCEN - Geen chapter item zichtbaar in de table of contents */
 #menuItems .chapterHolder .chapterItem.ui-state-active {
-  background: #cfcfcf;
-  border-color: #cfcfcf;
+  background: var(--theme-dialog-menu-chapter-active-background);
+  border-color: var(--theme-dialog-menu-chapter-active-border-color);
 }
 
 #menuItems .chapterHolder .chapterPageHolder.ui-accordion-content-active {
@@ -1143,7 +1152,7 @@ table.glossary tr.shaded {
 /* Sidebar / side navigation bar */
 #x_sideBar {
   background-color: var(--theme-sidebar-background); 
-  color: #000000; /* CHECKEN - Kleur veranderd niet wanneer je het aanpast*/
+  color: var(--theme-sidebar-text); /* CHECKEN - Kleur veranderd niet wanneer je het aanpast*/
 }
 
 /* Button to open/close the sidebar */
@@ -1172,14 +1181,14 @@ table.glossary tr.shaded {
 /* Function/navigation buttons in the sidebar */
 #x_sideBar.sideBarLarge #x_sideBarBtnHolder button span.ui-icon {
   background: none;
-  border: 2px solid #cfcfcf;  /* CHECKEN -  Kleur veranderd niet wanneer ik het verander */
+  border: 2px solid var(--theme-sidebar-large-button-icon-border-color);  /* CHECKEN -  Kleur veranderd niet wanneer ik het verander */
 }
 
 /* Function/navigation buttons in the sidebar on hover/focus in the active state */
 #x_sideBar.sideBarLarge #x_sideBarBtnHolder button:hover span.ui-icon, #x_sideBar.sideBarLarge #x_sideBarBtnHolder button:focus span.ui-icon, #x_sideBar.sideBarLarge #x_sideBarBtnHolder button:active span.ui-icon {
-  background: #bdbdbd; /* CHECKEN - Kleur veranderd niet wanneer ik het verander */
-  color: #000000; /* CHECKEN - Kleur veranderd niet wanneer ik het verander */
-  border: 2px solid #bdbdbd;  /* CHECKEN - Kleur veranderd niet wanneer ik het verander */
+  background: var(--theme-sidebar-large-button-icon-hover-background); /* CHECKEN - Kleur veranderd niet wanneer ik het verander */
+  color: var(--theme-sidebar-large-button-icon-hover-text); /* CHECKEN - Kleur veranderd niet wanneer ik het verander */
+  border: 2px solid var(--theme-sidebar-large-button-icon-hover-border-color);  /* CHECKEN - Kleur veranderd niet wanneer ik het verander */
 }
 
 /* Page timer */
@@ -1307,12 +1316,12 @@ table.glossary tr.shaded {
   display: table;
   padding: 10px;
   font-style: normal;
-  background-color: #C4551F;
-  color: #ffffff;
+  background-color: var(--theme-panel-1-background);
+  color: var(--theme-panel-1-text);
 }
 
 .panel1 a {
-  color: white !important;
+  color: var(--theme-panel-1-link-text) !important;
 }
 
 .panel2 {
@@ -1320,12 +1329,12 @@ table.glossary tr.shaded {
   display: table;
   padding: 10px;
   font-style: normal;
-  background-color: #418545;
-  color: #ffffff;
+  background-color: var(--theme-panel-2-background);
+  color: var(--theme-panel-2-text);
 }
 
 .panel2 a {
-  color: white !important;
+  color: var(--theme-panel-2-link-text) !important;
 }
 
 .panel3 {
@@ -1333,12 +1342,12 @@ table.glossary tr.shaded {
   display: table;
   padding: 10px;
   font-style: normal;
-  background-color: #4078C0;
-  color: #ffffff;
+  background-color: var(--theme-panel-3-background);
+  color: var(--theme-panel-3-text);
 }
 
 .panel3 a {
-  color: white !important;
+  color: var(--theme-panel-3-link-text) !important;
 }
 
 .panel4 {
@@ -1346,12 +1355,12 @@ table.glossary tr.shaded {
   display: table;
   padding: 10px;
   font-style: normal;
-  background-color: #f86718;
-  color: #000000;
+  background-color: var(--theme-panel-4-background);
+  color: var(--theme-panel-4-text);
 }
 
 .panel4 a {
-  color: black !important;
+  color: var(--theme-panel-4-link-text) !important;
 }
 
 .panel5 {
@@ -1359,13 +1368,13 @@ table.glossary tr.shaded {
   display: table;
   padding: 10px;
   font-style: normal;
-  background-color: #222222;
-  color: #ffffff;
+  background-color: var(--theme-panel-5-background);
+  color: var(--theme-panel-5-text);
   display: table;
 }
 
 .panel5 a {
-  color: white !important;
+  color: var(--theme-panel-5-link-text) !important;
 }
 
 .panel6 {
@@ -1373,97 +1382,97 @@ table.glossary tr.shaded {
   display: table;
   padding: 10px;
   font-style: normal;
-  background-color: #D13759;
-  color: #ffffff;
+  background-color: var(--theme-panel-6-background);
+  color: var(--theme-panel-6-text);
 }
 
 .panel6 a {
-  color: white !important;
+  color: var(--theme-panel-6-link-text) !important;
 }
 
 .highlight1 {
   font-family: Arial, sans-serif;
-  background: #fff;
+  background: var(--theme-highlight-1-background);
   display: table;
   font-weight: normal;
   margin-bottom: 7px;
   margin-top: 5px;
   padding: 10px;
   border-left: 5px solid;
-  -webkit-box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
-  border-color: #C4551F;
+  -webkit-box-shadow: 0 1px 3px var(--theme-highlight-1-box-shadow-color-1), 0 1px 2px var(--theme-highlight-1-box-shadow-color-2);
+  box-shadow: 0 1px 3px var(--theme-highlight-1-box-shadow-color-1), 0 1px 2px var(--theme-highlight-1-box-shadow-color-2);
+  border-color: var(--theme-highlight-2-border-color);
 }
 
 .highlight2 {
   font-family: Arial, sans-serif;
-  background: #fff;
+  background: var(--theme-highlight-2-background);
   display: table;
   font-weight: normal;
   margin-bottom: 7px;
   margin-top: 5px;
   padding: 10px;
   border-left: 5px solid;
-  -webkit-box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
-  border-color: #418545;
+  -webkit-box-shadow: 0 1px 3px var(--theme-highlight-2-box-shadow-color-1), 0 1px 2px var(--theme-highlight-2-box-shadow-color-2);
+  box-shadow: 0 1px 3px var(--theme-highlight-2-box-shadow-color-1), 0 1px 2px var(--theme-highlight-2-box-shadow-color-2);
+  border-color: var(--theme-highlight-2-border-color);
 }
 
 .highlight3 {
   font-family: Arial, sans-serif;
-  background: #fff;
+  background: var(--theme-highlight-3-background);
   display: table;
   font-weight: normal;
   margin-bottom: 7px;
   margin-top: 5px;
   padding: 10px;
   border-left: 5px solid;
-  -webkit-box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
-  border-color: #4078C0;
+  -webkit-box-shadow: 0 1px 3px var(--theme-highlight-3-box-shadow-color-1), 0 1px 2px var(--theme-highlight-3-box-shadow-color-2);
+  box-shadow: 0 1px 3px var(--theme-highlight-3-box-shadow-color-1), 0 1px 2px var(--theme-highlight-3-box-shadow-color-2);
+  border-color: var(--theme-highlight-3-border-color);
 }
 
 .highlight4 {
   font-family: Arial, sans-serif;
-  background: #fff;
+  background: var(--theme-highlight-4-background);
   display: table;
   font-weight: normal;
   margin-bottom: 7px;
   margin-top: 5px;
   padding: 10px;
   border-left: 5px solid;
-  -webkit-box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
+  -webkit-box-shadow: 0 1px 3px var(--theme-highlight-4-box-shadow-color-1), 0 1px 2px var(--theme-highlight-4-box-shadow-color-2);
+  box-shadow: 0 1px 3px var(--theme-highlight-4-box-shadow-color-1), 0 1px 2px var(--theme-highlight-4-box-shadow-color-2);
   color: #000000;
-  border-color: #f86718;
+  border-color: var(--theme-highlight-4-border-color);
 }
 
 .highlight5 {
   font-family: Arial, sans-serif;
-  background: #fff;
+  background: var(--theme-highlight-5-background);
   display: table;
   font-weight: normal;
   margin-bottom: 7px;
   margin-top: 5px;
   padding: 10px;
   border-left: 5px solid;
-  -webkit-box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
-  border-color: #222222;
+  -webkit-box-shadow: 0 1px 3px var(--theme-highlight-5-box-shadow-color-1), 0 1px 2px var(--theme-highlight-5-box-shadow-color-2);
+  box-shadow: 0 1px 3px var(--theme-highlight-5-box-shadow-color-1), 0 1px 2px var(--theme-highlight-5-box-shadow-color-2);
+  border-color: var(--theme-highlight-5-border-color);
 }
 
 .highlight6 {
   font-family: Arial, sans-serif;
-  background: #fff;
+  background: var(--theme-highlight-6-background);
   display: table;
   font-weight: normal;
   margin-bottom: 7px;
   margin-top: 5px;
   padding: 10px;
   border-left: 5px solid;
-  -webkit-box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
-  border-color: #D13759;
+  -webkit-box-shadow: 0 1px 3px var(--theme-highlight-6-box-shadow-color-1), 0 1px 2px var(--theme-highlight-6-box-shadow-color-2);
+  box-shadow: 0 1px 3px var(--theme-highlight-6-box-shadow-color-1), 0 1px 2px var(--theme-highlight-6-box-shadow-color-2);
+  border-color: var(--theme-highlight-6-border-color);
 }
 
 blockquote {
@@ -1472,8 +1481,8 @@ blockquote {
   margin: 1.5em 10px;
   padding: 0.5em 10px;
   quotes: "“" "”";
-  background: #f9f9f9;
-  border-color: #ccc;
+  background: var(--theme-blockquote-background);
+  border-color: var(--theme-blockquote-border-color);
 }
 
 blockquote:before {
@@ -1482,7 +1491,7 @@ blockquote:before {
   line-height: 0.1em;
   margin-right: 0.25em;
   vertical-align: -0.4em;
-  color: #ccc;
+  color: var(--theme-blockquote-opening-quote-text);
 }
 
 blockquote p {
@@ -1495,11 +1504,11 @@ blockquote:after {
   line-height: 0.1em;
   margin-left: 0.1em;
   vertical-align: -0.6em;
-  color: #ccc;
+  color: var(--theme-blockquote-closing-quote-text);
 }
 
 .bq1 {
-  border-color: #C4551F;
+  border-color: var(--theme-blockquote-1-border-color);
 }
 
 .bq1:after {
@@ -1508,7 +1517,7 @@ blockquote:after {
   line-height: 0.1em;
   margin-left: 0.1em;
   vertical-align: -0.6em;
-  color: #C4551F;
+  color: var(--theme-blockquote-1-closing-quote-text);
 }
 
 .bq1:before {
@@ -1517,11 +1526,11 @@ blockquote:after {
   line-height: 0.1em;
   margin-right: 0.25em;
   vertical-align: -0.4em;
-  color: #C4551F;
+  color: var(--theme-blockquote-1-opening-quote-text);
 }
 
 .bq2 {
-  border-color: #418545;
+  border-color: var(--theme-blockquote-2-border-color);
 }
 
 .bq2:after {
@@ -1530,7 +1539,7 @@ blockquote:after {
   line-height: 0.1em;
   margin-left: 0.1em;
   vertical-align: -0.6em;
-  color: #418545;
+  color: var(--theme-blockquote-2-closing-quote-text);
 }
 
 .bq2:before {
@@ -1539,11 +1548,11 @@ blockquote:after {
   line-height: 0.1em;
   margin-right: 0.25em;
   vertical-align: -0.4em;
-  color: #418545;
+  color: var(--theme-blockquote-2-opening-quote-text);
 }
 
 .bq3 {
-  border-color: #4078C0;
+  border-color: var(--theme-blockquote-3-border-color);
 }
 
 .bq3:after {
@@ -1552,7 +1561,7 @@ blockquote:after {
   line-height: 0.1em;
   margin-left: 0.1em;
   vertical-align: -0.6em;
-  color: #4078C0;
+  color: var(--theme-blockquote-3-closing-quote-text);
 }
 
 .bq3:before {
@@ -1561,11 +1570,11 @@ blockquote:after {
   line-height: 0.1em;
   margin-right: 0.25em;
   vertical-align: -0.4em;
-  color: #4078C0;
+  color: var(--theme-blockquote-3-opening-quote-text);
 }
 
 .bq4 {
-  border-color: #f86718;
+  border-color: var(--theme-blockquote-4-border-color);
 }
 
 .bq4:after {
@@ -1574,7 +1583,7 @@ blockquote:after {
   line-height: 0.1em;
   margin-left: 0.1em;
   vertical-align: -0.6em;
-  color: #f86718;
+  color: var(--theme-blockquote-4-closing-quote-text);
 }
 
 .bq4:before {
@@ -1583,11 +1592,11 @@ blockquote:after {
   line-height: 0.1em;
   margin-right: 0.25em;
   vertical-align: -0.4em;
-  color: #f86718;
+  color: var(--theme-blockquote-4-opening-quote-text);
 }
 
 .bq5 {
-  border-color: #222222;
+  border-color: var(--theme-blockquote-5-border-color);
 }
 
 .bq5:after {
@@ -1596,7 +1605,7 @@ blockquote:after {
   line-height: 0.1em;
   margin-left: 0.1em;
   vertical-align: -0.6em;
-  color: #222222;
+  color: var(--theme-blockquote-5-closing-quote-text);
 }
 
 .bq5:before {
@@ -1605,11 +1614,11 @@ blockquote:after {
   line-height: 0.1em;
   margin-right: 0.25em;
   vertical-align: -0.4em;
-  color: #222222;
+  color: var(--theme-blockquote-5-opening-quote-text);
 }
 
 .bq6 {
-  border-color: #D13759;
+  border-color: var(--theme-blockquote-6-border-color);
 }
 
 .bq6:after {
@@ -1618,7 +1627,7 @@ blockquote:after {
   line-height: 0.1em;
   margin-left: 0.1em;
   vertical-align: -0.6em;
-  color: #D13759;
+  color: var(--theme-blockquote-6-closing-quote-text);
 }
 
 .bq6:before {
@@ -1627,78 +1636,78 @@ blockquote:after {
   line-height: 0.1em;
   margin-right: 0.25em;
   vertical-align: -0.4em;
-  color: #D13759;
+  color: var(--theme-blockquote-6-opening-quote-text);
 }
 
 .speech-bubble1 {
-  background: #C4551F;
-  color: white;
+  background: var(--theme-speech-bubble-1-background);
+  color: var(--theme-speech-bubble-1-text);
 }
 
 .speech-bubble1:after {
-  border-right-color: #C4551F;
+  border-right-color: var(--theme-speech-bubble-1-arrow-border-right-color);
 }
 
 .speech-bubble2 {
-  background: #418545;
-  color: white;
+  background: var(--theme-speech-bubble-2-background);
+  color: var(--theme-speech-bubble-2-text);
 }
 
 .speech-bubble2:after {
-  border-left-color: #418545;
+  border-left-color: var(--theme-speech-bubble-2-arrow-border-left-color);
 }
 
 .speech-bubble3 {
-  background: #4078C0;
-  color: white;
+  background: var(--theme-speech-bubble-3-background);
+  color: var(--theme-speech-bubble-3-text);
 }
 
 .speech-bubble3:after {
-  border-right-color: #4078C0;
+  border-right-color: var(--theme-speech-bubble-3-arrow-border-right-color);
 }
 
 .speech-bubble4 {
-  background: #f86718;
-  color: black;
+  background: var(--theme-speech-bubble-4-background);
+  color: var(--theme-speech-bubble-4-text);
 }
 
 .speech-bubble4:after {
-  border-left-color: #f86718;
+  border-left-color: var(--theme-speech-bubble-4-arrow-border-left-color);
 }
 
 .speech-bubble5 {
-  background: #222222;
-  color: white;
+  background: var(--theme-speech-bubble-5-background);
+  color: var(--theme-speech-bubble-5-text);
 }
 
 .speech-bubble5:after {
-  border-top-color: #222222;
+  border-top-color: var(--theme-speech-bubble-5-arrow-border-top-color);
 }
 
 .speech-bubble6 {
-  background: #D13759;
-  color: white;
+  background: var(--theme-speech-bubble-6-background);
+  color: var(--theme-speech-bubble-6-text);
 }
 
 .speech-bubble6:after {
   font-family: Arial, sans-serif;
-  border-top-color: #D13759;
+  border-top-color: var(--theme-speech-bubble-6-arrow-border-top-color);
 }
 
 .speech-bubble1 a, .speech-bubble2 a, .speech-bubble3 a, .speech-bubble5 a, .speech-bubble6 a {
-  color: white !important;
+  color: var(--theme-speech-bubble-link-text) !important;
   text-decoration: underline;
 }
 
 .speech-bubble4 a {
-  color: black !important;
+  color: var(--theme-speech-bubble-4-link-text) !important;
   text-decoration: underline;
 }
 
 .marker {
   font-family: Arial, sans-serif;
-  background-color: #222222;
-  color: #cfcfcf;
+  background-color: var(--theme-marker-background);
+  color: var(--theme-marker-text);
   border-radius: 1vmin;
   display: table;
   padding: 10px;
@@ -1706,8 +1715,8 @@ blockquote:after {
 
 var {
   font-family: Arial, sans-serif;
-  background-color: #C4551F;
-  color: #ffffff;
+  background-color: var(--theme-code-variable-background);
+  color: var(--theme-code-variable-text);
   display: table;
   border-radius: 1vmin;
   font-style: normal;
@@ -1716,8 +1725,8 @@ var {
 
 kbd {
   font-family: Arial, sans-serif;
-  background-color: #cfcfcf;
-  color: #222222;
+  background-color: var(--theme-code-keyboard-background);
+  color: var(--theme-code-keyboard-text);
   display: table;
   border-radius: 1vmin;
   font-style: normal;
@@ -1726,8 +1735,8 @@ kbd {
 
 samp {
   font-family: Arial, sans-serif;
-  background-color: #4078C0;
-  color: #ffffff;
+  background-color: var(--theme-code-sample-background);
+  color: var(--theme-code-sample-text);
   display: table;
   border-radius: 1vmin;
   font-style: normal;
@@ -1735,9 +1744,9 @@ samp {
 }
 
 q {
-  border-bottom: 1px solid #ccc;
-  border-top: 1px solid #ccc;
-  color: #333;
+  border-bottom: 1px solid var(--theme-inline-quote-border-bottom-color);
+  border-top: 1px solid var(--theme-inline-quote-border-top-color);
+  color: var(--theme-inline-quote-text);
   display: block;
   padding: 10px;
 }
@@ -1751,8 +1760,8 @@ cite {
 
 tt {
   font-family: Arial, sans-serif;
-  background-color: #2196F3;
-  color: #ffffff;
+  background-color: var(--theme-code-teletype-background);
+  color: var(--theme-code-teletype-text);
   display: table;
   border-radius: 1vmin;
   font-style: normal;
@@ -1760,7 +1769,7 @@ tt {
 }
 
 tt a, kbd a, samp a, code a, .marker a, var a {
-  color: white !important;
+  color: var(--theme-code-link-text) !important;
   text-decoration: underline;
 }
 
@@ -1785,7 +1794,7 @@ tt a, kbd a, samp a, code a, .marker a, var a {
 }
 
 ::-webkit-scrollbar-thumb:window-inactive {
-  background: rgba(255, 255, 255, 0.4);
+  background: var(--theme-webkit-scrollbar-thumb-inactive);
 }
 
 [type=range] {
@@ -1796,26 +1805,26 @@ tt a, kbd a, samp a, code a, .marker a, var a {
   outline: 0;
 }
 [type=range]:focus::-webkit-slider-thumb {
-  border-color: #000000;
+  border-color: var(--theme-input-range-thumb-focus-border-color);
 }
 [type=range]:active::-webkit-slider-thumb {
-  border-color: #000000;
+  border-color: var(--theme-input-range-thumb-active-border-color);
 }
 [type=range]:hover::-webkit-slider-thumb {
-  border-color: #000000;
+  border-color: var(--theme-input-range-thumb-hover-border-color);
 }
 [type=range]::-webkit-slider-runnable-track {
   cursor: pointer;
   height: 8px;
   transition: all 0.2s ease;
-  box-shadow: 1px 1px 1px rgba(0, 0, 0, 0.2), 0 0 1px rgba(13, 13, 13, 0.2);
-  background: #222222;
+  box-shadow: 1px 1px 1px var(--theme-input-range-track-box-shadow-color-1), 0 0 1px var(--theme-input-range-track-box-shadow-color-2);
+  background: var(--theme-input-range-track-background);
   border-radius: 5px;
 }
 [type=range]::-webkit-slider-thumb {
-  box-shadow: 4px 4px 4px rgba(0, 0, 0, 0.2), 0 0 4px rgba(13, 13, 13, 0.2);
-  background: #f86718;
-  border: 2px solid #ffffff;
+  box-shadow: 4px 4px 4px var(--theme-input-range-thumb-box-shadow-color-1), 0 0 4px var(--theme-input-range-thumb-box-shadow-color-2);
+  background: var(--theme-input-range-thumb-background);
+  border: 2px solid var(--theme-input-range-thumb-border-color);
   border-radius: 12px;
   cursor: pointer;
   height: 24px;
@@ -1827,15 +1836,15 @@ tt a, kbd a, samp a, code a, .marker a, var a {
   cursor: pointer;
   height: 8px;
   transition: all 0.2s ease;
-  box-shadow: 1px 1px 1px rgba(0, 0, 0, 0.2), 0 0 1px rgba(13, 13, 13, 0.2);
-  background: #222222;
-  border: 2px solid #222222;
+  box-shadow: 1px 1px 1px var(--theme-input-range-track-box-shadow-color-1), 0 0 1px var(--theme-input-range-track-box-shadow-color-2);
+  background: var(--theme-input-range-track-background);
+  border: 2px solid var(--theme-input-range-track-border-color);
   border-radius: 5px;
 }
 [type=range]::-moz-range-thumb {
-  box-shadow: 4px 4px 4px rgba(0, 0, 0, 0.2), 0 0 4px rgba(13, 13, 13, 0.2);
-  background: #f86718;
-  border: 2px solid #ffffff;
+  box-shadow: 4px 4px 4px var(--theme-input-range-thumb-box-shadow-color-1), 0 0 4px var(--theme-input-range-thumb-box-shadow-color-2);
+  background: var(--theme-input-range-thumb-background);
+  border: 2px solid var(--theme-input-range-thumb-border-color);
   border-radius: 12px;
   cursor: pointer;
   height: 24px;
@@ -1845,27 +1854,27 @@ tt a, kbd a, samp a, code a, .marker a, var a {
   cursor: pointer;
   height: 8px;
   transition: all 0.2s ease;
-  background: transparent;
-  border-color: transparent;
+  background: var(--theme-input-range-legacy-track-background);
+  border-color: var(--theme-input-range-legacy-track-border-color);
   border-width: 12px 0;
-  color: transparent;
+  color: var(--theme-input-range-legacy-track-text);
 }
 [type=range]::-ms-fill-lower {
-  box-shadow: 1px 1px 1px rgba(0, 0, 0, 0.2), 0 0 1px rgba(13, 13, 13, 0.2);
-  background: #151515;
-  border: 2px solid #222222;
+  box-shadow: 1px 1px 1px var(--theme-input-range-legacy-fill-lower-box-shadow-color-1), 0 0 1px var(--theme-input-range-legacy-fill-lower-box-shadow-color-2);
+  background: var(--theme-input-range-legacy-fill-lower-background);
+  border: 2px solid var(--theme-input-range-legacy-fill-lower-border-color);
   border-radius: 10px;
 }
 [type=range]::-ms-fill-upper {
-  box-shadow: 1px 1px 1px rgba(0, 0, 0, 0.2), 0 0 1px rgba(13, 13, 13, 0.2);
-  background: #222222;
-  border: 2px solid #222222;
+  box-shadow: 1px 1px 1px var(--theme-input-range-legacy-fill-upper-box-shadow-color-1), 0 0 1px var(--theme-input-range-legacy-fill-upper-box-shadow-color-2);
+  background: var(--theme-input-range-legacy-fill-upper-background);
+  border: 2px solid var(--theme-input-range-legacy-fill-upper-border-color);
   border-radius: 10px;
 }
 [type=range]::-ms-thumb {
-  box-shadow: 4px 4px 4px rgba(0, 0, 0, 0.2), 0 0 4px rgba(13, 13, 13, 0.2);
-  background: #f86718;
-  border: 2px solid #ffffff;
+  box-shadow: 4px 4px 4px var(--theme-input-range-legacy-thumb-box-shadow-color-1), 0 0 4px var(--theme-input-range-legacy-thumb-box-shadow-color-2);
+  background: var(--theme-input-range-legacy-thumb-background);
+  border: 2px solid var(--theme-input-range-legacy-thumb-border-color);
   border-radius: 12px;
   cursor: pointer;
   height: 24px;
@@ -1914,13 +1923,13 @@ tt a, kbd a, samp a, code a, .marker a, var a {
 /*You should not edit the .css files directly or change values directly unless you wish to override something*/
 /*Use SASS and the file in the scss folder name _allvariables.scss to start any customisation*/
 body {
-  background: #BFBFBF;
-  color: #222222;
+  background: var(--theme-body-background);
+  color: var(--theme-body-text);
   font-family: var(--theme-font-family);
 }
 
 .cke_editable {
-  background: #ffffff;
+  background: var(--theme-editor-content-background);
 }
 
 .ui-button .ui-button-text {
@@ -2006,8 +2015,8 @@ body:not(.sb_right):not(.sb_left) #x_mainHolder {
 .panel .panel.editorStyle,
 .ui-accordion-content .panel.editorStyle,
 .ui-tabs-panel .panel.editorStyle {
-  background: #ffffff;
-  border-color: #ffffff;
+  background: var(--theme-panel-nested-editor-background);
+  border-color: var(--theme-panel-nested-editor-border-color);
 }
 
 .panelPage {
@@ -2137,6 +2146,71 @@ button.pannellumBtn.sceneMenu .sceneLink {
     -webkit-transform: translateZ(9999px);
     transform: translateZ(9999px)
 }
+
+ .highlighted .crossword-input[type=text]{
+     background-color: var(--theme-game-crossword-highlight-background);
+ }
+
+ /* indicates when a square has been selected */
+#puzzle .selected {
+  background-color: var(--theme-game-word-search-puzzle-selected-background) !important;
+}
+
+/* indicates that the square is part of a word that has been found */ 
+#puzzle .found {
+  background-color: var(--theme-game-word-search-puzzle-found-background);
+  color: var(--theme-game-word-search-puzzle-found-text);
+}
+
+#puzzle .solved {
+  background-color: var(--theme-game-word-search-puzzle-solved-background);
+  color: var(--theme-game-word-search-puzzle-solved-text);
+}
+
+/* indicates that all words have been found */
+#puzzle .complete {
+  background-color: var(--theme-game-word-search-puzzle-complete-background);
+}
+
+/* highlight the word in the puzzle */
+#puzzle .highlight {
+  background-color: var(--theme-game-word-search-puzzle-highlight-background) !important;
+  color: var(--theme-game-word-search-puzzle-highlight-text) !important;
+}
+
+/* indicates that the word has been found */
+#words .wordFound {
+  text-decoration: line-through;
+  color: var(--theme-game-word-search-words-word-found-text);
+}
+
+/*Results page table styling*/
+th {
+		background-color: var(--theme-table-result-page-th-background);
+		color: var(--theme-table-result-page-th-text);
+	}
+
+  /*Results page table styling*/
+	tr.alt td {
+		background-color: var(--theme-table-result-page-tr-alt-td-background);
+	}
+
+  /*Results page table styling*/
+  .alt td
+	{
+		background-color: var(--theme-table-result-page-tr-alt-td-background);
+	}
+
+  /*Results page table styling*/
+	.notLast{
+		background-color: var(--theme-table-result-page-not-last-background);
+	}
+
+  /*Results page table styling*/
+  .blue
+  {
+    color: var(--theme-table-result-page-details-icon-color);
+  }
 
 @media (min-width: 1366px) {
   /*tablet and above css below here*/

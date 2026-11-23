@@ -45,6 +45,11 @@
   --theme-webkit-scrollbar-thumb-inactive: rgba(255, 255, 255, 0.4); /*General scrollbar thumb  inactive background color*/
 
 
+  --theme-body-background: #BFBFBF; 
+
+  --theme-body-text: #222222; 
+
+
   /*
     BUTTONS -General Xerte .
   */
@@ -86,6 +91,8 @@
   --theme-footer-background: var(--color-primary); /* Background color of the footer*/
   --theme-footer-text: var(--color-text); /*Text and icon color of the footer*/
 
+  --theme-footer-chevron-text: #000000; /* Text color of the chevron in the footer */
+
   /*
      PANELS - General panels in the theme.
   */
@@ -111,6 +118,10 @@
   --theme-navigation-content-background: var(--theme-panel-background); /*Background color of content below tabs/accordion*/
   --theme-navigation-content-text: var(--theme-primary-text); /*Text color of content below tabs/accordion*/
 
+  --theme-navigation-list-close-button-text: #222222; /*Text color of the close button in the navigation list*/
+  --theme-navigation-list-close-button-hover-text: #4078C0; /*Text color of the close button in the navigation list on hover/focus/active*/
+  --theme-navigation-list-visited-link-text: #4078C0; /*Text color of the visited link in the navigation list*/
+
   --theme-tab-navigator-tab-holder-background: none; /*Background color of the tab holder in the tab navigator*/
   --theme-tab-navigator-tab-holder-border-bottom: #bdbdbd; /*Border color of the tab holder in the tab navigator*/
   
@@ -133,6 +144,8 @@
 
   --theme-multi-navigator-text-holder-border: #ebebeb; /*Border color of the text holder in the multi navigator*/
 
+  --theme-button-navigator-content-selected-background: #cfcfcf;  /*Background color of the selected button in the button navigator.*/
+
  
 
 
@@ -143,6 +156,12 @@
   --theme-interactivity-interactive-video-link-text: var(--theme-primary-text); /*Text color of the link to video in the interactive video page*/
   --theme-interactivity-interactive-video-link-border: #ebebeb; /*Border color of the link to video in the interactive video page*/
 
+  
+  --theme-interactivity-interactive-text-highlight-background: #ffffff; /*Background color of the highlight in the interactive text page*/
+  --theme-interactivity-interactive-text-more-link-text: #000000; /*Text color of the "more" link in the interactive text page*/
+  --theme-interactivity-interactive-text-more-link-hover-text: #f86718; /*Text color of the "more" link in the interactive text page on hover/focus/active*/
+
+  --theme-interactivity-documentation-fieldset-border-color: #ffffff; /*Border color of the fieldset in the documentation page*/
 
 
   --theme-interactivity-interactive-selected-background: var(--color-accent-8); /*Background color of the selected item in the interactive pages*/
@@ -151,16 +170,19 @@
 
   --theme-interactivity-matching-text-holder-background: var(--color-surface); /*Background color of the text holder in the matching text page*/
 
-  --theme-interactivity-matching-text-label-background: #ffffff; /*Background color of the label in the matching text page*/
+  --theme-interactivity-matching-text-label-background: var(--color-primary); /*Background color of the label in the matching text page*/
   --theme-interactivity-matching-text-label-border: var(--color-primary); /*Border color of the label in the matching text page*/
 
   --theme-interactivity-audio-recorder-delete-button-color: var(--theme-primary-text); /*Color of the delete button in the audio recorder page*/
   
   --theme-interactivity-interactive-text-divider-background: #ffffff; /*Background color of the divider in the interactive text page*/
 
-   --theme-interactivity-drag-and-drop-labelling-background: #ebebeb; /*Background color of the labeling in the drag and drop page*/
+  --theme-interactivity-drag-and-drop-labelling-background: #ebebeb; /*Background color of the labeling in the drag and drop page*/
 
-    --interactivity-categories-holder-background: var(--color-surface); /*Background color of the categories holder in the interactivity page*/
+  --interactivity-categories-holder-background: var(--color-surface); /*Background color of the categories holder in the interactivity page*/
+
+  --theme-interactivity-annotated-diagram-highlight-background: #ebebeb; /*Background color of the highlight in the annotated diagram page*/
+  --theme-interactivity-annotated-diagram-info-holder-background: #ffffff; /*Background color of the info holder in the annotated diagram page*/
  
    /*
     PROGRESS BAR - General styling of the progress bar in the theme
@@ -192,21 +214,21 @@
   /*
     Labels -General labels in the theme.
   */
-  --theme-label-background: #ffffff;  /*Background color of labels.*/
-  --theme-label-text: var(--color-text);  /*Text color of labels.*/
-  --theme-label-border: var(--color-primary);  /*Border color of labels.*/
+  --theme-label-background: var(--color-primary); /*Background color of labels.*/
+  --theme-label-text: var(--color-text-on-primary); /* CHECKEN - Kan kleur niet veranderen van tekst css niet zichtbaar daarvoor.Text color of labels.*/
+  --theme-label-border: var(--color-primary) !important;  /*Border color of labels.*/
   --theme-label-box-shadow: none;  /*Box shadow of labels.*/
 
-  --theme-label-selected-background: #ffffff; /*Background color of selected labels.*/
-  --theme-label-selected-text:  var(--color-text);  /*Text color of selected labels.*/
+  --theme-label-selected-background: var(--color-primary);/*Background color of selected labels.*/
+  --theme-label-selected-text:  var(--color-text-on-primary);  /* CHECKEN - Kan kleur niet veranderen van tekst css niet zichtbaar daarvoor.Text color of selected labels.*/
   --theme-label-selected-border: var(--color-secondary);  /*Border color of selected labels.*/
 
-  --theme-label-dragging-background: #ffffff;  /*Background color of labels during drag and drop.*/
-  --theme-label-dragging-text: var(--color-text);  /*Text color of labels during drag and drop.*/
+  --theme-label-dragging-background: var(--color-primary); /*Background color of labels during drag and drop.*/
+  --theme-label-dragging-text: var(--color-text-on-primary);  /* CHECKEN - Kan kleur niet veranderen van tekst css niet zichtbaar daarvoor.Text color of labels during drag and drop.*/
   --theme-label-dragging-border: var(--color-primary);  /*Border color of labels during drag and drop.*/
 
   --theme-label-disabled-background: ;  /*Background color of disabled labels.*/
-  --theme-label-disabled-text:  var(--color-text);  /*Text color of disabled labels.*/
+  --theme-label-disabled-text:  var(--color-text-on-primary);  /* CHECKEN - Kan kleur niet veranderen van tekst css niet zichtbaar daarvoor.Text color of disabled labels.*/
   --theme-label-disabled-border: ;  /*Border color of disabled labels.*/
   --theme-label-disabled-box-shadow: none;  /*Box shadow of disabled labels.*/
 
@@ -321,6 +343,11 @@
   --theme-sidebar-item-active-background: var(--theme-menuitem-active-background);  /* Background color of the item in the sidebar */
   --theme-sidebar-item-active-text: var(--theme-menuitem-active-text);  /* Text color of the item in the sidebar */
   --theme-sidebar-item-active-border: var(--theme-menuitem-active-border);  /* Border color of the item in the sidebar */
+
+  --theme-sidebar-large-button-icon-border-color: #cfcfcf;  /* Border color of the large button icon in the sidebar */
+  --theme-sidebar-large-button-icon-hover-background: #bdbdbd;  /* Background color of the large button icon in the sidebar on hover/focus */
+  --theme-sidebar-large-button-icon-hover-text: #000000;  /* Text color of the large button icon in the sidebar on hover/focus */
+  --theme-sidebar-large-button-icon-hover-border-color: #bdbdbd;  /* Border color of the large button icon in the sidebar on hover/focus */
 
 
   /*
@@ -450,6 +477,12 @@
   --theme-dialog-menu-item-hover-border: #FFFFFF;  /*Border color of the dialog menu item on hover/focus/active*/
   --theme-dialog-menu-item-current-border: #000000;  /*Border color of the current/selected dialog menu item*/
 
+  --theme-dialog-menu-chapter-link-background: #cfcfcf; /*Background color of the dialog menu chapter link*/
+  --theme-dialog-menu-chapter-link-border-color: #cfcfcf; /*Border color of the dialog menu chapter link*/
+  --theme-dialog-menu-chapter-link-text: #000000; /*Text color of the dialog menu chapter link*/
+  --theme-dialog-menu-chapter-active-background: #cfcfcf; /*Background color of the active dialog menu chapter link*/
+  --theme-dialog-menu-chapter-active-border-color: #cfcfcf; /*Border color of the active dialog menu chapter link*/
+
 
   /*
     RESOURCES - General styling of the resources in the theme
@@ -526,6 +559,60 @@
   --theme-subpage-navigation-background: none;  /*Background color of the subpage navigation*/
   --theme-subpage-navigation-text: var(--color-text);  /*Text color of the subpage navigation*/
   --theme-subpage-navigation-selected-background: black;  /*Background color of the selected subpage navigation*/
+
+
+  /* INPUT-RANGE - General styling of the input range in the theme */
+   --theme-input-range-thumb-focus-border-color: #000000; 
+
+  --theme-input-range-thumb-active-border-color: #000000; 
+
+  --theme-input-range-thumb-hover-border-color: #000000; 
+  --theme-input-range-track-box-shadow-color-1: rgba(0, 0, 0, 0.2); 
+
+  --theme-input-range-track-box-shadow-color-2: rgba(13, 13, 13, 0.2); 
+
+  --theme-input-range-track-background: #222222; 
+
+  --theme-input-range-thumb-box-shadow-color-1: rgba(0, 0, 0, 0.2); 
+
+  --theme-input-range-thumb-box-shadow-color-2: rgba(13, 13, 13, 0.2); 
+
+  --theme-input-range-thumb-background: #f86718; 
+
+  --theme-input-range-thumb-border-color: #ffffff; 
+
+  --theme-input-range-track-border-color: #222222; 
+
+  --theme-input-range-legacy-track-background: transparent; 
+
+  --theme-input-range-legacy-track-border-color: transparent; 
+
+  --theme-input-range-legacy-track-text: transparent; 
+
+  --theme-input-range-legacy-fill-lower-box-shadow-color-1: rgba(0, 0, 0, 0.2); 
+
+  --theme-input-range-legacy-fill-lower-box-shadow-color-2: rgba(13, 13, 13, 0.2); 
+
+  --theme-input-range-legacy-fill-lower-background: #151515; 
+
+  --theme-input-range-legacy-fill-lower-border-color: #222222; 
+
+  --theme-input-range-legacy-fill-upper-box-shadow-color-1: rgba(0, 0, 0, 0.2);
+
+  --theme-input-range-legacy-fill-upper-box-shadow-color-2: rgba(13, 13, 13, 0.2); 
+
+  --theme-input-range-legacy-fill-upper-background: #222222; 
+
+  --theme-input-range-legacy-fill-upper-border-color: #222222; 
+
+  --theme-input-range-legacy-thumb-box-shadow-color-1: rgba(0, 0, 0, 0.2); 
+
+  --theme-input-range-legacy-thumb-box-shadow-color-2: rgba(13, 13, 13, 0.2); 
+
+  --theme-input-range-legacy-thumb-background: #f86718; 
+
+  --theme-input-range-legacy-thumb-border-color: #ffffff; 
+
 
 
 

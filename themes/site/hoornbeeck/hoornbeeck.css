@@ -520,7 +520,7 @@ a:hover {
 
 .navbar-inverse .navbar-inner {
   background-color: var(--navbar-inverse-inner-background-color); 
-  background-image: var(--navbar-inverse-inner-background-image);                
+  background-image: var(--navbar-inverse-inner-background-image);          
   border-color: var(--navbar-inverse-inner-border-color);    
   filter: none;                          
 }

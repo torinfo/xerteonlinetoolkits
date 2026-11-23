@@ -48,12 +48,12 @@
     --navbar-inverse-inner-background-image: none; /* Background image of the navbar */
     --navbar-inverse-inner-border-color: var(--color-primary); /* Border color of the navbar */
 
-    --navbar-inverse-inner-nav-li-a-text-color: var(--color-primary-white); /* Text color of the navbar links */
+    --navbar-inverse-inner-nav-li-a-text-color: var(--color-dark-text); /* Text color of the navbar links */
 
-    --navbar-inverse-inner-nav-li-a-hover-text-color: var(--color-primary-white); /* Text color of the navbar links on hover */
+    --navbar-inverse-inner-nav-li-a-hover-text-color: var(--color-dark-text); /* Text color of the navbar links on hover */
     --navbar-inverse-inner-nav-li-a-hover-background-color: var(--color-secondary); /* Background color of the navbar links on hover */
 
-    --navbar-inverse-inner-nav-li-a-dropdown-hover-text-color: var(--color-primary-white); /* Text color of the navbar dropdown links on hover */
+    --navbar-inverse-inner-nav-li-a-dropdown-hover-text-color: var(---color-dark-text); /* Text color of the navbar dropdown links on hover */
     --navbar-inverse-inner-nav-li-a-dropdown-hover-background-color: var(--color-secondary); /* Background color of the navbar dropdown links on hover */
 
     --navbar-inverse-inner-nav-li-active-page-background-color: var(--color-secondary);; /* Background color of the active page link in the navbar */
