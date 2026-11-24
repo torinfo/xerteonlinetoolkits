@@ -1991,8 +1991,8 @@ tt a, kbd a, samp a, code a, .marker a, var a {
 }
 [type=range]::-webkit-slider-thumb {
   box-shadow: 4px 4px 4px var(--theme-input-range-thumb-box-shadow-color-1), 0 0 4px var(--theme-input-range-thumb-box-shadow-color-2);
-  background: var(--theme-input-range-thumb-background);
-  border: 2px solid var(--theme-input-range-thumb-border-color);
+  background: var(--theme-opinion-icon-background);
+  border: 2px solid var(--theme-opinion-icon-border);
   border-radius: 12px;
   cursor: pointer;
   height: 24px;
@@ -2338,18 +2338,18 @@ button.pannellumBtn.sceneMenu .sceneLink {
 
 /* indicates that the square is part of a word that has been found */ 
 #puzzle .found {
-  background-color: var(--theme-game-word-search-puzzle-found-background);
-  color: var(--theme-game-word-search-puzzle-found-text);
+  background-color: var(--theme-game-word-search-puzzle-found-background) !important;
+  color: var(--theme-game-word-search-puzzle-found-text) !important;
 }
 
 #puzzle .solved {
-  background-color: var(--theme-game-word-search-puzzle-solved-background);
-  color: var(--theme-game-word-search-puzzle-solved-text);
+  background-color: var(--theme-game-word-search-puzzle-solved-background)!important;
+  color: var(--theme-game-word-search-puzzle-solved-text)!important;
 }
 
 /* indicates that all words have been found */
 #puzzle .complete {
-  background-color: var(--theme-game-word-search-puzzle-complete-background);
+  background-color: var(--theme-game-word-search-puzzle-complete-background)!important;
 }
 
 /* highlight the word in the puzzle */
@@ -2361,7 +2361,7 @@ button.pannellumBtn.sceneMenu .sceneLink {
 /* indicates that the word has been found */
 #words .wordFound {
   text-decoration: line-through;
-  color: var(--theme-game-word-search-words-word-found-text);
+  color: var(--theme-game-word-search-words-word-found-text)!important;
 }
 
 /*Results page table styling*/

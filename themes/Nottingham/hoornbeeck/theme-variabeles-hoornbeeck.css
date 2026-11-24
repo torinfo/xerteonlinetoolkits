@@ -216,12 +216,12 @@
   */
   --theme-label-background: var(--color-primary); /*Background color of labels.*/
   --theme-label-text: var(--color-text-on-primary); /* CHECKEN - Kan kleur niet veranderen van tekst css niet zichtbaar daarvoor.Text color of labels.*/
-  --theme-label-border: var(--color-primary) !important;  /*Border color of labels.*/
+  --theme-label-border: var(--color-primary);  /*Border color of labels.*/
   --theme-label-box-shadow: none;  /*Box shadow of labels.*/
 
   --theme-label-selected-background: var(--color-primary);/*Background color of selected labels.*/
   --theme-label-selected-text:  var(--color-text-on-primary);  /* CHECKEN - Kan kleur niet veranderen van tekst css niet zichtbaar daarvoor.Text color of selected labels.*/
-  --theme-label-selected-border: var(--color-secondary);  /*Border color of selected labels.*/
+  --theme-label-selected-border: ;  /*Border color of selected labels.*/
 
   --theme-label-dragging-background: var(--color-primary); /*Background color of labels during drag and drop.*/
   --theme-label-dragging-text: var(--color-text-on-primary);  /* CHECKEN - Kan kleur niet veranderen van tekst css niet zichtbaar daarvoor.Text color of labels during drag and drop.*/
@@ -285,6 +285,13 @@
 
   --theme-table-horizontal-tr-border-bottom-color: var(--color-primary);  /*Border color of the bottom of the horizontal table rows.*/
 
+  --theme-table-result-page-th-background: var(--color-primary);  /*Background color of the table header in the result page.*/
+  --theme-table-result-page-th-text: var(--color-text-on-primary);  /*Text color of the table header in the result page.*/
+  --theme-table-result-page-tr-alt-td-background: var(--color-surface);  /*Background color of the alternate table rows in the result page.*/
+  --theme-table-result-page-not-last-background: #bbbbbb;  /*Background color of the table rows that are not the last in the result page.*/
+  --theme-table-result-page-details-icon-color: #0000ff;  /*Color of the details icon in the result page.*/
+  
+
 
   /*
    FEEDBACK -General feedback in the theme.
@@ -313,9 +320,9 @@
   /*
     LINKS -General links within the theme
   */
-  --theme-link: var(--color-accent-1); /*Normal link color.*/
-  --theme-link-hover: var(--color-accent-5); /*Link color on hover/focus.*/
-  --theme-link-visited: var(--color-accent-4); /*Link color for visited links*/
+  --theme-link: var(--color-text); /*Normal link color.*/
+  --theme-link-hover: var(--color-primary); /*Link color on hover/focus.*/
+  --theme-link-visited: var(--color-primary); /*Link color for visited links*/
   
 /*
     SIDEBAR - The sidebar is an additional navigation bar that can be displayed at the side of the project
@@ -424,6 +431,18 @@
   --theme-game-word-search-background: #ffffff;  /*Background color of the word search game*/
 
   --theme-game-memory-border: #bdbdbd;  /*Border color of the memory game*/
+  --theme-game-crossword-highlight-background: var(--color-secondary);  /*Background color of the highlighted cell in the crossword game*/
+  
+  --theme-game-word-search-puzzle-selected-background: var(--color-secondary);  /*Background color of the selected cell in the word search puzzle game*/
+  --theme-game-word-search-puzzle-found-background: var(--color-primary);  /*Background color of the found cell in the word search puzzle game*/
+  --theme-game-word-search-puzzle-found-text: white;  /*Text color of the found cell in the word search puzzle game*/
+  --theme-game-word-search-puzzle-solved-background: purple;  /*Background color of the solved cell in the word search puzzle game*/
+  --theme-game-word-search-puzzle-solved-text: white;  /*Text color of the solved cell in the word search puzzle game*/
+  --theme-game-word-search-puzzle-complete-background: var(--color-primary);  /*Background color of the complete word search puzzle game*/
+  --theme-game-word-search-puzzle-highlight-background: var(--color-secondary);  /*Background color of the highlighted cell in the word search puzzle game*/
+  --theme-game-word-search-puzzle-complete-text: black;  /*Text color of the complete word search puzzle game*/
+  --theme-game-word-search-puzzle-word-found-text: var(--color-primary);  /*Text color of the found word in the word search puzzle game*/
+  --theme-game-word-search-words-word-found-text: var(--color-primary);  /*Text color of the found word in the word search puzzle game*/
 
 
   /*
@@ -576,10 +595,6 @@
   --theme-input-range-thumb-box-shadow-color-1: rgba(0, 0, 0, 0.2); 
 
   --theme-input-range-thumb-box-shadow-color-2: rgba(13, 13, 13, 0.2); 
-
-  --theme-input-range-thumb-background: #f86718; 
-
-  --theme-input-range-thumb-border-color: #ffffff; 
 
   --theme-input-range-track-border-color: #222222; 
 

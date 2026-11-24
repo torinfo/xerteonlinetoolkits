@@ -519,10 +519,24 @@ a:hover {
 }
 
 .navbar-inverse .navbar-inner {
-  background-color: var(--navbar-inverse-inner-background-color); 
-  background-image: var(--navbar-inverse-inner-background-image);          
-  border-color: var(--navbar-inverse-inner-border-color);    
-  filter: none;                          
+  background-color: var(--navbar-inverse-inner-background-color);
+  background-image: var(--navbar-inverse-inner-background-image);
+  background-repeat: no-repeat;
+  background-position: 15px center;
+  background-size: 160px auto;
+  min-height: 55px;
+  border-color: var(--navbar-inverse-inner-border-color);
+  filter: none;
+}
+
+/* Position navigation links after the logo */
+.navbar-inverse .nav {
+  margin-left: 0;
+}
+/* Keep navigation links vertically centered */
+.navbar-inverse .nav > li > a {
+  padding-top: 18px;
+  padding-bottom: 18px;
 }
 
 .navbar-inverse .brand, .navbar-inverse .nav > li > a {
@@ -732,5 +746,34 @@ a.glossary:link, a.glossary:visited, a.glossary:hover, a.glossary:active {
 
 .oddSection {
   background: var(--section-odd-background-color);
+}
+
+/* Bootstrap navigation on smaller screens */
+@media (max-width: 979px) {
+
+  .navbar-inverse .navbar-inner {
+    position: relative;
+    min-height: 0;
+    padding-top: 70px;
+
+    background-repeat: no-repeat;
+    background-position: 15px 10px;
+    background-size: 165px auto;
+  }
+
+  /* Hamburger menu stays in the top-right corner */
+  .navbar .btn-navbar {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    margin: 0;
+  }
+
+  /* Navigation links appear below the logo */
+  .navbar-inverse .nav > li > a,
+  .navbar-inverse .nav-collapse .nav > li > a {
+    padding: 10px 15px;
+  }
+
 }
 /*# sourceMappingURL=new-bootstrap-theme.css.map */

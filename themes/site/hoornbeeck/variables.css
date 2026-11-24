@@ -45,7 +45,7 @@
 
     /* NAVBAR */
     --navbar-inverse-inner-background-color: var(--color-primary); /* Background color of the navbar */
-    --navbar-inverse-inner-background-image: none; /* Background image of the navbar */
+    --navbar-inverse-inner-background-image: url("./images/Logo.png"); /* Background image of the navbar */
     --navbar-inverse-inner-border-color: var(--color-primary); /* Border color of the navbar */
 
     --navbar-inverse-inner-nav-li-a-text-color: var(--color-dark-text); /* Text color of the navbar links */

@@ -2037,8 +2037,8 @@ tt a, kbd a, samp a, code a, .marker a, var a {
 }
 [type=range]::-webkit-slider-thumb {
   box-shadow: 4px 4px 4px var(--theme-input-range-thumb-box-shadow-color-1), 0 0 4px var(--theme-input-range-thumb-box-shadow-color-2);
-  background: var(--theme-input-range-thumb-background);
-  border: 2px solid var(--theme-input-range-thumb-border-color);
+  background: var(--theme-opinion-icon-background);
+  border: 2px solid var(--theme-opinion-icon-border);
   border-radius: 12px;
   cursor: pointer;
   height: 24px;
@@ -2372,6 +2372,71 @@ button.pannellumBtn.sceneMenu .sceneLink {
     -webkit-transform: translateZ(9999px);
     transform: translateZ(9999px)
 }
+
+ .highlighted .crossword-input[type=text]{
+     background-color: var(--theme-game-crossword-highlight-background);
+ }
+
+ /* indicates when a square has been selected */
+#puzzle .selected {
+  background-color: var(--theme-game-word-search-puzzle-selected-background) !important;
+}
+
+/* indicates that the square is part of a word that has been found */ 
+#puzzle .found {
+  background-color: var(--theme-game-word-search-puzzle-found-background) !important;
+  color: var(--theme-game-word-search-puzzle-found-text) !important;
+}
+
+#puzzle .solved {
+  background-color: var(--theme-game-word-search-puzzle-solved-background)!important;
+  color: var(--theme-game-word-search-puzzle-solved-text)!important;
+}
+
+/* indicates that all words have been found */
+#puzzle .complete {
+  background-color: var(--theme-game-word-search-puzzle-complete-background)!important;
+}
+
+/* highlight the word in the puzzle */
+#puzzle .highlight {
+  background-color: var(--theme-game-word-search-puzzle-highlight-background) !important;
+  color: var(--theme-game-word-search-puzzle-highlight-text) !important;
+}
+
+/* indicates that the word has been found */
+#words .wordFound {
+  text-decoration: line-through;
+  color: var(--theme-game-word-search-words-word-found-text)!important;
+}
+
+/*Results page table styling*/
+th {
+		background-color: var(--theme-table-result-page-th-background);
+		color: var(--theme-table-result-page-th-text);
+	}
+
+  /*Results page table styling*/
+	tr.alt td {
+		background-color: var(--theme-table-result-page-tr-alt-td-background);
+	}
+
+  /*Results page table styling*/
+  .alt td
+	{
+		background-color: var(--theme-table-result-page-tr-alt-td-background);
+	}
+
+  /*Results page table styling*/
+	.notLast{
+		background-color: var(--theme-table-result-page-not-last-background);
+	}
+
+  /*Results page table styling*/
+  .blue
+  {
+    color: var(--theme-table-result-page-details-icon-color);
+  }
 
 @media (min-width: 1366px) {
   /*tablet and above css below here*/

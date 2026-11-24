@@ -443,6 +443,7 @@
   --theme-game-word-search-puzzle-highlight-background: yellow;  /*Background color of the highlighted cell in the word search puzzle game*/
   --theme-game-word-search-puzzle-complete-text: black;  /*Text color of the complete word search puzzle game*/
   --theme-game-word-search-puzzle-word-found-text: green;  /*Text color of the found word in the word search puzzle game*/
+  --theme-game-word-search-words-word-found-text: green;  /*Text color of the found word in the word search puzzle game*/
 
   /*
     LINKS / FEEDS - General styling of the links and feeds in the theme
@@ -595,10 +596,6 @@
   --theme-input-range-thumb-box-shadow-color-1: rgba(0, 0, 0, 0.2); 
 
   --theme-input-range-thumb-box-shadow-color-2: rgba(13, 13, 13, 0.2); 
-
-  --theme-input-range-thumb-background: #f86718; 
-
-  --theme-input-range-thumb-border-color: #ffffff; 
 
   --theme-input-range-track-border-color: #222222; 
 
