@@ -2,10 +2,7 @@
  * Wrap selected text in the current main delimiter (legacy xotmarkword behavior).
  * @license Apache-2.0
  */
-import { Plugin } from '@ckeditor/ckeditor5-core';
-import { ButtonView } from '@ckeditor/ckeditor5-ui';
-import { IconPencil } from 'ckeditor5/src/icons.js';
-
+import { Plugin, ButtonView, IconPencil } from 'ckeditor5';
 function getMainDelimiter() {
 	try {
 		const root = document.getElementById( 'opt_mainDelimiter' );
@@ -44,7 +41,7 @@ function trimTrailingSpaceFromRange( writer, range ) {
 }
 
 /**
- * @param {import('@ckeditor/ckeditor5-core').Editor} editor
+ * @param {import('ckeditor5').Editor} editor
  * @param {Array|null} [savedRanges] - From context menu; restores selection before insert.
  * @param {string|null} [savedText] - Selected text captured when the context menu opened.
  */

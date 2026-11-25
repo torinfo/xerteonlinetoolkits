@@ -1,4 +1,4 @@
-import { Plugin } from '@ckeditor/ckeditor5-core';
+import { Plugin } from 'ckeditor5';
 import '../xerte-style-preview.css';
 
 // Keep the theme's appearance without importing its layout rules into the toolbar.

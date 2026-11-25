@@ -7,6 +7,8 @@
 	var bridgeScript = document.currentScript;
 	var languageAssetBase = bridgeScript && bridgeScript.src ?
 		bridgeScript.src.replace(/xerte-ckeditor5\.js(?:\?.*)?$/, '') : 'editor/js/vendor/ckeditor5/';
+	var languageAssetQuery = bridgeScript && bridgeScript.src.indexOf('?') !== -1 ?
+		'?' + bridgeScript.src.split('?').slice(1).join('?') : '';
 
 	window.__xerteCke5Instances = window.__xerteCke5Instances || {};
 	window.__xerteCke5Shims = window.__xerteCke5Shims || {};
@@ -176,10 +178,10 @@
 			return Promise.resolve({ requestedLanguage: lang, uiLanguage: lang });
 		}
 		return loadOptionalLanguageScript('ckeditor:' + lang,
-			languageAssetBase + 'translations/' + lang + '.js').then(function (coreLoaded) {
+			languageAssetBase + 'translations/' + lang + '.js' + languageAssetQuery).then(function (coreLoaded) {
 			// Load Xerte translations last so local overrides win over upstream entries.
 			return loadOptionalLanguageScript('xerte:' + lang,
-				languageAssetBase + 'lang/' + lang + '.js').then(function () {
+				languageAssetBase + 'lang/' + lang + '.js' + languageAssetQuery).then(function () {
 				return {
 					requestedLanguage: lang,
 					uiLanguage: coreLoaded ? lang : 'en'
@@ -433,7 +435,7 @@
 			base.height = user.height;
 		}
 		if (user.editorplaceholder) {
-			base.placeholder = user.editorplaceholder;
+			base.root = { placeholder: user.editorplaceholder };
 		}
 		if (user.inlineEditor) {
 			base.menuBar = { isVisible: false };
@@ -460,6 +462,14 @@
 				base[k] = user[k];
 			}
 		}
+		// Modern CKEditor builds receive dictionaries explicitly. Keep local
+		// overrides loaded by the existing language scripts after the upstream data.
+		var translations = window.CKEDITOR_TRANSLATIONS || {};
+		var selectedTranslations = {};
+		if (translations.en) selectedTranslations.en = translations.en;
+		if (translations[lang]) selectedTranslations[lang] = translations[lang];
+		base.translations = (Array.isArray(base.translations) ? base.translations :
+			(base.translations ? [base.translations] : [])).concat(selectedTranslations);
 		return base;
 	}
 
@@ -813,7 +823,7 @@
 			+ '.ck.ck-toolbar .xerte-toolbar-collapser{position:absolute;right:4px;bottom:4px;width:22px;height:22px;padding:0;border:0;border-radius:2px;background:transparent;color:inherit;cursor:pointer;display:flex;align-items:center;justify-content:center;}'
 			+ '.ck.ck-toolbar .xerte-toolbar-collapser:before{content:"";display:block;width:0;height:0;border-left:7px solid transparent;border-right:7px solid transparent;border-bottom:5px solid currentColor;}'
 			+ '.ck.ck-toolbar.xerte-fixed-toolbar--collapsed .xerte-toolbar-collapser:before{border-top:5px solid currentColor;border-bottom:0;}'
-			+ '.ck.ck-toolbar .xerte-toolbar-collapser:hover,.ck.ck-toolbar .xerte-toolbar-collapser:focus{background:var(--ck-color-button-default-hover-background);outline:none;}';
+			+ '.ck.ck-toolbar .xerte-toolbar-collapser:hover,.ck.ck-toolbar .xerte-toolbar-collapser:focus{background:var(--ck-color-button-default-hover-background, var(--ck-button-default-hover-background-color));outline:none;}';
 		var style = document.createElement('style');
 		style.type = 'text/css';
 		style.appendChild(document.createTextNode(css));
@@ -910,7 +920,13 @@
 		var lang = selectedLanguageCode();
 		return loadSelectedLanguages(lang).then(function (loadedLanguages) {
 			var cfg = mergeEditorConfig(userConfig || {}, loadedLanguages);
-			return Editor.create(domEl, cfg);
+			cfg.root = Object.assign({}, cfg.root);
+			if (wantsInline) {
+				cfg.root.element = domEl;
+			} else {
+				cfg.attachTo = domEl;
+			}
+			return Editor.create(cfg);
 		}).then(function (editor) {
 			var id = domEl.id;
 			editor.__xerteIsInline = !!(userConfig && userConfig.inlineEditor);

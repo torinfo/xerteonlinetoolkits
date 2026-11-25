@@ -1,9 +1,7 @@
 /**
  * @license Apache-2.0
  */
-import { Plugin } from '@ckeditor/ckeditor5-core';
-import { ButtonView } from '@ckeditor/ckeditor5-ui';
-import { IconBrowseFiles, IconImage } from 'ckeditor5/src/icons.js';
+import { Plugin, ButtonView, IconBrowseFiles, IconImage } from 'ckeditor5';
 import { displayDimension } from './xerte-image-dimensions.js';
 import { registerImageHeightConversion } from './xerte-image-height-conversion.js';
 import { showImagePropertiesDialog } from './xerte-image-properties-dialog.js';

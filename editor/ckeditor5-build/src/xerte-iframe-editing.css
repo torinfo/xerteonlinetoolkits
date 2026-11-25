@@ -3,13 +3,13 @@
  * The frame takes over the editable's border so there is no doubled border. */
 .ck.ck-editor.xerte-iframe-editor .xerte-cke5-content-frame {
 	border: 1px solid var(--ck-color-base-border);
-	border-radius: 0 0 var(--ck-border-radius) var(--ck-border-radius);
+	border-radius: 0 0 var(--ck-border-radius, var(--ck-radius-base)) var(--ck-border-radius, var(--ck-radius-base));
 }
 
 /* The plugin mirrors editor focus onto the frame, including toolbar focus. */
 .ck.ck-editor.xerte-iframe-editor .xerte-cke5-content-frame.ck-focused {
 	border-color: var(--ck-color-focus-border);
-	box-shadow: var(--ck-inner-shadow);
+	box-shadow: var(--ck-inner-shadow, var(--ck-inset-shadow-sm));
 }
 
 /* A small grip below the frame resizes the viewport without moving the iframe. */
@@ -24,7 +24,7 @@
 	padding: 0;
 	border: 1px solid var(--ck-color-base-border);
 	border-top: 0;
-	background: var(--ck-color-toolbar-background);
+	background: var(--ck-color-toolbar-background, var(--ck-toolbar-background-color));
 	color: var(--ck-color-text);
 	cursor: ns-resize;
 	touch-action: none;

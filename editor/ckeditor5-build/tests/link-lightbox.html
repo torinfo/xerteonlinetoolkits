@@ -4,7 +4,8 @@
 <h1>Link target and lightbox regression checks</h1>
 <pre id="results">Running…</pre>
 <div id="editor"></div>
-<script src="../../js/vendor/ckeditor5/xerte-editor.bundle.js?link-properties-regression=5"></script>
+<script src="test-page.js"></script>
+<script src="load-editor.js"></script>
 <script>
 ( async () => {
 	const results = document.querySelector( '#results' );
@@ -194,8 +195,10 @@
 		linkButton.destroy();
 		window.testEditor = editor;
 		results.textContent = passed.join( '\n' );
+		document.documentElement.dataset.testStatus = 'passed';
 	} catch ( error ) {
 		results.textContent = passed.join( '\n' ) + '\nFAIL: ' + error.stack;
+		document.documentElement.dataset.testStatus = 'failed';
 	}
 } )();
 </script>

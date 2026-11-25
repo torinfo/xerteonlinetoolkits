@@ -2,11 +2,7 @@
  * Toggle the legacy Xerte <mark> element on selected text.
  * @license Apache-2.0
  */
-import { Plugin } from '@ckeditor/ckeditor5-core';
-import { AttributeCommand } from '@ckeditor/ckeditor5-basic-styles';
-import { ButtonView } from '@ckeditor/ckeditor5-ui';
-import { IconMarker } from 'ckeditor5/src/icons.js';
-
+import { Plugin, AttributeCommand, ButtonView, IconMarker } from 'ckeditor5';
 const MARK_ATTRIBUTE = 'mark';
 
 export class XerteMarkTag extends Plugin {

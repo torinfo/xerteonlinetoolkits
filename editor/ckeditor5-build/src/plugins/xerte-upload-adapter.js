@@ -1,8 +1,7 @@
 /**
  * @license Apache-2.0
  */
-import { Plugin } from '@ckeditor/ckeditor5-core';
-
+import { Plugin } from 'ckeditor5';
 export class XerteUploadAdapter extends Plugin {
 	static get requires() {
 		return [ 'FileRepository' ];

@@ -2,8 +2,7 @@
  * Add Xerte's legacy Greek and mathematical characters to CKEditor 5.
  * @license Apache-2.0
  */
-import { Plugin } from '@ckeditor/ckeditor5-core';
-
+import { Plugin } from 'ckeditor5';
 const greekCharacters = [
 	[ 'Alpha', 'Α' ], [ 'Beta', 'Β' ], [ 'Gamma', 'Γ' ], [ 'Delta', 'Δ' ],
 	[ 'Epsilon', 'Ε' ], [ 'Zeta', 'Ζ' ], [ 'Eta', 'Η' ], [ 'Theta', 'Θ' ],

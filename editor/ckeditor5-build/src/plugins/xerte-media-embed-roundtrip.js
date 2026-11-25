@@ -2,8 +2,7 @@
  * Keep CKEditor 5 media previews editable after paste and drag/drop.
  * @license Apache-2.0
  */
-import { Plugin } from '@ckeditor/ckeditor5-core';
-import { MediaEmbed } from '@ckeditor/ckeditor5-media-embed';
+import { Plugin, MediaEmbed } from 'ckeditor5';
 import { normalizeDimension } from './xerte-image-dimensions.js';
 
 export class XerteMediaEmbedRoundTrip extends Plugin {

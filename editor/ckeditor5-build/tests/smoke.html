@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="en">
+<meta charset="utf-8">
+<title>Xerte CKEditor initial check</title>
+<style>body { font:16px/1.5 Arial,sans-serif; margin:24px; } pre { white-space:pre-wrap; } section { margin:24px 0; } .failed { color:#a00; }</style>
+<h1>Xerte CKEditor initial check</h1>
+<p>This page uses temporary content only. It does not save to any Xerte project.</p>
+<p><a href="?language=en">English</a> · <a href="?language=nl">Nederlands</a></p>
+<pre id="results">Running…</pre>
+<div id="editors"></div>
+<script src="test-page.js"></script>
+<script src="load-editor.js" data-bridge></script>
+<script>
+var language = { $code: new URLSearchParams(location.search).get('language') || 'en' };
+(async () => {
+	const results = document.querySelector('#results');
+	const lines = [];
+	const assert = (condition, message) => { if (!condition) throw new Error(message); };
+	const legacy = '<div class="custom-panel" style="padding:12px"><p>Older content with <strong>bold</strong>, ' +
+		'<span class="highlight1">highlighting</span> and <a href="media/example.pdf" target="_blank">a file link</a>.</p>' +
+		'<p><span lang="nl">Nederlandse tekst</span></p></div>';
+	try {
+		const { requiredPlugins, requiredToolbarItems } = await import('./browser-contract.js');
+		const expected = (await (await fetch('../package.json', { cache: 'no-store' })).json()).dependencies.ckeditor5;
+		assert(window.CKEDITOR_VERSION === expected, 'Expected CKEditor ' + expected + '; rebuild or reload if an older bundle was cached.');
+		for (const [name, inlineEditor, iframe] of [ ['Classic', false, false], ['Classic iframe', false, true], ['Inline', true, false] ]) {
+			const section = document.createElement('section');
+			section.innerHTML = '<h2>' + name + '</h2>';
+			document.querySelector('#editors').appendChild(section);
+			const field = document.createElement(inlineEditor ? 'div' : 'textarea');
+			field.id = 'check_' + name.replace(/\W/g, '_');
+			if (inlineEditor) field.innerHTML = legacy; else field.value = legacy;
+			section.appendChild(field);
+			const editor = await XerteCKEditor5Facade.create(field, {
+				inlineEditor, xerteIframeEditing: iframe, xerteIframeStylesheets: []
+			});
+			const Type = inlineEditor ? XerteCKEditor5.Inline : XerteCKEditor5.Classic;
+			const custom = Type.builtinPlugins.filter(plugin => (plugin.pluginName || plugin.name).startsWith('Xerte'));
+			assert(custom.length >= 20, name + ': custom plugin list is incomplete');
+			for (const plugin of custom) assert(editor.plugins.has(plugin), name + ': missing ' + plugin.pluginName);
+			for (const plugin of requiredPlugins.filter(plugin => !(inlineEditor && plugin === 'XerteIframeEditing'))) {
+				assert(editor.plugins.has(plugin), name + ': required custom plugin missing: ' + plugin);
+			}
+			for (const item of requiredToolbarItems) {
+				assert(Type.defaultConfig.toolbar.items.includes(item), name + ': required toolbar item missing: ' + item);
+			}
+			for (const item of Type.defaultConfig.toolbar.items.filter(item => item !== '|')) {
+				assert(editor.ui.componentFactory.has(item), name + ': toolbar control unavailable: ' + item);
+			}
+			for (let cycle = 0; cycle < 3; cycle++) {
+				const html = editor.getData();
+				const fragment = document.createElement('div'); fragment.innerHTML = html;
+				assert(fragment.querySelector('.custom-panel')?.style.padding === '12px', name + ': styled DIV lost');
+				assert(fragment.querySelector('strong')?.textContent === 'bold', name + ': bold text lost');
+				assert(fragment.querySelector('.highlight1')?.textContent === 'highlighting', name + ': legacy highlight lost');
+				assert(fragment.querySelector('a')?.getAttribute('href') === 'media/example.pdf', name + ': relative link lost');
+				assert(fragment.querySelector('[lang="nl"]')?.textContent === 'Nederlandse tekst', name + ': text language lost');
+				editor.setData(html);
+			}
+			if (language.$code === 'nl') {
+				assert(editor.t('Bold') === 'Vet', name + ': upstream Dutch translation missing');
+				assert(editor.t('Image Properties') === 'Afbeeldingseigenschappen', name + ': Xerte language override missing');
+			}
+			if (iframe) assert(editor.ui.getEditableElement().ownerDocument !== document, 'Expected editable inside iframe');
+			lines.push('PASS: ' + name + ' starts, loads its custom plugins, and preserves the older HTML through three reloads.');
+			results.textContent = lines.join('\n');
+		}
+		lines.push('PASS: CKEditor ' + window.CKEDITOR_VERSION + ', language ' + language.$code + '. Editors below remain available for manual checks.');
+		results.textContent = lines.join('\n');
+		document.documentElement.dataset.testStatus = 'passed';
+	} catch (error) {
+		results.textContent = lines.concat('FAIL: ' + (error.stack || error)).join('\n');
+		results.className = 'failed';
+		document.documentElement.dataset.testStatus = 'failed';
+	}
+})();
+</script>
+</html>

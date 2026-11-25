@@ -1,4 +1,4 @@
-import { Plugin } from '@ckeditor/ckeditor5-core';
+import { Plugin } from 'ckeditor5';
 import '../xerte-legacy-styles.css';
 
 const variants = [ 1, 2, 3, 4, 5, 6 ];

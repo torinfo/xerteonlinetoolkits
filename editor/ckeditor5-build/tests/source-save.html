@@ -1,0 +1,104 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>Saving while Source remains open</title>
+<pre id="results">Running…</pre>
+<button id="outside">Outside the editor</button>
+<script src="test-page.js"></script>
+<script src="../../js/vendor/jquery-1.9.1.min.js"></script>
+<script src="load-editor.js" data-bridge></script>
+<script>
+var EDITOR = { toolbox: {} };
+var lo_data = {};
+var previewxmlurl = 'preview.xml', dataxmlurl = 'data.xml', rlourlvariable = '', template_id = 1, upload_url = 'editor/upload.php';
+$.jstree = { reference: () => ({ get_node: id => ({ children: id === 'treeroot' ? [ 'page1', 'page2' ] : [] }) }) };
+</script>
+<script src="../../../website_code/scripts/template_management.js"></script>
+<script src="../../js/tree.js"></script>
+<script>
+( async () => {
+	const results = document.querySelector( '#results' );
+	const passed = [];
+	const assert = ( condition, message ) => { if ( !condition ) throw new Error( message ); };
+	const pause = () => new Promise( resolve => setTimeout( resolve, 30 ) );
+	try {
+		for ( const iframe of [ false, true ] ) {
+			lo_data = { treeroot: { attributes: { nodeName: 'learningObject' } }, page1: { data: '<p>Initial</p>' }, page2: { data: '<p>Initial</p>' } };
+			const editors = [];
+			for ( const [ index, key ] of [ 'page1', 'page2' ].entries() ) {
+				const field = document.createElement( 'textarea' );
+				field.id = 'source_' + index;
+				field.value = lo_data[ key ].data;
+				document.body.appendChild( field );
+				const editor = await XerteCKEditor5Facade.create( field, {
+					xerteIframeEditing: iframe, xerteIframeStylesheets: [],
+					// Also cover fields configured to start directly in Source mode.
+					startupMode: index === 0 ? 'source' : undefined
+				}, function () {
+					this.on( 'change', function () { lo_data[ key ].data = this.getData(); } );
+				} );
+				editors.push( { editor, field } );
+			}
+			const edit = ( entry, html ) => {
+				const source = entry.editor.plugins.get( 'SourceEditing' );
+				source.isSourceEditingMode = true;
+				const textarea = entry.editor.ui.getEditableElement( 'sourceEditing:main' );
+				textarea.focus();
+				textarea.value = html;
+				textarea.setSelectionRange( 4, 4 );
+				textarea.dispatchEvent( new textarea.ownerDocument.defaultView.Event( 'input', { bubbles: true } ) );
+				return textarea;
+			};
+			const requests = [];
+			const originalAjax = $.ajax;
+			$.ajax = options => {
+				requests.push( options );
+				const response = { done: () => response, fail: () => response };
+				return response;
+			};
+			for ( const [ name, save ] of [
+				[ 'preview', () => preview( {} ) ], [ 'publish', () => publish() ],
+				[ 'async save', () => savepreviewasync( true ) ], [ 'close save', () => savepreviewasync( false ) ],
+				[ 'LTI save', () => lti_save() ]
+			] ) {
+				const html = '<div class="custom-panel" style="padding:12px"><p>' + name + '</p></div>';
+				const textarea = edit( editors[ 0 ], html );
+				const beforeSave = lo_data.page1.data;
+				assert( beforeSave !== html, name + ': fixture must leave uncommitted Source data' );
+				save();
+				const request = requests.pop();
+				const payload = JSON.parse( decodeURIComponent( request.data.lo_data ) );
+				assert( payload.children[ 0 ].data.includes( '<p>' + name + '</p>' ), name + ': save payload is stale' );
+				assert( payload.children[ 0 ].data.includes( 'class="custom-panel"' ), name + ': styled DIV was lost' );
+				assert( editors[ 0 ].editor.plugins.get( 'SourceEditing' ).isSourceEditingMode, name + ': Source must remain open' );
+				assert( textarea.value === html && textarea.selectionStart === 4, name + ': Source text or caret changed' );
+				passed.push( `PASS: ${ iframe ? 'iframe' : 'standard' } ${ name } includes Source edits without closing Source or moving its caret` );
+			}
+			edit( editors[ 0 ], '<p>First editor pending</p>' );
+			edit( editors[ 1 ], '<p>Second editor pending</p>' );
+			const multiple = EDITOR.tree.build_json( 'treeroot' );
+			assert( multiple.children[ 0 ].data.includes( 'First editor pending' ) && multiple.children[ 1 ].data.includes( 'Second editor pending' ), 'Must synchronize all Source editors' );
+			passed.push( `PASS: ${ iframe ? 'iframe' : 'standard' } saves synchronize multiple Source editors` );
+			for ( const [ index, entry ] of editors.entries() ) {
+				edit( entry, '<p>Before page navigation ' + index + '</p>' );
+				document.querySelector( '#outside' ).focus();
+				await pause();
+				assert( lo_data[ 'page' + ( index + 1 ) ].data.includes( 'Before page navigation ' + index ), 'Blur must commit Source edits before page navigation' );
+				const saved = lo_data[ 'page' + ( index + 1 ) ].data;
+				await CKEDITOR.instances[ entry.field.id ].destroy();
+				const reloaded = await XerteCKEditor5Facade.create( entry.field, { xerteIframeEditing: iframe, xerteIframeStylesheets: [] } );
+				reloaded.setData( saved );
+				assert( reloaded.getData().includes( 'Before page navigation ' + index ), 'Source edits must survive reopening the page' );
+				await CKEDITOR.instances[ entry.field.id ].destroy();
+				entry.field.remove();
+			}
+			passed.push( `PASS: ${ iframe ? 'iframe' : 'standard' } Source edits survive leaving the field and reopening its editor` );
+			$.ajax = originalAjax;
+		}
+		results.textContent = passed.join( '\n' );
+		document.documentElement.dataset.testStatus = 'passed';
+	} catch ( error ) {
+		results.textContent = passed.concat( error.stack || String( error ) ).join( '\n' );
+		document.documentElement.dataset.testStatus = 'failed';
+	}
+} )();
+</script>

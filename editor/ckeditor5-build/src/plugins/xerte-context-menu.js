@@ -2,7 +2,7 @@
  * Right-click context menu (legacy CKEditor 4 parity).
  * @license Apache-2.0
  */
-import { Plugin } from '@ckeditor/ckeditor5-core';
+import { Plugin } from 'ckeditor5';
 import { runXertePageLink } from './xerte-page-link.js';
 import { parseXertePageId } from './xerte-page-link-utils.js';
 import { runAutocolumnsDialog } from './xerte-autocolumns-dialog.js';

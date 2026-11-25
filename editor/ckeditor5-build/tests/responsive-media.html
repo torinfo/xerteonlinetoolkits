@@ -1,0 +1,87 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>Responsive media regression checks</title>
+<pre id="results">Running…</pre>
+<script src="test-page.js"></script>
+<script src="load-editor.js"></script>
+<script>
+( async () => {
+	const results = document.querySelector( '#results' );
+	const passed = [];
+	const assert = ( condition, message ) => { if ( !condition ) throw new Error( message ); };
+	const pause = () => new Promise( resolve => setTimeout( resolve, 30 ) );
+	const field = ( dialog, name ) => Array.from( dialog.querySelectorAll( 'label' ) )
+		.find( label => label.firstChild?.textContent === name ).querySelector( 'input' );
+	const submit = async dialog => { dialog.dispatchEvent( new Event( 'submit', { cancelable: true } ) ); await pause(); };
+	const sampleImage = 'data:image/svg+xml,' + encodeURIComponent( '<svg xmlns="http://www.w3.org/2000/svg" width="600" height="300"><rect width="600" height="300" fill="teal"/></svg>' );
+	try {
+		for ( const [ name, Type, iframe ] of [
+			[ 'Classic', XerteCKEditor5.Classic, false ],
+			[ 'Classic iframe', XerteCKEditor5.Classic, true ],
+			[ 'Inline', XerteCKEditor5.Inline, false ]
+		] ) {
+			const root = document.createElement( 'div' ); document.body.appendChild( root );
+			const editor = await Type.create( root, {
+				xerteBrowseImageUrl: 'about:blank', xerteIframeEditing: iframe,
+				mediaEmbed: { extraProviders: [ {
+					name: 'responsiveTest', url: /example\.test\/media/,
+					html: () => '<div style="position:relative;padding-bottom:56.25%;height:0"><iframe src="about:blank" style="position:absolute;width:100%;height:100%"></iframe></div>'
+				} ] }
+			} );
+			const selectedImage = () => editor.plugins.get( 'ImageUtils' ).getClosestSelectedImageElement( editor.model.document.selection );
+			const open = component => {
+				const button = editor.ui.componentFactory.create( component ); button.fire( 'execute' ); button.destroy();
+				return document.querySelector( '[role=dialog]' );
+			};
+			editor.execute( 'insertImage', { source: { src: sampleImage, width: 600, height: 300 } } );
+			assert( selectedImage().getAttribute( 'resizedWidth' ) === '100%', name + ': image insertion must default to 100%' );
+			editor.execute( 'resizeImage', { width: null } );
+			editor.execute( 'imageStyle', { value: 'inline' } );
+			editor.execute( 'imageStyle', { value: 'block' } );
+			assert( !selectedImage().hasAttribute( 'resizedWidth' ), name + ': layout changes must retain Original size' );
+			let dialog = open( 'xerteImageProperties' );
+			assert( field( dialog, 'Width' ).value === '600px', name + ': saved intrinsic pixels must show an explicit unit' );
+			field( dialog, 'Width' ).value = '50';
+			field( dialog, 'Width' ).dispatchEvent( new Event( 'input' ) );
+			assert( field( dialog, 'Height' ).value === '', name + ': percentage width must leave proportional height automatic' );
+			await submit( dialog );
+			assert( selectedImage().getAttribute( 'resizedWidth' ) === '50%', name + ': unitless image input must save as %' );
+			dialog = open( 'xerteImageProperties' );
+			await pause();
+			assert( field( dialog, 'Width' ).value === '50%', name + ': loading dimensions must retain percentage sizing' );
+			field( dialog, 'Width' ).value = '240px'; field( dialog, 'Height' ).value = '';
+			await submit( dialog );
+			dialog = open( 'xerteImageProperties' ); await submit( dialog );
+			assert( selectedImage().getAttribute( 'resizedWidth' ) === '240px', name + ': explicit pixel sizing must survive properties save' );
+			passed.push( 'PASS: ' + name + ' image defaults, properties, proportional sizing and explicit pixel compatibility' );
+			editor.setData( '' );
+			dialog = open( 'mediaEmbed' );
+			assert( field( dialog, 'Width' ).value === '100%', name + ': media insertion must default to 100%' );
+			field( dialog, 'URL' ).value = 'https://example.test/media';
+			field( dialog, 'Width' ).value = '75'; field( dialog, 'Height' ).value = '40';
+			await submit( dialog );
+			let media = editor.model.document.selection.getSelectedElement();
+			assert( media?.getAttribute( 'mediaWidth' ) === '75%' && media.getAttribute( 'mediaHeight' ) === '40%', name + ': media dimensions must default to %' );
+			editor.setData( editor.getData() );
+			media = Array.from( editor.model.document.getRoot().getChildren() ).find( item => item.is( 'element', 'media' ) );
+			assert( media?.getAttribute( 'mediaHeight' ) === '40%', name + ': percentage media height lost on reload' );
+			const view = editor.editing.mapper.toViewElement( media );
+			const resizer = editor.plugins.get( 'WidgetResize' ).getResizerByViewElement( view );
+			assert( resizer?._options.unit === '%', name + ': media drag handles must use %' );
+			resizer._options.onCommit( '62.5%' );
+			assert( media.getAttribute( 'mediaWidth' ) === '62.5%' && !media.hasAttribute( 'mediaHeight' ), name + ': media drag must save % and restore proportional height' );
+			editor.setData( editor.getData() );
+			assert( editor.getData().includes( '62.5%' ), name + ': drag percentage lost on reload' );
+			passed.push( 'PASS: ' + name + ' media defaults, percentage height reload and drag commit' );
+			editor.setData( '' ); editor.execute( 'insertXerteAudio', { src: 'about:blank' } );
+			const audioHtml = document.createElement( 'div' ); audioHtml.innerHTML = editor.getData();
+			assert( audioHtml.querySelector( 'audio' )?.style.width === '100%', name + ': audio must use responsive width' );
+			passed.push( 'PASS: ' + name + ' responsive audio width' );
+			await editor.destroy(); root.remove();
+		}
+		results.textContent = passed.join( '\n' ); document.documentElement.dataset.testStatus = 'passed';
+	} catch ( error ) {
+		results.textContent = passed.join( '\n' ) + '\nFAIL: ' + error.stack; document.documentElement.dataset.testStatus = 'failed';
+	}
+} )();
+</script>

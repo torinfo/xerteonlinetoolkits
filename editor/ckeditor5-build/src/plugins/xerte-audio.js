@@ -2,9 +2,13 @@
  * HTML5 audio widget compatible with Xerte's CKEditor 4 content.
  * @license Apache-2.0
  */
-import { Plugin, Command } from '@ckeditor/ckeditor5-core';
-import { ButtonView } from '@ckeditor/ckeditor5-ui';
-import { Widget, toWidget } from '@ckeditor/ckeditor5-widget';
+import {
+	Plugin,
+	Command,
+	ButtonView,
+	Widget,
+	toWidget
+} from 'ckeditor5';
 import { browseMedia } from './xerte-browse-media.js';
 import AudioIcon from '../icons/audio.svg';
 

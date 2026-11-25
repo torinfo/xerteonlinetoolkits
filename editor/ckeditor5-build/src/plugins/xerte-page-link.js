@@ -3,11 +3,15 @@
  * <a href="#" onclick="x_navigateToPage(false,{type:'linkID',ID:'...'}); return false;">...</a>
  * @license Apache-2.0
  */
-import { Plugin } from '@ckeditor/ckeditor5-core';
-import { ButtonView, MenuBarMenuListItemButtonView } from '@ckeditor/ckeditor5-ui';
-import { _LinkPreviewButtonView as LinkPreviewButtonView, _ensureSafeLinkUrl as ensureSafeLinkUrl } from '@ckeditor/ckeditor5-link';
+import {
+	Plugin,
+	ButtonView,
+	MenuBarMenuListItemButtonView,
+	_LinkPreviewButtonView as LinkPreviewButtonView,
+	_ensureSafeLinkUrl as ensureSafeLinkUrl,
+	findAttributeRange
+} from 'ckeditor5';
 import PageLinkIcon from '../icons/page-link.svg';
-import { findAttributeRange } from 'ckeditor5/src/typing.js';
 import { parseXertePageId } from './xerte-page-link-utils.js';
 
 function escapeHtml( value ) {

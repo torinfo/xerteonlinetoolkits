@@ -2,10 +2,8 @@
  * Editable MathJax widget compatible with CKEditor 4's extmathjax HTML.
  * @license Apache-2.0
  */
-import { Plugin } from '@ckeditor/ckeditor5-core';
-import { ButtonView } from '@ckeditor/ckeditor5-ui';
+import { Plugin, ButtonView, toWidget } from 'ckeditor5';
 import MathIcon from '../icons/math.svg';
-import { toWidget } from '@ckeditor/ckeditor5-widget';
 import { normalizeMathJaxInput, parseMathJaxValue, serializeMathJaxValue } from './xerte-mathjax-utils.js';
 
 let mathJaxPromise;

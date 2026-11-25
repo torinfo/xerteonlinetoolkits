@@ -4,10 +4,8 @@
  * This Xerte integration is Apache-2.0. axe-core is MPL-2.0; see the
  * distribution notice next to the generated CKEditor bundle.
  */
+import { Command, Plugin, ButtonView, IconAccessibility } from 'ckeditor5';
 import axe from 'axe-core';
-import { Command, Plugin } from '@ckeditor/ckeditor5-core';
-import { ButtonView } from '@ckeditor/ckeditor5-ui';
-import { IconAccessibility } from '@ckeditor/ckeditor5-icons';
 
 const CHECKER_RULES = [
 	'image-alt',

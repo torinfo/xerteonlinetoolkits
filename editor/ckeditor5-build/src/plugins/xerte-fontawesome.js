@@ -2,10 +2,13 @@
  * Font Awesome inline widget and picker for Xerte's CKEditor 5 build.
  * @license Apache-2.0
  */
-import { Plugin } from '@ckeditor/ckeditor5-core';
-import { DomEventObserver } from '@ckeditor/ckeditor5-engine';
-import { ButtonView } from '@ckeditor/ckeditor5-ui';
-import { Widget, toWidget } from '@ckeditor/ckeditor5-widget';
+import {
+	Plugin,
+	DomEventObserver,
+	ButtonView,
+	Widget,
+	toWidget
+} from 'ckeditor5';
 import fontAwesomeCatalogue from '../fontawesome-icons.json';
 
 // Matches the white flag on a dark background used by Xerte's CKEditor 4 plugin.

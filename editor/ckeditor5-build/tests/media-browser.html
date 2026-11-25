@@ -1,0 +1,98 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>Media browser verification</title>
+<pre id="results">Running…</pre>
+<script src="test-page.js"></script>
+<script src="load-editor.js"></script>
+<script>
+( async () => {
+	const results = document.querySelector( '#results' );
+	const passed = [];
+	const assert = ( condition, message ) => { if ( !condition ) throw new Error( message ); };
+	const pause = () => new Promise( resolve => setTimeout( resolve, 30 ) );
+	const field = ( dialog, name ) => Array.from( dialog.querySelectorAll( 'label' ) )
+		.find( label => label.firstChild?.textContent === name ).querySelector( 'input' );
+	const button = ( dialog, name ) => Array.from( dialog.querySelectorAll( 'button' ) ).find( button => button.textContent === name );
+	const submit = async dialog => { dialog.dispatchEvent( new Event( 'submit', { cancelable: true } ) ); await pause(); };
+	const originalOpen = window.open;
+	try {
+		for ( const [ name, Type, iframe ] of [
+			[ 'Classic', XerteCKEditor5.Classic, false ],
+			[ 'Classic iframe', XerteCKEditor5.Classic, true ],
+			[ 'Inline', XerteCKEditor5.Inline, false ]
+		] ) {
+			const root = document.createElement( 'div' ); document.body.appendChild( root );
+			const editor = await Type.create( root, {
+				xerteBrowseMediaUrl: 'about:blank', xerteIframeEditing: iframe,
+				mediaEmbed: { extraProviders: [ { name: 'custom', url: /example\.test\/media/, html: () => '<iframe src="about:blank"></iframe>' } ] }
+			} );
+			const open = component => {
+				const view = editor.ui.componentFactory.create( component ); view.fire( 'execute' ); view.destroy();
+				return document.querySelector( '[role=dialog]' );
+			};
+			const registry = editor.plugins.get( 'MediaEmbedEditing' ).registry;
+			assert( registry.hasMedia( 'https://example.test/media' ), name + ': custom provider lost' );
+			assert( registry.hasMedia( 'https://youtu.be/abc123' ), name + ': YouTube provider lost' );
+			assert( !registry.hasMedia( 'javascript:evil.mp4' ), name + ': unsafe scheme accepted' );
+			for ( const extension of [ 'mp4', 'webm', 'ogv', 'ogg', 'm4v', 'mov' ] ) {
+				assert( registry.hasMedia( `https://example.test/video.${ extension }?v=2#t=1` ), name + ': unsupported ' + extension + ' providers: ' + registry.providerDefinitions.map( p => p.name ).join( ',' ) );
+			}
+			let dialog = open( 'mediaEmbed' );
+			let browse = button( dialog, 'Browse Server' );
+			assert( browse && !browse.disabled, name + ': missing browse button' );
+			const chosen = new URL( '/xotlatest/USER-FILES/demo/video.mp4?x=1&y=2', location.href ).href;
+			let popupUrl;
+			window.open = url => { popupUrl = url; queueMicrotask( () => window.__xerteCke5FilePickerResolve( chosen ) ); return { closed: false }; };
+			browse.click(); await pause();
+			assert( popupUrl === 'about:blank' && field( dialog, 'URL' ).value === chosen, name + ': picker did not populate URL' );
+			assert( !window.__xerteCke5FilePickerResolve, name + ': picker callback leaked' );
+			field( dialog, 'Title' ).value = 'Demo video'; field( dialog, 'ARIA label' ).value = 'Accessible video';
+			field( dialog, 'Width' ).value = '75'; field( dialog, 'Height' ).value = '240px';
+			await submit( dialog );
+			let media = editor.model.document.selection.getSelectedElement();
+			assert( media?.is( 'element', 'media' ) && media.getAttribute( 'url' ) === chosen, name + ': no media widget inserted' );
+			let html = document.createElement( 'div' ); html.innerHTML = editor.getData();
+			let video = html.querySelector( 'video' );
+			assert( video?.getAttribute( 'src' ) === chosen && video.hasAttribute( 'controls' ), name + ': not playable video markup' );
+			assert( video.title === 'Demo video' && video.getAttribute( 'aria-label' ) === 'Accessible video' && video.style.height === '240px', name + ': video metadata/height missing' );
+			assert( html.querySelector( 'figure.media' )?.style.width === '75%', name + ': responsive sizing lost' );
+			editor.setData( editor.getData() );
+			media = Array.from( editor.model.document.getRoot().getChildren() ).find( item => item.is( 'element', 'media' ) );
+			assert( media?.getAttribute( 'url' ) === chosen && media.getAttribute( 'mediaTitle' ) === 'Demo video', name + ': video lost on reload' );
+			editor.model.change( writer => writer.setSelection( media, 'on' ) );
+			dialog = open( 'xerteMediaProperties' ); browse = button( dialog, 'Browse Server' );
+			window.open = () => null;
+			browse.click(); await pause();
+			assert( field( dialog, 'URL' ).value === chosen && !browse.disabled, name + ': blocked popup changed source' );
+			window.open = () => ( { closed: true } );
+			browse.click(); await new Promise( resolve => setTimeout( resolve, 550 ) );
+			assert( field( dialog, 'URL' ).value === chosen && !browse.disabled, name + ': cancelled picker changed source' );
+			field( dialog, 'URL' ).value = 'https://example.test/unsupported.pdf'; await submit( dialog );
+			assert( field( dialog, 'URL' ).validationMessage, name + ': unsupported file not rejected' );
+			window.open = () => { queueMicrotask( () => window.__xerteCke5FilePickerResolve( 'clips/replacement.webm' ) ); return { closed: false }; };
+			browse.click(); await pause();
+			assert( !field( dialog, 'URL' ).validationMessage, name + ': picker left stale validation error' );
+			await submit( dialog );
+			assert( media.getAttribute( 'url' ) === new URL( 'clips/replacement.webm', document.baseURI ).href, name + ': relative file path not resolved' );
+			editor.execute( 'undo' );
+			assert( media.getAttribute( 'url' ) === chosen, name + ': update did not undo together' );
+			dialog = open( 'menuBar:mediaEmbed' );
+			assert( button( dialog, 'Browse Server' ), name + ': menu insertion missing picker' );
+			button( dialog, 'Cancel' ).click(); await pause();
+			passed.push( 'PASS: ' + name + ' picker, video embed, metadata, reload, replace, undo, cancel and URL providers' );
+			await editor.destroy(); root.remove();
+		}
+		const root = document.createElement( 'div' ); document.body.appendChild( root );
+		const editor = await XerteCKEditor5.Classic.create( root, {} );
+		const view = editor.ui.componentFactory.create( 'mediaEmbed' ); view.fire( 'execute' ); view.destroy();
+		const dialog = document.querySelector( '[role=dialog]' );
+		assert( button( dialog, 'Browse Server' ).disabled, 'Picker without configured URL should be disabled' );
+		button( dialog, 'Cancel' ).click(); await pause();
+		await editor.destroy(); root.remove();
+		passed.push( 'PASS: no browser URL configured' );
+		results.textContent = passed.join( '\n' ); document.documentElement.dataset.testStatus = 'passed';
+	} catch ( error ) {
+		results.textContent = passed.join( '\n' ) + '\nFAIL: ' + error.stack; document.documentElement.dataset.testStatus = 'failed';
+	} finally { window.open = originalOpen; }
+} )();
+</script>

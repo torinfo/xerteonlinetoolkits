@@ -6,11 +6,10 @@
  * instance as before. The frame is not another editor or a rendered preview.
  *
  * Maintenance: the UI-init wrapper and the resize/badge/fullscreen bridges below
- * depend on CKEditor 47 behavior. Recheck them when upgrading CKEditor.
+ * depend on CKEditor internals. Recheck them when upgrading CKEditor.
  * @license Apache-2.0
  */
-import { Plugin } from '@ckeditor/ckeditor5-core';
-import { DomEmitterMixin } from 'ckeditor5/src/utils.js';
+import { Plugin, DomEmitterMixin } from 'ckeditor5';
 import '../xerte-iframe-editing.css';
 
 const stockBlockquoteSelector = /^\.ck-content(?:\[dir="?rtl"?\])? blockquote$/;
@@ -311,7 +310,7 @@ export class XerteIframeEditing extends Plugin {
 		const resize = this.editor.plugins.get( 'WidgetResize' );
 		const childDocument = this.frame.contentDocument;
 		const parentDocument = this.frame.ownerDocument;
-		// CKEditor 47 listens for resize drags on the global document. Add the
+		// CKEditor listens for resize drags on the global document. Add the
 		// editable document and translate the pointer when it leaves the frame.
 		// These underscored members are private CKEditor APIs: review on upgrades.
 		// Keep its existing parent mouseup listener so releasing outside still ends

@@ -2,10 +2,14 @@
  * Apply Xerte's legacy line-height values to inline text.
  * @license Apache-2.0
  */
-import { Command, Plugin } from '@ckeditor/ckeditor5-core';
-import { Collection } from '@ckeditor/ckeditor5-utils';
-import { UIModel, addListToDropdown, createDropdown } from '@ckeditor/ckeditor5-ui';
-
+import {
+	Command,
+	Plugin,
+	Collection,
+	UIModel,
+	addListToDropdown,
+	createDropdown
+} from 'ckeditor5';
 const LINE_HEIGHT = 'lineHeight';
 const BLOCK_LINE_HEIGHT = 'xerteBlockLineHeight';
 

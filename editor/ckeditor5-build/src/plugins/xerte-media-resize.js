@@ -2,11 +2,16 @@
  * Media widget resizing, alignment and accessible metadata controls.
  * @license Apache-2.0
  */
-import { Plugin } from '@ckeditor/ckeditor5-core';
-import { ButtonView, MenuBarMenuListItemButtonView } from '@ckeditor/ckeditor5-ui';
-import { MediaEmbed, MediaEmbedToolbar } from '@ckeditor/ckeditor5-media-embed';
-import { WidgetResize } from '@ckeditor/ckeditor5-widget';
-import { IconMedia, IconPencil } from 'ckeditor5/src/icons.js';
+import {
+	Plugin,
+	ButtonView,
+	MenuBarMenuListItemButtonView,
+	MediaEmbed,
+	MediaEmbedToolbar,
+	WidgetResize,
+	IconMedia,
+	IconPencil
+} from 'ckeditor5';
 import { showMediaPropertiesDialog, xerteVideoProvider } from './xerte-media-properties-dialog.js';
 import { browseMedia } from './xerte-browse-media.js';
 

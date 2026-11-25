@@ -1,0 +1,113 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>DIV and HTML embed regression checks</title>
+<pre id="results">Running…</pre>
+<div id="editor"></div>
+<script src="test-page.js"></script>
+<script src="load-editor.js"></script>
+<script>
+( async () => {
+	const results = document.querySelector( '#results' );
+	const passed = [];
+	const assert = ( condition, message ) => {
+		if ( !condition ) throw new Error( message );
+	};
+	try {
+		let editor = await XerteCKEditor5.Classic.create( document.querySelector( '#editor' ), {
+			xerteIframeEditing: new URLSearchParams( location.search ).get( 'iframe' ) === '1'
+		} );
+		window.testEditor = editor;
+		const cases = [
+			[ 'reported plain text', '\n    I am html typed through the tool in the CKeditor 5 toolbar. I have been saved, and source has been clicked, and I have been pasted directly into codex.\n' ],
+			[ 'nested styled HTML', '<div class="legacy-panel" style="display:grid;grid-template-columns:1fr 2fr;gap:12px"><p style="color:purple">First</p><div data-custom="keep"><span class="custom">Second</span></div></div>' ],
+			[ 'embedded CSS', '<style>.custom-panel { border: 2px solid purple; }</style><div class="custom-panel">Styled snippet</div>' ]
+		];
+		const rawNodes = () => Array.from( editor.model.createRangeIn( editor.model.document.getRoot() ).getItems() )
+			.filter( item => item.is( 'element', 'rawHtml' ) );
+		for ( const [ name, snippet ] of cases ) {
+			editor.setData( '<p>Before</p><div class="raw-html-embed">' + snippet + '</div><p>After</p>' );
+			for ( let cycle = 0; cycle < 3; cycle++ ) {
+				assert( rawNodes().length === 1, `${ name }: embed missing on load ${ cycle }; output: ${ editor.getData() }` );
+				assert( rawNodes()[ 0 ].getAttribute( 'value' ) === snippet, `${ name }: raw HTML changed on load ${ cycle }` );
+				const source = editor.plugins.get( 'SourceEditing' );
+				source.isSourceEditingMode = true;
+				source.isSourceEditingMode = false;
+				assert( rawNodes().length === 1 && rawNodes()[ 0 ].getAttribute( 'value' ) === snippet, `${ name }: source toggle lost content` );
+				const saved = editor.getData();
+				assert( saved.includes( '<p>Before</p>' ) && saved.includes( '<p>After</p>' ), `${ name }: surrounding text lost` );
+				editor.setData( '<p>Another page</p>' );
+				editor.setData( saved );
+			}
+			passed.push( `PASS: ${ name } survives loading, Source toggles and three page reloads` );
+		}
+		const legacyCases = [
+			[ 'custom classes and inline CSS', '<div class="custom-panel other-class" data-custom="keep" style="background-color:purple;padding:12px;border:2px solid red"><p>Panel text</p></div>' ],
+			[ 'nested grid containers', '<div class="layout" style="display:grid;grid-template-columns:1fr 2fr;gap:12px"><div class="left"><p>First</p></div><div class="right"><p>Second</p><p>Third</p></div></div>' ],
+			[ 'nested flex containers', '<div class="layout" style="display:flex;gap:12px"><div class="item" style="flex:1"><p>First</p></div><div class="item" style="flex:2"><p>Second</p></div></div>' ],
+			[ 'inline content inside a styled DIV', '<div class="custom-panel" style="color:purple">Before <span class="custom-inline" style="letter-spacing:2px">inside</span> after</div>' ],
+			[ 'legacy style container', '<div class="panel editorStyle" style="padding:12px"><p>First</p><p>Second</p></div>' ],
+			[ 'plain DIV', '<div>Plain text</div>' ]
+		];
+		const markup = html => {
+			const container = document.createElement( 'div' );
+			container.innerHTML = html;
+			const describe = node => node.nodeType === Node.TEXT_NODE ? node.textContent.replace( /\s+/g, ' ' ).trim() : {
+				tag: node.tagName,
+				attributes: Array.from( node.attributes ).map( attribute => [ attribute.name, attribute.name === 'style' ?
+					Array.from( node.style ).sort().map( name => [ name, node.style.getPropertyValue( name ) ] ) : attribute.value ] ).sort(),
+				children: Array.from( node.childNodes ).map( describe ).filter( value => value !== '' )
+			};
+			return JSON.stringify( Array.from( container.childNodes ).map( describe ) );
+		};
+		for ( const [ name, html ] of legacyCases ) {
+			editor.setData( html );
+			for ( let cycle = 0; cycle < 3; cycle++ ) {
+				assert( markup( editor.getData() ) === markup( html ), `${ name }: markup changed on load ${ cycle }; output: ${ editor.getData() }` );
+				const source = editor.plugins.get( 'SourceEditing' );
+				source.isSourceEditingMode = true;
+				const textarea = editor.ui.getEditableElement( 'sourceEditing:main' );
+				textarea.value += '\n<p>Source edit</p>';
+				textarea.dispatchEvent( new Event( 'input', { bubbles: true } ) );
+				source.isSourceEditingMode = false;
+				assert( markup( editor.getData() ) === markup( html + '<p>Source edit</p>' ), `${ name }: Source edit changed markup; output: ${ editor.getData() }` );
+				editor.setData( '<p>Another page</p>' );
+				editor.setData( html );
+			}
+			passed.push( `PASS: ${ name } retains structure, attributes and CSS across Source edits and reloads` );
+		}
+		editor.setData( '<p>Formatted text</p>' );
+		editor.model.change( writer => writer.setSelection( editor.model.document.getRoot().getChild( 0 ), 0 ) );
+		editor.execute( 'heading', { value: 'div' } );
+		assert( editor.getData() === '<div>Formatted text</div>', 'Normal (DIV) format must still create a DIV' );
+		editor.setData( editor.getData() );
+		editor.model.change( writer => writer.setSelection( editor.model.document.getRoot().getChild( 0 ), 0 ) );
+		assert( editor.commands.get( 'heading' ).value === 'div', 'Normal (DIV) format must remain selected after reload' );
+		passed.push( 'PASS: Normal (DIV) format works and remains selected after reload' );
+		editor.setData( '<p>Before</p>' );
+		editor.execute( 'htmlEmbed', '<div class="toolbar-snippet" style="display:flex">Inserted through toolbar command</div>' );
+		const inserted = editor.getData();
+		const source = editor.plugins.get( 'SourceEditing' );
+		source.isSourceEditingMode = true;
+		const textarea = editor.ui.getEditableElement( 'sourceEditing:main' );
+		textarea.value += '\n<p>Source edit</p>';
+		textarea.dispatchEvent( new Event( 'input', { bubbles: true } ) );
+		source.isSourceEditingMode = false;
+		assert( rawNodes().length === 1, 'Source edit must preserve toolbar embed' );
+		assert( markup( editor.getData() ) === markup( inserted + '<p>Source edit</p>' ), 'Source edit must preserve toolbar embed HTML' );
+		const saved = editor.getData() + legacyCases[ 1 ][ 1 ];
+		await editor.destroy();
+		document.querySelector( '#editor' ).innerHTML = saved;
+		editor = await XerteCKEditor5.Classic.create( document.querySelector( '#editor' ), {
+			xerteIframeEditing: new URLSearchParams( location.search ).get( 'iframe' ) === '1'
+		} );
+		assert( markup( editor.getData() ) === markup( saved ), 'New editor instance must retain embed and nested DIV structure' );
+		passed.push( 'PASS: toolbar embed survives a Source edit and editor destruction/recreation alongside nested DIVs' );
+		results.textContent = passed.join( '\n' );
+		await editor.destroy();
+		document.documentElement.dataset.testStatus = 'passed';
+	} catch ( error ) {
+		results.textContent = passed.concat( error.stack || String( error ) ).join( '\n' );
+		document.documentElement.dataset.testStatus = 'failed';
+	}
+} )();
+</script>

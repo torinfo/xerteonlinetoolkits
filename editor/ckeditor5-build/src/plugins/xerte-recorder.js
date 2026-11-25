@@ -2,8 +2,7 @@
  * Browser audio recorder that inserts recordings through XerteAudio.
  * @license Apache-2.0
  */
-import { Plugin } from '@ckeditor/ckeditor5-core';
-import { ButtonView } from '@ckeditor/ckeditor5-ui';
+import { Plugin, ButtonView } from 'ckeditor5';
 import { XerteAudio } from './xerte-audio.js';
 import { uploadAudio } from './xerte-upload-adapter.js';
 import RecorderIcon from '../icons/recorder.svg';

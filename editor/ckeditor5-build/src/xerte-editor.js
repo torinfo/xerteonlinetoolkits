@@ -1,63 +1,67 @@
 /**
  * Xerte CKEditor 5 classic build (GPL-2.0+ via CKEditor packages).
  */
-import 'ckeditor5/ckeditor5.css';
-import '../../../modules/common/css/rich-text-tables.css';
-import './autocolumns.css';
-import './xerte-image-editing.css';
-import { ClassicEditor } from '@ckeditor/ckeditor5-editor-classic';
-import { InlineEditor } from '@ckeditor/ckeditor5-editor-inline';
-import { Emoji } from '@ckeditor/ckeditor5-emoji';
-import { Essentials } from '@ckeditor/ckeditor5-essentials';
-import { Autoformat } from '@ckeditor/ckeditor5-autoformat';
 import {
+	ClassicEditor,
+	InlineEditor,
+	Emoji,
+	Essentials,
+	Autoformat,
 	Bold,
 	Italic,
 	Underline,
 	Strikethrough,
 	Subscript,
 	Superscript,
-	Code
-} from '@ckeditor/ckeditor5-basic-styles';
-import { BlockQuote } from '@ckeditor/ckeditor5-block-quote';
-import { Heading } from '@ckeditor/ckeditor5-heading';
-import { AutoLink, Link, LinkImage } from '@ckeditor/ckeditor5-link';
-import { List, ListProperties } from '@ckeditor/ckeditor5-list';
-import { Paragraph } from '@ckeditor/ckeditor5-paragraph';
-import {
+	Code,
+	BlockQuote,
+	Heading,
+	AutoLink,
+	Link,
+	LinkImage,
+	List,
+	ListProperties,
+	Paragraph,
 	Image,
 	ImageCaption,
 	ImageResize,
 	ImageStyle,
 	ImageToolbar,
 	ImageUpload,
-	AutoImage
-} from '@ckeditor/ckeditor5-image';
-import {
+	AutoImage,
 	Table,
 	TableToolbar,
 	TableCaption,
 	TableProperties,
-	TableCellProperties
-} from '@ckeditor/ckeditor5-table';
-import { Indent, IndentBlock } from '@ckeditor/ckeditor5-indent';
-import { TextPartLanguage } from '@ckeditor/ckeditor5-language';
-import { Alignment } from '@ckeditor/ckeditor5-alignment';
-import { HorizontalLine } from '@ckeditor/ckeditor5-horizontal-line';
-import { FontSize, FontFamily, FontColor, FontBackgroundColor } from '@ckeditor/ckeditor5-font';
-import { Fullscreen } from '@ckeditor/ckeditor5-fullscreen';
-import { PasteFromOffice } from '@ckeditor/ckeditor5-paste-from-office';
-import { GeneralHtmlSupport } from '@ckeditor/ckeditor5-html-support';
-import { SourceEditing } from '@ckeditor/ckeditor5-source-editing';
-import { ShowBlocks } from '@ckeditor/ckeditor5-show-blocks';
-import { SpecialCharacters, SpecialCharactersEssentials } from '@ckeditor/ckeditor5-special-characters';
-import { Style } from '@ckeditor/ckeditor5-style';
-import { FindAndReplace } from '@ckeditor/ckeditor5-find-and-replace';
-import { CodeBlock } from '@ckeditor/ckeditor5-code-block';
-import { RemoveFormat } from '@ckeditor/ckeditor5-remove-format';
-import { MediaEmbed } from '@ckeditor/ckeditor5-media-embed';
-import { Mention } from '@ckeditor/ckeditor5-mention';
-import { HtmlEmbed } from '@ckeditor/ckeditor5-html-embed';
+	TableCellProperties,
+	Indent,
+	IndentBlock,
+	TextPartLanguage,
+	Alignment,
+	HorizontalLine,
+	FontSize,
+	FontFamily,
+	FontColor,
+	FontBackgroundColor,
+	Fullscreen,
+	PasteFromOffice,
+	GeneralHtmlSupport,
+	SourceEditing,
+	ShowBlocks,
+	SpecialCharacters,
+	SpecialCharactersEssentials,
+	Style,
+	FindAndReplace,
+	CodeBlock,
+	RemoveFormat,
+	MediaEmbed,
+	Mention,
+	HtmlEmbed
+} from 'ckeditor5';
+import 'ckeditor5/ckeditor5.css';
+import '../../../modules/common/css/rich-text-tables.css';
+import './autocolumns.css';
+import './xerte-image-editing.css';
 import { XerteUploadAdapter } from './plugins/xerte-upload-adapter.js';
 import { XerteBrowseMedia } from './plugins/xerte-browse-media.js';
 import { XerteAudio } from './plugins/xerte-audio.js';
@@ -218,6 +222,7 @@ const defaultTableBorder = { borderStyle: 'solid', borderWidth: '1px', borderCol
 
 const xerteDefaultConfig = {
 	licenseKey: 'GPL',
+	translations: [ { en: globalThis.CKEDITOR_TRANSLATIONS.en } ],
 	menuBar: {
 		isVisible: true
 	},
@@ -328,7 +333,10 @@ const xerteDefaultConfig = {
 		// These values are implicit in saved HTML. Match rich-text-tables.css
 		// so selecting a different value (including middle alignment) saves it.
 		tableProperties: {
-			defaultProperties: defaultTableBorder
+			defaultProperties: defaultTableBorder,
+			// Players do not load CKEditor's new alignment classes. Store equivalent
+			// inline styles so aligned tables display in existing Xerte themes.
+			alignment: { useInlineStyles: true }
 		},
 		tableCellProperties: {
 			defaultProperties: {

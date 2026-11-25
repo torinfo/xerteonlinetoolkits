@@ -2,9 +2,7 @@
  * Ruby text editing for the HTML produced by the CKEditor 4 rubytext plugin.
  * @license Apache-2.0
  */
-import { Plugin } from '@ckeditor/ckeditor5-core';
-import { ButtonView } from '@ckeditor/ckeditor5-ui';
-import { toWidget } from '@ckeditor/ckeditor5-widget';
+import { Plugin, ButtonView, toWidget } from 'ckeditor5';
 import RubyIcon from '../icons/ruby.svg';
 
 function textContent( node ) {

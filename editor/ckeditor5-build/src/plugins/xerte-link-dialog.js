@@ -2,11 +2,13 @@
  * Link properties with an explicit protocol, file browser and target settings.
  * @license Apache-2.0
  */
-import { Plugin } from '@ckeditor/ckeditor5-core';
-import { ButtonView } from '@ckeditor/ckeditor5-ui';
-import { ModelLivePosition } from '@ckeditor/ckeditor5-engine';
-import { IconLink } from 'ckeditor5/src/icons.js';
-import { findAttributeRange } from 'ckeditor5/src/typing.js';
+import {
+	Plugin,
+	ButtonView,
+	ModelLivePosition,
+	IconLink,
+	findAttributeRange
+} from 'ckeditor5';
 import { browseMedia } from './xerte-browse-media.js';
 import { composeHref, splitHref } from './xerte-link-utils.js';
 import { hideForXertePageLink } from './xerte-page-link.js';

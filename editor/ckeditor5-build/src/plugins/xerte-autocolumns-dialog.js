@@ -2,9 +2,13 @@
  * Autocolumns dialog (legacy xotcolumns behaviour).
  * @license Apache-2.0
  */
-import { Plugin } from '@ckeditor/ckeditor5-core';
-import { ButtonView } from '@ckeditor/ckeditor5-ui';
-import { Widget, toWidget, toWidgetEditable } from '@ckeditor/ckeditor5-widget';
+import {
+	Plugin,
+	ButtonView,
+	Widget,
+	toWidget,
+	toWidgetEditable
+} from 'ckeditor5';
 import AutocolumnsIcon from '../icons/autocolumns.svg';
 
 const DEFAULT_SETTINGS = {

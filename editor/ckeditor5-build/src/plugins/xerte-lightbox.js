@@ -3,11 +3,14 @@
  * link model.
  * @license Apache-2.0
  */
-import { Command, Plugin } from '@ckeditor/ckeditor5-core';
-import { ButtonView } from '@ckeditor/ckeditor5-ui';
-import { IconFullscreenEnter } from 'ckeditor5/src/icons.js';
-import { findAttributeRange } from 'ckeditor5/src/typing.js';
-import { priorities } from 'ckeditor5/src/utils.js';
+import {
+	Command,
+	Plugin,
+	ButtonView,
+	IconFullscreenEnter,
+	findAttributeRange,
+	priorities
+} from 'ckeditor5';
 import {
 	normalizeLightbox,
 	readLightboxAttributes,

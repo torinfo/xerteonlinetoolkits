@@ -1,0 +1,23 @@
+export const browserChecks = [
+	{ name: 'Initial check — English', url: 'smoke.html?language=en' },
+	{ name: 'Initial check — Dutch', url: 'smoke.html?language=nl' },
+	{ name: 'Older content and custom widgets', url: 'legacy-content.html' },
+	{ name: 'Editor lifecycle, undo and read-only', url: 'editor-lifecycle.html' },
+	{ name: 'Save while Source stays open', url: 'source-save.html' },
+	{ name: 'HTML and styled DIVs', url: 'html-embed.html' },
+	{ name: 'HTML and styled DIVs — iframe', url: 'html-embed.html?iframe=1' },
+	{ name: 'Responsive images, media and audio', url: 'responsive-media.html' },
+	{ name: 'Media browser dialogs', url: 'media-browser.html' },
+	{ name: 'Links and lightboxes', url: 'link-lightbox.html' },
+	{ name: 'Links and lightboxes — iframe', url: 'link-lightbox.html?iframe=1' }
+];
+
+/** A PASS progress line alone is insufficient to declare a whole page passed. */
+export function pageResult( { status, output = '', runtimeFailure = '' }, timedOut = false ) {
+	if ( runtimeFailure || status === 'failed' || /(?:^|\n)FAIL:/.test( output ) ) {
+		return { status: 'failed', output: runtimeFailure || output || 'Page reported a failure.' };
+	}
+	if ( status === 'passed' ) return { status: 'passed', output };
+	if ( timedOut ) return { status: 'failed', output: output + '\nFAIL: No final result within 90 seconds.' };
+	return { status: 'running', output };
+}

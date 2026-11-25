@@ -2,10 +2,13 @@
  * Source dialog for inline editors (legacy CKEditor 4 Sourcedialog behaviour).
  * @license Apache-2.0
  */
-import { Plugin } from '@ckeditor/ckeditor5-core';
-import { ButtonView, Dialog, View } from '@ckeditor/ckeditor5-ui';
-import { IconSource } from '@ckeditor/ckeditor5-icons';
-
+import {
+	Plugin,
+	ButtonView,
+	Dialog,
+	View,
+	IconSource
+} from 'ckeditor5';
 class SourceDialogView extends View {
 	constructor( locale ) {
 		super( locale );
@@ -15,7 +18,7 @@ class SourceDialogView extends View {
 			attributes: {
 				class: [ 'ck', 'ck-xerte-source-dialog' ],
 				style: {
-					padding: 'var(--ck-spacing-large)',
+					padding: 'var(--ck-spacing-large, var(--ck-spacing-lg))',
 					width: 'min(80vw, 700px)'
 				}
 			},

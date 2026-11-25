@@ -1,0 +1,24 @@
+<!doctype html>
+<html lang="en">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Xerte editor regression checks</title>
+<style>
+body{font:16px/1.5 system-ui,sans-serif;max-width:1200px;margin:24px auto;padding:0 20px;color:#172033}
+button{font:inherit;padding:8px 14px;cursor:pointer}li{padding:6px}a{color:#1559a8}
+iframe{width:100%;height:560px;border:1px solid #aab4c0}pre{white-space:pre-wrap;overflow-wrap:anywhere}
+[data-status=passed]{color:#14632b}[data-status=failed]{color:#a71919}details{margin:10px 0}
+</style>
+<h1>Xerte editor regression checks</h1>
+<p>These checks use temporary content and mocked save/media responses. They do not save projects,
+upload files, or request microphone access. Real uploads and published playback need separate manual checks.</p>
+<p>Keep this tab active while tests run. You can also open any check separately.</p>
+<button id="run">Run all browser checks</button>
+<p id="summary" role="status" aria-live="polite">Not run.</p>
+<ol id="checks"></ol>
+<div id="active"></div>
+<h2>Results</h2>
+<p>Copy the report below when reporting a failure.</p>
+<textarea id="report" readonly rows="10" style="width:100%" aria-label="Test report"></textarea>
+<script type="module" src="browser-runner.js"></script>
+</html>
