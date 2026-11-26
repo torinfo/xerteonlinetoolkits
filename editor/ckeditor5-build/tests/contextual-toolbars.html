@@ -1,0 +1,76 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>Iframe contextual toolbar checks</title>
+<style>body { font:16px/1.5 Arial,sans-serif; margin:24px; } #results { white-space:pre-wrap; } #editor { margin-top:180px; } .spacer { height:400px; }</style>
+<h1>Iframe contextual toolbar checks</h1>
+<p>Temporary content only. The editor remains available for manual interaction checks.</p>
+<pre id="results">Running…</pre>
+<div id="editor"></div>
+<div class="spacer"></div>
+<script src="test-page.js"></script>
+<script src="load-editor.js"></script>
+<script>
+( async () => {
+	const output = document.querySelector( '#results' );
+	const lines = [];
+	const assert = ( condition, message ) => { if ( !condition ) throw new Error( message ); };
+	const settle = () => new Promise( resolve => requestAnimationFrame( () => requestAnimationFrame( resolve ) ) );
+	const record = message => { lines.push( 'PASS: ' + message ); output.textContent = lines.join( '\n' ); };
+	try {
+		const editor = await XerteCKEditor5.Classic.create( {
+			attachTo: document.querySelector( '#editor' ), xerteIframeEditing: true,
+			xerteBrowseImageUrl: 'about:blank'
+		} );
+		const iframe = editor.plugins.get( 'XerteIframeEditing' );
+		iframe.setHeight( 320 );
+		const image = 'data:image/svg+xml,' + encodeURIComponent( '<svg xmlns="http://www.w3.org/2000/svg" width="160" height="80"><rect width="160" height="80" fill="teal"/></svg>' );
+		editor.setData( '<p>Before the widgets</p><figure class="image"><img src="' + image + '" alt="Toolbar test"></figure>' +
+			'<table><tr><td>First cell</td><td>Second cell</td></tr></table><p>After the widgets</p>' + '<p>Scrolling content</p>'.repeat( 12 ) );
+		const balloon = editor.plugins.get( 'ContextualBalloon' );
+		const root = () => editor.model.document.getRoot();
+		const select = async name => {
+			const widget = Array.from( root().getChildren() ).find( item => item.name === name );
+			editor.model.change( writer => writer.setSelection( name === 'table' ? widget.getChild( 0 ).getChild( 0 ) : widget, name === 'table' ? 'in' : 'on' ) );
+			editor.editing.view.focus();
+			const domWidget = editor.editing.view.domConverter.mapViewToDom( editor.editing.mapper.toViewElement( widget ) );
+			domWidget.scrollIntoView( { block: 'nearest' } );
+			iframe.frame.scrollIntoView( { block: 'center' } );
+			editor.ui.update();
+			await settle();
+		};
+		const visibleToolbar = label => {
+			const panel = balloon.view.element;
+			assert( panel.ownerDocument === document, label + ': floating toolbar mounted inside the content iframe' );
+			const toolbar = balloon.visibleView?.element;
+			assert( toolbar?.getAttribute( 'aria-label' ) === label, label + ': wrong contextual toolbar' );
+			const rect = panel.getBoundingClientRect();
+			const frameRect = iframe.frame.getBoundingClientRect();
+			assert( rect.width > 0 && rect.height > 0 && rect.top >= 0 && rect.bottom <= innerHeight && rect.left >= 0 && rect.right <= innerWidth,
+				label + ': toolbar outside the visible viewport' );
+			assert( rect.bottom >= frameRect.top - 60 && rect.top <= frameRect.bottom + 60, label + ': toolbar detached from the editor' );
+			const center = document.elementFromPoint( rect.left + rect.width / 2, rect.top + rect.height / 2 );
+			assert( center && panel.contains( center ), label + ': toolbar clipped or covered' );
+			return toolbar;
+		};
+		for ( const fullscreen of [ false, true, false ] ) {
+			if ( fullscreen !== !!editor.commands.get( 'toggleFullscreen' ).value ) editor.execute( 'toggleFullscreen' );
+			await select( 'imageBlock' );
+			const imageToolbar = visibleToolbar( 'Image toolbar' );
+			for ( const label of [ 'Image properties', 'Wrap text', 'Break text', 'Resize image', 'Change image text alternative' ] ) {
+				assert( Array.from( imageToolbar.querySelectorAll( 'button' ) ).some( button => button.getAttribute( 'aria-label' ) === label || button.dataset.ckeTooltipText === label ), 'Image toolbar: missing ' + label );
+			}
+			await select( 'table' );
+			const tableToolbar = visibleToolbar( 'Table toolbar' );
+			for ( const label of [ 'Table properties', 'Cell properties' ] ) {
+				assert( Array.from( tableToolbar.querySelectorAll( 'button' ) ).some( button => button.getAttribute( 'aria-label' ) === label || button.dataset.ckeTooltipText === label ), 'Table toolbar: missing ' + label );
+			}
+			record( 'Image and table controls are visible and reachable ' + ( fullscreen ? 'in fullscreen' : 'on a scrolled page' ) );
+		}
+		await select( 'imageBlock' );
+		document.documentElement.dataset.testStatus = 'passed';
+	} catch ( error ) {
+		output.textContent = lines.concat( 'FAIL: ' + ( error.stack || error ) ).join( '\n' );
+		document.documentElement.dataset.testStatus = 'failed';
+	}
+} )();
+</script>

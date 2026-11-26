@@ -1,0 +1,49 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>Iframe preview and shared properties presentation</title>
+<style>body{margin:24px;font:14px Arial,sans-serif}#editor{max-width:1000px}#results{white-space:pre-wrap}</style>
+<pre id="results">Running…</pre>
+<div id="editor"></div>
+<script src="test-page.js"></script>
+<script src="load-editor.js"></script>
+<script>
+( async () => {
+	const assert = ( value, message ) => { if ( !value ) throw new Error( message ); };
+	const wait = () => new Promise( resolve => setTimeout( resolve, 100 ) );
+	const open = ( editor, name ) => { const button = editor.ui.componentFactory.create( name ); button.fire( 'execute' ); button.destroy(); return document.querySelector( '[role=dialog]' ); };
+	const appearance = dialog => {
+		const style = getComputedStyle( dialog ), header = getComputedStyle( dialog.querySelector( 'h2' ) );
+		return JSON.stringify( [ style.width, style.fontFamily, style.fontSize, style.backgroundColor, header.padding, header.fontSize,
+			getComputedStyle( dialog.querySelector( 'input[type=text]' ) ).height, getComputedStyle( dialog.querySelector( '[type=submit]' ) ).backgroundColor ] );
+	};
+	try {
+		const editor = window.testEditor = await XerteCKEditor5.Classic.create( document.querySelector( '#editor' ), { xerteIframeEditing: true } );
+		const src = new URL( 'fixtures/iframe-page.html', location.href ).href;
+		editor.setData( '<p><iframe src="' + src + '" title="Embedded webpage" width="640" height="360" frameborder="0" scrolling="yes"></iframe></p><p>Surrounding text remains editable.</p>' );
+		const model = Array.from( editor.model.createRangeIn( editor.model.document.getRoot() ).getItems() ).find( item => item.is( 'element', 'htmlIframe' ) );
+		editor.model.change( writer => writer.setSelection( model, 'on' ) ); editor.editing.view.focus(); editor.ui.update();
+		await wait();
+		const widget = editor.ui.getEditableElement().querySelector( '.xerte-iframe-widget' );
+		const frame = widget.querySelector( 'iframe' );
+		for ( let attempt = 0; attempt < 50 && !frame.contentDocument?.querySelector( '#embedded-page' ); attempt++ ) await wait();
+		assert( frame.contentDocument?.querySelector( '#embedded-page' ), 'Live webpage is not rendered in the editor' );
+		const properties = editor.plugins.get( 'ContextualBalloon' ).visibleView.element.querySelector( 'button' );
+		assert( properties.querySelector( 'svg path[d]' )?.getBoundingClientRect().width > 0, 'Properties icon is not visible' );
+		const rect = properties.getBoundingClientRect();
+		assert( document.elementFromPoint( rect.x + rect.width / 2, rect.y + rect.height / 2 )?.closest( 'button' ) === properties, 'Properties control is not reachable' );
+		assert( widget.querySelectorAll( '.ck-widget__resizer__handle' ).length === 4, 'Iframe resize handles are missing' );
+		const media = open( editor, 'mediaEmbed' ); const expected = appearance( media );
+		Array.from( media.querySelectorAll( 'button' ) ).find( button => button.textContent === 'Cancel' ).click(); await wait();
+		const iframe = open( editor, 'xerteIframe' );
+		assert( appearance( iframe ) === expected, 'Iframe and media dialog appearance differs' );
+		for ( const name of [ 'name', 'id', 'class', 'style', 'longdesc', 'scrolling', 'frameborder', 'align', 'allowfullscreen' ] ) assert( iframe.querySelector( '[name="' + name + '"]' ), 'Iframe-specific option missing: ' + name );
+		const dialogRect = iframe.getBoundingClientRect();
+		assert( dialogRect.top >= 0 && dialogRect.bottom <= innerHeight && dialogRect.right <= innerWidth, 'Dialog is clipped' );
+		window.iframeVisualReady = true;
+		document.querySelector( '#results' ).textContent = 'PASS: live iframe preview, visible and reachable properties icon, resize handles, shared media dialog styling and iframe-specific options';
+		document.documentElement.dataset.testStatus = 'passed';
+	} catch ( error ) {
+		document.querySelector( '#results' ).textContent = 'FAIL: ' + error.stack; document.documentElement.dataset.testStatus = 'failed';
+	}
+} )();
+</script>

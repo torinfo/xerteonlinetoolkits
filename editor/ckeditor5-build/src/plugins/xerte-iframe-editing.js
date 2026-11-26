@@ -46,6 +46,13 @@ export class XerteIframeEditing extends Plugin {
 		const isSite = editor.config.get( 'xerteIframeFramework' ) === 'site';
 		const editable = editor.ui.getEditableElement();
 		const parentDocument = editable.ownerDocument;
+		// Since CKEditor 49 the overlay host follows the editing root's document.
+		// Keep floating UI in the wizard: _bridgeBalloons() converts iframe targets
+		// to wizard coordinates, and mounting those panels in the iframe clips them.
+		// Set the public option before moving the root, preserving explicit hosts.
+		if ( !editor.config.get( 'ui.overlayContainer' ) ) {
+			editor.config.set( 'ui.overlayContainer', parentDocument.body );
+		}
 		this.editable = editable;
 		// Remember the editable's original slot so cleanup can return the same node.
 		this.placeholder = parentDocument.createComment( 'Xerte iframe editable' );

@@ -10,6 +10,11 @@
 } ); } )( globalThis.CKEDITOR_TRANSLATIONS ||= {} );
 
 Object.assign( globalThis.CKEDITOR_TRANSLATIONS.nl.dictionary, {
+	'Iframe': 'Iframe', 'Insert iframe': 'Iframe invoegen', 'Iframe properties': 'Iframe-eigenschappen',
+	'Allow fullscreen': 'Volledig scherm toestaan', 'CSS classes': 'CSS-klassen', 'CSS styles': 'CSS-stijlen',
+	'Long description URL': 'URL voor uitgebreide beschrijving', 'Scrolling': 'Scrollen', 'Frame border': 'Framerand', 'Legacy alignment': 'Oorspronkelijke uitlijning',
+	'Enter a webpage URL or a relative path.': 'Voer een webpagina-URL of een relatief pad in.',
+	'Use pixels or percentages, for example 600 or 100%.': 'Gebruik pixels of percentages, bijvoorbeeld 600 of 100%.',
 	'Image Properties': 'Afbeeldingseigenschappen', 'URL': 'URL', 'Browse Server': 'Bladeren op server', 'Alternative Text': 'Alternatieve tekst',
 	'Lock ratio': 'Verhouding vergrendelen', 'Reset size': 'Afmetingen herstellen', 'Align Left': 'Links uitlijnen', 'Align Center': 'Centreren', 'Align Right': 'Rechts uitlijnen',
 	'Captioned image': 'Afbeelding met onderschrift', 'OK': 'OK'

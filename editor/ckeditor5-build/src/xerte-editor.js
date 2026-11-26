@@ -85,6 +85,7 @@ import { XerteLinkDialog } from './plugins/xerte-link-dialog.js';
 import { XerteAccessibilityChecker } from './plugins/xerte-accessibility-checker.js';
 import { XerteSourceDialog } from './plugins/xerte-source-dialog.js';
 import { XerteIframeEditing } from './plugins/xerte-iframe-editing.js';
+import { XerteIframe } from './plugins/xerte-iframe.js';
 import { XerteStylePreview } from './plugins/xerte-style-preview.js';
 import { XerteLegacyStyles, legacyStyles } from './plugins/xerte-legacy-styles.js';
 
@@ -96,7 +97,7 @@ const toolbarItems = [
 	'style', 'heading', 'fontFamily', 'fontSize', 'lineHeight', '|',
 	'fontColor', 'fontBackgroundColor', '|',
 	'accessibilityChecker', 'fullscreen', 'showBlocks', '|',
-	'xerteBrowseImage', 'xerteBrowseMedia', 'xerteAudio', 'xerteRecorder', 'mediaEmbed', 'insertTable', 'autocolumns', 'htmlEmbed', '|',
+	'xerteBrowseImage', 'xerteBrowseMedia', 'xerteAudio', 'xerteRecorder', 'mediaEmbed', 'xerteIframe', 'insertTable', 'autocolumns', 'htmlEmbed', '|',
 	'horizontalLine', 'specialCharacters', 'emoji', 'fontAwesome', 'xerteMathJax', 'xerteRubyText', '|',
 	'bulletedList', 'numberedList', 'outdent', 'indent', 'blockQuote', 'codeBlock', 'alignment', 'textPartLanguage', '|',
 	'markTag'
@@ -140,6 +141,7 @@ const styleVariants = [ 1, 2, 3, 4, 5, 6 ];
 
 const xerteBuiltinPlugins = [
 	XerteIframeEditing,
+	XerteIframe,
 	Essentials,
 	Mention,
 	Emoji,
@@ -224,7 +226,8 @@ const xerteDefaultConfig = {
 	licenseKey: 'GPL',
 	translations: [ { en: globalThis.CKEDITOR_TRANSLATIONS.en } ],
 	menuBar: {
-		isVisible: true
+		isVisible: true,
+		addItems: [ { item: 'menuBar:xerteIframe', position: 'after:menuBar:mediaEmbed' } ]
 	},
 	toolbar: {
 		items: toolbarItems,

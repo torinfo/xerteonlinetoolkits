@@ -229,6 +229,8 @@
 			Autocolumns: 'autocolumns',
 			oembed: 'mediaEmbed',
 			Oembed: 'mediaEmbed',
+			Iframe: 'xerteIframe',
+			iframe: 'xerteIframe',
 			Emoji: 'emoji',
 			ShowBlocks: 'showBlocks',
 			Maximize: 'fullscreen',
@@ -255,7 +257,7 @@
 			underline: 1, strikethrough: 1, subscript: 1, superscript: 1, code: 1, removeFormat: 1,
 			specialCharacters: 1, emoji: 1, fontAwesome: 1, horizontalLine: 1, xerteMathJax: 1,
 			xerteRubyText: 1, xerteLink: 1, xotlink: 1, xerteBrowseImage: 1, xerteBrowseMedia: 1,
-			xerteAudio: 1, xerteRecorder: 1, mediaEmbed: 1, insertTable: 1, autocolumns: 1,
+			xerteAudio: 1, xerteRecorder: 1, mediaEmbed: 1, xerteIframe: 1, insertTable: 1, autocolumns: 1,
 			blockQuote: 1, codeBlock: 1, alignment: 1, bulletedList: 1, numberedList: 1,
 			outdent: 1, indent: 1, markTag: 1
 		};
@@ -358,7 +360,7 @@
 			links: [ 'xerteLink', 'xotlink' ],
 			styles: [ 'heading', 'style', 'fontFamily', 'fontSize' ],
 			colors: [ 'fontColor', 'fontBackgroundColor' ],
-			insert: [ 'xerteBrowseImage', 'xerteBrowseMedia', 'xerteAudio', 'xerteRecorder', 'mediaEmbed',
+			insert: [ 'xerteBrowseImage', 'xerteBrowseMedia', 'xerteAudio', 'xerteRecorder', 'mediaEmbed', 'xerteIframe',
 				'insertTable', 'specialCharacters', 'fontAwesome', 'horizontalLine', 'xerteMathJax' ],
 			list: [ 'bulletedList', 'numberedList' ],
 			indent: [ 'outdent', 'indent' ],

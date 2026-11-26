@@ -74,6 +74,12 @@ test( 'legacy custom toolbar names resolve to the corresponding Xerte controls',
 	assert.deepEqual( Array.from( config.toolbar.items ), [ 'sourceEditing', 'xerteLink', 'xotlink', 'xerteBrowseImage', 'xerteAudio', 'autocolumns', 'xerteMathJax', 'fontAwesome', 'xerteRubyText' ] );
 } );
 
+test( 'the old Iframe toolbar button and insert group expose general iframe authoring', async () => {
+	const bridge = await bridgeHarness();
+	assert.deepEqual( Array.from( bridge.merge( { toolbar: [ 'Iframe', 'iframe', 'xerteIframe' ] } ).toolbar.items ), [ 'xerteIframe' ] );
+	assert.ok( bridge.merge( { toolbarGroups: [ { name: 'insert' } ] } ).toolbar.items.includes( 'xerteIframe' ) );
+} );
+
 test( 'Inline uses its source dialog and stays outside the themed iframe', async () => {
 	const bridge = await bridgeHarness();
 	const config = bridge.merge( { inlineEditor: true, toolbar: [ 'Source', 'Bold' ] } );

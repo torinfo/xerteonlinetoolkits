@@ -75,6 +75,14 @@ body.xerte-iframe-fullscreen-open .ck-body-wrapper {
 	--ck-z-default: 100001;
 	--ck-z-panel: 101000;
 	--ck-z-dialog: 110000;
+	/* v49 resolves these tokens at the root. Overriding only the legacy
+	 * variables here leaves inherited layer values below the fullscreen shell. */
+	--ck-layer-base: 100001;
+	--ck-layer-panel: 101000;
+	--ck-layer-panel-above: 101001;
+	--ck-layer-panel-below: 100999;
+	--ck-layer-dialog: 110000;
+	--ck-layer-tooltip: 110100;
 }
 
 /* Keep the live iframe in place: moving it would reload its document. Fullscreen

@@ -10,6 +10,7 @@ import { runXerteMarkWord } from './xerte-mark-word.js';
 import { openAudioDialog } from './xerte-audio.js';
 import { imageFromDomTarget, openImagePropertiesDialog } from './xerte-browse-media.js';
 import { mediaFromDomTarget, openMediaPropertiesDialog } from './xerte-media-resize.js';
+import { iframeFromDomTarget, openIframeDialog } from './xerte-iframe.js';
 
 const boundEditables = new WeakSet();
 
@@ -213,6 +214,7 @@ export class XerteContextMenu extends Plugin {
 		let savedAudio = null;
 		let savedImage = null;
 		let savedMedia = null;
+		let savedIframe = null;
 
 		const hideMenu = () => {
 			if ( dismissCleanup ) {
@@ -285,6 +287,7 @@ export class XerteContextMenu extends Plugin {
 			const editAudio = savedAudio;
 			const editImage = savedImage;
 			const editMedia = savedMedia;
+			const editIframe = savedIframe;
 
 			addItem( menuEl, editor.t( 'Cut' ), ranges => cutOrCopy( editor, 'cut', ranges ), hasText );
 			addItem( menuEl, editor.t( 'Copy' ), ranges => cutOrCopy( editor, 'copy', ranges ), hasText );
@@ -309,6 +312,9 @@ export class XerteContextMenu extends Plugin {
 			}
 			if ( editMedia ) {
 				addItem( menuEl, editor.t( 'Media properties' ), () => openMediaPropertiesDialog( editor, editMedia ) );
+			}
+			if ( editIframe ) {
+				addItem( menuEl, editor.t( 'Iframe properties' ), () => openIframeDialog( editor, editIframe ) );
 			}
 			addItem( menuEl, editor.t( 'Mark Word' ), () => {
 				runXerteMarkWord( editor, savedSelectionRanges, savedSelectionText );
@@ -368,6 +374,7 @@ export class XerteContextMenu extends Plugin {
 			savedAudio = getXerteAudio( editor, domEvent.target );
 			savedImage = imageFromDomTarget( editor, domEvent.target );
 			savedMedia = mediaFromDomTarget( editor, domEvent.target );
+			savedIframe = iframeFromDomTarget( editor, domEvent.target );
 			try {
 				savedSelectionText = editor.model.document.selection.getSelectedText() || '';
 			} catch ( e ) {

@@ -110,6 +110,8 @@
 					startVolume:		m_volume,
 					pauseOtherPlayers:	true,
 					enableAutosize:		true,
+					// Preserve the class names used by Site's themes and player selectors.
+					classPrefix: 'mejs-',
 					//playpauseText:		x_mediaText[1].label,
 					//muteText:			x_mediaText[2].label,
 					//fullscreenText:		x_mediaText[3].label,

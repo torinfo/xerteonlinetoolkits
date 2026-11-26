@@ -1,0 +1,14 @@
+.xerte-embed-overlay { position:fixed; inset:0; z-index:2147483647; background:#0008; display:flex; align-items:center; justify-content:center; }
+.xerte-embed-dialog { box-sizing:border-box; width:min(520px,calc(100vw - 24px)); max-height:calc(100vh - 24px); overflow:auto; background:#fff; color:#222; border-radius:3px; box-shadow:0 10px 35px #0006; font:14px Arial,sans-serif; }
+.xerte-embed-dialog h2 { margin:0; padding:12px 14px; border-bottom:1px solid #ccc; font-size:16px; }
+.xerte-embed-dialog__body { padding:14px; }
+.xerte-embed-dialog__field { display:block; margin-top:10px; }
+.xerte-embed-dialog__field > input, .xerte-embed-dialog__field > select { display:block; box-sizing:border-box; width:100%; height:34px; padding:6px; border:1px solid #aaa; background:#fff; color:#222; font:inherit; }
+.xerte-embed-dialog__url { display:grid; grid-template-columns:minmax(0,1fr) auto; gap:10px; align-items:end; }
+.xerte-embed-dialog__url > button { height:34px; }
+.xerte-embed-dialog__dimensions { display:flex; gap:12px; align-items:end; margin-top:12px; flex-wrap:wrap; }
+.xerte-embed-dialog__hint { margin:8px 0 0; color:#555; font-size:12px; }
+.xerte-embed-dialog__alignment { border:0; padding:0; margin:14px 0 0; }
+.xerte-embed-dialog__alignment > label { display:inline-flex; gap:4px; align-items:center; margin:6px 12px 0 0; }
+.xerte-embed-dialog__actions { display:flex; justify-content:flex-end; gap:8px; padding:10px 14px; border-top:1px solid #ccc; background:#f7f7f7; }
+.xerte-embed-dialog__actions > button[type="submit"] { background:#07883d; color:#fff; border:0; padding:7px 18px; font-weight:bold; }

@@ -16,6 +16,8 @@ for the initial checks. The previous v49-smoke.html link still works.
 - Added build timestamps to application script URLs to refresh cached assets.
 - Added lasting translation, bridge, legacy-content, lifecycle, and test-runner checks.
 - Added a single Node-test entry point for both existing test directories.
+- Corrected iframe floating-UI mounting for v49 and fullscreen layer tokens;
+  added a contextual-toolbar check for actual visibility and hit testing.
 
 ## Validation and remaining work
 

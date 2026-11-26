@@ -3,11 +3,14 @@ export const browserChecks = [
 	{ name: 'Initial check — Dutch', url: 'smoke.html?language=nl' },
 	{ name: 'Older content and custom widgets', url: 'legacy-content.html' },
 	{ name: 'Editor lifecycle, undo and read-only', url: 'editor-lifecycle.html' },
+	{ name: 'Iframe contextual toolbar visibility', url: 'contextual-toolbars.html' },
 	{ name: 'Save while Source stays open', url: 'source-save.html' },
 	{ name: 'HTML and styled DIVs', url: 'html-embed.html' },
 	{ name: 'HTML and styled DIVs — iframe', url: 'html-embed.html?iframe=1' },
 	{ name: 'Responsive images, media and audio', url: 'responsive-media.html' },
 	{ name: 'Media browser dialogs', url: 'media-browser.html' },
+	{ name: 'General iframe insertion and legacy properties', url: 'iframe-properties.html' },
+	{ name: 'Iframe preview and shared media controls', url: 'iframe-presentation.html' },
 	{ name: 'Links and lightboxes', url: 'link-lightbox.html' },
 	{ name: 'Links and lightboxes — iframe', url: 'link-lightbox.html?iframe=1' }
 ];

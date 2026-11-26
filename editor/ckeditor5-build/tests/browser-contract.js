@@ -1,7 +1,7 @@
 // Intentional acceptance inventory. Update deliberately when product features change.
 export const requiredPlugins = [
 	'XerteAccessibilityChecker', 'XerteAudio', 'XerteAutocolumns', 'XerteBrowseMedia',
-	'XerteContextMenu', 'XerteFontAwesome', 'XerteIframeEditing', 'XerteLegacyStyles',
+	'XerteContextMenu', 'XerteFontAwesome', 'XerteIframe', 'XerteIframeEditing', 'XerteLegacyStyles',
 	'XerteLightbox', 'XerteLineHeight', 'XerteLinkDialog', 'XerteLinkTarget',
 	'XerteMarkTag', 'XerteMarkWord', 'XerteMathJaxSnippet', 'XerteMediaEmbedRoundTrip',
 	'XerteMediaResize', 'XertePageLink', 'XerteRecorder', 'XerteRubyText',
@@ -10,5 +10,5 @@ export const requiredPlugins = [
 export const requiredToolbarItems = [
 	'accessibilityChecker', 'xerteBrowseImage', 'xerteBrowseMedia', 'xerteAudio',
 	'xerteRecorder', 'xotlink', 'xerteMathJax', 'xerteRubyText', 'fontAwesome',
-	'autocolumns', 'markTag', 'xerteLink', 'lineHeight'
+	'autocolumns', 'markTag', 'xerteLink', 'lineHeight', 'xerteIframe'
 ];

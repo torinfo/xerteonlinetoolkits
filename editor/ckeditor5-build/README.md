@@ -40,6 +40,7 @@ Use Node.js 24 with npm; the current migration was checked with Node 24.15.0.
 | `npm run test:all` | `editor/ckeditor5-build` | Both JavaScript suites |
 | `npm run check` | `editor/ckeditor5-build` | Production build, then both JavaScript suites |
 | `node tests/run-javascript-tests.cjs` | Project root | Both JavaScript suites without rebuilding |
+| `node editor/ckeditor5-build/scripts/run-browser-checks.mjs --all` | Project root | All browser fixtures in headless Chrome or Edge; requires the local web server |
 
 `tests/` here contains CKEditor-specific checks and fixtures. The project's root
 `tests/` contains application-wide tests, including PHP tests and
@@ -54,12 +55,31 @@ both locations. PHP tests remain separate; see the root `tests/README.txt`.
 | Initial browser check | Installed version matches `package.json`; explicit custom-plugin inventory and toolbar controls; English/Dutch; Classic, iframe, and Inline editors |
 | Legacy-content fixtures | Styled DIVs, text languages, nested lists, table headers/captions/merged cells, images/alt text, Xerte page links, lightboxes, icons, ruby, equation source, audio settings, and columns through repeated save/reload cycles |
 | Lifecycle fixture | Undo/redo, bridge get/set data, read-only state, Inline Source Save/Cancel, iframe fullscreen/height, independent fields, destroy/recreate |
+| Contextual toolbar fixture | Image/table controls mount in the wizard document, remain within the viewport, and pass hit testing on a scrolled page, in fullscreen, and after leaving fullscreen |
+| General iframe fixtures | Live webpage previews, visible/hit-tested properties icon, actual resize drags, shared media/iframe dialogs, legacy properties and attribute/theme preservation, Source/reload, cancel, undo/redo, read-only and cleanup in all three modes |
 | Existing browser fixtures | Source-open save payloads, HTML embeds, responsive media, mocked media browser dialogs, and link/lightbox dialogs and undo |
 
 The browser runner visits fixtures sequentially in an iframe, captures explicit
 completion or errors, and produces a copyable report. Individual links allow
 debugging a check on its own. Browser test assets receive fresh cache keys.
 The old `v49-smoke.html` URL redirects to the reusable `smoke.html` check.
+
+The optional headless runner uses Node 24 and a separate temporary browser
+profile. `XERTE_TEST_BROWSER` selects another Chrome/Edge executable;
+`XERTE_TEST_BASE_URL` changes the local test directory URL. Pass a fixture name
+instead of `--all` to run one page, for example `iframe-properties.html`.
+
+The **Iframe** button embeds a webpage URL or relative project path without a
+media-provider lookup. Select an existing iframe and use the button, its
+properties toolbar, double-click, or right-click to edit it. The editor renders
+the webpage inside a selectable frame with percentage resize handles. Media
+and iframe properties share their dialog, dimensions, reset and alignment
+controls; iframe-specific settings remain under Advanced. New frames default
+to 100% width and automatic 16:9 proportions; existing pixel sizes reopen with
+explicit units. General HTML Support
+continues to serialize the original element and its surrounding markup, keeping
+unmodified permissions, classes, styles, IDs and other attributes. Provider
+media widgets and explicit HTML Embed blocks retain their own controls.
 
 ## Update procedure
 
@@ -78,6 +98,12 @@ The old `v49-smoke.html` URL redirects to the reusable `smoke.html` check.
    returning to removed `/src/` imports. Review editor creation, translations,
    conversion rules, table styles, and the iframe plugin's private CKEditor hooks.
    Keep the bridge's `CKEDITOR.instances`/jQuery compatibility behavior.
+
+   In iframe mode, floating UI must stay in the wizard document. CKEditor 49
+   otherwise follows the editable into the content iframe, while Xerte's balloon
+   bridge supplies wizard coordinates. Preserve the explicit `ui.overlayContainer`
+   and the fullscreen `--ck-layer-*` overrides; checking that a toolbar exists
+   does not establish that it is visible or reachable.
 5. **Build and verify.** Run `npm run check`, the browser runner, and the manual
    checks below. Fix regressions and add the smallest fixture that reproduces
    each one. Compare meaning/behavior and required attributes, allowing valid

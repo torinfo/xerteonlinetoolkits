@@ -2,7 +2,8 @@
  * Media-properties dialog UI.
  * @license Apache-2.0
  */
-import { displayDimension, normalizeDimension } from './xerte-image-dimensions.js';
+import { normalizeDimension } from './xerte-image-dimensions.js';
+import { createEmbedDialog, embedAlignment, embedButton, embedDimensions, embedField } from './xerte-embed-dialog.js';
 
 export const xerteVideoProvider = {
 	name: 'xerteVideo',
@@ -21,67 +22,22 @@ function normalizeVideoUrl( url ) {
 	catch { return ''; }
 }
 
-let dialogSequence = 0;
-
 export function showMediaPropertiesDialog( editor, media, browseMedia = null ) {
 	return new Promise( resolve => {
 		const previouslyFocused = document.activeElement;
-		const overlay = document.createElement( 'div' );
-		overlay.style.cssText = 'position:fixed;inset:0;z-index:2147483647;background:#0008;display:flex;align-items:center;justify-content:center';
-		const form = document.createElement( 'form' );
-		const headingId = `xerte-media-properties-heading-${ ++dialogSequence }`;
-		form.setAttribute( 'role', 'dialog' );
-		form.setAttribute( 'aria-modal', 'true' );
-		form.setAttribute( 'aria-labelledby', headingId );
-		form.style.cssText = 'box-sizing:border-box;width:min(520px,calc(100vw - 24px));max-height:calc(100vh - 24px);overflow:auto;background:#fff;color:#222;border-radius:3px;box-shadow:0 10px 35px #0006;font:14px Arial,sans-serif';
-		const heading = document.createElement( 'h2' );
-		heading.id = headingId;
-		heading.textContent = editor.t( media ? 'Media properties' : 'Insert media' );
-		heading.style.cssText = 'margin:0;padding:12px 14px;border-bottom:1px solid #ccc;font-size:16px';
-		form.appendChild( heading );
-		const body = document.createElement( 'div' ); body.style.cssText = 'padding:14px';
-		form.appendChild( body );
+		const { overlay, form, body, save, cancel } = createEmbedDialog( editor, media ? 'Media properties' : 'Insert media' );
 		media = media || { getAttribute: name => name === 'mediaWidth' ? '100%' : '' };
 		const urlRow = document.createElement( 'div' );
-		urlRow.style.cssText = 'display:grid;grid-template-columns:minmax(0,1fr) auto;gap:10px;align-items:end';
+		urlRow.className = 'xerte-embed-dialog__url';
 		body.appendChild( urlRow );
-		const url = addField( urlRow, editor.t( 'URL' ), media.getAttribute( 'url' ) || '' );
+		const url = embedField( urlRow, editor.t( 'URL' ), media.getAttribute( 'url' ) || '' );
 		url.required = true;
-		const browse = makeButton( editor.t( 'Browse Server' ), 'button' );
-		browse.style.cssText = 'height:34px';
+		const browse = embedButton( urlRow, editor.t( 'Browse Server' ) );
 		browse.disabled = !browseMedia;
-		urlRow.appendChild( browse );
-		const title = addField( body, editor.t( 'Title' ), media.getAttribute( 'mediaTitle' ) || '' );
-		const aria = addField( body, editor.t( 'ARIA label' ), media.getAttribute( 'mediaAriaLabel' ) || '' );
-		const dimensions = document.createElement( 'div' );
-		dimensions.style.cssText = 'display:flex;gap:12px;align-items:end;margin-top:12px;flex-wrap:wrap';
-		const width = addField( dimensions, editor.t( 'Width' ), displayDimension( media.getAttribute( 'mediaWidth' ) ), '90px' );
-		const height = addField( dimensions, editor.t( 'Height' ), displayDimension( media.getAttribute( 'mediaHeight' ) ), '90px' );
-		width.placeholder = '%'; height.placeholder = editor.t( 'Auto' );
-		const reset = makeButton( '↻', 'button' );
-		reset.title = editor.t( 'Reset size' ); reset.setAttribute( 'aria-label', editor.t( 'Reset size' ) );
-		dimensions.appendChild( reset ); body.appendChild( dimensions );
-		const help = document.createElement( 'div' );
-		help.textContent = editor.t( 'Sizes default to %. Add px for pixels. Leave height blank to keep the original proportions.' );
-		help.style.cssText = 'margin-top:8px;color:#555;font-size:12px'; body.appendChild( help );
-		const align = document.createElement( 'fieldset' );
-		align.style.cssText = 'border:0;padding:0;margin:14px 0 0';
-		const legend = document.createElement( 'legend' ); legend.textContent = editor.t( 'Alignment' ); align.appendChild( legend );
-		for ( const [ value, label ] of [ [ '', 'None' ], [ 'left', 'Align Left' ], [ 'center', 'Align Center' ], [ 'right', 'Align Right' ] ] ) {
-			const choice = document.createElement( 'label' ); choice.style.cssText = 'display:inline-flex;gap:4px;align-items:center;margin:6px 12px 0 0';
-			const radio = document.createElement( 'input' ); radio.type = 'radio'; radio.name = 'xerte-media-alignment'; radio.value = value;
-			radio.checked = value === ( media.getAttribute( 'mediaAlign' ) || '' );
-			choice.append( radio, document.createTextNode( editor.t( label ) ) ); align.appendChild( choice );
-		}
-		body.appendChild( align );
-		const actions = document.createElement( 'div' );
-		actions.style.cssText = 'display:flex;justify-content:flex-end;gap:8px;padding:10px 14px;border-top:1px solid #ccc;background:#f7f7f7';
-		const cancel = makeButton( editor.t( 'Cancel' ), 'button' );
-		const save = makeButton( editor.t( 'OK' ), 'submit' );
-		save.style.cssText = 'background:#07883d;color:#fff;border:0;padding:7px 18px;font-weight:bold';
-		actions.append( save, cancel );
-		form.appendChild( actions );
-		overlay.appendChild( form );
+		const title = embedField( body, editor.t( 'Title' ), media.getAttribute( 'mediaTitle' ) || '' );
+		const aria = embedField( body, editor.t( 'ARIA label' ), media.getAttribute( 'mediaAriaLabel' ) || '' );
+		const { width, height } = embedDimensions( body, editor.t, { width: media.getAttribute( 'mediaWidth' ), height: media.getAttribute( 'mediaHeight' ) } );
+		embedAlignment( body, editor.t, media.getAttribute( 'mediaAlign' ) );
 		document.body.appendChild( overlay );
 
 		let finished = false;
@@ -108,7 +64,6 @@ export function showMediaPropertiesDialog( editor, media, browseMedia = null ) {
 			event.stopPropagation();
 			finish( null );
 		};
-		reset.addEventListener( 'click', () => { width.value = '100%'; height.value = ''; } );
 		browse.addEventListener( 'click', async () => {
 			browse.disabled = true;
 			try {
@@ -147,23 +102,6 @@ export function showMediaPropertiesDialog( editor, media, browseMedia = null ) {
 		url.addEventListener( 'input', () => url.setCustomValidity( '' ) );
 		url.focus();
 	} );
-}
-
-function addField( parent, labelText, value, width = 'auto' ) {
-	const label = document.createElement( 'label' );
-	label.textContent = labelText;
-	label.style.cssText = `display:block;width:${ width };margin-top:10px`;
-	const input = document.createElement( 'input' );
-	input.type = 'text'; input.value = value;
-	input.style.cssText = 'box-sizing:border-box;width:100%;height:34px;padding:6px;border:1px solid #aaa';
-	label.appendChild( input ); parent.appendChild( label );
-	return input;
-}
-
-function makeButton( text, type ) {
-	const button = document.createElement( 'button' );
-	button.type = type; button.textContent = text;
-	return button;
 }
 
 function validDimension( value ) {

@@ -1,0 +1,230 @@
+CKEditor 4 to CKEditor 5 compatibility audit
+=========================================
+
+Assessment date: 26 November 2026
+
+The migration has substantial replacement functionality, but it does not yet
+establish compatibility with the configured CKEditor 4 installation. General
+iframe authoring and provider-based embedding are separate features. Both must
+be covered. General iframe authoring is now restored as described below;
+provider-based embedding remains a separate outstanding item.
+
+Scope and evidence
+------------------
+
+The historical baseline is commit 4d6d12ba41f91c9c116355e2805244a371720fdf,
+the parent of the initial CKEditor 5 integration ec9fe0e4b077bfc9213d2c95d0eb261669c550d8.
+The installed CKEditor 4 version at that baseline is 4.12.1. The compared current
+CKEditor 5 version is 49.1.0, including existing working-tree changes.
+
+Reproduce the source inventory from the repository root:
+
+    node editor/ckeditor5-build/scripts/audit-ckeditor4-support.mjs
+
+The adjacent ckeditor4-support-inventory.json records:
+
+* The 82 default bundled plugin names and 25 extraPlugins entries.
+* 108 distinct configured plugins including inline-editor additions and
+  statically discoverable dependencies. These are modules, not 108 UI features.
+* Plugin source locations, literal UI registrations, dynamic UI registration
+  sites, hidden buttons, and the historical default/full grid toolbar profiles.
+* All 60 historical style entries, including duplicate media-size labels.
+* All 131 provider declarations (128 distinct names) in the actually loaded
+  jquery.oembed.min.js, including URL patterns and endpoint expressions.
+* The discrepancy with the non-loaded jquery.oembed.js: 106 declarations.
+* The current 9 upstream media providers plus Xerte's direct-video-file provider.
+* Actual current bridge results for legacy toolbar names, not just a guessed
+  mapping based on similar labels.
+* Current style definitions and matching historical style names.
+* Revision identifiers and SHA-256 source hashes.
+
+The primary historical sources are:
+
+    editor/js/vendor/ckeditor/ckeditor.js
+    editor/js/vendor/ckeditor/config.js
+    editor/js/vendor/ckeditor/styles.js
+    editor/js/vendor/ckeditor/plugins/iframe/dialogs/iframe.js
+    editor/js/vendor/ckeditor/plugins/oembed/plugin.js
+    editor/js/vendor/ckeditor/plugins/oembed/libs/jquery.oembed.min.js
+    editor/js/toolbox.js
+
+A bundled plugin is not necessarily exposed in every field. In particular,
+forms and templates are not explicitly included in the recorded grid toolbar
+groups. The old config also deliberately hides Cut, Copy, Paste, Save, NewPage,
+Preview, Print, PageBreak, CreateDiv, Anchor, Smiley and Flash. Do not count
+these hidden buttons as new default-toolbar regressions.
+
+Authoring findings and resolutions
+---------------------------------
+
+1. Arbitrary iframe insertion and properties
+
+CKEditor 4 registers the Iframe button in the insert toolbar group. Its dialog
+edits src, width, height, alignment, scrolling, frame border, name, title,
+longdesc, ID, classes and styles. Existing iframe placeholders can reopen this
+dialog by double-click or the context menu. Provider recognition is unnecessary:
+the URL can identify a web page, a PeerTube player, or another frameable resource.
+
+Resolved in the current working tree by XerteIframe. The Iframe button and
+properties dialog edit existing GeneralHtmlSupport htmlIframe objects rather
+than introducing a new saved format. The legacy Iframe toolbar name and insert
+group map to the new button. Double-click, a properties toolbar and the context
+menu open the same dialog. Unmodified sandbox/allow permissions, fullscreen,
+IDs, custom attributes, classes, styles and surrounding wrappers are preserved.
+The editor now renders a live iframe preview with a selectable overlay and the
+same percentage drag-resize handles as media. Media and iframe properties share
+their dialog styling, dimension/reset controls and horizontal alignment. New
+iframes default to 100% width and automatic 16:9 proportions; existing pixel
+dimensions retain their meaning and display explicit px units. Iframe-specific
+settings, including legacy vertical alignment, remain available under Advanced.
+XerteIframeEditing still has the separate task of isolating the themed editor.
+
+2. Provider-based URL embedding
+
+The old oEmbed plugin uses the loaded minified library's 128 named providers,
+plus an OpenGraph provider among those declarations. That historical list is
+not a certificate that every remote API or service remains operational.
+
+The current registry produces embed HTML for YouTube, Vimeo, Dailymotion and
+Spotify. Xerte additionally produces native video HTML for direct video files.
+Instagram, Twitter/X, Google Maps, Flickr and Facebook are recognized, but their
+upstream providers have no HTML renderer: the saved result is an oembed URL.
+The inspected general player code does not expand those oembed elements.
+
+119 historical provider names have no same-name entry in the current registry.
+Examples include SoundCloud, SlideShare, Wistia, Bandcamp, Mixcloud, Prezi,
+Scribd, Sketchfab, Speaker Deck, Google Calendar, CodePen and JSFiddle. Even
+matching names require URL-pattern and settings comparisons.
+
+PeerTube, Mediasite and YuJa have explicit adapters in the separate Popcorn
+playback integration. They have no explicit provider entry in the historical
+oEmbed library or current toolbar registry. The old arbitrary-iframe dialog
+nevertheless allowed their embed URLs to be used without such an entry.
+
+3. Additional historical authoring functions
+
+CopyFormatting is enabled in the old build's cleanup group. No replacement
+format-painter tool is registered in the current build.
+
+SCAYT/WSC are loaded in the old build; the old config selects supported spelling
+languages and enables SCAYT where applicable. The new bridge maps the
+spellchecker group to an empty list. Browser spelling is not the same service.
+
+CodeMirror's source formatting, code search, comment/uncomment and completion
+controls have no equivalent in the new source tools. The project owner excluded
+CodeMirror parity from the requested work. Viewing/editing HTML source is
+implemented; identical source-editing convenience features are not required here.
+
+Forms and template plugins existed in the old configured build and have no
+registered authoring equivalents in the new build. Establish which field
+profiles exposed them before treating them as default-toolbar losses. Existing
+form content still belongs in preservation testing.
+
+4. Legacy toolbar mapping gaps
+
+Iframe now maps to xerteIframe. CopyFormatting, Scayt, SpellChecker, Templates
+and form-control names are dropped. JustifyLeft/Center/Right/Block and Unlink are dropped too, even
+though alignment and unlink functionality exist elsewhere in CKEditor 5.
+Consequently, missing mappings and missing capabilities must be tracked
+separately. The JSON report includes all exercised names and results.
+
+Existing media and player integration
+-------------------------------------
+
+The old oEmbed widget recognizes div.embeddedContent and data-oembed metadata.
+The new dedicated media converter recognizes div[data-oembed-url]. There is no
+explicit conversion of the old oEmbed settings into the new media widget.
+General HTML preservation may retain an old embed without making it editable.
+
+New media wrappers differ from old ones. CESI Cardiff has concrete selectors
+for .embeddedContent iframe which do not match newly generated figure.media
+markup. Loading the right theme CSS does not fix that selector mismatch.
+Imported/custom themes and project scripts must also be considered.
+
+Site's general video initializer reads the video ID and selects its holder by
+that ID. The current direct-file provider generates video without an ID. This
+is a source-level integration defect to reproduce and correct separately.
+
+Site's missing MediaElement classPrefix setting was corrected earlier in this
+chat. Both inspected Site initialization paths now explicitly use mejs-.
+That correction does not resolve iframe authoring, provider or wrapper gaps.
+
+Popcorn's media adapters, event/timing API, and Xerte interaction plugins remain
+implemented. The CKEditor toolbar media widget does not automatically attach
+those interactions. Dedicated page playback must be tested in its own context.
+
+Positive implementation evidence
+--------------------------------
+
+All historical style names have a matching current style name after trimming
+the old duplicate media-size labels. This checks enumeration, not identical
+structure, attributes, sizing behavior or theme appearance.
+
+The principal replacements found in the new plugin registration are:
+
+    extmathjax      -> XerteMathJaxSnippet
+    image3         -> image tools, properties and Xerte media browser
+    xotlink        -> XertePageLink
+    xotmarkword    -> XerteMarkWord and context-menu actions
+    fontawesome    -> XerteFontAwesome
+    uploadimage    -> ImageUpload and XerteUploadAdapter
+    html5audio     -> XerteAudio
+    xotrecorder    -> XerteRecorder
+    xotcolumns     -> XerteAutocolumns
+    rubytext       -> XerteRubyText
+    wrapstyle      -> XerteLegacyStyles/style handling
+    link           -> Link and Xerte link dialogs/target handling
+    emoji          -> Emoji
+    xotlightbox    -> XerteLightbox
+    lineheight     -> XerteLineHeight
+    codesnippet    -> CodeBlock
+    a11ychecker    -> XerteAccessibilityChecker using axe rather than Quail
+    find           -> FindAndReplace
+    editorplaceholder -> root placeholder configuration
+    markTag        -> XerteMarkTag
+    sourcedialog   -> XerteSourceDialog for inline editors
+
+Dialog/widget/numeric-input and other infrastructure modules need not retain
+their old implementation identities. Their user-visible behavior belongs in
+the corresponding feature checks. A replacement listed above is not a claim
+of complete settings, accessibility-rule or save/reopen parity.
+
+Acceptance evidence and outstanding checks
+------------------------------------------
+
+The project owner's reported PeerTube sample is a plain iframe. It survived
+Source viewing, an unrelated text edit, save/close/reopen, and preview playback.
+That is positive preservation evidence for that sample. Re-adding its URL
+through the current media widget was rejected. It is not a wrapped CKEditor 4
+oEmbed test and does not establish parity for other iframe settings/providers.
+
+The general iframe fixture now checks insertion of an ordinary webpage and
+the reported PeerTube embed URL, existing iframe properties and attribute/theme
+wrapper preservation, Source, unrelated text edits, reloads, cancel, undo/redo,
+read-only, cleanup and editor recreation in all three editor modes. It also
+loads a local webpage through saved iframe markup to verify preview behavior.
+Provider media widgets and raw HTML blocks retain their own authoring models.
+The production build and 62 Node checks passed. The browser suite includes
+live preview, actual resize drags and a visual/hit-test check for the properties
+icon, shared dialog styling and retained iframe options.
+The broader historical provider catalogue and real remote playback still need
+their own checks; these results do not certify all historical media providers.
+
+For each user-visible historical feature, record these independently:
+
+    A. Existing untouched content previews correctly.
+    B. Unrelated text editing + save + editor recreation preserves it.
+    C. New content can be authored with equivalent settings and behavior.
+    D. Existing content can be edited with the new controls (ideal outcome).
+    E. Themes and project code still target the correct elements.
+
+Use plain page iframes, provider iframes, wrapped oEmbed content, uploaded
+video/audio, lightboxes and dedicated Popcorn pages in Site, Nottingham and
+Decision. Include Source toggles and Source-open saves, multiple embeds,
+URL parameters, IDs, classes, inline styles, titles, fullscreen/allow/sandbox
+attributes, mobile sizing, and navigation away/back. Verify actual preview and
+published behavior; successful HTML serialization alone is insufficient.
+
+The minimum acceptable outcome requires A, B, C and E; the ideal adds D.
+The findings above prevent a full compatibility signoff at present. This audit
+adds evidence and a reproducible inventory; it does not alter editor behavior.

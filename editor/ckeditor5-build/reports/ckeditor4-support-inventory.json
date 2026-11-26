@@ -1,0 +1,6413 @@
+{
+  "scope": "Historical configured capabilities, source-level migration inventory, and actual bridge mapping checks; not a playback or preservation certification.",
+  "baseline": {
+    "commit": "4d6d12ba41f91c9c116355e2805244a371720fdf",
+    "firstMigrationCommit": "ec9fe0e4b077bfc9213d2c95d0eb261669c550d8",
+    "ckeditorVersion": "4.12.1",
+    "defaultPlugins": [
+      "dialogui",
+      "dialog",
+      "about",
+      "a11yhelp",
+      "dialogadvtab",
+      "basicstyles",
+      "bidi",
+      "blockquote",
+      "notification",
+      "button",
+      "toolbar",
+      "clipboard",
+      "panelbutton",
+      "panel",
+      "floatpanel",
+      "colorbutton",
+      "colordialog",
+      "templates",
+      "menu",
+      "contextmenu",
+      "copyformatting",
+      "div",
+      "resize",
+      "elementspath",
+      "enterkey",
+      "entities",
+      "popup",
+      "filetools",
+      "filebrowser",
+      "find",
+      "fakeobjects",
+      "flash",
+      "floatingspace",
+      "listblock",
+      "richcombo",
+      "font",
+      "forms",
+      "format",
+      "horizontalrule",
+      "htmlwriter",
+      "iframe",
+      "wysiwygarea",
+      "image",
+      "indent",
+      "indentblock",
+      "indentlist",
+      "smiley",
+      "justify",
+      "menubutton",
+      "language",
+      "link",
+      "list",
+      "liststyle",
+      "magicline",
+      "maximize",
+      "newpage",
+      "pagebreak",
+      "pastetext",
+      "pastefromword",
+      "preview",
+      "print",
+      "removeformat",
+      "save",
+      "selectall",
+      "showblocks",
+      "showborders",
+      "sourcearea",
+      "specialchar",
+      "scayt",
+      "stylescombo",
+      "tab",
+      "table",
+      "tabletools",
+      "tableselection",
+      "undo",
+      "lineutils",
+      "widgetselection",
+      "widget",
+      "notificationaggregator",
+      "uploadwidget",
+      "uploadimage",
+      "wsc"
+    ],
+    "extraPlugins": [
+      "dialog",
+      "widget",
+      "extmathjax",
+      "image3",
+      "codemirror",
+      "oembed",
+      "xotlink",
+      "xotmarkword",
+      "fontawesome",
+      "uploadimage",
+      "html5audio",
+      "xotrecorder",
+      "xotcolumns",
+      "rubytext",
+      "wrapstyle",
+      "link",
+      "emoji",
+      "xotlightbox",
+      "numericinput",
+      "lineheight",
+      "codesnippet",
+      "a11ychecker",
+      "find",
+      "editorplaceholder",
+      "markTag"
+    ],
+    "inlineExtraPlugins": [
+      "sourcedialog",
+      "image3",
+      "fontawesome",
+      "rubytext",
+      "editorplaceholder"
+    ],
+    "removedButtons": [
+      "Cut",
+      "Copy",
+      "Paste",
+      "Save",
+      "NewPage",
+      "Preview",
+      "Print",
+      "PageBreak",
+      "CreateDiv",
+      "Anchor",
+      "Smiley",
+      "Flash"
+    ],
+    "formatTags": "p;h3;h4;h5;h6;pre;address;div",
+    "allowedContent": true,
+    "toolbarGroups": [
+      {
+        "name": "document",
+        "groups": [
+          "mode"
+        ]
+      },
+      {
+        "name": "clipboard",
+        "groups": [
+          "clipboard",
+          "undo",
+          "find"
+        ]
+      },
+      {
+        "name": "basicstyles",
+        "groups": [
+          "basicstyles",
+          "cleanup"
+        ]
+      },
+      {
+        "name": "links"
+      },
+      {
+        "name": "styles"
+      },
+      {
+        "name": "colors"
+      },
+      {
+        "name": "tools"
+      },
+      {
+        "name": "insert"
+      },
+      {
+        "name": "paragraph",
+        "groups": [
+          "list",
+          "indent",
+          "blocks",
+          "align",
+          "bidi"
+        ]
+      },
+      {
+        "name": "others"
+      }
+    ],
+    "toolbarProfiles": {
+      "defaultToolbar": [
+        {
+          "name": "clipboard",
+          "groups": [
+            "clipboard",
+            "undo"
+          ]
+        },
+        {
+          "name": "editing",
+          "groups": [
+            "spellchecker"
+          ]
+        },
+        {
+          "name": "basicstyles",
+          "groups": [
+            "basicstyles",
+            "cleanup"
+          ]
+        },
+        {
+          "name": "links"
+        },
+        {
+          "name": "styles"
+        },
+        {
+          "name": "colors"
+        },
+        {
+          "name": "insert"
+        }
+      ],
+      "fullToolbar": [
+        {
+          "name": "document",
+          "groups": [
+            "mode"
+          ]
+        },
+        {
+          "name": "clipboard",
+          "groups": [
+            "clipboard",
+            "undo"
+          ]
+        },
+        {
+          "name": "editing",
+          "groups": [
+            "spellchecker"
+          ]
+        },
+        {
+          "name": "basicstyles",
+          "groups": [
+            "basicstyles",
+            "cleanup"
+          ]
+        },
+        {
+          "name": "links"
+        },
+        {
+          "name": "styles"
+        },
+        {
+          "name": "colors"
+        },
+        {
+          "name": "insert"
+        },
+        {
+          "name": "paragraph",
+          "groups": [
+            "list",
+            "indent",
+            "blocks",
+            "align"
+          ]
+        }
+      ]
+    }
+  },
+  "legacyPlugins": [
+    {
+      "name": "a11ychecker",
+      "declaredBy": "extraPlugins",
+      "source": {
+        "path": "editor/js/vendor/ckeditor/plugins/a11ychecker/plugin.js",
+        "revision": "4d6d12ba41f91c9c116355e2805244a371720fdf",
+        "sha256": "16dbda22c2f6a1fc944143c180b5092c8cd9eb90443be6a713201ef06c6753de"
+      },
+      "staticRegistrationUnavailable": true
+    },
+    {
+      "name": "a11yhelp",
+      "declaredBy": "bundled-default",
+      "requires": [
+        "dialog"
+      ],
+      "ui": [],
+      "location": {
+        "path": "editor/js/vendor/ckeditor/ckeditor.js",
+        "line": 650,
+        "revision": "4d6d12ba41f91c9c116355e2805244a371720fdf"
+      }
+    },
+    {
+      "name": "about",
+      "declaredBy": "bundled-default",
+      "requires": [
+        "dialog"
+      ],
+      "ui": [
+        {
+          "kind": "addButton",
+          "name": "About",
+          "toolbar": "about",
+          "location": {
+            "path": "editor/js/vendor/ckeditor/ckeditor.js",
+            "line": 650,
+            "revision": "4d6d12ba41f91c9c116355e2805244a371720fdf"
+          }
+        }
+      ],
+      "location": {
+        "path": "editor/js/vendor/ckeditor/ckeditor.js",
+        "line": 650,
+        "revision": "4d6d12ba41f91c9c116355e2805244a371720fdf"
+      }
+    },
+    {
+      "name": "ajax",
+      "declaredBy": "dependency",
+      "requires": [
+        "xml"
+      ],
+      "ui": [],
+      "location": {
+        "path": "editor/js/vendor/ckeditor/plugins/ajax/plugin.js",
+        "line": 13,
+        "revision": "4d6d12ba41f91c9c116355e2805244a371720fdf"
+      }
+    },
+    {
+      "name": "autocomplete",
+      "declaredBy": "dependency",
+      "requires": [
+        "textwatcher"
+      ],
+      "ui": [],
+      "location": {
+        "path": "editor/js/vendor/ckeditor/plugins/autocomplete/plugin.js",
+        "line": 10,
+        "revision": "4d6d12ba41f91c9c116355e2805244a371720fdf"
+      }
+    },
+    {
+      "name": "basicstyles",
+      "declaredBy": "bundled-default",
+      "requires": [],
+      "ui": [
+        {
+          "kind": "addButton",
+          "name": null,
+          "toolbar": null,
+          "location": {
+            "path": "editor/js/vendor/ckeditor/ckeditor.js",
+            "line": 655,
+            "revision": "4d6d12ba41f91c9c116355e2805244a371720fdf"
+          },
+          "dynamicRegistration": "c.ui.addButton(g,{label:d,command:b,toolbar:\"basicstyles,\"+(e+=10)})"
+        }
+      ],
+      "location": {
+        "path": "editor/js/vendor/ckeditor/ckeditor.js",
+        "line": 655,
+        "revision": "4d6d12ba41f91c9c116355e2805244a371720fdf"
+      }
+    },
+    {
+      "name": "bidi",
+      "declaredBy": "bundled-default",
+      "requires": [],
+      "ui": [
+        {
+          "kind": "addButton",
+          "name": null,
+          "toolbar": null,
+          "location": {
+            "path": "editor/js/vendor/ckeditor/ckeditor.js",
+            "line": 665,
+            "revision": "4d6d12ba41f91c9c116355e2805244a371720fdf"
+          },
+          "dynamicRegistration": "a.ui.addButton(b,{label:c,command:d,toolbar:\"bidi,\"+f})"
+        }
+      ],
+      "location": {
+        "path": "editor/js/vendor/ckeditor/ckeditor.js",
+        "line": 664,
+        "revision": "4d6d12ba41f91c9c116355e2805244a371720fdf"
+      }
+    },
+    {
+      "name": "blockquote",
+      "declaredBy": "bundled-default",
+      "requires": [],
+      "ui": [
+        {
+          "kind": "addButton",
+          "name": "Blockquote",
+          "toolbar": "blocks,10",
+          "location": {
+            "path": "editor/js/vendor/ckeditor/ckeditor.js",
+            "line": 672,
+            "revision": "4d6d12ba41f91c9c116355e2805244a371720fdf"
+          }
+        }
+      ],
+      "location": {
+        "path": "editor/js/vendor/ckeditor/ckeditor.js",
+        "line": 672,
+        "revision": "4d6d12ba41f91c9c116355e2805244a371720fdf"
+      }
+    },
+    {
+      "name": "button",
+      "declaredBy": "bundled-default",
+      "requires": [],
+      "ui": [],
+      "location": {
+        "path": "editor/js/vendor/ckeditor/ckeditor.js",
+        "line": 686,
+        "revision": "4d6d12ba41f91c9c116355e2805244a371720fdf"
+      }
+    },
+    {
+      "name": "clipboard",
+      "declaredBy": "bundled-default",
+      "requires": [
+        "dialog",
+        "notification",
+        "toolbar"
+      ],
+      "ui": [],
+      "location": {
+        "path": "editor/js/vendor/ckeditor/ckeditor.js",
+        "line": 731,
+        "revision": "4d6d12ba41f91c9c116355e2805244a371720fdf"
+      }
+    },
+    {
+      "name": "codemirror",
+      "declaredBy": "extraPlugins",
+      "requires": [],
+      "ui": [
+        {
+          "kind": "addButton",
+          "name": "Source",
+          "toolbar": "mode,10",
+          "location": {
+            "path": "editor/js/vendor/ckeditor/plugins/codemirror/plugin.js",
+            "line": 987,
+            "revision": "4d6d12ba41f91c9c116355e2805244a371720fdf"
+          }
+        },
+        {
+          "kind": "addButton",
+          "name": "searchCode",
+          "toolbar": "mode,40",
+          "location": {
+            "path": "editor/js/vendor/ckeditor/plugins/codemirror/plugin.js",
+            "line": 1005,
+            "revision": "4d6d12ba41f91c9c116355e2805244a371720fdf"
+          }
+        },
+        {
+          "kind": "addButton",
+          "name": "autoFormat",
+          "toolbar": "mode,50",
+          "location": {
+            "path": "editor/js/vendor/ckeditor/plugins/codemirror/plugin.js",
+            "line": 1012,
+            "revision": "4d6d12ba41f91c9c116355e2805244a371720fdf"
+          }
+        },
+        {
+          "kind": "addButton",
+          "name": "CommentSelectedRange",
+          "toolbar": "mode,60",
+          "location": {
+            "path": "editor/js/vendor/ckeditor/plugins/codemirror/plugin.js",
+            "line": 1019,
+            "revision": "4d6d12ba41f91c9c116355e2805244a371720fdf"
+          }
+        },
+        {
+          "kind": "addButton",
+          "name": "UncommentSelectedRange",
+          "toolbar": "mode,70",
+          "location": {
+            "path": "editor/js/vendor/ckeditor/plugins/codemirror/plugin.js",
+            "line": 1026,
+            "revision": "4d6d12ba41f91c9c116355e2805244a371720fdf"
+          }
+        },
+        {
+          "kind": "addButton",
+          "name": "AutoComplete",
+          "toolbar": "mode,80",
+          "location": {
+            "path": "editor/js/vendor/ckeditor/plugins/codemirror/plugin.js",
+            "line": 1033,
+            "revision": "4d6d12ba41f91c9c116355e2805244a371720fdf"
+          }
+        }
+      ],
+      "location": {
+        "path": "editor/js/vendor/ckeditor/plugins/codemirror/plugin.js",
+        "line": 10,
+        "revision": "4d6d12ba41f91c9c116355e2805244a371720fdf"
+      }
+    },
+    {
+      "name": "codesnippet",
+      "declaredBy": "extraPlugins",
+      "requires": [
+        "widget",
+        "dialog"
+      ],
+      "ui": [
+        {
+          "kind": "addButton",
+          "name": "CodeSnippet",
+          "toolbar": "insert,10",
+          "location": {
+            "path": "editor/js/vendor/ckeditor/plugins/codesnippet/plugin.js",
+            "line": 65,
+            "revision": "4d6d12ba41f91c9c116355e2805244a371720fdf"
+          }
+        }
+      ],
+      "location": {
+        "path": "editor/js/vendor/ckeditor/plugins/codesnippet/plugin.js",
+        "line": 13,
+        "revision": "4d6d12ba41f91c9c116355e2805244a371720fdf"
+      }
+    },
+    {
+      "name": "colorbutton",
+      "declaredBy": "bundled-default",
+      "requires": [
+        "panelbutton",
+        "floatpanel"
+      ],
+      "ui": [],
+      "location": {
+        "path": "editor/js/vendor/ckeditor/ckeditor.js",
+        "line": 785,
+        "revision": "4d6d12ba41f91c9c116355e2805244a371720fdf"
+      }
+    },
+    {
+      "name": "colordialog",
+      "declaredBy": "bundled-default",
+      "requires": [],
+      "ui": [],
+      "location": {
+        "path": "editor/js/vendor/ckeditor/ckeditor.js",
+        "line": 798,
+        "revision": "4d6d12ba41f91c9c116355e2805244a371720fdf"
+      }
+    },
+    {
+      "name": "contextmenu",
+      "declaredBy": "bundled-default",
+      "requires": [
+        "menu"
+      ],
+      "ui": [],
+      "location": {
+        "path": "editor/js/vendor/ckeditor/ckeditor.js",
+        "line": 814,
+        "revision": "4d6d12ba41f91c9c116355e2805244a371720fdf"
+      }
+    },
+    {
+      "name": "copyformatting",
+      "declaredBy": "bundled-default",
+      "requires": [],
+      "ui": [
+        {
+          "kind": "addButton",
+          "name": "CopyFormatting",
+          "toolbar": "cleanup,0",
+          "location": {
+            "path": "editor/js/vendor/ckeditor/ckeditor.js",
+            "line": 820,
+            "revision": "4d6d12ba41f91c9c116355e2805244a371720fdf"
+          }
+        }
+      ],
+      "location": {
+        "path": "editor/js/vendor/ckeditor/ckeditor.js",
+        "line": 819,
+        "revision": "4d6d12ba41f91c9c116355e2805244a371720fdf"
+      }
+    },
+    {
+      "name": "dialog",
+      "declaredBy": "bundled-default",
+      "requires": [
+        "dialogui"
+      ],
+      "ui": [],
+      "location": {
+        "path": "editor/js/vendor/ckeditor/ckeditor.js",
+        "line": 650,
+        "revision": "4d6d12ba41f91c9c116355e2805244a371720fdf"
+      }
+    },
+    {
+      "name": "dialogadvtab",
+      "declaredBy": "bundled-default",
+      "requires": [
+        "dialog"
+      ],
+      "ui": [],
+      "location": {
+        "path": "editor/js/vendor/ckeditor/ckeditor.js",
+        "line": 651,
+        "revision": "4d6d12ba41f91c9c116355e2805244a371720fdf"
+      }
+    },
+    {
+      "name": "dialogui",
+      "declaredBy": "bundled-default",
+      "requires": [],
+      "ui": [],
+      "location": {
+        "path": "editor/js/vendor/ckeditor/ckeditor.js",
+        "line": 543,
+        "revision": "4d6d12ba41f91c9c116355e2805244a371720fdf"
+      }
+    },
+    {
+      "name": "div",
+      "declaredBy": "bundled-default",
+      "requires": [
+        "dialog"
+      ],
+      "ui": [
+        {
+          "kind": "addButton",
+          "name": "CreateDiv",
+          "toolbar": "blocks,50",
+          "location": {
+            "path": "editor/js/vendor/ckeditor/ckeditor.js",
+            "line": 843,
+            "revision": "4d6d12ba41f91c9c116355e2805244a371720fdf"
+          }
+        }
+      ],
+      "location": {
+        "path": "editor/js/vendor/ckeditor/ckeditor.js",
+        "line": 841,
+        "revision": "4d6d12ba41f91c9c116355e2805244a371720fdf"
+      }
+    },
+    {
+      "name": "editorplaceholder",
+      "declaredBy": "extraPlugins",
+      "requires": [],
+      "ui": [],
+      "location": {
+        "path": "editor/js/vendor/ckeditor/plugins/editorplaceholder/plugin.js",
+        "line": 10,
+        "revision": "4d6d12ba41f91c9c116355e2805244a371720fdf"
+      }
+    },
+    {
+      "name": "elementspath",
+      "declaredBy": "bundled-default",
+      "requires": [],
+      "ui": [],
+      "location": {
+        "path": "editor/js/vendor/ckeditor/ckeditor.js",
+        "line": 854,
+        "revision": "4d6d12ba41f91c9c116355e2805244a371720fdf"
+      }
+    },
+    {
+      "name": "emoji",
+      "declaredBy": "extraPlugins",
+      "requires": [
+        "autocomplete",
+        "textmatch",
+        "ajax",
+        "panelbutton",
+        "floatpanel"
+      ],
+      "ui": [],
+      "location": {
+        "path": "editor/js/vendor/ckeditor/plugins/emoji/plugin.js",
+        "line": 546,
+        "revision": "4d6d12ba41f91c9c116355e2805244a371720fdf"
+      }
+    },
+    {
+      "name": "enterkey",
+      "declaredBy": "bundled-default",
+      "requires": [],
+      "ui": [],
+      "location": {
+        "path": "editor/js/vendor/ckeditor/ckeditor.js",
+        "line": 855,
+        "revision": "4d6d12ba41f91c9c116355e2805244a371720fdf"
+      }
+    },
+    {
+      "name": "entities",
+      "declaredBy": "bundled-default",
+      "requires": [],
+      "ui": [],
+      "location": {
+        "path": "editor/js/vendor/ckeditor/ckeditor.js",
+        "line": 865,
+        "revision": "4d6d12ba41f91c9c116355e2805244a371720fdf"
+      }
+    },
+    {
+      "name": "extmathjax",
+      "declaredBy": "extraPlugins",
+      "requires": [
+        "widget",
+        "dialog"
+      ],
+      "ui": [],
+      "location": {
+        "path": "editor/js/vendor/ckeditor/plugins/extmathjax/plugin.js",
+        "line": 17,
+        "revision": "4d6d12ba41f91c9c116355e2805244a371720fdf"
+      }
+    },
+    {
+      "name": "fakeobjects",
+      "declaredBy": "bundled-default",
+      "requires": [],
+      "ui": [],
+      "location": {
+        "path": "editor/js/vendor/ckeditor/ckeditor.js",
+        "line": 888,
+        "revision": "4d6d12ba41f91c9c116355e2805244a371720fdf"
+      }
+    },
+    {
+      "name": "filebrowser",
+      "declaredBy": "bundled-default",
+      "requires": [
+        "popup",
+        "filetools"
+      ],
+      "ui": [],
+      "location": {
+        "path": "editor/js/vendor/ckeditor/ckeditor.js",
+        "line": 886,
+        "revision": "4d6d12ba41f91c9c116355e2805244a371720fdf"
+      }
+    },
+    {
+      "name": "filetools",
+      "declaredBy": "bundled-default",
+      "requires": [],
+      "ui": [],
+      "location": {
+        "path": "editor/js/vendor/ckeditor/ckeditor.js",
+        "line": 871,
+        "revision": "4d6d12ba41f91c9c116355e2805244a371720fdf"
+      }
+    },
+    {
+      "name": "find",
+      "declaredBy": "bundled-default",
+      "requires": [
+        "dialog"
+      ],
+      "ui": [
+        {
+          "kind": "addButton",
+          "name": "Find",
+          "toolbar": "find,10",
+          "location": {
+            "path": "editor/js/vendor/ckeditor/ckeditor.js",
+            "line": 886,
+            "revision": "4d6d12ba41f91c9c116355e2805244a371720fdf"
+          }
+        },
+        {
+          "kind": "addButton",
+          "name": "Replace",
+          "toolbar": "find,20",
+          "location": {
+            "path": "editor/js/vendor/ckeditor/ckeditor.js",
+            "line": 886,
+            "revision": "4d6d12ba41f91c9c116355e2805244a371720fdf"
+          }
+        }
+      ],
+      "location": {
+        "path": "editor/js/vendor/ckeditor/ckeditor.js",
+        "line": 886,
+        "revision": "4d6d12ba41f91c9c116355e2805244a371720fdf"
+      }
+    },
+    {
+      "name": "flash",
+      "declaredBy": "bundled-default",
+      "requires": [
+        "dialog",
+        "fakeobjects"
+      ],
+      "ui": [
+        {
+          "kind": "addButton",
+          "name": "Flash",
+          "toolbar": "insert,20",
+          "location": {
+            "path": "editor/js/vendor/ckeditor/ckeditor.js",
+            "line": 892,
+            "revision": "4d6d12ba41f91c9c116355e2805244a371720fdf"
+          }
+        }
+      ],
+      "location": {
+        "path": "editor/js/vendor/ckeditor/ckeditor.js",
+        "line": 891,
+        "revision": "4d6d12ba41f91c9c116355e2805244a371720fdf"
+      }
+    },
+    {
+      "name": "floatingspace",
+      "declaredBy": "bundled-default",
+      "requires": [],
+      "ui": [],
+      "location": {
+        "path": "editor/js/vendor/ckeditor/ckeditor.js",
+        "line": 899,
+        "revision": "4d6d12ba41f91c9c116355e2805244a371720fdf"
+      }
+    },
+    {
+      "name": "floatpanel",
+      "declaredBy": "bundled-default",
+      "requires": [
+        "panel"
+      ],
+      "ui": [],
+      "location": {
+        "path": "editor/js/vendor/ckeditor/ckeditor.js",
+        "line": 772,
+        "revision": "4d6d12ba41f91c9c116355e2805244a371720fdf"
+      }
+    },
+    {
+      "name": "font",
+      "declaredBy": "bundled-default",
+      "requires": [
+        "richcombo"
+      ],
+      "ui": [],
+      "location": {
+        "path": "editor/js/vendor/ckeditor/ckeditor.js",
+        "line": 922,
+        "revision": "4d6d12ba41f91c9c116355e2805244a371720fdf"
+      }
+    },
+    {
+      "name": "fontawesome",
+      "declaredBy": "extraPlugins",
+      "source": {
+        "path": "editor/js/vendor/ckeditor/plugins/fontawesome/plugin.js",
+        "revision": "4d6d12ba41f91c9c116355e2805244a371720fdf",
+        "sha256": "17e06fffc40e77d748007bbe1128d7784c6648a7934f79002be712f50de79b33"
+      },
+      "staticRegistrationUnavailable": true
+    },
+    {
+      "name": "format",
+      "declaredBy": "bundled-default",
+      "requires": [
+        "richcombo"
+      ],
+      "ui": [
+        {
+          "kind": "addRichCombo",
+          "name": "Format",
+          "toolbar": "styles,20",
+          "location": {
+            "path": "editor/js/vendor/ckeditor/ckeditor.js",
+            "line": 932,
+            "revision": "4d6d12ba41f91c9c116355e2805244a371720fdf"
+          }
+        }
+      ],
+      "location": {
+        "path": "editor/js/vendor/ckeditor/ckeditor.js",
+        "line": 932,
+        "revision": "4d6d12ba41f91c9c116355e2805244a371720fdf"
+      }
+    },
+    {
+      "name": "forms",
+      "declaredBy": "bundled-default",
+      "requires": [
+        "dialog",
+        "fakeobjects"
+      ],
+      "ui": [
+        {
+          "kind": "addButton",
+          "name": null,
+          "toolbar": null,
+          "location": {
+            "path": "editor/js/vendor/ckeditor/ckeditor.js",
+            "line": 926,
+            "revision": "4d6d12ba41f91c9c116355e2805244a371720fdf"
+          },
+          "dynamicRegistration": "b.ui.addButton(f,{label:a.common[f.charAt(0).toLowerCase()+f.slice(1)],command:c,toolbar:\"forms,\"+(g+=10)})"
+        }
+      ],
+      "location": {
+        "path": "editor/js/vendor/ckeditor/ckeditor.js",
+        "line": 924,
+        "revision": "4d6d12ba41f91c9c116355e2805244a371720fdf"
+      }
+    },
+    {
+      "name": "horizontalrule",
+      "declaredBy": "bundled-default",
+      "requires": [],
+      "ui": [
+        {
+          "kind": "addButton",
+          "name": "HorizontalRule",
+          "toolbar": "insert,40",
+          "location": {
+            "path": "editor/js/vendor/ckeditor/ckeditor.js",
+            "line": 935,
+            "revision": "4d6d12ba41f91c9c116355e2805244a371720fdf"
+          }
+        }
+      ],
+      "location": {
+        "path": "editor/js/vendor/ckeditor/ckeditor.js",
+        "line": 935,
+        "revision": "4d6d12ba41f91c9c116355e2805244a371720fdf"
+      }
+    },
+    {
+      "name": "html5audio",
+      "declaredBy": "extraPlugins",
+      "requires": [
+        "widget"
+      ],
+      "ui": [],
+      "location": {
+        "path": "editor/js/vendor/ckeditor/plugins/html5audio/plugin.js",
+        "line": 1,
+        "revision": "4d6d12ba41f91c9c116355e2805244a371720fdf"
+      }
+    },
+    {
+      "name": "htmlwriter",
+      "declaredBy": "bundled-default",
+      "requires": [],
+      "ui": [],
+      "location": {
+        "path": "editor/js/vendor/ckeditor/ckeditor.js",
+        "line": 935,
+        "revision": "4d6d12ba41f91c9c116355e2805244a371720fdf"
+      }
+    },
+    {
+      "name": "iframe",
+      "declaredBy": "bundled-default",
+      "requires": [
+        "dialog",
+        "fakeobjects"
+      ],
+      "ui": [
+        {
+          "kind": "addButton",
+          "name": "Iframe",
+          "toolbar": "insert,80",
+          "location": {
+            "path": "editor/js/vendor/ckeditor/ckeditor.js",
+            "line": 942,
+            "revision": "4d6d12ba41f91c9c116355e2805244a371720fdf"
+          }
+        }
+      ],
+      "location": {
+        "path": "editor/js/vendor/ckeditor/ckeditor.js",
+        "line": 941,
+        "revision": "4d6d12ba41f91c9c116355e2805244a371720fdf"
+      }
+    },
+    {
+      "name": "image",
+      "declaredBy": "bundled-default",
+      "requires": [
+        "dialog"
+      ],
+      "ui": [
+        {
+          "kind": "addButton",
+          "name": "Image",
+          "toolbar": "insert,10",
+          "location": {
+            "path": "editor/js/vendor/ckeditor/ckeditor.js",
+            "line": 960,
+            "revision": "4d6d12ba41f91c9c116355e2805244a371720fdf"
+          }
+        }
+      ],
+      "location": {
+        "path": "editor/js/vendor/ckeditor/ckeditor.js",
+        "line": 959,
+        "revision": "4d6d12ba41f91c9c116355e2805244a371720fdf"
+      }
+    },
+    {
+      "name": "image3",
+      "declaredBy": "extraPlugins",
+      "requires": [
+        "widget",
+        "dialog"
+      ],
+      "ui": [
+        {
+          "kind": "addButton",
+          "name": "Image",
+          "toolbar": "insert,10",
+          "location": {
+            "path": "editor/js/vendor/ckeditor/plugins/image3/plugin.js",
+            "line": 92,
+            "revision": "4d6d12ba41f91c9c116355e2805244a371720fdf"
+          }
+        }
+      ],
+      "location": {
+        "path": "editor/js/vendor/ckeditor/plugins/image3/plugin.js",
+        "line": 19,
+        "revision": "4d6d12ba41f91c9c116355e2805244a371720fdf"
+      }
+    },
+    {
+      "name": "indent",
+      "declaredBy": "bundled-default",
+      "requires": [],
+      "ui": [
+        {
+          "kind": "addButton",
+          "name": "Indent",
+          "toolbar": "indent,20",
+          "location": {
+            "path": "editor/js/vendor/ckeditor/ckeditor.js",
+            "line": 963,
+            "revision": "4d6d12ba41f91c9c116355e2805244a371720fdf"
+          }
+        },
+        {
+          "kind": "addButton",
+          "name": "Outdent",
+          "toolbar": "indent,10",
+          "location": {
+            "path": "editor/js/vendor/ckeditor/ckeditor.js",
+            "line": 963,
+            "revision": "4d6d12ba41f91c9c116355e2805244a371720fdf"
+          }
+        }
+      ],
+      "location": {
+        "path": "editor/js/vendor/ckeditor/ckeditor.js",
+        "line": 962,
+        "revision": "4d6d12ba41f91c9c116355e2805244a371720fdf"
+      }
+    },
+    {
+      "name": "indentblock",
+      "declaredBy": "bundled-default",
+      "requires": [
+        "indent"
+      ],
+      "ui": [],
+      "location": {
+        "path": "editor/js/vendor/ckeditor/ckeditor.js",
+        "line": 968,
+        "revision": "4d6d12ba41f91c9c116355e2805244a371720fdf"
+      }
+    },
+    {
+      "name": "indentlist",
+      "declaredBy": "bundled-default",
+      "requires": [
+        "indent"
+      ],
+      "ui": [],
+      "location": {
+        "path": "editor/js/vendor/ckeditor/ckeditor.js",
+        "line": 976,
+        "revision": "4d6d12ba41f91c9c116355e2805244a371720fdf"
+      }
+    },
+    {
+      "name": "justify",
+      "declaredBy": "bundled-default",
+      "requires": [],
+      "ui": [
+        {
+          "kind": "addButton",
+          "name": "JustifyLeft",
+          "toolbar": "align,10",
+          "location": {
+            "path": "editor/js/vendor/ckeditor/ckeditor.js",
+            "line": 985,
+            "revision": "4d6d12ba41f91c9c116355e2805244a371720fdf"
+          }
+        },
+        {
+          "kind": "addButton",
+          "name": "JustifyCenter",
+          "toolbar": "align,20",
+          "location": {
+            "path": "editor/js/vendor/ckeditor/ckeditor.js",
+            "line": 985,
+            "revision": "4d6d12ba41f91c9c116355e2805244a371720fdf"
+          }
+        },
+        {
+          "kind": "addButton",
+          "name": "JustifyRight",
+          "toolbar": "align,30",
+          "location": {
+            "path": "editor/js/vendor/ckeditor/ckeditor.js",
+            "line": 985,
+            "revision": "4d6d12ba41f91c9c116355e2805244a371720fdf"
+          }
+        },
+        {
+          "kind": "addButton",
+          "name": "JustifyBlock",
+          "toolbar": "align,40",
+          "location": {
+            "path": "editor/js/vendor/ckeditor/ckeditor.js",
+            "line": 986,
+            "revision": "4d6d12ba41f91c9c116355e2805244a371720fdf"
+          }
+        }
+      ],
+      "location": {
+        "path": "editor/js/vendor/ckeditor/ckeditor.js",
+        "line": 984,
+        "revision": "4d6d12ba41f91c9c116355e2805244a371720fdf"
+      }
+    },
+    {
+      "name": "language",
+      "declaredBy": "bundled-default",
+      "requires": [
+        "menubutton"
+      ],
+      "ui": [],
+      "location": {
+        "path": "editor/js/vendor/ckeditor/ckeditor.js",
+        "line": 988,
+        "revision": "4d6d12ba41f91c9c116355e2805244a371720fdf"
+      }
+    },
+    {
+      "name": "lineheight",
+      "declaredBy": "extraPlugins",
+      "requires": [
+        "richcombo"
+      ],
+      "ui": [],
+      "location": {
+        "path": "editor/js/vendor/ckeditor/plugins/lineheight/plugin.js",
+        "line": 65,
+        "revision": "4d6d12ba41f91c9c116355e2805244a371720fdf"
+      }
+    },
+    {
+      "name": "lineutils",
+      "declaredBy": "bundled-default",
+      "requires": [],
+      "ui": [],
+      "location": {
+        "path": "editor/js/vendor/ckeditor/ckeditor.js",
+        "line": 1246,
+        "revision": "4d6d12ba41f91c9c116355e2805244a371720fdf"
+      }
+    },
+    {
+      "name": "link",
+      "declaredBy": "bundled-default",
+      "requires": [
+        "dialog",
+        "fakeobjects"
+      ],
+      "ui": [
+        {
+          "kind": "addButton",
+          "name": "Link",
+          "toolbar": "links,10",
+          "location": {
+            "path": "editor/js/vendor/ckeditor/ckeditor.js",
+            "line": 994,
+            "revision": "4d6d12ba41f91c9c116355e2805244a371720fdf"
+          }
+        },
+        {
+          "kind": "addButton",
+          "name": "Unlink",
+          "toolbar": "links,20",
+          "location": {
+            "path": "editor/js/vendor/ckeditor/ckeditor.js",
+            "line": 995,
+            "revision": "4d6d12ba41f91c9c116355e2805244a371720fdf"
+          }
+        },
+        {
+          "kind": "addButton",
+          "name": "Anchor",
+          "toolbar": "links,30",
+          "location": {
+            "path": "editor/js/vendor/ckeditor/ckeditor.js",
+            "line": 995,
+            "revision": "4d6d12ba41f91c9c116355e2805244a371720fdf"
+          }
+        }
+      ],
+      "location": {
+        "path": "editor/js/vendor/ckeditor/ckeditor.js",
+        "line": 992,
+        "revision": "4d6d12ba41f91c9c116355e2805244a371720fdf"
+      }
+    },
+    {
+      "name": "list",
+      "declaredBy": "bundled-default",
+      "requires": [
+        "indentlist"
+      ],
+      "ui": [
+        {
+          "kind": "addButton",
+          "name": "NumberedList",
+          "toolbar": "list,10",
+          "location": {
+            "path": "editor/js/vendor/ckeditor/ckeditor.js",
+            "line": 1032,
+            "revision": "4d6d12ba41f91c9c116355e2805244a371720fdf"
+          }
+        },
+        {
+          "kind": "addButton",
+          "name": "BulletedList",
+          "toolbar": "list,20",
+          "location": {
+            "path": "editor/js/vendor/ckeditor/ckeditor.js",
+            "line": 1032,
+            "revision": "4d6d12ba41f91c9c116355e2805244a371720fdf"
+          }
+        }
+      ],
+      "location": {
+        "path": "editor/js/vendor/ckeditor/ckeditor.js",
+        "line": 1032,
+        "revision": "4d6d12ba41f91c9c116355e2805244a371720fdf"
+      }
+    },
+    {
+      "name": "listblock",
+      "declaredBy": "bundled-default",
+      "requires": [
+        "panel"
+      ],
+      "ui": [],
+      "location": {
+        "path": "editor/js/vendor/ckeditor/ckeditor.js",
+        "line": 899,
+        "revision": "4d6d12ba41f91c9c116355e2805244a371720fdf"
+      }
+    },
+    {
+      "name": "liststyle",
+      "declaredBy": "bundled-default",
+      "requires": [],
+      "ui": [],
+      "location": {
+        "path": "editor/js/vendor/ckeditor/ckeditor.js",
+        "line": 1039,
+        "revision": "4d6d12ba41f91c9c116355e2805244a371720fdf"
+      }
+    },
+    {
+      "name": "magicline",
+      "declaredBy": "bundled-default",
+      "requires": [],
+      "ui": [],
+      "location": {
+        "path": "editor/js/vendor/ckeditor/ckeditor.js",
+        "line": 1057,
+        "revision": "4d6d12ba41f91c9c116355e2805244a371720fdf"
+      }
+    },
+    {
+      "name": "markTag",
+      "declaredBy": "extraPlugins",
+      "requires": [],
+      "ui": [
+        {
+          "kind": "addButton",
+          "name": "Mark",
+          "toolbar": "basicstyles",
+          "location": {
+            "path": "editor/js/vendor/ckeditor/plugins/markTag/plugin.js",
+            "line": 26,
+            "revision": "4d6d12ba41f91c9c116355e2805244a371720fdf"
+          }
+        }
+      ],
+      "location": {
+        "path": "editor/js/vendor/ckeditor/plugins/markTag/plugin.js",
+        "line": 7,
+        "revision": "4d6d12ba41f91c9c116355e2805244a371720fdf"
+      }
+    },
+    {
+      "name": "maximize",
+      "declaredBy": "bundled-default",
+      "requires": [],
+      "ui": [
+        {
+          "kind": "addButton",
+          "name": "Maximize",
+          "toolbar": "tools,10",
+          "location": {
+            "path": "editor/js/vendor/ckeditor/ckeditor.js",
+            "line": 1075,
+            "revision": "4d6d12ba41f91c9c116355e2805244a371720fdf"
+          }
+        }
+      ],
+      "location": {
+        "path": "editor/js/vendor/ckeditor/ckeditor.js",
+        "line": 1070,
+        "revision": "4d6d12ba41f91c9c116355e2805244a371720fdf"
+      }
+    },
+    {
+      "name": "menu",
+      "declaredBy": "bundled-default",
+      "requires": [
+        "floatpanel"
+      ],
+      "ui": [],
+      "location": {
+        "path": "editor/js/vendor/ckeditor/ckeditor.js",
+        "line": 799,
+        "revision": "4d6d12ba41f91c9c116355e2805244a371720fdf"
+      }
+    },
+    {
+      "name": "menubutton",
+      "declaredBy": "bundled-default",
+      "requires": [
+        "button",
+        "menu"
+      ],
+      "ui": [],
+      "location": {
+        "path": "editor/js/vendor/ckeditor/ckeditor.js",
+        "line": 986,
+        "revision": "4d6d12ba41f91c9c116355e2805244a371720fdf"
+      }
+    },
+    {
+      "name": "newpage",
+      "declaredBy": "bundled-default",
+      "requires": [],
+      "ui": [
+        {
+          "kind": "addButton",
+          "name": "NewPage",
+          "toolbar": "document,20",
+          "location": {
+            "path": "editor/js/vendor/ckeditor/ckeditor.js",
+            "line": 1076,
+            "revision": "4d6d12ba41f91c9c116355e2805244a371720fdf"
+          }
+        }
+      ],
+      "location": {
+        "path": "editor/js/vendor/ckeditor/ckeditor.js",
+        "line": 1076,
+        "revision": "4d6d12ba41f91c9c116355e2805244a371720fdf"
+      }
+    },
+    {
+      "name": "notification",
+      "declaredBy": "bundled-default",
+      "requires": [],
+      "ui": [],
+      "location": {
+        "path": "editor/js/vendor/ckeditor/ckeditor.js",
+        "line": 673,
+        "revision": "4d6d12ba41f91c9c116355e2805244a371720fdf"
+      }
+    },
+    {
+      "name": "notificationaggregator",
+      "declaredBy": "bundled-default",
+      "requires": [
+        "notification"
+      ],
+      "ui": [],
+      "location": {
+        "path": "editor/js/vendor/ckeditor/ckeditor.js",
+        "line": 1326,
+        "revision": "4d6d12ba41f91c9c116355e2805244a371720fdf"
+      }
+    },
+    {
+      "name": "numericinput",
+      "declaredBy": "extraPlugins",
+      "requires": [
+        "dialogui"
+      ],
+      "ui": [],
+      "location": {
+        "path": "editor/js/vendor/ckeditor/plugins/numericinput/plugin.js",
+        "line": 16,
+        "revision": "4d6d12ba41f91c9c116355e2805244a371720fdf"
+      }
+    },
+    {
+      "name": "oembed",
+      "declaredBy": "extraPlugins",
+      "requires": [
+        "widget",
+        "dialog"
+      ],
+      "ui": [
+        {
+          "kind": "addButton",
+          "name": "oembed",
+          "toolbar": "insert,10",
+          "location": {
+            "path": "editor/js/vendor/ckeditor/plugins/oembed/plugin.js",
+            "line": 121,
+            "revision": "4d6d12ba41f91c9c116355e2805244a371720fdf"
+          }
+        }
+      ],
+      "location": {
+        "path": "editor/js/vendor/ckeditor/plugins/oembed/plugin.js",
+        "line": 9,
+        "revision": "4d6d12ba41f91c9c116355e2805244a371720fdf"
+      }
+    },
+    {
+      "name": "pagebreak",
+      "declaredBy": "bundled-default",
+      "requires": [
+        "fakeobjects"
+      ],
+      "ui": [
+        {
+          "kind": "addButton",
+          "name": "PageBreak",
+          "toolbar": "insert,70",
+          "location": {
+            "path": "editor/js/vendor/ckeditor/ckeditor.js",
+            "line": 1077,
+            "revision": "4d6d12ba41f91c9c116355e2805244a371720fdf"
+          }
+        }
+      ],
+      "location": {
+        "path": "editor/js/vendor/ckeditor/ckeditor.js",
+        "line": 1076,
+        "revision": "4d6d12ba41f91c9c116355e2805244a371720fdf"
+      }
+    },
+    {
+      "name": "panel",
+      "declaredBy": "bundled-default",
+      "requires": [],
+      "ui": [],
+      "location": {
+        "path": "editor/js/vendor/ckeditor/ckeditor.js",
+        "line": 762,
+        "revision": "4d6d12ba41f91c9c116355e2805244a371720fdf"
+      }
+    },
+    {
+      "name": "panelbutton",
+      "declaredBy": "bundled-default",
+      "requires": [
+        "button"
+      ],
+      "ui": [],
+      "location": {
+        "path": "editor/js/vendor/ckeditor/ckeditor.js",
+        "line": 759,
+        "revision": "4d6d12ba41f91c9c116355e2805244a371720fdf"
+      }
+    },
+    {
+      "name": "pastefromword",
+      "declaredBy": "bundled-default",
+      "requires": [
+        "clipboard"
+      ],
+      "ui": [],
+      "location": {
+        "path": "editor/js/vendor/ckeditor/ckeditor.js",
+        "line": 1081,
+        "revision": "4d6d12ba41f91c9c116355e2805244a371720fdf"
+      }
+    },
+    {
+      "name": "pastetext",
+      "declaredBy": "bundled-default",
+      "requires": [
+        "clipboard"
+      ],
+      "ui": [],
+      "location": {
+        "path": "editor/js/vendor/ckeditor/ckeditor.js",
+        "line": 1080,
+        "revision": "4d6d12ba41f91c9c116355e2805244a371720fdf"
+      }
+    },
+    {
+      "name": "popup",
+      "declaredBy": "bundled-default",
+      "requires": [],
+      "ui": [],
+      "location": {
+        "path": "editor/js/vendor/ckeditor/ckeditor.js",
+        "line": 868,
+        "revision": "4d6d12ba41f91c9c116355e2805244a371720fdf"
+      }
+    },
+    {
+      "name": "preview",
+      "declaredBy": "bundled-default",
+      "requires": [],
+      "ui": [
+        {
+          "kind": "addButton",
+          "name": "Preview",
+          "toolbar": "document,40",
+          "location": {
+            "path": "editor/js/vendor/ckeditor/ckeditor.js",
+            "line": 1088,
+            "revision": "4d6d12ba41f91c9c116355e2805244a371720fdf"
+          }
+        }
+      ],
+      "location": {
+        "path": "editor/js/vendor/ckeditor/ckeditor.js",
+        "line": 1088,
+        "revision": "4d6d12ba41f91c9c116355e2805244a371720fdf"
+      }
+    },
+    {
+      "name": "print",
+      "declaredBy": "bundled-default",
+      "requires": [],
+      "ui": [
+        {
+          "kind": "addButton",
+          "name": "Print",
+          "toolbar": "document,50",
+          "location": {
+            "path": "editor/js/vendor/ckeditor/ckeditor.js",
+            "line": 1088,
+            "revision": "4d6d12ba41f91c9c116355e2805244a371720fdf"
+          }
+        }
+      ],
+      "location": {
+        "path": "editor/js/vendor/ckeditor/ckeditor.js",
+        "line": 1088,
+        "revision": "4d6d12ba41f91c9c116355e2805244a371720fdf"
+      }
+    },
+    {
+      "name": "removeformat",
+      "declaredBy": "bundled-default",
+      "requires": [],
+      "ui": [
+        {
+          "kind": "addButton",
+          "name": "RemoveFormat",
+          "toolbar": "cleanup,10",
+          "location": {
+            "path": "editor/js/vendor/ckeditor/ckeditor.js",
+            "line": 1088,
+            "revision": "4d6d12ba41f91c9c116355e2805244a371720fdf"
+          }
+        }
+      ],
+      "location": {
+        "path": "editor/js/vendor/ckeditor/ckeditor.js",
+        "line": 1088,
+        "revision": "4d6d12ba41f91c9c116355e2805244a371720fdf"
+      }
+    },
+    {
+      "name": "resize",
+      "declaredBy": "bundled-default",
+      "requires": [],
+      "ui": [],
+      "location": {
+        "path": "editor/js/vendor/ckeditor/ckeditor.js",
+        "line": 844,
+        "revision": "4d6d12ba41f91c9c116355e2805244a371720fdf"
+      }
+    },
+    {
+      "name": "richcombo",
+      "declaredBy": "bundled-default",
+      "requires": [
+        "floatpanel",
+        "listblock",
+        "button"
+      ],
+      "ui": [],
+      "location": {
+        "path": "editor/js/vendor/ckeditor/ckeditor.js",
+        "line": 907,
+        "revision": "4d6d12ba41f91c9c116355e2805244a371720fdf"
+      }
+    },
+    {
+      "name": "rubytext",
+      "declaredBy": "extraPlugins",
+      "requires": [],
+      "ui": [
+        {
+          "kind": "addButton",
+          "name": "rubytext",
+          "toolbar": "basicstyles",
+          "location": {
+            "path": "editor/js/vendor/ckeditor/plugins/rubytext/plugin.js",
+            "line": 28,
+            "revision": "4d6d12ba41f91c9c116355e2805244a371720fdf"
+          }
+        }
+      ],
+      "location": {
+        "path": "editor/js/vendor/ckeditor/plugins/rubytext/plugin.js",
+        "line": 14,
+        "revision": "4d6d12ba41f91c9c116355e2805244a371720fdf"
+      }
+    },
+    {
+      "name": "save",
+      "declaredBy": "bundled-default",
+      "requires": [],
+      "ui": [
+        {
+          "kind": "addButton",
+          "name": "Save",
+          "toolbar": "document,10",
+          "location": {
+            "path": "editor/js/vendor/ckeditor/ckeditor.js",
+            "line": 1092,
+            "revision": "4d6d12ba41f91c9c116355e2805244a371720fdf"
+          }
+        }
+      ],
+      "location": {
+        "path": "editor/js/vendor/ckeditor/ckeditor.js",
+        "line": 1092,
+        "revision": "4d6d12ba41f91c9c116355e2805244a371720fdf"
+      }
+    },
+    {
+      "name": "scayt",
+      "declaredBy": "bundled-default",
+      "requires": [
+        "menubutton",
+        "dialog"
+      ],
+      "ui": [],
+      "location": {
+        "path": "editor/js/vendor/ckeditor/ckeditor.js",
+        "line": 1106,
+        "revision": "4d6d12ba41f91c9c116355e2805244a371720fdf"
+      }
+    },
+    {
+      "name": "selectall",
+      "declaredBy": "bundled-default",
+      "requires": [],
+      "ui": [
+        {
+          "kind": "addButton",
+          "name": "SelectAll",
+          "toolbar": "selection,10",
+          "location": {
+            "path": "editor/js/vendor/ckeditor/ckeditor.js",
+            "line": 1093,
+            "revision": "4d6d12ba41f91c9c116355e2805244a371720fdf"
+          }
+        }
+      ],
+      "location": {
+        "path": "editor/js/vendor/ckeditor/ckeditor.js",
+        "line": 1092,
+        "revision": "4d6d12ba41f91c9c116355e2805244a371720fdf"
+      }
+    },
+    {
+      "name": "showblocks",
+      "declaredBy": "bundled-default",
+      "requires": [],
+      "ui": [
+        {
+          "kind": "addButton",
+          "name": "ShowBlocks",
+          "toolbar": "tools,20",
+          "location": {
+            "path": "editor/js/vendor/ckeditor/ckeditor.js",
+            "line": 1096,
+            "revision": "4d6d12ba41f91c9c116355e2805244a371720fdf"
+          }
+        }
+      ],
+      "location": {
+        "path": "editor/js/vendor/ckeditor/ckeditor.js",
+        "line": 1093,
+        "revision": "4d6d12ba41f91c9c116355e2805244a371720fdf"
+      }
+    },
+    {
+      "name": "showborders",
+      "declaredBy": "bundled-default",
+      "requires": [],
+      "ui": [],
+      "location": {
+        "path": "editor/js/vendor/ckeditor/ckeditor.js",
+        "line": 1096,
+        "revision": "4d6d12ba41f91c9c116355e2805244a371720fdf"
+      }
+    },
+    {
+      "name": "smiley",
+      "declaredBy": "bundled-default",
+      "requires": [
+        "dialog"
+      ],
+      "ui": [
+        {
+          "kind": "addButton",
+          "name": "Smiley",
+          "toolbar": "insert,50",
+          "location": {
+            "path": "editor/js/vendor/ckeditor/ckeditor.js",
+            "line": 978,
+            "revision": "4d6d12ba41f91c9c116355e2805244a371720fdf"
+          }
+        }
+      ],
+      "location": {
+        "path": "editor/js/vendor/ckeditor/ckeditor.js",
+        "line": 978,
+        "revision": "4d6d12ba41f91c9c116355e2805244a371720fdf"
+      }
+    },
+    {
+      "name": "sourcearea",
+      "declaredBy": "bundled-default",
+      "requires": [],
+      "ui": [
+        {
+          "kind": "addButton",
+          "name": "Source",
+          "toolbar": "mode,10",
+          "location": {
+            "path": "editor/js/vendor/ckeditor/ckeditor.js",
+            "line": 1102,
+            "revision": "4d6d12ba41f91c9c116355e2805244a371720fdf"
+          }
+        }
+      ],
+      "location": {
+        "path": "editor/js/vendor/ckeditor/ckeditor.js",
+        "line": 1100,
+        "revision": "4d6d12ba41f91c9c116355e2805244a371720fdf"
+      }
+    },
+    {
+      "name": "sourcedialog",
+      "declaredBy": "inline-extraPlugins",
+      "requires": [
+        "dialog"
+      ],
+      "ui": [
+        {
+          "kind": "addButton",
+          "name": "Sourcedialog",
+          "toolbar": "mode,10",
+          "location": {
+            "path": "editor/js/vendor/ckeditor/plugins/sourcedialog/plugin.js",
+            "line": 23,
+            "revision": "4d6d12ba41f91c9c116355e2805244a371720fdf"
+          }
+        }
+      ],
+      "location": {
+        "path": "editor/js/vendor/ckeditor/plugins/sourcedialog/plugin.js",
+        "line": 6,
+        "revision": "4d6d12ba41f91c9c116355e2805244a371720fdf"
+      }
+    },
+    {
+      "name": "specialchar",
+      "declaredBy": "bundled-default",
+      "requires": [
+        "dialog"
+      ],
+      "ui": [
+        {
+          "kind": "addButton",
+          "name": "SpecialChar",
+          "toolbar": "insert,50",
+          "location": {
+            "path": "editor/js/vendor/ckeditor/ckeditor.js",
+            "line": 1105,
+            "revision": "4d6d12ba41f91c9c116355e2805244a371720fdf"
+          }
+        }
+      ],
+      "location": {
+        "path": "editor/js/vendor/ckeditor/ckeditor.js",
+        "line": 1104,
+        "revision": "4d6d12ba41f91c9c116355e2805244a371720fdf"
+      }
+    },
+    {
+      "name": "stylescombo",
+      "declaredBy": "bundled-default",
+      "requires": [
+        "richcombo"
+      ],
+      "ui": [
+        {
+          "kind": "addRichCombo",
+          "name": "Styles",
+          "toolbar": "styles,10",
+          "location": {
+            "path": "editor/js/vendor/ckeditor/ckeditor.js",
+            "line": 1157,
+            "revision": "4d6d12ba41f91c9c116355e2805244a371720fdf"
+          }
+        }
+      ],
+      "location": {
+        "path": "editor/js/vendor/ckeditor/ckeditor.js",
+        "line": 1156,
+        "revision": "4d6d12ba41f91c9c116355e2805244a371720fdf"
+      }
+    },
+    {
+      "name": "tab",
+      "declaredBy": "bundled-default",
+      "requires": [],
+      "ui": [],
+      "location": {
+        "path": "editor/js/vendor/ckeditor/ckeditor.js",
+        "line": 1162,
+        "revision": "4d6d12ba41f91c9c116355e2805244a371720fdf"
+      }
+    },
+    {
+      "name": "table",
+      "declaredBy": "bundled-default",
+      "requires": [
+        "dialog"
+      ],
+      "ui": [
+        {
+          "kind": "addButton",
+          "name": "Table",
+          "toolbar": "insert,30",
+          "location": {
+            "path": "editor/js/vendor/ckeditor/ckeditor.js",
+            "line": 1169,
+            "revision": "4d6d12ba41f91c9c116355e2805244a371720fdf"
+          }
+        }
+      ],
+      "location": {
+        "path": "editor/js/vendor/ckeditor/ckeditor.js",
+        "line": 1166,
+        "revision": "4d6d12ba41f91c9c116355e2805244a371720fdf"
+      }
+    },
+    {
+      "name": "tableselection",
+      "declaredBy": "bundled-default",
+      "requires": [
+        "clipboard",
+        "tabletools"
+      ],
+      "ui": [],
+      "location": {
+        "path": "editor/js/vendor/ckeditor/ckeditor.js",
+        "line": 1221,
+        "revision": "4d6d12ba41f91c9c116355e2805244a371720fdf"
+      }
+    },
+    {
+      "name": "tabletools",
+      "declaredBy": "bundled-default",
+      "requires": [],
+      "ui": [],
+      "location": {
+        "path": "editor/js/vendor/ckeditor/ckeditor.js",
+        "line": 1197,
+        "revision": "4d6d12ba41f91c9c116355e2805244a371720fdf"
+      }
+    },
+    {
+      "name": "templates",
+      "declaredBy": "bundled-default",
+      "requires": [
+        "dialog"
+      ],
+      "ui": [
+        {
+          "kind": "addButton",
+          "name": "Templates",
+          "toolbar": "doctools,10",
+          "location": {
+            "path": "editor/js/vendor/ckeditor/ckeditor.js",
+            "line": 798,
+            "revision": "4d6d12ba41f91c9c116355e2805244a371720fdf"
+          }
+        }
+      ],
+      "location": {
+        "path": "editor/js/vendor/ckeditor/ckeditor.js",
+        "line": 798,
+        "revision": "4d6d12ba41f91c9c116355e2805244a371720fdf"
+      }
+    },
+    {
+      "name": "textmatch",
+      "declaredBy": "dependency",
+      "requires": [],
+      "ui": [],
+      "location": {
+        "path": "editor/js/vendor/ckeditor/plugins/textmatch/plugin.js",
+        "line": 10,
+        "revision": "4d6d12ba41f91c9c116355e2805244a371720fdf"
+      }
+    },
+    {
+      "name": "textwatcher",
+      "declaredBy": "dependency",
+      "requires": [],
+      "ui": [],
+      "location": {
+        "path": "editor/js/vendor/ckeditor/plugins/textwatcher/plugin.js",
+        "line": 10,
+        "revision": "4d6d12ba41f91c9c116355e2805244a371720fdf"
+      }
+    },
+    {
+      "name": "toolbar",
+      "declaredBy": "bundled-default",
+      "requires": [
+        "button"
+      ],
+      "ui": [],
+      "location": {
+        "path": "editor/js/vendor/ckeditor/ckeditor.js",
+        "line": 697,
+        "revision": "4d6d12ba41f91c9c116355e2805244a371720fdf"
+      }
+    },
+    {
+      "name": "undo",
+      "declaredBy": "bundled-default",
+      "requires": [],
+      "ui": [
+        {
+          "kind": "addButton",
+          "name": "Undo",
+          "toolbar": "undo,10",
+          "location": {
+            "path": "editor/js/vendor/ckeditor/ckeditor.js",
+            "line": 1226,
+            "revision": "4d6d12ba41f91c9c116355e2805244a371720fdf"
+          }
+        },
+        {
+          "kind": "addButton",
+          "name": "Redo",
+          "toolbar": "undo,20",
+          "location": {
+            "path": "editor/js/vendor/ckeditor/ckeditor.js",
+            "line": 1226,
+            "revision": "4d6d12ba41f91c9c116355e2805244a371720fdf"
+          }
+        }
+      ],
+      "location": {
+        "path": "editor/js/vendor/ckeditor/ckeditor.js",
+        "line": 1224,
+        "revision": "4d6d12ba41f91c9c116355e2805244a371720fdf"
+      }
+    },
+    {
+      "name": "uploadimage",
+      "declaredBy": "bundled-default",
+      "requires": [
+        "uploadwidget"
+      ],
+      "ui": [],
+      "location": {
+        "path": "editor/js/vendor/ckeditor/ckeditor.js",
+        "line": 1336,
+        "revision": "4d6d12ba41f91c9c116355e2805244a371720fdf"
+      }
+    },
+    {
+      "name": "uploadwidget",
+      "declaredBy": "bundled-default",
+      "requires": [
+        "widget",
+        "clipboard",
+        "filetools",
+        "notificationaggregator"
+      ],
+      "ui": [],
+      "location": {
+        "path": "editor/js/vendor/ckeditor/ckeditor.js",
+        "line": 1330,
+        "revision": "4d6d12ba41f91c9c116355e2805244a371720fdf"
+      }
+    },
+    {
+      "name": "widget",
+      "declaredBy": "bundled-default",
+      "requires": [
+        "lineutils",
+        "clipboard",
+        "widgetselection"
+      ],
+      "ui": [
+        {
+          "kind": "addButton",
+          "name": null,
+          "toolbar": "insert,10",
+          "location": {
+            "path": "editor/js/vendor/ckeditor/ckeditor.js",
+            "line": 1307,
+            "revision": "4d6d12ba41f91c9c116355e2805244a371720fdf"
+          },
+          "dynamicRegistration": "a.ui.addButton(CKEDITOR.tools.capitalize(c.name,!0),{label:e,command:c.name,toolbar:\"insert,10\"})"
+        }
+      ],
+      "location": {
+        "path": "editor/js/vendor/ckeditor/ckeditor.js",
+        "line": 1306,
+        "revision": "4d6d12ba41f91c9c116355e2805244a371720fdf"
+      }
+    },
+    {
+      "name": "widgetselection",
+      "declaredBy": "bundled-default",
+      "requires": [],
+      "ui": [],
+      "location": {
+        "path": "editor/js/vendor/ckeditor/ckeditor.js",
+        "line": 1259,
+        "revision": "4d6d12ba41f91c9c116355e2805244a371720fdf"
+      }
+    },
+    {
+      "name": "wrapstyle",
+      "declaredBy": "extraPlugins",
+      "requires": [],
+      "ui": [],
+      "location": {
+        "path": "editor/js/vendor/ckeditor/plugins/wrapstyle/plugin.js",
+        "line": 213,
+        "revision": "4d6d12ba41f91c9c116355e2805244a371720fdf"
+      }
+    },
+    {
+      "name": "wsc",
+      "declaredBy": "bundled-default",
+      "requires": [
+        "dialog"
+      ],
+      "ui": [
+        {
+          "kind": "addButton",
+          "name": "SpellChecker",
+          "toolbar": "spellchecker,10",
+          "location": {
+            "path": "editor/js/vendor/ckeditor/ckeditor.js",
+            "line": 1341,
+            "revision": "4d6d12ba41f91c9c116355e2805244a371720fdf"
+          }
+        }
+      ],
+      "location": {
+        "path": "editor/js/vendor/ckeditor/ckeditor.js",
+        "line": 1339,
+        "revision": "4d6d12ba41f91c9c116355e2805244a371720fdf"
+      }
+    },
+    {
+      "name": "wysiwygarea",
+      "declaredBy": "bundled-default",
+      "requires": [],
+      "ui": [],
+      "location": {
+        "path": "editor/js/vendor/ckeditor/ckeditor.js",
+        "line": 949,
+        "revision": "4d6d12ba41f91c9c116355e2805244a371720fdf"
+      }
+    },
+    {
+      "name": "xml",
+      "declaredBy": "dependency",
+      "requires": [],
+      "ui": [],
+      "location": {
+        "path": "editor/js/vendor/ckeditor/plugins/xml/plugin.js",
+        "line": 13,
+        "revision": "4d6d12ba41f91c9c116355e2805244a371720fdf"
+      }
+    },
+    {
+      "name": "xotcolumns",
+      "declaredBy": "extraPlugins",
+      "requires": [
+        "widget"
+      ],
+      "ui": [
+        {
+          "kind": "addButton",
+          "name": "xotcolumns",
+          "toolbar": "blocks,1",
+          "location": {
+            "path": "editor/js/vendor/ckeditor/plugins/xotcolumns/plugin.js",
+            "line": 82,
+            "revision": "4d6d12ba41f91c9c116355e2805244a371720fdf"
+          }
+        }
+      ],
+      "location": {
+        "path": "editor/js/vendor/ckeditor/plugins/xotcolumns/plugin.js",
+        "line": 46,
+        "revision": "4d6d12ba41f91c9c116355e2805244a371720fdf"
+      }
+    },
+    {
+      "name": "xotlightbox",
+      "declaredBy": "extraPlugins",
+      "requires": [],
+      "ui": [],
+      "location": {
+        "path": "editor/js/vendor/ckeditor/plugins/xotlightbox/plugin.js",
+        "line": 179,
+        "revision": "4d6d12ba41f91c9c116355e2805244a371720fdf"
+      }
+    },
+    {
+      "name": "xotlink",
+      "declaredBy": "extraPlugins",
+      "requires": [],
+      "ui": [
+        {
+          "kind": "addButton",
+          "name": "xotlink",
+          "toolbar": "links",
+          "location": {
+            "path": "editor/js/vendor/ckeditor/plugins/xotlink/plugin.js",
+            "line": 62,
+            "revision": "4d6d12ba41f91c9c116355e2805244a371720fdf"
+          }
+        }
+      ],
+      "location": {
+        "path": "editor/js/vendor/ckeditor/plugins/xotlink/plugin.js",
+        "line": 14,
+        "revision": "4d6d12ba41f91c9c116355e2805244a371720fdf"
+      }
+    },
+    {
+      "name": "xotmarkword",
+      "declaredBy": "extraPlugins",
+      "requires": [
+        "menu",
+        "contextmenu"
+      ],
+      "ui": [],
+      "location": {
+        "path": "editor/js/vendor/ckeditor/plugins/xotmarkword/plugin.js",
+        "line": 9,
+        "revision": "4d6d12ba41f91c9c116355e2805244a371720fdf"
+      }
+    },
+    {
+      "name": "xotrecorder",
+      "declaredBy": "extraPlugins",
+      "requires": [
+        "widget"
+      ],
+      "ui": [],
+      "location": {
+        "path": "editor/js/vendor/ckeditor/plugins/xotrecorder/plugin.js",
+        "line": 4,
+        "revision": "4d6d12ba41f91c9c116355e2805244a371720fdf"
+      }
+    }
+  ],
+  "legacyStyles": [
+    {
+      "name": "Italic Title",
+      "element": "h2",
+      "styles": {
+        "font-style": "italic"
+      }
+    },
+    {
+      "name": "Subtitle",
+      "element": "h3",
+      "styles": {
+        "color": "#aaa",
+        "font-style": "italic"
+      }
+    },
+    {
+      "name": "Special Container",
+      "element": "div",
+      "styles": {
+        "padding": "5px 10px",
+        "background": "#eee",
+        "color": "#000",
+        "border": "1px solid #ccc"
+      }
+    },
+    {
+      "name": "Panel 1",
+      "element": "span",
+      "attributes": {
+        "class": "panel1"
+      }
+    },
+    {
+      "name": "Panel 2",
+      "element": "span",
+      "attributes": {
+        "class": "panel2"
+      }
+    },
+    {
+      "name": "Panel 3",
+      "element": "span",
+      "attributes": {
+        "class": "panel3"
+      }
+    },
+    {
+      "name": "Panel 4",
+      "element": "span",
+      "attributes": {
+        "class": "panel4"
+      }
+    },
+    {
+      "name": "Panel 5",
+      "element": "span",
+      "attributes": {
+        "class": "panel5"
+      }
+    },
+    {
+      "name": "Panel 6",
+      "element": "span",
+      "attributes": {
+        "class": "panel6"
+      }
+    },
+    {
+      "name": "Highlight 1",
+      "element": "span",
+      "attributes": {
+        "class": "highlight1"
+      }
+    },
+    {
+      "name": "Highlight 2",
+      "element": "span",
+      "attributes": {
+        "class": "highlight2"
+      }
+    },
+    {
+      "name": "Highlight 3",
+      "element": "span",
+      "attributes": {
+        "class": "highlight3"
+      }
+    },
+    {
+      "name": "Highlight 4",
+      "element": "span",
+      "attributes": {
+        "class": "highlight4"
+      }
+    },
+    {
+      "name": "Highlight 5",
+      "element": "span",
+      "attributes": {
+        "class": "highlight5"
+      }
+    },
+    {
+      "name": "Highlight 6",
+      "element": "span",
+      "attributes": {
+        "class": "highlight6"
+      }
+    },
+    {
+      "name": "Blockquote 1",
+      "element": "blockquote",
+      "attributes": {
+        "class": "bq1"
+      }
+    },
+    {
+      "name": "Blockquote 2",
+      "element": "blockquote",
+      "attributes": {
+        "class": "bq2"
+      }
+    },
+    {
+      "name": "Blockquote 3",
+      "element": "blockquote",
+      "attributes": {
+        "class": "bq3"
+      }
+    },
+    {
+      "name": "Blockquote 4",
+      "element": "blockquote",
+      "attributes": {
+        "class": "bq4"
+      }
+    },
+    {
+      "name": "Blockquote 5",
+      "element": "blockquote",
+      "attributes": {
+        "class": "bq5"
+      }
+    },
+    {
+      "name": "Blockquote 6",
+      "element": "blockquote",
+      "attributes": {
+        "class": "bq6"
+      }
+    },
+    {
+      "name": "Speech Bubble 1",
+      "element": "div",
+      "wrap": true,
+      "attributes": {
+        "class": "speech-bubble1"
+      }
+    },
+    {
+      "name": "Speech Bubble 2",
+      "element": "div",
+      "wrap": true,
+      "attributes": {
+        "class": "speech-bubble2"
+      }
+    },
+    {
+      "name": "Speech Bubble 3",
+      "element": "div",
+      "wrap": true,
+      "attributes": {
+        "class": "speech-bubble3"
+      }
+    },
+    {
+      "name": "Speech Bubble 4",
+      "element": "div",
+      "wrap": true,
+      "attributes": {
+        "class": "speech-bubble4"
+      }
+    },
+    {
+      "name": "Speech Bubble 5",
+      "element": "div",
+      "wrap": true,
+      "attributes": {
+        "class": "speech-bubble5"
+      }
+    },
+    {
+      "name": "Speech Bubble 6",
+      "element": "div",
+      "wrap": true,
+      "attributes": {
+        "class": "speech-bubble6"
+      }
+    },
+    {
+      "name": "Marker",
+      "element": "span",
+      "attributes": {
+        "class": "marker"
+      }
+    },
+    {
+      "name": "Big",
+      "element": "big"
+    },
+    {
+      "name": "Small",
+      "element": "small"
+    },
+    {
+      "name": "Typewriter",
+      "element": "tt"
+    },
+    {
+      "name": "Computer Code",
+      "element": "code"
+    },
+    {
+      "name": "Keyboard Phrase",
+      "element": "kbd"
+    },
+    {
+      "name": "Sample Text",
+      "element": "samp"
+    },
+    {
+      "name": "Variable",
+      "element": "var"
+    },
+    {
+      "name": "Deleted Text",
+      "element": "del"
+    },
+    {
+      "name": "Inserted Text",
+      "element": "ins"
+    },
+    {
+      "name": "Cited Work",
+      "element": "cite"
+    },
+    {
+      "name": "Inline Quotation",
+      "element": "q"
+    },
+    {
+      "name": "Language: RTL",
+      "element": "span",
+      "attributes": {
+        "dir": "rtl"
+      }
+    },
+    {
+      "name": "Language: LTR",
+      "element": "span",
+      "attributes": {
+        "dir": "ltr"
+      }
+    },
+    {
+      "name": "Styled Image (left)",
+      "element": "img",
+      "attributes": {
+        "class": "left"
+      }
+    },
+    {
+      "name": "Styled Image (right)",
+      "element": "img",
+      "attributes": {
+        "class": "right"
+      }
+    },
+    {
+      "name": "Compact Table",
+      "element": "table",
+      "attributes": {
+        "cellpadding": "5",
+        "cellspacing": "0",
+        "border": "1",
+        "bordercolor": "#ccc"
+      },
+      "styles": {
+        "border-collapse": "collapse"
+      }
+    },
+    {
+      "name": "Borderless Table",
+      "element": "table",
+      "styles": {
+        "border-style": "hidden",
+        "background-color": "#E6E6FA"
+      }
+    },
+    {
+      "name": "Square Bulleted List",
+      "element": "ul",
+      "styles": {
+        "list-style-type": "square"
+      }
+    },
+    {
+      "name": "Clean Image",
+      "type": "widget",
+      "widget": "image",
+      "attributes": {
+        "class": "image-clean"
+      }
+    },
+    {
+      "name": "Grayscale Image",
+      "type": "widget",
+      "widget": "image",
+      "attributes": {
+        "class": "image-grayscale"
+      }
+    },
+    {
+      "name": "Featured Snippet",
+      "type": "widget",
+      "widget": "codeSnippet",
+      "attributes": {
+        "class": "code-featured"
+      }
+    },
+    {
+      "name": "Featured Formula",
+      "type": "widget",
+      "widget": "mathjax",
+      "attributes": {
+        "class": "math-featured"
+      }
+    },
+    {
+      "name": "240p",
+      "type": "widget",
+      "widget": "embedSemantic",
+      "attributes": {
+        "class": "embed-240p"
+      },
+      "group": "size"
+    },
+    {
+      "name": "360p",
+      "type": "widget",
+      "widget": "embedSemantic",
+      "attributes": {
+        "class": "embed-360p"
+      },
+      "group": "size"
+    },
+    {
+      "name": "480p",
+      "type": "widget",
+      "widget": "embedSemantic",
+      "attributes": {
+        "class": "embed-480p"
+      },
+      "group": "size"
+    },
+    {
+      "name": "720p",
+      "type": "widget",
+      "widget": "embedSemantic",
+      "attributes": {
+        "class": "embed-720p"
+      },
+      "group": "size"
+    },
+    {
+      "name": "1080p",
+      "type": "widget",
+      "widget": "embedSemantic",
+      "attributes": {
+        "class": "embed-1080p"
+      },
+      "group": "size"
+    },
+    {
+      "name": "240p ",
+      "type": "widget",
+      "widget": "embed",
+      "attributes": {
+        "class": "embed-240p"
+      },
+      "group": "size"
+    },
+    {
+      "name": "360p ",
+      "type": "widget",
+      "widget": "embed",
+      "attributes": {
+        "class": "embed-360p"
+      },
+      "group": "size"
+    },
+    {
+      "name": "480p ",
+      "type": "widget",
+      "widget": "embed",
+      "attributes": {
+        "class": "embed-480p"
+      },
+      "group": "size"
+    },
+    {
+      "name": "720p ",
+      "type": "widget",
+      "widget": "embed",
+      "attributes": {
+        "class": "embed-720p"
+      },
+      "group": "size"
+    },
+    {
+      "name": "1080p ",
+      "type": "widget",
+      "widget": "embed",
+      "attributes": {
+        "class": "embed-1080p"
+      },
+      "group": "size"
+    }
+  ],
+  "legacyIframe": {
+    "dialog": "editor/js/vendor/ckeditor/plugins/iframe/dialogs/iframe.js",
+    "explicitDialogFieldIds": [
+      "info",
+      "src",
+      "width",
+      "height",
+      "align",
+      "scrolling",
+      "frameborder",
+      "name",
+      "title",
+      "longdesc"
+    ],
+    "advancedTabFields": [
+      "id",
+      "classes",
+      "styles"
+    ]
+  },
+  "legacyOembed": {
+    "loadedFile": "editor/js/vendor/ckeditor/plugins/oembed/libs/jquery.oembed.min.js",
+    "declarationCount": 131,
+    "uniqueProviderCount": 128,
+    "providers": [
+      {
+        "name": "youtube",
+        "type": "video",
+        "urlPatterns": [
+          "youtube\\.com/watch.+v=[\\w-]+&?",
+          "youtu\\.be/[\\w-]+",
+          "youtube.com/embed"
+        ],
+        "endpointExpression": "e()+\"www.youtube.com/embed/$1?wmode=transparent\"",
+        "location": {
+          "path": "editor/js/vendor/ckeditor/plugins/oembed/libs/jquery.oembed.min.js",
+          "line": 10,
+          "revision": "4d6d12ba41f91c9c116355e2805244a371720fdf"
+        },
+        "currentProvider": "youtube",
+        "status": "same-name-provider-html-available-url-parity-unverified"
+      },
+      {
+        "name": "wistia",
+        "type": "video",
+        "urlPatterns": [
+          "wistia.com/medias/.+",
+          "wistia.com/m/.+",
+          "wistia.com/embed/.+",
+          "wi.st/m/.+",
+          "wi.st/embed/.+"
+        ],
+        "endpointExpression": "\"http://fast.wistia.com/oembed\"",
+        "location": {
+          "path": "editor/js/vendor/ckeditor/plugins/oembed/libs/jquery.oembed.min.js",
+          "line": 10,
+          "revision": "4d6d12ba41f91c9c116355e2805244a371720fdf"
+        },
+        "currentProvider": null,
+        "status": "no-same-name-provider"
+      },
+      {
+        "name": "xtranormal",
+        "type": "video",
+        "urlPatterns": [
+          "xtranormal\\.com/watch/.+"
+        ],
+        "endpointExpression": "\"http://www.xtranormal.com/xtraplayr/$1/$2\"",
+        "location": {
+          "path": "editor/js/vendor/ckeditor/plugins/oembed/libs/jquery.oembed.min.js",
+          "line": 10,
+          "revision": "4d6d12ba41f91c9c116355e2805244a371720fdf"
+        },
+        "currentProvider": null,
+        "status": "no-same-name-provider"
+      },
+      {
+        "name": "scivee",
+        "type": "video",
+        "urlPatterns": [
+          "scivee.tv/node/.+"
+        ],
+        "endpointExpression": "\"http://www.scivee.tv/flash/embedCast.swf?\"",
+        "location": {
+          "path": "editor/js/vendor/ckeditor/plugins/oembed/libs/jquery.oembed.min.js",
+          "line": 10,
+          "revision": "4d6d12ba41f91c9c116355e2805244a371720fdf"
+        },
+        "currentProvider": null,
+        "status": "no-same-name-provider"
+      },
+      {
+        "name": "veoh",
+        "type": "video",
+        "urlPatterns": [
+          "veoh.com/watch/.+"
+        ],
+        "endpointExpression": "\"http://www.veoh.com/swf/webplayer/WebPlayer.swf?version=AFrontend.5.7.0.1337&permalinkId=$1&player=videodetailsembedded&videoAutoPlay=0&id=anonymous\"",
+        "location": {
+          "path": "editor/js/vendor/ckeditor/plugins/oembed/libs/jquery.oembed.min.js",
+          "line": 10,
+          "revision": "4d6d12ba41f91c9c116355e2805244a371720fdf"
+        },
+        "currentProvider": null,
+        "status": "no-same-name-provider"
+      },
+      {
+        "name": "gametrailers",
+        "type": "video",
+        "urlPatterns": [
+          "gametrailers\\.com/video/.+"
+        ],
+        "endpointExpression": "\"http://media.mtvnservices.com/mgid:moses:video:gametrailers.com:$2\"",
+        "location": {
+          "path": "editor/js/vendor/ckeditor/plugins/oembed/libs/jquery.oembed.min.js",
+          "line": 10,
+          "revision": "4d6d12ba41f91c9c116355e2805244a371720fdf"
+        },
+        "currentProvider": null,
+        "status": "no-same-name-provider"
+      },
+      {
+        "name": "funnyordie",
+        "type": "video",
+        "urlPatterns": [
+          "funnyordie\\.com/videos/.+"
+        ],
+        "endpointExpression": "\"http://player.ordienetworks.com/flash/fodplayer.swf?\"",
+        "location": {
+          "path": "editor/js/vendor/ckeditor/plugins/oembed/libs/jquery.oembed.min.js",
+          "line": 10,
+          "revision": "4d6d12ba41f91c9c116355e2805244a371720fdf"
+        },
+        "currentProvider": null,
+        "status": "no-same-name-provider"
+      },
+      {
+        "name": "colledgehumour",
+        "type": "video",
+        "urlPatterns": [
+          "collegehumor\\.com/video/.+"
+        ],
+        "endpointExpression": "\"http://www.collegehumor.com/moogaloop/moogaloop.swf?clip_id=$1&use_node_id=true&fullscreen=1\"",
+        "location": {
+          "path": "editor/js/vendor/ckeditor/plugins/oembed/libs/jquery.oembed.min.js",
+          "line": 10,
+          "revision": "4d6d12ba41f91c9c116355e2805244a371720fdf"
+        },
+        "currentProvider": null,
+        "status": "no-same-name-provider"
+      },
+      {
+        "name": "metacafe",
+        "type": "video",
+        "urlPatterns": [
+          "metacafe\\.com/watch/.+"
+        ],
+        "endpointExpression": "\"http://www.metacafe.com/fplayer/$1/$2.swf\"",
+        "location": {
+          "path": "editor/js/vendor/ckeditor/plugins/oembed/libs/jquery.oembed.min.js",
+          "line": 10,
+          "revision": "4d6d12ba41f91c9c116355e2805244a371720fdf"
+        },
+        "currentProvider": null,
+        "status": "no-same-name-provider"
+      },
+      {
+        "name": "bambuser",
+        "type": "video",
+        "urlPatterns": [
+          "bambuser\\.com/channel/.*/broadcast/.*"
+        ],
+        "endpointExpression": "\"http://static.bambuser.com/r/player.swf?vid=$1\"",
+        "location": {
+          "path": "editor/js/vendor/ckeditor/plugins/oembed/libs/jquery.oembed.min.js",
+          "line": 10,
+          "revision": "4d6d12ba41f91c9c116355e2805244a371720fdf"
+        },
+        "currentProvider": null,
+        "status": "no-same-name-provider"
+      },
+      {
+        "name": "twitvid",
+        "type": "video",
+        "urlPatterns": [
+          "twitvid\\.com/.+"
+        ],
+        "endpointExpression": "\"http://www.twitvid.com/embed.php?guid=$1&autoplay=0\"",
+        "location": {
+          "path": "editor/js/vendor/ckeditor/plugins/oembed/libs/jquery.oembed.min.js",
+          "line": 10,
+          "revision": "4d6d12ba41f91c9c116355e2805244a371720fdf"
+        },
+        "currentProvider": null,
+        "status": "no-same-name-provider"
+      },
+      {
+        "name": "aniboom",
+        "type": "video",
+        "urlPatterns": [
+          "aniboom\\.com/animation-video/.+"
+        ],
+        "endpointExpression": "\"http://api.aniboom.com/e/$1\"",
+        "location": {
+          "path": "editor/js/vendor/ckeditor/plugins/oembed/libs/jquery.oembed.min.js",
+          "line": 10,
+          "revision": "4d6d12ba41f91c9c116355e2805244a371720fdf"
+        },
+        "currentProvider": null,
+        "status": "no-same-name-provider"
+      },
+      {
+        "name": "vzaar",
+        "type": "video",
+        "urlPatterns": [
+          "vzaar\\.com/videos/.+",
+          "vzaar.tv/.+"
+        ],
+        "endpointExpression": "\"http://view.vzaar.com/$1/player?\"",
+        "location": {
+          "path": "editor/js/vendor/ckeditor/plugins/oembed/libs/jquery.oembed.min.js",
+          "line": 10,
+          "revision": "4d6d12ba41f91c9c116355e2805244a371720fdf"
+        },
+        "currentProvider": null,
+        "status": "no-same-name-provider"
+      },
+      {
+        "name": "snotr",
+        "type": "video",
+        "urlPatterns": [
+          "snotr\\.com/video/.+"
+        ],
+        "endpointExpression": "\"http://www.snotr.com/embed/$1\"",
+        "location": {
+          "path": "editor/js/vendor/ckeditor/plugins/oembed/libs/jquery.oembed.min.js",
+          "line": 10,
+          "revision": "4d6d12ba41f91c9c116355e2805244a371720fdf"
+        },
+        "currentProvider": null,
+        "status": "no-same-name-provider"
+      },
+      {
+        "name": "youku",
+        "type": "video",
+        "urlPatterns": [
+          "v.youku.com/v_show/id_.+"
+        ],
+        "endpointExpression": "\"http://player.youku.com/player.php/sid/$1/v.swf\"",
+        "location": {
+          "path": "editor/js/vendor/ckeditor/plugins/oembed/libs/jquery.oembed.min.js",
+          "line": 10,
+          "revision": "4d6d12ba41f91c9c116355e2805244a371720fdf"
+        },
+        "currentProvider": null,
+        "status": "no-same-name-provider"
+      },
+      {
+        "name": "tudou",
+        "type": "video",
+        "urlPatterns": [
+          "tudou.com/programs/view/.+/"
+        ],
+        "endpointExpression": "\"http://www.tudou.com/v/$1/v.swf\"",
+        "location": {
+          "path": "editor/js/vendor/ckeditor/plugins/oembed/libs/jquery.oembed.min.js",
+          "line": 10,
+          "revision": "4d6d12ba41f91c9c116355e2805244a371720fdf"
+        },
+        "currentProvider": null,
+        "status": "no-same-name-provider"
+      },
+      {
+        "name": "embedr",
+        "type": "video",
+        "urlPatterns": [
+          "embedr\\.com/playlist/.+"
+        ],
+        "endpointExpression": "\"http://embedr.com/swf/slider/$1/425/520/default/false/std?\"",
+        "location": {
+          "path": "editor/js/vendor/ckeditor/plugins/oembed/libs/jquery.oembed.min.js",
+          "line": 10,
+          "revision": "4d6d12ba41f91c9c116355e2805244a371720fdf"
+        },
+        "currentProvider": null,
+        "status": "no-same-name-provider"
+      },
+      {
+        "name": "blip",
+        "type": "video",
+        "urlPatterns": [
+          "blip\\.tv/.+"
+        ],
+        "endpointExpression": "e()+\"blip.tv/oembed/\"",
+        "location": {
+          "path": "editor/js/vendor/ckeditor/plugins/oembed/libs/jquery.oembed.min.js",
+          "line": 10,
+          "revision": "4d6d12ba41f91c9c116355e2805244a371720fdf"
+        },
+        "currentProvider": null,
+        "status": "no-same-name-provider"
+      },
+      {
+        "name": "minoto-video",
+        "type": "video",
+        "urlPatterns": [
+          "http://api.minoto-video.com/publishers/.+/videos/.+",
+          "http://dashboard.minoto-video.com/main/video/details/.+",
+          "http://embed.minoto-video.com/.+"
+        ],
+        "endpointExpression": "\"http://api.minoto-video.com/services/oembed.json\"",
+        "location": {
+          "path": "editor/js/vendor/ckeditor/plugins/oembed/libs/jquery.oembed.min.js",
+          "line": 10,
+          "revision": "4d6d12ba41f91c9c116355e2805244a371720fdf"
+        },
+        "currentProvider": null,
+        "status": "no-same-name-provider"
+      },
+      {
+        "name": "animoto",
+        "type": "video",
+        "urlPatterns": [
+          "animoto.com/play/.+"
+        ],
+        "endpointExpression": "\"http://animoto.com/services/oembed\"",
+        "location": {
+          "path": "editor/js/vendor/ckeditor/plugins/oembed/libs/jquery.oembed.min.js",
+          "line": 10,
+          "revision": "4d6d12ba41f91c9c116355e2805244a371720fdf"
+        },
+        "currentProvider": null,
+        "status": "no-same-name-provider"
+      },
+      {
+        "name": "hulu",
+        "type": "video",
+        "urlPatterns": [
+          "hulu\\.com/watch/.*"
+        ],
+        "endpointExpression": "e()+\"www.hulu.com/api/oembed.json\"",
+        "location": {
+          "path": "editor/js/vendor/ckeditor/plugins/oembed/libs/jquery.oembed.min.js",
+          "line": 10,
+          "revision": "4d6d12ba41f91c9c116355e2805244a371720fdf"
+        },
+        "currentProvider": null,
+        "status": "no-same-name-provider"
+      },
+      {
+        "name": "ustream",
+        "type": "video",
+        "urlPatterns": [
+          "ustream\\.tv/recorded/.*"
+        ],
+        "endpointExpression": "\"http://www.ustream.tv/oembed\"",
+        "location": {
+          "path": "editor/js/vendor/ckeditor/plugins/oembed/libs/jquery.oembed.min.js",
+          "line": 10,
+          "revision": "4d6d12ba41f91c9c116355e2805244a371720fdf"
+        },
+        "currentProvider": null,
+        "status": "no-same-name-provider"
+      },
+      {
+        "name": "videojug",
+        "type": "video",
+        "urlPatterns": [
+          "videojug\\.com/(film|payer|interview).*"
+        ],
+        "endpointExpression": "\"http://www.videojug.com/oembed.json\"",
+        "location": {
+          "path": "editor/js/vendor/ckeditor/plugins/oembed/libs/jquery.oembed.min.js",
+          "line": 10,
+          "revision": "4d6d12ba41f91c9c116355e2805244a371720fdf"
+        },
+        "currentProvider": null,
+        "status": "no-same-name-provider"
+      },
+      {
+        "name": "sapo",
+        "type": "video",
+        "urlPatterns": [
+          "videos\\.sapo\\.pt/.*"
+        ],
+        "endpointExpression": "\"http://videos.sapo.pt/oembed\"",
+        "location": {
+          "path": "editor/js/vendor/ckeditor/plugins/oembed/libs/jquery.oembed.min.js",
+          "line": 10,
+          "revision": "4d6d12ba41f91c9c116355e2805244a371720fdf"
+        },
+        "currentProvider": null,
+        "status": "no-same-name-provider"
+      },
+      {
+        "name": "vodpod",
+        "type": "video",
+        "urlPatterns": [
+          "vodpod.com/watch/.*"
+        ],
+        "endpointExpression": "\"http://vodpod.com/oembed.js\"",
+        "location": {
+          "path": "editor/js/vendor/ckeditor/plugins/oembed/libs/jquery.oembed.min.js",
+          "line": 10,
+          "revision": "4d6d12ba41f91c9c116355e2805244a371720fdf"
+        },
+        "currentProvider": null,
+        "status": "no-same-name-provider"
+      },
+      {
+        "name": "vimeo",
+        "type": "video",
+        "urlPatterns": [
+          "www.vimeo.com/groups/.*/videos/.*",
+          "www.vimeo.com/.*",
+          "vimeo.com/groups/.*/videos/.*",
+          "vimeo.com/.*"
+        ],
+        "endpointExpression": "e()+\"vimeo.com/api/oembed.json\"",
+        "location": {
+          "path": "editor/js/vendor/ckeditor/plugins/oembed/libs/jquery.oembed.min.js",
+          "line": 10,
+          "revision": "4d6d12ba41f91c9c116355e2805244a371720fdf"
+        },
+        "currentProvider": "vimeo",
+        "status": "same-name-provider-html-available-url-parity-unverified"
+      },
+      {
+        "name": "dailymotion",
+        "type": "video",
+        "urlPatterns": [
+          "dailymotion\\.com/.+"
+        ],
+        "endpointExpression": "e()+\"www.dailymotion.com/services/oembed\"",
+        "location": {
+          "path": "editor/js/vendor/ckeditor/plugins/oembed/libs/jquery.oembed.min.js",
+          "line": 10,
+          "revision": "4d6d12ba41f91c9c116355e2805244a371720fdf"
+        },
+        "currentProvider": "dailymotion",
+        "status": "same-name-provider-html-available-url-parity-unverified"
+      },
+      {
+        "name": "5min",
+        "type": "video",
+        "urlPatterns": [
+          "www\\.5min\\.com/.+"
+        ],
+        "endpointExpression": "\"http://api.5min.com/oembed.xml\"",
+        "location": {
+          "path": "editor/js/vendor/ckeditor/plugins/oembed/libs/jquery.oembed.min.js",
+          "line": 10,
+          "revision": "4d6d12ba41f91c9c116355e2805244a371720fdf"
+        },
+        "currentProvider": null,
+        "status": "no-same-name-provider"
+      },
+      {
+        "name": "National Film Board of Canada",
+        "type": "video",
+        "urlPatterns": [
+          "nfb\\.ca/film/.+"
+        ],
+        "endpointExpression": "\"http://www.nfb.ca/remote/services/oembed/\"",
+        "location": {
+          "path": "editor/js/vendor/ckeditor/plugins/oembed/libs/jquery.oembed.min.js",
+          "line": 10,
+          "revision": "4d6d12ba41f91c9c116355e2805244a371720fdf"
+        },
+        "currentProvider": null,
+        "status": "no-same-name-provider"
+      },
+      {
+        "name": "qik",
+        "type": "video",
+        "urlPatterns": [
+          "qik\\.com/\\w+"
+        ],
+        "endpointExpression": "\"http://qik.com/api/oembed.json\"",
+        "location": {
+          "path": "editor/js/vendor/ckeditor/plugins/oembed/libs/jquery.oembed.min.js",
+          "line": 10,
+          "revision": "4d6d12ba41f91c9c116355e2805244a371720fdf"
+        },
+        "currentProvider": null,
+        "status": "no-same-name-provider"
+      },
+      {
+        "name": "revision3",
+        "type": "video",
+        "urlPatterns": [
+          "revision3\\.com"
+        ],
+        "endpointExpression": "\"http://revision3.com/api/oembed/\"",
+        "location": {
+          "path": "editor/js/vendor/ckeditor/plugins/oembed/libs/jquery.oembed.min.js",
+          "line": 10,
+          "revision": "4d6d12ba41f91c9c116355e2805244a371720fdf"
+        },
+        "currentProvider": null,
+        "status": "no-same-name-provider"
+      },
+      {
+        "name": "dotsub",
+        "type": "video",
+        "urlPatterns": [
+          "dotsub\\.com/view/.+"
+        ],
+        "endpointExpression": "\"http://dotsub.com/services/oembed\"",
+        "location": {
+          "path": "editor/js/vendor/ckeditor/plugins/oembed/libs/jquery.oembed.min.js",
+          "line": 10,
+          "revision": "4d6d12ba41f91c9c116355e2805244a371720fdf"
+        },
+        "currentProvider": null,
+        "status": "no-same-name-provider"
+      },
+      {
+        "name": "clikthrough",
+        "type": "video",
+        "urlPatterns": [
+          "clikthrough\\.com/theater/video/\\d+"
+        ],
+        "endpointExpression": "\"http://clikthrough.com/services/oembed\"",
+        "location": {
+          "path": "editor/js/vendor/ckeditor/plugins/oembed/libs/jquery.oembed.min.js",
+          "line": 10,
+          "revision": "4d6d12ba41f91c9c116355e2805244a371720fdf"
+        },
+        "currentProvider": null,
+        "status": "no-same-name-provider"
+      },
+      {
+        "name": "Kinomap",
+        "type": "video",
+        "urlPatterns": [
+          "kinomap\\.com/.+"
+        ],
+        "endpointExpression": "\"http://www.kinomap.com/oembed\"",
+        "location": {
+          "path": "editor/js/vendor/ckeditor/plugins/oembed/libs/jquery.oembed.min.js",
+          "line": 10,
+          "revision": "4d6d12ba41f91c9c116355e2805244a371720fdf"
+        },
+        "currentProvider": null,
+        "status": "no-same-name-provider"
+      },
+      {
+        "name": "VHX",
+        "type": "video",
+        "urlPatterns": [
+          "vhx.tv/.+"
+        ],
+        "endpointExpression": "\"http://vhx.tv/services/oembed.json\"",
+        "location": {
+          "path": "editor/js/vendor/ckeditor/plugins/oembed/libs/jquery.oembed.min.js",
+          "line": 10,
+          "revision": "4d6d12ba41f91c9c116355e2805244a371720fdf"
+        },
+        "currentProvider": null,
+        "status": "no-same-name-provider"
+      },
+      {
+        "name": "bambuser",
+        "type": "video",
+        "urlPatterns": [
+          "bambuser.com/.+"
+        ],
+        "endpointExpression": "\"http://api.bambuser.com/oembed/iframe.json\"",
+        "location": {
+          "path": "editor/js/vendor/ckeditor/plugins/oembed/libs/jquery.oembed.min.js",
+          "line": 10,
+          "revision": "4d6d12ba41f91c9c116355e2805244a371720fdf"
+        },
+        "currentProvider": null,
+        "status": "no-same-name-provider"
+      },
+      {
+        "name": "justin.tv",
+        "type": "video",
+        "urlPatterns": [
+          "justin.tv/.+"
+        ],
+        "endpointExpression": "\"http://api.justin.tv/api/embed/from_url.json\"",
+        "location": {
+          "path": "editor/js/vendor/ckeditor/plugins/oembed/libs/jquery.oembed.min.js",
+          "line": 10,
+          "revision": "4d6d12ba41f91c9c116355e2805244a371720fdf"
+        },
+        "currentProvider": null,
+        "status": "no-same-name-provider"
+      },
+      {
+        "name": "vine",
+        "type": "video",
+        "urlPatterns": [
+          "vine.co/v/.*"
+        ],
+        "endpointExpression": "null",
+        "location": {
+          "path": "editor/js/vendor/ckeditor/plugins/oembed/libs/jquery.oembed.min.js",
+          "line": 10,
+          "revision": "4d6d12ba41f91c9c116355e2805244a371720fdf"
+        },
+        "currentProvider": null,
+        "status": "no-same-name-provider"
+      },
+      {
+        "name": "boxofficebuz",
+        "type": "video",
+        "urlPatterns": [
+          "boxofficebuz\\.com\\/embed/.+"
+        ],
+        "endpointExpression": "\"http://boxofficebuz.com/embed/$1/$2\"",
+        "location": {
+          "path": "editor/js/vendor/ckeditor/plugins/oembed/libs/jquery.oembed.min.js",
+          "line": 10,
+          "revision": "4d6d12ba41f91c9c116355e2805244a371720fdf"
+        },
+        "currentProvider": null,
+        "status": "no-same-name-provider"
+      },
+      {
+        "name": "clipsyndicate",
+        "type": "video",
+        "urlPatterns": [
+          "clipsyndicate\\.com/video/play/.+",
+          "clipsyndicate\\.com/embed/iframe?.+"
+        ],
+        "endpointExpression": "\"http://eplayer.clipsyndicate.com/embed/iframe?pf_id=1&show_title=0&va_id=$1&windows=1\"",
+        "location": {
+          "path": "editor/js/vendor/ckeditor/plugins/oembed/libs/jquery.oembed.min.js",
+          "line": 10,
+          "revision": "4d6d12ba41f91c9c116355e2805244a371720fdf"
+        },
+        "currentProvider": null,
+        "status": "no-same-name-provider"
+      },
+      {
+        "name": "coub",
+        "type": "video",
+        "urlPatterns": [
+          "coub\\.com/.+"
+        ],
+        "endpointExpression": "\"http://www.coub.com/embed/$1?muted=false&autostart=false&originalSize=false&hideTopBar=false&noSiteButtons=false&startWithHD=false\"",
+        "location": {
+          "path": "editor/js/vendor/ckeditor/plugins/oembed/libs/jquery.oembed.min.js",
+          "line": 10,
+          "revision": "4d6d12ba41f91c9c116355e2805244a371720fdf"
+        },
+        "currentProvider": null,
+        "status": "no-same-name-provider"
+      },
+      {
+        "name": "discoverychannel",
+        "type": "video",
+        "urlPatterns": [
+          "snagplayer\\.video\\.dp\\.discovery\\.com/.+"
+        ],
+        "endpointExpression": "\"http://snagplayer.video.dp.discovery.com/$1/snag-it-player.htm?auto=no\"",
+        "location": {
+          "path": "editor/js/vendor/ckeditor/plugins/oembed/libs/jquery.oembed.min.js",
+          "line": 10,
+          "revision": "4d6d12ba41f91c9c116355e2805244a371720fdf"
+        },
+        "currentProvider": null,
+        "status": "no-same-name-provider"
+      },
+      {
+        "name": "telly",
+        "type": "video",
+        "urlPatterns": [
+          "telly\\.com/.+"
+        ],
+        "endpointExpression": "\"http://www.telly.com/embed.php?guid=$1&autoplay=0\"",
+        "location": {
+          "path": "editor/js/vendor/ckeditor/plugins/oembed/libs/jquery.oembed.min.js",
+          "line": 10,
+          "revision": "4d6d12ba41f91c9c116355e2805244a371720fdf"
+        },
+        "currentProvider": null,
+        "status": "no-same-name-provider"
+      },
+      {
+        "name": "minilogs",
+        "type": "video",
+        "urlPatterns": [
+          "minilogs\\.com/.+"
+        ],
+        "endpointExpression": "\"http://www.minilogs.com/e/$1\"",
+        "location": {
+          "path": "editor/js/vendor/ckeditor/plugins/oembed/libs/jquery.oembed.min.js",
+          "line": 10,
+          "revision": "4d6d12ba41f91c9c116355e2805244a371720fdf"
+        },
+        "currentProvider": null,
+        "status": "no-same-name-provider"
+      },
+      {
+        "name": "viddy",
+        "type": "video",
+        "urlPatterns": [
+          "viddy\\.com/.+"
+        ],
+        "endpointExpression": "\"http://www.viddy.com/embed/video/$1\"",
+        "location": {
+          "path": "editor/js/vendor/ckeditor/plugins/oembed/libs/jquery.oembed.min.js",
+          "line": 10,
+          "revision": "4d6d12ba41f91c9c116355e2805244a371720fdf"
+        },
+        "currentProvider": null,
+        "status": "no-same-name-provider"
+      },
+      {
+        "name": "worldstarhiphop",
+        "type": "video",
+        "urlPatterns": [
+          "worldstarhiphop\\.com/embed/.+"
+        ],
+        "endpointExpression": "\"http://www.worldstarhiphop.com/embed/$1\"",
+        "location": {
+          "path": "editor/js/vendor/ckeditor/plugins/oembed/libs/jquery.oembed.min.js",
+          "line": 10,
+          "revision": "4d6d12ba41f91c9c116355e2805244a371720fdf"
+        },
+        "currentProvider": null,
+        "status": "no-same-name-provider"
+      },
+      {
+        "name": "zapiks",
+        "type": "video",
+        "urlPatterns": [
+          "zapiks\\.fr/.+"
+        ],
+        "endpointExpression": "\"http://www.zapiks.fr/index.php?action=playerIframe&media_id=$1&autoStart=fals\"",
+        "location": {
+          "path": "editor/js/vendor/ckeditor/plugins/oembed/libs/jquery.oembed.min.js",
+          "line": 10,
+          "revision": "4d6d12ba41f91c9c116355e2805244a371720fdf"
+        },
+        "currentProvider": null,
+        "status": "no-same-name-provider"
+      },
+      {
+        "name": "official.fm",
+        "type": "rich",
+        "urlPatterns": [
+          "official.fm/.+"
+        ],
+        "endpointExpression": "\"http://official.fm/services/oembed\"",
+        "location": {
+          "path": "editor/js/vendor/ckeditor/plugins/oembed/libs/jquery.oembed.min.js",
+          "line": 10,
+          "revision": "4d6d12ba41f91c9c116355e2805244a371720fdf"
+        },
+        "currentProvider": null,
+        "status": "no-same-name-provider"
+      },
+      {
+        "name": "chirbit",
+        "type": "rich",
+        "urlPatterns": [
+          "chirb.it/.+"
+        ],
+        "endpointExpression": "\"http://chirb.it/oembed.json\"",
+        "location": {
+          "path": "editor/js/vendor/ckeditor/plugins/oembed/libs/jquery.oembed.min.js",
+          "line": 10,
+          "revision": "4d6d12ba41f91c9c116355e2805244a371720fdf"
+        },
+        "currentProvider": null,
+        "status": "no-same-name-provider"
+      },
+      {
+        "name": "chirbit",
+        "type": "audio",
+        "urlPatterns": [
+          "chirb\\.it/.+"
+        ],
+        "endpointExpression": "\"http://chirb.it/wp/$1\"",
+        "location": {
+          "path": "editor/js/vendor/ckeditor/plugins/oembed/libs/jquery.oembed.min.js",
+          "line": 10,
+          "revision": "4d6d12ba41f91c9c116355e2805244a371720fdf"
+        },
+        "currentProvider": null,
+        "status": "no-same-name-provider"
+      },
+      {
+        "name": "Huffduffer",
+        "type": "rich",
+        "urlPatterns": [
+          "huffduffer.com/[-.\\w@]+/\\d+"
+        ],
+        "endpointExpression": "\"http://huffduffer.com/oembed\"",
+        "location": {
+          "path": "editor/js/vendor/ckeditor/plugins/oembed/libs/jquery.oembed.min.js",
+          "line": 10,
+          "revision": "4d6d12ba41f91c9c116355e2805244a371720fdf"
+        },
+        "currentProvider": null,
+        "status": "no-same-name-provider"
+      },
+      {
+        "name": "Spotify",
+        "type": "rich",
+        "urlPatterns": [
+          "open.spotify.com/(track|album|user)/"
+        ],
+        "endpointExpression": "\"https://embed.spotify.com/oembed/\"",
+        "location": {
+          "path": "editor/js/vendor/ckeditor/plugins/oembed/libs/jquery.oembed.min.js",
+          "line": 10,
+          "revision": "4d6d12ba41f91c9c116355e2805244a371720fdf"
+        },
+        "currentProvider": "spotify",
+        "status": "same-name-provider-html-available-url-parity-unverified"
+      },
+      {
+        "name": "shoudio",
+        "type": "rich",
+        "urlPatterns": [
+          "shoudio.com/.+",
+          "shoud.io/.+"
+        ],
+        "endpointExpression": "\"http://shoudio.com/api/oembed\"",
+        "location": {
+          "path": "editor/js/vendor/ckeditor/plugins/oembed/libs/jquery.oembed.min.js",
+          "line": 10,
+          "revision": "4d6d12ba41f91c9c116355e2805244a371720fdf"
+        },
+        "currentProvider": null,
+        "status": "no-same-name-provider"
+      },
+      {
+        "name": "mixcloud",
+        "type": "rich",
+        "urlPatterns": [
+          "mixcloud.com/.+"
+        ],
+        "endpointExpression": "e()+\"www.mixcloud.com/oembed/\"",
+        "location": {
+          "path": "editor/js/vendor/ckeditor/plugins/oembed/libs/jquery.oembed.min.js",
+          "line": 10,
+          "revision": "4d6d12ba41f91c9c116355e2805244a371720fdf"
+        },
+        "currentProvider": null,
+        "status": "no-same-name-provider"
+      },
+      {
+        "name": "rdio.com",
+        "type": "rich",
+        "urlPatterns": [
+          "rd.io/.+",
+          "rdio.com"
+        ],
+        "endpointExpression": "e()+\"rdio.com/api/oembed/\"",
+        "location": {
+          "path": "editor/js/vendor/ckeditor/plugins/oembed/libs/jquery.oembed.min.js",
+          "line": 10,
+          "revision": "4d6d12ba41f91c9c116355e2805244a371720fdf"
+        },
+        "currentProvider": null,
+        "status": "no-same-name-provider"
+      },
+      {
+        "name": "Soundcloud",
+        "type": "rich",
+        "urlPatterns": [
+          "soundcloud.com/.+",
+          "snd.sc/.+"
+        ],
+        "endpointExpression": "e()+\"soundcloud.com/oembed\"",
+        "location": {
+          "path": "editor/js/vendor/ckeditor/plugins/oembed/libs/jquery.oembed.min.js",
+          "line": 10,
+          "revision": "4d6d12ba41f91c9c116355e2805244a371720fdf"
+        },
+        "currentProvider": null,
+        "status": "no-same-name-provider"
+      },
+      {
+        "name": "bandcamp",
+        "type": "rich",
+        "urlPatterns": [
+          "bandcamp\\.com/album/.+"
+        ],
+        "endpointExpression": "null",
+        "location": {
+          "path": "editor/js/vendor/ckeditor/plugins/oembed/libs/jquery.oembed.min.js",
+          "line": 10,
+          "revision": "4d6d12ba41f91c9c116355e2805244a371720fdf"
+        },
+        "currentProvider": null,
+        "status": "no-same-name-provider"
+      },
+      {
+        "name": "deviantart",
+        "type": "photo",
+        "urlPatterns": [
+          "deviantart.com/.+",
+          "fav.me/.+",
+          "deviantart.com/.+"
+        ],
+        "endpointExpression": "e()+\"backend.deviantart.com/oembed\"",
+        "location": {
+          "path": "editor/js/vendor/ckeditor/plugins/oembed/libs/jquery.oembed.min.js",
+          "line": 10,
+          "revision": "4d6d12ba41f91c9c116355e2805244a371720fdf"
+        },
+        "currentProvider": null,
+        "status": "no-same-name-provider"
+      },
+      {
+        "name": "skitch",
+        "type": "photo",
+        "urlPatterns": [
+          "skitch.com/.+"
+        ],
+        "endpointExpression": "null",
+        "location": {
+          "path": "editor/js/vendor/ckeditor/plugins/oembed/libs/jquery.oembed.min.js",
+          "line": 10,
+          "revision": "4d6d12ba41f91c9c116355e2805244a371720fdf"
+        },
+        "currentProvider": null,
+        "status": "no-same-name-provider"
+      },
+      {
+        "name": "mobypicture",
+        "type": "photo",
+        "urlPatterns": [
+          "mobypicture.com/user/.+/view/.+",
+          "moby.to/.+"
+        ],
+        "endpointExpression": "\"http://api.mobypicture.com/oEmbed\"",
+        "location": {
+          "path": "editor/js/vendor/ckeditor/plugins/oembed/libs/jquery.oembed.min.js",
+          "line": 10,
+          "revision": "4d6d12ba41f91c9c116355e2805244a371720fdf"
+        },
+        "currentProvider": null,
+        "status": "no-same-name-provider"
+      },
+      {
+        "name": "flickr",
+        "type": "photo",
+        "urlPatterns": [
+          "flickr\\.com/photos/.+"
+        ],
+        "endpointExpression": "e()+\"flickr.com/services/oembed\"",
+        "location": {
+          "path": "editor/js/vendor/ckeditor/plugins/oembed/libs/jquery.oembed.min.js",
+          "line": 10,
+          "revision": "4d6d12ba41f91c9c116355e2805244a371720fdf"
+        },
+        "currentProvider": "flickr",
+        "status": "same-name-provider-url-only-no-general-player-renderer"
+      },
+      {
+        "name": "photobucket",
+        "type": "photo",
+        "urlPatterns": [
+          "photobucket\\.com/(albums|groups)/.+"
+        ],
+        "endpointExpression": "e()+\"photobucket.com/oembed/\"",
+        "location": {
+          "path": "editor/js/vendor/ckeditor/plugins/oembed/libs/jquery.oembed.min.js",
+          "line": 10,
+          "revision": "4d6d12ba41f91c9c116355e2805244a371720fdf"
+        },
+        "currentProvider": null,
+        "status": "no-same-name-provider"
+      },
+      {
+        "name": "instagram",
+        "type": "photo",
+        "urlPatterns": [
+          "instagr\\.?am(\\.com)?/.+"
+        ],
+        "endpointExpression": "e()+\"api.instagram.com/oembed\"",
+        "location": {
+          "path": "editor/js/vendor/ckeditor/plugins/oembed/libs/jquery.oembed.min.js",
+          "line": 10,
+          "revision": "4d6d12ba41f91c9c116355e2805244a371720fdf"
+        },
+        "currentProvider": "instagram",
+        "status": "same-name-provider-url-only-no-general-player-renderer"
+      },
+      {
+        "name": "SmugMug",
+        "type": "photo",
+        "urlPatterns": [
+          "smugmug.com/[-.\\w@]+/.+"
+        ],
+        "endpointExpression": "\"http://api.smugmug.com/services/oembed/\"",
+        "location": {
+          "path": "editor/js/vendor/ckeditor/plugins/oembed/libs/jquery.oembed.min.js",
+          "line": 10,
+          "revision": "4d6d12ba41f91c9c116355e2805244a371720fdf"
+        },
+        "currentProvider": null,
+        "status": "no-same-name-provider"
+      },
+      {
+        "name": "dribbble",
+        "type": "photo",
+        "urlPatterns": [
+          "dribbble.com/shots/.+"
+        ],
+        "endpointExpression": "\"http://api.dribbble.com/shots/$1?callback=?\"",
+        "location": {
+          "path": "editor/js/vendor/ckeditor/plugins/oembed/libs/jquery.oembed.min.js",
+          "line": 10,
+          "revision": "4d6d12ba41f91c9c116355e2805244a371720fdf"
+        },
+        "currentProvider": null,
+        "status": "no-same-name-provider"
+      },
+      {
+        "name": "chart.ly",
+        "type": "photo",
+        "urlPatterns": [
+          "chart\\.ly/[a-z0-9]{6,8}"
+        ],
+        "endpointExpression": "\"http://chart.ly/uploads/large_$1.png\"",
+        "location": {
+          "path": "editor/js/vendor/ckeditor/plugins/oembed/libs/jquery.oembed.min.js",
+          "line": 10,
+          "revision": "4d6d12ba41f91c9c116355e2805244a371720fdf"
+        },
+        "currentProvider": null,
+        "status": "no-same-name-provider"
+      },
+      {
+        "name": "circuitlab",
+        "type": "photo",
+        "urlPatterns": [
+          "circuitlab.com/circuit/.+"
+        ],
+        "endpointExpression": "\"https://www.circuitlab.com/circuit/$1/screenshot/540x405/\"",
+        "location": {
+          "path": "editor/js/vendor/ckeditor/plugins/oembed/libs/jquery.oembed.min.js",
+          "line": 10,
+          "revision": "4d6d12ba41f91c9c116355e2805244a371720fdf"
+        },
+        "currentProvider": null,
+        "status": "no-same-name-provider"
+      },
+      {
+        "name": "23hq",
+        "type": "photo",
+        "urlPatterns": [
+          "23hq.com/[-.\\w@]+/photo/.+"
+        ],
+        "endpointExpression": "\"http://www.23hq.com/23/oembed\"",
+        "location": {
+          "path": "editor/js/vendor/ckeditor/plugins/oembed/libs/jquery.oembed.min.js",
+          "line": 10,
+          "revision": "4d6d12ba41f91c9c116355e2805244a371720fdf"
+        },
+        "currentProvider": null,
+        "status": "no-same-name-provider"
+      },
+      {
+        "name": "img.ly",
+        "type": "photo",
+        "urlPatterns": [
+          "img\\.ly/.+"
+        ],
+        "endpointExpression": "\"//img.ly/show/thumb/$1\"",
+        "location": {
+          "path": "editor/js/vendor/ckeditor/plugins/oembed/libs/jquery.oembed.min.js",
+          "line": 10,
+          "revision": "4d6d12ba41f91c9c116355e2805244a371720fdf"
+        },
+        "currentProvider": null,
+        "status": "no-same-name-provider"
+      },
+      {
+        "name": "twitgoo.com",
+        "type": "photo",
+        "urlPatterns": [
+          "twitgoo\\.com/.+"
+        ],
+        "endpointExpression": "\"http://twitgoo.com/show/thumb/$1\"",
+        "location": {
+          "path": "editor/js/vendor/ckeditor/plugins/oembed/libs/jquery.oembed.min.js",
+          "line": 10,
+          "revision": "4d6d12ba41f91c9c116355e2805244a371720fdf"
+        },
+        "currentProvider": null,
+        "status": "no-same-name-provider"
+      },
+      {
+        "name": "imgur.com",
+        "type": "photo",
+        "urlPatterns": [
+          "imgur\\.com/gallery/.+"
+        ],
+        "endpointExpression": "e()+\"imgur.com/$1l.jpg\"",
+        "location": {
+          "path": "editor/js/vendor/ckeditor/plugins/oembed/libs/jquery.oembed.min.js",
+          "line": 10,
+          "revision": "4d6d12ba41f91c9c116355e2805244a371720fdf"
+        },
+        "currentProvider": null,
+        "status": "no-same-name-provider"
+      },
+      {
+        "name": "visual.ly",
+        "type": "rich",
+        "urlPatterns": [
+          "visual\\.ly/.+"
+        ],
+        "endpointExpression": "null",
+        "location": {
+          "path": "editor/js/vendor/ckeditor/plugins/oembed/libs/jquery.oembed.min.js",
+          "line": 10,
+          "revision": "4d6d12ba41f91c9c116355e2805244a371720fdf"
+        },
+        "currentProvider": null,
+        "status": "no-same-name-provider"
+      },
+      {
+        "name": "achewood",
+        "type": "photo",
+        "urlPatterns": [
+          "achewood\\.com\\/index.php\\?date=.+"
+        ],
+        "endpointExpression": "\"http://www.achewood.com/comic.php?date=$1\"",
+        "location": {
+          "path": "editor/js/vendor/ckeditor/plugins/oembed/libs/jquery.oembed.min.js",
+          "line": 10,
+          "revision": "4d6d12ba41f91c9c116355e2805244a371720fdf"
+        },
+        "currentProvider": null,
+        "status": "no-same-name-provider"
+      },
+      {
+        "name": "fotokritik",
+        "type": "photo",
+        "urlPatterns": [
+          "fotokritik\\.com/.+"
+        ],
+        "endpointExpression": "\"http://www.fotokritik.com/embed/$1\"",
+        "location": {
+          "path": "editor/js/vendor/ckeditor/plugins/oembed/libs/jquery.oembed.min.js",
+          "line": 10,
+          "revision": "4d6d12ba41f91c9c116355e2805244a371720fdf"
+        },
+        "currentProvider": null,
+        "status": "no-same-name-provider"
+      },
+      {
+        "name": "giflike",
+        "type": "photo",
+        "urlPatterns": [
+          "giflike\\.com/.+"
+        ],
+        "endpointExpression": "\"http://www.giflike.com/embed/$1\"",
+        "location": {
+          "path": "editor/js/vendor/ckeditor/plugins/oembed/libs/jquery.oembed.min.js",
+          "line": 10,
+          "revision": "4d6d12ba41f91c9c116355e2805244a371720fdf"
+        },
+        "currentProvider": null,
+        "status": "no-same-name-provider"
+      },
+      {
+        "name": "twitter",
+        "type": "rich",
+        "urlPatterns": [
+          "twitter.com/.+"
+        ],
+        "endpointExpression": "\"https://api.twitter.com/1/statuses/oembed.json?id=\"",
+        "location": {
+          "path": "editor/js/vendor/ckeditor/plugins/oembed/libs/jquery.oembed.min.js",
+          "line": 10,
+          "revision": "4d6d12ba41f91c9c116355e2805244a371720fdf"
+        },
+        "currentProvider": "twitter",
+        "status": "same-name-provider-url-only-no-general-player-renderer"
+      },
+      {
+        "name": "gmep",
+        "type": "rich",
+        "urlPatterns": [
+          "gmep.imeducate.com/.*",
+          "gmep.org/.*"
+        ],
+        "endpointExpression": "\"http://gmep.org/oembed.json\"",
+        "location": {
+          "path": "editor/js/vendor/ckeditor/plugins/oembed/libs/jquery.oembed.min.js",
+          "line": 10,
+          "revision": "4d6d12ba41f91c9c116355e2805244a371720fdf"
+        },
+        "currentProvider": null,
+        "status": "no-same-name-provider"
+      },
+      {
+        "name": "urtak",
+        "type": "rich",
+        "urlPatterns": [
+          "urtak.com/(u|clr)/.+"
+        ],
+        "endpointExpression": "\"http://oembed.urtak.com/1/oembed\"",
+        "location": {
+          "path": "editor/js/vendor/ckeditor/plugins/oembed/libs/jquery.oembed.min.js",
+          "line": 10,
+          "revision": "4d6d12ba41f91c9c116355e2805244a371720fdf"
+        },
+        "currentProvider": null,
+        "status": "no-same-name-provider"
+      },
+      {
+        "name": "cacoo",
+        "type": "rich",
+        "urlPatterns": [
+          "cacoo.com/.+"
+        ],
+        "endpointExpression": "\"http://cacoo.com/oembed.json\"",
+        "location": {
+          "path": "editor/js/vendor/ckeditor/plugins/oembed/libs/jquery.oembed.min.js",
+          "line": 10,
+          "revision": "4d6d12ba41f91c9c116355e2805244a371720fdf"
+        },
+        "currentProvider": null,
+        "status": "no-same-name-provider"
+      },
+      {
+        "name": "dailymile",
+        "type": "rich",
+        "urlPatterns": [
+          "dailymile.com/people/.*/entries/.*"
+        ],
+        "endpointExpression": "\"http://api.dailymile.com/oembed\"",
+        "location": {
+          "path": "editor/js/vendor/ckeditor/plugins/oembed/libs/jquery.oembed.min.js",
+          "line": 10,
+          "revision": "4d6d12ba41f91c9c116355e2805244a371720fdf"
+        },
+        "currentProvider": null,
+        "status": "no-same-name-provider"
+      },
+      {
+        "name": "documentcloud",
+        "type": "rich",
+        "urlPatterns": [
+          "documentcloud.org/documents/.+"
+        ],
+        "endpointExpression": "\"https://www.documentcloud.org/api/oembed.json\"",
+        "location": {
+          "path": "editor/js/vendor/ckeditor/plugins/oembed/libs/jquery.oembed.min.js",
+          "line": 10,
+          "revision": "4d6d12ba41f91c9c116355e2805244a371720fdf"
+        },
+        "currentProvider": null,
+        "status": "no-same-name-provider"
+      },
+      {
+        "name": "dipity",
+        "type": "rich",
+        "urlPatterns": [
+          "dipity.com/timeline/.+"
+        ],
+        "endpointExpression": "\"http://www.dipity.com/oembed/timeline/\"",
+        "location": {
+          "path": "editor/js/vendor/ckeditor/plugins/oembed/libs/jquery.oembed.min.js",
+          "line": 10,
+          "revision": "4d6d12ba41f91c9c116355e2805244a371720fdf"
+        },
+        "currentProvider": null,
+        "status": "no-same-name-provider"
+      },
+      {
+        "name": "sketchfab",
+        "type": "rich",
+        "urlPatterns": [
+          "sketchfab.com/show/.+"
+        ],
+        "endpointExpression": "\"http://sketchfab.com/oembed\"",
+        "location": {
+          "path": "editor/js/vendor/ckeditor/plugins/oembed/libs/jquery.oembed.min.js",
+          "line": 10,
+          "revision": "4d6d12ba41f91c9c116355e2805244a371720fdf"
+        },
+        "currentProvider": null,
+        "status": "no-same-name-provider"
+      },
+      {
+        "name": "speakerdeck",
+        "type": "rich",
+        "urlPatterns": [
+          "speakerdeck.com/.+"
+        ],
+        "endpointExpression": "\"http://speakerdeck.com/oembed.json\"",
+        "location": {
+          "path": "editor/js/vendor/ckeditor/plugins/oembed/libs/jquery.oembed.min.js",
+          "line": 10,
+          "revision": "4d6d12ba41f91c9c116355e2805244a371720fdf"
+        },
+        "currentProvider": null,
+        "status": "no-same-name-provider"
+      },
+      {
+        "name": "popplet",
+        "type": "rich",
+        "urlPatterns": [
+          "popplet.com/app/.*"
+        ],
+        "endpointExpression": "\"http://popplet.com/app/Popplet_Alpha.swf?page_id=$1&em=1\"",
+        "location": {
+          "path": "editor/js/vendor/ckeditor/plugins/oembed/libs/jquery.oembed.min.js",
+          "line": 10,
+          "revision": "4d6d12ba41f91c9c116355e2805244a371720fdf"
+        },
+        "currentProvider": null,
+        "status": "no-same-name-provider"
+      },
+      {
+        "name": "pearltrees",
+        "type": "rich",
+        "urlPatterns": [
+          "pearltrees.com/.*"
+        ],
+        "endpointExpression": "\"http://cdn.pearltrees.com/s/embed/getApp?\"",
+        "location": {
+          "path": "editor/js/vendor/ckeditor/plugins/oembed/libs/jquery.oembed.min.js",
+          "line": 10,
+          "revision": "4d6d12ba41f91c9c116355e2805244a371720fdf"
+        },
+        "currentProvider": null,
+        "status": "no-same-name-provider"
+      },
+      {
+        "name": "prezi",
+        "type": "rich",
+        "urlPatterns": [
+          "prezi.com/.*"
+        ],
+        "endpointExpression": "e()+\"prezi.com/bin/preziloader.swf?\"",
+        "location": {
+          "path": "editor/js/vendor/ckeditor/plugins/oembed/libs/jquery.oembed.min.js",
+          "line": 10,
+          "revision": "4d6d12ba41f91c9c116355e2805244a371720fdf"
+        },
+        "currentProvider": null,
+        "status": "no-same-name-provider"
+      },
+      {
+        "name": "tourwrist",
+        "type": "rich",
+        "urlPatterns": [
+          "tourwrist.com/tours/.+"
+        ],
+        "endpointExpression": "null",
+        "location": {
+          "path": "editor/js/vendor/ckeditor/plugins/oembed/libs/jquery.oembed.min.js",
+          "line": 10,
+          "revision": "4d6d12ba41f91c9c116355e2805244a371720fdf"
+        },
+        "currentProvider": null,
+        "status": "no-same-name-provider"
+      },
+      {
+        "name": "meetup",
+        "type": "rich",
+        "urlPatterns": [
+          "meetup\\.(com|ps)/.+"
+        ],
+        "endpointExpression": "e()+\"api.meetup.com/oembed\"",
+        "location": {
+          "path": "editor/js/vendor/ckeditor/plugins/oembed/libs/jquery.oembed.min.js",
+          "line": 10,
+          "revision": "4d6d12ba41f91c9c116355e2805244a371720fdf"
+        },
+        "currentProvider": null,
+        "status": "no-same-name-provider"
+      },
+      {
+        "name": "ebay",
+        "type": "rich",
+        "urlPatterns": [
+          "ebay\\.*"
+        ],
+        "endpointExpression": "e()+\"togo.ebay.com/togo/togo.swf?2008013100\"",
+        "location": {
+          "path": "editor/js/vendor/ckeditor/plugins/oembed/libs/jquery.oembed.min.js",
+          "line": 10,
+          "revision": "4d6d12ba41f91c9c116355e2805244a371720fdf"
+        },
+        "currentProvider": null,
+        "status": "no-same-name-provider"
+      },
+      {
+        "name": "wikipedia",
+        "type": "rich",
+        "urlPatterns": [
+          "wikipedia.org/wiki/.+"
+        ],
+        "endpointExpression": "\"http://$1.wikipedia.org/w/api.php?action=parse&page=$2&format=json&section=0&callback=?\"",
+        "location": {
+          "path": "editor/js/vendor/ckeditor/plugins/oembed/libs/jquery.oembed.min.js",
+          "line": 10,
+          "revision": "4d6d12ba41f91c9c116355e2805244a371720fdf"
+        },
+        "currentProvider": null,
+        "status": "no-same-name-provider"
+      },
+      {
+        "name": "imdb",
+        "type": "rich",
+        "urlPatterns": [
+          "imdb.com/title/.+"
+        ],
+        "endpointExpression": "\"http://www.imdbapi.com/?i=$1&callback=?\"",
+        "location": {
+          "path": "editor/js/vendor/ckeditor/plugins/oembed/libs/jquery.oembed.min.js",
+          "line": 10,
+          "revision": "4d6d12ba41f91c9c116355e2805244a371720fdf"
+        },
+        "currentProvider": null,
+        "status": "no-same-name-provider"
+      },
+      {
+        "name": "livejournal",
+        "type": "rich",
+        "urlPatterns": [
+          "livejournal.com/"
+        ],
+        "endpointExpression": "\"http://ljpic.seacrow.com/json/$2$4?jsonp=?\"",
+        "location": {
+          "path": "editor/js/vendor/ckeditor/plugins/oembed/libs/jquery.oembed.min.js",
+          "line": 10,
+          "revision": "4d6d12ba41f91c9c116355e2805244a371720fdf"
+        },
+        "currentProvider": null,
+        "status": "no-same-name-provider"
+      },
+      {
+        "name": "circuitbee",
+        "type": "rich",
+        "urlPatterns": [
+          "circuitbee\\.com/circuit/view/.+"
+        ],
+        "endpointExpression": "\"http://c.circuitbee.com/build/r/schematic-embed.html?id=$1\"",
+        "location": {
+          "path": "editor/js/vendor/ckeditor/plugins/oembed/libs/jquery.oembed.min.js",
+          "line": 10,
+          "revision": "4d6d12ba41f91c9c116355e2805244a371720fdf"
+        },
+        "currentProvider": null,
+        "status": "no-same-name-provider"
+      },
+      {
+        "name": "googlecalendar",
+        "type": "rich",
+        "urlPatterns": [
+          "www.google.com/calendar/embed?.+"
+        ],
+        "endpointExpression": "\"$1\"",
+        "location": {
+          "path": "editor/js/vendor/ckeditor/plugins/oembed/libs/jquery.oembed.min.js",
+          "line": 10,
+          "revision": "4d6d12ba41f91c9c116355e2805244a371720fdf"
+        },
+        "currentProvider": null,
+        "status": "no-same-name-provider"
+      },
+      {
+        "name": "jsfiddle",
+        "type": "rich",
+        "urlPatterns": [
+          "jsfiddle.net/[^/]+/?"
+        ],
+        "endpointExpression": "\"http://jsfiddle.net/$1/embedded/result,js,resources,html,css/?\"",
+        "location": {
+          "path": "editor/js/vendor/ckeditor/plugins/oembed/libs/jquery.oembed.min.js",
+          "line": 10,
+          "revision": "4d6d12ba41f91c9c116355e2805244a371720fdf"
+        },
+        "currentProvider": null,
+        "status": "no-same-name-provider"
+      },
+      {
+        "name": "jsbin",
+        "type": "rich",
+        "urlPatterns": [
+          "jsbin.com/.+"
+        ],
+        "endpointExpression": "\"http://jsbin.com/$1/?\"",
+        "location": {
+          "path": "editor/js/vendor/ckeditor/plugins/oembed/libs/jquery.oembed.min.js",
+          "line": 10,
+          "revision": "4d6d12ba41f91c9c116355e2805244a371720fdf"
+        },
+        "currentProvider": null,
+        "status": "no-same-name-provider"
+      },
+      {
+        "name": "jotform",
+        "type": "rich",
+        "urlPatterns": [
+          "form.jotform.co/form/.+"
+        ],
+        "endpointExpression": "\"$1?\"",
+        "location": {
+          "path": "editor/js/vendor/ckeditor/plugins/oembed/libs/jquery.oembed.min.js",
+          "line": 10,
+          "revision": "4d6d12ba41f91c9c116355e2805244a371720fdf"
+        },
+        "currentProvider": null,
+        "status": "no-same-name-provider"
+      },
+      {
+        "name": "reelapp",
+        "type": "rich",
+        "urlPatterns": [
+          "reelapp\\.com/.+"
+        ],
+        "endpointExpression": "\"http://www.reelapp.com/$1/embed\"",
+        "location": {
+          "path": "editor/js/vendor/ckeditor/plugins/oembed/libs/jquery.oembed.min.js",
+          "line": 10,
+          "revision": "4d6d12ba41f91c9c116355e2805244a371720fdf"
+        },
+        "currentProvider": null,
+        "status": "no-same-name-provider"
+      },
+      {
+        "name": "linkedin",
+        "type": "rich",
+        "urlPatterns": [
+          "linkedin.com/pub/.+"
+        ],
+        "endpointExpression": "\"https://www.linkedin.com/cws/member/public_profile?public_profile_url=$1&format=inline&isFramed=true\"",
+        "location": {
+          "path": "editor/js/vendor/ckeditor/plugins/oembed/libs/jquery.oembed.min.js",
+          "line": 10,
+          "revision": "4d6d12ba41f91c9c116355e2805244a371720fdf"
+        },
+        "currentProvider": null,
+        "status": "no-same-name-provider"
+      },
+      {
+        "name": "timetoast",
+        "type": "rich",
+        "urlPatterns": [
+          "timetoast.com/timelines/[0-9]+"
+        ],
+        "endpointExpression": "\"http://www.timetoast.com/flash/TimelineViewer.swf?passedTimelines=$1\"",
+        "location": {
+          "path": "editor/js/vendor/ckeditor/plugins/oembed/libs/jquery.oembed.min.js",
+          "line": 10,
+          "revision": "4d6d12ba41f91c9c116355e2805244a371720fdf"
+        },
+        "currentProvider": null,
+        "status": "no-same-name-provider"
+      },
+      {
+        "name": "pastebin",
+        "type": "rich",
+        "urlPatterns": [
+          "pastebin\\.com/[\\S]{8}"
+        ],
+        "endpointExpression": "\"http://pastebin.com/embed_iframe.php?i=$1\"",
+        "location": {
+          "path": "editor/js/vendor/ckeditor/plugins/oembed/libs/jquery.oembed.min.js",
+          "line": 10,
+          "revision": "4d6d12ba41f91c9c116355e2805244a371720fdf"
+        },
+        "currentProvider": null,
+        "status": "no-same-name-provider"
+      },
+      {
+        "name": "mixlr",
+        "type": "rich",
+        "urlPatterns": [
+          "mixlr.com/.+"
+        ],
+        "endpointExpression": "\"http://mixlr.com/embed/$1?autoplay=ae\"",
+        "location": {
+          "path": "editor/js/vendor/ckeditor/plugins/oembed/libs/jquery.oembed.min.js",
+          "line": 10,
+          "revision": "4d6d12ba41f91c9c116355e2805244a371720fdf"
+        },
+        "currentProvider": null,
+        "status": "no-same-name-provider"
+      },
+      {
+        "name": "pastie",
+        "type": "rich",
+        "urlPatterns": [
+          "pastie\\.org/pastes/.+"
+        ],
+        "endpointExpression": "null",
+        "location": {
+          "path": "editor/js/vendor/ckeditor/plugins/oembed/libs/jquery.oembed.min.js",
+          "line": 10,
+          "revision": "4d6d12ba41f91c9c116355e2805244a371720fdf"
+        },
+        "currentProvider": null,
+        "status": "no-same-name-provider"
+      },
+      {
+        "name": "github",
+        "type": "rich",
+        "urlPatterns": [
+          "gist.github.com/.+"
+        ],
+        "endpointExpression": "\"https://github.com/api/oembed\"",
+        "location": {
+          "path": "editor/js/vendor/ckeditor/plugins/oembed/libs/jquery.oembed.min.js",
+          "line": 10,
+          "revision": "4d6d12ba41f91c9c116355e2805244a371720fdf"
+        },
+        "currentProvider": null,
+        "status": "no-same-name-provider"
+      },
+      {
+        "name": "github",
+        "type": "rich",
+        "urlPatterns": [
+          "github.com/[-.\\w@]+/[-.\\w@]+"
+        ],
+        "endpointExpression": "\"https://api.github.com/repos/$1/$2?callback=?\"",
+        "location": {
+          "path": "editor/js/vendor/ckeditor/plugins/oembed/libs/jquery.oembed.min.js",
+          "line": 10,
+          "revision": "4d6d12ba41f91c9c116355e2805244a371720fdf"
+        },
+        "currentProvider": null,
+        "status": "no-same-name-provider"
+      },
+      {
+        "name": "facebook",
+        "type": "rich",
+        "urlPatterns": [
+          "facebook.com"
+        ],
+        "endpointExpression": "null",
+        "location": {
+          "path": "editor/js/vendor/ckeditor/plugins/oembed/libs/jquery.oembed.min.js",
+          "line": 10,
+          "revision": "4d6d12ba41f91c9c116355e2805244a371720fdf"
+        },
+        "currentProvider": "facebook",
+        "status": "same-name-provider-url-only-no-general-player-renderer"
+      },
+      {
+        "name": "stackoverflow",
+        "type": "rich",
+        "urlPatterns": [
+          "stackoverflow.com/questions/[\\d]+"
+        ],
+        "endpointExpression": "\"http://api.stackoverflow.com/1.1/questions/$1?body=true&jsonp=?\"",
+        "location": {
+          "path": "editor/js/vendor/ckeditor/plugins/oembed/libs/jquery.oembed.min.js",
+          "line": 10,
+          "revision": "4d6d12ba41f91c9c116355e2805244a371720fdf"
+        },
+        "currentProvider": null,
+        "status": "no-same-name-provider"
+      },
+      {
+        "name": "wordpress",
+        "type": "rich",
+        "urlPatterns": [
+          "wordpress\\.com/.+",
+          "blogs\\.cnn\\.com/.+",
+          "techcrunch\\.com/.+",
+          "wp\\.me/.+"
+        ],
+        "endpointExpression": "\"http://public-api.wordpress.com/oembed/1.0/?for=jquery-oembed-all\"",
+        "location": {
+          "path": "editor/js/vendor/ckeditor/plugins/oembed/libs/jquery.oembed.min.js",
+          "line": 10,
+          "revision": "4d6d12ba41f91c9c116355e2805244a371720fdf"
+        },
+        "currentProvider": null,
+        "status": "no-same-name-provider"
+      },
+      {
+        "name": "screenr",
+        "type": "rich",
+        "urlPatterns": [
+          "screenr.com"
+        ],
+        "endpointExpression": "\"http://www.screenr.com/embed/$1\"",
+        "location": {
+          "path": "editor/js/vendor/ckeditor/plugins/oembed/libs/jquery.oembed.min.js",
+          "line": 10,
+          "revision": "4d6d12ba41f91c9c116355e2805244a371720fdf"
+        },
+        "currentProvider": null,
+        "status": "no-same-name-provider"
+      },
+      {
+        "name": "gigpans",
+        "type": "rich",
+        "urlPatterns": [
+          "gigapan\\.org/[-.\\w@]+/\\d+"
+        ],
+        "endpointExpression": "\"http://gigapan.org/gigapans/$1/options/nosnapshots/iframe/flash.html\"",
+        "location": {
+          "path": "editor/js/vendor/ckeditor/plugins/oembed/libs/jquery.oembed.min.js",
+          "line": 10,
+          "revision": "4d6d12ba41f91c9c116355e2805244a371720fdf"
+        },
+        "currentProvider": null,
+        "status": "no-same-name-provider"
+      },
+      {
+        "name": "scribd",
+        "type": "rich",
+        "urlPatterns": [
+          "scribd\\.com/.+"
+        ],
+        "endpointExpression": "e()+\"www.scribd.com/embeds/$1/content?start_page=1&view_mode=list\"",
+        "location": {
+          "path": "editor/js/vendor/ckeditor/plugins/oembed/libs/jquery.oembed.min.js",
+          "line": 10,
+          "revision": "4d6d12ba41f91c9c116355e2805244a371720fdf"
+        },
+        "currentProvider": null,
+        "status": "no-same-name-provider"
+      },
+      {
+        "name": "kickstarter",
+        "type": "rich",
+        "urlPatterns": [
+          "kickstarter\\.com/projects/.+"
+        ],
+        "endpointExpression": "\"$1/widget/card.html\"",
+        "location": {
+          "path": "editor/js/vendor/ckeditor/plugins/oembed/libs/jquery.oembed.min.js",
+          "line": 10,
+          "revision": "4d6d12ba41f91c9c116355e2805244a371720fdf"
+        },
+        "currentProvider": null,
+        "status": "no-same-name-provider"
+      },
+      {
+        "name": "amazon",
+        "type": "rich",
+        "urlPatterns": [
+          "amzn.com/B+",
+          "amazon.com.*/(B\\S+)($|\\/.*)"
+        ],
+        "endpointExpression": "e()+\"rcm.amazon.com/e/cm?t=_APIKEY_&o=1&p=8&l=as1&asins=$1&ref=qf_br_asin_til&fc1=000000&IS2=1&lt1=_blank&m=amazon&lc1=0000FF&bc1=000000&bg1=FFFFFF&f=ifr\"",
+        "location": {
+          "path": "editor/js/vendor/ckeditor/plugins/oembed/libs/jquery.oembed.min.js",
+          "line": 10,
+          "revision": "4d6d12ba41f91c9c116355e2805244a371720fdf"
+        },
+        "currentProvider": null,
+        "status": "no-same-name-provider"
+      },
+      {
+        "name": "slideshare",
+        "type": "rich",
+        "urlPatterns": [
+          "slideshare.net"
+        ],
+        "endpointExpression": "e()+\"www.slideshare.net/api/oembed/2\"",
+        "location": {
+          "path": "editor/js/vendor/ckeditor/plugins/oembed/libs/jquery.oembed.min.js",
+          "line": 10,
+          "revision": "4d6d12ba41f91c9c116355e2805244a371720fdf"
+        },
+        "currentProvider": null,
+        "status": "no-same-name-provider"
+      },
+      {
+        "name": "roomsharejp",
+        "type": "rich",
+        "urlPatterns": [
+          "roomshare\\.jp/(en/)?post/.*"
+        ],
+        "endpointExpression": "\"http://roomshare.jp/oembed.json\"",
+        "location": {
+          "path": "editor/js/vendor/ckeditor/plugins/oembed/libs/jquery.oembed.min.js",
+          "line": 10,
+          "revision": "4d6d12ba41f91c9c116355e2805244a371720fdf"
+        },
+        "currentProvider": null,
+        "status": "no-same-name-provider"
+      },
+      {
+        "name": "lanyard",
+        "type": "rich",
+        "urlPatterns": [
+          "lanyrd.com/\\d+/.+"
+        ],
+        "endpointExpression": "null",
+        "location": {
+          "path": "editor/js/vendor/ckeditor/plugins/oembed/libs/jquery.oembed.min.js",
+          "line": 10,
+          "revision": "4d6d12ba41f91c9c116355e2805244a371720fdf"
+        },
+        "currentProvider": null,
+        "status": "no-same-name-provider"
+      },
+      {
+        "name": "asciiartfarts",
+        "type": "rich",
+        "urlPatterns": [
+          "asciiartfarts.com/\\d+.html"
+        ],
+        "endpointExpression": "null",
+        "location": {
+          "path": "editor/js/vendor/ckeditor/plugins/oembed/libs/jquery.oembed.min.js",
+          "line": 10,
+          "revision": "4d6d12ba41f91c9c116355e2805244a371720fdf"
+        },
+        "currentProvider": null,
+        "status": "no-same-name-provider"
+      },
+      {
+        "name": "coveritlive",
+        "type": "rich",
+        "urlPatterns": [
+          "coveritlive.com/"
+        ],
+        "endpointExpression": "null",
+        "location": {
+          "path": "editor/js/vendor/ckeditor/plugins/oembed/libs/jquery.oembed.min.js",
+          "line": 10,
+          "revision": "4d6d12ba41f91c9c116355e2805244a371720fdf"
+        },
+        "currentProvider": null,
+        "status": "no-same-name-provider"
+      },
+      {
+        "name": "polldaddy",
+        "type": "rich",
+        "urlPatterns": [
+          "polldaddy.com/"
+        ],
+        "endpointExpression": "null",
+        "location": {
+          "path": "editor/js/vendor/ckeditor/plugins/oembed/libs/jquery.oembed.min.js",
+          "line": 10,
+          "revision": "4d6d12ba41f91c9c116355e2805244a371720fdf"
+        },
+        "currentProvider": null,
+        "status": "no-same-name-provider"
+      },
+      {
+        "name": "360io",
+        "type": "rich",
+        "urlPatterns": [
+          "360\\.io/.+"
+        ],
+        "endpointExpression": "\"http://360.io/$1\"",
+        "location": {
+          "path": "editor/js/vendor/ckeditor/plugins/oembed/libs/jquery.oembed.min.js",
+          "line": 10,
+          "revision": "4d6d12ba41f91c9c116355e2805244a371720fdf"
+        },
+        "currentProvider": null,
+        "status": "no-same-name-provider"
+      },
+      {
+        "name": "bubbli",
+        "type": "rich",
+        "urlPatterns": [
+          "on\\.bubb\\.li/.+"
+        ],
+        "endpointExpression": "\"http://on.bubb.li/$1\"",
+        "location": {
+          "path": "editor/js/vendor/ckeditor/plugins/oembed/libs/jquery.oembed.min.js",
+          "line": 10,
+          "revision": "4d6d12ba41f91c9c116355e2805244a371720fdf"
+        },
+        "currentProvider": null,
+        "status": "no-same-name-provider"
+      },
+      {
+        "name": "cloudup",
+        "type": "rich",
+        "urlPatterns": [
+          "cloudup\\.com/.+"
+        ],
+        "endpointExpression": "\"http://cloudup.com/$1?chromeless\"",
+        "location": {
+          "path": "editor/js/vendor/ckeditor/plugins/oembed/libs/jquery.oembed.min.js",
+          "line": 10,
+          "revision": "4d6d12ba41f91c9c116355e2805244a371720fdf"
+        },
+        "currentProvider": null,
+        "status": "no-same-name-provider"
+      },
+      {
+        "name": "codepen",
+        "type": "rich",
+        "urlPatterns": [
+          "codepen.io/.+"
+        ],
+        "endpointExpression": "\"http://codepen.io/$1/embed/$2\"",
+        "location": {
+          "path": "editor/js/vendor/ckeditor/plugins/oembed/libs/jquery.oembed.min.js",
+          "line": 10,
+          "revision": "4d6d12ba41f91c9c116355e2805244a371720fdf"
+        },
+        "currentProvider": null,
+        "status": "no-same-name-provider"
+      },
+      {
+        "name": "googleviews",
+        "type": "rich",
+        "urlPatterns": [
+          "(.*maps\\.google\\.com\\/maps\\?).+(output=svembed).+(cbp=(.*)).*"
+        ],
+        "endpointExpression": "\"https://maps.google.com/maps?layer=c&panoid=$3&ie=UTF8&source=embed&output=svembed&cbp=$5\"",
+        "location": {
+          "path": "editor/js/vendor/ckeditor/plugins/oembed/libs/jquery.oembed.min.js",
+          "line": 10,
+          "revision": "4d6d12ba41f91c9c116355e2805244a371720fdf"
+        },
+        "currentProvider": null,
+        "status": "no-same-name-provider"
+      },
+      {
+        "name": "googlemaps",
+        "type": "rich",
+        "urlPatterns": [
+          "google\\.com/maps/place/.+"
+        ],
+        "endpointExpression": "\"http://maps.google.com/maps?t=m&q=$1&output=embed\"",
+        "location": {
+          "path": "editor/js/vendor/ckeditor/plugins/oembed/libs/jquery.oembed.min.js",
+          "line": 10,
+          "revision": "4d6d12ba41f91c9c116355e2805244a371720fdf"
+        },
+        "currentProvider": "googleMaps",
+        "status": "same-name-provider-url-only-no-general-player-renderer"
+      },
+      {
+        "name": "imajize",
+        "type": "rich",
+        "urlPatterns": [
+          "embed\\.imajize\\.com/.+"
+        ],
+        "endpointExpression": "\"http://embed.imajize.com/$1\"",
+        "location": {
+          "path": "editor/js/vendor/ckeditor/plugins/oembed/libs/jquery.oembed.min.js",
+          "line": 10,
+          "revision": "4d6d12ba41f91c9c116355e2805244a371720fdf"
+        },
+        "currentProvider": null,
+        "status": "no-same-name-provider"
+      },
+      {
+        "name": "mapjam",
+        "type": "rich",
+        "urlPatterns": [
+          "mapjam\\.com/.+"
+        ],
+        "endpointExpression": "\"http://www.mapjam.com/$1\"",
+        "location": {
+          "path": "editor/js/vendor/ckeditor/plugins/oembed/libs/jquery.oembed.min.js",
+          "line": 10,
+          "revision": "4d6d12ba41f91c9c116355e2805244a371720fdf"
+        },
+        "currentProvider": null,
+        "status": "no-same-name-provider"
+      },
+      {
+        "name": "polar",
+        "type": "rich",
+        "urlPatterns": [
+          "polarb\\.com/.+"
+        ],
+        "endpointExpression": "\"http://assets-polarb-com.a.ssl.fastly.net/api/v4/publishers/unknown/embedded_polls/iframe?poll_id=$1\"",
+        "location": {
+          "path": "editor/js/vendor/ckeditor/plugins/oembed/libs/jquery.oembed.min.js",
+          "line": 10,
+          "revision": "4d6d12ba41f91c9c116355e2805244a371720fdf"
+        },
+        "currentProvider": null,
+        "status": "no-same-name-provider"
+      },
+      {
+        "name": "ponga",
+        "type": "rich",
+        "urlPatterns": [
+          "ponga\\.com/.+"
+        ],
+        "endpointExpression": "\"https://www.ponga.com/embedded?id=$1\"",
+        "location": {
+          "path": "editor/js/vendor/ckeditor/plugins/oembed/libs/jquery.oembed.min.js",
+          "line": 10,
+          "revision": "4d6d12ba41f91c9c116355e2805244a371720fdf"
+        },
+        "currentProvider": null,
+        "status": "no-same-name-provider"
+      },
+      {
+        "name": "opengraph",
+        "type": "rich",
+        "urlPatterns": [
+          ".*"
+        ],
+        "endpointExpression": "null",
+        "location": {
+          "path": "editor/js/vendor/ckeditor/plugins/oembed/libs/jquery.oembed.min.js",
+          "line": 10,
+          "revision": "4d6d12ba41f91c9c116355e2805244a371720fdf"
+        },
+        "currentProvider": null,
+        "status": "no-same-name-provider"
+      }
+    ],
+    "nonLoadedSibling": {
+      "path": "editor/js/vendor/ckeditor/plugins/oembed/libs/jquery.oembed.js",
+      "declarationCount": 106,
+      "namesOnlyInLoadedFile": [
+        "vine",
+        "boxofficebuz",
+        "clipsyndicate",
+        "coub",
+        "discoverychannel",
+        "telly",
+        "minilogs",
+        "viddy",
+        "worldstarhiphop",
+        "zapiks",
+        "achewood",
+        "fotokritik",
+        "giflike",
+        "documentcloud",
+        "coveritlive",
+        "polldaddy",
+        "360io",
+        "bubbli",
+        "cloudup",
+        "codepen",
+        "googleviews",
+        "googlemaps",
+        "imajize",
+        "mapjam",
+        "polar",
+        "ponga"
+      ],
+      "namesOnlyInSibling": [
+        "youtubeiframe",
+        "gravtar"
+      ]
+    }
+  },
+  "current": {
+    "ckeditorVersion": "49.1.0",
+    "plugins": [
+      "XerteIframeEditing",
+      "XerteIframe",
+      "Essentials",
+      "Mention",
+      "Emoji",
+      "Paragraph",
+      "Autoformat",
+      "Bold",
+      "Italic",
+      "Underline",
+      "Strikethrough",
+      "Subscript",
+      "Superscript",
+      "Code",
+      "RemoveFormat",
+      "BlockQuote",
+      "Heading",
+      "AutoLink",
+      "Link",
+      "LinkImage",
+      "List",
+      "ListProperties",
+      "Image",
+      "ImageCaption",
+      "ImageResize",
+      "ImageStyle",
+      "ImageToolbar",
+      "ImageUpload",
+      "AutoImage",
+      "Table",
+      "TableToolbar",
+      "TableCaption",
+      "TableProperties",
+      "TableCellProperties",
+      "Indent",
+      "IndentBlock",
+      "TextPartLanguage",
+      "Alignment",
+      "HorizontalLine",
+      "FontSize",
+      "FontFamily",
+      "FontColor",
+      "FontBackgroundColor",
+      "Fullscreen",
+      "PasteFromOffice",
+      "GeneralHtmlSupport",
+      "SourceEditing",
+      "ShowBlocks",
+      "SpecialCharacters",
+      "SpecialCharactersEssentials",
+      "Style",
+      "XerteStylePreview",
+      "XerteLegacyStyles",
+      "FindAndReplace",
+      "CodeBlock",
+      "MediaEmbed",
+      "XerteMediaEmbedRoundTrip",
+      "XerteMediaResize",
+      "XerteLightbox",
+      "XerteLinkTarget",
+      "XerteLinkDialog",
+      "XerteAccessibilityChecker",
+      "XerteSourceDialog",
+      "HtmlEmbed",
+      "XerteUploadAdapter",
+      "XerteBrowseMedia",
+      "XerteAudio",
+      "XerteRecorder",
+      "XerteMathJaxSnippet",
+      "XertePageLink",
+      "XerteMarkWord",
+      "XerteSpecialCharacters",
+      "XerteMarkTag",
+      "XerteContextMenu",
+      "XerteAutocolumns",
+      "XerteFontAwesome",
+      "XerteLineHeight",
+      "XerteRubyText"
+    ],
+    "toolbar": [
+      "sourceEditing",
+      "|",
+      "undo",
+      "redo",
+      "findAndReplace",
+      "|",
+      "bold",
+      "italic",
+      "underline",
+      "removeFormat",
+      "strikethrough",
+      "subscript",
+      "superscript",
+      "code",
+      "|",
+      "xerteLink",
+      "xotlink",
+      "|",
+      "style",
+      "heading",
+      "fontFamily",
+      "fontSize",
+      "lineHeight",
+      "|",
+      "fontColor",
+      "fontBackgroundColor",
+      "|",
+      "accessibilityChecker",
+      "fullscreen",
+      "showBlocks",
+      "|",
+      "xerteBrowseImage",
+      "xerteBrowseMedia",
+      "xerteAudio",
+      "xerteRecorder",
+      "mediaEmbed",
+      "xerteIframe",
+      "insertTable",
+      "autocolumns",
+      "htmlEmbed",
+      "|",
+      "horizontalLine",
+      "specialCharacters",
+      "emoji",
+      "fontAwesome",
+      "xerteMathJax",
+      "xerteRubyText",
+      "|",
+      "bulletedList",
+      "numberedList",
+      "outdent",
+      "indent",
+      "blockQuote",
+      "codeBlock",
+      "alignment",
+      "textPartLanguage",
+      "|",
+      "markTag"
+    ],
+    "mediaProviders": [
+      {
+        "name": "dailymotion",
+        "urlPatterns": [
+          {
+            "regex": "^dailymotion\\.com\\/video\\/(\\w+)",
+            "flags": ""
+          },
+          {
+            "regex": "^dai.ly\\/(\\w+)",
+            "flags": ""
+          }
+        ],
+        "savesEmbedHtml": true,
+        "location": {
+          "path": "editor/ckeditor5-build/node_modules/@ckeditor/ckeditor5-media-embed/dist/index.js",
+          "line": 468,
+          "revision": "working-tree"
+        }
+      },
+      {
+        "name": "spotify",
+        "urlPatterns": [
+          {
+            "regex": "^open\\.spotify\\.com\\/(artist\\/\\w+)",
+            "flags": ""
+          },
+          {
+            "regex": "^open\\.spotify\\.com\\/(album\\/\\w+)",
+            "flags": ""
+          },
+          {
+            "regex": "^open\\.spotify\\.com\\/(track\\/\\w+)",
+            "flags": ""
+          }
+        ],
+        "savesEmbedHtml": true,
+        "location": {
+          "path": "editor/ckeditor5-build/node_modules/@ckeditor/ckeditor5-media-embed/dist/index.js",
+          "line": 475,
+          "revision": "working-tree"
+        }
+      },
+      {
+        "name": "youtube",
+        "urlPatterns": [
+          {
+            "regex": "^(?:m\\.)?youtube\\.com\\/watch\\?v=([\\w-]+)(?:&t=(\\d+))?",
+            "flags": ""
+          },
+          {
+            "regex": "^(?:m\\.)?youtube\\.com\\/shorts\\/([\\w-]+)(?:\\?t=(\\d+))?",
+            "flags": ""
+          },
+          {
+            "regex": "^(?:m\\.)?youtube\\.com\\/v\\/([\\w-]+)(?:\\?t=(\\d+))?",
+            "flags": ""
+          },
+          {
+            "regex": "^youtube\\.com\\/embed\\/([\\w-]+)(?:\\?start=(\\d+))?",
+            "flags": ""
+          },
+          {
+            "regex": "^youtu\\.be\\/([\\w-]+)(?:\\?t=(\\d+))?",
+            "flags": ""
+          }
+        ],
+        "savesEmbedHtml": true,
+        "location": {
+          "path": "editor/ckeditor5-build/node_modules/@ckeditor/ckeditor5-media-embed/dist/index.js",
+          "line": 488,
+          "revision": "working-tree"
+        }
+      },
+      {
+        "name": "vimeo",
+        "urlPatterns": [
+          {
+            "regex": "^vimeo\\.com\\/(\\d+)",
+            "flags": ""
+          },
+          {
+            "regex": "^vimeo\\.com\\/[^/]+\\/[^/]+\\/video\\/(\\d+)",
+            "flags": ""
+          },
+          {
+            "regex": "^vimeo\\.com\\/album\\/[^/]+\\/video\\/(\\d+)",
+            "flags": ""
+          },
+          {
+            "regex": "^vimeo\\.com\\/channels\\/[^/]+\\/(\\d+)",
+            "flags": ""
+          },
+          {
+            "regex": "^vimeo\\.com\\/groups\\/[^/]+\\/videos\\/(\\d+)",
+            "flags": ""
+          },
+          {
+            "regex": "^vimeo\\.com\\/ondemand\\/[^/]+\\/(\\d+)",
+            "flags": ""
+          },
+          {
+            "regex": "^player\\.vimeo\\.com\\/video\\/(\\d+)",
+            "flags": ""
+          }
+        ],
+        "savesEmbedHtml": true,
+        "location": {
+          "path": "editor/ckeditor5-build/node_modules/@ckeditor/ckeditor5-media-embed/dist/index.js",
+          "line": 503,
+          "revision": "working-tree"
+        }
+      },
+      {
+        "name": "instagram",
+        "urlPatterns": [
+          {
+            "regex": "^instagram\\.com\\/p\\/(\\w+)",
+            "flags": ""
+          },
+          {
+            "regex": "^instagram\\.com\\/reel\\/(\\w+)",
+            "flags": ""
+          }
+        ],
+        "savesEmbedHtml": false,
+        "location": {
+          "path": "editor/ckeditor5-build/node_modules/@ckeditor/ckeditor5-media-embed/dist/index.js",
+          "line": 518,
+          "revision": "working-tree"
+        }
+      },
+      {
+        "name": "twitter",
+        "urlPatterns": [
+          {
+            "regex": "^twitter\\.com",
+            "flags": ""
+          },
+          {
+            "regex": "^x\\.com",
+            "flags": ""
+          }
+        ],
+        "savesEmbedHtml": false,
+        "location": {
+          "path": "editor/ckeditor5-build/node_modules/@ckeditor/ckeditor5-media-embed/dist/index.js",
+          "line": 522,
+          "revision": "working-tree"
+        }
+      },
+      {
+        "name": "googleMaps",
+        "urlPatterns": [
+          {
+            "regex": "^google\\.com\\/maps",
+            "flags": ""
+          },
+          {
+            "regex": "^goo\\.gl\\/maps",
+            "flags": ""
+          },
+          {
+            "regex": "^maps\\.google\\.com",
+            "flags": ""
+          },
+          {
+            "regex": "^maps\\.app\\.goo\\.gl",
+            "flags": ""
+          }
+        ],
+        "savesEmbedHtml": false,
+        "location": {
+          "path": "editor/ckeditor5-build/node_modules/@ckeditor/ckeditor5-media-embed/dist/index.js",
+          "line": 526,
+          "revision": "working-tree"
+        }
+      },
+      {
+        "name": "flickr",
+        "urlPatterns": {
+          "regex": "^flickr\\.com",
+          "flags": ""
+        },
+        "savesEmbedHtml": false,
+        "location": {
+          "path": "editor/ckeditor5-build/node_modules/@ckeditor/ckeditor5-media-embed/dist/index.js",
+          "line": 535,
+          "revision": "working-tree"
+        }
+      },
+      {
+        "name": "facebook",
+        "urlPatterns": {
+          "regex": "^facebook\\.com",
+          "flags": ""
+        },
+        "savesEmbedHtml": false,
+        "location": {
+          "path": "editor/ckeditor5-build/node_modules/@ckeditor/ckeditor5-media-embed/dist/index.js",
+          "line": 539,
+          "revision": "working-tree"
+        }
+      },
+      {
+        "name": "xerteVideo",
+        "urlPatterns": {
+          "regex": "^((?:https?:\\/\\/|\\/\\/|(?![a-z][a-z\\d+.-]*:))[^?#\\s]+\\.(?:mp4|webm|ogv|ogg|m4v|mov)(?:[?#][^\\s]*)?)$",
+          "flags": "i"
+        },
+        "savesEmbedHtml": true,
+        "location": {
+          "path": "editor/ckeditor5-build/src/plugins/xerte-media-properties-dialog.js",
+          "line": 8,
+          "revision": "working-tree"
+        }
+      }
+    ],
+    "explicitLegacyToolbarMap": {
+      "Undo": "undo",
+      "Redo": "redo",
+      "Find": "findAndReplace",
+      "Replace": "findAndReplace",
+      "Sourcedialog": "sourceEditing",
+      "Source": "sourceEditing",
+      "Format": "heading",
+      "Font": "fontFamily",
+      "FontSize": "fontSize",
+      "LineHeight": "lineHeight",
+      "lineheight": "lineHeight",
+      "lineHeight": "lineHeight",
+      "Language": "textPartLanguage",
+      "TextColor": "fontColor",
+      "BGColor": "fontBackgroundColor",
+      "Bold": "bold",
+      "Italic": "italic",
+      "Underline": "underline",
+      "Strike": "strikethrough",
+      "Subscript": "subscript",
+      "Superscript": "superscript",
+      "CodeSnippet": "codeBlock",
+      "RemoveFormat": "removeFormat",
+      "SpecialChar": "specialCharacters",
+      "FontAwesome": "fontAwesome",
+      "HorizontalRule": "horizontalLine",
+      "Mathjax": "xerteMathJax",
+      "rubytext": "xerteRubyText",
+      "RubyText": "xerteRubyText",
+      "html5audio": "xerteAudio",
+      "Audio": "xerteAudio",
+      "xotrecorder": "xerteRecorder",
+      "Recorder": "xerteRecorder",
+      "xotcolumns": "autocolumns",
+      "Autocolumns": "autocolumns",
+      "oembed": "mediaEmbed",
+      "Oembed": "mediaEmbed",
+      "Iframe": "xerteIframe",
+      "iframe": "xerteIframe",
+      "Emoji": "emoji",
+      "ShowBlocks": "showBlocks",
+      "Maximize": "fullscreen",
+      "Styles": "style",
+      "Blockquote": "blockQuote",
+      "Link": "xerteLink",
+      "link": "xerteLink",
+      "xotlink": "xotlink",
+      "Image": "xerteBrowseImage",
+      "insertImage": "xerteBrowseImage",
+      "Table": "insertTable",
+      "MediaEmbed": "mediaEmbed",
+      "NumberedList": "numberedList",
+      "BulletedList": "bulletedList",
+      "Outdent": "outdent",
+      "Indent": "indent",
+      "Mark": "markTag",
+      "markTag": "markTag"
+    },
+    "styleDefinitions": [
+      {
+        "name": "Panel",
+        "element": "p",
+        "classes": [
+          "panel1"
+        ],
+        "existingOnly": true
+      },
+      {
+        "name": "Inline Panel",
+        "element": "span",
+        "classes": [
+          "panel",
+          "editorStyle",
+          "inline"
+        ],
+        "existingOnly": true
+      },
+      {
+        "name": "Panel 1",
+        "element": "span",
+        "classes": [
+          "panel1"
+        ]
+      },
+      {
+        "name": "Panel 2",
+        "element": "span",
+        "classes": [
+          "panel2"
+        ]
+      },
+      {
+        "name": "Panel 3",
+        "element": "span",
+        "classes": [
+          "panel3"
+        ]
+      },
+      {
+        "name": "Panel 4",
+        "element": "span",
+        "classes": [
+          "panel4"
+        ]
+      },
+      {
+        "name": "Panel 5",
+        "element": "span",
+        "classes": [
+          "panel5"
+        ]
+      },
+      {
+        "name": "Panel 6",
+        "element": "span",
+        "classes": [
+          "panel6"
+        ]
+      },
+      {
+        "name": "Highlight 1",
+        "element": "span",
+        "classes": [
+          "highlight1"
+        ]
+      },
+      {
+        "name": "Highlight 2",
+        "element": "span",
+        "classes": [
+          "highlight2"
+        ]
+      },
+      {
+        "name": "Highlight 3",
+        "element": "span",
+        "classes": [
+          "highlight3"
+        ]
+      },
+      {
+        "name": "Highlight 4",
+        "element": "span",
+        "classes": [
+          "highlight4"
+        ]
+      },
+      {
+        "name": "Highlight 5",
+        "element": "span",
+        "classes": [
+          "highlight5"
+        ]
+      },
+      {
+        "name": "Highlight 6",
+        "element": "span",
+        "classes": [
+          "highlight6"
+        ]
+      },
+      {
+        "name": "Italic Title",
+        "element": "h2",
+        "classes": [],
+        "heading": "heading1",
+        "styles": {
+          "font-style": "italic"
+        }
+      },
+      {
+        "name": "Subtitle",
+        "element": "h3",
+        "classes": [],
+        "heading": "heading2",
+        "styles": {
+          "color": "#aaa",
+          "font-style": "italic"
+        }
+      },
+      {
+        "name": "Special Container",
+        "element": "div",
+        "classes": [],
+        "wrap": "htmlDiv",
+        "styles": {
+          "padding": "5px 10px",
+          "background-color": "#eee",
+          "color": "#000",
+          "border": "1px solid #ccc"
+        }
+      },
+      {
+        "name": "Block Panel",
+        "element": "div",
+        "classes": [
+          "panel",
+          "editorStyle"
+        ],
+        "wrap": "htmlDiv",
+        "existingOnly": true
+      },
+      {
+        "name": "Blockquote 1",
+        "element": "blockquote",
+        "classes": [
+          "bq1"
+        ],
+        "wrap": "blockQuote",
+        "family": "quotes"
+      },
+      {
+        "name": "Blockquote 2",
+        "element": "blockquote",
+        "classes": [
+          "bq2"
+        ],
+        "wrap": "blockQuote",
+        "family": "quotes"
+      },
+      {
+        "name": "Blockquote 3",
+        "element": "blockquote",
+        "classes": [
+          "bq3"
+        ],
+        "wrap": "blockQuote",
+        "family": "quotes"
+      },
+      {
+        "name": "Blockquote 4",
+        "element": "blockquote",
+        "classes": [
+          "bq4"
+        ],
+        "wrap": "blockQuote",
+        "family": "quotes"
+      },
+      {
+        "name": "Blockquote 5",
+        "element": "blockquote",
+        "classes": [
+          "bq5"
+        ],
+        "wrap": "blockQuote",
+        "family": "quotes"
+      },
+      {
+        "name": "Blockquote 6",
+        "element": "blockquote",
+        "classes": [
+          "bq6"
+        ],
+        "wrap": "blockQuote",
+        "family": "quotes"
+      },
+      {
+        "name": "Speech Bubble 1",
+        "element": "div",
+        "classes": [
+          "speech-bubble1"
+        ],
+        "wrap": "htmlDiv",
+        "family": "bubbles"
+      },
+      {
+        "name": "Speech Bubble 2",
+        "element": "div",
+        "classes": [
+          "speech-bubble2"
+        ],
+        "wrap": "htmlDiv",
+        "family": "bubbles"
+      },
+      {
+        "name": "Speech Bubble 3",
+        "element": "div",
+        "classes": [
+          "speech-bubble3"
+        ],
+        "wrap": "htmlDiv",
+        "family": "bubbles"
+      },
+      {
+        "name": "Speech Bubble 4",
+        "element": "div",
+        "classes": [
+          "speech-bubble4"
+        ],
+        "wrap": "htmlDiv",
+        "family": "bubbles"
+      },
+      {
+        "name": "Speech Bubble 5",
+        "element": "div",
+        "classes": [
+          "speech-bubble5"
+        ],
+        "wrap": "htmlDiv",
+        "family": "bubbles"
+      },
+      {
+        "name": "Speech Bubble 6",
+        "element": "div",
+        "classes": [
+          "speech-bubble6"
+        ],
+        "wrap": "htmlDiv",
+        "family": "bubbles"
+      },
+      {
+        "name": "Marker",
+        "element": "span",
+        "classes": [
+          "marker"
+        ]
+      },
+      {
+        "name": "Big",
+        "element": "big",
+        "classes": [],
+        "textStyle": true
+      },
+      {
+        "name": "Small",
+        "element": "small",
+        "classes": [],
+        "textStyle": true
+      },
+      {
+        "name": "Typewriter",
+        "element": "tt",
+        "classes": [],
+        "textStyle": true
+      },
+      {
+        "name": "Computer Code",
+        "element": "code",
+        "classes": [],
+        "textStyle": true,
+        "nativeCommand": "code"
+      },
+      {
+        "name": "Keyboard Phrase",
+        "element": "kbd",
+        "classes": [],
+        "textStyle": true
+      },
+      {
+        "name": "Sample Text",
+        "element": "samp",
+        "classes": [],
+        "textStyle": true
+      },
+      {
+        "name": "Variable",
+        "element": "var",
+        "classes": [],
+        "textStyle": true
+      },
+      {
+        "name": "Deleted Text",
+        "element": "del",
+        "classes": [],
+        "textStyle": true
+      },
+      {
+        "name": "Inserted Text",
+        "element": "ins",
+        "classes": [],
+        "textStyle": true
+      },
+      {
+        "name": "Cited Work",
+        "element": "cite",
+        "classes": [],
+        "textStyle": true
+      },
+      {
+        "name": "Inline Quotation",
+        "element": "q",
+        "classes": [],
+        "textStyle": true
+      },
+      {
+        "name": "Language: RTL",
+        "element": "span",
+        "classes": [],
+        "textStyle": true,
+        "attributes": {
+          "dir": "rtl"
+        }
+      },
+      {
+        "name": "Language: LTR",
+        "element": "span",
+        "classes": [],
+        "textStyle": true,
+        "attributes": {
+          "dir": "ltr"
+        }
+      },
+      {
+        "name": "Styled Image (left)",
+        "element": "img",
+        "classes": [
+          "left"
+        ],
+        "models": [
+          "imageBlock",
+          "imageInline"
+        ],
+        "family": "imageAlign"
+      },
+      {
+        "name": "Styled Image (right)",
+        "element": "img",
+        "classes": [
+          "right"
+        ],
+        "models": [
+          "imageBlock",
+          "imageInline"
+        ],
+        "family": "imageAlign"
+      },
+      {
+        "name": "Compact Table",
+        "element": "table",
+        "classes": [],
+        "models": [
+          "table"
+        ],
+        "attributes": {
+          "cellpadding": "5",
+          "cellspacing": "0",
+          "border": "1",
+          "bordercolor": "#ccc"
+        },
+        "styles": {
+          "border-collapse": "collapse"
+        },
+        "family": "tables"
+      },
+      {
+        "name": "Borderless Table",
+        "element": "table",
+        "classes": [],
+        "models": [
+          "table"
+        ],
+        "styles": {
+          "border-style": "hidden",
+          "background-color": "#E6E6FA"
+        },
+        "family": "tables"
+      },
+      {
+        "name": "Square Bulleted List",
+        "element": "ul",
+        "classes": [],
+        "list": "square",
+        "styles": {
+          "list-style-type": "square"
+        }
+      },
+      {
+        "name": "Clean Image",
+        "element": "figure",
+        "classes": [
+          "image-clean"
+        ],
+        "models": [
+          "imageBlock",
+          "imageInline"
+        ]
+      },
+      {
+        "name": "Grayscale Image",
+        "element": "figure",
+        "classes": [
+          "image-grayscale"
+        ],
+        "models": [
+          "imageBlock",
+          "imageInline"
+        ]
+      },
+      {
+        "name": "Featured Snippet",
+        "element": "pre",
+        "classes": [
+          "code-featured"
+        ],
+        "models": [
+          "codeBlock"
+        ]
+      },
+      {
+        "name": "Featured Formula",
+        "element": "span",
+        "classes": [
+          "math-featured"
+        ],
+        "models": [
+          "xerteMathJax"
+        ],
+        "preset": "formulaStyle"
+      },
+      {
+        "name": "240p",
+        "element": "figure",
+        "classes": [
+          "embed-240p"
+        ],
+        "models": [
+          "media"
+        ],
+        "preset": "mediaStyle",
+        "existingOnly": true,
+        "dimensions": {
+          "mediaWidth": "426px",
+          "mediaHeight": "240px"
+        }
+      },
+      {
+        "name": "360p",
+        "element": "figure",
+        "classes": [
+          "embed-360p"
+        ],
+        "models": [
+          "media"
+        ],
+        "preset": "mediaStyle",
+        "existingOnly": true,
+        "dimensions": {
+          "mediaWidth": "640px",
+          "mediaHeight": "360px"
+        }
+      },
+      {
+        "name": "480p",
+        "element": "figure",
+        "classes": [
+          "embed-480p"
+        ],
+        "models": [
+          "media"
+        ],
+        "preset": "mediaStyle",
+        "existingOnly": true,
+        "dimensions": {
+          "mediaWidth": "854px",
+          "mediaHeight": "480px"
+        }
+      },
+      {
+        "name": "720p",
+        "element": "figure",
+        "classes": [
+          "embed-720p"
+        ],
+        "models": [
+          "media"
+        ],
+        "preset": "mediaStyle",
+        "existingOnly": true,
+        "dimensions": {
+          "mediaWidth": "1280px",
+          "mediaHeight": "720px"
+        }
+      },
+      {
+        "name": "1080p",
+        "element": "figure",
+        "classes": [
+          "embed-1080p"
+        ],
+        "models": [
+          "media"
+        ],
+        "preset": "mediaStyle",
+        "existingOnly": true,
+        "dimensions": {
+          "mediaWidth": "1920px",
+          "mediaHeight": "1080px"
+        }
+      }
+    ],
+    "legacyStylesWithoutSameName": [],
+    "legacyToolbarChecks": [
+      {
+        "name": "About",
+        "hiddenByOldConfig": false,
+        "mappedItems": []
+      },
+      {
+        "name": "Anchor",
+        "hiddenByOldConfig": true,
+        "mappedItems": []
+      },
+      {
+        "name": "AutoComplete",
+        "hiddenByOldConfig": false,
+        "mappedItems": []
+      },
+      {
+        "name": "BGColor",
+        "hiddenByOldConfig": false,
+        "mappedItems": [
+          "fontBackgroundColor"
+        ]
+      },
+      {
+        "name": "BidiLtr",
+        "hiddenByOldConfig": false,
+        "mappedItems": []
+      },
+      {
+        "name": "BidiRtl",
+        "hiddenByOldConfig": false,
+        "mappedItems": []
+      },
+      {
+        "name": "Blockquote",
+        "hiddenByOldConfig": false,
+        "mappedItems": [
+          "blockQuote"
+        ]
+      },
+      {
+        "name": "Bold",
+        "hiddenByOldConfig": false,
+        "mappedItems": [
+          "bold"
+        ]
+      },
+      {
+        "name": "BulletedList",
+        "hiddenByOldConfig": false,
+        "mappedItems": [
+          "bulletedList"
+        ]
+      },
+      {
+        "name": "Button",
+        "hiddenByOldConfig": false,
+        "mappedItems": []
+      },
+      {
+        "name": "Checkbox",
+        "hiddenByOldConfig": false,
+        "mappedItems": []
+      },
+      {
+        "name": "CodeSnippet",
+        "hiddenByOldConfig": false,
+        "mappedItems": [
+          "codeBlock"
+        ]
+      },
+      {
+        "name": "CommentSelectedRange",
+        "hiddenByOldConfig": false,
+        "mappedItems": []
+      },
+      {
+        "name": "Copy",
+        "hiddenByOldConfig": true,
+        "mappedItems": []
+      },
+      {
+        "name": "CopyFormatting",
+        "hiddenByOldConfig": false,
+        "mappedItems": []
+      },
+      {
+        "name": "CreateDiv",
+        "hiddenByOldConfig": true,
+        "mappedItems": []
+      },
+      {
+        "name": "Cut",
+        "hiddenByOldConfig": true,
+        "mappedItems": []
+      },
+      {
+        "name": "Find",
+        "hiddenByOldConfig": false,
+        "mappedItems": [
+          "findAndReplace"
+        ]
+      },
+      {
+        "name": "Flash",
+        "hiddenByOldConfig": true,
+        "mappedItems": []
+      },
+      {
+        "name": "Font",
+        "hiddenByOldConfig": false,
+        "mappedItems": [
+          "fontFamily"
+        ]
+      },
+      {
+        "name": "FontAwesome",
+        "hiddenByOldConfig": false,
+        "mappedItems": [
+          "fontAwesome"
+        ]
+      },
+      {
+        "name": "FontSize",
+        "hiddenByOldConfig": false,
+        "mappedItems": [
+          "fontSize"
+        ]
+      },
+      {
+        "name": "Form",
+        "hiddenByOldConfig": false,
+        "mappedItems": []
+      },
+      {
+        "name": "Format",
+        "hiddenByOldConfig": false,
+        "mappedItems": [
+          "heading"
+        ]
+      },
+      {
+        "name": "HiddenField",
+        "hiddenByOldConfig": false,
+        "mappedItems": []
+      },
+      {
+        "name": "HorizontalRule",
+        "hiddenByOldConfig": false,
+        "mappedItems": [
+          "horizontalLine"
+        ]
+      },
+      {
+        "name": "Iframe",
+        "hiddenByOldConfig": false,
+        "mappedItems": [
+          "xerteIframe"
+        ]
+      },
+      {
+        "name": "Image",
+        "hiddenByOldConfig": false,
+        "mappedItems": [
+          "xerteBrowseImage"
+        ]
+      },
+      {
+        "name": "ImageButton",
+        "hiddenByOldConfig": false,
+        "mappedItems": []
+      },
+      {
+        "name": "Indent",
+        "hiddenByOldConfig": false,
+        "mappedItems": [
+          "indent"
+        ]
+      },
+      {
+        "name": "Italic",
+        "hiddenByOldConfig": false,
+        "mappedItems": [
+          "italic"
+        ]
+      },
+      {
+        "name": "JustifyBlock",
+        "hiddenByOldConfig": false,
+        "mappedItems": []
+      },
+      {
+        "name": "JustifyCenter",
+        "hiddenByOldConfig": false,
+        "mappedItems": []
+      },
+      {
+        "name": "JustifyLeft",
+        "hiddenByOldConfig": false,
+        "mappedItems": []
+      },
+      {
+        "name": "JustifyRight",
+        "hiddenByOldConfig": false,
+        "mappedItems": []
+      },
+      {
+        "name": "Language",
+        "hiddenByOldConfig": false,
+        "mappedItems": [
+          "textPartLanguage"
+        ]
+      },
+      {
+        "name": "Link",
+        "hiddenByOldConfig": false,
+        "mappedItems": [
+          "xerteLink"
+        ]
+      },
+      {
+        "name": "Mark",
+        "hiddenByOldConfig": false,
+        "mappedItems": [
+          "markTag"
+        ]
+      },
+      {
+        "name": "Maximize",
+        "hiddenByOldConfig": false,
+        "mappedItems": [
+          "fullscreen"
+        ]
+      },
+      {
+        "name": "NewPage",
+        "hiddenByOldConfig": true,
+        "mappedItems": []
+      },
+      {
+        "name": "NumberedList",
+        "hiddenByOldConfig": false,
+        "mappedItems": [
+          "numberedList"
+        ]
+      },
+      {
+        "name": "Outdent",
+        "hiddenByOldConfig": false,
+        "mappedItems": [
+          "outdent"
+        ]
+      },
+      {
+        "name": "PageBreak",
+        "hiddenByOldConfig": true,
+        "mappedItems": []
+      },
+      {
+        "name": "Paste",
+        "hiddenByOldConfig": true,
+        "mappedItems": []
+      },
+      {
+        "name": "PasteFromWord",
+        "hiddenByOldConfig": false,
+        "mappedItems": []
+      },
+      {
+        "name": "PasteText",
+        "hiddenByOldConfig": false,
+        "mappedItems": []
+      },
+      {
+        "name": "Preview",
+        "hiddenByOldConfig": true,
+        "mappedItems": []
+      },
+      {
+        "name": "Print",
+        "hiddenByOldConfig": true,
+        "mappedItems": []
+      },
+      {
+        "name": "Radio",
+        "hiddenByOldConfig": false,
+        "mappedItems": []
+      },
+      {
+        "name": "Redo",
+        "hiddenByOldConfig": false,
+        "mappedItems": [
+          "redo"
+        ]
+      },
+      {
+        "name": "RemoveFormat",
+        "hiddenByOldConfig": false,
+        "mappedItems": [
+          "removeFormat"
+        ]
+      },
+      {
+        "name": "Replace",
+        "hiddenByOldConfig": false,
+        "mappedItems": [
+          "findAndReplace"
+        ]
+      },
+      {
+        "name": "Save",
+        "hiddenByOldConfig": true,
+        "mappedItems": []
+      },
+      {
+        "name": "Scayt",
+        "hiddenByOldConfig": false,
+        "mappedItems": []
+      },
+      {
+        "name": "Select",
+        "hiddenByOldConfig": false,
+        "mappedItems": []
+      },
+      {
+        "name": "SelectAll",
+        "hiddenByOldConfig": false,
+        "mappedItems": []
+      },
+      {
+        "name": "ShowBlocks",
+        "hiddenByOldConfig": false,
+        "mappedItems": [
+          "showBlocks"
+        ]
+      },
+      {
+        "name": "Smiley",
+        "hiddenByOldConfig": true,
+        "mappedItems": []
+      },
+      {
+        "name": "Source",
+        "hiddenByOldConfig": false,
+        "mappedItems": [
+          "sourceEditing"
+        ]
+      },
+      {
+        "name": "Sourcedialog",
+        "hiddenByOldConfig": false,
+        "mappedItems": [
+          "sourceEditing"
+        ]
+      },
+      {
+        "name": "SpecialChar",
+        "hiddenByOldConfig": false,
+        "mappedItems": [
+          "specialCharacters"
+        ]
+      },
+      {
+        "name": "SpellChecker",
+        "hiddenByOldConfig": false,
+        "mappedItems": []
+      },
+      {
+        "name": "Strike",
+        "hiddenByOldConfig": false,
+        "mappedItems": [
+          "strikethrough"
+        ]
+      },
+      {
+        "name": "Styles",
+        "hiddenByOldConfig": false,
+        "mappedItems": [
+          "style"
+        ]
+      },
+      {
+        "name": "Subscript",
+        "hiddenByOldConfig": false,
+        "mappedItems": [
+          "subscript"
+        ]
+      },
+      {
+        "name": "Superscript",
+        "hiddenByOldConfig": false,
+        "mappedItems": [
+          "superscript"
+        ]
+      },
+      {
+        "name": "Table",
+        "hiddenByOldConfig": false,
+        "mappedItems": [
+          "insertTable"
+        ]
+      },
+      {
+        "name": "Templates",
+        "hiddenByOldConfig": false,
+        "mappedItems": []
+      },
+      {
+        "name": "TextColor",
+        "hiddenByOldConfig": false,
+        "mappedItems": [
+          "fontColor"
+        ]
+      },
+      {
+        "name": "TextField",
+        "hiddenByOldConfig": false,
+        "mappedItems": []
+      },
+      {
+        "name": "Textarea",
+        "hiddenByOldConfig": false,
+        "mappedItems": []
+      },
+      {
+        "name": "UncommentSelectedRange",
+        "hiddenByOldConfig": false,
+        "mappedItems": []
+      },
+      {
+        "name": "Underline",
+        "hiddenByOldConfig": false,
+        "mappedItems": [
+          "underline"
+        ]
+      },
+      {
+        "name": "Undo",
+        "hiddenByOldConfig": false,
+        "mappedItems": [
+          "undo"
+        ]
+      },
+      {
+        "name": "Unlink",
+        "hiddenByOldConfig": false,
+        "mappedItems": []
+      },
+      {
+        "name": "autoFormat",
+        "hiddenByOldConfig": false,
+        "mappedItems": []
+      },
+      {
+        "name": "oembed",
+        "hiddenByOldConfig": false,
+        "mappedItems": [
+          "mediaEmbed"
+        ]
+      },
+      {
+        "name": "rubytext",
+        "hiddenByOldConfig": false,
+        "mappedItems": [
+          "xerteRubyText"
+        ]
+      },
+      {
+        "name": "searchCode",
+        "hiddenByOldConfig": false,
+        "mappedItems": []
+      },
+      {
+        "name": "xotcolumns",
+        "hiddenByOldConfig": false,
+        "mappedItems": [
+          "autocolumns"
+        ]
+      },
+      {
+        "name": "xotlink",
+        "hiddenByOldConfig": false,
+        "mappedItems": [
+          "xotlink"
+        ]
+      }
+    ],
+    "legacyToolbarWarnings": [
+      "[Xerte CKEditor 5] No toolbar mapping exists for CKEditor 4 item \"About\".",
+      "[Xerte CKEditor 5] No toolbar mapping exists for CKEditor 4 item \"Anchor\".",
+      "[Xerte CKEditor 5] No toolbar mapping exists for CKEditor 4 item \"AutoComplete\".",
+      "[Xerte CKEditor 5] No toolbar mapping exists for CKEditor 4 item \"BidiLtr\".",
+      "[Xerte CKEditor 5] No toolbar mapping exists for CKEditor 4 item \"BidiRtl\".",
+      "[Xerte CKEditor 5] No toolbar mapping exists for CKEditor 4 item \"Button\".",
+      "[Xerte CKEditor 5] No toolbar mapping exists for CKEditor 4 item \"Checkbox\".",
+      "[Xerte CKEditor 5] No toolbar mapping exists for CKEditor 4 item \"CommentSelectedRange\".",
+      "[Xerte CKEditor 5] No toolbar mapping exists for CKEditor 4 item \"Copy\".",
+      "[Xerte CKEditor 5] No toolbar mapping exists for CKEditor 4 item \"CopyFormatting\".",
+      "[Xerte CKEditor 5] No toolbar mapping exists for CKEditor 4 item \"CreateDiv\".",
+      "[Xerte CKEditor 5] No toolbar mapping exists for CKEditor 4 item \"Cut\".",
+      "[Xerte CKEditor 5] No toolbar mapping exists for CKEditor 4 item \"Flash\".",
+      "[Xerte CKEditor 5] No toolbar mapping exists for CKEditor 4 item \"Form\".",
+      "[Xerte CKEditor 5] No toolbar mapping exists for CKEditor 4 item \"HiddenField\".",
+      "[Xerte CKEditor 5] No toolbar mapping exists for CKEditor 4 item \"ImageButton\".",
+      "[Xerte CKEditor 5] No toolbar mapping exists for CKEditor 4 item \"JustifyBlock\".",
+      "[Xerte CKEditor 5] No toolbar mapping exists for CKEditor 4 item \"JustifyCenter\".",
+      "[Xerte CKEditor 5] No toolbar mapping exists for CKEditor 4 item \"JustifyLeft\".",
+      "[Xerte CKEditor 5] No toolbar mapping exists for CKEditor 4 item \"JustifyRight\".",
+      "[Xerte CKEditor 5] No toolbar mapping exists for CKEditor 4 item \"NewPage\".",
+      "[Xerte CKEditor 5] No toolbar mapping exists for CKEditor 4 item \"PageBreak\".",
+      "[Xerte CKEditor 5] No toolbar mapping exists for CKEditor 4 item \"Paste\".",
+      "[Xerte CKEditor 5] No toolbar mapping exists for CKEditor 4 item \"PasteFromWord\".",
+      "[Xerte CKEditor 5] No toolbar mapping exists for CKEditor 4 item \"PasteText\".",
+      "[Xerte CKEditor 5] No toolbar mapping exists for CKEditor 4 item \"Preview\".",
+      "[Xerte CKEditor 5] No toolbar mapping exists for CKEditor 4 item \"Print\".",
+      "[Xerte CKEditor 5] No toolbar mapping exists for CKEditor 4 item \"Radio\".",
+      "[Xerte CKEditor 5] No toolbar mapping exists for CKEditor 4 item \"Save\".",
+      "[Xerte CKEditor 5] No toolbar mapping exists for CKEditor 4 item \"Scayt\".",
+      "[Xerte CKEditor 5] No toolbar mapping exists for CKEditor 4 item \"Select\".",
+      "[Xerte CKEditor 5] No toolbar mapping exists for CKEditor 4 item \"SelectAll\".",
+      "[Xerte CKEditor 5] No toolbar mapping exists for CKEditor 4 item \"Smiley\".",
+      "[Xerte CKEditor 5] No toolbar mapping exists for CKEditor 4 item \"SpellChecker\".",
+      "[Xerte CKEditor 5] No toolbar mapping exists for CKEditor 4 item \"Templates\".",
+      "[Xerte CKEditor 5] No toolbar mapping exists for CKEditor 4 item \"TextField\".",
+      "[Xerte CKEditor 5] No toolbar mapping exists for CKEditor 4 item \"Textarea\".",
+      "[Xerte CKEditor 5] No toolbar mapping exists for CKEditor 4 item \"UncommentSelectedRange\".",
+      "[Xerte CKEditor 5] No toolbar mapping exists for CKEditor 4 item \"Unlink\".",
+      "[Xerte CKEditor 5] No toolbar mapping exists for CKEditor 4 item \"autoFormat\".",
+      "[Xerte CKEditor 5] No toolbar mapping exists for CKEditor 4 item \"searchCode\"."
+    ],
+    "insertGroupItems": [
+      "xerteBrowseImage",
+      "xerteBrowseMedia",
+      "xerteAudio",
+      "xerteRecorder",
+      "mediaEmbed",
+      "xerteIframe",
+      "insertTable",
+      "specialCharacters",
+      "fontAwesome",
+      "horizontalLine",
+      "xerteMathJax"
+    ]
+  },
+  "limitations": [
+    "Provider names do not prove equivalence of accepted URLs, endpoint behavior, or options.",
+    "Historical provider declarations do not establish that external services are still available.",
+    "Plugin presence does not mean every toolbar exposed it. Removed buttons and dynamic UI registration locations are recorded separately.",
+    "Packed plugins are inventoried without executing them; dynamic button declarations are supplemented, not claimed to be a complete runtime UI inventory.",
+    "Current working-tree modifications are included; source hashes identify the examined files.",
+    "Compare media attributes, theme selectors, and actual preview behavior through editing/save/reopen cycles before marking any feature compatible."
+  ],
+  "sources": [
+    {
+      "path": "editor/js/vendor/ckeditor/ckeditor.js",
+      "revision": "4d6d12ba41f91c9c116355e2805244a371720fdf",
+      "sha256": "d83b951e229c94e52d03c834b3a64deb9416cac88220d662e7beea07ef684ba7"
+    },
+    {
+      "path": "editor/js/vendor/ckeditor/config.js",
+      "revision": "4d6d12ba41f91c9c116355e2805244a371720fdf",
+      "sha256": "206f21ecd71d791e1dde5b1f3215afd9a7fde067aff9e857e3139f0ceb01c4ce"
+    },
+    {
+      "path": "editor/js/toolbox.js",
+      "revision": "4d6d12ba41f91c9c116355e2805244a371720fdf",
+      "sha256": "60503259fa4113b7715801f389089904adce7e8ae7c3663d8f374bd5a5e64aac"
+    },
+    {
+      "path": "editor/js/vendor/ckeditor/plugins/extmathjax/plugin.js",
+      "revision": "4d6d12ba41f91c9c116355e2805244a371720fdf",
+      "sha256": "115ae325fe620df1d320d8c4b6b75d1b91d6a0c4a20b3f72bdc24ac4999a6c7f"
+    },
+    {
+      "path": "editor/js/vendor/ckeditor/plugins/image3/plugin.js",
+      "revision": "4d6d12ba41f91c9c116355e2805244a371720fdf",
+      "sha256": "66cc48a119cd199af4f13490ee3face4de1ef624f1b3524d9b5fdde0cb1d5fb5"
+    },
+    {
+      "path": "editor/js/vendor/ckeditor/plugins/codemirror/plugin.js",
+      "revision": "4d6d12ba41f91c9c116355e2805244a371720fdf",
+      "sha256": "d9707f6457d26f3ee2777db40e72b22c9a15eec620751819fc402e1fa3aa8429"
+    },
+    {
+      "path": "editor/js/vendor/ckeditor/plugins/oembed/plugin.js",
+      "revision": "4d6d12ba41f91c9c116355e2805244a371720fdf",
+      "sha256": "353eb48833070995c1fcddf93d0f546a0d0981e4072977c181cc94ff455b3783"
+    },
+    {
+      "path": "editor/js/vendor/ckeditor/plugins/xotlink/plugin.js",
+      "revision": "4d6d12ba41f91c9c116355e2805244a371720fdf",
+      "sha256": "dd3c57030f5347a604ce7233d1b9232a03997413a4b72ff02fa76737d3731285"
+    },
+    {
+      "path": "editor/js/vendor/ckeditor/plugins/xotmarkword/plugin.js",
+      "revision": "4d6d12ba41f91c9c116355e2805244a371720fdf",
+      "sha256": "ba13aa04b5388b5a839695dba29fdcd96fa77e8e951c7abec7aaadfa84acb42a"
+    },
+    {
+      "path": "editor/js/vendor/ckeditor/plugins/fontawesome/plugin.js",
+      "revision": "4d6d12ba41f91c9c116355e2805244a371720fdf",
+      "sha256": "17e06fffc40e77d748007bbe1128d7784c6648a7934f79002be712f50de79b33"
+    },
+    {
+      "path": "editor/js/vendor/ckeditor/plugins/html5audio/plugin.js",
+      "revision": "4d6d12ba41f91c9c116355e2805244a371720fdf",
+      "sha256": "d484d0e0596ee586c55c8bb3a953aba59f0c187b2a5113c99a4679258a900c36"
+    },
+    {
+      "path": "editor/js/vendor/ckeditor/plugins/xotrecorder/plugin.js",
+      "revision": "4d6d12ba41f91c9c116355e2805244a371720fdf",
+      "sha256": "022f3debe6dcbe8b4ded283b60635fa546edad341c4ae685ec40d4e1d6d1f04e"
+    },
+    {
+      "path": "editor/js/vendor/ckeditor/plugins/xotcolumns/plugin.js",
+      "revision": "4d6d12ba41f91c9c116355e2805244a371720fdf",
+      "sha256": "9c4cbbef52f6c08a871b7b944fa713453a738ab3cb03cc53ccbb7b56cee1ff07"
+    },
+    {
+      "path": "editor/js/vendor/ckeditor/plugins/rubytext/plugin.js",
+      "revision": "4d6d12ba41f91c9c116355e2805244a371720fdf",
+      "sha256": "a1dcde4fbde6d0e7fd197115462cba770e13f1d1a7b5bc3a280d1b5c461f9e7d"
+    },
+    {
+      "path": "editor/js/vendor/ckeditor/plugins/wrapstyle/plugin.js",
+      "revision": "4d6d12ba41f91c9c116355e2805244a371720fdf",
+      "sha256": "1838b0595b390ffc7412f319a9a7768843d394f0d8da4a2b2d5a6738d3cbafeb"
+    },
+    {
+      "path": "editor/js/vendor/ckeditor/plugins/emoji/plugin.js",
+      "revision": "4d6d12ba41f91c9c116355e2805244a371720fdf",
+      "sha256": "d569e151e1da6e8d230eaf94541d45dd0ed918f9e7dd62f43fd3711b448d173d"
+    },
+    {
+      "path": "editor/js/vendor/ckeditor/plugins/xotlightbox/plugin.js",
+      "revision": "4d6d12ba41f91c9c116355e2805244a371720fdf",
+      "sha256": "c3ea536332675e866ecce4042b2f0bc0ec145c43d0d63acb9f97be1cf0c55568"
+    },
+    {
+      "path": "editor/js/vendor/ckeditor/plugins/numericinput/plugin.js",
+      "revision": "4d6d12ba41f91c9c116355e2805244a371720fdf",
+      "sha256": "afd099f995c38c7326ea9582d91c9e8ee24c04635d703e8b6facd4ec0c1e16bd"
+    },
+    {
+      "path": "editor/js/vendor/ckeditor/plugins/lineheight/plugin.js",
+      "revision": "4d6d12ba41f91c9c116355e2805244a371720fdf",
+      "sha256": "dbf084d7b5d918a920a35bd5f8e4f3098d8324af4512347098bcf3b35c982411"
+    },
+    {
+      "path": "editor/js/vendor/ckeditor/plugins/codesnippet/plugin.js",
+      "revision": "4d6d12ba41f91c9c116355e2805244a371720fdf",
+      "sha256": "0ce4782b2faec53f6c5656f9d095a4d6ec93d255a23bf67be77f0ce431467b0b"
+    },
+    {
+      "path": "editor/js/vendor/ckeditor/plugins/a11ychecker/plugin.js",
+      "revision": "4d6d12ba41f91c9c116355e2805244a371720fdf",
+      "sha256": "16dbda22c2f6a1fc944143c180b5092c8cd9eb90443be6a713201ef06c6753de"
+    },
+    {
+      "path": "editor/js/vendor/ckeditor/plugins/editorplaceholder/plugin.js",
+      "revision": "4d6d12ba41f91c9c116355e2805244a371720fdf",
+      "sha256": "406c5b9a0e9de5111f62ae006ea492e26fe91e19aa5d09fe9fb07dd45f52acc2"
+    },
+    {
+      "path": "editor/js/vendor/ckeditor/plugins/markTag/plugin.js",
+      "revision": "4d6d12ba41f91c9c116355e2805244a371720fdf",
+      "sha256": "bf94a8a30ad1ca12eb37ddf6cf711cd813ac3e89f1290a351c4926f6125ca8ed"
+    },
+    {
+      "path": "editor/js/vendor/ckeditor/plugins/sourcedialog/plugin.js",
+      "revision": "4d6d12ba41f91c9c116355e2805244a371720fdf",
+      "sha256": "a7ec013d780a135ce3ba582874b586b16b5849c28b49d5ccdee0e0a43833f7f4"
+    },
+    {
+      "path": "editor/js/vendor/ckeditor/plugins/autocomplete/plugin.js",
+      "revision": "4d6d12ba41f91c9c116355e2805244a371720fdf",
+      "sha256": "5ed698c7c7c53ef3b74f255206fcf08341bd33832393dd70a9a4de70fe755fa3"
+    },
+    {
+      "path": "editor/js/vendor/ckeditor/plugins/textmatch/plugin.js",
+      "revision": "4d6d12ba41f91c9c116355e2805244a371720fdf",
+      "sha256": "06704714a0ddfc8e6de50c3a2f50ce8ceef585bfa8e1a81caf217b68b6593325"
+    },
+    {
+      "path": "editor/js/vendor/ckeditor/plugins/ajax/plugin.js",
+      "revision": "4d6d12ba41f91c9c116355e2805244a371720fdf",
+      "sha256": "59b1e2677bf28f8b701ee3fd07dac9d3f4a9dae45e82010a2443b6553c3ee99a"
+    },
+    {
+      "path": "editor/js/vendor/ckeditor/plugins/textwatcher/plugin.js",
+      "revision": "4d6d12ba41f91c9c116355e2805244a371720fdf",
+      "sha256": "eda42bc5e1706317b73036e8d9a2b2e7d4f53a1cfd5c3e7c6aa1f78a0a4594fd"
+    },
+    {
+      "path": "editor/js/vendor/ckeditor/plugins/xml/plugin.js",
+      "revision": "4d6d12ba41f91c9c116355e2805244a371720fdf",
+      "sha256": "21fbd9d0929b4df08ee3f976babf7e63227b0353bf3b4cdba1ab1109db1f6400"
+    },
+    {
+      "path": "editor/js/vendor/ckeditor/styles.js",
+      "revision": "4d6d12ba41f91c9c116355e2805244a371720fdf",
+      "sha256": "379347145b714c9ea145ab3ff5e2e09fbec52d4311838447ecb0b779c93ceed1"
+    },
+    {
+      "path": "editor/js/vendor/ckeditor/plugins/oembed/libs/jquery.oembed.min.js",
+      "revision": "4d6d12ba41f91c9c116355e2805244a371720fdf",
+      "sha256": "0cb2d51cd620df2ce731d5e17814cb995ace046d1e5436fd8403f30c506440f4"
+    },
+    {
+      "path": "editor/js/vendor/ckeditor/plugins/oembed/libs/jquery.oembed.js",
+      "revision": "4d6d12ba41f91c9c116355e2805244a371720fdf",
+      "sha256": "444b0ab422ce587ace80bd62ed453bca551519b69086a48572981cbd9f2751db"
+    },
+    {
+      "path": "editor/js/vendor/ckeditor/plugins/iframe/dialogs/iframe.js",
+      "revision": "4d6d12ba41f91c9c116355e2805244a371720fdf",
+      "sha256": "aef1d8abe6ca6fedea099e5f8199a8ae800e81c014d3d56be6e074b9e6fa4979"
+    },
+    {
+      "path": "editor/ckeditor5-build/node_modules/@ckeditor/ckeditor5-media-embed/dist/index.js",
+      "revision": "working-tree",
+      "sha256": "8cfec7d1523a449fbfcec3d086c355c5a2c2af7ed645a175fe27118f7408c4a8"
+    },
+    {
+      "path": "editor/ckeditor5-build/src/plugins/xerte-media-properties-dialog.js",
+      "revision": "working-tree",
+      "sha256": "d4c572df33ccfc6339eb5ea14c000d83f0ffad50e8d90c8b5c648a892b55483f"
+    },
+    {
+      "path": "editor/ckeditor5-build/src/xerte-editor.js",
+      "revision": "working-tree",
+      "sha256": "37bc532eb69768d9f6bbdffe6cae9a59fdafb906bfcfd7fb858b4316a118499e"
+    },
+    {
+      "path": "editor/ckeditor5-build/src/plugins/xerte-legacy-styles.js",
+      "revision": "working-tree",
+      "sha256": "beca22624a2712ff35e54d9d6c3204c85ab426d4eef7ebf50b221c09cfa63cea"
+    },
+    {
+      "path": "editor/js/vendor/ckeditor5/xerte-ckeditor5.js",
+      "revision": "working-tree",
+      "sha256": "059a82fed47b0c37fbe8fc231afde1d089ef58eb9d8465e2ecdb39777cb0316a"
+    }
+  ]
+}

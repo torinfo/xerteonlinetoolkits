@@ -1,0 +1,155 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>General iframe authoring and preservation checks</title>
+<pre id="results">Running…</pre>
+<script src="test-page.js"></script>
+<script src="load-editor.js"></script>
+<script>
+( async () => {
+	const passed = [];
+	const assert = ( condition, message ) => { if ( !condition ) throw new Error( message ); };
+	const pause = () => new Promise( resolve => setTimeout( resolve, 50 ) );
+	const waitFor = async ( predicate, message = 'Live iframe did not render its webpage' ) => { for ( let attempt = 0; attempt < 80; attempt++ ) { if ( predicate() ) return; await pause(); } throw new Error( message ); };
+	const parse = html => { const div = document.createElement( 'div' ); div.innerHTML = html; return div; };
+	const attributes = element => JSON.stringify( Array.from( element.attributes, item => [ item.name, item.value ] ).sort() );
+	const models = editor => Array.from( editor.model.createRangeIn( editor.model.document.getRoot() ).getItems() ).filter( item => item.is( 'element', 'htmlIframe' ) );
+	const field = ( dialog, name ) => dialog.querySelector( '[name="' + name + '"]' );
+	const button = ( dialog, name ) => Array.from( dialog.querySelectorAll( 'button' ) ).find( item => item.textContent === name );
+	const open = editor => { const view = editor.ui.componentFactory.create( 'xerteIframe' ); view.fire( 'execute' ); view.destroy(); return document.querySelector( '.xerte-iframe-dialog' ); };
+	const submit = async dialog => { dialog.dispatchEvent( new Event( 'submit', { cancelable: true } ) ); await pause(); };
+	const select = ( editor, model ) => editor.model.change( writer => writer.setSelection( model, 'on' ) );
+	try {
+		for ( const [ name, Type, framed ] of [ [ 'Classic', XerteCKEditor5.Classic, false ], [ 'Classic iframe', XerteCKEditor5.Classic, true ], [ 'Inline', XerteCKEditor5.Inline, false ] ] ) {
+			const root = document.createElement( 'div' ); document.body.appendChild( root );
+			let editor = await Type.create( root, { xerteIframeEditing: framed } );
+			assert( editor.plugins.has( 'XerteIframe' ), name + ': iframe plugin missing' );
+			let dialog = open( editor );
+			assert( dialog && field( dialog, 'width' ).value === '100%' && field( dialog, 'height' ).value === '', name + ': media-compatible defaults missing' );
+			const webpage = new URL( 'fixtures/iframe-page.html', location.href ).href;
+			field( dialog, 'src' ).value = webpage;
+			field( dialog, 'title' ).value = 'Embedded project page';
+			field( dialog, 'width' ).value = '75%'; field( dialog, 'height' ).value = '320px';
+			field( dialog, 'class' ).value = 'project-frame';
+			field( dialog, 'style' ).value = 'border:2px solid red';
+			await submit( dialog );
+			assert( !document.querySelector( '.xerte-iframe-dialog' ), name + ': insertion failed' );
+			let saved = parse( editor.getData() ); let iframe = saved.querySelector( 'iframe' );
+			assert( models( editor ).length === 1 && iframe?.getAttribute( 'src' ) === webpage, name + ': general webpage not inserted' );
+			assert( iframe.getAttribute( 'height' ) === '320' && iframe.getAttribute( 'width' ) === '75%', name + ': iframe pixel/percentage dimensions changed' );
+			assert( iframe.classList.contains( 'project-frame' ) && iframe.style.border === '2px solid red' && iframe.hasAttribute( 'allowfullscreen' ), name + ': new iframe settings missing' );
+			assert( !saved.querySelector( '.xerte-iframe-widget,.raw-html-embed,figure.media' ), name + ': editor wrapper leaked into saved HTML' );
+			await waitFor( () => editor.ui.getEditableElement().querySelector( '.xerte-iframe-widget iframe' )?.contentDocument?.querySelector( '#embedded-page' ) );
+			const firstView = editor.editing.mapper.toViewElement( models( editor )[ 0 ] );
+			const rendered = editor.editing.view.domConverter.mapViewToDom( firstView );
+			assert( Math.round( rendered.getBoundingClientRect().height ) === 320, name + ': editor does not render configured height' );
+			select( editor, models( editor )[ 0 ] ); editor.editing.view.focus(); editor.ui.update(); await pause();
+			const toolbar = editor.plugins.get( 'ContextualBalloon' ).visibleView?.element;
+			const propertiesIcon = toolbar?.querySelector( 'button svg path[d]' );
+			assert( propertiesIcon?.getAttribute( 'd' )?.length > 10 && propertiesIcon.getBoundingClientRect().width > 0, name + ': properties icon is empty or invisible' );
+			const resizer = editor.plugins.get( 'WidgetResize' ).getResizerByViewElement( firstView );
+			assert( resizer?._options.unit === '%' && rendered.querySelector( '.ck-widget__resizer' ), name + ': media-style drag handles missing' );
+			const handle = rendered.querySelector( '.ck-widget__resizer__handle-bottom-right' );
+			const handleRect = handle.getBoundingClientRect(), owner = rendered.ownerDocument;
+			const mouse = ( type, x, y ) => new owner.defaultView.MouseEvent( type, { bubbles: true, cancelable: true, clientX: x, clientY: y, buttons: type === 'mouseup' ? 0 : 1 } );
+			handle.dispatchEvent( mouse( 'mousedown', handleRect.x + 2, handleRect.y + 2 ) );
+			owner.dispatchEvent( mouse( 'mousemove', handleRect.x - 80, handleRect.y - 30 ) );
+			owner.dispatchEvent( mouse( 'mouseup', handleRect.x - 80, handleRect.y - 30 ) ); await pause();
+			iframe = parse( editor.getData() ).querySelector( 'iframe' );
+			assert( iframe.getAttribute( 'width' ).endsWith( '%' ) && parseFloat( iframe.getAttribute( 'width' ) ) < 75 && !iframe.hasAttribute( 'height' ) && iframe.style.height === 'auto', name + ': dragging did not save percentage/proportional sizing' );
+			const resized = editor.ui.getEditableElement().querySelector( '.xerte-iframe-widget' ).getBoundingClientRect();
+			assert( Math.abs( resized.height - resized.width * 9 / 16 ) < 3, name + ': automatic iframe proportions do not render correctly' );
+			editor.execute( 'undo' );
+			dialog = open( editor ); field( dialog, 'width' ).value = '70'; field( dialog, 'height' ).value = '40';
+			dialog.querySelector( '[name="xerte-iframe-alignment"][value="center"]' ).checked = true;
+			await submit( dialog ); iframe = parse( editor.getData() ).querySelector( 'iframe' );
+			assert( iframe.getAttribute( 'width' ) === '70%' && iframe.getAttribute( 'height' ) === '40%' && iframe.style.marginLeft === 'auto' && iframe.style.marginRight === 'auto', name + ': common dimension/alignment controls differ from media' );
+			editor.execute( 'undo' );
+			dialog = open( editor ); dialog.querySelector( '.xerte-embed-dialog__dimensions button' ).click();
+			assert( field( dialog, 'width' ).value === '100%' && field( dialog, 'height' ).value === '', name + ': reset differs from media' );
+			button( dialog, 'Cancel' ).click(); await pause();
+			// Render the saved markup as preview does. The local webpage must load inside it.
+			const preview = document.createElement( 'div' ); document.body.appendChild( preview );
+			const loaded = new Promise( ( resolve, reject ) => {
+				const timeout = setTimeout( () => reject( new Error( name + ': saved iframe did not load its webpage' ) ), 5000 );
+				preview.addEventListener( 'load', event => { if ( event.target.tagName === 'IFRAME' ) { clearTimeout( timeout ); resolve(); } }, true );
+			} );
+			preview.innerHTML = editor.getData(); await loaded;
+			assert( preview.querySelector( 'iframe' ).contentDocument.querySelector( '#embedded-page' ), name + ': preview webpage content missing' ); preview.remove();
+			passed.push( 'PASS: ' + name + ' inserts a general webpage, preserves settings and loads saved HTML in preview' );
+			const firstFrame = models( editor )[ 0 ];
+			editor.model.change( writer => writer.setSelection( firstFrame.parent, 'end' ) );
+			dialog = open( editor );
+			const peerTube = 'https://video.dlearning.nl/videos/embed/e46bd183-ceca-46d3-88d9-f1344441b191';
+			field( dialog, 'src' ).value = peerTube; field( dialog, 'title' ).value = 'New PeerTube iframe'; await submit( dialog );
+			assert( models( editor ).length === 2, name + ': new iframe replaced an existing one' );
+			saved = parse( editor.getData() );
+			assert( saved.querySelectorAll( 'iframe' )[ 0 ].getAttribute( 'src' ) === webpage && saved.querySelectorAll( 'iframe' )[ 1 ].getAttribute( 'src' ) === peerTube, name + ': new PeerTube URL was rejected or changed' );
+			passed.push( 'PASS: ' + name + ' adds the reported PeerTube embed URL alongside an existing webpage iframe' );
+
+			// The reported imported PeerTube iframe, plus old theme/project settings.
+			const legacy = '<div class="embeddedContent" data-oembed="legacy"><p><iframe id="legacy-frame" class="theme-frame" title="Animatievideo AI &amp; DLearning" width="100%" height="400" src="https://video.dlearning.nl/videos/embed/e46bd183-ceca-46d3-88d9-f1344441b191?start=30&amp;custom=keep" frameborder="0" allowfullscreen="" sandbox="allow-same-origin allow-scripts allow-popups" allow="autoplay; fullscreen" referrerpolicy="strict-origin" data-project="keep" style="border:2px solid red"></iframe></p></div><p>Surrounding text</p>';
+			editor.setData( legacy );
+			const initial = attributes( parse( editor.getData() ).querySelector( 'iframe' ) );
+			assert( models( editor ).length === 1, name + ': imported iframe not recognized' );
+			assert( editor.ui.getEditableElement().querySelector( '.xerte-iframe-widget iframe' )?.getAttribute( 'sandbox' ) === 'allow-same-origin allow-scripts allow-popups', name + ': live preview lost iframe permissions' );
+			const source = editor.plugins.get( 'SourceEditing' ); source.isSourceEditingMode = true; source.isSourceEditingMode = false;
+			const paragraph = editor.model.document.getRoot().getChild( editor.model.document.getRoot().childCount - 1 );
+			editor.model.change( writer => writer.insertText( ' Edited elsewhere.', paragraph, 'end' ) );
+			for ( let cycle = 0; cycle < 3; cycle++ ) {
+				const html = editor.getData(); saved = parse( html );
+				assert( saved.querySelector( '.embeddedContent iframe' ) && attributes( saved.querySelector( 'iframe' ) ) === initial, name + ': legacy iframe or theme wrapper changed' );
+				editor.setData( html );
+			}
+			select( editor, models( editor )[ 0 ] ); dialog = open( editor );
+			assert( field( dialog, 'height' ).value === '400px' && field( dialog, 'src' ).value.includes( 'video.dlearning.nl' ), name + ': old pixel properties not loaded with explicit units' );
+			await submit( dialog );
+			assert( attributes( parse( editor.getData() ).querySelector( 'iframe' ) ) === initial, name + ': no-op properties save changed legacy attributes' );
+			passed.push( 'PASS: ' + name + ' recognizes imported PeerTube iframe and preserves its attributes/theme wrapper through Source, text edits and reloads' );
+
+			// Double-click editing, cancel, update, undo/redo and context menu access.
+			let widget = editor.ui.getEditableElement().querySelector( '.xerte-iframe-widget' );
+			widget.dispatchEvent( new MouseEvent( 'dblclick', { bubbles: true } ) ); await pause(); dialog = document.querySelector( '.xerte-iframe-dialog' );
+			assert( dialog, name + ': double-click properties missing' );
+			field( dialog, 'title' ).value = 'Cancelled title'; button( dialog, 'Cancel' ).click(); await pause();
+			assert( attributes( parse( editor.getData() ).querySelector( 'iframe' ) ) === initial, name + ': cancel changed content' );
+			dialog = open( editor ); field( dialog, 'title' ).value = 'Updated title'; await submit( dialog );
+			iframe = parse( editor.getData() ).querySelector( 'iframe' );
+			assert( iframe.title === 'Updated title' && iframe.getAttribute( 'sandbox' ) === 'allow-same-origin allow-scripts allow-popups', name + ': title edit lost permissions' );
+			editor.execute( 'undo' ); assert( attributes( parse( editor.getData() ).querySelector( 'iframe' ) ) === initial, name + ': edit did not undo' );
+			editor.execute( 'redo' ); assert( parse( editor.getData() ).querySelector( 'iframe' ).title === 'Updated title', name + ': edit did not redo' );
+			widget = editor.ui.getEditableElement().querySelector( '.xerte-iframe-widget' );
+			widget.dispatchEvent( new MouseEvent( 'contextmenu', { bubbles: true, cancelable: true, clientX: 10, clientY: 10 } ) ); await pause();
+			const properties = Array.from( document.querySelectorAll( '.xerte-ck5-context-menu button' ) ).find( item => item.textContent === 'Iframe properties' );
+			assert( properties, name + ': context-menu properties missing' ); properties.click();
+			await waitFor( () => document.querySelector( '.xerte-iframe-dialog' ), name + ': context menu did not open dialog' );
+			dialog = document.querySelector( '.xerte-iframe-dialog' ); assert( dialog, name + ': context menu did not open dialog' ); button( dialog, 'Cancel' ).click(); await pause();
+			passed.push( 'PASS: ' + name + ' properties via double-click/context menu, cancel and undo/redo' );
+
+			// Valid URLs need no provider; executable URL schemes are rejected.
+			dialog = open( editor ); field( dialog, 'src' ).value = 'javascript:alert(1)'; await submit( dialog );
+			assert( dialog.isConnected && field( dialog, 'src' ).validationMessage, name + ': executable scheme accepted' );
+			button( dialog, 'Cancel' ).click(); await pause();
+			editor.enableReadOnlyMode( 'iframe-test' ); assert( !editor.commands.get( 'xerteIframe' ).isEnabled && !open( editor ), name + ': read-only iframe editing enabled' ); editor.disableReadOnlyMode( 'iframe-test' );
+			const retained = editor.getData(); await editor.destroy(); root.innerHTML = retained;
+			editor = await Type.create( root, { xerteIframeEditing: framed } );
+			assert( parse( editor.getData() ).querySelector( 'iframe' ).title === 'Updated title', name + ': editor recreation lost iframe' );
+
+			// New CKEditor media embeds and raw HTML keep their own authoring models.
+			editor.setData( '' ); editor.execute( 'mediaEmbed', 'https://youtu.be/abc123' );
+			const mediaHtml = editor.getData(); editor.setData( mediaHtml );
+			assert( !models( editor ).length && parse( editor.getData() ).querySelector( 'figure.media iframe' ), name + ': iframe tool stole a provider media widget' );
+			editor.setData( '<div class="raw-html-embed"><iframe src="about:blank" title="Raw HTML"></iframe></div>' );
+			assert( !models( editor ).length && parse( editor.getData() ).querySelector( '.raw-html-embed iframe' ), name + ': iframe tool stole a raw HTML embed' );
+			editor.setData( '<p><iframe srcdoc="&lt;p&gt;Inline webpage&lt;/p&gt;" sandbox=""></iframe></p>' );
+			select( editor, models( editor )[ 0 ] ); dialog = open( editor ); await submit( dialog );
+			assert( parse( editor.getData() ).querySelector( 'iframe' ).getAttribute( 'srcdoc' ) === '<p>Inline webpage</p>', name + ': srcdoc iframe lost' );
+			select( editor, models( editor )[ 0 ] ); open( editor ); await editor.destroy(); await pause();
+			assert( !document.querySelector( '.xerte-iframe-dialog' ), name + ': destroy leaked dialog' ); root.remove();
+			passed.push( 'PASS: ' + name + ' URL validation, read-only, recreation, provider/raw HTML separation, srcdoc and cleanup' );
+		}
+		document.querySelector( '#results' ).textContent = passed.join( '\n' ); document.documentElement.dataset.testStatus = 'passed';
+	} catch ( error ) {
+		document.querySelector( '#results' ).textContent = passed.join( '\n' ) + '\nFAIL: ' + error.stack; document.documentElement.dataset.testStatus = 'failed';
+	}
+} )();
+</script>
