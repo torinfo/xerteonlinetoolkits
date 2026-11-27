@@ -98,8 +98,9 @@ var EDITOR = (function ($, parent) {
     },
 
     unloadFunction = function() {
-        //save my data
-        savepreviewasync(false);
+        // Browsers block synchronous XHR during close/refresh. The lightbox
+        // saves synchronously before removing its iframe, outside this event.
+        savepreviewasync(true);
         bunload();
 
     },
