@@ -42,6 +42,7 @@ var collapseHeight = -1;
 var hideBannerBtn = false;
 var fullscreenBannerTitleMargin=10;
 var m_volume=1;
+var siteVideoSequence = 0;
 
 /* ---------------------------------------------------------------------------
  * Print-fallback utilities (audio / video / pdf)
@@ -875,13 +876,32 @@ function initMedia($media) {
 }
 
 function initVideo(element) {
-	const id = $(element).attr('id');
-	const url = $(element).attr('src');
-	const iframeRatioAttr = $(element).attr('iframeRatio');
-	let div = $("<div>")
+	const $video = $(element);
+	if ($video.data('mediaelementplayer')) {
+		resizeSiteVideo($video.closest('.x_videoContainer'));
+		return; // updateContent can visit an already-initialized section again.
+	}
+	const url = $video.attr('src') || $video.find('source').first().attr('src');
+	if (!url) {
+		return;
+	}
+	const originalId = $video.attr('id');
+	let id = originalId;
+	// Rich-text videos need not have an ID. Popcorn's holder selectors require
+	// a unique, selector-safe one; keep existing framework IDs where possible.
+	if (!id || !/^[a-z_][a-z\d_-]*$/i.test(id) || document.getElementById(id) !== element) {
+		do { id = 'x_site_video_' + (++siteVideoSequence); } while (document.getElementById(id));
+	}
+	const iframeRatioAttr = $video.attr('iframeRatio');
+	const authoredHeight = element.style.height || $video.attr('height');
+	const fixedHeight = !$video.closest('.vidHolder').length && authoredHeight && authoredHeight !== 'auto' ? $video.outerHeight() : 0;
+	const div = $("<div>")
 		.attr('id', id)
 		.attr('class', 'x_videoContainer');
-	element = $(element).replaceWith(div);
+	if (id === originalId || originalId && document.getElementById(originalId) !== element) {
+		$video.removeAttr('id'); // The existing page-link target moves to the holder.
+	}
+	$video.before(div).detach();
 	let iframeRatioStr = iframeRatioAttr != "" && iframeRatioAttr != undefined ? iframeRatioAttr : '16:9';
 	let iframeRatio = iframeRatioStr.split(':');
 	// iframe ratio can be one entered in editor or fallback to 16:9
@@ -893,15 +913,16 @@ function initVideo(element) {
 	if (div.parents('.navigator').length > 0) {
 		width = div.parents('.navigator').width();
 	}
-	let height = width / aspectRatio;
+	let height = fixedHeight > 0 ? fixedHeight : width / aspectRatio;
 
-	this.popcornInstance = loadMedia($('#' + id), "video",
+	this.popcornInstance = loadMedia(div, "video",
 		{
-			// tip: $(data).find.attr("tip"),
+			tip: $video.attr('aria-label') || $video.attr('title') || '',
+			element: element,
 			width: width,
 			height: height,
 			media: url,
-			// autoplay: "false",
+			autoplay: element.autoplay ? 'true' : 'false',
 			aspect: aspectRatio,
 			// transcript: x_currentPageXML.getAttribute("transcript"),
 			// transcriptBtnTxt: x_currentPageXML.getAttribute("transcriptTabTxt"),
@@ -912,36 +933,40 @@ function initVideo(element) {
 		}, false);
 
 
-	$('#' + id)
-		.width(width)
-		.height(height);
-	resizeEmbededMedia($('#' + id + ' .popcornMedia'), {ratio: 16/9});
+	div.data({ popcornInstance: this.popcornInstance, videoAspect: aspectRatio, videoFixedHeight: fixedHeight });
+	resizeSiteVideo(div);
 
 
-	$(window).resize(function() {
-		if (!sessionStorage.getItem('hasReloaded')) {
-			sessionStorage.setItem('hasReloaded', 'true');
-			location.reload();
-		}
+	// Keep one set of handlers for all videos, preserving their players and position.
+	$(window).off('resize.siteVideos').on('resize.siteVideos', resizeSiteVideos);
+	$(document).off('.siteVideos').on('fullscreenchange.siteVideos webkitfullscreenchange.siteVideos ' +
+		'mozfullscreenchange.siteVideos MSFullscreenChange.siteVideos', function() {
+		requestAnimationFrame(resizeSiteVideos);
 	});
 
-	// var heightCalc = $('.popcornMedia').width();
-	// var heightCalc2 = heightCalc * 9 / 16;
+}
 
-	// $('.x_videoContainer').css('width', '100%');
-	// $('.popcornMedia').css('width', '100%');
-	// $('.x_videoContainer').css('height', height);
-	// $('.popcornMedia').css('height', height);
-	// $(window).resize(function() {
-	// 	setTimeout(function() {
-	// 		$('.x_videoContainer').css('width', width);
-	// 		$('.popcornMedia').css('width', width);
-	// 		$('.x_videoContainer').css('height',  height);
-	// 		$('.popcornMedia').css('height',  height);
+function resizeSiteVideo($container) {
+	if (!$container.length || !$container.is(':visible')) return;
+	const $frame = $container.find('.mejs-container');
+	const video = $container.find('video')[0];
+	const active = document.fullscreenElement || document.webkitFullscreenElement ||
+		document.mozFullScreenElement || document.msFullscreenElement;
+	// Keep the temporary fullscreen viewport out of normal panel calculations.
+	if ($frame.hasClass('mejs-container-fullscreen') || video && video.webkitDisplayingFullscreen === true ||
+		active && $container[0].contains(active)) return;
+	const ratio = $container.closest('.vidHolder').data('iframeRatio');
+	const aspect = ratio && Number(ratio[0]) > 0 && Number(ratio[1]) > 0 ? Number(ratio[0]) / Number(ratio[1]) : $container.data('videoAspect');
+	const width = $container.parent().width();
+	const height = $container.data('videoFixedHeight') || Math.ceil(width / aspect);
+	if (!(width > 0 && height > 0 && isFinite(height))) return;
+	$container.css({ width: '100%', height: height });
+	resizeEmbededMedia($container.find('.popcornMedia'), { ratio: aspect, width: '100%', height: height });
+	$container.height(height); // The shared constructor also serves holders that use 100% height.
+}
 
-	// 	}, 200);
-	// });
-
+function resizeSiteVideos() {
+	$('.x_videoContainer').each(function() { resizeSiteVideo($(this)); });
 }
 
 // called after all content loaded to set up mediaelement.js players
@@ -995,6 +1020,11 @@ function iframeResize($iframe) {
 
 // resize iframe height to keep aspect ratio
 function videoResize($popcorn) {
+	const $container = $popcorn.closest('.x_videoContainer');
+	if ($container.length) {
+		resizeSiteVideo($container);
+		return;
+	}
 	const videoRatio = $popcorn.parents('.vidHolder').data('iframeRatio');
 	const aspect = videoRatio[0] / videoRatio[1];
 	if ($popcorn.parents('.navigator.carousel').length > 0) {
@@ -1007,6 +1037,7 @@ function videoResize($popcorn) {
 		$popcorn.parent().height($popcorn.height());
 		//$popcorn.parents('.mejs-container').height('auto');
 	}
+	$popcorn.mediaPlayerSize($popcorn.width(), $popcorn.height());
 }
 
 function initSidebar(){

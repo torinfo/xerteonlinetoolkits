@@ -60,7 +60,7 @@
 					}
 				}
 
-				$(".popcornmedia .embed").each(function(){
+				$(".popcornMedia.embed").each(function(){
 					resizeEmbededMedia($(this), {});
 				});
 
@@ -638,13 +638,7 @@
 							}
 						} else if (thisData.nodeName == "movie") {
 							var $video = $mediaPanel.find("#pageVideo")
-							if ($video.data("width") != "fixed") {
-								if ($video.find(".mejs-video").width() == $video.width() || ($video.find(".mejs-video").width() > $video.width() && $video.find(".mejs-video").width() - 10 <= $video.width()) || ($video.find(".mejs-video").width() < $video.width() && $video.find(".mejs-video").width() + 10 >= $video.width())) {
-								} else {
-									// mediaelement.js videos only stay responsive when whole browser window is resized - if resize of LO is done by clicking minimise/maximise button we have to force mediaelement.js to triger resize
-									$x_window.resize();
-								}
-							}
+							perspectives.resizeVideo($video);
 						}
 					}
 				})
@@ -797,6 +791,8 @@
 
 				}, true);
 
+			perspectives.resizeVideo($holder);
+
 			if ($video.data("trackMedia")) {
 				$video.css({
 					"height": "100%",
@@ -811,6 +807,29 @@
 			if (playAll) perspectives.playAll($("#pageVideo"));
 		}
 		
+		this.mediaMetadata = function($video, dimensions) {
+			if (!(dimensions[0] > 0 && dimensions[1] > 0)) return;
+			const $holder = $video.closest('#pageVideo');
+			$holder.data('nativeDimensions', dimensions);
+			this.resizeVideo($holder);
+		}
+
+		this.resizeVideo = function($holder) {
+			const dimensions = $holder.data('dimensions') || [];
+			const native = $holder.data('nativeDimensions') || [16, 9];
+			const fixed = Number(dimensions[0]) > 0 && Number(dimensions[1]) > 0;
+			const ratio = fixed ? dimensions[0] / dimensions[1] : native[0] / native[1];
+			let width = fixed ? Math.min(Number(dimensions[0]), $holder.parent().width()) : $holder.width();
+			let height = width / ratio;
+			const $panel = $holder.parent();
+			const maxH = $('#mainInfoHolder').data('height') - ($panel.outerHeight(true) - $panel.height()) - 5;
+			if (maxH > 0 && height > maxH) {
+				height = maxH;
+				width = height * ratio;
+			}
+			$holder.mediaPlayerSize(width, height);
+		}
+
 		this.playAll = function($media) {
 			$(".playAll").addClass("playing");
 			if ($media == "text" || $media.length == 0 || $media[0].nodeName == "IMG") {
@@ -861,22 +880,6 @@
 		this.leavePage = function () {
 			document.dispatchEvent(new Event('leavepage'));
 		};
-	}
-	
-	//tweak for outscaled thumbnails when returned from video-full-screen for mp4
-	MediaElementPlayer.prototype.exitFullScreen_org = MediaElementPlayer.prototype.exitFullScreen;
-	MediaElementPlayer.prototype.exitFullScreen = function() {
-		$("#thumbHolder .thumbVideo video").each(function() {
-			var tmp_width = $(this.parentElement.parentElement.parentElement.parentElement).width();
-			var tmp_height = $(this.parentElement.parentElement.parentElement.parentElement).height();
-			var tmp_elem = this;
-			for (var i = 0; i < 5; i++) {
-				$(tmp_elem).width(tmp_width);
-				$(tmp_elem).height(tmp_height);
-				tmp_elem = tmp_elem.parentElement;
-			}
-		});
-		this.exitFullScreen_org();
 	}
 	
 	perspectives.init();

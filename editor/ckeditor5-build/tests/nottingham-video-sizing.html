@@ -1,0 +1,147 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>Nottingham video panel sizing regression</title>
+<link rel="stylesheet" href="../../../modules/xerte/parent_templates/Nottingham/common/css/mainStyles.css">
+<link rel="stylesheet" href="../../../modules/common/mediaelement/mediaelementplayer.min.css">
+<link rel="stylesheet" href="../../../modules/common/mediaelement/mediaelementplayer-legacy.min.css">
+<link rel="stylesheet" href="../../../modules/common/mediaelement/xerte-player.css">
+<link rel="stylesheet" href="../../../modules/xerte/parent_templates/Nottingham/models/textVideo.css">
+<style>body{overflow:auto}#fixture{width:800px;min-height:400px;margin:30px}#results{white-space:pre-wrap;background:white;color:black}</style>
+<pre id="results">Running...</pre><div id="fixture"></div>
+<script src="test-page.js"></script>
+<script src="../../../modules/common/js/jquery-1.9.1.min.js"></script>
+<script src="../../../modules/common/mediaelement/mediaelement-and-player.js"></script>
+<script src="../../../modules/common/js/mediaelement-sizing.js"></script>
+<script src="../../../modules/common/js/popcorn/popcorn-complete.js"></script>
+<script src="../../../modules/common/js/popcorn/plugins/popcorn.mediaconstructor.js"></script>
+<script src="../../../modules/xerte/parent_templates/Nottingham/common/js/mediaPlayer.js"></script>
+<script>
+// Real models, MediaElement, Popcorn and MP4; only the surrounding project shell is stubbed.
+var x_volume=.8, x_audioBarH=30, x_mediaText=Array.from({length:7},()=>({label:'Media'}));
+var x_siteUrl=new URL('../../../',location.href).href, x_templateLocation='modules/xerte/parent_templates/Nottingham/', xot_offline=true;
+var x_currentPage=0,x_pageInfo=[{type:'textVideo'}],x_browserInfo={mobile:false},x_params={language:'en-GB'},x_fillWindow=false;
+var x_currentPageXML, $x_innerPage=$('#fixture'),$x_pageDiv=$('#fixture'),$x_pageHolder=$('#fixture'),$x_window=$(window);
+var XENITH={SPLITSCREEN:{resizePanel(){},init(){}}};
+function x_fixYouTubeVimeo(url){return url} function x_addLineBreaks(text){return text || ''}
+function x_getAvailableHeight(){return 350} function x_pageLoaded(){} function x_pageContentsUpdated(){} function XTVideo(){}
+function x_evalURL(url){return url} function x_getLangInfo(node,key,fallback){return fallback || ''}
+(async()=>{
+ const passed=[],assert=(value,message)=>{if(!value)throw new Error(message)},delay=ms=>new Promise(r=>setTimeout(r,ms));
+ const near=(a,b)=>Math.abs(a-b)<1.1;
+ const src=new URL('../../../src/popcorn-js/test/trailer.mp4',location.href).href;
+ async function waitFor(check){for(let i=0;i<120;i++){if(check())return;await delay(100)}throw new Error('Timed out waiting for MP4 metadata/playback')}
+ function pageXML(type,extra=''){
+  x_pageInfo[0].type=type;
+  x_currentPageXML=new DOMParser().parseFromString('<'+type+' name="Video" align="Left" full="false" url="'+src+'" '+extra+'/>','text/xml').documentElement;
+ }
+ async function model(name,initialize=false){
+  Popcorn.instances.slice().forEach(instance=>instance.destroy());
+  $('#fixture video').each(function(){if(this.player)this.player.remove()});
+  const html=await(await fetch('../../../modules/xerte/parent_templates/Nottingham/models/'+name+'.html')).text();
+  const doc=new DOMParser().parseFromString(html,'text/html'),script=doc.querySelector('script');
+  const code=script.textContent.replace(name+'.init();','');script.remove();
+  $('#fixture').html(doc.body.innerHTML);$.globalEval(code);
+  if(initialize)window[name].init();
+ }
+ async function nativeVideo($holder){
+  $holder.mediaPlayer({type:'video',source:src,width:'100%',height:'100%',pageName:x_pageInfo[0].type});
+  const video=$holder.find('video')[0];await waitFor(()=>video.readyState>=1);return video;
+ }
+ function fits(video,width,height,label){
+  const $frame=$(video).closest('.mejs-container');
+  for(const element of [$frame[0],video,$frame.find('.mejs-overlay-play')[0]]){
+   const bounds=$(element).is(':visible') ? element.getBoundingClientRect() : {width:$(element).width(),height:$(element).height()};
+   assert(near(bounds.width,width)&&near(bounds.height,height),label+': '+element.className+' '+bounds.width+'x'+bounds.height+' != '+width+'x'+height);
+  }
+ }
+ try{
+  // The fixture MP4 has a non-16:9 aspect ratio: panel dimensions must still win.
+  pageXML('textVideo');await model('textVideo',true);
+  let video=$('#pageVideo video')[0];await waitFor(()=>video.readyState>=1);await delay(180);
+  for(const width of [800,500,1000,300]){
+   $('#fixture').width(width);textVideo.sizeChanged();await delay(160);
+   const w=$('#pageVideo').width(),h=$('#pageVideo').height();
+   fits(video,w,h,'Media > Video at layout '+width);
+   window.dispatchEvent(new Event('resize'));await delay(30);
+   fits(video,w,h,'Native resize must retain panel dimensions');
+   assert($(video).closest('.mejs-container').outerHeight()<=$('#videoHolder').height()+1,'Player escaped its panel');
+  }
+  let pop=textVideo.popcornInstance,plays=0,cues=0;
+  pop.on('play',()=>plays++);pop.cue(.15,()=>cues++);video.muted=true;pop.play();
+  await waitFor(()=>video.currentTime>.2&&cues>0);pop.pause();assert(plays>0,'Popcorn no longer receives playback events');
+  passed.push('PASS: Media > Video picture, controls and panel agree before/after metadata and repeated resizes; Popcorn playback and timed cues still work');
+
+  const player=video.player,exitFullscreen=document.exitFullscreen,normalWidth=$(video).closest('.mejs-container').width(),normalHeight=$(video).closest('.mejs-container').height();
+  // Exercise MediaElement's real fullscreen entry/exit sizing without asking
+  // the browser to enter native fullscreen from an automated page.
+  document.exitFullscreen=()=>Promise.resolve();player.fullscreenMode='';player.enterFullScreen();
+  const oldFrame=$(video).closest('.mejs-container')[0].getAttribute('style');
+  $(video).mediaPlayerSize(240,180);
+  assert($(video).closest('.mejs-container')[0].getAttribute('style')===oldFrame,'Panel sizing overwrote fullscreen');
+  assert(player.normalWidth===normalWidth&&player.normalHeight===normalHeight,'Temporary fullscreen layout replaced the return dimensions');
+  player.exitFullScreen();document.exitFullscreen=exitFullscreen;await delay(30);fits(video,normalWidth,normalHeight,'Returning from fullscreen');
+  window.dispatchEvent(new Event('resize'));await delay(30);fits(video,normalWidth,normalHeight,'Resizing after fullscreen');
+  $(video).mediaPlayerSize(240,180);
+  $(video).mediaPlayerSize(0,NaN);fits(video,240,180,'Hidden/unmeasurable layout');
+  passed.push('PASS: fullscreen dimensions are protected and zero/invalid measurements do not collapse the player');
+
+  // Fixed dimensions and a repeated page visit use the same shared constructor.
+  pageXML('textVideo','movieSize="320,240"');$('#fixture').width(800);await model('textVideo',true);
+  video=$('#pageVideo video')[0];await waitFor(()=>video.readyState>=1);await delay(180);fits(video,320,240,'Authored maximum size');
+  textVideo.pageChanged();video=$('#pageVideo video')[0];await waitFor(()=>video.readyState>=1);await delay(180);fits(video,320,240,'Revisited Video page');
+  passed.push('PASS: authored Maximum Size and returning to the Video page retain the Xerte frame dimensions');
+
+  for(const name of ['title','orient','summary']){
+   pageXML(name);await model(name);$('#fixture').html('<div id="mediaHolder" class="pageVideo"><div class="mediaPanel" style="width:400px;height:250px"><div id="pageVideo"></div></div></div>');
+   video=await nativeVideo($('#pageVideo'));
+   window[name].getMaxDimensions=()=>[300,220];
+   window[name].mediaMetadata($(video),[640,480]);fits(video,293,220,name+' video');
+   window[name].getMaxDimensions=()=>[240,120];window[name].resizeVideo();fits(video,160,120,name+' resized');
+   window.dispatchEvent(new Event('resize'));await delay(30);fits(video,160,120,name+' native resize');
+   passed.push('PASS: '+name+' uses its calculated panel size for both frame and picture');
+  }
+
+  for(const name of ['mediaLesson','interactiveVideo']){
+   pageXML(name);await model(name);$('#fixture').html('<div class="layoutPanel videoPanel panel" style="width:300px;height:210px"><h3 class="panelTitle" style="height:20px;margin:0">Video</h3><div id="lessonVideo" class="popcornMedia mainMedia"></div></div>');
+   // Initialize the model's private panel reference through its page lifecycle,
+   // without constructing unrelated interaction plugins from project XML.
+   const setUp=window[name].setUp;window[name].setUp=()=>{};window[name].pageChanged();window[name].setUp=setUp;
+   video=await nativeVideo($('#lessonVideo'));window[name].mediaMetadata($(video),[640,480]);
+   const w=$(video).closest('.mejs-container').width(),h=$(video).closest('.mejs-container').height();
+   assert(w<=300&&h<=190,'Lesson player exceeded available panel');fits(video,w,h,name);
+   $('.layoutPanel').width(240);window[name].resizeMedia();
+   fits(video,$(video).closest('.mejs-container').width(),$(video).closest('.mejs-container').height(),name+' resized');
+   assert($(video).width()<=240,'Lesson picture escaped narrower panel');
+   passed.push('PASS: '+name+' resizes native videos within its panel without a simulated window resize');
+  }
+
+  pageXML('nav','type="Col"');await model('nav');$('#fixture').html('<div class="navChild" style="width:350px;height:250px"><div class="navMedia video" id="navVideo"></div></div>');
+  video=await nativeVideo($('#navVideo'));nav.mediaMetadata($(video),[640,480]);fits(video,340,255,'Navigator initial size');
+  $('.navChild').width(250);nav.resizeMedia();fits(video,240,180,'Navigator resized');
+  passed.push('PASS: navigator video frame and picture resize together when available panel width changes');
+
+  pageXML('videoSynch','panelWidth="medium"');await model('videoSynch');videoSynch.init();
+  $('#pageVideo').css({width:320,height:240});video=await nativeVideo($('#pageVideo'));
+  $('#pageVideo .mejs-container').wrap('<div class="popcornMedia mainMedia"></div>');videoSynch.sizeChanged();fits(video,320,180,'Synched Video');
+  $('#pageVideo').addClass('fixedSize').data('dimensions',[320,240]);videoSynch.sizeChanged();fits(video,320,240,'Fixed Synched Video');
+  passed.push('PASS: Synched Video handles native files as well as embedded providers, including fixed dimensions');
+
+  pageXML('perspectives');await model('perspectives');$('#fixture').html('<div id="mainInfoHolder"><div class="panel" style="width:300px"><div id="pageVideo"></div></div></div>');
+  $('#pageVideo').data('dimensions',['100%','100%']);video=await nativeVideo($('#pageVideo'));perspectives.mediaMetadata($(video),[640,480]);fits(video,300,225,'Perspectives');
+  $('#pageVideo').parent().width(240);perspectives.resizeVideo($('#pageVideo'));fits(video,240,180,'Perspectives resized');
+  $('#pageVideo').data('dimensions',[320,180]);perspectives.resizeVideo($('#pageVideo'));fits(video,240,135,'Perspectives fixed');
+  passed.push('PASS: Perspectives respects the selected panel for fluid and fixed-size video');
+
+  pageXML('media360');await model('media360');$('#fixture').html('<div class="featherlight-content" style="width:320px;height:220px"><div id="pageVideo"></div></div>');
+  video=await nativeVideo($('#pageVideo'));media360.mediaMetadata($(video),[640,480]);fits(video,266,200,'360 video lightbox');
+  assert(!$('.featherlight-content').hasClass('hidden'),'Lightbox stayed hidden');
+  passed.push('PASS: 360-page video lightbox fits both the player and picture to its available space');
+
+  // The shared utility must not resize audio or replace provider iframes.
+  const $embed=$('<div class="popcornMedia embed" style="width:300px;height:200px"><iframe src="about:blank"></iframe></div>').appendTo('#fixture');
+  resizeEmbededMedia($embed,{width:280,height:180});assert($embed.width()===280&&$embed.height()===180&&$embed.find('iframe').length===1,'Embedded provider path changed');
+  passed.push('PASS: iframe-provider resizing retains its existing path');
+  document.querySelector('#results').textContent=passed.join('\n');document.documentElement.dataset.testStatus='passed';
+ }catch(error){document.querySelector('#results').textContent=passed.join('\n')+'\nFAIL: '+error.stack;document.documentElement.dataset.testStatus='failed'}
+})();
+</script>

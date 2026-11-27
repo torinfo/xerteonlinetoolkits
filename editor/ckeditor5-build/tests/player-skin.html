@@ -1,0 +1,74 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>Xerte established player skin regression</title>
+<style>
+body{margin:20px;font:14px Arial;background:#f3f3f3;color:#222}
+#examples{display:grid;grid-template-columns:470px 470px;gap:16px}
+iframe{width:470px;height:310px;border:0;background:white}
+iframe.audio{height:100px}h2{margin:0 0 8px;font-size:16px}
+#results{white-space:pre-wrap;max-width:960px}
+</style>
+<script src="test-page.js"></script>
+<pre id="results">Running...</pre><div id="examples"></div>
+<script>
+(async()=>{
+ const caseName=new URL(location.href).searchParams.get('case');
+ const assert=(value,message)=>{if(!value)throw new Error(message)},delay=ms=>new Promise(r=>setTimeout(r,ms));
+ const waitFor=async check=>{for(let i=0;i<150;i++){if(check())return;await delay(100)}throw new Error('Player skin check timed out')};
+ const common='../../../modules/common/mediaelement/',old='../../../modules/xerte/parent_templates/Nottingham/common/mediaelement/';
+ async function css(url){await new Promise((resolve,reject)=>{const link=document.createElement('link');link.rel='stylesheet';link.href=url;link.onload=resolve;link.onerror=()=>reject(new Error('Missing CSS: '+url));document.head.appendChild(link)})}
+ async function script(url){await new Promise((resolve,reject)=>{const item=document.createElement('script');item.src=url;item.onload=resolve;item.onerror=()=>reject(new Error('Missing script: '+url));document.head.appendChild(item)})}
+ try{
+  if(!caseName){
+   const cases=[['old-video','Previous video player'],['new-video','Current player with restored skin'],['old-audio','Previous audio player'],['new-audio','Current audio player with restored skin'],['contrast-audio','High Contrast theme override']];
+   const frames=cases.map(([id,title])=>{const section=document.createElement('section'),heading=document.createElement('h2'),frame=document.createElement('iframe');heading.textContent=title;frame.title=title;frame.src='player-skin.html?case='+id;frame.className=id.includes('audio')?'audio':'';section.append(heading,frame);document.querySelector('#examples').append(section);return frame});
+   await waitFor(()=>frames.every(frame=>['passed','failed'].includes(frame.contentDocument?.documentElement.dataset.testStatus)));
+   for(const frame of frames)assert(frame.contentDocument.documentElement.dataset.testStatus==='passed',frame.title+': '+frame.contentDocument.querySelector('#results').textContent);
+   const metrics=frames.map(frame=>frame.contentWindow.skinMetrics);
+   for(const [before,after] of [[metrics[0],metrics[1]],[metrics[2],metrics[3]]]){
+    for(const property of ['barHeight','buttonWidth','buttonHeight','barBackground','loadedBackground','currentBackground'])assert(before[property]===after[property],property+' differs from the previous skin: '+before[property]+' vs '+after[property]);
+   }
+   document.querySelector('#results').textContent='PASS: video and audio match the earlier 30px bar, 16px icons, dark gradient, blue buffering and white playback colours\nPASS: current-player controls play, pause, seek and mute; progress transforms and keyboard focus remain usable\nPASS: High Contrast theme overrides remain effective';
+  }else{
+   document.body.style.cssText='margin:12px;background:white;color:black;font:14px Arial';document.querySelector('#results').style.display='none';
+   const legacy=caseName.startsWith('old-'),audio=caseName.includes('audio');
+   await css(legacy?old+'mediaelementplayer.css':common+'mediaelementplayer.min.css');
+   if(!legacy){await css(common+'mediaelementplayer-legacy.min.css');await css(common+'xerte-player.css')}
+   if(caseName==='contrast-audio')await css('../../../themes/Nottingham/highcontrast/highcontrast.css');
+   await script('../../../modules/common/js/jquery-1.9.1.min.js');await script(legacy?old+'mediaelement-and-player.js':common+'mediaelement-and-player.min.js');
+   const element=document.createElement(audio?'audio':'video');element.controls=true;element.preload='auto';element.muted=true;element.style.cssText='width:420px;height:'+(audio?30:250)+'px';
+   element.setAttribute('width','420');element.setAttribute('height',audio?'30':'250');
+   const source=document.createElement('source');source.src='../../../src/popcorn-js/test/'+(audio?'silence.mp3':'trailer.mp4');source.type=audio?'audio/mp3':'video/mp4';element.append(source);document.body.append(element);
+   $(element).mediaelementplayer({classPrefix:'mejs-',features:audio?['playpause','current','progress','duration','volume']:['playpause','current','progress','duration','volume','fullscreen'],startVolume:1,enableAutosize:false,alwaysShowControls:true});
+   const player=$(element).data('mediaelementplayer')||element.player;
+   await waitFor(()=>player.media.readyState>=1);await delay(350);player.showControls();
+   const container=player.container.jquery?player.container[0]:typeof player.container==='string'?document.getElementById(player.container):player.container;
+   const controls=container.querySelector('.mejs-controls'),button=container.querySelector('.mejs-playpause-button button'),loaded=container.querySelector('.mejs-time-loaded'),current=container.querySelector('.mejs-time-current');
+   const bar=getComputedStyle(controls),icon=getComputedStyle(button);
+   window.skinMetrics={barHeight:bar.height,buttonWidth:icon.width,buttonHeight:icon.height,barBackground:bar.backgroundImage,loadedBackground:getComputedStyle(loaded).backgroundImage,currentBackground:getComputedStyle(current).backgroundImage};
+   assert(bar.height==='30px'&&icon.width==='16px'&&icon.height==='16px','Compact bar/button dimensions were not restored');
+   if(!legacy){
+    assert(icon.backgroundImage.includes('xerte-controls.svg'),'Original control artwork is missing');
+    const asset=new Image();asset.src=new URL(common+'xerte-controls.svg',location.href).href;await asset.decode();
+    const overlay=new Image();overlay.src=new URL(common+'xerte-bigplay.svg',location.href).href;await overlay.decode();
+    player.media.setMuted(true);button.click();await waitFor(()=>player.media.currentTime>.1);assert(container.querySelector('.mejs-pause'),'Play button did not change to pause');
+    assert(getComputedStyle(button).backgroundPosition==='0px -16px','Pause/play artwork mapping is incorrect');
+    button.click();await waitFor(()=>player.media.paused);
+    player.setCurrentTime(Math.min(1,player.media.duration/2));await waitFor(()=>player.media.currentTime>.3);player.setCurrentRail();
+    await waitFor(()=>getComputedStyle(current).transform!=='none'&&getComputedStyle(current).transform!=='matrix(0, 0, 0, 1, 0, 0)');
+    container.querySelector('.mejs-volume-button button').click();assert(!player.media.muted,'Mute control stopped working');
+    $(container).removeClass('mejs-container-keyboard-inactive');button.focus();assert(getComputedStyle(button).outlineStyle==='dotted','Keyboard focus indicator was lost');button.blur();
+    if(caseName==='contrast-audio')assert(getComputedStyle(loaded).backgroundImage==='none'&&getComputedStyle(container.querySelector('.mejs-time-total')).borderLeftStyle==='solid','High Contrast theme styling was overridden');
+   }
+   player.pause();player.setCurrentTime(0);player.media.setVolume(1);player.media.setMuted(false);player.showControls();
+   if(!audio)$(container).find('video').css('visibility','hidden');
+   await delay(200);
+   // A deterministic visual sample, after testing the live playback controls.
+   loaded.style.width='100%';loaded.style.transformOrigin='0 0';loaded.style.transform='scaleX(.3)';current.style.width='100%';current.style.transform='scaleX(0)';
+   await delay(200);
+   document.querySelector('#results').textContent='PASS: '+caseName;
+  }
+  document.documentElement.dataset.testStatus='passed';
+ }catch(error){document.querySelector('#results').style.display='block';document.querySelector('#results').textContent='FAIL: '+error.stack;document.documentElement.dataset.testStatus='failed'}
+})();
+</script>

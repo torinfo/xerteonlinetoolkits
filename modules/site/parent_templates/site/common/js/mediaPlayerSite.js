@@ -91,15 +91,16 @@
 					opts.source = evalURL(opts.source);
 				}
 				
-				var element = $('<' + opts.type + '>')
-					.attr('preload', 'metadata');
+				// Reuse rich-text video HTML so poster, captions, permissions,
+				// accessibility attributes and authored sizes reach MediaElement intact.
+				var element = opts.element ? $(opts.element) : $('<' + opts.type + '>').attr('preload', 'metadata');
 				
-				if (opts.height != undefined) {
+				if (!opts.element && opts.height != undefined) {
 					element.attr('width', opts.width);
 					element.attr('height', opts.height);
 				}
 				
-				element.append($('<source>')
+				if (!opts.element) element.append($('<source>')
 					.attr('type', mimeType)
 					.attr('src', opts.source)
 				);
@@ -144,7 +145,7 @@
 							if (e.volume != undefined) {
 								m_volume = e.volume;
 							} else {
-								m_volume = e.target.player.getVolume();
+								m_volume = mediaElement.volume;
 							}
 							$("audio,video").each(function() {
 								if (this != domObject) {
@@ -201,7 +202,7 @@
 							});
 							
 							mediaElement.addEventListener("loadedmetadata", function(e) {
-								var $video = $(e.detail.target);
+								var $video = $(domObject);
 								$video.add($video.parents('.mejs-container')).css({
 									//'max-width': e.detail.target.videoWidth,
 									//'max-height': e.detail.target.videoHeight

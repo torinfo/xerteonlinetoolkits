@@ -50,16 +50,22 @@ var videoSynch = new function() {
 				}
 			}
 
-			$(".popcornMedia.embed").width("unset");
+			$("#pageVideo .popcornMedia").width("unset");
 
 			let maxW = "100%";
-			let maxH = $(".popcornMedia.embed").width() / aspectRatio[0] * aspectRatio[1];
+			let maxH = $("#pageVideo .popcornMedia").width() / aspectRatio[0] * aspectRatio[1];
 			if (maxH > x_getAvailableHeight([$("#videoHolder"),$("#videoHolder .videoPanel")])) {
 				maxH = x_getAvailableHeight([$("#videoHolder"),$("#videoHolder .videoPanel")]);
 				maxW = maxH / aspectRatio[1] * aspectRatio[0];
 			}
 
-			resizeEmbededMedia($(".popcornMedia.embed"), { width: maxW, height: maxH });
+			resizeEmbededMedia($("#pageVideo .popcornMedia"), { width: maxW, height: maxH });
+		} else {
+			const dimensions = $("#pageVideo").data('dimensions');
+			if (dimensions) {
+				const width = Math.min(Number(dimensions[0]), $("#pageVideo").width());
+				$("#pageVideo").mediaPlayerSize(width, width * Number(dimensions[1]) / Number(dimensions[0]));
+			}
 		}
 
 		if ($infoHolder.find("#panel").children("div:visible").last().length > 0) {

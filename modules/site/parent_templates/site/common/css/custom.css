@@ -528,10 +528,6 @@ h3.contentTitle {
         width: 100%;
     }
 
-    .vidHolder .mejs-mediaelement {
-        position: relative;
-    }
-
     .navigator.carousel .mejs-container.mejs-video .mejs-overlay-play {
         z-index: auto;
     }
@@ -1193,4 +1189,14 @@ html.x_print-capture .carousel-indicators {
 
 .x_videoContainer {
     width: 100%;
+}
+
+/* Bound the old pixel size while a responsive layout is being recalculated.
+   Otherwise a section's temporary scrollbars can feed back into video sizing. */
+.x_videoContainer .mejs-container:not(.mejs-container-fullscreen) {
+    max-width: 100%;
+}
+
+.x_videoContainer .mejs-mediaelement {
+    overflow: hidden;
 }

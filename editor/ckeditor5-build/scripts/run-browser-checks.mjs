@@ -13,14 +13,17 @@ const browser = process.env.XERTE_TEST_BROWSER || [
 if ( !browser ) throw new Error( 'Set XERTE_TEST_BROWSER to the Chrome or Edge executable.' );
 const base = process.env.XERTE_TEST_BASE_URL || 'http://localhost/xotlatest/editor/ckeditor5-build/tests/';
 const screenshot = process.argv.find( value => value.startsWith( '--screenshot=' ) )?.slice( '--screenshot='.length );
-const pages = process.argv.includes( '--all' ) ? browserChecks.map( check => check.url ) : process.argv.slice( 2 ).filter( value => !value.startsWith( '--screenshot=' ) );
+const pages = process.argv.includes( '--all' ) ? browserChecks.map( check => check.url ) : process.argv.slice( 2 ).filter( value => !value.startsWith( '--screenshot=' ) && value !== '--allow-media-playback' );
 if ( !pages.length ) pages.push( 'iframe-properties.html' );
 const delay = milliseconds => new Promise( resolve => setTimeout( resolve, milliseconds ) );
 const profile = await mkdtemp( join( tmpdir(), 'xerte-browser-check-' ) );
 const child = spawn( browser, [ '--headless=new', '--disable-gpu', '--no-first-run', '--no-default-browser-check',
+	// Audio-control integration tests need playback without a physical mouse gesture.
+	...( process.argv.includes( '--allow-media-playback' ) ? [ '--autoplay-policy=no-user-gesture-required' ] : [] ),
 	'--disable-background-networking', '--remote-debugging-port=0', `--user-data-dir=${ profile }`, 'about:blank' ],
 { stdio: [ 'ignore', 'ignore', 'pipe' ], windowsHide: true } );
 const pending = new Map();
+const runtimeErrors = new Map();
 let socket, nextId = 0;
 function call( method, params = {}, sessionId ) {
 	const id = ++nextId;
@@ -43,7 +46,12 @@ try {
 	} );
 	socket = new WebSocket( endpoint );
 	socket.addEventListener( 'message', event => {
-		const message = JSON.parse( event.data ); const request = pending.get( message.id );
+		const message = JSON.parse( event.data );
+		if ( message.method === 'Runtime.exceptionThrown' ) {
+			const details = message.params.exceptionDetails;
+			runtimeErrors.set( message.sessionId, [ ...( runtimeErrors.get( message.sessionId ) || [] ), details.exception?.description || details.text ] );
+		}
+		const request = pending.get( message.id );
 		if ( !request ) return;
 		pending.delete( message.id );
 		if ( message.error ) request.reject( new Error( message.error.message ) ); else request.resolve( message.result );
@@ -56,6 +64,7 @@ try {
 		const { sessionId } = await call( 'Target.attachToTarget', { targetId, flatten: true } );
 		await call( 'Emulation.setDeviceMetricsOverride', { width: 1280, height: 1000, deviceScaleFactor: 1, mobile: false }, sessionId );
 		await call( 'Target.activateTarget', { targetId } );
+		await call( 'Runtime.enable', {}, sessionId );
 		await call( 'Page.navigate', { url: url.href }, sessionId );
 		const started = Date.now();
 		let state;
@@ -64,12 +73,17 @@ try {
 			const result = await call( 'Runtime.evaluate', { returnByValue: true,
 				expression: '({status:document.documentElement.dataset.testStatus,failure:document.documentElement.dataset.runtimeFailure,output:document.querySelector("#results")?.textContent})' }, sessionId );
 			state = result.result.value;
+			// A fixture can request a browser-recognized user gesture for native
+			// fullscreen. This uses the real Fullscreen API, rather than mocking it.
+			if ( state?.status === 'awaiting-gesture' ) {
+				await call( 'Runtime.evaluate', { expression: 'document.querySelector("[data-test-user-gesture]").click()', userGesture: true }, sessionId );
+			}
 			if ( [ 'passed', 'failed' ].includes( state?.status ) ) break;
 		}
 		const passed = state?.status === 'passed' && !state.failure;
 		console.log( `${ passed ? 'PASS' : 'FAIL' }: ${ page } (${ Date.now() - started }ms)` );
 		console.log( state?.failure || state?.output || 'No completion marker within 90 seconds.' );
-		if ( !passed ) failures++;
+		if ( !passed ) { failures++; for ( const error of runtimeErrors.get( sessionId ) || [] ) console.log( error ); }
 		if ( screenshot && page === pages.at( -1 ) ) {
 			const capture = await call( 'Page.captureScreenshot', { format: 'png' }, sessionId );
 			await writeFile( screenshot, Buffer.from( capture.data, 'base64' ) );

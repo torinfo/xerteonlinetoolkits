@@ -1,0 +1,79 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>Bootstrap/Site native video fullscreen regression</title>
+<link rel="stylesheet" href="../../../modules/site/parent_templates/site/common/css/bootstrap.css">
+<link rel="stylesheet" href="../../../modules/site/parent_templates/site/common/css/custom.css">
+<link rel="stylesheet" href="../../../modules/common/mediaelement/mediaelementplayer.min.css">
+<link rel="stylesheet" href="../../../modules/common/mediaelement/mediaelementplayer-legacy.min.css">
+<link rel="stylesheet" href="../../../modules/common/mediaelement/xerte-player.css">
+<style>#preview{width:800px;margin:20px}#results{white-space:pre-wrap}button[data-test-user-gesture]{margin:16px}</style>
+<pre id="results">Running...</pre><button data-test-user-gesture disabled>Enter fullscreen to test Bootstrap/Site</button><div id="editor"></div><section id="preview"></section>
+<script src="test-page.js"></script>
+<script src="../../../modules/site/parent_templates/site/common/js/jquery-1.9.1.min.js"></script>
+<script src="../../../modules/common/mediaelement/mediaelement-and-player.min.js"></script>
+<script src="../../../modules/common/js/mediaelement-sizing.js"></script>
+<script src="../../../modules/common/js/popcorn/popcorn-complete.js"></script>
+<script src="../../../modules/common/js/popcorn/plugins/popcorn.mediaconstructor.js"></script>
+<script src="../../../modules/site/parent_templates/site/common/js/mediaPlayerSite.js"></script>
+<script>
+const originalReady=$.fn.ready;
+$.fn.ready=function(callback){return callback.name==='init'?this:originalReady.call(this,callback)};
+</script>
+<script src="../../../modules/site/parent_templates/site/common/js/application.js"></script>
+<script>$.fn.ready=originalReady;</script>
+<script src="load-editor.js"></script>
+<script>
+(async()=>{
+ const passed=[],button=document.querySelector('[data-test-user-gesture]'),preview=document.querySelector('#preview');
+ const src=new URL('../../../src/popcorn-js/test/trailer.mp4',location.href).href;
+ const delay=ms=>new Promise(r=>setTimeout(r,ms)),assert=(ok,message)=>{if(!ok)throw new Error(message)};
+ async function waitFor(check,message){for(let i=0;i<100;i++){if(check())return;await delay(50)}throw new Error(message)}
+ function fail(error){document.querySelector('#results').textContent=passed.join('\n')+'\nFAIL: '+error.stack;document.documentElement.dataset.testStatus='failed';button.disabled=true}
+ function fits(video,w,h,label){for(const element of [video,$(video).closest('.mejs-container')[0]]){const box=element.getBoundingClientRect();assert(Math.abs(box.width-w)<1.1&&Math.abs(box.height-h)<1.1,label+': '+element.tagName+' '+box.width+'x'+box.height+' != '+w+'x'+h+'; '+JSON.stringify(Array.from($(video).parents().slice(0,8),item=>({className:item.className,width:$(item).width(),height:$(item).height(),style:item.getAttribute('style')}))))}}
+ const cases=[['rich-text','button'],['rich-text','browser'],['dedicated','button'],['dedicated','browser']];let index=0,video,saved;
+ async function next(){
+  if(index===cases.length){
+   $('#preview').hide().width(400);updateContent($(preview));$('#preview').show();updateContent($(preview));
+   fits(video,400,300,'Site video revealed after a hidden-section resize');
+   $('#preview').width(800);$('.vidHolder',preview).wrap('<div class="navigator carousel" style="width:500px"></div>');videoResize($(video).closest('.popcornMedia'));
+   fits(video,500,375,'Site carousel layout');$('.navigator',preview).width(360);window.dispatchEvent(new Event('resize'));await delay(250);fits(video,360,270,'Site carousel resized');
+   passed.push('PASS: Site hidden sections and carousel video layouts resize their existing players');
+   button.disabled=true;document.querySelector('#results').textContent=passed.join('\n');document.documentElement.dataset.testStatus='passed';return;
+  }
+  Popcorn.instances.slice().forEach(instance=>instance.destroy());$('#preview video').each(function(){if(this.player)this.player.remove()});$('#preview').width(800).empty();
+  if(cases[index][0]==='rich-text')preview.innerHTML=saved;
+  else{const media=setUpVideo(src,'4:3','fullscreen');preview.innerHTML=media[0];$('.vidHolder',preview).data('iframeRatio',media[1])}
+  updateContent($(preview));video=preview.querySelector('video');await waitFor(()=>video.readyState>=1,'Metadata unavailable');
+  if(cases[index][0]==='dedicated')videoResize($(video).closest('.popcornMedia'));
+  await delay(180);assert(getComputedStyle(preview.querySelector('.mejs-controls')).height==='30px','Site did not load the established skin');
+  const seek=Math.min(1,video.duration/2);video.currentTime=seek;await waitFor(()=>!video.seeking&&Math.abs(video.currentTime-seek)<.05,'Could not set a nonzero playback position');
+  button.disabled=false;button.textContent='Test Site '+cases[index][0]+' ('+cases[index][1]+' exit)';document.documentElement.dataset.testStatus='awaiting-gesture';
+ }
+ button.addEventListener('click',()=>{
+  if(button.disabled)return;button.disabled=true;document.documentElement.dataset.testStatus='running';
+  const [kind,exit]=cases[index],player=video.player,$frame=$(video).closest('.mejs-container'),$holder=$(video).closest('.x_videoContainer');
+  const w=$frame.width(),h=$frame.height(),currentTime=video.currentTime;
+  $frame.find('.mejs-fullscreen-button button')[0].click();
+  (async()=>{
+   await waitFor(()=>document.fullscreenElement===$frame[0]&&player.isNativeFullScreen,'Browser did not enter native fullscreen');
+   window.dispatchEvent(new Event('resize'));await delay(250);
+   assert(preview.contains(video)&&video.player===player,'Site replaced the player during fullscreen');
+   if(exit==='button')$frame.find('.mejs-fullscreen-button button')[0].click();else await document.exitFullscreen();
+   await waitFor(()=>!document.fullscreenElement&&!player.isFullScreen&&!player.isNativeFullScreen,'Browser did not leave native fullscreen');
+   await delay(700);fits(video,w,h,'Site '+kind+' fullscreen return');
+   assert(Math.abs(video.currentTime-currentTime)<.1,'Site lost playback position after fullscreen');
+   $('#preview').width(600);window.dispatchEvent(new Event('resize'));await delay(250);
+   const width=kind==='rich-text'?450:600,height=kind==='rich-text'?240:450;
+   fits(video,width,height,'Site '+kind+' narrower layout');assert(Math.abs($holder.width()-width)<1.1&&Math.abs($holder.height()-height)<1.1,'Site holder did not follow its content width');
+   passed.push('PASS: Site '+kind+' retains player/position and restores panel/picture size after real fullscreen ('+exit+' exit), then resizes without reloading');
+   index++;await next();
+  })().catch(fail);
+ });
+ try{
+  assert(performance.getEntriesByType('navigation')[0]?.type!=='reload','Site reloaded the page when a video resize/fullscreen event fired');
+  const editor=await XerteCKEditor5.Classic.create(document.querySelector('#editor'),{xerteIframeEditing:false});editor.execute('mediaEmbed',src);
+  const media=editor.model.document.selection.getSelectedElement();editor.model.change(writer=>{writer.setAttribute('mediaWidth','75%',media);writer.setAttribute('mediaHeight','240px',media)});
+  saved=editor.getData();await editor.destroy();await next();
+ }catch(error){fail(error)}
+})();
+</script>

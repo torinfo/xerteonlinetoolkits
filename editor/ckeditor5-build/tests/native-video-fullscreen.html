@@ -1,0 +1,89 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>Native video fullscreen return regression</title>
+<link rel="stylesheet" href="../../../modules/xerte/parent_templates/Nottingham/common/css/mainStyles.css">
+<link rel="stylesheet" href="../../../modules/common/mediaelement/mediaelementplayer-legacy.min.css">
+<link rel="stylesheet" href="../../../modules/common/mediaelement/xerte-player.css">
+<link rel="stylesheet" href="../../../modules/xerte/parent_templates/Nottingham/models/textVideo.css">
+<style>body{overflow:auto}#fixture{width:800px;min-height:400px;margin:30px}#results{white-space:pre-wrap}button[data-test-user-gesture]{margin:16px}</style>
+<pre id="results">Running...</pre><button data-test-user-gesture disabled>Enter fullscreen to test the return size</button><div id="fixture"></div>
+<script src="test-page.js"></script>
+<script src="../../../modules/common/js/jquery-1.9.1.min.js"></script>
+<script src="../../../modules/common/mediaelement/mediaelement-and-player.js"></script>
+<script src="../../../modules/common/js/mediaelement-sizing.js"></script>
+<script src="../../../modules/common/js/popcorn/popcorn-complete.js"></script>
+<script src="../../../modules/common/js/popcorn/plugins/popcorn.mediaconstructor.js"></script>
+<script src="../../../modules/xerte/parent_templates/Nottingham/common/js/mediaPlayer.js"></script>
+<script>
+var x_volume=.8,x_audioBarH=30,x_mediaText=Array.from({length:7},()=>({label:'Media'}));
+var x_siteUrl=new URL('../../../',location.href).href,x_templateLocation='modules/xerte/parent_templates/Nottingham/',xot_offline=true;
+var x_currentPage=0,x_pageInfo=[{type:'title'}],x_browserInfo={mobile:false},x_params={language:'en-GB'},x_currentPageXML;
+var $x_innerPage=$('#fixture'),$x_pageDiv=$('#fixture'),$x_pageHolder=$('#fixture'),$x_window=$(window);
+function x_fixYouTubeVimeo(url){return url}function x_addLineBreaks(text){return text||''}function x_getAvailableHeight(){return 350}
+function x_pageLoaded(){}function x_pageContentsUpdated(){}function XTVideo(){}function x_getLangInfo(node,key,fallback){return fallback||''}
+(async()=>{
+ const src=new URL('../../../src/popcorn-js/test/trailer.mp4',location.href).href,button=document.querySelector('[data-test-user-gesture]'),passed=[];
+ const delay=ms=>new Promise(r=>setTimeout(r,ms)),assert=(ok,message)=>{if(!ok)throw new Error(message)};
+ async function waitFor(check,message){for(let i=0;i<100;i++){if(check())return;await delay(50)}throw new Error(message)}
+ function fail(error){document.querySelector('#results').textContent=passed.join('\n')+'\nFAIL: '+error.stack;document.documentElement.dataset.testStatus='failed';button.disabled=true}
+ async function model(name){
+  const html=await(await fetch('../../../modules/xerte/parent_templates/Nottingham/models/'+name+'.html')).text();
+  const doc=new DOMParser().parseFromString(html,'text/html'),script=doc.querySelector('script'),code=script.textContent.replace(name+'.init();','');script.remove();
+  $('#fixture').html(doc.body.innerHTML);$.globalEval(code);
+ }
+ async function prepare(name){
+  Popcorn.instances.slice().forEach(instance=>instance.destroy());$('#fixture video').each(function(){if(this.player)this.player.remove()});$('#fixture').width(800);
+  x_pageInfo[0].type=name;x_currentPageXML=new DOMParser().parseFromString('<'+name+' name="Video" align="Left" full="false" url="'+src+'"/>','text/xml').documentElement;
+  await model(name);
+  if(name==='textVideo')textVideo.init();else{
+   $('#fixture').html('<div id="mediaHolder" class="pageVideo"><div class="mediaPanel panel"><div id="pageVideo"></div></div></div>');
+   title.getMaxDimensions=()=>[$('#fixture').width()*.48,350];
+   $('#pageVideo').mediaPlayer({type:'video',source:src,width:'100%',height:'100%',pageName:'title'});
+  }
+  const video=$('#pageVideo video')[0];await waitFor(()=>video.readyState>=1,'Metadata unavailable');await delay(180);return video;
+ }
+ function fits(video,w,h,label){
+  for(const element of [video,$(video).closest('.mejs-container')[0]]){
+   const box=element.getBoundingClientRect();assert(Math.abs(box.width-w)<1.1&&Math.abs(box.height-h)<1.1,label+': '+box.width+'x'+box.height+' instead of '+w+'x'+h);
+  }
+ }
+ const cases=[['title','button',false],['title','browser',true],['textVideo','button',false],['textVideo','browser',true]];let index=0,video;
+ async function next(){
+  if(index===cases.length){button.disabled=true;document.querySelector('#results').textContent=passed.join('\n');document.documentElement.dataset.testStatus='passed';return}
+  video=await prepare(cases[index][0]);button.disabled=false;button.textContent='Test '+cases[index][0]+' fullscreen ('+cases[index][1]+' exit)';document.documentElement.dataset.testStatus='awaiting-gesture';
+ }
+ button.addEventListener('click',()=>{
+  if(button.disabled)return;button.disabled=true;document.documentElement.dataset.testStatus='running';
+  const [name,exit,transient]=cases[index],player=video.player,$frame=$(video).closest('.mejs-container'),w=$frame.width(),h=$frame.height();
+  const $panel=name==='title'?$('#mediaHolder .mediaPanel'):$('#pageVideo');
+  const panelStyle=$panel.attr('style');
+  $frame.find('.mejs-fullscreen-button button')[0].click();
+  (async()=>{
+   await waitFor(()=>document.fullscreenElement===$frame[0]&&player.isNativeFullScreen,'Browser did not enter native fullscreen');
+   assert($frame[0].getBoundingClientRect().width>=window.innerWidth-1,'Fullscreen did not fill the browser');
+   if(transient){
+    // A project layout can be wider during fullscreen. Its temporary sizing
+    // pass must not replace the normal size cached for returning to the page.
+    $('#fixture').width(1200);if(name==='title')title.resizeVideo();else textVideo.sizeChanged();await delay(180);
+    $('#fixture').width(800);if(panelStyle===undefined)$panel.removeAttr('style');else $panel.attr('style',panelStyle);
+   }
+   if(exit==='button')$frame.find('.mejs-fullscreen-button button')[0].click();else await document.exitFullscreen();
+   await waitFor(()=>!document.fullscreenElement&&!player.isFullScreen&&!player.isNativeFullScreen,'Browser did not leave native fullscreen');
+   await delay(700);fits(video,w,h,name+' native fullscreen return');
+   assert(!$frame.hasClass('mejs-container-fullscreen'),'Fullscreen CSS remained on the player');
+   window.dispatchEvent(new Event('resize'));await delay(30);fits(video,w,h,name+' resize after native fullscreen');
+   $('#fixture').width(600);if(name==='title')title.resizeVideo();else textVideo.sizeChanged();await delay(180);
+   fits(video,$panel.width(),$panel.height(),name+' narrower panel after fullscreen');
+   passed.push('PASS: '+name+' restores panel/picture size after real native fullscreen ('+exit+' exit'+(transient?', temporary layout resize':'')+')');
+   index++;await next();
+  })().catch(fail);
+ });
+ try{
+  const exitMethod=MediaElementPlayer.prototype.exitFullScreen;
+  await model('perspectives');await model('perspectives');
+  assert(MediaElementPlayer.prototype.exitFullScreen===exitMethod,'Revisiting Perspectives replaced the fullscreen exit method for every page');
+  passed.push('PASS: revisiting Perspectives does not replace the shared fullscreen exit method');
+  await next();
+ }catch(error){fail(error)}
+})();
+</script>

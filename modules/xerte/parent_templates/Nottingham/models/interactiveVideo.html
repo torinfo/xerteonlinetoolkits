@@ -93,7 +93,7 @@
                 var	$this = $(this),
                     $popcornMedia = $this.closest(".popcornMedia");
                 var holderHeight = toResize ? $('#trackBarHolder').height() : 0;
-                var titleHeight = $(".panelTitle").outerHeight(true);
+                var titleHeight = $(".panelTitle").outerHeight(true) || 0;
 
                 var tempW = $popcornMedia.data("max-width");
                 var tempH = $popcornMedia.data("max-height") - titleHeight - holderHeight;
@@ -117,10 +117,7 @@
                     $(this).css("max-height", $(this).parent().css("max-height"));
                 });
 
-                if ($this.width() != $popcornMedia.width() && triggerResize == true) {
-                    triggerResize = false;
-                    $x_window.resize();
-                }
+                $popcornMedia.mediaPlayerSize(tempW, tempH);
                 if ($popcornMedia.next().hasClass("transcriptHolder")) {
                     $popcornMedia.next().width($popcornMedia.width());
                 }

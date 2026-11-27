@@ -141,9 +141,17 @@ for .embeddedContent iframe which do not match newly generated figure.media
 markup. Loading the right theme CSS does not fix that selector mismatch.
 Imported/custom themes and project scripts must also be considered.
 
-Site's general video initializer reads the video ID and selects its holder by
-that ID. The current direct-file provider generates video without an ID. This
-is a source-level integration defect to reproduce and correct separately.
+Site's general video initializer previously required an existing video ID,
+while the current direct-file provider generates video without one. This
+caused an uploaded video to disappear during preview initialization. The
+initializer now generates a unique holder ID when needed and reuses the
+original video element, retaining captions, poster, accessibility attributes
+and authored sizing. Repeated initialization skips an existing player.
+The Site playback fixture verifies actual MP4 playback from media-widget
+output, default paused state, multiple videos, source children, problematic
+IDs, and the legacy Site and shared-constructor paths. This addresses native
+video initialization; provider recognition and old wrapper selectors remain
+separate gaps.
 
 Site's missing MediaElement classPrefix setting was corrected earlier in this
 chat. Both inspected Site initialization paths now explicitly use mejs-.

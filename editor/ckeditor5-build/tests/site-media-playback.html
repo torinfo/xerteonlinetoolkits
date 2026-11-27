@@ -1,0 +1,99 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>Site uploaded-video playback regression</title>
+<link rel="stylesheet" href="../../../modules/site/parent_templates/site/common/css/bootstrap.css">
+<link rel="stylesheet" href="../../../modules/site/parent_templates/site/common/css/custom.css">
+<link rel="stylesheet" href="../../../modules/common/mediaelement/mediaelementplayer.min.css">
+<link rel="stylesheet" href="../../../modules/common/mediaelement/mediaelementplayer-legacy.min.css">
+<link rel="stylesheet" href="../../../modules/common/mediaelement/xerte-player.css">
+<pre id="results">Running…</pre>
+<div id="editor"></div>
+<div id="x_site_video_1">Reserved ID to check collision handling</div>
+<section id="preview" style="width:800px"></section>
+<script src="test-page.js"></script>
+<script src="../../../modules/site/parent_templates/site/common/js/jquery-1.9.1.min.js"></script>
+<script src="../../../modules/common/mediaelement/mediaelement-and-player.min.js"></script>
+<script src="../../../modules/common/js/mediaelement-sizing.js"></script>
+<script src="../../../modules/common/js/popcorn/popcorn-complete.js"></script>
+<script src="../../../modules/common/js/popcorn/plugins/popcorn.mediaconstructor.js"></script>
+<script src="../../../modules/site/parent_templates/site/common/js/mediaPlayerSite.js"></script>
+<script>
+// Load the real Site code; only skip its unrelated project-loading ready hook.
+const originalReady = $.fn.ready;
+$.fn.ready = function( callback ) { return callback.name === 'init' ? this : originalReady.call( this, callback ); };
+</script>
+<script src="../../../modules/site/parent_templates/site/common/js/application.js"></script>
+<script>$.fn.ready = originalReady;</script>
+<script src="load-editor.js"></script>
+<script>
+( async () => {
+	const passed = [];
+	const assert = ( condition, message ) => { if ( !condition ) throw new Error( message ); };
+	const waitFor = async ( condition, message ) => { for ( let count = 0; count < 120; count++ ) { if ( condition() ) return; await new Promise( resolve => setTimeout( resolve, 100 ) ); } throw new Error( message ); };
+	try {
+		const src = new URL( '../../../src/popcorn-js/test/trailer.mp4', location.href ).href;
+		const editor = await XerteCKEditor5.Classic.create( document.querySelector( '#editor' ), { xerteIframeEditing: false } );
+		editor.execute( 'mediaEmbed', src );
+		const media = editor.model.document.selection.getSelectedElement();
+		editor.model.change( writer => {
+			for ( const [ key, value ] of Object.entries( { mediaWidth: '75%', mediaHeight: '240px', mediaTitle: 'Uploaded video', mediaAriaLabel: 'Accessible uploaded video' } ) ) writer.setAttribute( key, value, media );
+		} );
+		const saved = editor.getData(); await editor.destroy();
+		const preview = document.querySelector( '#preview' ); preview.innerHTML = saved;
+		const original = preview.querySelector( 'video' );
+		assert( original && !original.id, 'Fixture must exercise the actual ID-less media-widget output' );
+		original.classList.add( 'project-video' ); original.setAttribute( 'data-project', 'retain' ); original.setAttribute( 'controlslist', 'nodownload' ); original.setAttribute( 'playsinline', '' );
+		const poster = 'data:image/svg+xml,' + encodeURIComponent( '<svg xmlns="http://www.w3.org/2000/svg" width="320" height="180"><rect width="320" height="180" fill="teal"/></svg>' ); original.poster = poster;
+		const track = document.createElement( 'track' ); track.kind = 'captions'; track.label = 'English'; track.srclang = 'en'; track.src = new URL( 'fixtures/site-media-captions.vtt', location.href ).href; original.appendChild( track );
+		updateContent( $( preview ) );
+		const holder = preview.querySelector( '.x_videoContainer' );
+		assert( holder && holder.id !== 'x_site_video_1' && holder.id !== 'undefined', 'Missing/invalid generated holder ID' );
+		assert( holder.contains( original ) && original.classList.contains( 'project-video' ) && original.getAttribute( 'data-project' ) === 'retain', 'Original video element or project hooks lost' );
+		assert( original.title === 'Uploaded video' && original.getAttribute( 'aria-label' ) === 'Accessible uploaded video', 'Video accessibility settings lost' );
+		assert( original.poster === poster && original.querySelector( 'track' ) === track && original.getAttribute( 'controlslist' ) === 'nodownload' && original.hasAttribute( 'playsinline' ), 'Poster, captions or playback settings lost' );
+		assert( holder.querySelector( '.mejs-container.mejs-video .mejs-controls' ), 'Themed MediaElement video controls missing' );
+		assert( $( holder ).data( 'popcornInstance' ).media === original, 'Popcorn did not bind to the real video element' );
+		await waitFor( () => original.readyState >= 1 && original.videoWidth > 0, 'Video metadata did not load' );
+		assert( original.paused && !original.autoplay, 'Uploaded video autoplays without being requested' );
+		assert( Math.abs( holder.getBoundingClientRect().height - 240 ) < 2 && holder.getBoundingClientRect().width > 0, 'Authored video dimensions were not retained' );
+		const frame = holder.querySelector( '.mejs-container' ).getBoundingClientRect();
+		const picture = original.getBoundingClientRect();
+		assert( Math.abs( picture.width - frame.width ) < 2 && Math.abs( picture.height - frame.height ) < 2, 'Site video picture escaped the authored player dimensions' );
+		window.dispatchEvent( new Event( 'resize' ) );
+		assert( Math.abs( holder.querySelector( '.mejs-container' ).getBoundingClientRect().height - 240 ) < 2, 'Native resize replaced the authored Site video height' );
+		original.muted = true; await original.play();
+		await waitFor( () => original.currentTime > 0.1, 'Uploaded video did not actually play' ); original.pause();
+		passed.push( 'PASS: actual CKEditor media output loads and plays through Site/MediaElement/Popcorn, keeps theme hooks and settings, and does not autoplay' );
+		const playerCount = preview.querySelectorAll( '.mejs-container' ).length;
+		updateContent( $( preview ) );
+		assert( preview.querySelectorAll( '.mejs-container' ).length === playerCount && holder.contains( original ), 'Updating content initializes the video twice' );
+		passed.push( 'PASS: repeated Site content initialization retains the existing player' );
+		for ( const id of [ '', 'custom.video:two', 'duplicate-player', 'duplicate-player' ] ) {
+			const video = document.createElement( 'video' ); video.controls = true; video.style.cssText = 'width:100%;height:180px';
+			if ( id ) video.id = id;
+			const source = document.createElement( 'source' ); source.src = src; source.type = 'video/mp4'; video.appendChild( source );
+			preview.appendChild( video );
+		}
+		updateContent( $( preview ) );
+		assert( preview.querySelectorAll( '.x_videoContainer' ).length === 5 && preview.querySelectorAll( '.mejs-container' ).length === 5, 'Multiple or source-child videos failed to initialize' );
+		const ids = Array.from( document.querySelectorAll( '[id]' ), element => element.id );
+		assert( new Set( ids ).size === ids.length, 'Video initialization introduced duplicate IDs' );
+		assert( document.getElementById( 'custom.video:two' ), 'Selector-special original ID target was lost' );
+		passed.push( 'PASS: missing, duplicate and selector-special IDs plus source-child videos initialize independently' );
+		const dedicated = document.createElement( 'div' ); dedicated.innerHTML = setUpVideo( src, '4:3', 'legacy' )[ 0 ]; preview.appendChild( dedicated );
+		initMedia( $( dedicated ).find( 'video' ) );
+		assert( document.getElementById( 'playerlegacy' )?.classList.contains( 'x_videoContainer' ) && dedicated.querySelector( '.mejs-video video' ), 'Legacy Site video path regressed' );
+		passed.push( 'PASS: existing Site-generated videos retain their framework holder IDs and player path' );
+		const legacyHolder = $( '<div id="legacy-constructor" style="width:400px;height:225px"></div>' ).appendTo( preview );
+		const legacyPlayer = loadMedia( legacyHolder, 'video', { media: src, autoplay: 'false', aspect: 16 / 9, trackMedia: false } );
+		const legacyVideo = legacyHolder.find( 'video' )[ 0 ];
+		assert( legacyVideo && legacyVideo.id === 'mainVideo' && legacyPlayer.media === legacyVideo && legacyVideo.querySelector( 'source' ), 'Shared constructor no longer creates/binds legacy video elements' );
+		await waitFor( () => legacyVideo.readyState >= 1, 'Legacy constructor video metadata did not load' );
+		assert( legacyVideo.paused, 'Legacy constructor video unexpectedly autoplays' );
+		passed.push( 'PASS: shared constructor still creates and binds a video when no existing element is supplied' );
+		document.querySelector( '#results' ).textContent = passed.join( '\n' ); document.documentElement.dataset.testStatus = 'passed';
+	} catch ( error ) {
+		document.querySelector( '#results' ).textContent = passed.join( '\n' ) + '\nFAIL: ' + error.stack; document.documentElement.dataset.testStatus = 'failed';
+	}
+} )();
+</script>

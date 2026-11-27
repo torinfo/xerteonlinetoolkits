@@ -196,9 +196,8 @@
                 $iframe.height(height);
             } else {
                 $("#mediaHolder .mediaPanel").width(width);
-                $("#mediaHolder .mediaPanel .mejs-container").width(width);
                 $("#mediaHolder .mediaPanel").height(height);
-                $("#mediaHolder .mediaPanel .mejs-container").height(height);
+                $("#mediaHolder .mediaPanel").mediaPlayerSize(width, height);
             }
 
         }
@@ -233,6 +232,7 @@
             const $mediaHolder = $('#mediaHolder.pageVideo');
             let tempW = $mediaHolder.data('max-width');
             let tempH = $mediaHolder.data('max-height');
+            if (!(tempW > 0 && tempH > 0)) return;
             const dimensions = this.getMaxDimensions();
 
             if (tempW > dimensions[0]) {
@@ -246,16 +246,12 @@
                 tempW = Math.floor(tempW * scale);
             }
 
-            const prevW = $mediaHolder.find(".mediaPanel").width();
             $mediaHolder.find(".mediaPanel").css({
                 'width'	:tempW,
                 'height':tempH
             });
 
-            if (Math.round(prevW) != Math.round(tempW)) {
-                // force the mediaplayer resize to occur
-                $x_window.resize();
-            }
+            $mediaHolder.mediaPlayerSize(tempW, tempH);
         }
 	}
 	

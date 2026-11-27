@@ -918,6 +918,7 @@
 		}
 		
 		this.mediaMetadata = function($video, wh) {
+			if (!(wh[0] > 0 && wh[1] > 0)) return;
 			$video.data({
 				width: wh[0],
 				height: wh[1]
@@ -930,23 +931,10 @@
 			
 			$('.featherlight-content').addClass('max hidden');
 			
-			var availSpace = [$('.featherlight-content').width()- 20, $('.featherlight-content').height() - 20],
-				$videoDiv = $('#pageVideo').find('.mejs-video');
-			
-			// resize if the media is the wrong size for its holder
-			// this is done by manually triggering the window resize event (mediaelement.js listens to this event)
-			if ($videoDiv.width() > availSpace[0] || $videoDiv.height() < availSpace[1]) {
-				videoResize = false;
-				$x_window.resize();
-				
-				if (x_fillWindow == false) {
-					videoResize = true;
-					$('.featherlight-content').removeClass('max hidden');
-				}
-				
-			} else {
-				$('.featherlight-content').removeClass('max hidden');
-			}
+			var availSpace = [$('.featherlight-content').width() - 20, $('.featherlight-content').height() - 20];
+			var scale = Math.min(1, availSpace[0] / wh[0], availSpace[1] / wh[1]);
+			$video.mediaPlayerSize(Math.floor(wh[0] * scale), Math.floor(wh[1] * scale));
+			$('.featherlight-content').removeClass('max hidden');
 		}
 		
 		this.applySceneStyles = function(e) {

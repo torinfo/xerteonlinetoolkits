@@ -4852,11 +4852,7 @@ function x_introMediaMetadata($video, wh) {
 		var scale = Math.min(1, $lightbox.width() / wh[0], $lightbox.height() / wh[1]);
 		var width = Math.floor(wh[0] * scale);
 		var height = Math.floor(wh[1] * scale);
-		player.setPlayerSize(width, height);
-		// MediaElement 4 sizes the frame and video renderer separately. Update both
-		// or the video can keep its initial tiny pixel size inside the enlarged frame.
-		player.media.setSize(width, height);
-		player.setControlsSize();
+		$video.mediaPlayerSize(width, height);
 	} else {
 		$x_window.resize();
 	}

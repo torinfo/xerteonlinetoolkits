@@ -57,6 +57,11 @@ both locations. PHP tests remain separate; see the root `tests/README.txt`.
 | Lifecycle fixture | Undo/redo, bridge get/set data, read-only state, Inline Source Save/Cancel, iframe fullscreen/height, independent fields, destroy/recreate |
 | Contextual toolbar fixture | Image/table controls mount in the wizard document, remain within the viewport, and pass hit testing on a scrolled page, in fullscreen, and after leaving fullscreen |
 | General iframe fixtures | Live webpage previews, visible/hit-tested properties icon, actual resize drags, shared media/iframe dialogs, legacy properties and attribute/theme preservation, Source/reload, cancel, undo/redo, read-only and cleanup in all three modes |
+| Site video playback fixture | Actual media-widget MP4 output through Site, MediaElement and Popcorn; playback and default paused state; captions, poster, attributes and dimensions; missing/duplicate IDs, repeated initialization and legacy video paths |
+| Site native fullscreen fixture | Dedicated video fields and actual rich-text media-widget output enter/exit real browser fullscreen, retain their player and playback position, restore their authored dimensions and resize without reloading Site; hidden sections and carousel layouts |
+| Nottingham video sizing fixture | Panel-governed MP4 frame, picture and overlay sizing across Video, Synched Video, Title, Orientation, Summary, Media Lesson, Interactive Video, navigator, Perspectives and 360 lightboxes; metadata, resizing, fullscreen sizing, repeated visits and Popcorn timed cues |
+| Native fullscreen fixture | Real browser fullscreen on Title and Video; player-button and browser exits, temporary fullscreen layout sizes, resizing after exit, and repeated Perspectives visits without changing the shared player methods |
+| Established player skin fixture | Compares the earlier and current audio/video skins; bar and icon sizes, gradients, live playback controls, progress transforms, keyboard focus and High Contrast theme overrides |
 | Existing browser fixtures | Source-open save payloads, HTML embeds, responsive media, mocked media browser dialogs, and link/lightbox dialogs and undo |
 
 The browser runner visits fixtures sequentially in an iframe, captures explicit
@@ -68,6 +73,12 @@ The optional headless runner uses Node 24 and a separate temporary browser
 profile. `XERTE_TEST_BROWSER` selects another Chrome/Edge executable;
 `XERTE_TEST_BASE_URL` changes the local test directory URL. Pass a fixture name
 instead of `--all` to run one page, for example `iframe-properties.html`.
+For the skin fixture's automated audio playback checks, use
+`node scripts/run-browser-checks.mjs player-skin.html --allow-media-playback`.
+The flag applies only to that headless test browser; it does not change the player.
+`native-video-fullscreen.html` requests a click for each native fullscreen case.
+The headless runner supplies a browser-recognized user gesture; the test uses the
+real Fullscreen API and waits for the browser to enter and leave fullscreen.
 
 The **Iframe** button embeds a webpage URL or relative project path without a
 media-provider lookup. Select an existing iframe and use the button, its

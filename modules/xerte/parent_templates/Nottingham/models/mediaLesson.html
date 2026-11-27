@@ -126,7 +126,7 @@
 			$(".popcornMedia video").each(function(i) {
 				var	$this = $(this),
 					$popcornMedia = $this.closest(".popcornMedia");
-				var titleHeight = $(".panelTitle").outerHeight(true);
+				var titleHeight = $(".panelTitle").outerHeight(true) || 0;
 				
 				var tempW = $popcornMedia.data("max-width");
 				var tempH = $popcornMedia.data("max-height") - titleHeight;
@@ -150,10 +150,7 @@
 					$(this).css("max-height", $(this).parent().css("max-height"));
 				});
 
-				if ($this.width() != $popcornMedia.width() && triggerResize == true) {
-					triggerResize = false;
-					$x_window.resize();
-				}
+				$popcornMedia.mediaPlayerSize(tempW, tempH);
 				if ($popcornMedia.next().hasClass("transcriptHolder")) {
 					$popcornMedia.next().width($popcornMedia.width());
 				}

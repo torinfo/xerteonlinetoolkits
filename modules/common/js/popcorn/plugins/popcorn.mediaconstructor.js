@@ -77,15 +77,17 @@ this.loadMedia = function($holder, mediaType, mediaData, mainMedia = true) {
                     width		:"100%",
                     height		:"100%",
                     autoPlay	:mediaData.autoplay,
+					element     :mediaData.element,
+					title       :mediaData.element ? mediaData.tip : undefined,
                     pageName	:mediaData.pageName ? mediaData.pageName : "mediaLesson"
                 });
 
-            popcornInstance = Popcorn("#" +$holder.attr("id") + " video");
+			var $nativeVideo = $holder.find('video');
+            popcornInstance = Popcorn($nativeVideo[0]);
             if (mainMedia == true) {
-                $("#" + $holder.attr("id") + " video").attr('id', 'mainVideo');
-            } else {
-                $("#" + $holder.attr("id") + " video").attr('id', 'video_' 
-                    + $("#" + $holder.attr("id") + " video").parents('.mejs-video').attr('id'));
+                $nativeVideo.attr('id', 'mainVideo');
+            } else if (!mediaData.element || !$nativeVideo.attr('id')) {
+                $nativeVideo.attr('id', 'video_' + $nativeVideo.parents('.mejs-video').attr('id'));
             }
         }
 
@@ -253,15 +255,7 @@ this.resizeEmbededMedia = function($video, {ratio = 16 / 9, width, height}) {
         });
     } else if ($video.find(".mejs-container").length > 0) {
 
-        var $mediaHolder = $video.find(".mejs-container");
-        $mediaHolder.css({
-            "width": width ? width : w,
-            "height": height ? height : h,
-        });
-        $mediaHolder.find(".mejs-overlay-play").css({
-            "width": width ? width : w,
-            "height": height ? height : h,
-        });
+        $video.mediaPlayerSize(width ? width : w, height ? height : h);
     }
 };
 

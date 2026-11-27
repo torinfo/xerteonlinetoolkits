@@ -178,18 +178,16 @@
 				} else { // video
 					const $this = $(this);
 					const $video = $this.find('video');
-					const $videoDiv = $this.find('.mejs-video');
-					const videoW = $videoDiv.width();
 					$(this).hide();
-
-					if (videoW > $holder.width() - 1 || (videoW < $holder.width() - 50 && ($video.data('width') == 0 || videoW < $video.data('width')))) {
-						$this.css("max-width", $holder.width() - 10);
-						$this.show();
-						$x_window.resize();
-						return false;
-					} else {
-						$(this).show();
+					const ratio = $video.data('width') / $video.data('height');
+					let width = Math.min($holder.width() - 10, $video.data('width') || Infinity);
+					let height = width / ratio;
+					const maxH = getMaxH($this);
+					if (maxH > 0 && height > maxH) {
+						height = maxH;
+						width = height * ratio;
 					}
+					$this.css('max-width', width).show().mediaPlayerSize(width, height);
 				}
 			});
 		}
